@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Clusters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -161,6 +162,10 @@ namespace GingerCore.NoSqlBase
         }
         public List<string> GetDatabaseList()
         {
+            if (mMongoClient == null)
+            {
+                return new List<string>();
+            }
             return mMongoClient.ListDatabaseNames().ToList();
         }
         public override List<string> GetTableList(string dbName)
@@ -350,7 +355,7 @@ namespace GingerCore.NoSqlBase
                     case Actions.ActDBValidation.eDBValidationType.UpdateDB:
 
                         //do commit
-                        if (Act.CommitDB_Value == true)
+                        if (Act.CommitDB_Value && mMongoClient.Cluster.Description.Type != ClusterType.Standalone)
                         {
                             var session = mMongoClient.StartSession();
                             session.StartTransaction();

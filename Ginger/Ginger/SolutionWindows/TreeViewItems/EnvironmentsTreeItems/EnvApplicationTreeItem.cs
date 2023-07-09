@@ -136,7 +136,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 if (env != ProjEnvironment)
                 {
-                    if (env.Applications.Where(x => x.Name == EnvApplication.Name).FirstOrDefault() == null)
+                    if (env.Applications.FirstOrDefault(x => x.Name == EnvApplication.Name) == null)
                     {
                         EnvApplication app = (EnvApplication)(((RepositoryItemBase)EnvApplication).CreateCopy());
                         env.Applications.Add(app);

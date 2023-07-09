@@ -58,7 +58,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
-        public void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
+        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
         {
             throw new NotImplementedException();
         }
@@ -113,7 +113,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             throw new NotImplementedException();
         }
 
-        public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
+        public void ShowRecoveryItemPage()
         {
             throw new NotImplementedException();
         }

@@ -129,7 +129,7 @@ namespace GingerCoreNET.RunLib
                     break;
                 case SocketMessages.SendToNode:  // Send action to Node, used when Grid is remote
                     Guid SessionID2 = p.GetGuid();
-                    GingerNodeInfo gingerNodeInfo = (from x in NodeList where x.SessionID == SessionID2 select x).SingleOrDefault();
+                    GingerNodeInfo gingerNodeInfo = NodeList.FirstOrDefault(x=>x.SessionID == SessionID2);
                     NewPayLoad actionPayload = p.ReadPayload();
                     NewPayLoad remoteNodeActionResponce = SendRequestPayLoad(gingerNodeInfo.SessionID, actionPayload);
                     remoteNodeActionResponce.Truncate();

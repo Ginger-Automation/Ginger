@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.GeneralLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,7 +40,7 @@ namespace GingerWPF.RunLib
             this.Top = 0;
             this.Left = 0;
 
-            MainFrame.Content = grid;
+            MainFrame.ClearAndSetContent(grid);
             mGingerRunnerControlsPageContentControl = CC;
             mGrid = grid;
             this.setMiniView = setMiniView;

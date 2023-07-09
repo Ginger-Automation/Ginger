@@ -113,8 +113,16 @@ namespace GingerWPF.BusinessFlowsLib
                     BindingHandler.ObjFieldBinding(xBreakPointMenuItemIcon, ImageMaker.ContentProperty, mActionBeenEdit, nameof(Act.BreakPoint), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
                 }
 
-                mActionEditPage = new ActionEditPage(mActionBeenEdit, mPageViewMode);
-                xMainFrame.SetContent(mActionEditPage);
+                if (mActionEditPage == null)
+                {
+                    mActionEditPage = new ActionEditPage(mActionBeenEdit, mPageViewMode);
+                }
+                else
+                {
+                    mActionEditPage.Init(mActionBeenEdit, mPageViewMode);
+                }
+
+                xMainFrame.ClearAndSetContent(mActionEditPage);
                 if (ShiftToActionEditEvent != null)
                 {
                     ShiftToActionEditEvent.Invoke(this, null);
@@ -127,11 +135,9 @@ namespace GingerWPF.BusinessFlowsLib
                 if (mActionEditPage != null)
                 {
                     mActionEditPage.ClearPageBindings();
-                    mActionEditPage.KeepAlive = false;
-                    mActionEditPage = null;
                     //GC.Collect();
                 }
-                xMainFrame.SetContent(mActionsListView);
+                xMainFrame.ClearAndSetContent(mActionsListView);
                 mActionsListView.ScrollToViewCurrentItem();
 
                 if (ShiftToActionsListEvent != null)

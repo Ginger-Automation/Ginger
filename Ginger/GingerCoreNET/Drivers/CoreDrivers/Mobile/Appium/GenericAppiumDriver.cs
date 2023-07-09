@@ -252,23 +252,36 @@ namespace Amdocs.Ginger.CoreNET
                         break;
                 }
 
-                mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-                mSeleniumDriver.StopProcess = this.StopProcess;
-                mSeleniumDriver.BusinessFlow = this.BusinessFlow;
-
-                if (AppType == eAppType.Web && mDefaultURL != null)
+                //If Driver.SessionId is null, it means that the Mobile Agent already in use.
+                
+                if (!(Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device"))
                 {
-                    try
+                    mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
+                    mSeleniumDriver.StopProcess = this.StopProcess;
+                    mSeleniumDriver.BusinessFlow = this.BusinessFlow;
+
+                    if (AppType == eAppType.Web && mDefaultURL != null)
                     {
-                        Driver.Navigate().GoToUrl(mDefaultURL);
+                        try
+                        {
+                            Driver.Navigate().GoToUrl(mDefaultURL);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to load default mobile web app URL, please validate the URL is valid", ex);
-                    }
+
+                    return true;
+                }
+                else
+                {
+                    string error = string.Format("Failed to start Appium session.{0}Error: Mobile device is already in use. Please close all other sessions and try again.", System.Environment.NewLine);
+                    Reporter.ToLog(eLogLevel.ERROR, error);
+                    ErrorMessageFromDriver = error;
+                    return false;
                 }
 
-                return true;
             }
             catch (Exception ex)
             {
@@ -1574,13 +1587,13 @@ namespace Amdocs.Ginger.CoreNET
                 return;
             }
 
-            if (ElementInfo.X == 0 && ElementInfo.Properties.Where(p => p.Name == "x").FirstOrDefault() != null)
+            if (ElementInfo.X == 0 && ElementInfo.Properties.FirstOrDefault(p => p.Name == "x") != null)
             {
-                ElementInfo.X = Convert.ToInt32(ElementInfo.Properties.Where(p => p.Name == "x").FirstOrDefault().Value);
+                ElementInfo.X = Convert.ToInt32(ElementInfo.Properties.FirstOrDefault(p => p.Name == "x").Value);
             }
-            if (ElementInfo.Y == 0 && ElementInfo.Properties.Where(p => p.Name == "y").FirstOrDefault() != null)
+            if (ElementInfo.Y == 0 && ElementInfo.Properties.FirstOrDefault(p => p.Name == "y") != null)
             {
-                ElementInfo.Y = Convert.ToInt32(ElementInfo.Properties.Where(p => p.Name == "y").FirstOrDefault().Value);
+                ElementInfo.Y = Convert.ToInt32(ElementInfo.Properties.FirstOrDefault(p => p.Name == "y").Value);
             }
 
             if (ElementInfo.ElementObject == null)
@@ -2350,7 +2363,7 @@ namespace Amdocs.Ginger.CoreNET
                     }
                 }
 
-                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+                if (activesElementLocators.Any(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed))
                 {
                     return true;
                 }
@@ -2489,7 +2502,7 @@ namespace Amdocs.Ginger.CoreNET
             //try using online IWebElement Objects comparison
             //ElementInfo OriginalElementInfo = originalElements.Where(x => (x.ElementObject != null) && (latestElement.ElementObject != null) && (x.ElementObject.ToString() == latestElement.ElementObject.ToString())).FirstOrDefault();//comparing IWebElement ID's
 
-            ElementInfo OriginalElementInfo = originalElements.Where(x => (x.ElementTypeEnum == latestElement.ElementTypeEnum)
+            ElementInfo OriginalElementInfo = originalElements.FirstOrDefault(x => (x.ElementTypeEnum == latestElement.ElementTypeEnum)
                                                                     && (x.XPath == latestElement.XPath)
                                                                     && (x.Path == latestElement.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(latestElement.Path)))
                                                                     && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null
@@ -2497,7 +2510,7 @@ namespace Amdocs.Ginger.CoreNET
                                                                             && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == latestElement.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
                                                                             )
                                                                         )
-                                                                  ).FirstOrDefault();
+);
 
             return OriginalElementInfo;
         }
@@ -2579,10 +2592,10 @@ namespace Amdocs.Ginger.CoreNET
 
                     ElementActionCongifuration configArgs = new ElementActionCongifuration();
 
-                    if (TestLocatorOutput(elemInfo, elemInfo.Locators.Where(l => l.LocateBy == eLocateBy.ByXPath).FirstOrDefault()))
+                    if (TestLocatorOutput(elemInfo, elemInfo.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByXPath)))
                     {
                         configArgs.LocateBy = eLocateBy.ByXPath;
-                        configArgs.LocateValue = elemInfo.Locators.Where(l => l.LocateBy == eLocateBy.ByXPath).FirstOrDefault().LocateValue;
+                        configArgs.LocateValue = elemInfo.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByXPath).LocateValue;
                     }
                     else
                     {

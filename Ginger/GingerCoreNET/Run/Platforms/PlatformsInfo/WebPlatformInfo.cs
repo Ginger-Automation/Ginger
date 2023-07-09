@@ -87,6 +87,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             browserActElementList.Add(ActBrowserElement.eControlAction.GetMessageBoxText);
             browserActElementList.Add(ActBrowserElement.eControlAction.SetAlertBoxText);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetBrowserLog);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetConsoleLog);
             browserActElementList.Add(ActBrowserElement.eControlAction.StartMonitoringNetworkLog);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetNetworkLog);
             browserActElementList.Add(ActBrowserElement.eControlAction.StopMonitoringNetworkLog);
@@ -120,7 +121,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             switch (ElementType)
             {
                 default:
-                    ElementTypeData elementTypeOperations = GetPlatformElementTypesData().Where(x => x.ElementType == ElementType).FirstOrDefault();
+                    ElementTypeData elementTypeOperations = GetPlatformElementTypesData().FirstOrDefault(x => x.ElementType == ElementType);
                     if (elementTypeOperations != null)
                     {
                         if (elementTypeOperations.ActionType == typeof(ActUIElement))
@@ -137,7 +138,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
 
-            ElementTypeData elementTypeOperations = GetPlatformElementTypesData().Where(x => x.ElementType == elementInfo.ElementTypeEnum).FirstOrDefault();
+            ElementTypeData elementTypeOperations = GetPlatformElementTypesData().FirstOrDefault(x => x.ElementType == elementInfo.ElementTypeEnum);
             if ((elementTypeOperations != null) && ((elementTypeOperations.ElementOperationsList != null)) && (elementTypeOperations.ElementOperationsList.Count > 0))
             {
                 if (elementTypeOperations.ActionType == typeof(ActBrowserElement))
@@ -173,7 +174,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             Act elementAction = null;
             if (elementInfo != null)
             {
-                ElementTypeData elementTypeOperations = GetPlatformElementTypesData().Where(x => x.ElementType == elementInfo.ElementTypeEnum).FirstOrDefault();
+                ElementTypeData elementTypeOperations = GetPlatformElementTypesData().FirstOrDefault(x => x.ElementType == elementInfo.ElementTypeEnum);
                 if (actConfig != null)
                 {
                     if (string.IsNullOrWhiteSpace(actConfig.Operation))

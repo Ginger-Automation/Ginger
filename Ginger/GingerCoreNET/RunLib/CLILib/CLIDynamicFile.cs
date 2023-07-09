@@ -317,7 +317,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                             if (almDetails.IsDefault == true)
                             {
                                 //clear previous default
-                                ALMConfig currentDefAlm = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm == true).FirstOrDefault();
+                                ALMConfig currentDefAlm = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm == true);
                                 if (currentDefAlm != null)
                                 {
                                     currentDefAlm.DefaultAlm = false;

@@ -254,7 +254,7 @@ namespace Ginger
             }
             else
             {
-                mItemTagsKey.Remove(mItemTagsKey.Where(x => x.Guid == ((RepositoryItemTag)((Button)sender).Tag).Guid).FirstOrDefault());
+                mItemTagsKey.Remove(mItemTagsKey.FirstOrDefault(x => x.Guid == ((RepositoryItemTag)((Button)sender).Tag).Guid));
             }
         }
 

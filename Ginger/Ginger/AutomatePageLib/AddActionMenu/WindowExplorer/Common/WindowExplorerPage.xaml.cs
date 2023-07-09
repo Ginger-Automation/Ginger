@@ -41,6 +41,7 @@ using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Drivers.PBDriver;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -1141,7 +1142,7 @@ namespace Ginger.WindowExplorer
 
                 mScreenShotViewPage.xMainImage.MouseLeftButtonDown += XMainImage_MouseLeftButtonDown;
 
-                xScreenShotFrame.Content = mScreenShotViewPage;
+                xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
                 //xDeviceImage.Source = General.ToBitmapSource(ScreenShotBitmap);
 
                 xScreenShotFrame.Visibility = Visibility.Visible;
@@ -1314,8 +1315,15 @@ namespace Ginger.WindowExplorer
                     rectangleHeight = clickedElementInfo.Height;
                 }
 
-                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.LeftProperty, ElementStartPoint.X + ((mScreenShotViewPage.xMainCanvas.ActualWidth - mScreenShotViewPage.xMainImage.ActualWidth) / 2));
-                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + ((mScreenShotViewPage.xMainCanvas.ActualHeight - mScreenShotViewPage.xMainImage.ActualHeight) / 2));
+                double canvasLeftForMainImage = Canvas.GetLeft(mScreenShotViewPage.xMainImage);
+                if (double.IsNaN(canvasLeftForMainImage))
+                    canvasLeftForMainImage = 0;
+                double canvasTopForMainImage = Canvas.GetTop(mScreenShotViewPage.xMainImage);
+                if (double.IsNaN(canvasTopForMainImage))
+                    canvasTopForMainImage = 0;
+
+                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.LeftProperty, ElementStartPoint.X + canvasLeftForMainImage);
+                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + canvasTopForMainImage);
                 mScreenShotViewPage.xHighlighterBorder.Margin = new Thickness(0);
 
                 mScreenShotViewPage.xHighlighterBorder.Width = rectangleWidth;
@@ -1548,7 +1556,7 @@ namespace Ginger.WindowExplorer
 
             if (!xLiveSpyTabContentFrame.HasContent || xLiveSpyTabContentFrame.Content == null)
             {
-                xLiveSpyTabContentFrame.Content = spyPage;
+                xLiveSpyTabContentFrame.ClearAndSetContent(spyPage);
             }
         }
 

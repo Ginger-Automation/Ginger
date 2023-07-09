@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Drivers.CommunicationProtocol;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
+using GingerCore.GeneralLib;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
@@ -155,7 +156,7 @@ namespace Ginger.GingerGridLib
                 GingerGridNodePage p = new GingerGridNodePage(GNA);
                 // Connect to LiveView Channel - this is not via Run act
                 Frame f = new Frame();
-                f.Content = p;
+                f.ClearAndSetContent(p);
                 xServicesGrid.Children.Add(f);
 
                 Grid.SetRow(f, row);
@@ -289,8 +290,8 @@ namespace Ginger.GingerGridLib
                 {
                     // using repeated function calls below instead of usual iteration
                     //because list changes every time delete is called
-                    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>()[0]);
-                } while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().Count != 0);
+                    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<RemoteServiceGrid>());
+                } while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().Any());
                 WorkSpace.Instance.CurrentSelectedItem = null;
             }
         }

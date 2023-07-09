@@ -33,7 +33,7 @@ namespace Ginger.Actions
     public partial class ActScriptEditPage : Page
     {
         public ActionEditPage actp;
-        private ActScript f;
+        private ActScript actScript;
 
         string SHFilesPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\Scripts\");
 
@@ -41,21 +41,22 @@ namespace Ginger.Actions
         public ActScriptEditPage(GingerCore.Actions.ActScript Act)
         {
             InitializeComponent();
-            this.f = Act;
+            this.actScript = Act;            
             GingerCore.General.FillComboFromEnumObj(ScriptActComboBox, Act.ScriptCommand);
             GingerCore.General.FillComboFromEnumObj(ScriptInterpreterComboBox, Act.ScriptInterpreterType);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptInterpreterComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActScript.ScriptInterpreterType));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptActComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActScript.ScriptCommand));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, Act, nameof(ActScript.ScriptName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, actScript, nameof(ActScript.ScriptName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkIgnoreScriptErrors, CheckBox.IsCheckedProperty, actScript, nameof(ActScript.IgnoreStdOutErrors));
 
             ScriptNameComboBox.SelectionChanged += ScriptNameComboBox_SelectionChanged;
 
             ScriptInterPreter.FileExtensions.Add(".exe");
             ScriptInterPreter.Init(Act, nameof(ActScript.ScriptInterpreter), true);
-            f.ScriptPath = SHFilesPath;
+            actScript.ScriptPath = SHFilesPath;
 
-            var comboEnumItem = ScriptInterpreterComboBox.Items.Cast<GingerCore.GeneralLib.ComboEnumItem>().Where(x => x.text == ActScript.eScriptInterpreterType.JS.ToString()).FirstOrDefault();
+            var comboEnumItem = ScriptInterpreterComboBox.Items.Cast<GingerCore.GeneralLib.ComboEnumItem>().FirstOrDefault(x => x.text == ActScript.eScriptInterpreterType.JS.ToString());
             ScriptInterpreterComboBox.Items.Remove(comboEnumItem);//Removed JS from UI
         }
 
@@ -68,14 +69,14 @@ namespace Ginger.Actions
                 case ActScript.eScriptAct.FreeCommand:
                     ScriptStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                     ScriptDescriptionPanel.Visibility = Visibility.Collapsed;
-                    f.RemoveAllButOneInputParam("Free Command");
-                    f.AddInputValueParam("Free Command");
+                    actScript.RemoveAllButOneInputParam("Free Command");
+                    actScript.AddInputValueParam("Free Command");
                     ScriptNameComboBox.SelectedItem = null;
                     break;
 
                 case ActScript.eScriptAct.Script:
                     ScriptStackPanel.Visibility = System.Windows.Visibility.Visible;
-                    f.RemoveInputParam("Free Command");
+                    actScript.RemoveInputParam("Free Command");
                     break;
             }
         }
@@ -90,17 +91,17 @@ namespace Ginger.Actions
                 {
                     Directory.CreateDirectory(SHFilesPath);
                 }
-                f.ReturnValues.Clear();
-                f.InputValues.Clear();
+                actScript.ReturnValues.Clear();
+                actScript.InputValues.Clear();
 
                 string[] script = File.ReadAllLines(ScriptFile);
                 ScriptDescriptionContent.Content = "";
                 parseScriptHeader(script);
             }
 
-            if (f.InputValues.Count == 0)
+            if (actScript.InputValues.Count == 0)
             {
-                f.AddInputValueParam("Value");
+                actScript.AddInputValueParam("Value");
             }
         }
 
@@ -114,7 +115,7 @@ namespace Ginger.Actions
                 }
                 if (line.Contains("GINGER_$"))
                 {
-                    f.AddOrUpdateInputParamValue(replaceStartWithInput(line), "");
+                    actScript.AddOrUpdateInputParamValue(replaceStartWithInput(line), "");
                 }
             }
             if (String.IsNullOrEmpty(ScriptDescriptionContent.Content.ToString()))
@@ -163,11 +164,22 @@ namespace Ginger.Actions
                 fileEntries = fileEntries.Select(q => q.Replace(SHFilesPath, "")).ToArray();
                 ScriptNameComboBox.ItemsSource = fileEntries;
 
-                if (f.ScriptName == null)
+                if (actScript.ScriptName == null)
                 {
                     ScriptNameComboBox.SelectedValue = fileEntries.FirstOrDefault();
                 }
             }
+        }
+        private void chkIgnoreScriptErrorsChecked(object sender, RoutedEventArgs e)
+        {
+            actScript.IgnoreStdOutErrors = true;
+            actScript.InvokPropertyChanngedForAllFields();
+        }
+
+        private void chkIgnoreScriptErrorsUnChecked(object sender, RoutedEventArgs e)
+        {
+            actScript.IgnoreStdOutErrors = false;
+            actScript.InvokPropertyChanngedForAllFields();
         }
     }
 }

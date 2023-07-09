@@ -128,11 +128,11 @@ namespace Ginger
         public void AddSolutionToRecent(Solution solution)
         {
             //remove existing similar folder path
-            string solPath = UserProfile.RecentSolutions.Where(x => SolutionRepository.NormalizePath(x) == SolutionRepository.NormalizePath(solution.Folder)).FirstOrDefault();
+            string solPath = UserProfile.RecentSolutions.FirstOrDefault(x => SolutionRepository.NormalizePath(x) == SolutionRepository.NormalizePath(solution.Folder));
             if (solPath != null)
             {
                 UserProfile.RecentSolutions.Remove(solPath);
-                Solution sol = mRecentSolutionsAsObjects.Where(x => SolutionRepository.NormalizePath(x.Folder) == SolutionRepository.NormalizePath(solution.Folder)).FirstOrDefault();
+                Solution sol = mRecentSolutionsAsObjects.FirstOrDefault(x => SolutionRepository.NormalizePath(x.Folder) == SolutionRepository.NormalizePath(solution.Folder));
                 if (sol != null)
                 {
                     mRecentSolutionsAsObjects.Remove(sol);
@@ -165,10 +165,16 @@ namespace Ginger
             {
                 if (mUserProfileFilePath == null)
                 {
-                    string userProfileFileName = "Ginger.UserProfile.xml";
-                    string sharedUserProfilePath = Path.Combine(WorkSpace.Instance.CommonApplicationDataFolderPath, userProfileFileName);
-                    string specificUserProfilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, userProfileFileName);
-                    if (WorkSpace.Instance.RunningInExecutionMode && File.Exists(sharedUserProfilePath))
+                    string specificUserProfilePath = Path.Combine(WorkSpace.Instance.LocalUserApplicationDataFolderPath, "Ginger.UserProfile.xml");
+                    string sharedUserProfilePath = Path.Combine(WorkSpace.Instance.CommonApplicationDataFolderPath, "Ginger.UserProfile.xml");
+                    string sharedUserProfileForUIPath = Path.Combine(WorkSpace.Instance.CommonApplicationDataFolderPath, "GingerUI.UserProfile.xml");
+                    if (File.Exists(sharedUserProfileForUIPath))
+                    {
+                        mUserProfileFilePath = sharedUserProfileForUIPath;
+                        Reporter.ToLog(eLogLevel.INFO, string.Format("Shared User Profile for UI is been used, path:'{0}'", sharedUserProfileForUIPath));
+                        mSharedUserProfileBeenUsed = true;
+                    }
+                    else if (WorkSpace.Instance.RunningInExecutionMode && File.Exists(sharedUserProfilePath))
                     {
                         mUserProfileFilePath = sharedUserProfilePath;
                         Reporter.ToLog(eLogLevel.INFO, string.Format("Shared User Profile is been used, path:'{0}'", sharedUserProfilePath));
@@ -182,6 +188,8 @@ namespace Ginger
                 return mUserProfileFilePath;
             }
         }
+
+        public bool IsSharedUserProfile { get { return mSharedUserProfileBeenUsed; } }
 
         public void SaveUserProfile()
         {
@@ -208,7 +216,7 @@ namespace Ginger
             if (WorkSpace.Instance.Solution != null)
             {
                 //remove last saved mapping for this solution
-                string existingSolMapping = UserProfile.RecentAppAgentsMapping.Where(x => x.Contains(WorkSpace.Instance.Solution.Name + "***") == true).FirstOrDefault();
+                string existingSolMapping = UserProfile.RecentAppAgentsMapping.FirstOrDefault(x => x.Contains(WorkSpace.Instance.Solution.Name + "***") == true);
                 if (string.IsNullOrEmpty(existingSolMapping) == false)
                 {
                     UserProfile.RecentAppAgentsMapping.Remove(existingSolMapping);
@@ -232,7 +240,7 @@ namespace Ginger
             if (WorkSpace.Instance.Solution != null)
             {
                 //unserialize the current solution mapping saving
-                string existingSolMapping = UserProfile.RecentAppAgentsMapping.Where(x => x.Contains(WorkSpace.Instance.Solution.Name + "***") == true).FirstOrDefault();
+                string existingSolMapping = UserProfile.RecentAppAgentsMapping.FirstOrDefault(x => x.Contains(WorkSpace.Instance.Solution.Name + "***") == true);
                 if (string.IsNullOrEmpty(existingSolMapping))
                 {
                     return;//no saved mapping
@@ -259,10 +267,10 @@ namespace Ginger
                         {
                             if (mappingDic.Keys.Contains(ap.AppName))
                             {
-                                if (ap != null && WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Count > 0)
+                                if (ap != null && WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Any())
                                 {
                                     List<Agent> platformAgents = (from p in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>() where p.Platform == ap.Platform select p).ToList();
-                                    Agent matchingAgent = platformAgents.Where(x => x.Name == mappingDic[ap.AppName]).FirstOrDefault();
+                                    Agent matchingAgent = platformAgents.FirstOrDefault(x => x.Name == mappingDic[ap.AppName]);
                                     if (matchingAgent != null)
                                     {
                                         ap.LastMappedAgentName = matchingAgent.Name;

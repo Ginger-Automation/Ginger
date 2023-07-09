@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -70,6 +70,22 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public string mDisplayValue;
+        public string DisplayValue
+        {
+            get
+            {
+                if (mDisplayValue != null)
+                {
+                    return mDisplayValue;
+                }
+                return "";
+            }
+            set
+            {
+                mDisplayValue = value;
+            }
+        }
 
         public bool BoolValue
         {

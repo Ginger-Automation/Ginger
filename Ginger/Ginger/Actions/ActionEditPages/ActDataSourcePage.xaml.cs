@@ -511,14 +511,15 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.DSTableName);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbColumnValue, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.LocateColTitle);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RowSelectorValue, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.LocateRowValue);
-
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ByQuery, RadioButton.IsCheckedProperty, mActDSTblElem, ActDSTableElement.Fields.ByQuery);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(QueryVal, TextBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.QueryValue);
 
             if (mActDSTblElem == null || (mActDSTblElem.DSName == null && mActDSTblElem.DSTableName == null) || (mActDSTblElem.DSName == "" && mActDSTblElem.DSTableName == ""))
             {
                 cmbDataSourceName.SelectedIndex = 0;
                 mDataSourceName = mDSNames[0];
             }
-
+            
             if (mActDSTblElem.ValueExp != null && mActDSTblElem.ValueExp != "")
             {
                 SetDataSourceVEParams(mActDSTblElem.ValueExp);
@@ -554,7 +555,7 @@ namespace Ginger.Actions
                 mActDSTblElem.DSTableName = mDSTable.Name;
                 mActDSTblElem.DSName = mDSTable.DSC.Name;
                 Page pageContent = new Ginger.DataSource.DataSourceExportToExcel(mActDSTblElem);
-                ExcelSpecificFrame.Content = pageContent;
+                ExcelSpecificFrame.ClearAndSetContent(pageContent);
                 ExcelSpecificFrame.Visibility = Visibility.Visible;
             }
             else

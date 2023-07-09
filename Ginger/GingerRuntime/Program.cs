@@ -67,7 +67,7 @@ namespace Amdocs.Ginger.GingerRuntime
 
             try
             {
-                if (args.Count() > 0)
+                if (args.Any())
                 {
                     if (args.Count() == 1 && args[0].ToLower().Trim() == "menu")
                     {

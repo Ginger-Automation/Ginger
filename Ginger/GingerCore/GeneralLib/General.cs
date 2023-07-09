@@ -35,7 +35,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -72,6 +74,7 @@ namespace GingerCore
                     genWindow.Left = 50;
                     genWindow.Top = 200;
                 }
+                             
                 if (winStyle == eWindowShowStyle.Dialog || winStyle == eWindowShowStyle.OnlyDialog)
                 {
                     genWindow.ShowDialog();
@@ -403,7 +406,7 @@ namespace GingerCore
                     }
                     break;
                 case "ReportTemplate":
-                    if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>().Any(x => x.Name == resultValue))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Template with same name: " + "'" + resultValue + "'" + " already exists.");
                         return true;
@@ -411,7 +414,7 @@ namespace GingerCore
 
                     break;
                 case "ApplicationPOMModel":
-                    if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Any(x=> x.Name == resultValue))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "POM Model with same name: " + "'" + resultValue + "'" + " already exists.");
                         return true;
@@ -419,7 +422,7 @@ namespace GingerCore
 
                     break;
                 case "EnvApplication":
-                    if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<EnvApplication>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any(x => x.Applications.Any(y=>y.Name== resultValue)))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Application with same name: " + "'" + resultValue + "'" + " already exists.");
                         return true;
@@ -427,7 +430,7 @@ namespace GingerCore
 
                     break;
                 case "HTMLReportTemplate":
-                    if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>() where x.Name == resultValue select x).SingleOrDefault() != null)
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>().Any(x => x.Name == resultValue))
                     {
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Report Template with same name: " + "'" + resultValue + "'" + " already exists.");
                         return true;
@@ -1285,7 +1288,37 @@ namespace GingerCore
         {
             return Clipboard.GetText();
         }
+        public static bool IsAdmin()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                WindowsIdentity current = WindowsIdentity.GetCurrent();
+                WindowsPrincipal windowsPrincipal = new WindowsPrincipal(current);
+                return windowsPrincipal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                var process = new System.Diagnostics.Process();
+                var startInfo = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "id",
+                    Arguments = "-u",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false
+                };
 
+                process.StartInfo = startInfo;
+                process.Start();
+                var output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+
+                int.TryParse(output, out int userId);
+
+                return userId == 0;
+            }
+            return false;
+
+        }
     }
 }
 

@@ -244,7 +244,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             // !!!!
 
             // TODO: loop over all remote grid !!!!!!!!!!!!!!!
-            RemoteServiceGrid remoteServiceGrid = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().FirstOrDefault();  // !!!!!!!!!!!!!!
+            RemoteServiceGrid remoteServiceGrid = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<RemoteServiceGrid>();  // !!!!!!!!!!!!!!
             string remoteGridHost = remoteServiceGrid.Host;
             int RemoteGridPort = remoteServiceGrid.HostPort;
             return remoteServiceGrid;
@@ -417,7 +417,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             List<ActionInputValueInfo> paramsList = WorkSpace.Instance.PlugInsManager.GetActionEditInfo(actPlugIn.PluginId, actPlugIn.ServiceId, actPlugIn.ActionId);
             foreach (ActInputValue AP in actPlugIn.InputValues)
             {
-                ActionInputValueInfo actionInputValueInfo = (from x in paramsList where x.Param == AP.Param select x).SingleOrDefault();
+                ActionInputValueInfo actionInputValueInfo = paramsList.FirstOrDefault(x => x.Param == AP.Param);
                 AP.ParamType = actionInputValueInfo.ParamType;
             }
         }
@@ -503,7 +503,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
 
                 Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
 
 
                 if (selectedPOMElement == null)
@@ -573,7 +573,7 @@ namespace Amdocs.Ginger.CoreNET.Run
         {
             // If we have remote grid(s) then we go for remote run
             ObservableList<RemoteServiceGrid> remoteServiceGrids = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
-            if (remoteServiceGrids.Count > 0)
+            if (remoteServiceGrids.Any())
             {
                 ExecuteActionOnRemotePlugin(act);
             }

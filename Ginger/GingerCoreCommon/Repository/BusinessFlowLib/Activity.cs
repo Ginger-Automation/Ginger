@@ -350,11 +350,11 @@ namespace GingerCore
             }
         }
 
-        public eImageType TargetApplicationPlatformImage
+        public virtual eImageType TargetApplicationPlatformImage
         {
             get
             {
-                ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == TargetApplication).FirstOrDefault();
+                ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == TargetApplication);
                 if (appPlat != null)
                 {
                     return appPlat.PlatformImage;
@@ -366,11 +366,11 @@ namespace GingerCore
             }
         }
 
-        public string TargetApplicationPlatformName
+        public virtual string TargetApplicationPlatformName
         {
             get
             {
-                ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == TargetApplication).FirstOrDefault();
+                ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == TargetApplication);
                 if (appPlat != null)
                 {
                     return appPlat.Platform.ToString();
@@ -473,7 +473,7 @@ namespace GingerCore
                 case eFilterBy.Tags:
                     foreach (Guid tagGuid in Tags)
                     {
-                        Guid guid = ((List<Guid>)obj).Where(x => tagGuid.Equals(x) == true).FirstOrDefault();
+                        Guid guid = ((List<Guid>)obj).FirstOrDefault(x => tagGuid.Equals(x) == true);
                         if (!guid.Equals(Guid.Empty))
                             return true;
                     }
@@ -560,7 +560,7 @@ namespace GingerCore
         public void SetUniqueVariableName(VariableBase var)
         {
             if (string.IsNullOrEmpty(var.Name)) var.Name = "Variable";
-            if (this.Variables.Where(x => x.Name == var.Name).FirstOrDefault() == null) return; //no name like it
+            if (Variables.FirstOrDefault(x => x.Name == var.Name) == null) return; //no name like it
 
             List<VariableBase> sameNameObjList =
                 this.Variables.Where(x => x.Name == var.Name).ToList<VariableBase>();
@@ -568,7 +568,7 @@ namespace GingerCore
 
             //Set unique name
             int counter = 2;
-            while ((this.Variables.Where(x => x.Name == var.Name + "_" + counter.ToString()).FirstOrDefault()) != null)
+            while ((Variables.FirstOrDefault(x => x.Name == var.Name + "_" + counter.ToString())) != null)
                 counter++;
             var.Name = var.Name + "_" + counter.ToString();
         }
@@ -651,9 +651,9 @@ namespace GingerCore
                             {
                                 VariableDependency varDep = null;
                                 if (this.VariablesDependencies != null)
-                                    varDep = this.VariablesDependencies.Where(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                    varDep = VariablesDependencies.FirstOrDefault(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid);
                                 if (varDep == null)
-                                    varDep = this.VariablesDependencies.Where(avd => avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                    varDep = VariablesDependencies.FirstOrDefault(avd => avd.VariableGuid == listVar.Guid);
                                 if (varDep != null)
                                 {
                                     if (!varDep.VariableValues.Contains(listVar.Value))
@@ -915,7 +915,7 @@ namespace GingerCore
                     {
                         VariableSelectionList usageVarList = (VariableSelectionList)usageVar;
                         //get the matching var in the repo item
-                        VariableBase repoVar = repositoryItem.Variables.Where(x => x.Name.ToUpper() == usageVarList.Name.ToUpper()).FirstOrDefault();
+                        VariableBase repoVar = repositoryItem.Variables.FirstOrDefault(x => x.Name.ToUpper() == usageVarList.Name.ToUpper());
                         if (repoVar != null)
                         {
                             VariableSelectionList repoVarList = (VariableSelectionList)repoVar;
@@ -923,7 +923,7 @@ namespace GingerCore
                             //go over all optional values and add the missing ones
                             foreach (OptionalValue usageValue in usageVarList.OptionalValuesList)
                             {
-                                OptionalValue val = repoVarList.OptionalValuesList.Where(x => x.Value == usageValue.Value).FirstOrDefault();
+                                OptionalValue val = repoVarList.OptionalValuesList.FirstOrDefault(x => x.Value == usageValue.Value);
                                 if (val == null)
                                 {
                                     //add the val
@@ -933,7 +933,7 @@ namespace GingerCore
                             }
 
                             //keep original variable value selection
-                            if (repoVarList.OptionalValuesList.Where(pv => pv.Value == usageVar.Value).FirstOrDefault() != null)
+                            if (repoVarList.OptionalValuesList.FirstOrDefault(pv => pv.Value == usageVar.Value) != null)
                                 repoVarList.Value = usageVar.Value;
                         }
                     }
@@ -975,7 +975,7 @@ namespace GingerCore
                 return lstActions[0];
             else//we have more than 1
             {
-                IAct firstActive = lstActions.Where(x => x.Active == true).FirstOrDefault();
+                IAct firstActive = lstActions.FirstOrDefault(x => x.Active == true);
                 if (firstActive != null)
                     return firstActive;
                 else
@@ -1083,10 +1083,6 @@ namespace GingerCore
         {
             // saving from Shared repository tab
             GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations.UpdateSharedRepositoryLinkedInstances(this);
-        }
-        public override bool PreSaveHandler()
-        {
-            return Reporter.ToUser(eUserMsgKey.WarnOnEditLinkSharedActivities) == Amdocs.Ginger.Common.eUserMsgSelection.No;
         }
 
         public bool IsAutoLearned { get; set; }

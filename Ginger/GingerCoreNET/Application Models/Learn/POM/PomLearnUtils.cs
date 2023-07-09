@@ -198,7 +198,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             // appending Specific frame title in POM name
             if (!string.IsNullOrEmpty(SpecificFramePath))
             {
-                var frame = IWindowExplorerDriver.GetWindowAllFrames().Where(x => x.Path.Equals(SpecificFramePath)).FirstOrDefault();
+                var frame = IWindowExplorerDriver.GetWindowAllFrames().FirstOrDefault(x => x.Path.Equals(SpecificFramePath));
 
                 if (frame != null)
                 {
@@ -269,7 +269,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             List<ElementLocator> orderedLocatorsList = element.Locators.OrderBy(m => mElementLocatorsList.IndexOf(m.LocateBy)).ToList();
             foreach (ElementLocator elemLoc in orderedLocatorsList)
             {
-                elemLoc.Active = ElementLocatorsSettingsList.Any(m => m.LocateBy == elemLoc.LocateBy) && ElementLocatorsSettingsList.Where(m => m.LocateBy == elemLoc.LocateBy).FirstOrDefault().Active;
+                elemLoc.Active = ElementLocatorsSettingsList.Any(m => m.LocateBy == elemLoc.LocateBy) && ElementLocatorsSettingsList.FirstOrDefault(m => m.LocateBy == elemLoc.LocateBy).Active;
             }
             element.Locators = new ObservableList<ElementLocator>(orderedLocatorsList);
 
@@ -323,14 +323,14 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             string uname = name;
             try
             {
-                if (elements.Where(p => p.ElementName == name).Count() > 0)
+                if (elements.Any(p => p.ElementName == name))
                 {
                     bool isFound = false;
                     int count = 2;
                     while (!isFound)
                     {
                         string postfix = string.Format("{0}_{1}", name, count);
-                        if (elements.Where(p => p.ElementName == postfix).Count() > 0)
+                        if (elements.Any(p => p.ElementName == postfix))
                         {
                             count++;
                         }

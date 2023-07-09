@@ -302,7 +302,7 @@ namespace Ginger.ALM.Repository
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTestSets)
         {
-            if (selectedTestSets != null && selectedTestSets.Count() > 0)
+            if (selectedTestSets != null && selectedTestSets.Any())
             {
                 ObservableList<QCTestSetTreeItem> testSetsItemsToImport = new ObservableList<QCTestSetTreeItem>();
                 foreach (QCTestSetTreeItem testSetItem in selectedTestSets)
@@ -351,9 +351,9 @@ namespace Ginger.ALM.Repository
                             {
                                 if (string.IsNullOrEmpty(activ.TargetApplication))
                                 {
-                                    if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
+                                    if (tsBusFlow.TargetApplications.FirstOrDefault(x => x.Name == activ.TargetApplication) == null)
                                     {
-                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == activ.TargetApplication);
                                         if (appAgent != null)
                                         {
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });

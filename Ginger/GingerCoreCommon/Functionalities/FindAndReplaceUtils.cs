@@ -171,7 +171,7 @@ namespace Amdocs.Ginger.Common.Functionalities
                                     else
                                         finalFoundFieldPath = foundField + @"\" + mi.Name;
 
-                                    FoundItem foundItem = foundItemsList.Where(x => x.FieldName == mi.Name && x.FieldValue == stringValue && x.ItemObject == item).FirstOrDefault();
+                                    FoundItem foundItem = foundItemsList.FirstOrDefault(x => x.FieldName == mi.Name && x.FieldValue == stringValue && x.ItemObject == item);
                                     if (foundItem == null)
                                     {
                                         List<string> OptionalValuseToReplaceList = new List<string>();

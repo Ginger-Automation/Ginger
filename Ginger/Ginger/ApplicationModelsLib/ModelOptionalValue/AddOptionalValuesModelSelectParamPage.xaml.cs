@@ -94,7 +94,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     AddModelOptionalValuesWizard.SetFirstDefaultValueInParameterValues(parm);
                 }
-                var item = AddModelOptionalValuesWizard.mAAMB.AppModelParameters.SingleOrDefault(x => x.Key.ItemName == parm.ParamName);
+                var item = AddModelOptionalValuesWizard.mAAMB.AppModelParameters.FirstOrDefault(x => x.Key.ItemName == parm.ParamName);
                 if (item == null)
                 {
                     AppModelParameter temp = new AppModelParameter();
@@ -144,7 +144,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
                 {
                     AddModelOptionalValuesWizard.SetFirstDefaultValueInParameterValues(parm);
                 }
-                var item = AddModelOptionalValuesWizard.mGlobalParamterList.SingleOrDefault(x => x.Key.ItemName == parm.ParamName);
+                var item = AddModelOptionalValuesWizard.mGlobalParamterList.FirstOrDefault(x => x.Key.ItemName == parm.ParamName);
                 if (item == null)
                 {
                     GlobalAppModelParameter temp = new GlobalAppModelParameter();

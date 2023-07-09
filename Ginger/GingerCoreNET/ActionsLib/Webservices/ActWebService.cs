@@ -122,7 +122,7 @@ namespace GingerCore.Actions
                 //Old web service action add response as --> FullReponseXML
                 //And new adds it as Response:
                 // so we update it when converting from old action to new
-                ActReturnValue ARC = convertedActWebAPISoap.ReturnValues.Where(x => x.Param == "FullReponseXML").FirstOrDefault();
+                ActReturnValue ARC = convertedActWebAPISoap.ReturnValues.FirstOrDefault(x => x.Param == "FullReponseXML");
                 if (ARC != null)
                 {
                     ARC.Param = "Response:";

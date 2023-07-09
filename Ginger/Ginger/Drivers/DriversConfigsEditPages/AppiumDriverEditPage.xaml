@@ -93,7 +93,7 @@
                             <CheckBox x:Name="xAutoUpdateCapabiltiies" Content="Auto update capabilities table" Style="{StaticResource $CeckBoxStyle}" Margin="0,4.5,5,0" IsChecked="True" Checked="xAutoUpdateCapabiltiies_Checked"/>
                             <TextBlock Style="{StaticResource $TextBlockStyle}" Margin="0,5,0,0"> 
                             (for full Appium desired capabilities list,
-                            <Hyperlink NavigateUri="http://appium.io/docs/en/writing-running-appium/caps/" RequestNavigate="AppiumCapabilities_RequestNavigate">
+                            <Hyperlink NavigateUri="https://appium.io/docs/en/2.0/guides/caps/" RequestNavigate="AppiumCapabilities_RequestNavigate">
                                 click here
                             </Hyperlink>)
                             </TextBlock>

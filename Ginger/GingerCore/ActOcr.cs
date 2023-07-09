@@ -123,6 +123,25 @@ namespace GingerCore
             [EnumValueDescription("Read Text From Table In Pdf")]
             ReadTextFromTableInPdf = 3
         }
+
+        public enum eDPILevel
+        {
+            [EnumValueDescription("150")]
+            e150 = 150,
+            [EnumValueDescription("300")]
+            e300 = 300,
+            [EnumValueDescription("450")]
+            e450 = 450,
+            [EnumValueDescription("600")]
+            e600 = 600,
+            [EnumValueDescription("750")]
+            e750 = 750,
+        }
+        public eDPILevel SelectedOcrDPIOperation
+        {
+            get => GetOrCreateInputParam(nameof(SelectedOcrDPIOperation), eDPILevel.e300);
+            set => AddOrUpdateInputParamValue(nameof(SelectedOcrDPIOperation), value.ToString());
+        }
         public eActOcrImageOperations SelectedOcrImageOperation
         {
             get => GetOrCreateInputParam(nameof(SelectedOcrImageOperation), eActOcrImageOperations.ReadTextAfterLabel);
@@ -283,14 +302,16 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrImageOperations.ReadTextBetweenTwoStrings:
-                    resultText = GingerOcrOperations.ReadTextFromImageBetweenStrings(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(SecondString));
+                    string err = string.Empty;
+
+                    resultText = GingerOcrOperations.ReadTextFromImageBetweenStrings(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(SecondString), ref err );
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
                     }
                     else
                     {
-                        Error = "Unable to read text from Image";
+                        Error = err;
                     }
                     break;
                 case eActOcrImageOperations.ReadAllText:
@@ -312,12 +333,20 @@ namespace GingerCore
 
         private void ExecutePdfOperation()
         {
+
+            // Password Can be entered in 2 ways 
+            // 1. Directly Entering the password
+            // 2. using ValueExpressions
+            // If ValueExpression is used , Calculate returns the decrypted value , else it will return the encrypted value
+            // Hence before decrpyting , checking if the string is encrypted is required otherwise an error is thrown.
+            string password = ValueExpression.Calculate(OcrPassword);
+            string decryptedPassword =  (EncryptionHandler.IsStringEncrypted(password)) ?  EncryptionHandler.DecryptwithKey(password) : password;
             string resultText = string.Empty;
             Dictionary<string, object> dctOutput = new Dictionary<string, object>();
             switch (SelectedOcrPdfOperation)
             {
                 case eActOcrPdfOperations.ReadTextAfterLabel:
-                    resultText = GingerOcrOperations.ReadTextAfterLabelPdf(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(PageNumber), ValueExpression.Calculate(OcrPassword));
+                    resultText = GingerOcrOperations.ReadTextAfterLabelPdf(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), (int)SelectedOcrDPIOperation, ValueExpression.Calculate(PageNumber), decryptedPassword);
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -328,19 +357,20 @@ namespace GingerCore
                     }
                     break;
                 case eActOcrPdfOperations.ReadTextBetweenTwoStrings:
+                    string err = string.Empty;
                     resultText = GingerOcrOperations.ReadTextBetweenLabelsPdf(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString),
-                        ValueExpression.Calculate(SecondString), ValueExpression.Calculate(PageNumber), ValueExpression.Calculate(OcrPassword));
+                        ValueExpression.Calculate(SecondString), ValueExpression.Calculate(PageNumber), (int)SelectedOcrDPIOperation,ref err,decryptedPassword);
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
                     }
                     else
                     {
-                        Error = "Unable to read text from PDF";
+                        Error = err;
                     }
                     break;
                 case eActOcrPdfOperations.ReadTextFromPDFSinglePage:
-                    resultText = GingerOcrOperations.ReadTextFromPdfSinglePage(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(PageNumber), ValueExpression.Calculate(OcrPassword));
+                    resultText = GingerOcrOperations.ReadTextFromPdfSinglePage(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(PageNumber), (int)SelectedOcrDPIOperation, decryptedPassword);
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);
@@ -357,7 +387,7 @@ namespace GingerCore
                     }
                     resultText = GingerOcrOperations.ReadTextFromPdfTable(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString), ValueExpression.Calculate(PageNumber), bool.Parse(UseRowNumber),
                         int.Parse(ValueExpression.Calculate(GetFromRowNumber)), ElementLocateBy, ValueExpression.Calculate(ConditionColumnName),
-                        ValueExpression.Calculate(ConditionColumnValue), ValueExpression.Calculate(OcrPassword));
+                        ValueExpression.Calculate(ConditionColumnValue), decryptedPassword);
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);

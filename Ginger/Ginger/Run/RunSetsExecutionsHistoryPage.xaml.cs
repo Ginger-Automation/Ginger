@@ -307,7 +307,7 @@ namespace Ginger.Run
         {
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
-                Process.Start(new ProcessStartInfo() { FileName = WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, UseShellExecute = true });
+                Process.Start(new ProcessStartInfo() { FileName = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder), UseShellExecute = true });
             }
             else
             {
@@ -350,7 +350,7 @@ namespace Ginger.Run
 
         private void ReportBtnClicked(object sender, RoutedEventArgs e)
         {
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             if (grdExecutionsHistory.CurrentItem == null)
             {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);

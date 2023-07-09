@@ -157,7 +157,7 @@ namespace Ginger.Run
                 mApplicationAgent.Agent = selectedAgent;
 
                 //save last used agent on the Solution Target Applications
-                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == mApplicationAgent.AppName).FirstOrDefault();
+                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == mApplicationAgent.AppName);
                 if (ap != null)
                 {
                     ap.LastMappedAgentName = selectedAgent.Name;

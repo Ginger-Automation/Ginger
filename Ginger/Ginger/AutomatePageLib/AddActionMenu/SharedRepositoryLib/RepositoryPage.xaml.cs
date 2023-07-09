@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
+using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using System;
 using System.Windows;
@@ -133,7 +134,7 @@ namespace Ginger.Repository
                 if (((string)tbActivitiesGroups.Tag) != "Done")
                 {
                     ActivitiesGroupsRepoPage = new ActivitiesGroupsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>(), mContext);
-                    frmActivitiesGroups.Content = ActivitiesGroupsRepoPage;
+                    frmActivitiesGroups.ClearAndSetContent(ActivitiesGroupsRepoPage);
                     // Mark that this tab is loaded with info
                     tbActivitiesGroups.Tag = "Done";
                 }
@@ -144,7 +145,7 @@ namespace Ginger.Repository
                 if (((string)tbiActivities.Tag) != "Done")
                 {
                     ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), mContext);
-                    frmActivities.Content = ActivitiesRepoPage;
+                    frmActivities.ClearAndSetContent(ActivitiesRepoPage);
                     // Mark that this tab is loaded with info
                     tbiActivities.Tag = "Done";
                 }
@@ -155,7 +156,7 @@ namespace Ginger.Repository
                 if (((string)tbiActions.Tag) != "Done")
                 {
                     ActionsRepoPage = new ActionsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>(), mContext);
-                    frmActions.Content = ActionsRepoPage;
+                    frmActions.ClearAndSetContent(ActionsRepoPage);
                     // Mark that this tab is loaded with info
                     tbiActions.Tag = "Done";
                 }
@@ -166,7 +167,7 @@ namespace Ginger.Repository
                 if (((string)tbiVariables.Tag) != "Done")
                 {
                     VariablesRepoPage = new VariablesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<VariableBase>(), mBusinessFlow);
-                    frmVariables.Content = VariablesRepoPage;
+                    frmVariables.ClearAndSetContent(VariablesRepoPage);
                     // Mark that this tab is loaded with info
                     tbiVariables.Tag = "Done";
                 }

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Linq;
@@ -68,7 +69,7 @@ namespace Ginger.ALM.MapToALMWizard
         /// </summary>
         private void BindTestSet()
         {
-            load_frame.Content = GetALMTree();
+            load_frame.ClearAndSetContent(GetALMTree());
         }
         #endregion
         #region Functions
@@ -90,7 +91,7 @@ namespace Ginger.ALM.MapToALMWizard
                     ChangeTestSetPageVisibility();
                     mWizard.UpdateMappedTestCasesCollections();
                     mWizard.RemapTestCasesLists();
-                    WizardPage nextPage = mWizard.Pages.Where(p => p.Page is TestCasesMappingPage).FirstOrDefault();
+                    WizardPage nextPage = mWizard.Pages.FirstOrDefault(p => p.Page is TestCasesMappingPage);
                     (nextPage.Page as TestCasesMappingPage).xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";
                 }
             }

@@ -151,6 +151,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
         public override void StartDriver()
         {
+
             if (JavaAgentHost == null || JavaAgentHost.Length == 0)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty");
@@ -252,6 +253,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                         Thread.Sleep(500);
                     }
                 }
+                //if the agent loading was cancelled for some reason, we need to reset the flag so that next time the loading can continue normally
+                cancelAgentLoading = false;
                 //Connect Failed after x retry...   
                 IsTryingToConnect = false;
             });
@@ -460,11 +463,16 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             while (!response.IsOK())
             {
+                if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
+                {
+                    break;
+                }
                 response = Send(Request);
                 if (St.ElapsedMilliseconds > waitTime * 1000)
                 {
                     break;
                 }
+                Thread.Sleep(500);
             }
             St.Stop();
             return response;
@@ -581,13 +589,13 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             if (IsPOMWidgetElement(currentPOMElementInfo))
             {
-                var path = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.ParentBrowserPath)).FirstOrDefault();
+                var path = currentPOMElementInfo.Properties.FirstOrDefault(x => x.Name.Equals(ElementProperty.ParentBrowserPath));
                 if (path != null && !string.IsNullOrEmpty(path.Value))
                 {
                     InitializeBrowser(new JavaElementInfo() { XPath = path.Value });
 
                     //check iframe and switch
-                    var iframePath = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.ParentIFrame)).FirstOrDefault();
+                    var iframePath = currentPOMElementInfo.Properties.FirstOrDefault(x => x.Name.Equals(ElementProperty.ParentIFrame));
 
                     if (iframePath != null && !string.IsNullOrEmpty(iframePath.Value))
                     {
@@ -820,7 +828,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     st.Start();
                     while (!(sResponse.Contains("True")))
                     {
-                        Thread.Sleep(100);
+                        Thread.Sleep(200);
                         PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
                         sResponse = PL.GetValueString();
 
@@ -843,7 +851,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                         st.Start();
                         while (!(sResponse.Contains("False")))
                         {
-                            Thread.Sleep(100);
+                            Thread.Sleep(200);
                             PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
                             sResponse = PL.GetValueString();
                             if (st.ElapsedMilliseconds > MaxTimeout * 1000)
@@ -3793,7 +3801,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     }
                 }
 
-                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+                if (activesElementLocators.Any(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed))
                 {
                     return true;
                 }
@@ -3942,7 +3950,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         public ElementInfo GetMatchingElement(ElementInfo element, ObservableList<ElementInfo> originalElements)
         {
             //try by type and Xpath comparison
-            ElementInfo OriginalElementInfo = originalElements.Where(x => (x.ElementTypeEnum == element.ElementTypeEnum)
+            ElementInfo OriginalElementInfo = originalElements.FirstOrDefault(x => (x.ElementTypeEnum == element.ElementTypeEnum)
                                                                 && (x.XPath == element.XPath)
                                                                 && (x.Path == element.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(element.Path)))
                                                                 && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null
@@ -3950,7 +3958,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                                                                         && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
                                                                         )
                                                                     )
-                                                                ).FirstOrDefault();
+);
             return OriginalElementInfo;
         }
 
@@ -4148,8 +4156,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             Size size = new Size();
             int Height = 0;
             int Width = 0;
-            int.TryParse(EI.Properties.Where(item => item.Name == "Height").FirstOrDefault().Value, out Height);
-            int.TryParse(EI.Properties.Where(item => item.Name == "Width").FirstOrDefault().Value, out Width);
+            int.TryParse(EI.Properties.FirstOrDefault(item => item.Name == "Height").Value, out Height);
+            int.TryParse(EI.Properties.FirstOrDefault(item => item.Name == "Width").Value, out Width);
 
             size.Height = Height;
             size.Width = Width;

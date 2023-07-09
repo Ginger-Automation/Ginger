@@ -30,6 +30,7 @@ using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 using static GingerCore.Environments.Database;
 
 namespace GingerCore.Environments
@@ -692,7 +693,6 @@ namespace GingerCore.Environments
             return rc;
         }
 
-
         public List<object> FreeSQL(string SQL, int? timeout = null)
         {
             MakeSureConnectionIsOpen();
@@ -746,7 +746,7 @@ namespace GingerCore.Environments
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to execute query:" + SQL, e);
-                throw e;
+                throw;
             }
             finally
             {
@@ -757,7 +757,6 @@ namespace GingerCore.Environments
             }
             return ReturnList;
         }
-
 
         public string GetRecordCount(string SQL)
         {

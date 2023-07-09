@@ -301,7 +301,7 @@ namespace Ginger.SolutionWindows
                     {
                         try
                         {
-                            if (Bf.GetBFandActivitiesVariabeles(false).Where(f => f is GingerCore.Variables.VariablePasswordString).Any())
+                            if (Bf.GetBFandActivitiesVariabeles(false).Any(f => f is GingerCore.Variables.VariablePasswordString))
                             {
                                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(Bf);
                             }
@@ -336,7 +336,7 @@ namespace Ginger.SolutionWindows
                             {
                                 foreach (GeneralParam gp in ea.GeneralParams.Where(f => f.Encrypt))
                                 {
-                                    gp.Value = ((ObservableList<GingerCore.Variables.VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList).Where(f => f.Guid.Equals(gp.Guid)).FirstOrDefault().Password;
+                                    gp.Value = ((ObservableList<VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList).FirstOrDefault(f => f.Guid.Equals(gp.Guid)).Password;
                                     res1 = true;
                                 }
 
@@ -344,7 +344,7 @@ namespace Ginger.SolutionWindows
                                 {
                                     if (!string.IsNullOrEmpty(db.Pass))
                                     {
-                                        db.Pass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList).Where(f => f.Guid.Equals(db.Guid)).FirstOrDefault().Password;
+                                        db.Pass = ((ObservableList<VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList).FirstOrDefault(f => f.Guid.Equals(db.Guid)).Password;
                                         res1 = true;
                                     }
                                 }
@@ -381,7 +381,7 @@ namespace Ginger.SolutionWindows
                     {
                         try
                         {
-                            if (sharedAct.Variables.Where(f => f is GingerCore.Variables.VariablePasswordString).Any())
+                            if (sharedAct.Variables.Any(f => f is GingerCore.Variables.VariablePasswordString))
                             {
                                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(sharedAct);
                             }
@@ -405,22 +405,22 @@ namespace Ginger.SolutionWindows
                                 if (ra is RunSetActionHTMLReportSendEmail && ((RunSetActionHTMLReportSendEmail)ra).Email != null
                                 && !string.IsNullOrEmpty(((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass))
                                 {
-                                    ((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList)
-                                    .Where(f => f.Guid.Equals(((RunSetActionHTMLReportSendEmail)ra).Email.Guid)).FirstOrDefault().Password;
+                                    ((RunSetActionHTMLReportSendEmail)ra).Email.SMTPPass = ((ObservableList<VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList)
+.FirstOrDefault(f => f.Guid.Equals(((RunSetActionHTMLReportSendEmail)ra).Email.Guid)).Password;
                                     res = true;
                                 }
                                 else if (ra is RunSetActionSendFreeEmail && ((RunSetActionSendFreeEmail)ra).Email != null
                                 && !string.IsNullOrEmpty(((RunSetActionSendFreeEmail)ra).Email.SMTPPass))
                                 {
-                                    ((RunSetActionSendFreeEmail)ra).Email.SMTPPass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList)
-                                    .Where(f => f.Guid.Equals(((RunSetActionSendFreeEmail)ra).Email.Guid)).FirstOrDefault().Password;
+                                    ((RunSetActionSendFreeEmail)ra).Email.SMTPPass = ((ObservableList<VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList)
+.FirstOrDefault(f => f.Guid.Equals(((RunSetActionSendFreeEmail)ra).Email.Guid)).Password;
                                     res = true;
                                 }
                                 else if (ra is RunSetActionSendSMS && ((RunSetActionSendSMS)ra).SMSEmail != null
                                     && !string.IsNullOrEmpty(((RunSetActionSendSMS)ra).SMSEmail.SMTPPass))
                                 {
-                                    ((RunSetActionSendSMS)ra).SMSEmail.SMTPPass = ((ObservableList<GingerCore.Variables.VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList)
-                                    .Where(f => f.Guid.Equals(((RunSetActionSendSMS)ra).SMSEmail.Guid)).FirstOrDefault().Password;
+                                    ((RunSetActionSendSMS)ra).SMSEmail.SMTPPass = ((ObservableList<VariablePasswordString>)xSolutionPasswordsParamtersGrid.DataSourceList)
+.FirstOrDefault(f => f.Guid.Equals(((RunSetActionSendSMS)ra).SMSEmail.Guid)).Password;
                                     res = true;
                                 }
                             }

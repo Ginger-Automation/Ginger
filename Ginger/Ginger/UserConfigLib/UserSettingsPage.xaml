@@ -6,36 +6,69 @@
       xmlns:local="clr-namespace:Ginger.User"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="600" d:DesignWidth="800" d:Height="600"
       Title="UserSettings">
 
     <ScrollViewer Background="{StaticResource $BackgroundColor_White}">
-        <StackPanel>
-            <Label Content="Terminology Type:" Style="{StaticResource $LabelStyle}" Margin="-5,20,0,0"/>
-            <ComboBox x:Name="xTerminologyTypeComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="xTerminologyTypeComboBox_SelectionChanged"/>
-            <Label x:Name="xTerminologyTypeNoteLbl" Content="Note: Terminology Type selection change will effect items names on UI, changes will fully take effect only after Ginger re-start." Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" FontSize="9" />
-
-            <Label Content="Logging Level:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="-5,5,0,0"/>
-            <ComboBox x:Name="xLoggingLevelComboBox" Style="{StaticResource $FlatInputComboBoxStyle}"/>
-            
-            <CheckBox x:Name="xAutoLoadLastSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Auto load last Solution"  Margin="0,10,0,0"/>
-            
-            <CheckBox x:Name="xAskToUpgradeSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Do not ask to upgrade Solution"  Margin="0,5,0,0"/>
-            
-            <CheckBox x:Name="xAskToRecoverSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Do not offer to recover un-saved items"  Margin="0,5,0,0"/>
-
-            <CheckBox x:Name="xAutoLoadLastRunSetCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Auto load last Run Set"  Margin="0,5,0,0"/>
-
-            <StackPanel Orientation="Horizontal">
-                <CheckBox x:Name="xShowEnterpriseFeatures" Style="{StaticResource $CeckBoxStyle}" Content="Show enterprise features"  Margin="0,5,0,0"/>
-                <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
+        <StackPanel Margin="5,0,0,0">
+            <Expander x:Name="xGeneralExpender" Expanded="Expender_Expanded" IsExpanded="True">
+                <Expander.Header>
+                    <Label Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                        <Label.Content>
+                            <GingerCore:ucTextDicResource Text="General"/>
+                        </Label.Content>
+                    </Label>
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel Margin="10,0,0,5">
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Terminology Type:" Style="{StaticResource $LabelStyle}" Margin="-5,5,0,0" Width="150px"/>
+                            <ComboBox x:Name="xTerminologyTypeComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200px"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Logging Level:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="-5,5,0,0" Width="150px"/>
+                            <ComboBox x:Name="xLoggingLevelComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200px"/>
+                        </StackPanel>
+                        <CheckBox x:Name="xAskToUpgradeSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Do not ask to upgrade Solution"  Margin="0,10,0,5"/>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="xShowEnterpriseFeatures" Style="{StaticResource $CeckBoxStyle}" Content="Show enterprise features"  Margin="0,5,0,5"/>
+                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+            <Expander x:Name="xAutoLoadExpender" Expanded="Expender_Expanded">
+                <Expander.Header>
+                    <Label Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                        <Label.Content>
+                            <GingerCore:ucTextDicResource Text="Auto Load"/>
+                        </Label.Content>
+                    </Label>
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel Margin="10,0,0,5">
+                        <CheckBox x:Name="xAutoLoadLastSolutionCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Auto load last Solution"  Margin="0,10,0,5"/>
+                        <CheckBox x:Name="xAutoLoadLastRunSetCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Auto load last Run Set"  Margin="0,5,0,5"/>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+            <Expander x:Name="xSourceControlExpender" Expanded="Expender_Expanded">
+                <Expander.Header>
+                    <Label Style="{StaticResource @HorizontalExpanderLightLabelStyle}">
+                        <Label.Content>
+                            <GingerCore:ucTextDicResource Text="Source Control"/>
+                        </Label.Content>
+                    </Label>
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel Margin="10,0,0,5">
+                        <CheckBox x:Name="xShowSourceControlStatusIconCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Show source control status icon"  Margin="0,5,0,5"/>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+            <StackPanel VerticalAlignment="Bottom">
+                <Label Content="Note: Ginger restart is required for changes to take effect." Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" FontSize="10"/>
             </StackPanel>
-            <!--<CheckBox x:Name="xShowBFSaveWarnCheckBox" Style="{StaticResource $CeckBoxStyle}"  Margin="0,5,0,0">
-                <CheckBox.Content>
-                    <GingerCore:ucTextDicResource Text="Show [BusinessFlow] change save warning when shifting to automate other [BusinessFlow]"/>
-                </CheckBox.Content>
-            </CheckBox>-->
-
         </StackPanel>
     </ScrollViewer>
 </Page>

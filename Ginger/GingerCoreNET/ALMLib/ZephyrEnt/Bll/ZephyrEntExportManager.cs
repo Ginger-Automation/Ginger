@@ -270,7 +270,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             {
                 return exportedCategories;
             }
-            if (exportedCategories.GetValue("categories").Count() > 0)
+            if (exportedCategories.GetValue("categories").Any())
             {
                 return findPhaseToExportDetails((JObject)exportedCategories.GetValue("categories").First, id);
             }
@@ -444,20 +444,20 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
         }
         public int GetTestStatus(ActivitiesGroup testToExport)
         {
-            if (testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Failed).Any())
+            if (testToExport.ActivitiesIdentifiers.Any(x => x.IdentifiedActivity.Status == eRunStatus.Failed))
             {
                 return 2;
             }
-            else if (testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Blocked).Any())
+            else if (testToExport.ActivitiesIdentifiers.Any(x => x.IdentifiedActivity.Status == eRunStatus.Blocked))
             {
                 return 4;
             }
-            else if (testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Running).Any())
+            else if (testToExport.ActivitiesIdentifiers.Any(x => x.IdentifiedActivity.Status == eRunStatus.Running))
             {
                 return 3;
             }
-            else if ((testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Pending).Any())
-                        || (testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Stopped).Any()))
+            else if ((testToExport.ActivitiesIdentifiers.Any(x => x.IdentifiedActivity.Status == eRunStatus.Pending))
+                        || (testToExport.ActivitiesIdentifiers.Any(x => x.IdentifiedActivity.Status == eRunStatus.Stopped)))
             {
                 return 3;
             }
@@ -465,7 +465,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             {
                 return 1;
             }
-            else if (testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Skipped).Any())
+            else if (testToExport.ActivitiesIdentifiers.Any(x => x.IdentifiedActivity.Status == eRunStatus.Skipped))
             {
                 return 3;
             }

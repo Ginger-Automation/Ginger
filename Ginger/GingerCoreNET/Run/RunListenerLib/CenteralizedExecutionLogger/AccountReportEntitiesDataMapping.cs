@@ -37,7 +37,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
     public static class AccountReportEntitiesDataMapping
     {
         //select template 
-        static HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => x.IsDefault).FirstOrDefault();
+        static HTMLReportConfiguration _HTMLReportConfig = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().FirstOrDefault(x => x.IsDefault);
         static string _InProgressStatus = "In Progress";
 
         public static AccountReportAction MapActionStartData(GingerCore.Actions.Act action, Context context)
@@ -339,13 +339,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunSet.ExecutedByUser = System.Environment.UserName.ToString();
             accountReportRunSet.GingerVersion = ApplicationInfo.ApplicationVersion;
             accountReportRunSet.Account = WorkSpace.Instance.Solution.Account;
-            accountReportRunSet.Product = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.Product).FirstOrDefault());
-            accountReportRunSet.Release = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.Release).FirstOrDefault());
-            accountReportRunSet.Iteration = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.Iteration).FirstOrDefault());
-            accountReportRunSet.TestType = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.TestType).FirstOrDefault());
-            accountReportRunSet.UserCategory1 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory1).FirstOrDefault());
-            accountReportRunSet.UserCategory2 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory2).FirstOrDefault());
-            accountReportRunSet.UserCategory3 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.Where(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory3).FirstOrDefault());
+            accountReportRunSet.Product = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.Product));
+            accountReportRunSet.Release = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.Release));
+            accountReportRunSet.Iteration = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.Iteration));
+            accountReportRunSet.TestType = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.TestType));
+            accountReportRunSet.UserCategory1 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory1));
+            accountReportRunSet.UserCategory2 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory2));
+            accountReportRunSet.UserCategory3 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory3));
             accountReportRunSet.RunStatus = _InProgressStatus;
             accountReportRunSet.IsPublished = runSetConfig.Publish;
             SetRunSetChildCounts(runSetConfig, accountReportRunSet, true);
@@ -377,15 +377,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             if (gingerRunner.BusinessFlows != null && gingerRunner.BusinessFlows.Count > 0)
             {
-                if ((from x in gingerRunner.BusinessFlows.ToList() where x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed select x).Count() > 0)
+                if ((from x in gingerRunner.BusinessFlows.ToList() where x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed select x).Any())
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 }
-                else if ((from x in gingerRunner.BusinessFlows.ToList() where x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked select x).Count() > 0)
+                else if ((from x in gingerRunner.BusinessFlows.ToList() where x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked select x).Any())
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
                 }
-                else if ((from x in gingerRunner.BusinessFlows.ToList() where x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped select x).Count() > 0)
+                else if ((from x in gingerRunner.BusinessFlows.ToList() where x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped select x).Any())
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                 }

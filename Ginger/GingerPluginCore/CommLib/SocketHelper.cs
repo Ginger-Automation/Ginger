@@ -82,7 +82,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
                 IPEndPoint[] tcpEndPoints = properties.GetActiveTcpListeners();
                 List<int> usedPorts = tcpEndPoints.Select(p => p.Port).ToList<int>();
-                unusedPort = Enumerable.Range(portStartIndex, count).Where(port => !usedPorts.Contains(port)).FirstOrDefault();
+                unusedPort = Enumerable.Range(portStartIndex, count).FirstOrDefault(port => !usedPorts.Contains(port));
                 if (unusedPort != LastPort)
                 {
                     LastPort = unusedPort;

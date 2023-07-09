@@ -68,7 +68,7 @@ namespace Ginger.Actions
             xGotoURLTypeRadioButton.Init(typeof(ActBrowserElement.eGotoURLType), xGotoURLTypeRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString()));
             xURLSrcRadioButton.Init(typeof(ActBrowserElement.eURLSrc), xURLSrcRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString()), URLSrcRadioButton_Clicked);
             xMonitorURLRadioButton.Init(typeof(ActBrowserElement.eMonitorUrl), xMonitorURLRadioButtonPnl, mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl), ActBrowserElement.eMonitorUrl.AllUrl.ToString()), MonitorURLRadioButton_Clicked);
-            xRequestTypeRadioButton.Init(typeof(ActBrowserElement.eRequestTypes), xRequestTypeRadioButtonPnl, mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes), ActBrowserElement.eRequestTypes.All.ToString()), RequestTypeRadioButton_Clicked);
+            xRequestTypeRadioButton.Init(typeof(ActBrowserElement.eRequestTypes), xRequestTypeRadioButtonPnl, mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes), ActBrowserElement.eRequestTypes.FetchOrXHR.ToString()), RequestTypeRadioButton_Clicked);
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy);
             xImplicitWaitVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.ImplicitWait);
             SetGridView();
@@ -172,6 +172,12 @@ namespace Ginger.Actions
                     xUpdateNetworkUrlGridPnl.Visibility = System.Windows.Visibility.Visible;
                 }
             }
+            else if (mAct.ControlAction == ActBrowserElement.eControlAction.GetConsoleLog)
+            {
+                ResetPOMView();
+                xValueGrid.Visibility = System.Windows.Visibility.Visible;
+                xValueLabel.Content = "Text File Path:";
+            }
             else
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.InitializeBrowser)
@@ -208,7 +214,7 @@ namespace Ginger.Actions
                     xLocateValueVE.Visibility = System.Windows.Visibility.Collapsed;
                     xLocateValueEditFrame.Visibility = System.Windows.Visibility.Visible;
                     Page p = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), null, null, mAct, nameof(ActBrowserElement.LocateValue));
-                    xLocateValueEditFrame.Content = p;
+                    xLocateValueEditFrame.ClearAndSetContent(p);
                     break;
                 default:
                     xLocateValueVE.Visibility = System.Windows.Visibility.Visible;
@@ -241,7 +247,7 @@ namespace Ginger.Actions
         private void SetLocateValueFrame()
         {
             LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), mAct, null, mAct, nameof(ActBrowserElement.Fields.PomGUID), true);
-            xPOMUrlFrame.Content = locateByPOMElementPage;
+            xPOMUrlFrame.ClearAndSetContent(locateByPOMElementPage);
         }
 
         private void SetGridView()

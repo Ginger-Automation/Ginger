@@ -46,7 +46,6 @@
         <Grid.RowDefinitions>
             <RowDefinition x:Name="xTitleSection" Height="0"/>
             <RowDefinition Height="50*" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -57,9 +56,9 @@
             <TextBlock x:Name="xSelectedElementTextBlock" Text="Selected Element" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" FontSize="15" />
         </StackPanel>-->
 
-        <Frame x:Name="xElementScreenShotFrameTop" Visibility="Collapsed" Grid.Column="0" Grid.Row="1" Margin="5,0,0,0" MaxHeight="100" VerticalAlignment="Top"></Frame>
+        <Frame x:Name="xElementScreenShotFrameTop" Visibility="Collapsed" Grid.Column="0" Grid.Row="0" Margin="5,0,0,0" MaxHeight="100" VerticalAlignment="Top"></Frame>
 
-        <TabControl x:Name="xElementDetailsTabs" Grid.Row="2" Grid.Column="0" Margin="5,5,0,0" HorizontalAlignment="Stretch" SelectionChanged="ElementDetailsTabs_SelectionChanged" Height="Auto" >
+        <TabControl x:Name="xElementDetailsTabs" Grid.Row="1" Grid.Column="0" Margin="5,5,0,0" HorizontalAlignment="Stretch" SelectionChanged="ElementDetailsTabs_SelectionChanged" Height="Auto" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
                     <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
@@ -152,6 +151,6 @@
             </TabItem>
         </TabControl>
 
-        <Frame x:Name="xElementScreenShotFrame" Grid.Column="1" Grid.Row="2" Margin="5,25,5,0" Height="200" VerticalAlignment="Top"></Frame>
+        <Frame x:Name="xElementScreenShotFrame" Grid.Column="1" Grid.Row="1" Margin="5,25,5,0" Height="200" VerticalAlignment="Top"></Frame>
     </Grid>
 </UserControl>

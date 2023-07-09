@@ -127,7 +127,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
 
         public PlatformAction GetAsPlatformAction()
         {
-            ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == APImodelGUID).FirstOrDefault();
+            ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(APImodelGUID);
             if (AAMB == null)
             {
                 Error = "Failed to find the pointed API Model";
@@ -261,7 +261,7 @@ namespace GingerCore.Actions.WebServices.WebAPI
         private void SetExecutionValue<T>(T param, ActWebAPIModel actWebAPIModel)
         {
             AppModelParameter p = param as AppModelParameter;
-            EnhancedActInputValue enhanceInput = actWebAPIModel.APIModelParamsValue.Where(x => x.ParamGuid == p.Guid).FirstOrDefault();
+            EnhancedActInputValue enhanceInput = actWebAPIModel.APIModelParamsValue.FirstOrDefault(x => x.ParamGuid == p.Guid);
             if (enhanceInput != null)
             {
                 p.ExecutionValue = enhanceInput.ValueForDriver;

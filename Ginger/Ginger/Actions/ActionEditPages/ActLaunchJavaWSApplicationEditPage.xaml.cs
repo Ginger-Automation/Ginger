@@ -74,6 +74,10 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ShowAgent, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.ShowAgent);
 
             rbGroupPortConfig.Init(typeof(ActLaunchJavaWSApplication.ePortConfigType), RadioButtonPanel, mAct.GetOrCreateInputParam(ActLaunchJavaWSApplication.Fields.PortConfigParam, ActLaunchJavaWSApplication.ePortConfigType.Manual.ToString()), new RoutedEventHandler(PortConfigRB_Click));
+
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ApplicationProcessNameChkBox, CheckBox.IsCheckedProperty, mAct, ActLaunchJavaWSApplication.Fields.IsCustomApplicationProcessName);
+            ApplicationProcessNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActLaunchJavaWSApplication.Fields.ApplicationProcessName);
+
             UpdateAgentPortTextBoxEnabledStatus();
         }
 
@@ -97,21 +101,31 @@ namespace Ginger.Actions
             {
                 GingerAgentFromOtherRdb.IsChecked = true;
             }
+
+            if(mAct.IsCustomApplicationProcessName)
+            {
+                ApplicationProcessNameChkBox.IsChecked = true;
+            }
+            else
+            {
+                ApplicationProcessNameTextBox.Visibility = Visibility.Hidden;
+                ApplicationProcessNameChkBox.IsChecked = false;
+            }
         }
 
         private void RemoveOldInputParams()
         {
-            if (mAct.InputValues.Where(x => x.Param == "Value" && x.Value == string.Empty).FirstOrDefault() != null)
+            if (mAct.InputValues.FirstOrDefault(x => x.Param == "Value" && x.Value == string.Empty) != null)
             {
                 mAct.RemoveInputParam("Value");
             }
 
-            if (mAct.InputValues.Where(x => x.Param == "Port").FirstOrDefault() != null)
+            if (mAct.InputValues.FirstOrDefault(x => x.Param == "Port") != null)
             {
                 mAct.RemoveInputParam("Port");
             }
 
-            if (mAct.InputValues.Where(x => x.Param == "URL").FirstOrDefault() != null)
+            if (mAct.InputValues.FirstOrDefault(x => x.Param == "URL") != null)
             {
                 mAct.RemoveInputParam("URL");
             }
@@ -276,5 +290,15 @@ namespace Ginger.Actions
 
         }
 
+        private void ApplicationProcessNameChkBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ApplicationProcessNameTextBox.Visibility = Visibility.Hidden;
+            ApplicationProcessNameTextBox.ValueTextBox.Text = null;
+        }
+
+        private void ApplicationProcessNameChkBox_Checked(object sender, RoutedEventArgs e)
+        {
+            ApplicationProcessNameTextBox.Visibility = Visibility.Visible;
+        }
     }
 }

@@ -56,6 +56,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace GingerCore.ALM.RQM
 {
@@ -72,6 +73,7 @@ namespace GingerCore.ALM.RQM
 
         public static BusinessFlow ConvertRQMTestPlanToBF(RQMTestPlan testPlan)
         {
+            System.Diagnostics.Trace.WriteLine("in ConvertRQMTestPlanToBF :");
             try
             {
                 if (testPlan == null)
@@ -82,7 +84,7 @@ namespace GingerCore.ALM.RQM
                 //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
                 busFlow.Name = testPlan.Name;
-                busFlow.ExternalID = "RQMID=" + testPlan.RQMID;
+                busFlow.ExternalID = $"RQMID={testPlan.RQMID}";
                 busFlow.Status = BusinessFlow.eBusinessFlowStatus.Development;
                 busFlow.Activities = new ObservableList<Activity>();
                 busFlow.Variables = new ObservableList<VariableBase>();
@@ -97,7 +99,7 @@ namespace GingerCore.ALM.RQM
                         continue;
                     }
 
-                    RQMExecutionRecord selectedExecutionRecord = testPlan.RQMExecutionRecords.Where(x => x.RelatedTestCaseRqmID == tc.RQMID && x.RelatedTestScriptRqmID == selectedScript.RQMID).FirstOrDefault();
+                    RQMExecutionRecord selectedExecutionRecord = testPlan.RQMExecutionRecords.FirstOrDefault(x => x.RelatedTestCaseRqmID == tc.RQMID && x.RelatedTestScriptRqmID == selectedScript.RQMID);
                     string RQMRecordID = selectedExecutionRecord == null ? string.Empty : selectedExecutionRecord.RQMID.ToString();
 
                     //check if the TC is already exist in repository
@@ -105,13 +107,13 @@ namespace GingerCore.ALM.RQM
                     ActivitiesGroup repoActivsGroup = null;
                     if (repoActivsGroup == null)
                     {
-                        repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
+                        repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false);
                     }
 
                     if (repoActivsGroup != null)
                     {
                         tcActivsGroup = (ActivitiesGroup)((ActivitiesGroup)repoActivsGroup).CreateInstance(true);
-                        tcActivsGroup.ExternalID = tcActivsGroup.ExternalID.Replace("RQMRecordID=" + ExportToRQM.GetExportedIDString(tcActivsGroup.ExternalID, "RQMRecordID"), "RQMRecordID=");
+                        tcActivsGroup.ExternalID = tcActivsGroup.ExternalID.Replace($"RQMRecordID={ ExportToRQM.GetExportedIDString(tcActivsGroup.ExternalID, "RQMRecordID")}", "RQMRecordID=");
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                         busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
                         busFlow.AttachActivitiesGroupsAndActivities();
@@ -122,8 +124,7 @@ namespace GingerCore.ALM.RQM
                         tcActivsGroup = new ActivitiesGroup
                         {
                             Name = tc.Name,
-                            ExternalID = "RQMID=" + tc.RQMID + "|RQMScriptID=" + selectedScript.RQMID +
-                                         "|RQMRecordID=" + RQMRecordID + "|AtsID=" + tc.BTSID,
+                            ExternalID = $"RQMID={tc.RQMID}|RQMScriptID={selectedScript.RQMID}|RQMRecordID={RQMRecordID}|AtsID={tc.BTSID}",
                             TestSuiteId = tc.TestSuiteId,
                             TestSuiteTitle = tc.TestSuiteTitle
                         };
@@ -151,16 +152,16 @@ namespace GingerCore.ALM.RQM
                         bool toAddStepActivity = false;
 
                         // check if mapped activity exist in repository
-                        Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false).FirstOrDefault();
+                        Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false);
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
                             //ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RQMIndex).FirstOrDefault();
-                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID != null ? x.ActivityExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false).FirstOrDefault();
+                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID != null ? x.ActivityExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false);
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
-                                stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                                stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                             }
                             else // not in ActivitiesGroup so get instance from repo
                             {
@@ -178,11 +179,11 @@ namespace GingerCore.ALM.RQM
                             string currentStepATSId = string.Empty;
                             if (strBtsIDs.TryGetValue((selectedScript.Steps.IndexOf(step) + 1).ToString(), out currentStepATSId))
                             {
-                                stepActivity.ExternalID = "RQMID=" + step.RQMIndex + "|AtsID=" + currentStepATSId;
+                                stepActivity.ExternalID = $"RQMID={step.RQMIndex}|AtsID={currentStepATSId}";
                             }
                             else
                             {
-                                stepActivity.ExternalID = "RQMID=" + step.RQMIndex;
+                                stepActivity.ExternalID = $"RQMID={step.RQMIndex}";
                             }
 
                             toAddStepActivity = true;
@@ -214,7 +215,7 @@ namespace GingerCore.ALM.RQM
                             }
 
                             //check if already exist param with that name
-                            VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.Name.ToUpper()).FirstOrDefault();
+                            VariableBase stepActivityVar = stepActivity.Variables.FirstOrDefault(x => x.Name.ToUpper() == param.Name.ToUpper());
                             if (stepActivityVar == null)
                             {
                                 //#Param not exist so add it
@@ -268,7 +269,7 @@ namespace GingerCore.ALM.RQM
                             //add the variable selected value                          
                             if (stepActivityVar is VariableSelectionList)
                             {
-                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == param.Value).FirstOrDefault();
+                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.FirstOrDefault(x => x.Value == param.Value);
                                 if (stepActivityVarOptionalVar == null)
                                 {
                                     //no such variable value option so add it
@@ -302,7 +303,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to import QC test set and convert it into { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}", ex);
                 return null;
             }
         }
@@ -357,7 +358,7 @@ namespace GingerCore.ALM.RQM
                                 continue;
                             }
 
-                            RQMExecutionRecord selectedExecutionRecord = testPlan.RQMExecutionRecords.Where(x => x.RelatedTestCaseRqmID == tc.RQMID && x.RelatedTestScriptRqmID == selectedScript.RQMID).FirstOrDefault();
+                            RQMExecutionRecord selectedExecutionRecord = testPlan.RQMExecutionRecords.FirstOrDefault(x => x.RelatedTestCaseRqmID == tc.RQMID && x.RelatedTestScriptRqmID == selectedScript.RQMID);
                             string RQMRecordID = selectedExecutionRecord == null ? string.Empty : selectedExecutionRecord.RQMID.ToString();
 
                             //check if the TC is already exist in repository
@@ -365,7 +366,7 @@ namespace GingerCore.ALM.RQM
                             ActivitiesGroup repoActivsGroup = null;
                             if (repoActivsGroup == null)
                             {
-                                repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
+                                repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false);
                             }
 
                             if (repoActivsGroup != null)
@@ -380,7 +381,7 @@ namespace GingerCore.ALM.RQM
                             {
                                 tcActivsGroup = new ActivitiesGroup();
                                 tcActivsGroup.Name = tc.Name;
-                                tcActivsGroup.ExternalID = "RQMID=" + tc.RQMID + "|RQMScriptID=" + selectedScript.RQMID + "|RQMRecordID=" + RQMRecordID + "|AtsID=" + tc.BTSID;
+                                tcActivsGroup.ExternalID = $"RQMID={tc.RQMID}|RQMScriptID={selectedScript.RQMID}|RQMRecordID={RQMRecordID}|AtsID={tc.BTSID}";
                                 busFlow.AddActivitiesGroup(tcActivsGroup, activityGroupToRemoveIndex);
                             }
 
@@ -404,15 +405,15 @@ namespace GingerCore.ALM.RQM
                                 bool toAddStepActivity = false;
 
                                 // check if mapped activity exist in repository
-                                Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false).FirstOrDefault();
+                                Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false);
                                 if (repoStepActivity != null)
                                 {
                                     //check if it is part of the Activities Group
-                                    ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RQMIndex).FirstOrDefault();
+                                    ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.RQMIndex);
                                     if (groupStepActivityIdent != null)
                                     {
                                         //already in Activities Group so get link to it
-                                        stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                                        stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                                     }
                                     else // not in ActivitiesGroup so get instance from repo
                                     {
@@ -432,11 +433,11 @@ namespace GingerCore.ALM.RQM
                                     string currentStepATSId = string.Empty;
                                     if (strBtsIDs.TryGetValue((selectedScript.Steps.IndexOf(step) + 1).ToString(), out currentStepATSId))
                                     {
-                                        stepActivity.ExternalID = "RQMID=" + step.RQMIndex + "|AtsID=" + currentStepATSId;
+                                        stepActivity.ExternalID = $"RQMID={step.RQMIndex}|AtsID={currentStepATSId}";
                                     }
                                     else
                                     {
-                                        stepActivity.ExternalID = "RQMID=" + step.RQMIndex;
+                                        stepActivity.ExternalID = $"RQMID={step.RQMIndex}";
                                     }
 
                                     toAddStepActivity = true;
@@ -468,7 +469,7 @@ namespace GingerCore.ALM.RQM
                                     }
 
                                     //check if already exist param with that name
-                                    VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.Name.ToUpper()).FirstOrDefault();
+                                    VariableBase stepActivityVar = stepActivity.Variables.FirstOrDefault(x => x.Name.ToUpper() == param.Name.ToUpper());
                                     if (stepActivityVar == null)
                                     {
                                         //#Param not exist so add it
@@ -520,7 +521,7 @@ namespace GingerCore.ALM.RQM
                                     //add the variable selected value                          
                                     if (stepActivityVar is VariableSelectionList)
                                     {
-                                        OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == param.Value).FirstOrDefault();
+                                        OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.FirstOrDefault(x => x.Value == param.Value);
                                         if (stepActivityVarOptionalVar == null)
                                         {
                                             //no such variable value option so add it
@@ -556,7 +557,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to import QC test set and convert it into { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}", ex);
                 return;
             }
         }
@@ -584,7 +585,7 @@ namespace GingerCore.ALM.RQM
                         continue;
                     }
 
-                    RQMExecutionRecord selectedExecutionRecord = testPlan.RQMExecutionRecords.Where(x => x.RelatedTestCaseRqmID == tc.RQMID && x.RelatedTestScriptRqmID == selectedScript.RQMID).FirstOrDefault();
+                    RQMExecutionRecord selectedExecutionRecord = testPlan.RQMExecutionRecords.FirstOrDefault(x => x.RelatedTestCaseRqmID == tc.RQMID && x.RelatedTestScriptRqmID == selectedScript.RQMID);
                     string RQMRecordID = selectedExecutionRecord == null ? string.Empty : selectedExecutionRecord.RQMID.ToString();
 
                     //check if the TC is already exist in repository
@@ -592,7 +593,7 @@ namespace GingerCore.ALM.RQM
                     ActivitiesGroup repoActivsGroup = null;
                     if (repoActivsGroup == null)
                     {
-                        repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false).FirstOrDefault();
+                        repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == tc.RQMID : false);
                     }
 
                     if (repoActivsGroup != null)
@@ -607,7 +608,7 @@ namespace GingerCore.ALM.RQM
                     {
                         tcActivsGroup = new ActivitiesGroup();
                         tcActivsGroup.Name = tc.Name;
-                        tcActivsGroup.ExternalID = "RQMID=" + tc.RQMID + "|RQMScriptID=" + selectedScript.RQMID + "|RQMRecordID=" + RQMRecordID + "|AtsID=" + tc.BTSID;
+                        tcActivsGroup.ExternalID = $"RQMID={ tc.RQMID }|RQMScriptID={selectedScript.RQMID}|RQMRecordID={RQMRecordID}|AtsID={tc.BTSID}";
                         busFlow.AddActivitiesGroup(tcActivsGroup);
                     }
 
@@ -631,15 +632,15 @@ namespace GingerCore.ALM.RQM
                         bool toAddStepActivity = false;
 
                         // check if mapped activity exist in repository
-                        Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false).FirstOrDefault();
+                        Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID != null ? x.ExternalID.Split('|').First().Split('=').Last() == step.RQMIndex : false);
                         if (repoStepActivity != null)
                         {
                             //check if it is part of the Activities Group
-                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.RQMIndex).FirstOrDefault();
+                            ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.RQMIndex);
                             if (groupStepActivityIdent != null)
                             {
                                 //already in Activities Group so get link to it
-                                stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                                stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                             }
                             else // not in ActivitiesGroup so get instance from repo
                             {
@@ -657,11 +658,11 @@ namespace GingerCore.ALM.RQM
                             string currentStepATSId = string.Empty;
                             if (strBtsIDs.TryGetValue((selectedScript.Steps.IndexOf(step) + 1).ToString(), out currentStepATSId))
                             {
-                                stepActivity.ExternalID = "RQMID=" + step.RQMIndex + "|AtsID=" + currentStepATSId;
+                                stepActivity.ExternalID = $"RQMID={step.RQMIndex }|AtsID={ currentStepATSId}";
                             }
                             else
                             {
-                                stepActivity.ExternalID = "RQMID=" + step.RQMIndex;
+                                stepActivity.ExternalID = $"RQMID={ step.RQMIndex}";
                             }
 
                             toAddStepActivity = true;
@@ -693,7 +694,7 @@ namespace GingerCore.ALM.RQM
                             }
 
                             //check if already exist param with that name
-                            VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.Name.ToUpper()).FirstOrDefault();
+                            VariableBase stepActivityVar = stepActivity.Variables.FirstOrDefault(x => x.Name.ToUpper() == param.Name.ToUpper());
                             if (stepActivityVar == null)
                             {
                                 //#Param not exist so add it
@@ -747,7 +748,7 @@ namespace GingerCore.ALM.RQM
                             //add the variable selected value                          
                             if (stepActivityVar is VariableSelectionList)
                             {
-                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == param.Value).FirstOrDefault();
+                                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.FirstOrDefault(x => x.Value == param.Value);
                                 if (stepActivityVarOptionalVar == null)
                                 {
                                     //no such variable value option so add it
@@ -781,7 +782,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to import QC test set and convert it into " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to import QC test set and convert it into { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}", ex);
                 return;
             }
         }
@@ -841,6 +842,20 @@ namespace GingerCore.ALM.RQM
             }
         }
 
+        public static ObservableList<ExternalItemFieldBase> GetALMItemFieldsForDefect(BackgroundWorker bw, bool online)
+        {
+            if (online)
+            {
+                
+             return GetOnlineItemFieldsForDefect(bw);
+
+                   
+            }
+            else
+            {
+                return GetLocalSavedPossibleValues();
+            }
+        } 
         private static ObservableList<ExternalItemFieldBase> GetLocalSavedPossibleValues()
         {
             ObservableList<ExternalItemFieldBase> ItemFieldsPossibleValues = new ObservableList<ExternalItemFieldBase>();
@@ -850,7 +865,7 @@ namespace GingerCore.ALM.RQM
                 string jsonItemsFieldsFile = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Fields", "ExternalItemsFields.json");
                 if (!File.Exists(jsonItemsFieldsFile))
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "ALM RQM, Restoring External Items Fields from ExternalItemsFields.json, file hasn't been found at: " + jsonItemsFieldsFile);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"ALM RQM, Restoring External Items Fields from ExternalItemsFields.json, file hasn't been found at: { jsonItemsFieldsFile}");
                     return ItemFieldsPossibleValues;
                 }
 
@@ -877,7 +892,7 @@ namespace GingerCore.ALM.RQM
                     {
                         itemField.SelectedValue = "Unassigned";
                     }
-
+                    Reporter.ToLog(eLogLevel.DEBUG, "Item : " + Newtonsoft.Json.JsonConvert.SerializeObject(itemField));
                     ItemFieldsPossibleValues.Add(itemField);
                 }
             }
@@ -917,12 +932,7 @@ namespace GingerCore.ALM.RQM
             List<IProjectDefinitions> rqmProjectsDataList;
             string rqmSserverUrl = ALMCore.DefaultAlmConfig.ALMServerURL + "/";
             LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
-            IProjectData rqmProjectsData = rqmRep.GetVisibleProjects(loginData);
-            rqmProjectsDataList = rqmProjectsData.IProjectDefinitions;
-            IProjectDefinitions currentProj = rqmProjectsDataList.Where(prj => prj.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName)).FirstOrDefault();
-            string rqmDomain = currentProj.Prefix;
-            string rqmProject = currentProj.ProjectName;
-            string rqmProjectGuid = currentProj.Guid;
+
             //------------------------------- Improved solution
 
             string baseUri_ = string.Empty;
@@ -937,19 +947,22 @@ namespace GingerCore.ALM.RQM
             {
                 //TODO: Populate list fields with CategoryTypes
                 populatedValue = "Starting fields retrieve process... ";
-                bw.ReportProgress(totalValues, populatedValue);
-                RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + rqmDomain + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + rqmProjectGuid + "/categoryType"));
+                if(bw != null)
+                {
+                    bw.ReportProgress(totalValues, populatedValue);
+                }
+                RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + RQMCore.ALMProjectGroupName + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + ALMCore.DefaultAlmConfig.ALMProjectGUID + "/categoryType"));
                 XmlDocument categoryTypeList = new XmlDocument();
 
 
                 if (!string.IsNullOrEmpty(categoryType.responseText))
                 {
+
                     categoryTypeList.LoadXml(categoryType.responseText);
                 }
-
+                
                 //TODO: Get 'next' and 'last links
                 XmlNodeList linkList_ = categoryTypeList.GetElementsByTagName("link");
-
                 if (linkList_.Count > 0)
                 {
                     XmlNode selfPage = linkList_.Item(1);
@@ -958,7 +971,6 @@ namespace GingerCore.ALM.RQM
                     if (selfPage.Attributes["rel"].Value.ToString() == "self") //verify self link is present
                     {
                         selfLink_ = selfPage.Attributes["href"].Value.ToString();
-                        //baseUri_ = selfLink_.Substring(0, selfLink_.Length - 1);
                         baseUri_ = selfLink_;
                     }
 
@@ -995,18 +1007,14 @@ namespace GingerCore.ALM.RQM
                     List<XmlNode> entryList = new List<XmlNode>();
                     if (categoryTypeUriPages.Count > 1)
                     {
-                        Parallel.ForEach(categoryTypeUriPages.AsParallel(), categoryTypeUri =>
+                        Parallel.ForEach(categoryTypeUriPages.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, categoryTypeUri =>
                         {
-
-                            //System.Diagnostics.Debug.WriteLine("parallel foreach #1");
                             newUri_ = categoryTypeUri;
-                            //categoryType = rqmRep.GetRqmResponse(loginData, new Uri(newUri_));
                             categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(newUri_));
                             if (!string.IsNullOrEmpty(categoryType.responseText))
                             {
                                 categoryTypeList.LoadXml(categoryType.responseText);
                             }
-
                             //TODO: Get all ID links under entry:
                             XmlNodeList categoryTypeEntry_ = categoryTypeList.GetElementsByTagName("entry");
 
@@ -1014,8 +1022,7 @@ namespace GingerCore.ALM.RQM
                             {
                                 entryList.Add(entryNode);
                             }
-
-                            ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), singleEntry =>
+                            ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, singleEntry =>
                             {
 
                                 XmlNodeList innerNodes = singleEntry.ChildNodes;
@@ -1033,7 +1040,7 @@ namespace GingerCore.ALM.RQM
                                 {
                                     categoryTypeListing.LoadXml(categoryTypeDetail.responseText);
                                 }
-
+                                
 
                                 string categoryTypeName = string.Empty; // -->itemfield.Name
                                 string categoryTypeItemType = string.Empty; //-->itemfield.ItemType
@@ -1066,11 +1073,18 @@ namespace GingerCore.ALM.RQM
                                 }
 
                                 catTypeRsult.Add(itemfield);
-                                populatedValue = "Populating field :" + categoryTypeName + " \r\nNumber of fields populated :" + catTypeRsult.Count;
-                                bw.ReportProgress(catTypeRsult.Count, populatedValue);
+                                populatedValue = $"Populating field :{ categoryTypeName } \r\nNumber of fields populated :{catTypeRsult.Count}";
+                                
+                                if (bw!= null)
+                                {
+                                    bw.ReportProgress(catTypeRsult.Count, populatedValue);
+                                }
+                                
 
-                            });
-                        });
+                            }
+                            );
+                        }
+                        );
                     }
                     else
                     {
@@ -1082,7 +1096,7 @@ namespace GingerCore.ALM.RQM
                         {
                             categoryTypeList.LoadXml(categoryType.responseText);
                         }
-
+                        
                         //TODO: Get all ID links under entry:
                         XmlNodeList categoryTypeEntry_ = categoryTypeList.GetElementsByTagName("entry");
 
@@ -1090,8 +1104,7 @@ namespace GingerCore.ALM.RQM
                         {
                             entryList.Add(entryNode);
                         }
-
-                        ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), singleEntry =>
+                        ParallelLoopResult innerResult = Parallel.ForEach(entryList.AsParallel(), new ParallelOptions { MaxDegreeOfParallelism = 5 }, singleEntry =>
                         {
 
                             XmlNodeList innerNodes = singleEntry.ChildNodes;
@@ -1109,7 +1122,7 @@ namespace GingerCore.ALM.RQM
                             {
                                 categoryTypeListing.LoadXml(categoryTypeDetail.responseText);
                             }
-
+                            
                             string categoryTypeName = string.Empty; // -->itemfield.Name
                             string categoryTypeItemType = string.Empty; //-->itemfield.ItemType
                             string categoryTypeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
@@ -1140,23 +1153,28 @@ namespace GingerCore.ALM.RQM
                             }
 
                             catTypeRsult.Add(itemfield);
-                            populatedValue = "Populating field :" + categoryTypeName + " \r\n Number of fields populated :" + catTypeRsult.Count;
-                            bw.ReportProgress(catTypeRsult.Count, populatedValue);
-                        });
+                            populatedValue = $"Populating field :{ categoryTypeName } \r\n Number of fields populated :{ catTypeRsult.Count}";
+                            
+                            if (bw!= null)
+                            {
+                                bw.ReportProgress(catTypeRsult.Count, populatedValue);
+                            }
+                            
+                        }
+                        );
                     }
-
                     foreach (ExternalItemFieldBase field in catTypeRsult)
                     {
+                        System.Diagnostics.Debug.WriteLine($"field name:{ field.Name } field Id ={ field.ID } field Type ={ field.Type } field mandetory ={field.Mandatory } field ItemType={ field.ItemType } field toupdate= {field.ToUpdate}");
                         fields.Add(field);
-                        totalCategoryTypeCount++;
-                        System.Diagnostics.Debug.WriteLine("Number of retrieved fields:" + totalCategoryTypeCount);
-                    }
-
-                    //TODO: Add Values to CategoryTypes Parallel
+                        totalCategoryTypeCount++;                       
+                    }//TODO: Add Values to CategoryTypes Parallel
                     populatedValue = "Starting values retrieve process... ";
-                    bw.ReportProgress(totalValues, populatedValue);
-
-                    RqmResponseData category = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + rqmDomain + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + rqmProjectGuid + "/category"));
+                    if(bw!= null)
+                    {
+                        bw.ReportProgress(totalValues, populatedValue);
+                    }
+                    RqmResponseData category = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(rqmSserverUrl + RQMCore.ALMProjectGroupName + "/service/com.ibm.rqm.integration.service.IIntegrationService/resources/" + ALMCore.DefaultAlmConfig.ALMProjectGUID + "/category"));
                     XmlDocument CategoryList = new XmlDocument();
                     CategoryList.LoadXml(category.responseText);
                     totalValues = 0;
@@ -1168,10 +1186,10 @@ namespace GingerCore.ALM.RQM
                     XmlNode lastPageNode = linkList.Item(3);
 
                     string selfLink = selfPageNode.Attributes["href"].Value.ToString();
-                    string baseUri = selfLink.Substring(0, selfLink.Length - 1);
+                    string baseUri = selfLink.EndsWith("/") ? selfLink.Substring(0, selfLink.Length - 1) : selfLink.Substring(0, selfLink.Length);
 
                     string tempString = lastPageNode.Attributes["href"].Value.ToString();
-                    int maxPageNumber = System.Convert.ToInt32(tempString.Substring(tempString.LastIndexOf('=') + 1));
+                    bool checkResult = int.TryParse(tempString.Substring(tempString.LastIndexOf('=') + 1), out int maxPageNumber);
                     string newUri = string.Empty;
                     List<string> categoryUriPages = new List<string>();
 
@@ -1274,10 +1292,14 @@ namespace GingerCore.ALM.RQM
 
                                             totalValues++;
 
-                                            System.Diagnostics.Debug.WriteLine("Total number of populated values is :" + totalValues + "/" + iDCount * (categoryUriPages.Count + 1)); //TODO pass this to a string to print in the UI
+                                            System.Diagnostics.Debug.WriteLine($"Total number of populated values is :{ totalValues }/{ iDCount * (categoryUriPages.Count + 1)}"); //TODO pass this to a string to print in the UI
                                                                                                                                                                                       //bw.ReportProgress(totalValues);
-                                            populatedValue = "Populating value:" + categoryValue + " \r\n Total Values:" + totalValues;
-                                            bw.ReportProgress(totalValues, populatedValue);
+                                            populatedValue = $"Populating value:{categoryValue}\r\n Total Values:{ totalValues}";
+                                            if(bw != null)
+                                            {
+                                                bw.ReportProgress(totalValues, populatedValue);
+                                            }
+                                            
                                         }
                                     }
                                 } //simple foreach closing                                                   
@@ -1291,6 +1313,202 @@ namespace GingerCore.ALM.RQM
             SaveItemFields(fields);
             return fields;
         }
+
+
+        public static ObservableList<ExternalItemFieldBase> GetOnlineItemFieldsForDefect(BackgroundWorker bw)
+        {
+            ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
+
+            //TODO : receive as parameters:
+
+            RqmRepository rqmRep = new RqmRepository(RQMCore.ConfigPackageFolderPath);
+            List<IProjectDefinitions> rqmProjectsDataList;
+            string rqmSserverUrl = ALMCore.DefaultAlmConfig.ALMServerURL.EndsWith("/") ? ALMCore.DefaultAlmConfig.ALMServerURL : Path.Combine(ALMCore.DefaultAlmConfig.ALMServerURL, "/");
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
+            string rqmDomain = RQMCore.ALMProjectGroupName;
+            string rqmProject = ALMCore.DefaultAlmConfig.ALMProjectName; 
+            string rqmProjectGuid = ALMCore.DefaultAlmConfig.ALMProjectGUID;
+            
+            //------------------------------- Improved solution
+
+            string baseUri_ = string.Empty;
+            string selfLink_ = string.Empty;
+            int maxPageNumber_ = 0;
+            int totalCategoryTypeCount = 0;
+
+
+            string categoryValue = string.Empty;  // --> itemfield.PossibleValues.Add(ccNode.Name);
+            //string categoryTypeID = string.Empty; //--> itemfield.ID
+            try
+            {
+                //TODO: Populate list fields with CategoryTypes
+                populatedValue = "Starting fields retrieve process... ";
+                if (bw != null)
+                {
+                    bw.ReportProgress(totalValues, populatedValue);
+                }
+                
+                string defectfieldurl = ALMCore.DefaultAlmConfig.DefectFieldAPI;
+                RqmResponseData categoryType = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(defectfieldurl),true);
+                XmlDocument categoryTypeList = new XmlDocument();
+
+
+                if (!string.IsNullOrEmpty(categoryType.responseText))
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, $"ImportFromRQM GetOnlineItemFieldsForDefect categoryType.responseText : { categoryType.responseText }");
+                    categoryTypeList.LoadXml(categoryType.responseText);
+                }
+
+                //TODO: Get 'next' and 'last links
+                XmlNodeList linkList_ = categoryTypeList.GetElementsByTagName("rdf:Description");
+                if (linkList_.Count > 0)
+                {
+                    foreach (XmlNode entryNode in linkList_)
+                    {
+                        try
+                        {
+                            ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
+                            XmlNodeList innerNodes = entryNode.ChildNodes;
+
+
+                            string categoryTypeName = string.Empty; // -->itemfield.Name
+                            string categoryTypeItemType = string.Empty; //-->itemfield.ItemType
+                            string categoryTypeMandatory = string.Empty; // --> itemfield.Mandatory & initial value for : --> itemfield.ToUpdate
+                            string categorydefaultvaluelink = string.Empty;
+                            string categoryTypeID = string.Empty;
+                            foreach (XmlNode node in innerNodes)
+                            {
+                                if (node.Name.Equals("dcterms:title", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    categoryTypeName = node.InnerText;
+                                }
+                                if (node.Name.Equals("oslc:occurs", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    categoryTypeMandatory = node.Attributes["rdf:resource"].Value.Contains("#Exactly-one") ? "true" : "false";
+                                }
+                                if (node.Name.Equals("oslc:name", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    categoryTypeItemType = !string.IsNullOrEmpty(node.Attributes["rdf:datatype"].Value) ? node.Attributes["rdf:datatype"].Value.Split("#")[1] : "string";
+                                    categoryTypeID = node.InnerText;
+                                }
+                                
+                                if (node.Name.Equals("oslc:defaultValue", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    string categorydefaultvalue = string.Empty;
+                                    categorydefaultvaluelink = node.Attributes.Count > 0 ? node.Attributes["rdf:resource"].Value : string.Empty;
+                                    if (!string.IsNullOrEmpty(categorydefaultvaluelink))
+                                    {
+                                        try
+                                        {
+                                            RqmResponseData categorydefault = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(categorydefaultvaluelink), true);
+                                            XmlDocument categorydefaultData = new XmlDocument();
+
+                                            if (!string.IsNullOrEmpty(categorydefault.responseText))
+                                            {
+                                                categorydefaultData.LoadXml(categorydefault.responseText);
+                                                try
+                                                {
+                                                    categorydefaultvalue = categorydefaultData.GetElementsByTagName("dcterms:title").Item(0).InnerText;
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    categorydefaultvalue = categorydefaultData.GetElementsByTagName("foaf:name").Item(0).InnerText;
+                                                }
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                        }
+                                    }
+
+                                    itemfield.SelectedValue = !string.IsNullOrEmpty(categorydefaultvalue) ? categorydefaultvalue : string.Empty;
+                                }
+                                if (node.Name.Equals("oslc:allowedValues", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    string allowedvalueslink = node.Attributes["rdf:resource"].Value;
+                                    RqmResponseData allowedValues = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(allowedvalueslink), true);
+                                    XmlDocument allowedValuesData = new XmlDocument();
+
+
+                                    if (!string.IsNullOrEmpty(allowedValues.responseText))
+                                    {
+                                        allowedValuesData.LoadXml(allowedValues.responseText);
+                                    }
+                                    XmlNodeList allowedValuesList = allowedValuesData.GetElementsByTagName("oslc:allowedValue");
+
+                                    foreach (XmlNode allowedValuData in allowedValuesList)
+                                    {
+                                        if (allowedValuData.Name.Equals("oslc:allowedValue", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            string singleallowedvaluelink = allowedValuData.Attributes["rdf:resource"].Value;
+                                            try
+                                            {
+                                                RqmResponseData singleallowedValue = RQM.RQMConnect.Instance.RQMRep.GetRqmResponse(loginData, new Uri(singleallowedvaluelink), true);
+                                                XmlDocument singleallowedValueData = new XmlDocument();
+
+                                                if (!string.IsNullOrEmpty(singleallowedValue.responseText))
+                                                {
+                                                    singleallowedValueData.LoadXml(singleallowedValue.responseText);
+                                                    string fieldValue = string.Empty;
+                                                    try
+                                                    {
+                                                        fieldValue = singleallowedValueData.GetElementsByTagName("dcterms:title").Item(0).InnerText;
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        fieldValue = singleallowedValueData.GetElementsByTagName("foaf:name").Item(0).InnerText;
+                                                    }
+                                                    if (!string.IsNullOrEmpty(fieldValue))
+                                                    {
+                                                        itemfield.PossibleValues.Add(fieldValue);
+                                                    }
+                                                }
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                            }
+                                        }
+                                    }
+
+                                }
+                            }
+                            itemfield.ItemType = categoryTypeItemType;
+
+                            itemfield.ID = categoryTypeID;
+                            itemfield.Name = categoryTypeName;
+                            if (itemfield.SelectedValue == null)
+                            {
+                                itemfield.SelectedValue = "Unassigned";
+                            }
+
+                            if (categoryTypeMandatory == "true")
+                            {
+                                itemfield.ToUpdate = true;
+                                itemfield.Mandatory = true;
+                            }
+                            else
+                            {
+                                itemfield.ToUpdate = false;
+                                itemfield.Mandatory = false;
+                            }
+                            if (!string.IsNullOrEmpty(itemfield.Name))
+                            {
+                                fields.Add(itemfield);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        }
+                    }
+                }
+            }
+            catch (Exception e) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {e.Message}", e); }
+            return fields;
+        }
+
 
         public static XmlNodeList Readxmlfile(string fieldType, string solutionFolder)
         {

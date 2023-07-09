@@ -589,6 +589,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.SelfHealing:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Magic);
                     break;
+                case eImageType.Rules:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Gavel);
+                    break;
+                case eImageType.AdminUser:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserCog, Brushes.OrangeRed);
+                    break;
+                case eImageType.NormalUser:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserCog);
+                    break;
                 #endregion
 
 
@@ -720,7 +729,10 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Eraser:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Eraser);
                     break;
-
+                case eImageType.Broom:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Broom);
+                    break;
+                    
                 case eImageType.ArrowDown:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleDown);
                     break;
