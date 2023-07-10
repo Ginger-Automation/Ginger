@@ -30,7 +30,8 @@ namespace GingerCore
         Activity, Activities,
         ConversionMechanism,
         Variable, Variables,
-        RunSet, RunSets
+        RunSet, RunSets,
+        TargetApplication
     }
 
     public enum eSkinDicsType

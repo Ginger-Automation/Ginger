@@ -28,6 +28,7 @@ using Ginger.TwoLevelMenuLib;
 using GingerWPF.UserControlsLib;
 using System;
 using System.Windows.Controls;
+using GingerCore;
 
 namespace Ginger.ConfigurationsLib
 {
@@ -66,7 +67,7 @@ namespace Ginger.ConfigurationsLib
         {
             TwoLevelMenu twoLevelMenu = new TwoLevelMenu();
 
-            TopMenuItem targetApplicationsMenu = new TopMenuItem(eImageType.Application, "Target Applications", ConsoleKey.T, "Target Applications AID", "Name & Platforms of the Applications which been tested in current Solution");
+            TopMenuItem targetApplicationsMenu = new TopMenuItem(eImageType.Application, GingerDicser.GetTermResValue(eTermResKey.TargetApplication), ConsoleKey.T, "Target Applications AID", "Name & Platforms of the Applications which been tested in current Solution");
             targetApplicationsMenu.Add(eImageType.Application, "", GetTargetApplicationsPage, ConsoleKey.T, "", "AID");
             twoLevelMenu.Add(targetApplicationsMenu);
 
