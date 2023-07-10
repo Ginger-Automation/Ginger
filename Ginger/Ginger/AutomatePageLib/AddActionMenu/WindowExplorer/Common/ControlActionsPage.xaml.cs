@@ -26,6 +26,7 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using System;
 using System.Linq;
@@ -77,7 +78,7 @@ namespace Ginger.WindowExplorer
                 DataFrameRow.Height = new GridLength(mLastDataGridRowHeight, GridUnitType.Star);
                 DataFrameSplitter.Visibility = System.Windows.Visibility.Visible;
                 DataFrameScrollViewer.Visibility = System.Windows.Visibility.Visible;
-                DataFrame.Content = mDataPage;
+                DataFrame.ClearAndSetContent(mDataPage);
             }
             else
             {

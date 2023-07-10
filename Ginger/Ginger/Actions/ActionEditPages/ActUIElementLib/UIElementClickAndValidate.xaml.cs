@@ -89,14 +89,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void SetLocateValueFrame()
         {
-            LocateValueEditFrame.Content = null;
+            LocateValueEditFrame.ClearAndSetContent(null);
             if (xValidationElementLocateByComboBox.ComboBox.SelectedItem == null)
             {
                 return;
             }
             eLocateBy SelectedLocType = (eLocateBy)((ComboItem)xValidationElementLocateByComboBox.ComboBox.SelectedItem).Value;
             Page p = GetLocateValueEditPage(SelectedLocType);
-            LocateValueEditFrame.Content = p;
+            LocateValueEditFrame.ClearAndSetContent(p);
             if (SelectedLocType != eLocateBy.POMElement)
             {
                 xValidationElementTypeComboBox.ComboBox.IsEnabled = true;

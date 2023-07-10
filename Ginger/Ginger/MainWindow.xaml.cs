@@ -241,7 +241,7 @@ namespace Ginger
                 if (WorkSpace.Instance.LoadingSolution)
                 {
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
-                    xMainWindowFrame.Content = new LoadingPage("Loading Solution...");
+                    xMainWindowFrame.ClearAndSetContent(new LoadingPage("Loading Solution..."));
                     xMainWindowFrame.Visibility = Visibility.Visible;
                     xModifiedItemsCounter.Visibility = Visibility.Collapsed;
                     GingerCore.General.DoEvents();
@@ -260,7 +260,7 @@ namespace Ginger
                     if (WorkSpace.Instance.ReencryptingVariables)
                     {
                         xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
-                        xMainWindowFrame.Content = new LoadingPage("Re-Encrypting Password Variables...");
+                        xMainWindowFrame.ClearAndSetContent(new LoadingPage("Re-Encrypting Password Variables..."));
                         xMainWindowFrame.Visibility = Visibility.Visible;
                         GingerCore.General.DoEvents();
                     }
@@ -435,7 +435,11 @@ namespace Ginger
             eUserMsgSelection userSelection;
             if (mRestartApplication)
             {
-                if (WorkSpace.Instance.SolutionRepository != null && WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
+                if (mLaunchInAdminMode)
+                {
+                    userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestartInAdminMode);
+                }
+                else if (WorkSpace.Instance.SolutionRepository != null && WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
                 {
                     userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestart);
                 }
@@ -547,7 +551,7 @@ namespace Ginger
                     SelectedSolutionTab = eSolutionTabType.Resources;
                 }
 
-                xMainWindowFrame.Content = selectedTopListItem.Tag;
+                xMainWindowFrame.ClearAndSetContent(selectedTopListItem.Tag);
                 xMainWindowFrame.Visibility = Visibility.Visible;
             }
         }

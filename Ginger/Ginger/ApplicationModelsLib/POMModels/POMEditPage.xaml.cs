@@ -28,6 +28,7 @@ using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -125,10 +126,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
-            xScreenShotFrame.Content = mScreenShotViewPage;
+            xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
 
             mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
-            xUIElementsFrame.Content = mPomAllElementsPage;
+            xUIElementsFrame.ClearAndSetContent(mPomAllElementsPage);
             mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
             UIElementTabTextBlockUpdate();
 
@@ -274,7 +275,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             Bitmap ScreenShotBitmap = ((IVisualTestingDriver)((AgentOperations)mAgent.AgentOperations).Driver).GetScreenShot(new Tuple<int, int>(ApplicationPOMModel.cLearnScreenWidth, ApplicationPOMModel.cLearnScreenHeight));
             mPOM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShotBitmap);
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
-            xScreenShotFrame.Content = mScreenShotViewPage;
+            xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
         }
 
         private void BrowseImageButtonClicked(object sender, System.Windows.RoutedEventArgs e)
@@ -297,7 +298,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                                 Bitmap ScreenShotBitmap = Ginger.General.BitmapImage2Bitmap(bi);
                                 mPOM.ScreenShotImage = Ginger.General.BitmapToBase64(ScreenShotBitmap);
                                 mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, ScreenShotBitmap);
-                                xScreenShotFrame.Content = mScreenShotViewPage;
+                                xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
                             }
                         }
                     }

@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Drivers.Common;
+using GingerCore.GeneralLib;
 using SharpAdbClient;
 using System.Windows;
 using System.Windows.Controls;
@@ -46,7 +47,7 @@ namespace Ginger.Drivers.AndroidDeviceADBLib
         {
             string DeviceConfigFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\Devices\nexus_4\");
             mDeviceViewPage = new DeviceViewPage(DeviceConfigFolder);
-            DeviceViewFrame.Content = mDeviceViewPage;
+            DeviceViewFrame.ClearAndSetContent(mDeviceViewPage);
             RefreshConnectedDevices();
         }
 

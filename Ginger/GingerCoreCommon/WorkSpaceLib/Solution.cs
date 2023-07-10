@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -236,10 +236,10 @@ namespace Ginger.SolutionGeneral
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)
         {
             //need to look for all .xmls and not only *Ginger.*.xml" for covering old xml's as well
-            IEnumerable<string> files = Directory.EnumerateFiles(folder, "*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
+            IEnumerable<string> files = Directory.EnumerateFiles(folder, "*.xml", SearchOption.AllDirectories).Where(x=> !x.Contains("RQMServerConfigurationsPackage")).AsParallel().AsOrdered();
             Parallel.ForEach(files, file =>
             {
-                CB.Add(file);
+                    CB.Add(file);
             });
         }
 

@@ -234,7 +234,7 @@ namespace Ginger.WindowExplorer
 
                 xActEditPageFrame.Visibility = Visibility.Visible;
 
-                xActEditPageFrame.Content = actEditPage;
+                xActEditPageFrame.ClearAndSetContent(actEditPage);
 
                 xOperationsScrollView.Visibility = Visibility.Collapsed;
             }
@@ -262,7 +262,7 @@ namespace Ginger.WindowExplorer
                 xDataFrameRow.Height = new GridLength(mLastDataGridRowHeight, GridUnitType.Star);
                 xDataFrameSplitter.Visibility = System.Windows.Visibility.Visible;
                 xDataFrameExpander.Visibility = System.Windows.Visibility.Visible;
-                DataFrame.Content = mDataPage;
+                DataFrame.ClearAndSetContent(mDataPage);
             }
             else
             {

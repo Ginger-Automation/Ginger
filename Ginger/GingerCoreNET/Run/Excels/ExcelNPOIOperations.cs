@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
+using OctaneStdSDK.Entities.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -27,6 +28,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.ActionsLib
 {
@@ -152,19 +154,23 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         private bool GetExcelSheet(string fileName, string sheetName)
         {
-            mWorkbook = GetExcelWorkbook(fileName);
-            if (mWorkbook == null)
+            lock (lockObj)
             {
-                Reporter.ToLog(eLogLevel.WARN, "File name not Exists.");
-                return false;
+                Thread.Sleep(100);
+                mWorkbook = GetExcelWorkbook(fileName);
+                if (mWorkbook == null)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "File name not Exists.");
+                    return false;
+                }
+                mSheet = mWorkbook.GetSheet(sheetName);
+                if (mSheet == null)
+                {
+                    Reporter.ToLog(eLogLevel.WARN, "Sheet name not Exists.");
+                    return false;
+                }
+                return true; 
             }
-            mSheet = mWorkbook.GetSheet(sheetName);
-            if (mSheet == null)
-            {
-                Reporter.ToLog(eLogLevel.WARN, "Sheet name not Exists.");
-                return false;
-            }
-            return true;
         }
 
         private DataTable GetFilteredDataTable(DataTable dataTable, bool selectAllRows)
@@ -172,22 +178,26 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             return selectAllRows ? dataTable.DefaultView.ToTable() : dataTable.DefaultView.ToTable().AsEnumerable().Take(1).CopyToDataTable();
         }
 
+        private static readonly Object lockObj = new object();
         public IWorkbook GetExcelWorkbook(string fullFilePath)
         {
-            IWorkbook workbook = null;
             try
             {
+                IWorkbook workbook = null;
+                
                 using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
                 {
                     workbook = WorkbookFactory.Create(fs);
                 }
+
+                return workbook;
+
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Invalid Excel Path Name" + fullFilePath, ex);
                 return null;
             }
-            return workbook;
         }
 
         public bool UpdateExcelData(string fileName, string sheetName, string filter, List<Tuple<string, object>> updateCellValuesList, string primaryKey = null, string key = null)
@@ -327,10 +337,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                         }
                     }
                 }
-                using (FileStream fs = new FileStream(fileName, FileMode.Create))
+                lock (lockObj)
                 {
-                    mWorkbook.Write(fs);
-                    fs.Close();
+                    using (FileStream fs = new FileStream(fileName, FileMode.Create))
+                    {
+                        mWorkbook.Write(fs);
+                        fs.Close();
+                    }
                 }
                 return true;
             }
@@ -339,24 +352,28 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
 
         public List<string> GetSheets(string fileName)
         {
-            List<string> sheets = new List<string>();
-            mFileName = fileName;
-            var wb = GetExcelWorkbook(mFileName);
-            if (wb == null)
+            lock (lockObj)
             {
-                return sheets;
+                Thread.Sleep(100);
+                List<string> sheets = new List<string>();
+                mFileName = fileName;
+                var wb = GetExcelWorkbook(mFileName);
+                if (wb == null)
+                {
+                    return sheets;
+                }
+                for (int i = 0; i < wb.NumberOfSheets; i++)
+                {
+                    sheets.Add(wb.GetSheetAt(i).SheetName);
+                }
+                return sheets.OrderBy(itm => itm).ToList(); 
             }
-            for (int i = 0; i < wb.NumberOfSheets; i++)
-            {
-                sheets.Add(wb.GetSheetAt(i).SheetName);
-            }
-            return sheets.OrderBy(itm => itm).ToList();
         }
 
         public void Dispose()
         {
             mSheet = null;
-            mWorkbook.Close();
+            mWorkbook?.Close();
             mWorkbook = null;
         }
 

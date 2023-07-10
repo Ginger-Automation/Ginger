@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Ginger;
+using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
@@ -119,7 +120,7 @@ namespace GingerWPF.WizardLib
         void RefreshCurrentPage()
         {
             WizardPage page = mWizard.GetCurrentPage();
-            PageFrame.Content = page.Page;
+            PageFrame.ClearAndSetContent(page.Page);
             tbSubTitle.Text = page.SubTitle;
             // sync the list too
             NavigationList.SelectedItem = page;

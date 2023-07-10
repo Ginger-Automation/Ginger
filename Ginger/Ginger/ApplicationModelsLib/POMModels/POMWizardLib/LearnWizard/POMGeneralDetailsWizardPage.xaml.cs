@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.BusinessFlowWindows;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
@@ -61,7 +62,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xTagsViewer.Init(mWizard.mPomLearnUtils.POM.TagsKeys);
 
                     mBusinessFlowControl = new ucBusinessFlowMap(mWizard.mPomLearnUtils.POM, nameof(mWizard.mPomLearnUtils.POM.MappedBusinessFlow), false);
-                    xFrameBusinessFlowControl.Content = mBusinessFlowControl;
+                    xFrameBusinessFlowControl.ClearAndSetContent(mBusinessFlowControl);
                     break;
                 case EventType.Active:
                     SetDefaultPage();
@@ -97,7 +98,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             mScreenshotPage = new ScreenShotViewPage(mWizard.mPomLearnUtils.POM.Name, mWizard.mPomLearnUtils.ScreenShot);
             mScreenshotPage.xZoomSlider.Value = 0.5;
-            xScreenShotFrame.Content = mScreenshotPage;
+            xScreenShotFrame.ClearAndSetContent(mScreenshotPage);
         }
 
         private void xTakeScreenShotLoadButton_Click(object sender, RoutedEventArgs e)
@@ -124,7 +125,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                             mWizard.mPomLearnUtils.ScreenShot = Ginger.General.BitmapImage2Bitmap(bi);
                             mWizard.mPomLearnUtils.POM.ScreenShotImage = Ginger.General.BitmapToBase64(mWizard.mPomLearnUtils.ScreenShot);
                             mScreenshotPage = new ScreenShotViewPage(mWizard.mPomLearnUtils.POM.Name, mWizard.mPomLearnUtils.ScreenShot);
-                            xScreenShotFrame.Content = mScreenshotPage;
+                            xScreenShotFrame.ClearAndSetContent(mScreenshotPage);
                         }
                     }
                 }

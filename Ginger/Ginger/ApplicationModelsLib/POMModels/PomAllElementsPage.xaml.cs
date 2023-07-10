@@ -22,6 +22,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels.POMWizardLib;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Specialized;
@@ -88,10 +89,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
 
             mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, AddSelfHealingColumn);
-            xMappedElementsFrame.Content = mappedUIElementsPage;
+            xMappedElementsFrame.ClearAndSetContent(mappedUIElementsPage);
 
             unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped, AddSelfHealingColumn);
-            xUnMappedElementsFrame.Content = unmappedUIElementsPage;
+            xUnMappedElementsFrame.ClearAndSetContent(unmappedUIElementsPage);
 
             UnMappedUIElementsUpdate();
             MappedUIElementsUpdate();

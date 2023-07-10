@@ -18,6 +18,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
 using System.Linq;
 using System.Windows;
@@ -52,7 +53,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             mPomDeltaViewPage.xMainElementsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
 
             mPomDeltaViewPage.xMainElementsGrid.txtSearch.Text = searchText;
-            xNewPomElementsPageFrame.Content = mPomDeltaViewPage;
+            xNewPomElementsPageFrame.ClearAndSetContent(mPomDeltaViewPage);
 
 
             // set LiveSpy Agent

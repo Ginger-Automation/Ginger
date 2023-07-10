@@ -311,7 +311,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     mAddActionMainPage = new MainAddActionsNavigationPage(mContext);
                 }
-                xAddActionMenuFrame.Content = mAddActionMainPage;
+                xAddActionMenuFrame.ClearAndSetContent(mAddActionMainPage);
 
                 ExpandAddActionsPnl();
                 Ginger.General.DoEvents();
@@ -448,7 +448,7 @@ namespace GingerWPF.BusinessFlowsLib
                         if (mConfigurationsPage == null)
                         {
                             mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
-                            xBfConfigurationsTabFrame.Content = mConfigurationsPage;
+                            xBfConfigurationsTabFrame.ClearAndSetContent(mConfigurationsPage);
                         }
                         else
                         {
@@ -458,7 +458,7 @@ namespace GingerWPF.BusinessFlowsLib
                         if (mVariabelsPage == null)
                         {
                             mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
-                            xBfVariablesTabFrame.Content = mVariabelsPage;
+                            xBfVariablesTabFrame.ClearAndSetContent(mVariabelsPage);
                         }
                         else
                         {
@@ -470,7 +470,7 @@ namespace GingerWPF.BusinessFlowsLib
                             mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
                             mActivitiesPage.ListView.List.SelectionChanged -= ActivitiesList_SelectionChanged;
                             mActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
-                            xActivitiesListFrame.Content = mActivitiesPage;
+                            xActivitiesListFrame.ClearAndSetContent(mActivitiesPage);
                         }
                         else
                         {
@@ -790,7 +790,6 @@ namespace GingerWPF.BusinessFlowsLib
                 xStopRunBtn.ButtonText = "Stopping...";
                 xStopRunBtn.ToolTip = "Stopping execution";
                 xStopRunBtn.IsEnabled = false;
-                xStopRunBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionStop");
             });
         }
 

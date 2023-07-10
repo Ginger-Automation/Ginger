@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -77,8 +77,8 @@ namespace Amdocs.Ginger.Repository
         private string mSimulatedActual;
         [IsSerializedForLocalRepository]
         public string SimulatedActual { get { return mSimulatedActual; } set { if (mSimulatedActual != value) { mSimulatedActual = value; OnPropertyChanged(Fields.SimulatedActual); } } }
-        [IsSerializedForLocalRepository] // we serializing the field rather than the property, why?
         public string mExpected { get; set; }
+        [IsSerializedForLocalRepository] // we serializing the field rather than the property, why?
         public string Expected { get { return mExpected; } set { if (mExpected != value) { mExpected = value; OnPropertyChanged(Fields.Expected); } } }
 
         private string mExpectedCalculated;

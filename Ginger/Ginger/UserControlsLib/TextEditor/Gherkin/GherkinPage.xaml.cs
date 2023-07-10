@@ -29,6 +29,7 @@ using Ginger.UserControlsLib.TextEditor;
 using Ginger.UserControlsLib.TextEditor.Gherkin;
 using GingerCore;
 using GingerCore.Activities;
+using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerPlugIns.TextEditorLib;
 using GingerWPF.DragDropLib;
@@ -120,7 +121,7 @@ namespace Ginger.GherkinLib
                 }
             }
             ARP.xActivitiesRepositoryListView.Tags = mSolTags;
-            SharedActivitiesFrame.Content = ARP;
+            SharedActivitiesFrame.ClearAndSetContent(ARP);
         }
 
         private void Save_Click(TextEditorToolRoutedEventArgs Args)
@@ -309,7 +310,7 @@ namespace Ginger.GherkinLib
 
 
             ARP.xActivitiesRepositoryListView.Tags = mSolTags;
-            SharedActivitiesFrame.Content = ARP;
+            SharedActivitiesFrame.ClearAndSetContent(ARP);
 
             foreach (GherkinStep gStep in mOptimizedSteps)
             {
@@ -717,7 +718,7 @@ namespace Ginger.GherkinLib
 
             ARP = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), new Context() { BusinessFlow = mBizFlow }, mSolTags, ArrowButtonHandler);
             //ARP.xActivitiesRepositoryListView.EnableTagsPanel = false;
-            SharedActivitiesFrame.Content = ARP;
+            SharedActivitiesFrame.ClearAndSetContent(ARP);
 
             BFName = FileName.Replace(WorkSpace.Instance.Solution.Folder, "");
             //to prevent creating a folder rather than putting them on BF level.

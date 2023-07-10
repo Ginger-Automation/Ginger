@@ -36,6 +36,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using static Ginger.Variables.InputVariableRule;
 using Amdocs.Ginger.CoreNET;
+using GingerCore.GeneralLib;
 
 namespace Ginger.Run
 {
@@ -98,7 +99,7 @@ namespace Ginger.Run
         {
             FlowControlFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
             BusinessFlowRunFlowControlPage BFCP = new BusinessFlowRunFlowControlPage(mGingerRunner, businessFlow);
-            FlowControlFrame.Content = BFCP;
+            FlowControlFrame.ClearAndSetContent(BFCP);
 
         }
         public BusinessFlowRunConfigurationsPage(BusinessFlowExecutionSummary businessFlowExecSummary)
@@ -411,6 +412,10 @@ namespace Ginger.Run
 
         private void okBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (mGingerRunner != null && mGingerRunner.Executor != null)
+            {
+                mGingerRunner.Executor.UpdateBusinessFlowsRunList();
+            }
             _pageGenericWin.Close();
         }
 

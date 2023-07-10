@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -54,7 +54,7 @@ namespace GingerCore.Environments
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<EnvApplication> Applications = new ObservableList<EnvApplication>();
+        public ObservableList<EnvApplication> Applications { get; set; } = new ObservableList<EnvApplication>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> Tags = new ObservableList<Guid>();
@@ -94,11 +94,11 @@ namespace GingerCore.Environments
             {
                 foreach (EnvApplication ea in Applications)
                 {
-                    foreach (Database db in ea.Dbs)
+                    if (ea.Dbs != null)
                     {
-                        if (ea.Dbs != null)
+                        foreach (Database db in ea.Dbs)
                         {
-                            db.DatabaseOperations.CloseConnection();
+                            db?.DatabaseOperations.CloseConnection();
                         }
                     }
                 }
