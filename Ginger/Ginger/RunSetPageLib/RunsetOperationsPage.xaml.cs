@@ -87,11 +87,11 @@ namespace Ginger.Run
             RunSetActionsGrid.DataSourceList = mRunSetConfig.RunSetActions;
             RunSetActionsGrid.RowChangedEvent += RunSetActionsGrid_RowChangedEvent;
 
-            RunSetActionEditFrame.Content = null;
+            RunSetActionEditFrame.ClearAndSetContent(null);
             if (RunSetActionsGrid.CurrentItem != null)
             {
                 RunSetActionEditPage RSAEP = new RunSetActionEditPage((RunSetActionBase)RunSetActionsGrid.CurrentItem);
-                RunSetActionEditFrame.Content = RSAEP;
+                RunSetActionEditFrame.ClearAndSetContent(RSAEP);
             }
         }
 
@@ -104,7 +104,7 @@ namespace Ginger.Run
         RunSetActionEditPage runSetActionEditPage;
         private void RunSetActionsGrid_RowChangedEvent(object sender, EventArgs e)
         {
-            RunSetActionEditFrame.Content = null;
+            RunSetActionEditFrame.ClearAndSetContent(null);
             if (RunSetActionsGrid.CurrentItem != null)
             {
                 RunSetActionEditPage RSAEP = null;
@@ -124,7 +124,7 @@ namespace Ginger.Run
                 {
                     RSAEP = new RunSetActionEditPage((RunSetActionBase)RunSetActionsGrid.CurrentItem);
                 }
-                RunSetActionEditFrame.Content = RSAEP;
+                RunSetActionEditFrame.ClearAndSetContent(RSAEP);
             }
         }
 

@@ -168,7 +168,7 @@ namespace Amdocs.Ginger.Common
         DeleteRecoverFolderWarn,
         EnvParamNameExists,
         EnvParamNameEmpty,
-        RenameVariableReferences
+        NoPublishRepositoryInfo
     }
 
     public static class UserMsgsPool
@@ -252,7 +252,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToPublishRepositoryInfo, new UserMsg(eUserMsgType.ERROR, "Failed to publish Repository Item", "Failed to publish in one or more Business flows.", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.MissingErrorString, new UserMsg(eUserMsgType.ERROR, "Missing Error String details", "Error String is missing for one or more row." + Environment.NewLine + "Please add error string for missing rows", eUserMsgOption.OK, eUserMsgSelection.None));
-
+            Reporter.UserMsgsPool.Add(eUserMsgKey.NoPublishRepositoryInfo, new UserMsg(eUserMsgType.INFO, "Item Repository Publish Info", "Please Select at least One Business Flow.", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion Repository
 
             #region Analyzer
@@ -408,7 +408,6 @@ namespace Amdocs.Ginger.Common
             #endregion Excel Messages
 
             #region Variables Messages
-            Reporter.UserMsgsPool.Add(eUserMsgKey.RenameVariableReferences, new UserMsg(eUserMsgType.QUESTION, "Rename Variable References", "Do you want to rename all references of this variable?" + Environment.NewLine + "Note: Renaming will update its usage across {0}.", eUserMsgOption.OKCancel, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskToSelectVariable, new UserMsg(eUserMsgType.WARN, "Select " + GingerDicser.GetTermResValue(eTermResKey.Variable), "Please select " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ".", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.VariablesAssignError, new UserMsg(eUserMsgType.ERROR, GingerDicser.GetTermResValue(eTermResKey.Variables) + " Assign Error", "Failed to assign " + GingerDicser.GetTermResValue(eTermResKey.Variables) + "." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SetCycleNumError, new UserMsg(eUserMsgType.ERROR, "Set Cycle Number Error", "Failed to set the cycle number." + Environment.NewLine + "Error Details: '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));

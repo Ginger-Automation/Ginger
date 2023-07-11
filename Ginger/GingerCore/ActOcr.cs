@@ -359,7 +359,7 @@ namespace GingerCore
                 case eActOcrPdfOperations.ReadTextBetweenTwoStrings:
                     string err = string.Empty;
                     resultText = GingerOcrOperations.ReadTextBetweenLabelsPdf(ValueExpression.Calculate(OcrFilePath), ValueExpression.Calculate(FirstString),
-                        ValueExpression.Calculate(SecondString), ValueExpression.Calculate(PageNumber), (int)SelectedOcrDPIOperation,ref err,ValueExpression.Calculate(OcrPassword));
+                        ValueExpression.Calculate(SecondString), ValueExpression.Calculate(PageNumber), (int)SelectedOcrDPIOperation,ref err,decryptedPassword);
                     if (!string.IsNullOrEmpty(resultText))
                     {
                         ProcessOutput(resultText);

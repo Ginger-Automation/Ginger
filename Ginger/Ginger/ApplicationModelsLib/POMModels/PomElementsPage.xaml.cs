@@ -817,7 +817,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mSelectedElement.ScreenShotImage.ToString()));
                 }
-                xElementDetails.xElementScreenShotFrame.Content = new ScreenShotViewPage(mSelectedElement?.ElementName, source, false);
+                xElementDetails.xElementScreenShotFrame.ClearAndSetContent(new ScreenShotViewPage(mSelectedElement?.ElementName, source, false));
             }
             else
             {

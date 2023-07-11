@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Ginger.SolutionCategories;
 using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib;
+using GingerCore.GeneralLib;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -35,6 +36,7 @@ namespace Ginger.SolutionWindows
         Solution mSolution;
         bool IsValidEncryptionKeyAdded = false;
         bool IsEncrytedStrAvailableOnSol = false;
+        private SolutionCategoriesPage mSolutionCategoriesPage;
         public SolutionPage()
         {
             InitializeComponent();
@@ -89,7 +91,12 @@ namespace Ginger.SolutionWindows
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
             xCategoriesExpander.Visibility = Visibility.Visible;
-            xCategoriesFrame.Content = new SolutionCategoriesPage(eSolutionCategoriesPageMode.OptionalValuesDefinition);
+            if (mSolutionCategoriesPage == null)
+            {
+                mSolutionCategoriesPage = new SolutionCategoriesPage();
+                xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage); 
+            }
+            mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.OptionalValuesDefinition);
 
             SolutionFolderTextBox.IsReadOnly = false;
             SolutionNameTextBox.IsReadOnly = false;

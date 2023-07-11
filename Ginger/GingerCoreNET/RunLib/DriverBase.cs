@@ -36,7 +36,7 @@ namespace GingerCore.Drivers
     {
         //Basic configurations
         [UserConfigured]
-        [UserConfiguredDefault("5")]
+        [UserConfiguredDefault("30")]
         [UserConfiguredDescription("The amount of maximum time (in seconds) to wait for the driver to load/connect")]
         public int DriverLoadWaitingTime { get; set; }
 

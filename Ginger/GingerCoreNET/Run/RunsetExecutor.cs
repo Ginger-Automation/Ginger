@@ -24,7 +24,6 @@ using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
-using Amdocs.Ginger.Repository;
 using AutoMapper;
 using Ginger.Configurations;
 using Ginger.Reports;
@@ -77,6 +76,7 @@ namespace Ginger.Run
         ObservableList<DefectSuggestion> mDefectSuggestionsList = new ObservableList<DefectSuggestion>();
         private List<BusinessFlowRun> AllPreviousBusinessFlowRuns = new List<BusinessFlowRun>();
         RunSetConfig mRunSetConfig = null;
+        internal List<Task> ALMResultsPublishTaskPool;
         public RunSetConfig RunSetConfig
         {
             get
@@ -169,6 +169,10 @@ namespace Ginger.Run
         {          
             //Configure Runner for execution
             runner.Status = eRunStatus.Pending;
+            if(runner.Executor != null && runner.Executor is GingerExecutionEngine previousExectionEngine)
+            {
+                previousExectionEngine.ClearBindings();
+            }
             runner.Executor = ExecutorEngine;
             ConfigureRunnerForExecution((GingerExecutionEngine)runner.Executor);
 
@@ -489,7 +493,7 @@ namespace Ginger.Run
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
                 }
 
-                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
+                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == eDataPublishingPhase.DuringExecution && Runners.Count > 0)
                 {
                     await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetStart(RunSetConfig);
                 }
@@ -497,7 +501,7 @@ namespace Ginger.Run
                 if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
                 {
                     string[] testsToExclude = ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetStart(RunSetConfig);
-                    if (testsToExclude != null)
+                    if (testsToExclude != null && testsToExclude.Length > 0)
                     {
                         DisableTestsExecution(testsToExclude, RunSetConfig);
                     }
@@ -621,6 +625,8 @@ namespace Ginger.Run
                     await ((GingerExecutionEngine)Runners[0].Executor).Sealights_Logger.RunSetEnd(RunSetConfig);
                 }
 
+                FinishPublishResultsToAlmTask();
+
                 if (mStopRun == false)
                 {
                     // Process all post execution RunSet Operations
@@ -643,6 +649,24 @@ namespace Ginger.Run
                 mRunSetConfig.IsRunning = false;
             }
         }
+
+        private void FinishPublishResultsToAlmTask()
+        {
+            if (ALMResultsPublishTaskPool != null && ALMResultsPublishTaskPool.Count > 0)
+            {
+                // Wait for all ALM publish tasks to complete
+                Reporter.ToLog(eLogLevel.INFO, "######## Finishing Update Execution Results to ALM...");
+                Task.WaitAll(ALMResultsPublishTaskPool.ToArray());
+                ALMResultsPublishTaskPool.Clear();
+                ALMResultsPublishTaskPool = null;
+                var runsetAction = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(f => f is RunSetActionPublishToQC && f.RunAt.Equals(RunSetActionBase.eRunAt.DuringExecution));
+                if (runsetAction.Status != RunSetActionBase.eRunSetActionStatus.Failed)
+                {
+                    runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Completed;
+                }
+            }
+        }
+
         public void CreateGingerExecutionReportAutomaticly()
         {
             HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
@@ -671,6 +695,7 @@ namespace Ginger.Run
                 runner.Executor.ResetRunnerExecutionDetails();
                 runner.Executor.CloseAgents();
             }
+            ResetRunsetActions();
         }
 
         public void StopRun()
@@ -685,6 +710,15 @@ namespace Ginger.Run
             }
         }
 
+        internal void ResetRunsetActions() 
+        {
+            foreach (RunSetActionBase RSA in RunSetConfig.RunSetActions)
+            {
+                RSA.Errors = "";
+                RSA.Status = RunSetActionBase.eRunSetActionStatus.Pending;
+                RSA.Elapsed = 0;
+            }
+        }
 
         internal void ProcessRunSetActions(List<RunSetActionBase.eRunAt> runAtList)
         {
@@ -767,6 +801,8 @@ namespace Ginger.Run
                             if (RSA is RunSetActions.RunSetActionPublishToQC)
                             {
                                 RSA.PrepareDuringExecAction(Runners);
+                                ALMResultsPublishTaskPool = new List<Task>();
+                                RSA.Errors = "";
                             }
 
                             break;

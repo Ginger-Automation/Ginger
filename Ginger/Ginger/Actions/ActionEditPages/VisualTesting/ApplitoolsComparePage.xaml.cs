@@ -248,7 +248,7 @@ namespace Ginger.Actions.VisualTesting
                     xLocateValueVE.Visibility = System.Windows.Visibility.Collapsed;
                     xLocateValueEditFrame.Visibility = System.Windows.Visibility.Visible;
                     Page p = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), null, null, mAct, nameof(ActBrowserElement.LocateValue));
-                    xLocateValueEditFrame.Content = p;
+                    xLocateValueEditFrame.ClearAndSetContent(p);
                     break;
                 default:
                     xLocateValueVE.Visibility = System.Windows.Visibility.Visible;

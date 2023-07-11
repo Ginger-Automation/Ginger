@@ -216,29 +216,36 @@ namespace GingerCore
                         }
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Error Occured! While Trying to Communicate with the {Agent.AgentType} Agent {Agent.Name}. Please try checking your Agent Configurations!", e);
                 }
                 finally
                 {
-                    if (Agent.AgentType == Agent.eAgentType.Service)
+                    try
                     {
-                        Agent.mIsStarting = false;
-                    }
-                    else
-                    {
-                        if (Driver != null)
+                        if (Agent.AgentType == Agent.eAgentType.Service)
                         {
-                            // Give the driver time to start            
-                            Thread.Sleep(500);
-                            Driver.IsDriverRunning = true;
-                            Driver.DriverMessageEvent += driverMessageEventHandler;
+                            Agent.mIsStarting = false;
                         }
+                        else
+                        {
+                            if (Driver != null)
+                            {
+                                // Give the driver time to start            
+                                Thread.Sleep(1000);
+                                Driver.IsDriverRunning = true;
+                                Driver.DriverMessageEvent += driverMessageEventHandler;
+                            }
 
-                        Agent.mIsStarting = false;
-                        Agent.OnPropertyChanged(nameof(Agent.Status));
-                        Agent.OnPropertyChanged(nameof(IsWindowExplorerSupportReady));
+                            Agent.mIsStarting = false;
+                            Agent.OnPropertyChanged(nameof(Agent.Status));
+                            Agent.OnPropertyChanged(nameof(IsWindowExplorerSupportReady));
+                        }
+                    }
+                    catch ( Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error Occured! While Staring Driver ", ex);
                     }
                 }
             }
@@ -748,15 +755,29 @@ namespace GingerCore
                 {
                     Driver.Dispatcher.Invoke(() =>
                    {
-                       Driver.CloseDriver();
-                       Thread.Sleep(1000);
+                       try
+                       {
+                           Driver.CloseDriver();
+                           Thread.Sleep(1000);
+                       }
+                       catch (Exception ex)
+                       {
+                           Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
+                       }
                    });
                 }
                 else
                 {
                     await Task.Run(() =>
                     {
-                        Driver.CloseDriver();
+                        try
+                        {
+                            Driver.CloseDriver();
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
+                        }
                     });
                 }
                 if (MSTATask != null)
@@ -768,6 +789,10 @@ namespace GingerCore
                 }
 
                 Driver = null;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
             }
             finally
             {

@@ -165,14 +165,7 @@ namespace Ginger.Variables
         {
             if (mVariable.NameBeforeEdit != mVariable.Name)
             {
-                if (Reporter.ToUser(eUserMsgKey.RenameVariableReferences, mParent.GetType().Name) == eUserMsgSelection.OK)
-                {
-                    await Task.Run(() => UpdateVariableNameChange());
-                }
-                else
-                {
-                    mVariable.Name = mVariable.NameBeforeEdit;
-                }
+                await Task.Run(() => UpdateVariableNameChange());
             }
         }
 
