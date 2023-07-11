@@ -230,11 +230,6 @@ namespace GingerCore.Drivers
         public string PageLoadStrategy { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("ignore")]
-        [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
-        public string UnhandledPromptBehavior { get; set; }
-
-        [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Start BMP - Browser Mob Proxy (true/false)")]
         public bool StartBMP { get; set; }
@@ -268,6 +263,11 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Sample Value is 'localhost:9222'.This allows to Connect to existing browser session on specific debug port instead of Launching a new browser")]
         public string DebugAddress { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("dismissAndNotify")]
+        [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
+        public string UnhandledPromptBehavior { get; set; }
 
         protected IWebDriver Driver;
 
@@ -1200,9 +1200,12 @@ namespace GingerCore.Drivers
             //Checking if Alert handling is asked to be performed (in that case we can't modify anything on driver before handling the Alert)
             bool isActBrowser = act is ActBrowserElement;
             ActBrowserElement actBrowserObj = isActBrowser ? (act as ActBrowserElement) : null;
-            bool runActHandlerDirect = act is ActHandleBrowserAlert || (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
-                                    || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
-                                        || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox));
+            bool runActHandlerDirect = act is ActHandleBrowserAlert ||
+                                      (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.GetMessageBoxText
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SetAlertBoxText));
 
             if (!runActHandlerDirect)
             {
