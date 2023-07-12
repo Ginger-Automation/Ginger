@@ -173,7 +173,6 @@ namespace Ginger.Run
                     ObservableList<VariableBase> optionalOutputVars = new ObservableList<VariableBase>();
                     foreach (VariableBase outputVar in ((GingerExecutionEngine)mGingerRunner.Executor).GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true))
                     {
-                        ;
                         optionalOutputVars.Add(outputVar);
                     }
                     //allow setting output vars options only to variables types which supports setting value
