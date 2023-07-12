@@ -236,6 +236,7 @@ namespace Ginger.Actions
             KeySpaceComboBox.Items.Clear();
             TablesComboBox.Items.Clear();
             ColumnComboBox.Items.Clear();
+            txtWhere.Clear();
 
             if ((((ComboBox)sender).SelectedItem) == null)
             {
@@ -320,7 +321,7 @@ namespace Ginger.Actions
             KeySpaceComboBox.Items.Clear();
             TablesComboBox.Items.Clear();
             ColumnComboBox.Items.Clear();
-
+            txtWhere.Clear();
             AddDBOperationTypeInsert(sender, e);
             SetVisibleControlsForAction();
         }
@@ -328,6 +329,7 @@ namespace Ginger.Actions
         private void TablesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ColumnComboBox.Items.Clear();
+            txtWhere.Clear();
         }
 
         private void KeySpaceComboBox_DropDownOpened(object sender, EventArgs e)
@@ -366,13 +368,14 @@ namespace Ginger.Actions
 
         private void TablesComboBox_DropDownOpened(object sender, EventArgs e)
         {
+            Task? getTablesTask = null;
             try
             {
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Loading Tables...");
                 TablesComboBox.Items.Clear();
                 string DBName = DBNameComboBox.Text;
-                db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
+                db = (Database)EA.Dbs.FirstOrDefault(db => string.Equals(db.Name, DBName));
                 if (db == null)
                 {
                     return;
@@ -383,20 +386,30 @@ namespace Ginger.Actions
                 {
                     db.DatabaseOperations = new DatabaseOperations(db);
                 }
-                List<string> Tables = db.DatabaseOperations.GetTablesList(KeySpace);
-                if (Tables == null)
+
+                getTablesTask = Task.Run(async () =>
                 {
-                    return;
-                }
-                foreach (string s in Tables)
-                {
-                    TablesComboBox.Items.Add(s);
-                }
+                    List<string> tables = await db.DatabaseOperations.GetTablesListAsync(KeySpace);
+                    if (tables != null)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            foreach (string s in tables)
+                            {
+                                TablesComboBox.Items.Add(s);
+                            }
+                        });
+                    }
+                    Reporter.HideStatusMessage();
+                });
             }
             finally
             {
                 Mouse.OverrideCursor = null;
-                Reporter.HideStatusMessage();
+                if (getTablesTask != null && getTablesTask.IsCompleted)
+                {
+                    Reporter.HideStatusMessage();
+                }
             }
         }
 
@@ -419,14 +432,22 @@ namespace Ginger.Actions
             {
                 table = TablesComboBox.Text;
             }
-            List<string> Columns = db.DatabaseOperations.GetTablesColumns(table);
-            if (Columns == null)
+            List<string>? Columns = null;
+            if (db != null && db.DatabaseOperations != null)
+            {
+                Columns = db.DatabaseOperations.GetTablesColumns(table); // Call GetTablesColumns method
+            }
+
+            if (Columns != null)
+            {
+                foreach (string s in Columns)
+                {
+                    ColumnComboBox.Items.Add(s);
+                }
+            }
+            else
             {
                 return;
-            }
-            foreach (string s in Columns)
-            {
-                ColumnComboBox.Items.Add(s);
             }
         }
 

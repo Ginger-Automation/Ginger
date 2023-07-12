@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using GingerCore.NoSqlBase;
 using Microsoft.Win32;
 using MySql.Data.MySqlClient;
+using NJsonSchema.Infrastructure;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ using System.Data.SqlClient;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using static GingerCore.Environments.Database;
 
 namespace GingerCore.Environments
@@ -460,7 +462,7 @@ namespace GingerCore.Environments
             }
         }
 
-        public List<string> GetTablesList(string Keyspace = null)
+        public async Task<List<string>> GetTablesListAsync(string Keyspace = null)
         {
 
             List<string> rc = new List<string>() { "" };
@@ -468,7 +470,6 @@ namespace GingerCore.Environments
             {
                 try
                 {
-                    //if (oConn == null || oConn.State == ConnectionState.Closed) Connect();
                     if (Database.DBType == Database.eDBTypes.Cassandra)
                     {
                         NoSqlBase.NoSqlBase NoSqlDriver = null;
@@ -492,18 +493,30 @@ namespace GingerCore.Environments
                         GingerCosmos objGingerCosmos = new GingerCosmos();
                         Database.ConnectionString = GetConnectionString();
                         objGingerCosmos.Db = Database;
-                        rc = objGingerCosmos.GetTableList(Keyspace);
+                        rc =  objGingerCosmos.GetTableList(Keyspace);
+                    }
+                    else if (Database.DBType == eDBTypes.Oracle)
+                    {
+                        string[] restr = new string[1];
+                        restr[0] = GetConnectedUsername();
+                        DataTable table = await oConn.GetSchemaAsync("Tables", restr);
+                        string tableName = "";
+                        foreach (DataRow row in table.Rows)
+                        {
+                            tableName = (string)row[1];
+                             rc.Add(tableName);
+                        }
                     }
                     else
                     {
-                        DataTable table = oConn.GetSchema("Tables");
+                        DataTable table = await Task.Run(() => oConn.GetSchema("Tables"));
                         string tableName = "";
                         foreach (DataRow row in table.Rows)
                         {
                             switch (Database.DBType)
                             {
                                 case eDBTypes.MSSQL:
-                                    tableName = (string)row[2];
+                            tableName = (string)row[2];
                                     break;
                                 case eDBTypes.Oracle:
                                     tableName = (string)row[1];
@@ -524,7 +537,7 @@ namespace GingerCore.Environments
                                     //not implemented
                                     break;
                             }
-
+                            
                             rc.Add(tableName);
                         }
                     }
@@ -537,8 +550,13 @@ namespace GingerCore.Environments
             }
             return rc;
         }
-
-
+        public string GetConnectedUsername()
+        {   using (DbCommand command = oConn.CreateCommand())
+            { 
+                command.CommandText = "SELECT USER FROM DUAL"; 
+                return command.ExecuteScalar().ToString(); 
+            } 
+        }
         public List<string> GetTablesColumns(string table)
         {
             DbDataReader reader = null;

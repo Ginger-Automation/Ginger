@@ -30,6 +30,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Threading.Tasks;
+
 namespace UnitTests.NonUITests
 {
     [Level3]
@@ -99,7 +101,7 @@ namespace UnitTests.NonUITests
         [Ignore]
         [TestMethod]
         [Timeout(60000)]
-        public void TestMSAccessDB()
+        public async Task TestMSAccessDBAsync()
         {
             Database db = new Database();
             DatabaseOperations databaseOperations = new DatabaseOperations(db);
@@ -112,7 +114,7 @@ namespace UnitTests.NonUITests
             Boolean b = db.DatabaseOperations.Connect();
             if (b)
             {
-                List<string> tables = db.DatabaseOperations.GetTablesList();
+               List<string> tables = await db.DatabaseOperations.GetTablesListAsync();
                 db.DatabaseOperations.CloseConnection();
             }
 
@@ -121,7 +123,7 @@ namespace UnitTests.NonUITests
         [Ignore]
         [TestMethod]
         [Timeout(60000)]
-        public void TestMSSQL()
+        public async Task TestMSSQLAsync()
         {
             Database db = new Database();
             DatabaseOperations databaseOperations = new DatabaseOperations(db);
@@ -134,7 +136,7 @@ namespace UnitTests.NonUITests
             Boolean b = db.DatabaseOperations.Connect();
             if (b)
             {
-                List<string> tables = db.DatabaseOperations.GetTablesList();
+                List<string> tables = await db.DatabaseOperations.GetTablesListAsync();
                 db.DatabaseOperations.CloseConnection();
             }
 
