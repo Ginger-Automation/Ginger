@@ -166,6 +166,10 @@ namespace Ginger.Run
         }
         private void RunSelected(object sender, RoutedEventArgs e)
         {
+            if (RunSetActionsGrid.CurrentItem == null)
+            {
+                return;
+            }
             if ((WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB || WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                 && ((RunSetActionBase)RunSetActionsGrid.CurrentItem).GetType() == typeof(RunSetActionHTMLReportSendEmail)
                 && WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetExecutionStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)

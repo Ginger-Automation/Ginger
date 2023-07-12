@@ -71,7 +71,7 @@ namespace Ginger.Run.RunSetActions
 
         public override void Execute(IReportInfo RI)
         {
-            RunSetActionHTMLReportOperations.Execute(RI);
+            RunSetActionHTMLReportOperations?.Execute(RI);
         }
 
         public override string GetEditPage()
