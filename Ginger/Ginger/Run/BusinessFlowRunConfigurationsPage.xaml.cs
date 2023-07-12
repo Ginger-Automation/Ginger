@@ -412,7 +412,8 @@ namespace Ginger.Run
         {
             if (mGingerRunner != null && mGingerRunner.Executor != null)
             {
-                mGingerRunner.Executor.UpdateBusinessFlowsRunList();
+                //commenting the below part out because causing issues with customized variables
+                //mGingerRunner.Executor.UpdateBusinessFlowsRunList();
             }
             _pageGenericWin.Close();
         }
