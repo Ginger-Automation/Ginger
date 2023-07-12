@@ -125,7 +125,27 @@ namespace Ginger.Run
             view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Initial Value", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
             if (mWindowMode == eWindowMode.Configuration)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCDataMapping.GetTemplate(nameof(VariableBase.MappedOutputType), nameof(VariableBase.MappedOutputValue), nameof(VariableBase.SupportSetValue), variabelsSourceProperty: nameof(VariableBase.PossibleVariables), outputVariabelsSourceProperty: nameof(VariableBase.PossibleOutputVariables)), WidthWeight = 40 });
+                view.GridColsView.Add(new GridColView()
+                {
+                    Field = nameof(VariableBase.MappedOutputValue),
+                    Header = "Mapped Runtime Value",
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = UCDataMapping.GetTemplate(new UCDataMapping.TemplateOptions(
+                        dataTypeProperty: nameof(VariableBase.MappedOutputType),
+                        dataValueProperty: nameof(VariableBase.MappedOutputValue))
+                        {
+                            _EnableDataMappingProperty = nameof(VariableBase.SupportSetValue),
+                            _VariabelsSourceProperty = nameof(VariableBase.PossibleVariables),
+                            _OutputVariabelsSourceProperty = nameof(VariableBase.PossibleOutputVariables),
+                            _RestrictedMappingTypes = new[]
+                            {
+                                new UCDataMapping.RestrictedMappingType(
+                                    name: nameof(UCDataMapping.eDataType.Variable), 
+                                    reason: "Variables are deprected for Mapped Runtime Value.")
+                            }
+                        }),
+                    WidthWeight = 40
+                });
             }
             else if (mWindowMode == eWindowMode.SummaryView)
             {
