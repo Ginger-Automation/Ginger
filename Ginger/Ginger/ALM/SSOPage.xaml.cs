@@ -55,7 +55,9 @@ namespace Ginger.ALM
         private static void SetSilent(WebBrowser browser, bool silent)
         {
             if (browser == null)
-                throw new ArgumentNullException("browser");
+            {
+                throw new ArgumentNullException(nameof(browser));
+            }
 
             IOleServiceProvider sp = browser.Document as IOleServiceProvider;
             if (sp != null)
@@ -100,7 +102,6 @@ namespace Ginger.ALM
 
         private void CloseWindow(object sender, EventArgs e)
         {
-
             xBrowser.LoadCompleted -= XBrowser_LoadCompleted;
             xBrowser.Navigated -= XBrowser_Navigated;
             xBrowser.Dispose();
