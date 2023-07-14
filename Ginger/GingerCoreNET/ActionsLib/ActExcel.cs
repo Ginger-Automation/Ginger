@@ -300,7 +300,6 @@ namespace GingerCore.Actions
                     string substr = indexOfField != -1 ? field.Substring(indexOfField + calculated.Length) : field;
                     string actualFieldValue = splitBetCapLetters.Replace( substr, " ") ;
                     this.Error = $"The Mandatory field : {actualFieldValue} cannot be empty";
-                    //Reporter.ToUser(eUserMsgKey.StaticErrorMessage, this.Error);
                     return false;
                 }
             }
@@ -399,7 +398,6 @@ namespace GingerCore.Actions
                 {
                     Error = ex.Message;
                 }
-                // Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
             }
         }
 

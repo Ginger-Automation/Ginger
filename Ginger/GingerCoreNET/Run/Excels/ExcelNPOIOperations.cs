@@ -153,15 +153,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 if (mWorkbook == null)
                 {
                     Reporter.ToLog(eLogLevel.WARN, "File name not Exists.");
-                    // TODO Can a Custom Exception be made instead of 'Exception' ??
-                    throw new Exception("File DOES NOT Exist or is currently being used by some other application, Please verify if the File Path is valid");
+                    throw new ArgumentException("File DOES NOT Exist or is currently being used by some other application, Please verify if the File Path is valid");
                 }
                 mSheet = mWorkbook.GetSheet(sheetName);
                 if (mSheet == null)
                 {
                     Reporter.ToLog(eLogLevel.WARN, "Sheet name not Exists.");
-                    // TODO Can a Custom Exception be made instead of 'Exception' ??
-                    throw new Exception("Sheet name DOES NOT Exist , Please verify if the entered Sheet Name is valid");
+                    throw new ArgumentException("Sheet name DOES NOT Exist , Please verify if the entered Sheet Name is valid");
                 }
             }
         }
