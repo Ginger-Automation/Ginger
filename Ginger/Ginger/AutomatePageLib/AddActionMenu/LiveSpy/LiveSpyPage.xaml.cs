@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions.UserControls;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -265,7 +266,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         {
                             source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mSpyElement.ScreenShotImage.ToString()));
                         }
-                        xUCElementDetails.xElementScreenShotFrameTop.Content = new ScreenShotViewPage(mSpyElement?.ElementName, source, false);
+                        xUCElementDetails.xElementScreenShotFrameTop.ClearAndSetContent(new ScreenShotViewPage(mSpyElement?.ElementName, source, false));
                     }
                     else
                     {

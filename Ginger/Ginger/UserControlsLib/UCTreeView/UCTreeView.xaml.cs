@@ -231,8 +231,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             if (item.IsExpandable())
             {
-                TVI.Expanded += TVI_Expanded;
-                TVI.Collapsed += TVI_Collapsed;
+                WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(source: TVI, eventName: nameof(TreeViewItem.Expanded), handler: TVI_Expanded);
+                WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(source: TVI, eventName: nameof(TreeViewItem.Collapsed), handler: TVI_Collapsed);
 
                 TreeViewItem TVDummy = new TreeViewItem() { Header = "DUMMY" };
                 TVI.Items.Add(TVDummy);
@@ -245,7 +245,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         }
 
 
-        private void TVI_Expanded(object sender, RoutedEventArgs e)
+        private void TVI_Expanded(object? sender, RoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
 
@@ -255,19 +255,19 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             SetTreeNodeItemChilds(TVI);
             GingerCore.General.DoEvents();
             // remove the handler as expand data is cached now on tree
-            TVI.Expanded -= TVI_Expanded;
-            TVI.Expanded += TVI_ExtraExpanded;
+            WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(source: TVI, eventName: nameof(TreeViewItem.Expanded), handler: TVI_Expanded);
+            WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(source: TVI, eventName: nameof(TreeViewItem.Expanded), handler: TVI_ExtraExpanded);
 
             Mouse.OverrideCursor = null;
         }
 
-        private void TVI_Collapsed(object sender, RoutedEventArgs e)
+        private void TVI_Collapsed(object? sender, RoutedEventArgs e)
         {
             TreeViewItem tvi = (TreeViewItem)e.Source;
             SetRepositoryFolderIsExpanded(tvi, false);
         }
 
-        private void TVI_ExtraExpanded(object sender, RoutedEventArgs e)
+        private void TVI_ExtraExpanded(object? sender, RoutedEventArgs e)
         {
             TreeViewItem tvi = (TreeViewItem)e.Source;
             SetRepositoryFolderIsExpanded(tvi, true);

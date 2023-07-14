@@ -5484,5 +5484,13 @@ namespace Ginger.Run
                 return false;
             }
         }
+
+        public void ClearBindings()
+        {
+            if (CurrentBusinessFlow != null)
+            {
+                CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
+            }
+        }
     }
 }
