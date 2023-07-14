@@ -202,7 +202,13 @@ namespace Ginger.Actions
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
+                string errorMessage = ex.Message;
+                if(!string.IsNullOrEmpty(ex.Message)  && ex.Message.StartsWith("Cannot find column"))
+                {
+                    errorMessage = errorMessage + " " + $"at Row Number {mAct.HeaderRowNum}";
+                }
+                
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, errorMessage);
             }
         }
         DataTable GetExcelSheetData(bool isViewAllData)

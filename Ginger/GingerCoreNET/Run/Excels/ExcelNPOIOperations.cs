@@ -40,24 +40,19 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         IWorkbook mWorkbook { get; set; }
         ISheet mSheet { get; set; }
 
-        /*
-            Reading The Rows and Columns of the Excel Sheet
-         */
-        private DataTable ConvertSheetToDataTable(ISheet sheet , int rowHeaderNumber , int endRowNumber = -1)
+        /// <summary>
+        /// Reading The Rows and Columns of the Excel Sheet
+        /// </summary>
+        /// <param name="sheet"> A specific sheet in the Excel</param>
+        /// <param name="rowHeaderNumber"> row number at which the header columns are found </param>
+        /// <param name="rowLimit">If the 'View Data / View Filtered Data' is selected on the Excel Action Page, the rowLimit is set , which means the user will only see AT MOST 'rowLimit' number of rows apart from the Column Header row </param>
+        /// <returns></returns>
+        private DataTable ConvertSheetToDataTable(ISheet sheet , int rowHeaderNumber , int rowLimit = -1)
         {
             try
             {
                 var dtExcelTable = new DataTable();
                 IRow headerRow = this.GetHeaderRow(sheet, rowHeaderNumber);
-/*              
- *              The below code is redundant because the dtExcelTable.Columns.Add() -> throws DuplicateNameException
- *                
- *                bool allUnique = headerRow.Cells.GroupBy(x => x.StringCellValue).All(g => g.Count() == 1);
-                if (!allUnique)
-                {
-                    throw new DuplicateNameException(string.Format("Sheet '{0}' contains duplicate column names", sheet.SheetName));
-                }
-*/              
                 /*
                  initialColNumber -> is used to locate the first column number of the first header column
                  */
@@ -66,7 +61,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 /*
                  intialColNumber is used to also locate where to start and end the reading of the row data. 
                  */
-                SetRowsForDataTable(sheet , dtExcelTable , initialColNumber, rowHeaderNumber, endRowNumber);
+                SetRowsForDataTable(sheet , dtExcelTable , initialColNumber, rowHeaderNumber, rowLimit);
                 return dtExcelTable;
             }
             catch (Exception ex)
@@ -127,13 +122,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
         }
 
-        public DataTable ReadDataWithRowLimit(string fileName, string sheetName , string filter , bool selectedRows , string headerRowNumber="1" , int endRowNumber = -1)
+        public DataTable ReadDataWithRowLimit(string fileName, string sheetName , string filter , bool selectedRows , string headerRowNumber="1" , int rowLimit = -1)
         {
             filter = filter ?? "";
             try
             {
                 GetExcelSheet(fileName , sheetName);
-                mExcelDataTable = ConvertSheetToDataTable(mSheet , int.Parse(string.IsNullOrEmpty(headerRowNumber) ? "1" : headerRowNumber) , endRowNumber);
+                mExcelDataTable = ConvertSheetToDataTable(mSheet , int.Parse(string.IsNullOrEmpty(headerRowNumber) ? "1" : headerRowNumber) , rowLimit);
                 mExcelDataTable.DefaultView.RowFilter = filter;
                 mFilteredDataTable = string.IsNullOrEmpty(filter) ? mExcelDataTable : GetFilteredDataTable(mExcelDataTable, selectedRows);
                 return mFilteredDataTable;
@@ -430,33 +425,50 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
 
         }
+        /// <summary>
+        ///  Collects the row data (Apart from the Column Header)
+        /// </summary>
+        /// <param name="sheet">A Particular Sheet on Excel</param>
+        /// <param name="dtExcelTable">The Row Data will be collected in this</param>
+        /// <param name="initialColNumber">Used to locate the first Column Number from where the row data exists</param>
+        /// <param name="startRowNumber">Used to locate the first Row Number from where the row data begins</param>
+        /// <param name="rowLimit">If the 'View Data / View Filtered Data' is selected on the Excel Action Page, the rowLimit is set , which means the user will only see AT MOST 'rowLimit' number of rows apart from the Column Header row </param>
 
-        private void SetRowsForDataTable(ISheet sheet,DataTable dtExcelTable , int initialColNumber , int startRowNumber , int endRowNumber)
+        private void SetRowsForDataTable(ISheet sheet, DataTable dtExcelTable, int initialColNumber, int startRowNumber, int rowLimit)
         {
-            var i = startRowNumber;
-            var currentRow = sheet.GetRow(i);
+            var currentRowNumber = startRowNumber;
+            var currentRow = sheet.GetRow(currentRowNumber);
 
-            while ( hasDataTableReachedRowLimit(currentRow , endRowNumber , startRowNumber, i))
+            while ( hasDataTableReachedRowLimit(currentRow , rowLimit , startRowNumber, currentRowNumber))
             {
                 var dr = dtExcelTable.NewRow();
-                for (var j = initialColNumber; j < initialColNumber + dr.ItemArray.Length; j++)
+                for (var currentColNumber = initialColNumber; currentColNumber < initialColNumber + dr.ItemArray.Length; currentColNumber++)
                 {
-                    var cell = currentRow.GetCell(j);
+                    var cell = currentRow.GetCell(currentColNumber);
                     if (cell != null)
                     {
-                        dr[j - initialColNumber] = GetCellValue(cell, cell.CellType);
+                        dr[currentColNumber - initialColNumber] = GetCellValue(cell, cell.CellType);
                     }
                 }
                 dtExcelTable.Rows.Add(dr);
-                i++;
-                currentRow = sheet.GetRow(i);
+                currentRowNumber++;
+                currentRow = sheet.GetRow(currentRowNumber);
             }
 
         }
-
-        private bool hasDataTableReachedRowLimit(IRow currentRow , int endRowNumber , int startRowNumber,int i)
+        /// <summary>
+        /// This function checks if the Reader has reached the row limit. if the 'View Data / View Filtered Data is selected it stops after the 'currentRowNumber' has reached 'rowLimit' or  the row length of the Sheet is lesser than the rowLimit
+        /// in order case it only checks if the excel sheet has no more data to be read.
+        /// </summary>
+        /// <param name="currentRow"></param>
+        /// <param name="rowLimit">If the 'View Data / View Filtered Data' is selected on the Excel Action Page, the rowLimit is set , which means the user will only see AT MOST 'rowLimit' number of rows apart from the Column Header row</param>
+        /// <param name="startRowNumber">Start Row Number in the Excel Sheet </param>
+        /// <param name="currentRowNumber">This variable denotes the current row , that is being read</param>
+        private bool hasDataTableReachedRowLimit(IRow currentRow , int rowLimit , int startRowNumber,int currentRowNumber)
         {
-            return  (endRowNumber == -1) ? currentRow!=null  : currentRow != null && (startRowNumber+endRowNumber - i) > 0;
+            return  (rowLimit == -1) ? currentRow!=null  : currentRow != null && (startRowNumber+rowLimit - currentRowNumber) > 0;
         }
     }
 }
+
+// change 5t
