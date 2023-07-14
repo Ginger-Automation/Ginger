@@ -507,6 +507,8 @@ namespace GingerCore.Environments
                                 rc.Add(tableName);
                             }
                             break;
+                        default:
+                            break;
                     }
                         if (Database.DBType == eDBTypes.MSSQL || Database.DBType == eDBTypes.MySQL || Database.DBType == eDBTypes.MSAccess || Database.DBType == eDBTypes.DB2 || Database.DBType == eDBTypes.PostgreSQL)
                         {
