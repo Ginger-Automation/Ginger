@@ -25,6 +25,7 @@ using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -51,6 +52,9 @@ namespace Ginger.UserControlsLib
         public static DependencyProperty OutputVariabelsSourceProperty =
         DependencyProperty.Register("OutputVariabelsSource", typeof(ObservableList<VariableBase>), typeof(UCDataMapping), new PropertyMetadata(OnOutputVariabelsSourcePropertyChanged));
 
+        public static readonly DependencyProperty RestrictedMappingTypesProperty = DependencyProperty.Register("RestrictedMappingTypes",
+            typeof(IEnumerable<RestrictedMappingType>), typeof(UCDataMapping));
+
         public enum eDataType
         {
             None,
@@ -59,6 +63,35 @@ namespace Ginger.UserControlsLib
             OutputVariable,
             ApplicationModelParameter,
             DataSource
+        }
+
+        public sealed class RestrictedMappingType
+        {
+            public string Name { get; }
+            public string? Reason { get; } = null;
+
+            public RestrictedMappingType(string name, string? reason = null)
+            {
+                Name = name;
+                Reason = reason;
+            }
+        }
+
+        public sealed class TemplateOptions
+        {
+            public string _DataTypeProperty { get; set; }
+            public string _DataValueProperty { get; set; }
+            public string _EnableDataMappingProperty { get; set; } = "";
+            public string _VariabelsSourceProperty { get; set; } = "";
+            public ObservableList<string>? _VariabelsSourceList { get; set; } = null;
+            public string _OutputVariabelsSourceProperty { get; set; } = "";
+            public IEnumerable<RestrictedMappingType>? _RestrictedMappingTypes { get; set; } = null;
+
+            public TemplateOptions(string dataTypeProperty, string dataValueProperty)
+            {
+                _DataTypeProperty = dataTypeProperty;
+                _DataValueProperty = dataValueProperty;
+            }
         }
 
         public string MappedValue
@@ -81,7 +114,19 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        string _prevMappedType = null;
+        public IEnumerable<RestrictedMappingType> RestrictedMappingTypes
+        {
+            get
+            {
+                return (IEnumerable<RestrictedMappingType>)GetValue(RestrictedMappingTypesProperty);
+            }
+            set
+            {
+                SetValue(RestrictedMappingTypesProperty, value);
+            }
+        }
+
+        private string? _prevMappedType = null;
 
         public string MappedType
         {
@@ -96,10 +141,10 @@ namespace Ginger.UserControlsLib
 
         bool EnableDataMapping = false;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            PropertyChangedEventHandler? handler = PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
@@ -283,6 +328,23 @@ namespace Ginger.UserControlsLib
 
         private void xMappedTypeComboBox_DropDownClosed(object sender, EventArgs e)
         {
+            if (RestrictedMappingTypes != null)
+            {
+                RestrictedMappingType? restrictedMappingType = RestrictedMappingTypes
+                    .FirstOrDefault(restrictedType => string.Equals(restrictedType.Name, MappedType));
+
+                if (restrictedMappingType != null && !string.Equals(_prevMappedType, MappedType))
+                {
+                    MappedType = _prevMappedType!;
+                    string? reason = restrictedMappingType.Reason;
+                    if (reason == null)
+                    {
+                        reason = $"{restrictedMappingType.Name} is not allowed for Mapped Runtime Value.";
+                    }
+                    Reporter.ToUser(eUserMsgKey.NotAllowedForMappedRuntimeValue, reason);
+                }
+            }
+
             if (_prevMappedType != MappedType)
             {
                 //reset value between type selection
@@ -350,44 +412,45 @@ namespace Ginger.UserControlsLib
             xDSConfigBtn.IsEnabled = false;
         }
 
-        public static DataTemplate GetTemplate(string dataTypeProperty, string dataValueProperty, string enableDataMappingProperty = "", string variabelsSourceProperty = "", ObservableList<string> variabelsSourceList = null, string outputVariabelsSourceProperty = "")
+        public static DataTemplate GetTemplate(TemplateOptions options)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory ucDataMapping = new FrameworkElementFactory(typeof(UCDataMapping));
 
-            if (string.IsNullOrEmpty(variabelsSourceProperty) == false)
+            if (!string.IsNullOrEmpty(options._VariabelsSourceProperty))
             {
-                Binding variablesSourceBinding = new Binding(variabelsSourceProperty);
+                Binding variablesSourceBinding = new Binding(options._VariabelsSourceProperty);
                 variablesSourceBinding.Mode = BindingMode.OneWay;
                 variablesSourceBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                 ucDataMapping.SetBinding(UCDataMapping.VariabelsSourceProperty, variablesSourceBinding);
             }
-            else if (variabelsSourceList != null)
+            else if (options._VariabelsSourceList != null)
             {
-                ucDataMapping.SetValue(UCDataMapping.VariabelsSourceProperty, variabelsSourceList);
+                ucDataMapping.SetValue(UCDataMapping.VariabelsSourceProperty, options._VariabelsSourceList);
             }
 
-            if (string.IsNullOrEmpty(outputVariabelsSourceProperty) == false)
+
+            if (!string.IsNullOrEmpty(options._OutputVariabelsSourceProperty))
             {
-                Binding outputVariabelsSourceBinding = new Binding(outputVariabelsSourceProperty);
+                Binding outputVariabelsSourceBinding = new Binding(options._OutputVariabelsSourceProperty);
                 outputVariabelsSourceBinding.Mode = BindingMode.OneWay;
                 outputVariabelsSourceBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                 ucDataMapping.SetBinding(UCDataMapping.OutputVariabelsSourceProperty, outputVariabelsSourceBinding);
             }
 
-            Binding mappedItemTypeBinding = new Binding(dataTypeProperty);
+            Binding mappedItemTypeBinding = new Binding(options._DataTypeProperty);
             mappedItemTypeBinding.Mode = BindingMode.TwoWay;
             mappedItemTypeBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
             ucDataMapping.SetBinding(UCDataMapping.MappedTypeProperty, mappedItemTypeBinding);
 
-            Binding mappedValueBinding = new Binding(dataValueProperty);
+            Binding mappedValueBinding = new Binding(options._DataValueProperty);
             mappedValueBinding.Mode = BindingMode.TwoWay;
             mappedValueBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
             ucDataMapping.SetBinding(UCDataMapping.MappedValueProperty, mappedValueBinding);
 
-            if (string.IsNullOrEmpty(enableDataMappingProperty) == false)
+            if (!string.IsNullOrEmpty(options._EnableDataMappingProperty))
             {
-                Binding allowDataMappingBinding = new Binding(enableDataMappingProperty);
+                Binding allowDataMappingBinding = new Binding(options._EnableDataMappingProperty);
                 allowDataMappingBinding.Mode = BindingMode.OneWay;
                 allowDataMappingBinding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                 ucDataMapping.SetBinding(UCDataMapping.EnableDataMappingProperty, allowDataMappingBinding);
@@ -395,6 +458,11 @@ namespace Ginger.UserControlsLib
             else
             {
                 ucDataMapping.SetValue(UCDataMapping.EnableDataMappingProperty, true);
+            }
+
+            if (options._RestrictedMappingTypes != null)
+            {
+                ucDataMapping.SetValue(UCDataMapping.RestrictedMappingTypesProperty, options._RestrictedMappingTypes);
             }
 
             template.VisualTree = ucDataMapping;
