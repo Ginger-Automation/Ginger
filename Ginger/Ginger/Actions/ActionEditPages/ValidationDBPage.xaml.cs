@@ -370,7 +370,6 @@ namespace Ginger.Actions
 
         private async void TablesComboBox_DropDownOpened(object sender, EventArgs e)
         {
-            //Task? getTablesTask = null;
             try
             {
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
