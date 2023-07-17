@@ -197,11 +197,14 @@ namespace Ginger.Run
             });
 
             ObservableList<RunSetReport> executionsHistoryListSortedByDate = new ObservableList<RunSetReport>();
-            foreach (RunSetReport runSetReport in mExecutionsHistoryList.OrderByDescending(item => item.StartTimeStamp))
+            if (mExecutionsHistoryList != null && mExecutionsHistoryList.Count > 0)
             {
-                runSetReport.StartTimeStamp = runSetReport.StartTimeStamp.ToLocalTime();
-                runSetReport.EndTimeStamp = runSetReport.EndTimeStamp.ToLocalTime();
-                executionsHistoryListSortedByDate.Add(runSetReport);
+                foreach (RunSetReport runSetReport in mExecutionsHistoryList.OrderByDescending(item => item.StartTimeStamp))
+                {
+                    runSetReport.StartTimeStamp = runSetReport.StartTimeStamp.ToLocalTime();
+                    runSetReport.EndTimeStamp = runSetReport.EndTimeStamp.ToLocalTime();
+                    executionsHistoryListSortedByDate.Add(runSetReport);
+                }
             }
 
             grdExecutionsHistory.DataSourceList = executionsHistoryListSortedByDate;
