@@ -547,29 +547,29 @@ namespace GingerCore.Environments
         public List<string> GetTablesColumns(string table)
         {
             DbDataReader reader = null;
-            List<string> databaseColoumnNames = new List<string>() { "" };
+            List<string> databaseColumnNames = new List<string>() { "" };
             if ((oConn == null || string.IsNullOrEmpty(table)) && (Database.DBType != Database.eDBTypes.Cassandra) && (Database.DBType != Database.eDBTypes.MongoDb)
                 && (Database.DBType != Database.eDBTypes.CosmosDb))
             {
-                return databaseColoumnNames;
+                return databaseColumnNames;
             }
             if (Database.DBType == Database.eDBTypes.Cassandra)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCassandra(Database);
-                databaseColoumnNames = NoSqlDriver.GetColumnList(table);
+                databaseColumnNames = NoSqlDriver.GetColumnList(table);
             }
             else if (Database.DBType == Database.eDBTypes.Couchbase)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCouchbase(Database);
-                databaseColoumnNames = NoSqlDriver.GetColumnList(table);
+                databaseColumnNames = NoSqlDriver.GetColumnList(table);
             }
             else if (Database.DBType == Database.eDBTypes.MongoDb)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerMongoDb(Database);
-                databaseColoumnNames = NoSqlDriver.GetColumnList(table);
+                databaseColumnNames = NoSqlDriver.GetColumnList(table);
             }
             else if (Database.DBType == Database.eDBTypes.CosmosDb)
             {
@@ -577,7 +577,7 @@ namespace GingerCore.Environments
                 NoSqlDriver = new GingerCosmos();
                 Database.ConnectionString = GetConnectionString();
                 NoSqlDriver.Db = Database;
-                databaseColoumnNames = NoSqlDriver.GetColumnList(table);
+                databaseColumnNames = NoSqlDriver.GetColumnList(table);
             }
             else
             {
@@ -602,8 +602,7 @@ namespace GingerCore.Environments
                     DataTable schemaTable = reader.GetSchemaTable();
                     foreach (DataRow row in schemaTable.Rows)
                     {
-                        string ColName = (string)row[0];
-                        databaseColoumnNames.Add(ColName);
+                        databaseColumnNames.Add((string)row[0]);
                     }
                 }
                 catch (Exception e)
@@ -618,7 +617,7 @@ namespace GingerCore.Environments
 
                 }
             }
-            return databaseColoumnNames;
+            return databaseColumnNames;
         }
 
         public string fUpdateDB(string updateCmd, bool commit)
