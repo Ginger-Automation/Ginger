@@ -434,7 +434,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         public void ScrollToViewCurrentItem()
         {
-            if (mObjList.CurrentItem != null)
+            if (mObjList != null && mObjList.CurrentItem != null)
             {
                 this.Dispatcher.Invoke(() =>
                 {
