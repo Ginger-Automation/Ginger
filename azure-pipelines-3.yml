@@ -14,7 +14,7 @@ steps:
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
-    version: '6.0.x'
+    version: '7.0.203'
     
 - script: dotnet test  Ginger/GingerUtilsTest --configuration $(buildConfiguration) --logger trx
   displayName: 'Testing GingerUtilsTest'
