@@ -513,9 +513,54 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         private void SmartSyncHandler(ActSmartSync act)
         {
-            IHTMLElement e = mFrmBrowser.TryGetActElementByLocator(act);
+            int maxTimeout = GetMaxTimeout(act);
 
             Stopwatch st = new Stopwatch();
+            st.Reset();
+            st.Start();
+
+            IHTMLElement e;
+            switch (act.SmartSyncAction)
+            {
+                case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
+                    do
+                    {
+                        if (st.ElapsedMilliseconds > maxTimeout * 1000)
+                        {
+                            act.Error = "Smart Sync of WaitUntilDisplay is timeout";
+                            break;
+                        }
+
+                        Thread.Sleep(100);
+
+                        e = mFrmBrowser.TryGetActElementByLocator(act);                        
+
+                    } while (!(e != null && ((bool)e.getAttribute("Displayed") == true || (bool)e.getAttribute("Enabled") == true)));
+                    break;
+
+                case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
+                    do
+                    {
+                        if (st.ElapsedMilliseconds > maxTimeout * 1000)
+                        {
+                            act.Error = "Smart Sync of WaitUntilDisapear is timeout";
+                            break;
+                        }
+
+                        Thread.Sleep(100);
+
+                        e = mFrmBrowser.TryGetActElementByLocator(act);                        
+
+                    } while (e != null && (bool)e.getAttribute("Displayed") != true);
+                    break;
+            }
+
+            st.Stop();
+            return;
+        }
+
+        private static int GetMaxTimeout(ActSmartSync act)
+        {
             int waitTime = 0;
             try
             {
@@ -532,49 +577,8 @@ namespace GingerCore.Drivers.InternalBrowserLib
             {
                 waitTime = 5;
             }
-            switch (act.SmartSyncAction)
-            {
-                case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
-                    st.Reset();
-                    st.Start();
 
-                    while (!(e != null && ((bool)e.getAttribute("Displayed") == true || (bool)e.getAttribute("Enabled") == true)))
-                    {
-                        Thread.Sleep(100);
-                        e = mFrmBrowser.TryGetActElementByLocator(act);
-                        if (st.ElapsedMilliseconds > waitTime * 1000)
-                        {
-                            act.Error = "Smart Sync of WaitUntilDisplay is timeout";
-                            break;
-                        }
-                    }
-                    break;
-                case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
-                    st.Reset();
-
-                    if (e == null)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        st.Start();
-
-                        while (e != null && (bool)e.getAttribute("Displayed") != true)
-                        {
-                            Thread.Sleep(100);
-                            e = mFrmBrowser.TryGetActElementByLocator(act);
-                            if (st.ElapsedMilliseconds > waitTime * 1000)
-                            {
-                                act.Error = "Smart Sync of WaitUntilDisapear is timeout";
-                                break;
-                            }
-                        }
-
-                    }
-                    break;
-            }
-            return;
+            return waitTime;
         }
 
         private void GenElementHandler(ActGenElement act)

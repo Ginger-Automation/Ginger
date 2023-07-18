@@ -798,10 +798,58 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private PayLoad SmartSyncHandler(ActSmartSync act)
         {
-            PayLoad PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
-            String sResponse = PL.GetValueString();
+            int MaxTimeout = GetMaxTimeout(act);
+            PayLoad PL = null;
+            string sResponse;
+
             Stopwatch st = new Stopwatch();
-            int MaxTimeout = 0;
+            st.Reset();
+            st.Start();
+
+            switch (act.SmartSyncAction)
+            {
+                case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
+                    do
+                    {
+                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
+                        {
+                            act.Error = "Smart Sync of WaitUntilDisplay is timeout";
+                            break;
+                        }
+
+                        Thread.Sleep(200);
+
+                        PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
+                        sResponse = PL.GetValueString();
+
+                    } while (sResponse == null || !sResponse.Contains("True"));
+                    break;
+
+                case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
+                    do
+                    {
+                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
+                        {
+                            act.Error = "Smart Sync of WaitUntilDisapear is timeout";
+                            break;
+                        }
+
+                        Thread.Sleep(200);
+
+                        PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
+                        sResponse = PL.GetValueString();
+
+                    } while (sResponse != null && !sResponse.Contains("False"));
+                    break;
+            }
+
+            st.Stop();
+            return PL;
+        }
+
+        private static int GetMaxTimeout(ActSmartSync act)
+        {
+            int MaxTimeout;
             try
             {
                 if (act.WaitTime.HasValue == true)
@@ -821,51 +869,9 @@ namespace GingerCore.Drivers.JavaDriverLib
             {
                 MaxTimeout = 5;
             }
-            switch (act.SmartSyncAction)
-            {
-                case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
-                    st.Reset();
-                    st.Start();
-                    while (!(sResponse.Contains("True")))
-                    {
-                        Thread.Sleep(200);
-                        PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
-                        sResponse = PL.GetValueString();
 
-                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                        {
-                            act.Error = "Smart Sync of WaitUntilDisplay is timeout";
-                            break;
-                        }
-                    }
-                    break;
-
-                case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
-                    st.Reset();
-                    if (sResponse == null)
-                    {
-                        return PL;
-                    }
-                    else
-                    {
-                        st.Start();
-                        while (!(sResponse.Contains("False")))
-                        {
-                            Thread.Sleep(200);
-                            PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
-                            sResponse = PL.GetValueString();
-                            if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                            {
-                                act.Error = "Smart Sync of WaitUntilDisapear is timeout";
-                                break;
-                            }
-                        }
-                    }
-                    break;
-            }
-            return PL;
+            return MaxTimeout;
         }
-
 
         private PayLoad HandleJavaBrowserElementAction(ActBrowserElement actJavaBrowserElement)
         {

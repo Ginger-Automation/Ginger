@@ -1757,53 +1757,54 @@ namespace GingerCore.Drivers
 
         public void SmartSyncHandler(ActSmartSync act)
         {
-            int MaxTimeout = SetMaxTimeout(act);
+            int MaxTimeout = GetMaxTimeout(act);
 
             try
             {
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, MaxTimeout);
-                IWebElement e = LocateElement(act, true);
+                IWebElement e = null;
+
                 Stopwatch st = new Stopwatch();
+
+                st.Reset();
+                st.Start();
+
                 switch (act.SmartSyncAction)
                 {
                     case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
-                        st.Reset();
-                        st.Start();
-                        while (!(e != null && (e.Displayed || e.Enabled)))
+                        do
                         {
-                            Thread.Sleep(100);
-                            e = LocateElement(act, true);
                             if (st.ElapsedMilliseconds > MaxTimeout * 1000)
                             {
                                 act.Error = "Smart Sync of WaitUntilDisplay is timeout";
                                 break;
                             }
-                        }
-                        break;
-                    case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
-                        st.Reset();
-                        if (e == null)
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            st.Start();
 
-                            while (e != null && e.Displayed)
+                            Thread.Sleep(100);
+
+                            e = LocateElement(act, true);
+
+                        } while (!(e != null && (e.Displayed || e.Enabled)));
+                        break;
+
+                    case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
+                        do
+                        {
+                            if (st.ElapsedMilliseconds > MaxTimeout * 1000)
                             {
-                                Thread.Sleep(100);
-                                e = LocateElement(act, true);
-                                if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                                {
-                                    act.Error = "Smart Sync of WaitUntilDisapear is timeout";
-                                    break;
-                                }
+                                act.Error = "Smart Sync of WaitUntilDisapear is timeout";
+                                break;
                             }
 
-                        }
+                            Thread.Sleep(100);
+
+                            e = LocateElement(act, true);
+
+                        } while (e != null && e.Displayed);
                         break;
                 }
+
+                st.Stop();
             }
             finally
             {
@@ -1812,9 +1813,9 @@ namespace GingerCore.Drivers
 
         }
 
-        private int SetMaxTimeout(ActSmartSync act)
+        private int GetMaxTimeout(ActSmartSync act)
         {
-            int MaxTimeout = 0;
+            int MaxTimeout;
             try
             {
                 if (act.WaitTime.HasValue == true)
