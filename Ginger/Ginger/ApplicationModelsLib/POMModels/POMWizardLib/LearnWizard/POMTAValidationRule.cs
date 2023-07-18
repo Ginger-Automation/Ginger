@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using GingerCore;
 using System.Linq;
 using System.Windows.Controls;
 
@@ -35,7 +36,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
             if (value == null || string.IsNullOrEmpty(value.ToString()))
             {
-                return new ValidationResult(false, "Target Application can not be empty");
+                return new ValidationResult(false, GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "can not be empty");
             }
 
             return new ValidationResult(true, null);

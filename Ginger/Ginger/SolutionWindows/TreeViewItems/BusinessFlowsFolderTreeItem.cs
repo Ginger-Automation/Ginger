@@ -296,7 +296,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 {
                     EditBusinessFlowAppsPage EBFP = new EditBusinessFlowAppsPage(BizFlow, true);
                     EBFP.ResetPlatformSelection();
-                    EBFP.Title = "Configure " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Target Application(s)";
+                    EBFP.Title = "Configure " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + GingerDicser.GetTermResValue(eTermResKey.TargetApplication);
                     EBFP.ShowAsWindow(eWindowShowStyle.Dialog, false);
                 }
                 else

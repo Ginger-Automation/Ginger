@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib;
+using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -138,7 +139,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Please Add at-least one Target Application that supports POM to continue adding Page Object Models");
+                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Please Add at-least one" + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "that supports POM to continue adding Page Object Models");
             }
         }
 

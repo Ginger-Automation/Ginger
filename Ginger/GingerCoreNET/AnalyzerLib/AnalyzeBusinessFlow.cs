@@ -35,7 +35,7 @@ namespace Ginger.AnalyzerLib
 {
     public class AnalyzeBusinessFlow : AnalyzerItemBase
     {
-        static string MissingTargetApp = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " is missing target Application(s)";
+        static string MissingTargetApp = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " is missing " + GingerDicser.GetTermResValue(eTermResKey.TargetApplication);
         static string MissingActivities = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " is missing " + GingerDicser.GetTermResValue(eTermResKey.Activities);
         public static readonly string LegacyOutPutValidationDescription = "Output validation contains legacy operators which are very slow and does not work on Linux";
         private static Regex rxVarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
@@ -54,7 +54,7 @@ namespace Ginger.AnalyzerLib
                 AnalyzeBusinessFlow ABF = new AnalyzeBusinessFlow();
                 ABF.Description = MissingTargetApp;
                 ABF.UTDescription = "MissingTargetApp";
-                ABF.Details = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " doesn't have Target Application(s) defined";
+                ABF.Details = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " doesn't have " + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "defined";
                 ABF.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " in solution tab and add target apps";
                 ABF.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;   //  take it from solution 
                 ABF.FixItHandler = FixMissingTargetApp;
@@ -63,7 +63,7 @@ namespace Ginger.AnalyzerLib
                 ABF.ItemParent = "NA";
                 ABF.mBusinessFlow = BusinessFlow;
                 ABF.ItemName = BusinessFlow.Name;
-                ABF.Impact = "Might be executed on wrong application if solution have more than 1 target application";
+                ABF.Impact = "Might be executed on wrong application if solution have more than 1" + GingerDicser.GetTermResValue(eTermResKey.TargetApplication);
                 ABF.mSolution = Solution;
                 ABF.ItemClass = "BusinessFlow";
                 ABF.Severity = eSeverity.High;
@@ -304,7 +304,7 @@ namespace Ginger.AnalyzerLib
             {
                 if (!ABF.mSolution.ApplicationPlatforms.Any())
                 {
-                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The default Application Platform Info is missing, please go to Solution level to add at least one Target Application.");
+                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The default Application Platform Info is missing, please go to Solution level to add at least one" + GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
                     return;
                 }
                 string SAN = ABF.mSolution.ApplicationPlatforms[0].AppName;

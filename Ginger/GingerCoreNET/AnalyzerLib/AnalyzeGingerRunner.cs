@@ -61,9 +61,9 @@ namespace Ginger.AnalyzerLib
                     //create error
                     AnalyzeGingerRunner AGR = CreateNewIssue(IssuesList, GR);
                     AGR.ItemParent = GR.Name;
-                    AGR.Description = "Target Application is not mapped to an Agent";
-                    AGR.Details = string.Format("The '{0}' Runner '{1}' Target Application is not mapped to any Agent", GR.Name, AA.AppName);
-                    AGR.HowToFix = "Map the Target Application to an Agent";
+                    AGR.Description = GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "is not mapped to an Agent";
+                    AGR.Details = string.Format("The '{0}' Runner '{1}' " + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "is not mapped to any Agent", GR.Name, AA.AppName);
+                    AGR.HowToFix = "Map the" + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "to an Agent";
                     AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                     AGR.IssueType = eType.Error;
                     AGR.Impact = "Execution will fail.";

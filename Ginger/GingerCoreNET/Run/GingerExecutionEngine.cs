@@ -2470,7 +2470,7 @@ namespace Ginger.Run
 
             if (string.IsNullOrEmpty(AppName))
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select Target Application for the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " and " + GingerDicser.GetTermResValue(eTermResKey.Activity));
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select" + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "for the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " and " + GingerDicser.GetTermResValue(eTermResKey.Activity));
                 CurrentBusinessFlow.CurrentActivity.CurrentAgent = null;
                 return;
             }
@@ -2479,7 +2479,7 @@ namespace Ginger.Run
             if (AA == null || ((Agent)AA.Agent) == null)
             {
 
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The current target application, " + AppName + ", doesn't have a mapped agent assigned to it");
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "The current" + GingerDicser.GetTermResValue(eTermResKey.TargetApplication)  + AppName + ", doesn't have a mapped agent assigned to it");
                 CurrentBusinessFlow.CurrentActivity.CurrentAgent = null;
                 return;
             }

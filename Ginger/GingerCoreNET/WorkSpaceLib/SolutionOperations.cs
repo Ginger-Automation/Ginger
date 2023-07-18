@@ -136,7 +136,7 @@ namespace Ginger.SolutionGeneral
                 {
                     if (Solution.ApplicationPlatforms.Count != lastSavedSolution.ApplicationPlatforms.Count)
                     {
-                        bldExtraChangedItems.Append("Target Applications, ");
+                        bldExtraChangedItems.Append(GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
                     }
                     else
                     {
@@ -144,7 +144,7 @@ namespace Ginger.SolutionGeneral
                         {
                             if (app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
-                                bldExtraChangedItems.Append("Target Applications, ");
+                                bldExtraChangedItems.Append(GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
                                 break;
                             }
                         }

@@ -158,7 +158,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xAddTargetBtn.IsEnabled = true;
                 xPublishcheckbox.IsEnabled = true;
             }
-
+            xAddTargetApplication.Content= GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + " " + ":";
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
             xNameTxtBox.AddValidationRule(new BusinessFlowNameValidationRule());
             xShowIDUC.Init(mBusinessFlow);
