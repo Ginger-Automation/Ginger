@@ -22,13 +22,13 @@ jobs:
   steps:
   
 # ------------------------------------------------------------------------------------------------------
-# installs version 6.0.301 latest
+# installs version 7.0.203 latest
 # ------------------------------------------------------------------------------------------------------  
   - task: UseDotNet@2
-    displayName: 'Use .NET Core sdk 6.0.301'
+    displayName: 'Use .NET Core sdk 7.0.203'
     inputs:
       packageType: sdk
-      version: 6.0.301
+      version: 7.0.203
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
 
