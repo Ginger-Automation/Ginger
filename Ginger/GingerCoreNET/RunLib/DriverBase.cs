@@ -381,7 +381,7 @@ namespace GingerCore.Drivers
         {
             try
             {
-                if (act.WaitTime.HasValue == true)
+                if (act.WaitTime.HasValue)
                 {
                     return act.WaitTime.GetValueOrDefault();
                 }
