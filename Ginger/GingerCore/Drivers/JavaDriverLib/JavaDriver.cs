@@ -847,32 +847,6 @@ namespace GingerCore.Drivers.JavaDriverLib
             return PL;
         }
 
-        private static int GetMaxTimeout(ActSmartSync act)
-        {
-            int MaxTimeout;
-            try
-            {
-                if (act.WaitTime.HasValue == true)
-                {
-                    MaxTimeout = act.WaitTime.GetValueOrDefault();
-                }
-                else if (string.IsNullOrEmpty(act.GetInputParamValue("Value")))
-                {
-                    MaxTimeout = 5;
-                }
-                else
-                {
-                    MaxTimeout = Convert.ToInt32(act.GetInputParamCalculatedValue("Value"));
-                }
-            }
-            catch (Exception)
-            {
-                MaxTimeout = 5;
-            }
-
-            return MaxTimeout;
-        }
-
         private PayLoad HandleJavaBrowserElementAction(ActBrowserElement actJavaBrowserElement)
         {
             PayLoad resp = null;

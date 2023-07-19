@@ -2589,8 +2589,13 @@ namespace GingerCore.Drivers
 
                         Thread.Sleep(100);
 
-                        try { AE = (UIAuto.AutomationElement)GetActElement(act); }
-                        catch (Exception) { }
+                        try
+                        {
+                            AE = (UIAuto.AutomationElement)GetActElement(act);
+                        }
+                        catch (Exception)
+                        {
+                        }
 
                     } while (!(AE != null && (AE.Current.IsKeyboardFocusable || !AE.Current.IsOffscreen)));
                     break;
@@ -2606,8 +2611,13 @@ namespace GingerCore.Drivers
 
                         Thread.Sleep(100);
 
-                        try { AE = (UIAuto.AutomationElement)GetActElement(act); }
-                        catch (Exception) { }
+                        try
+                        {
+                            AE = (UIAuto.AutomationElement)GetActElement(act);
+                        }
+                        catch (Exception)
+                        {
+                        }
 
                     } while (AE != null && (AE.Current.IsKeyboardFocusable || !AE.Current.IsOffscreen));
                     break;

@@ -562,28 +562,6 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return;
         }
 
-        private static int GetMaxTimeout(ActSmartSync act)
-        {
-            int waitTime = 0;
-            try
-            {
-                if (string.IsNullOrEmpty(act.GetInputParamValue("Value")))
-                {
-                    waitTime = 5;
-                }
-                else
-                {
-                    waitTime = Convert.ToInt32(act.GetInputParamCalculatedValue("Value"));
-                }
-            }
-            catch (Exception)
-            {
-                waitTime = 5;
-            }
-
-            return waitTime;
-        }
-
         private void GenElementHandler(ActGenElement act)
         {
             IHTMLElement e = null;
