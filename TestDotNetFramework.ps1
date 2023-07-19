@@ -34,15 +34,15 @@ Write-Host "-                    Copy Test Artifacts                    -"
 Write-Host "-------------------------------------------------------------"
 New-Item -Path "d:\a\1\a" -Name "TestCompleted.txt" -ItemType "file" -Value "Test Completed Artifacts"
 
-Compress-Archive -Path 'd:\a\1\s\Ginger\GingerUtilsTest\bin\Release\net7.0\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerUtilsTestArtifacts'
-Compress-Archive -Path 'd:\a\1\s\Ginger\GingerCoreCommonTest\bin\Release\net7.0\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerCoreCommonTestArtifacts'
-Compress-Archive -Path 'd:\a\1\s\Ginger\GingerCoreNETUnitTest\bin\Release\net7.0\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerCoreNETUnitTestArtifacts'
-Compress-Archive -Path 'd:\a\1\s\Ginger\GingerConsoleTest\bin\Release\net7.0\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerConsoleTestArtifacts'
-Compress-Archive -Path 'd:\a\1\s\Ginger\GingerAutoPilotTest\bin\Release\net7.0\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerAutoPilotTestArtifacts'
-# Compress-Archive -Path 'd:\a\1\s\Ginger\GingerPluginCoreTest\bin\Release\netcoreapp3.1\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerPluginCoreTestArtifacts'
+Compress-Archive -Path 'd:\a\1\s\Ginger\GingerUtilsTest\bin\Release\net7.0-windows\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerUtilsTestArtifacts'
+Compress-Archive -Path 'd:\a\1\s\Ginger\GingerCoreCommonTest\bin\Release\net7.0-windows\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerCoreCommonTestArtifacts'
+Compress-Archive -Path 'd:\a\1\s\Ginger\GingerCoreNETUnitTest\bin\Release\net7.0-windows\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerCoreNETUnitTestArtifacts'
+Compress-Archive -Path 'd:\a\1\s\Ginger\GingerConsoleTest\bin\Release\net7.0-windows\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerConsoleTestArtifacts'
+Compress-Archive -Path 'd:\a\1\s\Ginger\GingerAutoPilotTest\bin\Release\net7.0-windows\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerAutoPilotTestArtifacts'
+# Compress-Archive -Path 'd:\a\1\s\Ginger\GingerPluginCoreTest\bin\Release\net7.0-windows\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerPluginCoreTestArtifacts'
       
-# Compress-Archive -Path 'd:\a\1\s\Ginger\GingerCoreTest\bin\Release\netcoreapp3.1\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerCoreTestTestArtifacts'
-# Compress-Archive -Path 'd:\a\1\s\Ginger\GingerTest\bin\Release\netcoreapp3.1\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerTestArtifacts'
+# Compress-Archive -Path 'd:\a\1\s\Ginger\GingerCoreTest\bin\Release\net7.0-windows\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerCoreTestTestArtifacts'
+# Compress-Archive -Path 'd:\a\1\s\Ginger\GingerTest\bin\Release\net7.0-windows\TestArtifacts' -DestinationPath 'D:\a\1\a\GingerTestArtifacts'
 
 Write-Host "-------------------------------------------------------------"
 Write-Host "-                         Artifacts List                    -"
