@@ -520,6 +520,9 @@ namespace GingerCore.Drivers.InternalBrowserLib
             st.Start();
 
             IHTMLElement e;
+            const string strConstDisplayed = "Displayed";
+            const string strConstEnabled = "Enabled";
+
             switch (act.SmartSyncAction)
             {
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
@@ -535,7 +538,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
                         e = mFrmBrowser.TryGetActElementByLocator(act);                        
 
-                    } while (!(e != null && ((bool)e.getAttribute("Displayed") == true || (bool)e.getAttribute("Enabled") == true)));
+                    } while (!(e != null && ((bool)e.getAttribute(strConstDisplayed) == true || (bool)e.getAttribute(strConstEnabled) == true)));
                     break;
 
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
@@ -551,7 +554,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
                         e = mFrmBrowser.TryGetActElementByLocator(act);                        
 
-                    } while (e != null && (bool)e.getAttribute("Displayed") != true);
+                    } while (e != null && (bool)e.getAttribute(strConstDisplayed) != true);
                     break;
             }
 
