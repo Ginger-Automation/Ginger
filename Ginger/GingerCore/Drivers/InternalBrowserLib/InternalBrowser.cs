@@ -554,7 +554,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
                         e = mFrmBrowser.TryGetActElementByLocator(act);                        
 
-                    } while (e != null && (bool)e.getAttribute(strConstDisplayed) != true);
+                    } while (e != null && (!(bool)e.getAttribute(strConstDisplayed)));
                     break;
             }
 
