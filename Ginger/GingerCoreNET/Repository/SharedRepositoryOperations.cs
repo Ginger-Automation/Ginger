@@ -522,11 +522,13 @@ namespace Ginger.Repository
             Activity sharedActivity = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(LinkedActivity.ParentGuid);
             if (sharedActivity != null)
             {
+                var sharedActFullPath = sharedActivity.ContainingFolderFullPath;
                 WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(sharedActivity);
                 sharedActivity = (Activity)LinkedActivity.CreateInstance(true);
                 sharedActivity.Guid = LinkedActivity.ParentGuid;
                 sharedActivity.Type = eSharedItemType.Regular;
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(sharedActivity);
+                WorkSpace.Instance.SolutionRepository.MoveItem(sharedActivity, sharedActFullPath);
                 LinkedActivity.EnableEdit = false;
                 await UpdateLinkedInstances(sharedActivity, ExcludeBusinessFlowGuid);
             }
