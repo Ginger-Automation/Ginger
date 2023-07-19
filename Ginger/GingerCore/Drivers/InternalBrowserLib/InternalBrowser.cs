@@ -536,9 +536,9 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
                         Thread.Sleep(100);
 
-                        e = mFrmBrowser.TryGetActElementByLocator(act);                        
+                        e = mFrmBrowser.TryGetActElementByLocator(act);
 
-                    } while (!(e != null && ((bool)e.getAttribute(strConstDisplayed) == true || (bool)e.getAttribute(strConstEnabled) == true)));
+                    } while (!(e != null && ((bool)e.getAttribute(strConstDisplayed) || (bool)e.getAttribute(strConstEnabled))));
                     break;
 
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
