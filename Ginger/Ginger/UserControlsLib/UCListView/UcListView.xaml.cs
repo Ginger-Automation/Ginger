@@ -52,14 +52,14 @@ namespace Ginger.UserControlsLib.UCListView
 
         CollectionView mGroupView;
 
-        public delegate void UcListViewEventHandler(UcListViewEventArgs EventArgs);
+        public delegate void UcListViewEventHandler(object? sender, UcListViewEventArgs EventArgs);
         public event UcListViewEventHandler UcListViewEvent;
         public void OnUcListViewEvent(UcListViewEventArgs.eEventType eventType, Object eventObject = null)
         {
             UcListViewEventHandler handler = UcListViewEvent;
             if (handler != null)
             {
-                handler(new UcListViewEventArgs(eventType, eventObject));
+                handler(this, new UcListViewEventArgs(eventType, eventObject));
             }
         }
 
@@ -434,7 +434,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         public void ScrollToViewCurrentItem()
         {
-            if (mObjList.CurrentItem != null)
+            if (mObjList != null && mObjList.CurrentItem != null)
             {
                 this.Dispatcher.Invoke(() =>
                 {
@@ -1048,7 +1048,7 @@ namespace Ginger.UserControlsLib.UCListView
         }
     }
 
-    public class UcListViewEventArgs
+    public class UcListViewEventArgs : System.EventArgs
     {
         public enum eEventType
         {

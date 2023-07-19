@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -30,7 +30,8 @@ namespace GingerCore
         Activity, Activities,
         ConversionMechanism,
         Variable, Variables,
-        RunSet, RunSets
+        RunSet, RunSets,
+        TargetApplication
     }
 
     public enum eSkinDicsType
@@ -43,7 +44,8 @@ namespace GingerCore
         Default,
         Testing,
         Gherkin,
-        TDM
+        TDM,
+        MBT
     }
 
     public enum eUserType

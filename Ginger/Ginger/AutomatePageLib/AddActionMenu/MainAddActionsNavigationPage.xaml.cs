@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.AddActionMenu;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Windows;
@@ -337,7 +338,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             this.Dispatcher.Invoke(() =>
             {
-                xSelectedItemFrame.Content = navigationPage;
+                xSelectedItemFrame.ClearAndSetContent(navigationPage);
 
                 mNavPanelPage = navigationPage;
 

@@ -167,9 +167,14 @@ namespace Ginger.Run
 
         Context mContext = null;
 
-        public RunnerPage(GingerExecutionEngine runner, Context context, bool Viewmode = false)
+        public RunnerPage()
         {
             InitializeComponent();
+        }
+
+        public void Init(GingerExecutionEngine runner, Context context, bool Viewmode = false)
+        {
+            Clear();
             mExecutorEngine = runner;
             mContext = context;
             ViewMode1 = Viewmode;
@@ -198,6 +203,42 @@ namespace Ginger.Run
                 xExecutionOperationsPnl.Visibility = Visibility.Collapsed;
                 xOperationsPnl.Visibility = Visibility.Collapsed;
             }
+        }
+
+        public void Clear()
+        {
+            BindingOperations.ClearBinding(xBusinessflowsTotalCount, Label.ContentProperty);
+            BindingOperations.ClearBinding(xStatus, StatusItem.StatusProperty);
+            BindingOperations.ClearBinding(xStatusLabel, ImageMakerControl.ImageTypeProperty);
+            BindingOperations.ClearBinding(xRunnerActive, ucButton.ButtonImageTypeProperty);
+            if (ViewMode1)
+            {
+                pageGrid.IsEnabled = false;
+            }
+
+            if (mDispatcherTimer != null)
+            {
+                mDispatcherTimer.Stop();
+                mDispatcherTimer.Tick -= dispatcherTimerElapsedTick;
+                mDispatcherTimer = null;
+            }
+
+            if (mRunnerPageListener != null)
+            {
+                mExecutorEngine.RunListeners.Remove(mRunnerPageListener);
+                mRunnerPageListener.UpdateStat = null;
+                mRunnerPageListener = null;
+            }
+
+            if (WorkSpace.Instance.RunningInExecutionMode)
+            {
+                xExecutionOperationsPnl.Visibility = Visibility.Collapsed;
+                xOperationsPnl.Visibility = Visibility.Collapsed;
+            }
+
+            mExecutorEngine = null;
+            mContext = null;
+            ViewMode1 = false;
         }
 
         private void HandleUpdateStat(object sender, EventArgs e)

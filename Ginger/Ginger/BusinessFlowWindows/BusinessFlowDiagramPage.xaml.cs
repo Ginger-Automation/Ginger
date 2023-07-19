@@ -20,6 +20,7 @@ using Ginger.UserControlsLib.VisualFlow;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.FlowControlLib;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,7 +98,7 @@ namespace Ginger.BusinessFlowLib
 
             AddFlowControls();
 
-            MainFrame.Content = mFlowDiagram;
+            MainFrame.ClearAndSetContent(mFlowDiagram);
         }
 
         void AddFlowControls()

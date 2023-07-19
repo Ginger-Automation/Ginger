@@ -105,6 +105,10 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                 }
             }
+            else if (e.PropertyName == nameof(Activity.Active) || e.PropertyName == nameof(Activity.Mandatory))
+            {
+                mBusinessFlow.OnPropertyChanged(nameof(BusinessFlow.Activities));
+            }
         }
 
         private void mBusinessFlowActivities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

@@ -222,13 +222,13 @@ namespace Ginger.Actions
                 try
                 {
                     ScreenShotViewPage screenShotPage = new ScreenShotViewPage(calculateValue, calculateValue, 0.5);
-                    xScreenShotsViewFrame.Content = screenShotPage;
+                    xScreenShotsViewFrame.ClearAndSetContent(screenShotPage);
                 }
                 catch (Exception exc)
                 {
                     actSikuli.PatternPath = string.Empty;
                     Reporter.ToLog(eLogLevel.ERROR, exc.Message, exc);
-                    xScreenShotsViewFrame.Content = null;
+                    xScreenShotsViewFrame.ClearAndSetContent(null);
                 }
             }
             else
@@ -238,7 +238,7 @@ namespace Ginger.Actions
                     Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Valid Image file found. Please enter a valid Image path.");
                 }
                 actSikuli.PatternPath = string.Empty;
-                xScreenShotsViewFrame.Content = null;
+                xScreenShotsViewFrame.ClearAndSetContent(null);
             }
         }
 

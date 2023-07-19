@@ -39,7 +39,7 @@ namespace Ginger.Run.RunSetActions
                 mRunSetActionSendFreeEmail.Email = new Email();
             }
 
-            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(mRunSetActionSendFreeEmail.Email);
+            RunsetActionDeliveryMethodConfigPageFrame.ClearAndSetContent(new RunSetActionDeliveryMethodConfigPage(mRunSetActionSendFreeEmail.Email));
             Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
             MailFromTextBox.Init(context, mRunSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFrom));
             xMailFromDisplayNameTextBox.Init(context, mRunSetActionSendFreeEmail, nameof(RunSetActionSendFreeEmail.MailFromDisplayName));

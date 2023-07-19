@@ -22,6 +22,7 @@ using Ginger.Actions.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.GeneralLib;
 using System;
 using System.Drawing;
 using System.IO;
@@ -192,18 +193,18 @@ namespace Ginger.Actions.VisualTesting
             if (mAct.CompareResult is BitmapImage)
             {
                 ScreenShotViewPage p = new ScreenShotViewPage("Compare Result", (BitmapImage)mAct.CompareResult);
-                xDiffrenceImageFrame.Content = p;
+                xDiffrenceImageFrame.ClearAndSetContent(p);
                 return;
             }
 
             if (mAct.CompareResult is Bitmap)
             {
                 ScreenShotViewPage p = new ScreenShotViewPage("Compare Result", (Bitmap)mAct.CompareResult);
-                xDiffrenceImageFrame.Content = p;
+                xDiffrenceImageFrame.ClearAndSetContent(p);
                 return;
             }
 
-            xDiffrenceImageFrame.Content = null;
+            xDiffrenceImageFrame.ClearAndSetContent(null);
         }
 
         private void UpdateTargetImage()
@@ -215,7 +216,7 @@ namespace Ginger.Actions.VisualTesting
                     if (mAct.ScreenShots.Count >= 2)
                     {
                         ScreenShotViewPage p = new ScreenShotViewPage("Target Image", mAct.ScreenShots[1]); // TODO: get it from act as target image
-                        TargetImageFrame.Content = p;
+                        TargetImageFrame.ClearAndSetContent(p);
                     }
                 }
                 else
@@ -225,7 +226,7 @@ namespace Ginger.Actions.VisualTesting
                     if (File.Exists(filename))
                     {
                         ScreenShotViewPage p = new ScreenShotViewPage("Target Image", mAct.TargetFileName);
-                        TargetImageFrame.Content = p;
+                        TargetImageFrame.ClearAndSetContent(p);
                     }
                 }
             });
@@ -246,7 +247,7 @@ namespace Ginger.Actions.VisualTesting
             }
             // send with null bitmap will show image not found
             ScreenShotViewPage p = new ScreenShotViewPage("Baseline Image", b);
-            BaseImageFrame.Content = p;
+            BaseImageFrame.ClearAndSetContent(p);
         }
 
         private void VisualTestingEngineComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -263,7 +264,7 @@ namespace Ginger.Actions.VisualTesting
                         mApplitoolsComparePage.visualCompareAnalyzerIntegration.VisualTestingEvent += VisualCompareAnalyzerIntegration_VisualTestingEvent;
                     }
                     mApplitoolsComparePage.InitLayout();
-                    EngineConfigFrame.Content = mApplitoolsComparePage;
+                    EngineConfigFrame.ClearAndSetContent(mApplitoolsComparePage);
                     xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
                     break;
 
@@ -274,7 +275,7 @@ namespace Ginger.Actions.VisualTesting
                         mBitmapPixelsComaprePage.visualCompareAnalyzerIntegration.VisualTestingEvent += VisualCompareAnalyzerIntegration_VisualTestingEvent;
                     }
                     mBitmapPixelsComaprePage.InitLayout();
-                    EngineConfigFrame.Content = mBitmapPixelsComaprePage;
+                    EngineConfigFrame.ClearAndSetContent(mBitmapPixelsComaprePage);
                     xFullPageScreenshotCheckbox.Visibility = Visibility.Visible;
                     break;
 
@@ -285,7 +286,7 @@ namespace Ginger.Actions.VisualTesting
                         mUIElementsBitmapComparisonPage.visualCompareAnalyzerIntegration.VisualTestingEvent += VisualCompareAnalyzerIntegration_VisualTestingEvent;
                     }
                     mUIElementsBitmapComparisonPage.InitLayout();
-                    EngineConfigFrame.Content = mUIElementsBitmapComparisonPage;
+                    EngineConfigFrame.ClearAndSetContent(mUIElementsBitmapComparisonPage);
                     xFullPageScreenshotCheckbox.Visibility = Visibility.Visible;
                     break;
                 case ActVisualTesting.eVisualTestingAnalyzer.VRT:
@@ -295,7 +296,7 @@ namespace Ginger.Actions.VisualTesting
                         mVRtComparisonPage.visualCompareAnalyzerIntegration.VisualTestingEvent += VisualCompareAnalyzerIntegration_VisualTestingEvent;
                     }
                     mVRtComparisonPage.InitLayout();
-                    EngineConfigFrame.Content = mVRtComparisonPage;
+                    EngineConfigFrame.ClearAndSetContent(mVRtComparisonPage);
                     xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
 
                     if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl) || string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.ApiKey) || string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.Project))
@@ -304,7 +305,7 @@ namespace Ginger.Actions.VisualTesting
                     }
                     break;
                 default:
-                    EngineConfigFrame.Content = null;
+                    EngineConfigFrame.ClearAndSetContent(null);
                     xSetApplicationScreenSize.Visibility = Visibility.Collapsed;
                     xCompareOrCreateBaselinesRadioButtons.Visibility = Visibility.Collapsed;
                     xBaselineAndTargetImages.Visibility = Visibility.Collapsed;
@@ -390,7 +391,7 @@ namespace Ginger.Actions.VisualTesting
             TargetScreenShotLabel.Visibility = Visibility.Visible;
             TargetImageFileNameUCVE.Visibility = Visibility.Collapsed;
             mAct.TargetFileName = null; // must clear, since Isscreen shot depends on it
-            TargetImageFrame.Content = null;
+            TargetImageFrame.ClearAndSetContent(null);
         }
 
         private void TargetImageFileRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -403,7 +404,7 @@ namespace Ginger.Actions.VisualTesting
         private void CreateBaseline_Click(object sender, RoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            BaseImageFrame.Content = null;
+            BaseImageFrame.ClearAndSetContent(null);
             string FileName = General.GetFullFilePath(CurrentBaselineImagePathTxtBox.ValueTextBox.Text);
 
             //TODO: add try catch if delete failed
