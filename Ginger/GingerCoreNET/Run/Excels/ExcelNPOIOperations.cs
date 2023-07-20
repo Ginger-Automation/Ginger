@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
-using OctaneStdSDK.Entities.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -39,7 +38,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         DataTable mFilteredDataTable { get; set; }
         IWorkbook mWorkbook { get; set; }
         ISheet mSheet { get; set; }
-
+        private Regex regex;
         /// <summary>
         /// Reading The Rows and Columns of the Excel Sheet
         /// </summary>
@@ -66,8 +65,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
             catch (Exception ex)
             {
-                string exceptionMessage = $"Can't convert sheet to data, {ex.Message}";
-                Reporter.ToLog(eLogLevel.WARN, exceptionMessage);
+                Reporter.ToLog(eLogLevel.WARN, $"Can't convert sheet to data, {ex.Message}");
                 throw;
             }
         }
@@ -153,13 +151,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 if (mWorkbook == null)
                 {
                     Reporter.ToLog(eLogLevel.WARN, "File name not Exists.");
-                    throw new ArgumentException("File DOES NOT Exist or is currently being used by some other application, Please verify if the File Path is valid");
+                    throw new ArgumentException("File does not exist or is currently being used by some other application, Please verify if the File Path is valid");
                 }
                 mSheet = mWorkbook.GetSheet(sheetName);
                 if (mSheet == null)
                 {
-                    Reporter.ToLog(eLogLevel.WARN, "Sheet name not Exists.");
-                    throw new ArgumentException("Sheet name DOES NOT Exist , Please verify if the entered Sheet Name is valid");
+                    Reporter.ToLog(eLogLevel.WARN, "Sheet name not exists.");
+                    throw new ArgumentException("Sheet name does not exist , Please verify if the entered Sheet Name is valid");
                 }
             }
         }
@@ -222,7 +220,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 {
                     return ReadData(fileName, sheetName, filter, selectedRows, headerRowNumber);
                 }
-                Regex regex = new Regex(@"(^[A-Z]+\d+$)|(^[A-Z]+\d+:[A-Z]+\d+$)");
+                regex = new Regex(@"(^[A-Z]+\d+$)|(^[A-Z]+\d+:[A-Z]+\d+$)");
                 Match match = regex.Match(filter);
                 if (!match.Success)
                 {

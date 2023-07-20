@@ -392,7 +392,7 @@ namespace GingerCore.Actions
             {
                 if(ex.Message!=null && ex.Message.StartsWith("Cannot find column"))
                 {
-                    Error = ex.Message + " " + $"at Row Number {HeaderRowNum}";
+                    Error = $"{ex.Message} at Row Number {HeaderRowNum}";
                 }
                 else
                 {
