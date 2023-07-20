@@ -272,7 +272,7 @@ namespace Ginger.Reports
             {
                 DataTable dt = new DataTable();
                 dt.Columns.Add("TargetApplication");
-                dt.Columns[GingerDicser.GetTermResValue(eTermResKey.TargetApplication)].Caption = GingerDicser.GetTermResValue(eTermResKey.TargetApplication);
+                dt.Columns["TargetApplication"].Caption = GingerDicser.GetTermResValue(eTermResKey.TargetApplication);
                 dt.Columns.Add("Agents");
                 dt.Columns["Agents"].Caption = "Agents Mapping";
 
