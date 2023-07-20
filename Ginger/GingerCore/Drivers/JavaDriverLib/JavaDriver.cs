@@ -798,74 +798,54 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private PayLoad SmartSyncHandler(ActSmartSync act)
         {
-            PayLoad PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
-            String sResponse = PL.GetValueString();
+            int MaxTimeout = GetMaxTimeout(act);
+            PayLoad PL = null;
+            string sResponse;
+
             Stopwatch st = new Stopwatch();
-            int MaxTimeout = 0;
-            try
-            {
-                if (act.WaitTime.HasValue == true)
-                {
-                    MaxTimeout = act.WaitTime.GetValueOrDefault();
-                }
-                else if (string.IsNullOrEmpty(act.GetInputParamValue("Value")))
-                {
-                    MaxTimeout = 5;
-                }
-                else
-                {
-                    MaxTimeout = Convert.ToInt32(act.GetInputParamCalculatedValue("Value"));
-                }
-            }
-            catch (Exception)
-            {
-                MaxTimeout = 5;
-            }
+            st.Reset();
+            st.Start();
+
             switch (act.SmartSyncAction)
             {
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
-                    st.Reset();
-                    st.Start();
-                    while (!(sResponse.Contains("True")))
+                    do
                     {
-                        Thread.Sleep(200);
-                        PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
-                        sResponse = PL.GetValueString();
-
                         if (st.ElapsedMilliseconds > MaxTimeout * 1000)
                         {
                             act.Error = "Smart Sync of WaitUntilDisplay is timeout";
                             break;
                         }
-                    }
+
+                        Thread.Sleep(200);
+
+                        PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
+                        sResponse = PL.GetValueString();
+
+                    } while (sResponse == null || !sResponse.Contains("True"));
                     break;
 
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
-                    st.Reset();
-                    if (sResponse == null)
+                    do
                     {
-                        return PL;
-                    }
-                    else
-                    {
-                        st.Start();
-                        while (!(sResponse.Contains("False")))
+                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
                         {
-                            Thread.Sleep(200);
-                            PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
-                            sResponse = PL.GetValueString();
-                            if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                            {
-                                act.Error = "Smart Sync of WaitUntilDisapear is timeout";
-                                break;
-                            }
+                            act.Error = "Smart Sync of WaitUntilDisapear is timeout";
+                            break;
                         }
-                    }
+
+                        Thread.Sleep(200);
+
+                        PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
+                        sResponse = PL.GetValueString();
+
+                    } while (sResponse != null && !sResponse.Contains("False"));
                     break;
             }
+
+            st.Stop();
             return PL;
         }
-
 
         private PayLoad HandleJavaBrowserElementAction(ActBrowserElement actJavaBrowserElement)
         {
