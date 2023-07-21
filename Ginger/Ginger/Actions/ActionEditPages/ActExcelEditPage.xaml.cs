@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -41,6 +42,7 @@ namespace Ginger.Actions
         public ActionEditPage actp;
         private ActExcel mAct;
         private IExcelOperations mExcelOperations = new ExcelNPOIOperations();
+        private List<string>? SheetsList;
         public ActExcelEditPage(ActExcel act)
         {
             InitializeComponent();
@@ -70,15 +72,11 @@ namespace Ginger.Actions
                 this.ColMappingRulesSection.Visibility = Visibility.Visible;
             }
 
+            EnableSheetNameComboBox();
             // populate Sheet dropdown
             if (!string.IsNullOrEmpty(mAct.ExcelFileName))
             {
                 FillSheetCombo();
-                if (mAct.SheetName != null)
-                {
-                    SheetNamComboBox.Items.Add(mAct.SheetName);
-                    SheetNamComboBox.SelectedValue = mAct.SheetName;
-                }
             }
         }
 
@@ -91,21 +89,51 @@ namespace Ginger.Actions
             }) is string fileName)
             {
                 ExcelFileNameTextBox.ValueTextBox.Text = fileName;
+                SheetsList = null;
+                // Empty the list in the UI before Creating a new list
+                GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
                 FillSheetCombo();
             }
         }
 
-        private void FillSheetCombo()
+        private async void FillSheetCombo()
         {
             ContextProcessInputValueForDriver();
-            //Move code to ExcelFunction no in Act...
-            List<string> SheetsList = mExcelOperations.GetSheets(mAct.CalculatedFileName);
-            if (SheetsList == null || SheetsList.Count == 0)
+            if (SheetsList == null || !SheetsList.Any())
             {
-                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
-                return;
+                DisableSheetNameComboBox();
+                xLoader.Visibility = Visibility.Visible;
+                await Task.Run(() =>
+                {
+                    SheetsList = mExcelOperations.GetSheets(mAct.CalculatedFileName);
+
+                    if (SheetsList == null || SheetsList.Count == 0)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                        });
+
+                        return;
+                    }
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
+                        EnableSheetNameComboBox();
+                        xLoader.Visibility = Visibility.Collapsed;
+                    });
+                });
             }
-            GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
+        }
+        private void DisableSheetNameComboBox()
+        {
+            SheetNamComboBox.DropDownOpened -= SheetNamComboBox_DropDownOpened;
+        }
+
+        private void EnableSheetNameComboBox()
+        {
+            SheetNamComboBox.DropDownOpened += SheetNamComboBox_DropDownOpened;
         }
 
         private void ContextProcessInputValueForDriver()
@@ -117,20 +145,31 @@ namespace Ginger.Actions
             }
         }
 
-        private void ViewDataButton_Click(object sender, RoutedEventArgs e)
+        private async void ViewDataButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 ContextProcessInputValueForDriver();
 
-                DataTable excelSheetData = GetExcelSheetData(true);
-                if (excelSheetData == null)
+                await Task.Run(() =>
                 {
-                    Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
-                    return;
-                }
+                    DataTable excelSheetData = GetExcelSheetData(true);
+                    if (excelSheetData == null)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                        });
+                        return;
+                    }
 
-                SetExcelDataGridItemsSource(excelSheetData);
+                    Dispatcher.Invoke(() =>
+                    {
+                        SetExcelDataGridItemsSource(excelSheetData);
+
+                    });
+                });
+
             }
             catch (Exception ex)
             {

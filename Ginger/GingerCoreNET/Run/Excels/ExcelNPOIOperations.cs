@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
-using OctaneStdSDK.Entities.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Data;
