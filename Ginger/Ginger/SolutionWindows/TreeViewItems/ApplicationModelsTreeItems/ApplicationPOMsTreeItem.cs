@@ -139,7 +139,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Please Add at-least one" + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "that supports POM to continue adding Page Object Models");
+                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, $"Please Add at-least one {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} that supports POM to continue adding Page Object Models");
             }
         }
 

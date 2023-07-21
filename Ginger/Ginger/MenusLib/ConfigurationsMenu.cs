@@ -67,7 +67,7 @@ namespace Ginger.ConfigurationsLib
         {
             TwoLevelMenu twoLevelMenu = new TwoLevelMenu();
 
-            TopMenuItem targetApplicationsMenu = new TopMenuItem(eImageType.Application, GingerDicser.GetTermResValue(eTermResKey.TargetApplication), ConsoleKey.T, GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "AID", "Name & Platforms of the Applications which been tested in current Solution");
+            TopMenuItem targetApplicationsMenu = new TopMenuItem(eImageType.Application, GingerDicser.GetTermResValue(eTermResKey.TargetApplication), ConsoleKey.T, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} AID", "Name & Platforms of the Applications which been tested in current Solution");
             targetApplicationsMenu.Add(eImageType.Application, "", GetTargetApplicationsPage, ConsoleKey.T, "", "AID");
             twoLevelMenu.Add(targetApplicationsMenu);
 

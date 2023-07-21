@@ -179,7 +179,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Please Add at-least one Web Service platform based" + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "to continue adding API Models");
+                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, $"Please Add at-least one Web Service platform based {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} to continue adding API Models");
             }
         }
 

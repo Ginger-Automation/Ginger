@@ -138,7 +138,7 @@ namespace Ginger.Actions.ActionConversion
                 StyleType = GridColView.eGridColStyleType.ComboBox,
                 CellValuesList = TargetAppList,
                 WidthWeight = 15,
-                Header = "Map to - " + GingerDicser.GetTermResValue(eTermResKey.TargetApplication)
+                Header = $"Map to - {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}"
             });
             xTargetApplication.SetAllColumnsDefaultView(view);
             xTargetApplication.InitViewItems();

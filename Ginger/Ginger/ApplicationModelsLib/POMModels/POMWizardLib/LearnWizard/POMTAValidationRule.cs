@@ -31,12 +31,12 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         {
             if (!WorkSpace.Instance.Solution.ApplicationPlatforms.Any(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)))
             {
-                return new ValidationResult(false, "POM supported Target Application platform is required");
+                return new ValidationResult(false, $"POM supported {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} platform is required");
             }
 
             if (value == null || string.IsNullOrEmpty(value.ToString()))
             {
-                return new ValidationResult(false, GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "can not be empty");
+                return new ValidationResult(false, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} can not be empty");
             }
 
             return new ValidationResult(true, null);

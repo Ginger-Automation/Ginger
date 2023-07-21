@@ -41,7 +41,7 @@ namespace GingerWPF.SolutionLib
 
             AddPage(Name: "Plugin Packages", Title: "Plugin Packages", SubTitle: "Select Plugin Packages", Page: new NewSolutionPluginsWizardPage(mSolution));
 
-            AddPage(Name: GingerDicser.GetTermResValue(eTermResKey.TargetApplication), Title: GingerDicser.GetTermResValue(eTermResKey.TargetApplication), SubTitle: "Select" + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "and Platform", Page: new NewSolutionTargetApplicationWizardPage(mSolution));
+            AddPage(Name: GingerDicser.GetTermResValue(eTermResKey.TargetApplication), Title: GingerDicser.GetTermResValue(eTermResKey.TargetApplication), SubTitle: $"Select {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} and Platform", Page: new NewSolutionTargetApplicationWizardPage(mSolution));
 
             AddPage(Name: "Agent", Title: "Create Agent", SubTitle: "Create Agent", Page: new NewSolutionAgentsWizardPage(mSolution));
 

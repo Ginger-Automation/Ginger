@@ -997,7 +997,7 @@ namespace Amdocs.Ginger.CoreNET.GlobalSolutionLib
             }
             else if (itemToAdd.ItemType == GlobalSolution.eImportItemType.TargetApplication)
             {
-                itemToAdd.Comments = GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + " will be added to your solution.";
+                itemToAdd.Comments = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} will be added to your solution.";
             }
             else if (itemToAdd.ItemType == GlobalSolution.eImportItemType.ExtrnalIntegrationConfigurations)
             {

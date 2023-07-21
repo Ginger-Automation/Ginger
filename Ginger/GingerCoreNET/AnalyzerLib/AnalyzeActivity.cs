@@ -75,9 +75,9 @@ namespace Ginger.AnalyzerLib
                     string BFApps = string.Join(";", BusinessFlow.TargetApplications.Select(p => p.Name).ToList());
 
                     AnalyzeActivity AA = CreateNewIssue(BusinessFlow, Activity);
-                    AA.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + " not found in " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
-                    AA.Details = GingerDicser.GetTermResValue(eTermResKey.Activity) + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "= '" + Activity.TargetApplication + "' while " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " target app(s) is: '" + BFApps + "'";
-                    AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " and add set correct" + GingerDicser.GetTermResValue(eTermResKey.TargetApplication);
+                    AA.Description = $"{GingerDicser.GetTermResValue(eTermResKey.Activity)} {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}  not found in  {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}";
+                    AA.Details = GingerDicser.GetTermResValue(eTermResKey.Activity) + " " + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "= '" + Activity.TargetApplication + "' while " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " target app(s) is: '" + BFApps + "'";
+                    AA.HowToFix = $"Open the {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}  {GingerDicser.GetTermResValue(eTermResKey.Activity)}  and add set correct {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}";
                     AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;    // yes if we have one target app, or just set the first 
                     AA.IssueType = eType.Error;
                     AA.Impact = GingerDicser.GetTermResValue(eTermResKey.Activity) + " will not be executed and will fail";
