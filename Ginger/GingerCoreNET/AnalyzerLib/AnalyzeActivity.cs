@@ -38,8 +38,8 @@ namespace Ginger.AnalyzerLib
             if (string.IsNullOrEmpty(Activity.TargetApplication))
             {
                 AnalyzeActivity AA = CreateNewIssue(BusinessFlow, Activity);
-                AA.Description = GingerDicser.GetTermResValue(eTermResKey.Activity) + " is missing " + GingerDicser.GetTermResValue(eTermResKey.TargetApplication);
-                AA.Details = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " doesn't have" + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + "defined";
+                AA.Description = $"{GingerDicser.GetTermResValue(eTermResKey.Activity)} is missing {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}";
+                AA.Details = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} doesn't have {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} defined";
                 AA.HowToFix = "Open the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: "s") + " in solution tab and add target apps";
                 AA.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;   //  take it from solution 
                 AA.FixItHandler = FixTargetApplicationHandler;
