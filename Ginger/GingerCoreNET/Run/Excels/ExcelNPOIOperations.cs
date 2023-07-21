@@ -38,7 +38,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         DataTable mFilteredDataTable { get; set; }
         IWorkbook mWorkbook { get; set; }
         ISheet mSheet { get; set; }
-        private Regex regex;
+        private Regex regex = new Regex(@"(^[A-Z]+\d+$)|(^[A-Z]+\d+:[A-Z]+\d+$)");
         /// <summary>
         /// Reading The Rows and Columns of the Excel Sheet
         /// </summary>
@@ -220,7 +220,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 {
                     return ReadData(fileName, sheetName, filter, selectedRows, headerRowNumber);
                 }
-                regex = new Regex(@"(^[A-Z]+\d+$)|(^[A-Z]+\d+:[A-Z]+\d+$)");
                 Match match = regex.Match(filter);
                 if (!match.Success)
                 {
