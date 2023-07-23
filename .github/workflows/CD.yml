@@ -31,11 +31,8 @@ jobs:
           - name: create version environment variable - alpha
             if: ${{ github.event.inputs.revision != 0 }}
             run: |
-                beta_help_variable=${{ github.event.inputs.build }}
-                beta_help_variable=$((beta_help_variable - 1))
-                echo $beta_help_variable
-                echo "gingertag=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Alpha$beta_help_variable.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
-                echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.$beta_help_variable.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
+                echo "gingertag=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Alpha$github.event.inputs.build.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
+                echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.$github.event.inputs.build.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
           
           - name: create version environment variable - BETA
             if: ${{ (github.event.inputs.build != 0) && (github.event.inputs.revision == 0 )}} 
