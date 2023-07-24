@@ -1022,9 +1022,9 @@ namespace Ginger.Run
             }
         }
 
-        private void GingerRunnerHighlight(RunnerPage GRP)
+        private void GingerRunnerHighlight(RunnerPage GRP, bool forceReload = false)
         {
-            if (mCurrentSelectedRunner != null && GRP != null && mCurrentSelectedRunner.Equals(GRP))
+            if (mCurrentSelectedRunner != null && GRP != null && mCurrentSelectedRunner.Equals(GRP) && !forceReload)
             {
                 return;//the Runner is already selected
             }
@@ -1367,7 +1367,7 @@ namespace Ginger.Run
                 //highlight first Runner
                 if (firstRunnerPage != null)
                 {
-                    GingerRunnerHighlight(firstRunnerPage);
+                    GingerRunnerHighlight(firstRunnerPage, forceReload: true);
                 }
 
                 SetRunnersCombo();
