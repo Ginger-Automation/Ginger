@@ -202,7 +202,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
 
                         if (addInfoExtention)
                         {
-                            solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName + "--> File Version: " + fileVer));
+                            solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName + "--> File Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertBackendApplicationVersionToUIVersion(fileVer)));
                         }
                         else
                         {
