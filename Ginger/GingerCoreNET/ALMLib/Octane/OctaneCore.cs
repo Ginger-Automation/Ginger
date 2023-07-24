@@ -58,6 +58,7 @@ namespace GingerCore.ALM
         public override ObservableList<Activity> GingerActivitiesRepo { get; set; }
         public override ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
         public ProjectArea ProjectArea { get; private set; }
+        private AlmResponseWithData<AlmDomainColl> domainsProjectsData = null;
 
         public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.Octane;
 
@@ -792,21 +793,28 @@ namespace GingerCore.ALM
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
         {
-            AlmResponseWithData<AlmDomainColl> domains = Task.Run(() =>
+            if (domainsProjectsData == null)
             {
-                return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
-            }).Result;
-            return domains.DataResult.FirstOrDefault(f => f.DomainName.Equals(ALMDomainName)).Projects.ToDictionary(project => project.ProjectName, project => project.ProjectName);
+                domainsProjectsData = Task.Run(() =>
+                {
+                    return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
+                }).Result;
+            }
+
+            return domainsProjectsData.DataResult.FirstOrDefault(f => f.DomainName.Equals(ALMDomainName)).Projects.ToDictionary(project => project.ProjectName, project => project.ProjectName);
         }
 
         public override List<string> GetALMDomains()
         {
-            AlmResponseWithData<AlmDomainColl> domains = Task.Run(() =>
+            if (domainsProjectsData == null)
             {
-                return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
-            }).Result;
+                domainsProjectsData = Task.Run(() =>
+                {
+                    return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
+                }).Result;
+            }
 
-            return domains.DataResult.Select(f => f.DomainName).ToList();
+            return domainsProjectsData.DataResult.Select(f => f.DomainName).ToList();
         }
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType = AlmDataContractsStd.Enums.ResourceType.ALL)

@@ -814,7 +814,19 @@ namespace Ginger.Actions
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.ExpectedCalculated, Header = "Calculated Expected", WidthWeight = 150, BindingMode = BindingMode.OneWay });
             viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.Status, WidthWeight = 70, MaxWidth = 70, BindingMode = BindingMode.OneWay, PropertyConverter = (new ColumnPropertyConverter(new ActReturnValueStatusConverter(), TextBlock.ForegroundProperty)) });
             GenerateStoreToVarsList();
-            viewCols.Add(new GridColView() { Field = ActReturnValue.Fields.StoreToValue, Header = "Store To ", WidthWeight = 300, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCDataMapping.GetTemplate(ActReturnValue.Fields.StoreTo, ActReturnValue.Fields.StoreToValue, variabelsSourceList: mStoreToVarsList) });
+            viewCols.Add(new GridColView()
+            {
+                Field = ActReturnValue.Fields.StoreToValue,
+                Header = "Store To ",
+                WidthWeight = 300,
+                StyleType = GridColView.eGridColStyleType.Template,
+                CellTemplate = UCDataMapping.GetTemplate(new UCDataMapping.TemplateOptions(
+                    dataTypeProperty: ActReturnValue.Fields.StoreTo,
+                    dataValueProperty: ActReturnValue.Fields.StoreToValue)
+                    {
+                        _VariabelsSourceList = mStoreToVarsList
+                    })
+            });
 
             //Default mode view
             GridViewDef defView = new GridViewDef(eGridView.NonSimulation.ToString());
