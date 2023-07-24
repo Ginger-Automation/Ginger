@@ -337,7 +337,7 @@ namespace Ginger.ALM
         }
 
 
-        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false)
+        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false,Context mContext = null)
         {
             ObservableList<ExternalItemFieldBase> solutionAlmFields = null;
             try
@@ -346,7 +346,7 @@ namespace Ginger.ALM
                 ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
                 if (AutoALMProjectConnect(almConnectionType, false))
                 {
-                    return AlmCore.ExportBusinessFlowsResultToALM(BusinessFlows, ref result, publishToALMConfig, almConnectionType, exectutedFromAutomateTab);
+                    return AlmCore.ExportBusinessFlowsResultToALM(BusinessFlows, ref result, publishToALMConfig, almConnectionType, exectutedFromAutomateTab, mContext);
                 }
                 else
                 {
