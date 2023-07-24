@@ -349,6 +349,15 @@ namespace Ginger.Run
             return BFESs;
         }
 
+        private void CloseAllAgents()
+        {
+            foreach(GingerRunner runner in Runners)
+            {
+                if (runner.Executor != null)
+                    runner.Executor.CloseAgents();
+            }
+        }
+
         internal void CloseAllEnvironments()
         {
             foreach (GingerRunner gr in Runners)
@@ -636,6 +645,7 @@ namespace Ginger.Run
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## Creating {0} Execution Report", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 CreateGingerExecutionReportAutomaticly();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                CloseAllAgents();
                 CloseAllEnvironments();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
