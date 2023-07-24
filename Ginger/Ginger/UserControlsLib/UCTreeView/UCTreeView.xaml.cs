@@ -20,12 +20,14 @@ using Amdocs.Ginger.Repository;
 using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -1134,6 +1136,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             return validationRes;
         }
-    }
 
+        
+    }
 }

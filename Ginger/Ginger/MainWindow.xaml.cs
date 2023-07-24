@@ -28,6 +28,7 @@ using Ginger.ALM;
 using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowWindows;
 using Ginger.ConfigurationsLib;
+using Ginger.ConflictResolve;
 using Ginger.Drivers.DriversWindows;
 using Ginger.Functionalities;
 using Ginger.GeneralLib;
@@ -39,13 +40,17 @@ using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using Ginger.User;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.ALM;
+using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -1068,6 +1073,7 @@ namespace Ginger
 
         private void xSupportOptionsMenuItem_Click(object sender, RoutedEventArgs e)
         {
+            Test();
             if (xSupportOptionsMenuItem.Tag == null)
             {
                 xSupportOptionsMenuItem.Tag = "Expanded";//expanded
@@ -1079,6 +1085,282 @@ namespace Ginger
 
             SetSupportOptionsMenuItems();
         }
+
+        private void Test()
+        {
+            //BusinessFlow bf1 = new()
+            //{
+            //    Name = "BF 1",
+            //    Activities = new()
+            //    {
+            //        new()
+            //        {
+            //            ActivityName = "Activity 1"
+            //        }
+            //    }
+            //};
+            //BusinessFlow bf2 = new()
+            //{
+            //    Guid = bf1.Guid,
+            //    Name = "BF 1 Updated",
+            //    Activities = new()
+            //    {
+            //        new()
+            //        {
+            //            ActivityName = "Activity 1 New"
+            //        }
+            //    }
+            //};
+
+            BusinessFlow bf1 = new()
+            {
+                Name = "BF 1",
+                Activities = new()
+                    {
+                        new()
+                        {
+                            ActivityName = "Activity 1"
+                        },
+                        new()
+                        {
+                            ActivityName = "Activity 2"
+                        },
+                        new()
+                        {
+                            ActivityName = "Activity 3",
+                            Acts = new()
+                            {
+                                new ActDummy()
+                                {
+                                    ItemName = "Act 1"
+                                },
+                                new ActDummy()
+                                {
+                                    ItemName = "Act 2",
+                                    FlowControls = new()
+                                    {
+                                        new()
+                                        {
+                                            ItemName = "FC 1",
+                                            Condition = "Passed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+            };
+
+            BusinessFlow bf2 = new()
+            {
+                Guid = bf1.Guid,
+                Name = "BF 1 Updated",
+                Activities = new()
+                    {
+                        new()
+                        {
+                            ActivityName = "Activity 1 New"
+                        },
+                        new()
+                        {
+                            Guid = bf1.Activities[1].Guid,
+                            ActivityName = "Activity 2 Updated"
+                        },
+                        new()
+                        {
+                            Guid = bf1.Activities[2].Guid,
+                            ActivityName = bf1.Activities[2].ActivityName,
+                            Acts = new()
+                            {
+                                new ActDummy()
+                                {
+                                    ItemName = "Act 1 New"
+                                },
+                                new ActDummy()
+                                {
+                                    Guid = bf1.Activities[2].Acts[1].Guid,
+                                    ItemName = "Act 2 Updated",
+                                    FlowControls = new()
+                                    {
+                                        new()
+                                        {
+                                            Guid = bf1.Activities[2].Acts[1].FlowControls[0].Guid,
+                                            ItemName = "FC 1 Updated",
+                                            Condition = "Failed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+            };
+
+            WizardWindow.ShowWizard(new ResolveMergeConflictWizard(bf1, bf2));
+        }
+
+        //BusinessFlow bf1 = new()
+        //{
+        //    Name = "BF 1",
+        //    Activities = new()
+        //        {
+        //            new()
+        //            {
+        //                ActivityName = "Activity 1"
+        //            },
+        //            new()
+        //            {
+        //                ActivityName = "Activity 2"
+        //            },
+        //            new()
+        //            {
+        //                ActivityName = "Activity 3",
+        //                Acts = new()
+        //                {
+        //                    new ActDummy()
+        //                    {
+        //                        ItemName = "Act 1"
+        //                    },
+        //                    new ActDummy()
+        //                    {
+        //                        ItemName = "Act 2",
+        //                        FlowControls = new()
+        //                        {
+        //                            new()
+        //                            {
+        //                                ItemName = "FC 1",
+        //                                Condition = "Passed"
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //};
+
+        //BusinessFlow bf2 = new()
+        //{
+        //    Guid = bf1.Guid,
+        //    Name = "BF 1 Updated",
+        //    Activities = new()
+        //        {
+        //            new()
+        //            {
+        //                ActivityName = "Activity 1 New"
+        //            },
+        //            new()
+        //            {
+        //                Guid = bf1.Activities[1].Guid,
+        //                ActivityName = "Activity 2 Updated"
+        //            },
+        //            new()
+        //            {
+        //                Guid = bf1.Activities[2].Guid,
+        //                ActivityName = bf1.Activities[2].ActivityName,
+        //                Acts = new()
+        //                {
+        //                    new ActDummy()
+        //                    {
+        //                        ItemName = "Act 1 New"
+        //                    },
+        //                    new ActDummy()
+        //                    {
+        //                        Guid = bf1.Activities[2].Acts[1].Guid,
+        //                        ItemName = "Act 2 Updated",
+        //                        FlowControls = new()
+        //                        {
+        //                            new()
+        //                            {
+        //                                Guid = bf1.Activities[2].Acts[1].FlowControls[0].Guid,
+        //                                ItemName = "FC 1 Updated",
+        //                                Condition = "Failed"
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //};
+
+        //BusinessFlow bf1 = new()
+        //{
+        //    Name = "MyBusinessFlow",
+        //    Activities = new()
+        //    {
+        //        new GingerCore.Activity()
+        //        {
+        //            ActivityName = "MyActivity 1"
+        //        },
+        //        new GingerCore.Activity()
+        //        {
+        //            ActivityName = "MyActivity 2",
+        //            Acts = new()
+        //            {
+        //                new ActDummy()
+        //                {
+        //                    ItemName = "MyAction 1",
+        //                    FlowControls = new()
+        //                    {
+        //                        new FlowControl()
+        //                        {
+        //                            Condition = "Passed",
+        //                            Value = "MyAction 2"
+        //                        }
+        //                    }
+        //                },
+        //                new ActDummy()
+        //                {
+        //                    ItemName = "MyAction 2"
+        //                },
+        //                new ActDummy()
+        //                {
+        //                    ItemName = "MyAction 3"
+        //                }
+        //            }
+        //        }
+        //    }
+        //};
+
+        //BusinessFlow bf2 = new()
+        //{
+        //    Guid = bf1.Guid,
+        //    Name = "MyBusinessFlow New",
+        //    Activities = new()
+        //    {
+        //        new GingerCore.Activity()
+        //        {
+        //            ActivityName = "MyActivity 1"
+        //        },
+        //        new GingerCore.Activity()
+        //        {
+        //            Guid = bf1.Activities[1].Guid,
+        //            ActivityName = "MyActivity 2 New",
+        //            Acts = new()
+        //            {
+        //                new ActDummy()
+        //                {
+        //                    Guid = bf1.Activities[1].Acts[0].Guid,
+        //                    FlowControls = new()
+        //                    {
+        //                        new FlowControl()
+        //                        {
+        //                            Guid = bf1.Activities[1].Acts[0].FlowControls[0].Guid,
+        //                            Condition = "Passed",
+        //                            Value = "MyAction 3"
+        //                        }
+        //                    }
+        //                },
+        //                new ActDummy()
+        //                {
+        //                    Guid = bf1.Activities[1].Acts[1].Guid
+        //                },
+        //                new ActDummy()
+        //                {
+        //                    Guid = bf1.Activities[1].Acts[2].Guid
+        //                }
+        //            }
+        //        }
+        //    }
+        //};
 
         private void SetHelpOptionsMenuItems()
         {
