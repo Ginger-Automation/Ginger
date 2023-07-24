@@ -156,7 +156,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                 return;
             }
 
-            VersionAndNewsInfo = CheckLatestVersionAndNews(ApplicationInfo.ApplicationVersion).Result;
+            VersionAndNewsInfo = CheckLatestVersionAndNews(ApplicationInfo.ApplicationUIversion).Result;
             if (eventHandler != null)
             {
                 eventHandler(null, new TelemetryEventArgs() { name = "CheckVersionAndNews" });

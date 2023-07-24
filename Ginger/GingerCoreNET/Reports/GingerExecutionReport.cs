@@ -129,7 +129,7 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{RunSetGeneralDetails_Headers}", fieldsNamesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{RunSetGeneralDetails_Data}", fieldsValuesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{css_to_place}", ReportsCSS);
-            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{css_path}", StyleBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
@@ -305,7 +305,7 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{Parent_RunSetReport_Name_Link}", "SUMMARY VIEW");
             ReportHTML = ReportHTML.Replace("{css_to_place}", ReportsCSS);
             ReportHTML = ReportHTML.Replace("{canvas_path}", CanvasJs);
-            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{css_path}", StyleBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
@@ -1052,7 +1052,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
             ReportHTML = ReportHTML.Replace("{Parent_GingerRunner_Name}", currentGingerRunnerLinkText);
             ReportHTML = ReportHTML.Replace("{css_to_place}", ReportsCSS);
-            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{css_path}", StyleBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
@@ -1221,7 +1221,7 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{BusinessFlow_Headers}", fieldsNamesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{BusinessFlow_Data}", fieldsValuesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{css_to_place}", ReportsCSS);
-            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{css_path}", StyleBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
@@ -1680,7 +1680,7 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{ActivityGroup_Headers}", fieldsNamesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{ActivityGroup_Data}", fieldsValuesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{css_to_place}", ReportsCSS);
-            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{css_path}", StyleBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
@@ -2044,7 +2044,7 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{Activity_Headers}", fieldsNamesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{Activity_Data}", fieldsValuesHTMLTableCells.ToString());
             ReportHTML = ReportHTML.Replace("{css_to_place}", ReportsCSS);
-            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             ReportHTML = ReportHTML.Replace("{css_path}", StyleBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
@@ -2355,7 +2355,7 @@ namespace Ginger.Reports.GingerExecutionReport
             ReportHTML = ReportHTML.Replace("{js_path}", JSBundle.ToString());
             ReportHTML = ReportHTML.Replace("{js_to_place}", ReportJS);
             ReportHTML = ReportHTML.Replace("{ReportLevel}", ReportLevel);
-            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
+            ReportHTML = ReportHTML.Replace("{ReportCreated}", "Created By Ginger Version : " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion.ToString() + " | Used Report Template : '" + currentTemplate.Name + "' | Report Creation Time : " + DateTime.Now.ToString());
             fieldsNamesHTMLTableCells.Remove(0, fieldsNamesHTMLTableCells.Length);
             fieldsValuesHTMLTableCells.Remove(0, fieldsValuesHTMLTableCells.Length);
             // adding Sections 

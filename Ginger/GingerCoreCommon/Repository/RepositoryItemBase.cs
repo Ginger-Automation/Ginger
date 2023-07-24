@@ -677,7 +677,7 @@ namespace Amdocs.Ginger.Repository
             {
                 Created = GetUTCDateTime(),
                 CreatedBy = Environment.UserName,
-                GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion,
+                GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationBackendVersion,
                 Version = 1,
                 LastUpdateBy = Environment.UserName,
                 LastUpdate = GetUTCDateTime()
@@ -689,7 +689,7 @@ namespace Amdocs.Ginger.Repository
         public void UpdateHeader()
         {
             RepositoryItemHeader.Version++;
-            RepositoryItemHeader.GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion;
+            RepositoryItemHeader.GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationBackendVersion;
             RepositoryItemHeader.LastUpdateBy = Environment.UserName;
             RepositoryItemHeader.LastUpdate = DateTime.UtcNow;
         }
