@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ namespace Amdocs.Ginger.Repository
         public string Status
         {
             get
-            {                
+            {
                 return mStatus;
             }
             set
@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.Repository
                 }
             }
         }
-        
+
 
         private ObservableList<OnlinePluginPackageRelease> mReleases;
 
@@ -64,7 +64,7 @@ namespace Amdocs.Ginger.Repository
             PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
             {
-                handler(this, new PropertyChangedEventArgs(name));         
+                handler(this, new PropertyChangedEventArgs(name));
             }
         }
 
@@ -81,7 +81,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        
+
 
 
         /// <summary>
@@ -98,14 +98,14 @@ namespace Amdocs.Ginger.Repository
             }
             // string url = "https://api.github.com/repos/Ginger-Automation" + pluginRepositoryName +  "/releases";
 
-            string releasesURL = URL.Replace("https://github.com/Ginger-Automation", "https://api.github.com/repos/Ginger-Automation") + "/releases";             
+            string releasesURL = URL.Replace("https://github.com/Ginger-Automation", "https://api.github.com/repos/Ginger-Automation") + "/releases";
             string releases = GitHTTPClient.GetResponseString(releasesURL).Result;
             if (releases == "Error: Forbidden")
             {
                 throw new IOException("Error: Forbidden - " + releases);
             }
             mReleases = JsonConvert.DeserializeObject<ObservableList<OnlinePluginPackageRelease>>(releases);
-            
+
         }
 
 
@@ -114,7 +114,7 @@ namespace Amdocs.Ginger.Repository
             Reporter.ToLog(eLogLevel.INFO, "Downloading Plugin" + Id + " " + release.Version);
             string pluginSubFolder = Path.Combine(Id, release.Version);
             string folder = DownloadPackage(release.assets[0].browser_download_url, pluginSubFolder).Result;
-            return folder;       
+            return folder;
         }
 
         async Task<string> DownloadPackage(string url, string subfolder)
@@ -150,10 +150,10 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-        
 
-        
 
-        
+
+
+
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Ginger.UserControls;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -86,8 +85,8 @@ namespace Ginger.SolutionCategories
         {
             List<SolutionCategoryValue> optionalValuesToRemove = new List<SolutionCategoryValue>();
             foreach (SolutionCategoryValue selectedOV in xOptionalValuesGrid.Grid.SelectedItems)
-            { 
-                optionalValuesToRemove.Add(selectedOV); 
+            {
+                optionalValuesToRemove.Add(selectedOV);
             }
 
             foreach (SolutionCategoryValue ov in optionalValuesToRemove)
@@ -111,7 +110,7 @@ namespace Ginger.SolutionCategories
         {
             foreach (SolutionCategoryValue cat in mCopiedItems)
             {
-                SolutionCategoryValue newCopy= (SolutionCategoryValue)cat.CreateCopy();
+                SolutionCategoryValue newCopy = (SolutionCategoryValue)cat.CreateCopy();
                 newCopy.Value += "_Copy";
                 mSolutionCategory.CategoryOptionalValues.Add(newCopy);
             }
@@ -139,7 +138,7 @@ namespace Ginger.SolutionCategories
             {
                 SolutionCategoryValue cat = (SolutionCategoryValue)xOptionalValuesGrid.Grid.Items[i];
                 if (string.IsNullOrEmpty(cat.Value))
-                {                   
+                {
                     mSolutionCategory.CategoryOptionalValues.Remove(cat);
                     i--;
                 }

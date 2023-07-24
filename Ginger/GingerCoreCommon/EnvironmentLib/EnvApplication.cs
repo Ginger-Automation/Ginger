@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
 using System.Linq;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Environments
 {
     public class EnvApplication : RepositoryItemBase
-    {        
-
+    {
 
         private string mName;
         [IsSerializedForLocalRepository]
@@ -60,7 +59,7 @@ namespace GingerCore.Environments
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
 
         [IsSerializedForLocalRepository]
-        public ObservableList<IDatabase> Dbs = new ObservableList<IDatabase>();
+        public ObservableList<IDatabase> Dbs { get; set; } = new ObservableList<IDatabase>();
 
         [IsSerializedForLocalRepository]
         public ObservableList<UnixServer> UnixServers = new ObservableList<UnixServer>();
@@ -90,6 +89,10 @@ namespace GingerCore.Environments
             {
                 this.Name = value;
             }
+        }
+        public override string GetItemType()
+        {
+            return nameof(EnvApplication);
         }
 
         public override eImageType ItemImageType

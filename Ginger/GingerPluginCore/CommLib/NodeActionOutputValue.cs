@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,13 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Plugin.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
-    public class NodeActionOutputValue :IGingerActionOutputValue
+    public class NodeActionOutputValue : IGingerActionOutputValue
     {
         private object mValue;
         private OutputValueType mOutputValueType;
@@ -57,7 +54,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         public byte[] ValueByteArray
         { get { return (byte[])mValue; } set { mOutputValueType = OutputValueType.ByteArray; mValue = value; } }
 
-        public object Value { get { return mValue; }  set { mValue = value; } }
+        public object Value { get { return mValue; } set { mValue = value; } }
 
         public OutputValueType GetParamType()
         {

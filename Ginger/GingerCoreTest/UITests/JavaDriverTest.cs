@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ using System.IO;
 using System.Linq;
 
 namespace UnitTests.UITests.JavaDriverTest
-{    
+{
     [Ignore]  // temp
     [TestClass]
     [Level3]
@@ -855,7 +855,7 @@ namespace UnitTests.UITests.JavaDriverTest
 
         }
 
-        
+
         [TestMethod]
         [Timeout(60000)]
         public void ClickTreeNodeSingleNodeValueTest()
@@ -981,11 +981,11 @@ namespace UnitTests.UITests.JavaDriverTest
             mGR.Executor.RunAction(actJavaElement, false);
 
             //Assert
-            Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");           
+            Assert.AreEqual(eRunStatus.Failed, actJavaElement.Status, "Action Status");
             Assert.IsTrue(actJavaElement.Error.Contains("Node: Ontario was not found under: [Root, US]"), "Node not found validation");
 
         }
-               
+
         /**
          * Menu Item Test Cases  
         */

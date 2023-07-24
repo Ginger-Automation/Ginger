@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.Environments;
+using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
+using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
+using Amdocs.Ginger.CoreNET.Utility;
 using Ginger.Reports;
 using Ginger.UserControls;
 using GingerCore;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -29,13 +35,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.CoreNET.Utility;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
-using Amdocs.Ginger.CoreNET.LiteDBFolder;
-using System.Collections.Generic;
-using Amdocs.Ginger.CoreNET.Logger;
-using Amdocs.Ginger.CoreNET;
 
 namespace Ginger.Run
 {
@@ -62,7 +61,7 @@ namespace Ginger.Run
         }
 
         private eExecutionHistoryLevel mExecutionHistoryLevel;
-        public RunSetsExecutionsHistoryPage(eExecutionHistoryLevel executionHistoryLevel, RunSetConfig runsetConfig=null)
+        public RunSetsExecutionsHistoryPage(eExecutionHistoryLevel executionHistoryLevel, RunSetConfig runsetConfig = null)
         {
             InitializeComponent();
 
@@ -82,15 +81,15 @@ namespace Ginger.Run
         {
             if (mExecutionHistoryLevel == eExecutionHistoryLevel.Solution)
             {
-                grdExecutionsHistory.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.History, GingerDicser.GetTermResValue(eTermResKey.RunSets, "All "," Executions History"), saveAllHandler: null, addHandler: null);
+                grdExecutionsHistory.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.History, GingerDicser.GetTermResValue(eTermResKey.RunSets, "All ", " Executions History"), saveAllHandler: null, addHandler: null);
             }
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(RunSetReport.GUID), Header="Execution ID", WidthWeight = 15 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(RunSetReport.GUID), Header = "Execution ID", WidthWeight = 15 });
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.Name, WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.Description, WidthWeight = 20, ReadOnly = true });            
+            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.Description, WidthWeight = 20, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.StartTimeStamp, Header = "Execution Start Time", WidthWeight = 10, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.EndTimeStamp, Header = "Execution End Time", WidthWeight = 10, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.ExecutionDurationHHMMSS, Header = "Execution Duration", WidthWeight = 10, ReadOnly = true });
@@ -102,7 +101,7 @@ namespace Ginger.Run
             grdExecutionsHistory.InitViewItems();
 
             grdExecutionsHistory.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGrid));
-            grdExecutionsHistory.AddToolbarTool("@Open_16x16.png", "Open Execution Results Main Folder", new RoutedEventHandler(GetExecutionResultsFolder));            
+            grdExecutionsHistory.AddToolbarTool("@Open_16x16.png", "Open Execution Results Main Folder", new RoutedEventHandler(GetExecutionResultsFolder));
             grdExecutionsHistory.AddToolbarTool("@Delete_16x16.png", "Delete Selected Execution Results", new RoutedEventHandler(DeleteSelectedExecutionResults));
             grdExecutionsHistory.AddToolbarTool("@Trash_16x16.png", "Delete All Execution Results", new RoutedEventHandler(DeleteAllSelectedExecutionResults));
             grdExecutionsHistory.RowDoubleClick += OpenExecutionResultsFolder;
@@ -135,7 +134,8 @@ namespace Ginger.Run
             grdExecutionsHistory.Visibility = Visibility.Collapsed;
             Loading.Visibility = Visibility.Visible;
             mExecutionsHistoryList.Clear();
-            await Task.Run(() => {
+            await Task.Run(() =>
+            {
                 if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
                 {
                     mRunSetExecsRootFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
@@ -156,11 +156,15 @@ namespace Ginger.Run
                                     Guid runSetReportGuid = Guid.Empty;
                                     Guid.TryParse(runSetReport.GUID, out runSetReportGuid);
                                     if (RunsetConfig.Guid.Equals(runSetReportGuid))
+                                    {
                                         mExecutionsHistoryList.Add(runSetReport);
+                                    }
                                 }
                             }
                             else
+                            {
                                 mExecutionsHistoryList.Add(runSetReport);
+                            }
                         }
                         LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "GingerExecutionResults.db"));
                         var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
@@ -189,17 +193,20 @@ namespace Ginger.Run
                         Reporter.ToLog(eLogLevel.ERROR, "Error Occured during LoadExecutionHistory.", ex);
                     }
                 }
-                
+
             });
 
             ObservableList<RunSetReport> executionsHistoryListSortedByDate = new ObservableList<RunSetReport>();
-            foreach (RunSetReport runSetReport in mExecutionsHistoryList.OrderByDescending(item => item.StartTimeStamp))
+            if (mExecutionsHistoryList != null && mExecutionsHistoryList.Count > 0)
             {
-                runSetReport.StartTimeStamp = runSetReport.StartTimeStamp.ToLocalTime();
-                runSetReport.EndTimeStamp = runSetReport.EndTimeStamp.ToLocalTime();
-                executionsHistoryListSortedByDate.Add(runSetReport);
+                foreach (RunSetReport runSetReport in mExecutionsHistoryList.OrderByDescending(item => item.StartTimeStamp))
+                {
+                    runSetReport.StartTimeStamp = runSetReport.StartTimeStamp.ToLocalTime();
+                    runSetReport.EndTimeStamp = runSetReport.EndTimeStamp.ToLocalTime();
+                    executionsHistoryListSortedByDate.Add(runSetReport);
+                }
             }
-            
+
             grdExecutionsHistory.DataSourceList = executionsHistoryListSortedByDate;
             grdExecutionsHistory.Visibility = Visibility.Visible;
             Loading.Visibility = Visibility.Collapsed;
@@ -210,11 +217,11 @@ namespace Ginger.Run
             List<RunSetReport> runsetsReport = new List<RunSetReport>();
             if (RunsetConfig != null)
             {
-                runsetsReport = new GingerRemoteExecutionUtils().GetRunsetExecutionInfo(WorkSpace.Instance.Solution.Guid,RunsetConfig.Guid);
+                runsetsReport = new GingerRemoteExecutionUtils().GetRunsetExecutionInfo(WorkSpace.Instance.Solution.Guid, RunsetConfig.Guid);
             }
             else
             {
-                 runsetsReport = new GingerRemoteExecutionUtils().GetSolutionRunsetsExecutionInfo(WorkSpace.Instance.Solution.Guid);
+                runsetsReport = new GingerRemoteExecutionUtils().GetSolutionRunsetsExecutionInfo(WorkSpace.Instance.Solution.Guid);
             }
             foreach (var item in runsetsReport)
             {
@@ -288,7 +295,7 @@ namespace Ginger.Run
                     dir.Delete(true);
                 }
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Clean the Folder '{0}', Issue:'{1}'", folderName, ex.Message));
             }
@@ -301,12 +308,14 @@ namespace Ginger.Run
 
         private void GetExecutionResultsFolder(object sender, RoutedEventArgs e)
         {
-            if ( WorkSpace.Instance.Solution != null &&  WorkSpace.Instance.Solution.LoggerConfigurations != null)
+            if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
-                Process.Start(new ProcessStartInfo() { FileName = WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, UseShellExecute = true });
+                Process.Start(new ProcessStartInfo() { FileName = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder), UseShellExecute = true });
             }
             else
+            {
                 return;
+            }
         }
 
         private void OpenExecutionResultsFolder()
@@ -320,7 +329,9 @@ namespace Ginger.Run
             string runSetFolder = ((RunSetReport)grdExecutionsHistory.CurrentItem).LogFolder;
 
             if (string.IsNullOrEmpty(runSetFolder))
+            {
                 return;
+            }
 
             if (!Directory.Exists(runSetFolder))
             {
@@ -342,7 +353,7 @@ namespace Ginger.Run
 
         private void ReportBtnClicked(object sender, RoutedEventArgs e)
         {
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             if (grdExecutionsHistory.CurrentItem == null)
             {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
@@ -374,7 +385,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                   Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder, UseShellExecute = true });
+                    Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder, UseShellExecute = true });
                     Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder + "\\" + "GingerExecutionReport.html", UseShellExecute = true });
                 }
             }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ namespace Ginger.Reports
 
             AddInternalTemplates();
 
-            ReportsListBox.DisplayMemberPath = ReportTemplate.Fields.Name;            
+            ReportsListBox.DisplayMemberPath = ReportTemplate.Fields.Name;
             ReportsListBox.ItemsSource = ReportTemplateList;
 
             ReportsListBox.SelectionChanged += ReportsListBox_SelectionChanged;
@@ -52,7 +52,7 @@ namespace Ginger.Reports
 
         private void AddInternalTemplates()
         {
-            List <ReportTemplate> lst = ReportTemplate.GetInternalTemplates();
+            List<ReportTemplate> lst = ReportTemplate.GetInternalTemplates();
 
             foreach (ReportTemplate RT in lst)
             {
@@ -67,20 +67,20 @@ namespace Ginger.Reports
 
         void ShowPreview()
         {
-            string Xaml = ((ReportTemplate)ReportsListBox.SelectedItem).Xaml;            
+            string Xaml = ((ReportTemplate)ReportsListBox.SelectedItem).Xaml;
             PreviewFrame.Content = ReportTemplateDesignerPage.GetSampleReportPage(Xaml);
         }
 
         public void ShowAsWindow()
         {
-                Button OKButton = new Button();
-                OKButton.Content = "Ok";
-                OKButton.Click += new RoutedEventHandler(OKButton_Click);
-                
-                ObservableList<Button> winButtons = new ObservableList<Button>();
-                winButtons.Add(OKButton);
+            Button OKButton = new Button();
+            OKButton.Content = "Ok";
+            OKButton.Click += new RoutedEventHandler(OKButton_Click);
 
-                GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, eWindowShowStyle.Dialog , "Select Report Template", this, winButtons);            
+            ObservableList<Button> winButtons = new ObservableList<Button>();
+            winButtons.Add(OKButton);
+
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, eWindowShowStyle.Dialog, "Select Report Template", this, winButtons);
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)

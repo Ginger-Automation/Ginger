@@ -16,9 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger;
 using Amdocs.Ginger.Common;
-using GingerCore;
 using GingerCore.Actions;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -45,19 +43,20 @@ namespace UnitTests.NonUITests
 
         [ClassInitialize()]
         public static void ClassInit(TestContext context)
-        {            
+        {
             mAct = new ActDummy();
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void GetInputParamEnumValueTest()
         {
             mAct.AddOrUpdateInputParamValue("Enum Value", eSampleEnum.Yes.ToString());
 
-            eSampleEnum enumValue =(eSampleEnum)mAct.GetInputParamValue<eSampleEnum>("Enum Value");
-          
+            eSampleEnum enumValue = (eSampleEnum)mAct.GetInputParamValue<eSampleEnum>("Enum Value");
+
             Assert.AreEqual(eSampleEnum.Yes, enumValue);
         }
-        
+
     }
 }

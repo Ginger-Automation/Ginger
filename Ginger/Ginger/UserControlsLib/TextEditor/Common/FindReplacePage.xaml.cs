@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerCore;
 using ICSharpCode.AvalonEdit.Document;
 using System.Media;
 using System.Text.RegularExpressions;
@@ -64,13 +63,17 @@ namespace Ginger.UserControlsLib.TextEditor.Common
         private void FindNextClick(object sender, RoutedEventArgs e)
         {
             if (!FindNext(txtFind.Text))
+            {
                 SystemSounds.Beep.Play();
+            }
         }
 
         private void FindNext2Click(object sender, RoutedEventArgs e)
         {
             if (!FindNext(txtFind2.Text))
+            {
                 SystemSounds.Beep.Play();
+            }
         }
 
         private void ReplaceClick(object sender, RoutedEventArgs e)
@@ -86,9 +89,9 @@ namespace Ginger.UserControlsLib.TextEditor.Common
             }
 
             if (!FindNext(txtFind2.Text) && !replaced)
+            {
                 SystemSounds.Beep.Play();
-
-
+            }
         }
 
         private void ReplaceAllClick(object sender, RoutedEventArgs e)
@@ -117,9 +120,13 @@ namespace Ginger.UserControlsLib.TextEditor.Common
             if (!match.Success)  // start again from beginning or end
             {
                 if (regex.Options.HasFlag(RegexOptions.RightToLeft))
+                {
                     match = regex.Match(editor.Text, editor.Text.Length);
+                }
                 else
+                {
                     match = regex.Match(editor.Text, 0);
+                }
             }
 
             if (match.Success)
@@ -136,9 +143,14 @@ namespace Ginger.UserControlsLib.TextEditor.Common
         {
             RegexOptions options = RegexOptions.None;
             if (cbSearchUp.IsChecked == true && !leftToRight)
+            {
                 options |= RegexOptions.RightToLeft;
+            }
+
             if (cbCaseSensitive.IsChecked == false)
+            {
                 options |= RegexOptions.IgnoreCase;
+            }
 
             if (cbRegex.IsChecked == true)
             {
@@ -148,9 +160,15 @@ namespace Ginger.UserControlsLib.TextEditor.Common
             {
                 string pattern = Regex.Escape(textToFind);
                 if (cbWildcards.IsChecked == true)
+                {
                     pattern = pattern.Replace("\\*", ".*").Replace("\\?", ".");
+                }
+
                 if (cbWholeWord.IsChecked == true)
+                {
                     pattern = "\\b" + pattern + "\\b";
+                }
+
                 return new Regex(pattern, options);
             }
         }

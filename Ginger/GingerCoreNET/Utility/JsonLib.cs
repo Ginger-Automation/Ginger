@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,19 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.Reports;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Utility
 {
-  public  class JsonLib
+    public class JsonLib
     {
 
-        public static object LoadObjFromJSonFile(string FileName, Type t,JsonSerializer serializer=null )
+        public static object LoadObjFromJSonFile(string FileName, Type t, JsonSerializer serializer = null)
         {
             object obj = null;
             JsonSerializer mJsonSerializer;
@@ -44,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.Utility
             using (StreamReader SR = new StreamReader(FileName))
             using (JsonReader reader = new JsonTextReader(SR))
             {
-                obj= mJsonSerializer.Deserialize(reader, t);
+                obj = mJsonSerializer.Deserialize(reader, t);
             }
 
             return obj;

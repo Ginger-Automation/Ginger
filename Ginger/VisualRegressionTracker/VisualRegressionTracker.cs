@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -54,7 +53,7 @@ namespace VisualRegressionTracker
         {
         }
 
-        public VisualRegressionTracker(Config config) : this(config, null) 
+        public VisualRegressionTracker(Config config) : this(config, null)
         {
         }
 
@@ -86,7 +85,7 @@ namespace VisualRegressionTracker
 
         public Task Start(CancellationToken cancellationToken)
         {
-            return Start((CancellationToken?) cancellationToken);
+            return Start((CancellationToken?)cancellationToken);
         }
 
         protected async Task Start(CancellationToken? cancellationToken)
@@ -116,28 +115,32 @@ namespace VisualRegressionTracker
                 throw new VisualRegressionTrackerError(ex);
             }
         }
-         
+
         public Task Stop()
         {
             return Stop(null);
         }
-         
+
         public Task Stop(CancellationToken cancellationToken)
         {
-            return Stop((CancellationToken?) cancellationToken);
+            return Stop((CancellationToken?)cancellationToken);
         }
 
         protected async Task Stop(CancellationToken? cancellationToken)
         {
-            if (!IsStarted) {
+            if (!IsStarted)
+            {
                 throw new VisualRegressionTrackerError("Visual Regression Tracker has not been started");
             }
 
             try
             {
-                if (cancellationToken.HasValue) {
+                if (cancellationToken.HasValue)
+                {
                     await client.BuildsController_stopAsync(buildId, cancellationToken.Value);
-                } else {
+                }
+                else
+                {
                     await client.BuildsController_stopAsync(buildId);
                 }
 
@@ -157,7 +160,8 @@ namespace VisualRegressionTracker
         protected async Task<TestRunResult> SubmitTestRun(
             CreateTestRequestDto testRun, CancellationToken? cancellationToken)
         {
-            if (!IsStarted) {
+            if (!IsStarted)
+            {
                 throw new VisualRegressionTrackerError("Visual Regression Tracker has not been started");
             }
 
@@ -165,7 +169,7 @@ namespace VisualRegressionTracker
                 ? await client.TestRunsController_postTestRunAsync(testRun, cancellationToken.Value)
                 : await client.TestRunsController_postTestRunAsync(testRun);
             var status = TestRunStatus.New;
-            switch(response.Status)
+            switch (response.Status)
             {
                 case "new":
                     status = TestRunStatus.New;
@@ -237,7 +241,7 @@ namespace VisualRegressionTracker
 
             return await SubmitTestRun(dto, cancellationToken).ConfigureAwait(false);
         }
- 
+
         public Task<TestRunResult> Track(
             string name,
             Stream image,

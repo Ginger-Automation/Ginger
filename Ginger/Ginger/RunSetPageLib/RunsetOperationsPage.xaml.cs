@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,11 +22,9 @@ using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
 using Ginger.UserControls;
-using GingerCore.ALM;
 using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -50,7 +48,7 @@ namespace Ginger.Run
         {
             SetGridView();
             RunSetActionsGrid.AddSeparator();
-                        
+
             RunSetActionsGrid.AddToolbarTool("@AddHTMLReport_16x16.png", "Add Produce HTML Report Operation", AddHTMLReport);
             RunSetActionsGrid.AddToolbarTool("@AddMail_16x16.png", "Add Send HTML Report Email Operation", AddSendHTMLReportEmailAction);
             RunSetActionsGrid.AddToolbarTool("@AddFile_16x16.png", "Add Produce JSON Summary Report Operation", AddJSONSummary);
@@ -58,7 +56,7 @@ namespace Ginger.Run
             RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool("@AddMail2_16x16.png", "Add Send Text Email Operation", AddSendFreeEmailAction);
             RunSetActionsGrid.AddToolbarTool("@AddSMS_16x16.png", "Add Send SMS Operation", AddSendSMS);
-           
+
             Binding b = new Binding();
             b.Source = WorkSpace.Instance.UserProfile;
             b.Path = new PropertyPath(nameof(UserProfile.ShowEnterpriseFeatures));
@@ -70,7 +68,7 @@ namespace Ginger.Run
             RunSetActionsGrid.AddSeparator(b);
             RunSetActionsGrid.AddToolbarTool("@AddRunSetALMAction_16x16.png", "Add Publish Execution Results to ALM Operation", AddPublishtoALMAction, binding: b);
             RunSetActionsGrid.AddToolbarTool("@AddDefectsToALM_16x16.png", "Add Open ALM Defects Operation", AddAutomatedALMDefectsOperation, binding: b);
-            
+
             RunSetActionsGrid.AddSeparator();
             RunSetActionsGrid.AddToolbarTool("@AddScript2_16x16.png", "Add Run Script Operation", AddScriptAction);
             RunSetActionsGrid.AddSeparator();
@@ -89,12 +87,12 @@ namespace Ginger.Run
             RunSetActionsGrid.DataSourceList = mRunSetConfig.RunSetActions;
             RunSetActionsGrid.RowChangedEvent += RunSetActionsGrid_RowChangedEvent;
 
-            RunSetActionEditFrame.Content = null;
+            RunSetActionEditFrame.ClearAndSetContent(null);
             if (RunSetActionsGrid.CurrentItem != null)
             {
                 RunSetActionEditPage RSAEP = new RunSetActionEditPage((RunSetActionBase)RunSetActionsGrid.CurrentItem);
-                RunSetActionEditFrame.Content = RSAEP;
-            }           
+                RunSetActionEditFrame.ClearAndSetContent(RSAEP);
+            }
         }
 
         public void Init(RunSetConfig runSetConfig)
@@ -106,7 +104,7 @@ namespace Ginger.Run
         RunSetActionEditPage runSetActionEditPage;
         private void RunSetActionsGrid_RowChangedEvent(object sender, EventArgs e)
         {
-            RunSetActionEditFrame.Content = null;
+            RunSetActionEditFrame.ClearAndSetContent(null);
             if (RunSetActionsGrid.CurrentItem != null)
             {
                 RunSetActionEditPage RSAEP = null;
@@ -126,7 +124,7 @@ namespace Ginger.Run
                 {
                     RSAEP = new RunSetActionEditPage((RunSetActionBase)RunSetActionsGrid.CurrentItem);
                 }
-                RunSetActionEditFrame.Content = RSAEP;
+                RunSetActionEditFrame.ClearAndSetContent(RSAEP);
             }
         }
 
@@ -139,7 +137,7 @@ namespace Ginger.Run
 
             viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.Active), WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
             viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.Name), WidthWeight = 150 });
-            viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.Type), Header = "Type", WidthWeight = 150, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly=true });
+            viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.Type), Header = "Type", WidthWeight = 150, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly = true });
             List<ComboEnumItem> runAtOptionList = GingerCore.General.GetEnumValuesForCombo(typeof(RunSetActionBase.eRunAt));
             viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.RunAt), Header = "Run At", WidthWeight = 100, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = runAtOptionList });
             List<ComboEnumItem> conditionOptionList = GingerCore.General.GetEnumValuesForCombo(typeof(RunSetActionBase.eRunSetActionCondition));
@@ -147,7 +145,7 @@ namespace Ginger.Run
             viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.Status), WidthWeight = 80, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly = true });
             viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.Errors), WidthWeight = 80, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly = true });
             viewCols.Add(new GridColView() { Field = nameof(RunSetActionBase.ElapsedSecs), Header = "Execution Duration (Seconds)", WidthWeight = 50, BindingMode = System.Windows.Data.BindingMode.OneWay, ReadOnly = true });
-            
+
             RunSetActionsGrid.SetAllColumnsDefaultView(view);
             RunSetActionsGrid.InitViewItems();
         }
@@ -168,8 +166,12 @@ namespace Ginger.Run
         }
         private void RunSelected(object sender, RoutedEventArgs e)
         {
+            if (RunSetActionsGrid.CurrentItem == null)
+            {
+                return;
+            }
             if ((WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB || WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
-                && ((RunSetActionBase)RunSetActionsGrid.CurrentItem).GetType() == typeof(RunSetActionHTMLReportSendEmail) 
+                && ((RunSetActionBase)RunSetActionsGrid.CurrentItem).GetType() == typeof(RunSetActionHTMLReportSendEmail)
                 && WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetExecutionStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
             {
                 Reporter.ToUser(eUserMsgKey.RunSetNotExecuted);
@@ -289,7 +291,7 @@ namespace Ginger.Run
         }
         private void AddHTMLReport(object sender, RoutedEventArgs e)
         {
-            if (! WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationIsEnabled)
+            if (!WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationIsEnabled)
             {
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;

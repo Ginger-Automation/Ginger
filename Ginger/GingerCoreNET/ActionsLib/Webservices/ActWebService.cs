@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,17 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
-
+using GingerCore.Actions.WebServices;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
-using GingerCore.Actions.WebServices;
-
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions
 {
@@ -124,7 +122,7 @@ namespace GingerCore.Actions
                 //Old web service action add response as --> FullReponseXML
                 //And new adds it as Response:
                 // so we update it when converting from old action to new
-                ActReturnValue ARC = convertedActWebAPISoap.ReturnValues.Where(x => x.Param == "FullReponseXML").FirstOrDefault();
+                ActReturnValue ARC = convertedActWebAPISoap.ReturnValues.FirstOrDefault(x => x.Param == "FullReponseXML");
                 if (ARC != null)
                 {
                     ARC.Param = "Response:";

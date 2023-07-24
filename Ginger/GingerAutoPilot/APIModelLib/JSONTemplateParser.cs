@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.Common.APIModelLib
             AAMSList.Add(AAM);
 
             return AAMSList;
-        }        
+        }
 
         public static ObservableList<ActReturnValue> ParseJSONResponseSampleIntoReturnValues(string JSOnText)
         {
@@ -75,7 +75,7 @@ namespace Amdocs.Ginger.Common.APIModelLib
             {
                 string tagName = Jn.Path.Split('.').LastOrDefault();
 
-                ReturnValues.Add(new ActReturnValue() { Param = tagName, Path = Jn.Path, Active = true, DoNotConsiderAsTemp=true });
+                ReturnValues.Add(new ActReturnValue() { Param = tagName, Path = Jn.Path, Active = true, DoNotConsiderAsTemp = true });
             }
 
             return ReturnValues;
@@ -97,7 +97,10 @@ namespace Amdocs.Ginger.Common.APIModelLib
             foreach (var Jn in EndingNodesList)
             {
                 if (Jn == null)
+                {
                     continue;
+                }
+
                 string tagName = Jn.Path.Split('.').LastOrDefault();
                 string paramname = tagName.ToUpper();
                 int i = 0;
@@ -112,7 +115,7 @@ namespace Amdocs.Ginger.Common.APIModelLib
                 JToken jt2 = jt.SelectToken(Jn.Path);
                 try
                 {
-                    if (jt2.Type != JTokenType.String&& jt2.Type != JTokenType.Array)
+                    if (jt2.Type != JTokenType.String && jt2.Type != JTokenType.Array)
                     {
                         consts.Add(param);
                     }
@@ -128,7 +131,7 @@ namespace Amdocs.Ginger.Common.APIModelLib
                     }
                 }
 
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine("GenerateBodyANdModelParameters error - " + ex.Message);
 
@@ -137,12 +140,12 @@ namespace Amdocs.Ginger.Common.APIModelLib
                     {
                         consts.Add(param);
                     }
-                    jt2.Replace( param);
+                    jt2.Replace(param);
                 }
                 AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue>()));
 
             }
-       string body= jt.ToString();
+            string body = jt.ToString();
             foreach (var item in consts)
             {
                 body = body.Replace("\"" + item + "\"", item);

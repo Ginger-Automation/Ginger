@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,14 +18,11 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using System.Diagnostics;
-using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
 using Ginger.Reports;
+using static GingerCore.ALM.PublishToALMConfig;
 //using amdocs.ginger.GingerCoreNET;
-using GingerCore;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -179,6 +176,7 @@ namespace Ginger.Run.RunSetActions
 
         public abstract String Type { get; }
 
+        public abstract eALMTestSetLevel GetAlMTestSetLevel();
 
 
         //public void ExecuteWithRunPageBFES()

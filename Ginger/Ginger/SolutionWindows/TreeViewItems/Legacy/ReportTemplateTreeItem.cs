@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.Enums;
 using Ginger.Reports;
 using Ginger.Reports.Designer;
 using GingerWPF.TreeViewItemsLib;
@@ -42,13 +41,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {          
+        {
             // create binded SP            
-            return TreeViewUtils.CreateItemHeader(ReportTemplate.Name, "@Report_16x16.png", Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));          
+            return TreeViewUtils.CreateItemHeader(ReportTemplate.Name, "@Report_16x16.png", Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Path, ref ItemSourceControlStatus));
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
-        {            
+        {
             return null;
         }
 
@@ -73,10 +72,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
 
         void ITreeViewItem.SetTools(ITreeView TV)
-        {            
+        {
             AddItemNodeBasicManipulationsOptions(mContextMenu);
             AddSourceControlOptions(mContextMenu);
         }
-        
+
     }
 }

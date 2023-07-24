@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,20 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using SkiaSharp.Views.Desktop;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Reports;
 using GingerCore.ALM;
-using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.GeneralFunctions;
 using GingerCore.GeneralLib;
 using SkiaSharp;
+using SkiaSharp.Views.Desktop;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -37,15 +35,15 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using System.Xml;
-using static Amdocs.Ginger.Common.GeneralLib.General;
 
 namespace GingerCore
 {
@@ -76,10 +74,15 @@ namespace GingerCore
                     genWindow.Left = 50;
                     genWindow.Top = 200;
                 }
+                             
                 if (winStyle == eWindowShowStyle.Dialog || winStyle == eWindowShowStyle.OnlyDialog)
+                {
                     genWindow.ShowDialog();
+                }
                 else
+                {
                     genWindow.Show();
+                }
             }
             while (genWindow.NeedToReShow);
         }
@@ -296,7 +299,9 @@ namespace GingerCore
         {
             comboBox.Items.Clear();
             if (ls == null)
+            {
                 return;
+            }
 
             foreach (var item in ls)
             {
@@ -310,12 +315,16 @@ namespace GingerCore
         public static bool CheckComboItems(ComboBox comboBox, List<string> ls)
         {
             if (comboBox.Items.Count != ls.Count())
+            {
                 return false;
+            }
 
             for (int i = 0; i < comboBox.Items.Count; i++)
             {
                 if (!ls.Contains(comboBox.Items[i].ToString()))
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -327,13 +336,17 @@ namespace GingerCore
                 if (specificValueField == null)
                 {
                     if (value == comboBox.Items[i].ToString())
+                    {
                         return true;
+                    }
                 }
                 else
                 {
                     PropertyInfo propertyInfo = (comboBox.Items[i]).GetType().GetProperty(specificValueField);
                     if (propertyInfo != null && propertyInfo.GetValue((comboBox.Items[i])).ToString() == value)
+                    {
                         return true;
+                    }
                 }
             }
             return false;
@@ -351,7 +364,7 @@ namespace GingerCore
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Value cannot be empty.");
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline);
                 }
-                if (IsNameAlreadyexists(repositoryItem, resultValue.Trim()))
+                if (repositoryItem != null && IsNameAlreadyexists(repositoryItem, resultValue.Trim()))
                 {
                     return GetInputWithValidation(header, label, ref resultValue, CharsNotAllowed, isMultiline, repositoryItem);
                 }
@@ -369,64 +382,67 @@ namespace GingerCore
             }
             return returnWindow;
         }
-        public static bool IsNameAlreadyexists(RepositoryItemBase repositoryItem ,string resultValue)
-        {           
-                switch (repositoryItem.GetItemType())
-                {     
-                    case "BusinessFlow":
-                    ObservableList<BusinessFlow> BFList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();                        
-                        if(BFList.Any(x =>x.Name == resultValue))
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business flow with same name: " + "'" + resultValue + "'" + " already exists.");
-                            return true;
-                        }                                                   
-                        break;
-                    case "Agent":
-                        ObservableList<Agent> Agentist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-                        if (Agentist.Any(x => x.Name == resultValue))
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Agent with same name: " + "'" + resultValue + "'" + " already exists.");
-                            return true;
-                        }                       
-                        break;
-                    case "ReportTemplate":
-                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>() where x.Name == resultValue select x).SingleOrDefault() != null)
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Template with same name: " + "'" + resultValue + "'" + " already exists.");
-                            return true;
-                        }
-                        
-                        break;
-                    case "ApplicationPOMModel":
-                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>() where x.Name == resultValue select x).SingleOrDefault() != null)
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "POM Model with same name: " + "'" + resultValue + "'" + " already exists.");
-                            return true;
-                        }
-                      
-                        break;
-                    case "EnvApplication":
-                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<EnvApplication>() where x.Name == resultValue select x).SingleOrDefault() != null)
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Application with same name: " + "'" + resultValue + "'" + " already exists.");
-                            return true;
-                        }
-                    
-                        break;
-                    case "HTMLReportTemplate":
-                        if ((from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>() where x.Name == resultValue select x).SingleOrDefault() != null)
-                        {
-                            Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Report Template with same name: " + "'" + resultValue + "'" + " already exists.");
-                            return true;
-                        }
-                       
-                        break;
+        public static bool IsNameAlreadyexists(RepositoryItemBase repositoryItem, string resultValue)
+        {
+
+
+
+            switch (repositoryItem.GetItemType())
+            {
+                case "BusinessFlow":
+                    ObservableList<BusinessFlow> BFList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                    if (BFList.Any(x => x.Name == resultValue))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business flow with same name: " + "'" + resultValue + "'" + " already exists.");
+                        return true;
+                    }
+                    break;
+                case "Agent":
+                    ObservableList<Agent> Agentist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
+                    if (Agentist.Any(x => x.Name == resultValue))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Agent with same name: " + "'" + resultValue + "'" + " already exists.");
+                        return true;
+                    }
+                    break;
+                case "ReportTemplate":
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>().Any(x => x.Name == resultValue))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Template with same name: " + "'" + resultValue + "'" + " already exists.");
+                        return true;
+                    }
+
+                    break;
+                case "ApplicationPOMModel":
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Any(x=> x.Name == resultValue))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "POM Model with same name: " + "'" + resultValue + "'" + " already exists.");
+                        return true;
+                    }
+
+                    break;
+                case "EnvApplication":
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any(x => x.Applications.Any(y=>y.Name== resultValue)))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Application with same name: " + "'" + resultValue + "'" + " already exists.");
+                        return true;
+                    }
+
+                    break;
+                case "HTMLReportTemplate":
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>().Any(x => x.Name == resultValue))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Report Template with same name: " + "'" + resultValue + "'" + " already exists.");
+                        return true;
+                    }
+
+                    break;
                 default:
                     return false;
-                }
-            
+            }
+
             return false;
-          
+
         }
 
         public static bool SelectInputWithValidation(string header, string label, ref string resultValue, List<string> mValues)
@@ -457,7 +473,11 @@ namespace GingerCore
 
         internal static ImageSource ToBitmapSource(System.Drawing.Bitmap source)
         {
-            if (source == null) return null;
+            if (source == null)
+            {
+                return null;
+            }
+
             BitmapSource bitSrc = null;
             var hBitmap = source.GetHbitmap();
             try
@@ -492,7 +512,9 @@ namespace GingerCore
             using (bmp)
             {
                 if (string.IsNullOrEmpty(filePath))
+                {
                     filePath = Path.GetTempFileName();
+                }
                 else if (!CheckOrCreateDirectory(Path.GetDirectoryName(filePath)))
                 {
                     return string.Empty;
@@ -532,10 +554,13 @@ namespace GingerCore
                 if (System.IO.Directory.Exists(folderName))
                 {
                     if (isCleanFile)
+                    {
                         foreach (System.IO.FileInfo file in di.GetFiles())
                         {
                             file.Delete();
                         }
+                    }
+
                     foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
                     {
                         dir.Delete(true);
@@ -605,9 +630,14 @@ namespace GingerCore
             foreach (var item in comboBox.Items)
             {
                 if (item.GetType() == typeof(ComboBoxItem))
+                {
                     itemVal = ((ComboBoxItem)item).Content.ToString();
+                }
                 else
+                {
                     itemVal = item.ToString();
+                }
+
                 if (itemVal == Value)
                 {
                     comboBox.SelectedItem = item;
@@ -620,12 +650,18 @@ namespace GingerCore
         {
             string itemText = itemtoadd.ToString();
             if (itemtoadd.GetType().BaseType.Name == "Enum")
+            {
                 itemText = GetEnumValueDescription(itemtoadd.GetType(), itemtoadd);
+            }
+
             foreach (var item in comboBox.Items)
+            {
                 if (item.ToString() == itemText)
                 {
                     return;
                 }
+            }
+
             ComboEnumItem CEI = new ComboEnumItem();
             CEI.text = itemText;
             CEI.Value = itemtoadd;
@@ -636,13 +672,18 @@ namespace GingerCore
         {
             string itemText = itemtoRemove.ToString();
             if (itemtoRemove.GetType().BaseType.Name == "Enum")
+            {
                 itemText = GetEnumValueDescription(itemtoRemove.GetType(), itemtoRemove);
+            }
+
             foreach (var item in comboBox.Items)
+            {
                 if (item.ToString() == itemText)
                 {
                     comboBox.Items.Remove(item);
                     return;
                 }
+            }
         }
         public static void DisableComboItem(ComboBox comboBox, object itemtoDisable)
         {
@@ -663,7 +704,10 @@ namespace GingerCore
         {
             string itemText = itemtoUpdate.ToString();
             if (itemtoUpdate.GetType().BaseType.Name == "Enum")
+            {
                 itemText = GetEnumValueDescription(itemtoUpdate.GetType(), itemtoUpdate);
+            }
+
             foreach (var item in comboBox.Items)
             {
                 if (item.GetType() == typeof(ComboBoxItem))
@@ -764,7 +808,10 @@ namespace GingerCore
             ResourceDictionary r = new ResourceDictionary();
             System.Windows.Media.SolidColorBrush myBrush = null;
             if (string.IsNullOrEmpty(status))
+            {
                 status = "Pending";
+            }
+
             switch (status)
             {
                 case "Passed":
@@ -803,36 +850,39 @@ namespace GingerCore
         {
             System.Windows.Media.SolidColorBrush myBrush = null;
             if (string.IsNullOrEmpty(status))
+            {
                 status = "Pending";
+            }
+
             switch (status)
             {
                 case "Passed":
                     myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#54A81B"));
-                    
+
                     break;
                 case "Failed":
                     myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#E31123"));
-                    
+
                     break;
                 case "Fail":
                     myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#E31123"));
-                    
+
                     break;
                 case "Stopped":
                     myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#ED5588"));
-                    
+
                     break;
                 case "Pending":
                     myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#FF8C00"));
-                    
+
                     break;
                 case "Running":
                     myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#800080"));
-                    
+
                     break;
                 default:
                     myBrush = new System.Windows.Media.SolidColorBrush(GingerCore.General.makeColorN("#1B3651"));
-                   
+
                     break;
             }
             return myBrush;
@@ -850,7 +900,9 @@ namespace GingerCore
             foreach (System.Windows.Forms.Screen screen in System.Windows.Forms.Screen.AllScreens)
             {
                 if (captureAllScreens == false & screen.Primary == false)
+                {
                     continue;//jump over non primary screens
+                }
 
                 System.Drawing.Rectangle bounds = screen.Bounds;
                 using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
@@ -867,7 +919,9 @@ namespace GingerCore
                     }
                     string imagePath = GingerCore.General.BitmapImageToFile(bitmap);
                     if (System.IO.File.Exists(imagePath))
+                    {
                         imagePaths.Add(screen.DeviceName, imagePath);
+                    }
                 }
             }
             return imagePaths;
@@ -889,7 +943,7 @@ namespace GingerCore
         {
             System.Windows.Forms.Screen primaryScreen = System.Windows.Forms.Screen.PrimaryScreen;
             Bitmap taskbarScreenshot = new(primaryScreen.Bounds.Width, primaryScreen.Bounds.Height - primaryScreen.WorkingArea.Height);
-            using(Graphics graphics = Graphics.FromImage(taskbarScreenshot))
+            using (Graphics graphics = Graphics.FromImage(taskbarScreenshot))
             {
                 System.Drawing.Point upperLeftSource = new(x: 0, y: primaryScreen.WorkingArea.Height);
                 System.Drawing.Point uppderLeftDestination = new(x: 0, y: 0);
@@ -957,9 +1011,14 @@ namespace GingerCore
 
                 //######################## FEATURE_BROWSER_EMULATION ###########################                               
                 if (osBitTypeIs64)
+                {
                     registryKeyPath = @"SOFTWARE\Wow6432Node\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION";
+                }
                 else
+                {
                     registryKeyPath = @"SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_BROWSER_EMULATION";
+                }
+
                 requiredValueName = appExeName;
                 requiredValue = string.Empty;
                 object installedIEVersion =
@@ -967,11 +1026,15 @@ namespace GingerCore
                 if (installedIEVersion != null)
                 {
                     if (installedIEVersion != null)
+                    {
                         requiredValue = (installedIEVersion.ToString().Split(new char[] { '.' }))[0] + "000";
+                    }
                 }
                 if (requiredValue.ToString() == string.Empty || requiredValue.ToString() == "000")
+                {
                     requiredValue = "11000"; //defualt value
-                                             //write registry key to the User level if failed to write to Local Machine level
+                }
+                //write registry key to the User level if failed to write to Local Machine level
 
                 if (!RegistryFunctions.CheckRegistryValueExist(eRegistryRoot.HKEY_LOCAL_MACHINE, registryKeyPath,
                                     requiredValueName, requiredValue, Microsoft.Win32.RegistryValueKind.DWord, true, true))
@@ -988,9 +1051,14 @@ namespace GingerCore
 
                 //######################## FEATURE_SCRIPTURL_MITIGATION ###########################
                 if (osBitTypeIs64)
+                {
                     registryKeyPath = @"SOFTWARE\Wow6432Node\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_SCRIPTURL_MITIGATION";
+                }
                 else
+                {
                     registryKeyPath = @"SOFTWARE\Microsoft\Internet Explorer\MAIN\FeatureControl\FEATURE_SCRIPTURL_MITIGATION";
+                }
+
                 requiredValueName = appExeName;
                 requiredValue = 1;
                 //write registry key to the User level if failed to write to Local Machine level
@@ -1025,7 +1093,10 @@ namespace GingerCore
         {
             ObservableList<T> ObservableList = new ObservableList<T>();
             foreach (T o in List)
+            {
                 ObservableList.Add(o);
+            }
+
             return ObservableList;
         }
 
@@ -1033,7 +1104,10 @@ namespace GingerCore
         {
             List<T> ObservableList = new List<T>();
             foreach (T o in List)
+            {
                 ObservableList.Add(o);
+            }
+
             return ObservableList;
         }
 
@@ -1047,12 +1121,20 @@ namespace GingerCore
         where T : DependencyObject
         {
             DependencyObject parentObject = VisualTreeHelper.GetParent(child);
-            if (parentObject == null) return null;
+            if (parentObject == null)
+            {
+                return null;
+            }
+
             T parent = parentObject as T;
             if (parent != null)
+            {
                 return parent;
+            }
             else
+            {
                 return TryFindParent<T>(parentObject);
+            }
         }
 
         /// <summary>
@@ -1206,7 +1288,37 @@ namespace GingerCore
         {
             return Clipboard.GetText();
         }
+        public static bool IsAdmin()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                WindowsIdentity current = WindowsIdentity.GetCurrent();
+                WindowsPrincipal windowsPrincipal = new WindowsPrincipal(current);
+                return windowsPrincipal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                var process = new System.Diagnostics.Process();
+                var startInfo = new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = "id",
+                    Arguments = "-u",
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false
+                };
 
+                process.StartInfo = startInfo;
+                process.Start();
+                var output = process.StandardOutput.ReadToEnd();
+                process.WaitForExit();
+
+                int.TryParse(output, out int userId);
+
+                return userId == 0;
+            }
+            return false;
+
+        }
     }
 }
 

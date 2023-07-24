@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,20 +16,20 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using GingerCore.Variables;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.FlowControlLib;
+using GingerCore.Variables;
 
 namespace Ginger.Run
 {
     //This Class is for storing the Business Flow executed, it can have different Run Description, and a copy of the original BF
     // It is save as part of RunSetConfig
     public class BusinessFlowExecutionSummary : RepositoryItemBase
-    {       
-       
+    {
+
         public BusinessFlowExecutionSummary()
         {
         }
@@ -51,9 +51,9 @@ namespace Ginger.Run
 
         [IsSerializedForLocalRepository]
         public ObservableList<FlowControl> ExecutionBFFlowControls = new ObservableList<FlowControl>();
-        
-        public string PublishStatus 
-        { 
+
+        public string PublishStatus
+        {
             get
             {
                 if (BusinessFlow != null)
@@ -61,16 +61,16 @@ namespace Ginger.Run
                 else
                     return "Not Published";
             }
-        }        
+        }
 
 
         [IsSerializedForLocalRepository]
         public Amdocs.Ginger.CoreNET.Execution.eRunStatus Status { get; set; }
-        
-        public BusinessFlow BusinessFlow { get; set; }        
+
+        public BusinessFlow BusinessFlow { get; set; }
 
         public bool Selected { get; set; }
-        
+
         public string BusinessFlowExecLoggerFolder { get; set; }
 
         public bool BusinessFlowExecLoggerPopulated
@@ -81,14 +81,14 @@ namespace Ginger.Run
             }
         }
 
-        public override  string GetNameForFileName()
+        public override string GetNameForFileName()
         {
             return BusinessFlowName;
         }
 
         public string CurrentActivity
         {
-            get 
+            get
             {
                 if (BusinessFlow != null && BusinessFlow.CurrentActivity != null)
                     return BusinessFlow.CurrentActivity.ActivityName;
@@ -99,7 +99,7 @@ namespace Ginger.Run
 
         public string CurrentAction
         {
-            get 
+            get
             {
                 if (BusinessFlow != null && BusinessFlow.CurrentActivity != null && BusinessFlow.CurrentActivity.Acts != null && BusinessFlow.CurrentActivity.Acts.CurrentItem != null)
                     return ((IAct)(BusinessFlow.CurrentActivity.Acts.CurrentItem)).Description;
@@ -107,7 +107,7 @@ namespace Ginger.Run
                     return string.Empty;
             }
         }
-        
+
         public string GingerRunnerName { get; set; }
 
         public override string ItemName

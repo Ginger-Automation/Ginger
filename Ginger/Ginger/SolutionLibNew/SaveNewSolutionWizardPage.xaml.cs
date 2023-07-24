@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ namespace GingerWPF.SolutionLib
         public SaveNewSolutionWizardPage(Solution solution)
         {
             InitializeComponent();
-            mSolution = solution;            
+            mSolution = solution;
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -43,14 +43,14 @@ namespace GingerWPF.SolutionLib
                 case EventType.Init:
                     mWizard = (NewSolutionWizard)WizardEventArgs.Wizard;
                     break;
-                
+
                 case EventType.Active:
                     UpdateSummary();
                     break;
             }
         }
 
-        
+
 
         private void UpdateSummary()
         {

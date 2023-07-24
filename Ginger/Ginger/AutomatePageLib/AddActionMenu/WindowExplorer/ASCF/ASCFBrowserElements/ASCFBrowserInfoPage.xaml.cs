@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ limitations under the License.
 
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using GingerCore.Drivers.ASCF;
 
 namespace Ginger.Actions.Locators.ASCF
 {
@@ -38,7 +36,7 @@ namespace Ginger.Actions.Locators.ASCF
 
         private void ShowControlInfo(string Path)
         {
-            ControlNameTextBox.Text = Path;            
+            ControlNameTextBox.Text = Path;
         }
 
         //TODO: use me

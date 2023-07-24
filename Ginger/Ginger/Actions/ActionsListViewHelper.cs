@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
     public class ActionsListViewHelper : IListViewHelper
     {
         Act mAction;
-        
+
         public General.eRIPageViewMode PageViewMode { get; set; }
 
         UcListView mListView = null;
@@ -106,7 +106,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         public void UpdatePageViewMode(Ginger.General.eRIPageViewMode pageViewMode)
         {
             PageViewMode = pageViewMode;
-            
+
         }
 
         public void SetItem(object item)
@@ -115,12 +115,12 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 mAction = (Act)item;
             }
-            else if(item is ucButton)
+            else if (item is ucButton)
             {
-                if(((ucButton)item).Tag is Act)
+                if (((ucButton)item).Tag is Act)
                 {
                     mAction = (Act)(((ucButton)item).Tag);
-                }                
+                }
             }
             else if (item is MenuItem)
             {
@@ -129,7 +129,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                     mAction = ((Act)((MenuItem)item).Tag);
                 }
             }
-            else if(item is ApplicationPOMModel)
+            else if (item is ApplicationPOMModel)
             {
                 mAction = (Act)item;
             }
@@ -151,7 +151,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 case General.eRIPageViewMode.Automation:
                 case General.eRIPageViewMode.ViewAndExecute:
-                    return nameof(Act.ElapsedSecs); 
+                    return nameof(Act.ElapsedSecs);
 
                 case General.eRIPageViewMode.AddFromModel: //Add from POM
                     return nameof(ElementInfo.ElementTypeEnum);
@@ -168,7 +168,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public string GetItemDescriptionField()
         {
-            switch(PageViewMode)
+            switch (PageViewMode)
             {
                 case General.eRIPageViewMode.Automation:
                 case General.eRIPageViewMode.AddFromShardRepository:
@@ -193,7 +193,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.ViewAndExecute)
             {
                 return nameof(Act.Status);
-            }    
+            }
             else
             {
                 return null;
@@ -209,7 +209,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             SetItem(item);
 
-            if ((PageViewMode == General.eRIPageViewMode.Automation|| PageViewMode == General.eRIPageViewMode.View || PageViewMode == General.eRIPageViewMode.ViewAndExecute) 
+            if ((PageViewMode == General.eRIPageViewMode.Automation || PageViewMode == General.eRIPageViewMode.View || PageViewMode == General.eRIPageViewMode.ViewAndExecute)
                 && mAction.BreakPoint)
             {
                 return new ListItemUniqueIdentifier() { Color = "Red", Tooltip = "Break Point was set for this Action" };
@@ -287,7 +287,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 {
                     return;
                 }
-                List<Act> list = new List<Act>();
                 foreach (Act selectedItem in mListView.List.SelectedItems)
                 {
                     ActionsFactory.AddActionsHandler(selectedItem, mContext);
@@ -313,7 +312,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
         }
 
-    
+
         public List<ListItemOperation> GetListExtraOperations()
         {
             List<ListItemOperation> extraOperationsList = new List<ListItemOperation>();
@@ -346,7 +345,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             extraOperationsList.Add(takeUntakeSS);
 
             ListItemOperation copyAllList = new ListItemOperation();
-            copyAllList.SupportedViews= new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            copyAllList.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copyAllList.AutomationID = "copyAllList";
             copyAllList.Group = "Clipboard";
             copyAllList.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
@@ -630,7 +629,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             extraOperationsList.Add(pasterAfterCurrent);
 
             ListItemOperation addToSR = new ListItemOperation();
-            addToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone};
+            addToSR.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             addToSR.AutomationID = "addToSR";
             addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
             addToSR.Header = "Add to Shared Repository";
@@ -647,7 +646,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             List<ListItemOperation> executionOperationsList = new List<ListItemOperation>();
 
             ListItemOperation run = new ListItemOperation();
-            run.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute};
+            run.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute };
             run.AutomationID = "run";
             run.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Run;
             run.ToolTip = "Run Action";
@@ -655,7 +654,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             executionOperationsList.Add(run);
 
             ListItemOperation continueRun = new ListItemOperation();
-            continueRun.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute};
+            continueRun.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.ViewAndExecute };
             continueRun.AutomationID = "continueRun";
             continueRun.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Continue;
             continueRun.ToolTip = "Continue Run from Action";
@@ -678,7 +677,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void DeleteAllHandler(object sender, RoutedEventArgs e)
         {
             if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteAll) == eUserMsgSelection.Yes)
-            {                
+            {
                 mContext.Activity.Acts.Clear();
             }
         }
@@ -732,13 +731,13 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
 
         private void ActionsVarsHandler(object sender, RoutedEventArgs e)
-        {            
+        {
             VariablesDependenciesPage actionsDepPage = new VariablesDependenciesPage(mContext.Activity);
             actionsDepPage.ShowAsWindow();
         }
 
         private void ActiveUnactiveAllActionsHandler(object sender, RoutedEventArgs e)
-        {            
+        {
             if (mContext.Activity.Acts.Count > 0)
             {
                 bool activeValue = !mContext.Activity.Acts[0].Active;
@@ -788,7 +787,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             SetItem(sender);
 
             int index = mContext.Activity.Acts.IndexOf(mAction);
-            if (index < mContext.Activity.Acts.Count-1)
+            if (index < mContext.Activity.Acts.Count - 1)
             {
                 //move
                 ExpandItemOnLoad = true;
@@ -856,7 +855,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
 
         private void AddSelectedToSRHandler(object sender, RoutedEventArgs e)
-        {            
+        {
             List<RepositoryItemBase> list = new List<RepositoryItemBase>();
             List<object> SelectedItemsList = ListView.List.SelectedItems.Cast<object>().ToList();
             foreach (Act act in SelectedItemsList)

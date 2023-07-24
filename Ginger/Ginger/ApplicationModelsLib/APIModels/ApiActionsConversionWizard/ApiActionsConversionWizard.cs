@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Threading.Tasks;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
@@ -28,6 +26,8 @@ using Ginger.WizardLib;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
+using System;
+using System.Threading.Tasks;
 
 namespace Ginger.Actions.ApiActionsConversion
 {
@@ -43,7 +43,8 @@ namespace Ginger.Actions.ApiActionsConversion
         private ObservableList<BusinessFlowToConvert> mListOfBusinessFlow = null;
         public ObservableList<BusinessFlowToConvert> ListOfBusinessFlow
         {
-            get {
+            get
+            {
                 return mListOfBusinessFlow;
             }
             set
@@ -56,8 +57,8 @@ namespace Ginger.Actions.ApiActionsConversion
 
         public bool PullValidations { get; set; }
 
-        public eModelConversionType ModelConversionType 
-        { 
+        public eModelConversionType ModelConversionType
+        {
             get
             {
                 return eModelConversionType.ApiActionConversion;
@@ -75,7 +76,7 @@ namespace Ginger.Actions.ApiActionsConversion
         public ApiActionsConversionWizard(RepositoryFolder<ApplicationAPIModel> apiModelFolder)
         {
             mAPIModelFolder = apiModelFolder;
-            ListOfBusinessFlow = GetBusinessFlowsToConvert(); 
+            ListOfBusinessFlow = GetBusinessFlowsToConvert();
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Web services Actions Conversion Introduction", Page: new WizardIntroPage("/ApplicationModelsLib/APIModels/ApiActionsConversionWizard/ApiActionsConversionIntro.md"));
 
@@ -95,7 +96,7 @@ namespace Ginger.Actions.ApiActionsConversion
         private ObservableList<BusinessFlowToConvert> GetBusinessFlowsToConvert()
         {
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            ObservableList <BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>();           
+            ObservableList<BusinessFlowToConvert> lst = new ObservableList<BusinessFlowToConvert>();
             Parallel.ForEach(businessFlows, bf =>
             {
                 if (IsWebServiceTargetApplicationInFlow(bf))
@@ -119,12 +120,12 @@ namespace Ginger.Actions.ApiActionsConversion
         /// <returns></returns>
         private bool IsWebServiceTargetApplicationInFlow(BusinessFlow bf)
         {
-            bool isPresent = false;            
+            bool isPresent = false;
             foreach (var ta in bf.TargetApplications)
             {
                 ePlatformType platformType = WorkSpace.Instance.Solution.GetApplicationPlatformForTargetApp(ta.ItemName);
                 isPresent = platformType == ePlatformType.WebServices;
-                if(isPresent)
+                if (isPresent)
                 {
                     break;
                 }

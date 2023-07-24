@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,25 +23,24 @@ using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger;
 using Ginger.Actions;
-using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.BusinessFlowPages;
+using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System.Linq;
-using Amdocs.Ginger.Common.InterfacesLib;
-using System.Threading.Tasks;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -114,8 +113,16 @@ namespace GingerWPF.BusinessFlowsLib
                     BindingHandler.ObjFieldBinding(xBreakPointMenuItemIcon, ImageMaker.ContentProperty, mActionBeenEdit, nameof(Act.BreakPoint), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
                 }
 
-                mActionEditPage = new ActionEditPage(mActionBeenEdit, mPageViewMode);
-                xMainFrame.SetContent(mActionEditPage);
+                if (mActionEditPage == null)
+                {
+                    mActionEditPage = new ActionEditPage(mActionBeenEdit, mPageViewMode);
+                }
+                else
+                {
+                    mActionEditPage.Init(mActionBeenEdit, mPageViewMode);
+                }
+
+                xMainFrame.ClearAndSetContent(mActionEditPage);
                 if (ShiftToActionEditEvent != null)
                 {
                     ShiftToActionEditEvent.Invoke(this, null);
@@ -128,11 +135,9 @@ namespace GingerWPF.BusinessFlowsLib
                 if (mActionEditPage != null)
                 {
                     mActionEditPage.ClearPageBindings();
-                    mActionEditPage.KeepAlive = false;
-                    mActionEditPage = null;
                     //GC.Collect();
                 }
-                xMainFrame.SetContent(mActionsListView);
+                xMainFrame.ClearAndSetContent(mActionsListView);
                 mActionsListView.ScrollToViewCurrentItem();
 
                 if (ShiftToActionsListEvent != null)
@@ -206,7 +211,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mActionsListHelper.UpdatePageViewMode(mPageViewMode);
                 mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
-                if(mActionsListHelper.Context != null && mActivity != mActionsListHelper.Context.Activity)
+                if (mActionsListHelper.Context != null && mActivity != mActionsListHelper.Context.Activity)
                 {
                     UpdateActivity(mActionsListHelper.Context.Activity);
                 }

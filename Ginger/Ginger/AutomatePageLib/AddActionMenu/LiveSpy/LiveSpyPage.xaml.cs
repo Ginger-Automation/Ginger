@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,19 +19,14 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
-using Ginger.Drivers.Common;
-using Ginger.UserControls;
-using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Drivers.JavaDriverLib;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -271,7 +266,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                         {
                             source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mSpyElement.ScreenShotImage.ToString()));
                         }
-                        xUCElementDetails.xElementScreenShotFrameTop.Content = new ScreenShotViewPage(mSpyElement?.ElementName, source, false);
+                        xUCElementDetails.xElementScreenShotFrameTop.ClearAndSetContent(new ScreenShotViewPage(mSpyElement?.ElementName, source, false));
                     }
                     else
                     {

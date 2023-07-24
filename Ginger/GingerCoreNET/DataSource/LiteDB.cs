@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using static GingerCore.Actions.ActDSTableElement;
@@ -417,7 +416,7 @@ namespace GingerCoreNET.DataSource
 
                 var itemToRemove = mColumnNames.RemoveAll(x => x.Contains("System.Data.DataColumnCollection"));
                 var s = mColumnNames.RemoveAll(a => a.Contains("_id"));
-                var name = mColumnNames.RemoveAll(i => i.Contains("Name"));
+                //var name = mColumnNames.RemoveAll(i => i.Contains("Name")); Commented this as we are not able to see columnNames which contain "Name" keyword in it.
 
             }
             return mColumnNames;
@@ -552,7 +551,7 @@ namespace GingerCoreNET.DataSource
                                     if ((jt as JProperty).Name != "_id")
                                     {
                                         string sData = jt.ToString();
-                                        Regex regex = new Regex(@": {(\r|\n| )*""_type"": ""System.DBNull, mscorlib""(\r|\n| )*}");
+                                        Regex regex = new Regex(@": {(\r|\n| )*""_type"": ""System.DBNull*");
                                         Match match = regex.Match(sData);
                                         if (match.Success)
                                         {
@@ -721,21 +720,28 @@ namespace GingerCoreNET.DataSource
         {
             bool renameSuccess = false;
             bool tableExist = false;
-            using (var db = new LiteDatabase(FileFullPath))
-            {
-                tableExist = db.CollectionExists(newTableName);
-                if (!tableExist)
+            try
+            {                
+                using (var db = new LiteDatabase(FileFullPath))
                 {
-                    renameSuccess = db.RenameCollection(tableName, newTableName);
+                    tableExist = db.CollectionExists(newTableName);
+                    if (!tableExist)
+                    {
+                        renameSuccess = db.RenameCollection(tableName, newTableName);
+                    }
+                }
+                if (renameSuccess)
+                {
+                    this.UpdateDSNameChangeInItem(this, tableName, newTableName, ref renameSuccess);
+                }
+                else if (tableExist)
+                {
+                    Reporter.ToUser(eUserMsgKey.DbTableNameError, newTableName);
                 }
             }
-            if (renameSuccess)
+            catch (Exception ex)
             {
-                this.UpdateDSNameChangeInItem(this, tableName, newTableName, ref renameSuccess);
-            }
-            else if (tableExist)
-            {
-                Reporter.ToUser(eUserMsgKey.DbTableNameError, newTableName);
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occured while renaming the table {tableName}", ex);                
             }
         }
 
@@ -1303,8 +1309,8 @@ namespace GingerCoreNET.DataSource
 
         public override string UpdateDSReturnValues(string Name, string sColList, string sColVals)
         {
-            string[] collist = sColList.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            string[] vallist = sColVals.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] collist = sColList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] vallist = sColVals.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             string query = null;
             string colvalues = null;
 

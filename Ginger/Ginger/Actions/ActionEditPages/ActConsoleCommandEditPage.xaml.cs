@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ namespace Ginger.Actions
 
         private Context mContext;
 
-        string SHFilesPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, @"Documents\sh\");        
+        string SHFilesPath = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder, @"Documents\sh\");
 
         public ActConsoleCommandEditPage(ActConsoleCommand actConsoleCommand)
         {
@@ -49,41 +49,41 @@ namespace Ginger.Actions
                 mContext = Context.GetAsContext(mActConsoleCommand.Context);
             }
 
-            List<object> list = GetActionListPlatform();            
+            List<object> list = GetActionListPlatform();
             GingerCore.General.FillComboFromEnumObj(ConsoleActionComboBox, actConsoleCommand.ConsoleCommand, list);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConsoleActionComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ConsoleCommand);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CommandTextBox, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.Command);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.ScriptName);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWait, TextBox.TextProperty, actConsoleCommand, ActConsoleCommand.Fields.WaitTime);
             xDelimiterVE.BindControl(Context.GetAsContext(actConsoleCommand.Context), actConsoleCommand, nameof(ActConsoleCommand.Delimiter));
-            txtExpected.Init(Context.GetAsContext(mActConsoleCommand.Context), mActConsoleCommand, ActConsoleCommand.Fields.ExpString);           
+            txtExpected.Init(Context.GetAsContext(mActConsoleCommand.Context), mActConsoleCommand, ActConsoleCommand.Fields.ExpString);
         }
 
         private List<object> GetActionListPlatform()
         {
-            if(mActConsoleCommand.Platform== ePlatformType.NA)
+            if (mActConsoleCommand.Platform == ePlatformType.NA)
             {
-                if (mContext != null && mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity!=null)
+                if (mContext != null && mContext.BusinessFlow != null && mContext.BusinessFlow.CurrentActivity != null)
                 {
                     string targetapp = mContext.BusinessFlow.CurrentActivity.TargetApplication;
                     mActConsoleCommand.Platform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == targetapp select x.Platform).FirstOrDefault();
-                }    
+                }
                 //TODO: Need to handle in generic way for all actions added to SR
                 //else - if platform is NA and context is also null means we are in Shared repository
                 //So the actions list will have only free command which is wrong
             }
-           
+
 
             List<object> actionList = new List<object>();
-           
+
             actionList.Add(ActConsoleCommand.eConsoleCommand.FreeCommand);
 
             if (mActConsoleCommand.Platform == ePlatformType.Unix)
-            {                
+            {
                 actionList.Add(ActConsoleCommand.eConsoleCommand.ParametrizedCommand);
                 actionList.Add(ActConsoleCommand.eConsoleCommand.Script);
             }
-            else if(mActConsoleCommand.Platform == ePlatformType.DOS)
+            else if (mActConsoleCommand.Platform == ePlatformType.DOS)
             {
                 actionList.Add(ActConsoleCommand.eConsoleCommand.CopyFile);
                 actionList.Add(ActConsoleCommand.eConsoleCommand.IsFileExist);
@@ -93,19 +93,19 @@ namespace Ginger.Actions
         private void ConsoleActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ScriptStackPanel.Visibility = System.Windows.Visibility.Collapsed;
-            CommandPanel.Visibility = System.Windows.Visibility.Collapsed;           
+            CommandPanel.Visibility = System.Windows.Visibility.Collapsed;
             //Ugly code but working, find way to make it simple use the enum val from combo            
-            ActConsoleCommand.eConsoleCommand comm =  (ActConsoleCommand.eConsoleCommand)Enum.Parse(typeof(ActConsoleCommand.eConsoleCommand), ConsoleActionComboBox.SelectedItem.ToString());
-            
+            ActConsoleCommand.eConsoleCommand comm = (ActConsoleCommand.eConsoleCommand)Enum.Parse(typeof(ActConsoleCommand.eConsoleCommand), ConsoleActionComboBox.SelectedItem.ToString());
+
             switch (comm)
-            {                
-                case ActConsoleCommand.eConsoleCommand.FreeCommand:                    
+            {
+                case ActConsoleCommand.eConsoleCommand.FreeCommand:
                     mActConsoleCommand.RemoveAllButOneInputParam("Free Command");
                     mActConsoleCommand.AddInputValueParam("Free Command");
                     mActConsoleCommand.ScriptName = "";
                     break;
                 case ActConsoleCommand.eConsoleCommand.Script:
-                    ScriptStackPanel.Visibility = System.Windows.Visibility.Visible;                    
+                    ScriptStackPanel.Visibility = System.Windows.Visibility.Visible;
                     FillScriptNameCombo();
                     break;
                 case ActConsoleCommand.eConsoleCommand.ParametrizedCommand:
@@ -126,14 +126,17 @@ namespace Ginger.Actions
         {
             ScriptNameComboBox.Items.Clear();
             if (!Directory.Exists(SHFilesPath))
+            {
                 Directory.CreateDirectory(SHFilesPath);
+            }
+
             string[] fileEntries = Directory.GetFiles(SHFilesPath, "*.sh");
             foreach (string file in fileEntries)
             {
                 string s = file.Replace(SHFilesPath, "");
-                ScriptNameComboBox.Items.Add(s);                
+                ScriptNameComboBox.Items.Add(s);
             }
-            if(mActConsoleCommand.ScriptName =="")
+            if (mActConsoleCommand.ScriptName == "")
             {
                 mActConsoleCommand.ReturnValues.Clear();
                 mActConsoleCommand.InputValues.Clear();
@@ -144,7 +147,11 @@ namespace Ginger.Actions
         {
             string ScriptFile = SHFilesPath + ScriptNameComboBox.SelectedValue;
 
-            if (ScriptNameComboBox.SelectedValue == null) return;            
+            if (ScriptNameComboBox.SelectedValue == null)
+            {
+                return;
+            }
+
             if (mActConsoleCommand.ScriptName != ScriptNameComboBox.SelectedValue.ToString())
             {
                 mActConsoleCommand.ReturnValues.Clear();

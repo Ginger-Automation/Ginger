@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RosLynLib
 {
@@ -27,16 +25,16 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
     {
         public string FormatDateTime(string date, string format)
         {
-    //            0 = vbGeneralDate - Default.Returns date: mm / dd / yy and time if specified: hh: mm: ss PM/ AM.
-    //1 = vbLongDate - Returns date: weekday, monthname, year
-//2 = vbShortDate - Returns date: mm / dd / yy
-//3 = vbLongTime - Returns time: hh: mm: ss PM/ AM
-//4 = vbShortTime - Return time: hh: mm
-             //TODO: switch case on enum int/string
-             // trim in 
-             DateTime dateTime = DateTime.Parse(date);
+            //            0 = vbGeneralDate - Default.Returns date: mm / dd / yy and time if specified: hh: mm: ss PM/ AM.
+            //1 = vbLongDate - Returns date: weekday, monthname, year
+            //2 = vbShortDate - Returns date: mm / dd / yy
+            //3 = vbLongTime - Returns time: hh: mm: ss PM/ AM
+            //4 = vbShortTime - Return time: hh: mm
+            //TODO: switch case on enum int/string
+            // trim in 
+            DateTime dateTime = DateTime.Parse(date);
             return dateTime.ToString();
-                
+
         }
 
 

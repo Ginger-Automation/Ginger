@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,18 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.Actions.PlugIns;
-using System.Collections.Generic;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.PlugInsWindows;
 using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
-using Amdocs.Ginger.Common.Enums;
-using System.IO;
+using System.Collections.Generic;
 using System.Diagnostics;
-using Amdocs.Ginger.Common;
+using System.IO;
+using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -35,7 +34,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         private readonly PluginPackage mPluginPackage;
         private PlugInsWindows.PluginPackagePage mPlugInPage;
-        
+
         public PluginPackageTreeItem(PluginPackage pluginPackage)
         {
             mPluginPackage = pluginPackage;
@@ -77,7 +76,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mPlugInPage == null)
             {
-                 mPlugInPage = new PluginPackagePage(mPluginPackage);
+                mPlugInPage = new PluginPackagePage(mPluginPackage);
             }
             return mPlugInPage;
         }

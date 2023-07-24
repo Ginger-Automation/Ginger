@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
 {
-    public class VariableString : VariableBase 
+    public class VariableString : VariableBase
     {
         public VariableString()
         {
@@ -35,38 +35,39 @@ namespace GingerCore.Variables
 
         public override string VariableEditPage { get { return "VariableStringPage"; } }
         private string mInitialStringValue;
-        
+
         // Only for set initial value, later on using only Value from VarBase
         // So when doing reset or start flow will reset to Initial String Value
         // Later on if during the flow the value change it will be on the VarBase.Value
         [IsSerializedForLocalRepository]
-        public string InitialStringValue 
-        { 
+        public string InitialStringValue
+        {
             set
             {
                 mInitialStringValue = value;
                 Value = value;
                 OnPropertyChanged("InitialStringValue");
                 OnPropertyChanged("Formula");
-            } 
-            get { 
+            }
+            get
+            {
                 //TODO: cleanup later, quick and dirty Temp solution for converting scripts prior to v1.5 which had the value and no StringInitialValue
                 if (mInitialStringValue == null)
                 {
                     mInitialStringValue = Value;
                 }
-                return mInitialStringValue; 
-            } 
+                return mInitialStringValue;
+            }
         }
-        
+
         public override string GetFormula()
         {
             return "Initial String Value=" + mInitialStringValue;
         }
 
         public override void ResetValue()
-        {            
-            Value = mInitialStringValue; 
+        {
+            Value = mInitialStringValue;
         }
 
         public override bool GenerateAutoValue(ref string errorMsg)

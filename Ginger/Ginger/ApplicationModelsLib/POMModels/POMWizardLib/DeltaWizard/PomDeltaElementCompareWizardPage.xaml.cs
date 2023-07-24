@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,15 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
-using GingerCore.Drivers;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -50,7 +44,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = (PomDeltaWizard)WizardEventArgs.Wizard;                  
+                    mWizard = (PomDeltaWizard)WizardEventArgs.Wizard;
                     break;
 
                 case EventType.Active:
@@ -73,8 +67,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                     InitilizePomElementsMappingPage();//we recreating page as workaround for clearing grid filters                    
                     xReLearnButton.Visibility = Visibility.Collapsed;
                     xStopLoadButton.ButtonText = "Stop";
-                    xStopLoadButton.IsEnabled = true;                    
-                    xStopLoadButton.Visibility = Visibility.Visible;                    
+                    xStopLoadButton.IsEnabled = true;
+                    xStopLoadButton.Visibility = Visibility.Visible;
 
                     await mWizard.mPomDeltaUtils.LearnDelta();
                 }
@@ -112,9 +106,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void InitilizePomElementsMappingPage()
         {
-            mPomDeltaViewPage = new PomDeltaViewPage(mWizard.mPomDeltaUtils.DeltaViewElements,null, mWizard.mPomDeltaUtils.Agent);
+            mPomDeltaViewPage = new PomDeltaViewPage(mWizard.mPomDeltaUtils.DeltaViewElements, null, mWizard.mPomDeltaUtils.Agent);
             mPomDeltaViewPage.SetAgent(mWizard.mPomDeltaUtils.Agent);
-            xPomElementsMappingPageFrame.Content = mPomDeltaViewPage;
+            xPomElementsMappingPageFrame.ClearAndSetContent(mPomDeltaViewPage);
         }
 
 

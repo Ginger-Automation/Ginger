@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ namespace Ginger.Drivers.WindowsAutomation
     public abstract class AutomationElementTreeItemBase
     {
         public UIAElementInfo UIAElementInfo = new UIAElementInfo();
-        
+
         //Quick way to get the AEControl
         public bool IsExpandable
         {
             get
             {
-                UIAutomationDriverBase driver = (UIAutomationDriverBase) UIAElementInfo.WindowExplorer;
+                UIAutomationDriverBase driver = (UIAutomationDriverBase)UIAElementInfo.WindowExplorer;
                 return driver.mUIAutomationHelper.HasAtleastOneChild(UIAElementInfo.ElementObject);
             }
         }

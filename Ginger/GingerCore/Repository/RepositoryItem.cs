@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,21 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
-using GingerCore.Activities;
-using GingerCore.DataSource;
 using GingerCore.Repository;
-using GingerCore.Variables;
 using System;
 using System.Reflection;
 
 namespace GingerCore
 {
     public abstract class RepositoryItem : RepositoryItemBase
-    {        
+    {
 
         [IsSerializedForLocalRepository]
         public int Version { get; set; }
@@ -46,7 +40,7 @@ namespace GingerCore
         public string LastUpdateBy { get; set; }
 
         [IsSerializedForLocalRepository]
-        public DateTime LastUpdate { get; set; }        
+        public DateTime LastUpdate { get; set; }
 
         public bool Deleted { get; set; }
 
@@ -57,19 +51,22 @@ namespace GingerCore
             UpdateControlFields();
         }
 
-        
+
         public virtual void Save()
         {
             SaveToFile(FileName);
         }
 
         public void SaveToFile(string fileName, bool FlagToUpdateFileName = true)
-        {            
+        {
             this.Version++;
             this.LastUpdate = DateTime.UtcNow;
             this.LastUpdateBy = Environment.UserName;
             if (FlagToUpdateFileName)
+            {
                 this.FileName = fileName;
+            }
+
             this.ClearBackup();
 
             RepositorySerializer rs = new RepositorySerializer();
@@ -99,7 +96,7 @@ namespace GingerCore
             RS.DeserializeFromTextWithTargetObj(sourceObj.GetType(), sourceObjXml, targetObj);
         }
 
-      
+
 
         public void InvokPropertyChanngedForAllFields()
         {
@@ -136,6 +133,6 @@ namespace GingerCore
 
 
 
-      
+
     }
 }

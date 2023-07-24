@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
 
 namespace Amdocs.Ginger.Common.GlobalSolutionLib
 {
@@ -63,7 +61,7 @@ namespace Amdocs.Ginger.Common.GlobalSolutionLib
             [EnumValueDescription("~\\Ginger.Solution.xml")]
             ExtrnalIntegrationConfigurations
         }
-        
+
         public static IEnumerable<T> GetEnumValues<T>()
         {
             return Enum.GetValues(typeof(T)).Cast<T>();

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,20 +18,18 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.BusinessFlowWindows;
-using GingerCore;
 using Ginger;
+using Ginger.BusinessFlowWindows;
+using Ginger.UserControls;
+using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
-using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.Repository;
-using Ginger.UserControls;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -71,7 +69,7 @@ namespace GingerWPF.BusinessFlowsLib
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16, Style = FindResource("@DataGridColumn_Image") as Style });
             view.GridColsView.Add(new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay });
 
@@ -81,7 +79,7 @@ namespace GingerWPF.BusinessFlowsLib
             xAppsGrid.DataSourceList = mBusinessFlow.TargetApplicationPlatforms;
         }
 
-       
+
 
         private void TrackBusinessFlowAutomationPrecentage()
         {
@@ -100,12 +98,16 @@ namespace GingerWPF.BusinessFlowsLib
                 Activity changedActivity = (Activity)sender;
                 if (string.IsNullOrEmpty(changedActivity.ActivitiesGroupID) == false)
                 {
-                    ActivitiesGroup actGroup = mBusinessFlow.ActivitiesGroups.Where(x => x.Name == changedActivity.ActivitiesGroupID).FirstOrDefault();
-                    if(actGroup != null)
+                    ActivitiesGroup actGroup = mBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == changedActivity.ActivitiesGroupID);
+                    if (actGroup != null)
                     {
                         actGroup.OnPropertyChanged(nameof(ActivitiesGroup.AutomationPrecentage));
-                    }                    
+                    }
                 }
+            }
+            else if (e.PropertyName == nameof(Activity.Active) || e.PropertyName == nameof(Activity.Mandatory))
+            {
+                mBusinessFlow.OnPropertyChanged(nameof(BusinessFlow.Activities));
             }
         }
 
@@ -116,17 +118,17 @@ namespace GingerWPF.BusinessFlowsLib
             //Perf imrprovements
             //if (WorkSpace.Instance.BetaFeatures.BFPageActivitiesHookOnlyNewActivities)
             //{
-                if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+            {
+                foreach (object o in e.NewItems)
                 {
-                    foreach (object o in e.NewItems)
-                    {
-                        Activity activity = (Activity)o;
-                        activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
-                    }
+                    Activity activity = (Activity)o;
+                    activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
                 }
+            }
             //}            
         }
-        
+
 
         private void BindControls()
         {
@@ -217,8 +219,12 @@ namespace GingerWPF.BusinessFlowsLib
 
             //make sure all Activities mapped to Application after change
             foreach (Activity activity in mBusinessFlow.Activities)
-                if (mBusinessFlow.TargetApplications.Where(x => x.Name == activity.TargetApplication).FirstOrDefault() == null)
+            {
+                if (mBusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == activity.TargetApplication) == null)
+                {
                     activity.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
+                }
+            }
         }
 
     }

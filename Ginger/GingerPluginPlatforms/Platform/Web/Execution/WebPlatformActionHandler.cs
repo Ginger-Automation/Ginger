@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ using GingerCoreNET.DriversLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Ginger.Plugin.Platform.Web.Execution
@@ -99,7 +98,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
 
             string SmartSyncAction = InputParams["SmartSyncAction"] as string;
 
-            string LocateValue= InputParams["LocateValue"] as string;
+            string LocateValue = InputParams["LocateValue"] as string;
 
             string LocateBy = InputParams["LocateBy"] as string;
             eElementType ElementType = eElementType.WebElement;
@@ -112,7 +111,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
                 case "WaitUntilDisplay":
                     st.Reset();
                     st.Start();
-                    WebElement= LocateElement(ref ElementType, LocateBy, LocateValue, webPlatformService);
+                    WebElement = LocateElement(ref ElementType, LocateBy, LocateValue, webPlatformService);
 
                     while (!(WebElement != null && (WebElement.IsVisible() || WebElement.IsEnabled())))
                     {
@@ -165,7 +164,7 @@ namespace Ginger.Plugin.Platform.Web.Execution
         }
 
 
-       internal static IGingerWebElement LocateElement(ref eElementType ElementType, string ElementLocateBy, string LocateByValue, IWebPlatform mPlatformService)
+        internal static IGingerWebElement LocateElement(ref eElementType ElementType, string ElementLocateBy, string LocateByValue, IWebPlatform mPlatformService)
         {
             IGingerWebElement Element = null;
             try

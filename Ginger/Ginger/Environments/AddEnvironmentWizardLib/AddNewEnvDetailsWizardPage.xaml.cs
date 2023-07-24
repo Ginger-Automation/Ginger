@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,13 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using GingerCore.Environments;
 using GingerWPF.WizardLib;
-using System;
-using System.Linq;
 using System.Windows.Controls;
-using static Ginger.ExtensionMethods;
 
 namespace Ginger.Environments.AddEnvironmentWizardLib
 {
@@ -43,20 +39,20 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
             {
                 case EventType.Init:
                     mWizard = (AddEnvironmentWizard)WizardEventArgs.Wizard;
-                    xNameTextBox.BindControl(mWizard.NewEnvironment, nameof(ProjEnvironment.Name));                    
+                    xNameTextBox.BindControl(mWizard.NewEnvironment, nameof(ProjEnvironment.Name));
                     xNameTextBox.AddValidationRule(new EnvironemntNameValidationRule());
-                    xEnvTagsViewer.Init(mWizard.NewEnvironment.Tags);                    
+                    xEnvTagsViewer.Init(mWizard.NewEnvironment.Tags);
                     xNameTextBox.Focus();
                     break;
-                //case EventType.Active:
-                //    // SetNextBtn();
-                //    // WizardEventArgs.IgnoreDefaultNextButtonSettings = true;
-                //    //mWizard.FinishEnabled = false;
-                //    break;
-                //case EventType.Finish:
-                //    //avoid keeping the form in memory ?? FIXME
-                //    // mWizard.NewEnvironment.PropertyChanged -= NewEnvironment_PropertyChanged;
-                //    break;
+                    //case EventType.Active:
+                    //    // SetNextBtn();
+                    //    // WizardEventArgs.IgnoreDefaultNextButtonSettings = true;
+                    //    //mWizard.FinishEnabled = false;
+                    //    break;
+                    //case EventType.Finish:
+                    //    //avoid keeping the form in memory ?? FIXME
+                    //    // mWizard.NewEnvironment.PropertyChanged -= NewEnvironment_PropertyChanged;
+                    //    break;
             }
         }
 
@@ -95,6 +91,6 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
         //        xNameNotUniqueLbl.Visibility = System.Windows.Visibility.Collapsed;
         //    }
         //}
-        
+
     }
 }

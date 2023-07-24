@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,17 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels.POMWizardLib;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -90,10 +89,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
 
             mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, AddSelfHealingColumn);
-            xMappedElementsFrame.Content = mappedUIElementsPage;
+            xMappedElementsFrame.ClearAndSetContent(mappedUIElementsPage);
 
             unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped, AddSelfHealingColumn);
-            xUnMappedElementsFrame.Content = unmappedUIElementsPage;
+            xUnMappedElementsFrame.ClearAndSetContent(unmappedUIElementsPage);
 
             UnMappedUIElementsUpdate();
             MappedUIElementsUpdate();
@@ -391,16 +390,19 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     foreach (TabItem tab in xPOMModelTabs.Items)
                     {
                         foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
-
+                        {
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (xPOMModelTabs.SelectedItem == tab)
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                }
                                 else
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
-
-                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                                } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
+                        }
                     }
                 }
             }

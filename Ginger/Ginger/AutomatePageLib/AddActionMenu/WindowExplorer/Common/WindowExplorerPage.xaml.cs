@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,13 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET;
 using Ginger.Actions.Locators.ASCF;
-using Ginger.Drivers.Common;
+using Ginger.Actions.UserControls;
+using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.Drivers.PowerBuilder;
 using Ginger.Drivers.Windows;
 using Ginger.UserControls;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Ginger.WindowExplorer.Android;
 using Ginger.WindowExplorer.Appium;
 using Ginger.WindowExplorer.Common;
 using Ginger.WindowExplorer.HTMLCommon;
@@ -33,40 +35,28 @@ using Ginger.WindowExplorer.Windows;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.UIAutomation;
+using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
-using GingerCore.Drivers.AndroidADB;
 using GingerCore.Drivers.Appium;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.JavaDriverLib;
 using GingerCore.Drivers.PBDriver;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms;
+using GingerCore.Platforms.PlatformsInfo;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Xml;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.UserControls;
-using GingerCore.Platforms.PlatformsInfo;
-using System.Linq;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System.Threading.Tasks;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Plugin.Core;
-using GingerCore.Actions.Common;
-using Ginger.BusinessFlowsLibNew.AddActionMenu;
-using System.Drawing;
-using Ginger.Actions.UserControls;
-using GingerCore.Actions.VisualTesting;
-using HtmlAgilityPack;
-using Ginger.ApplicationModelsLib.POMModels;
-using GingerCoreNET.Application_Models;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 
 namespace Ginger.WindowExplorer
 {
@@ -520,7 +510,10 @@ namespace Ginger.WindowExplorer
 
             AppWindow AW = (AppWindow)xWindowSelection.WindowsComboBox.SelectedItem;
             if (AW == null)
+            {
                 return null;
+            }
+
             mWindowExplorerDriver.SwitchWindow(AW.Title);
 
             return AW;
@@ -670,7 +663,10 @@ namespace Ginger.WindowExplorer
         private void FocusSpyItemOnControlTree()
         {
             //TODO: run the search on background worker so will work fast without user impact 
-            if (mSpyElement == null) return;
+            if (mSpyElement == null)
+            {
+                return;
+            }
 
             //StatusTextBlock.Text = mSpyElement.XPath;
             if (xWindowControlsGridView.Visibility == System.Windows.Visibility.Visible)
@@ -742,7 +738,11 @@ namespace Ginger.WindowExplorer
 
         public TreeViewItem FindMatchingTreeItemByElementXPath(TreeViewItem root, string searchItemXPath, string searchItemPath)
         {
-            if (root == null) return null;
+            if (root == null)
+            {
+                return null;
+            }
+
             ElementInfo currentItem = null;
 
             foreach (TreeViewItem TVI in root.Items)
@@ -762,7 +762,10 @@ namespace Ginger.WindowExplorer
                 {
                     TVI.IsExpanded = true;
                     TreeViewItem vv = FindMatchingTreeItemByElementXPath(TVI, searchItemXPath, searchItemPath);
-                    if (vv != null) return vv;
+                    if (vv != null)
+                    {
+                        return vv;
+                    }
                 }
             }
             return null;
@@ -841,7 +844,9 @@ namespace Ginger.WindowExplorer
         private void WindowsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if ((sender as ComboBox).SelectedItem != null)
+            {
                 RefreshTabsContent();
+            }
         }
 
         private void RefreshWindowsButton_Click(object sender, RoutedEventArgs e)
@@ -895,7 +900,9 @@ namespace Ginger.WindowExplorer
                     foreach (ElementInfo EI in list)
                     {
                         if (EI.WindowExplorer == null)
+                        {
                             EI.WindowExplorer = mWindowExplorerDriver;
+                        }
 
                         EI.ElementTitle = EI.ElementName;
 
@@ -931,7 +938,10 @@ namespace Ginger.WindowExplorer
 
         private ITreeViewItem GetTreeViewItemForElementInfo(Amdocs.Ginger.Common.UIElement.ElementInfo EI)
         {
-            if (EI == null) return null; // can happen when grid is filtered
+            if (EI == null)
+            {
+                return null; // can happen when grid is filtered
+            }
 
             //TODO: make it OO style avoid the if else if
             ITreeViewItem TVI = null;
@@ -1038,11 +1048,15 @@ namespace Ginger.WindowExplorer
         {
             bool isSearched;
             foreach (UIElementFilter filter in FilteringCreteriaList)
+            {
                 if (filter.Selected)
                 {
                     if (!CheckedFilteringCreteriaList.Contains(filter))
+                    {
                         CheckedFilteringCreteriaList.Add(filter);
+                    }
                 }
+            }
 
             //StatusTextBlock.Text = "Searching Elements...";
             GingerCore.General.DoEvents();
@@ -1068,7 +1082,10 @@ namespace Ginger.WindowExplorer
         private void ShowFilterElementsPage()
         {
             if (FilteringCreteriaList.Count == 0)
+            {
                 SetAutoMapElementTypes();
+            }
+
             if (FilteringCreteriaList.Count != 0)
             {
                 CheckedFilteringCreteriaList = new ObservableList<UIElementFilter>();
@@ -1076,11 +1093,15 @@ namespace Ginger.WindowExplorer
                 FEW.ShowAsWindow(eWindowShowStyle.Dialog);
 
                 foreach (UIElementFilter filter in FilteringCreteriaList)
+                {
                     if (filter.Selected)
                     {
                         if (!CheckedFilteringCreteriaList.Contains(filter))
+                        {
                             CheckedFilteringCreteriaList.Add(filter);
+                        }
                     }
+                }
             }
         }
 
@@ -1105,7 +1126,9 @@ namespace Ginger.WindowExplorer
                 LoadPageSourceDoc = mWindowExplorerDriver.SupportedViews().Contains(eTabView.PageSource);
 
                 if (!mWindowExplorerDriver.SupportedViews().Contains(eTabView.Screenshot) || SwitchToCurrentWindow() == null)
+                {
                     return;
+                }
 
                 Bitmap ScreenShotBitmap = ((IVisualTestingDriver)((AgentOperations)mApplicationAgent.Agent.AgentOperations).Driver).GetScreenShot();
                 mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, (mWindowExplorerDriver as DriverBase).ScreenShotInitialZoom());
@@ -1119,7 +1142,7 @@ namespace Ginger.WindowExplorer
 
                 mScreenShotViewPage.xMainImage.MouseLeftButtonDown += XMainImage_MouseLeftButtonDown;
 
-                xScreenShotFrame.Content = mScreenShotViewPage;
+                xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
                 //xDeviceImage.Source = General.ToBitmapSource(ScreenShotBitmap);
 
                 xScreenShotFrame.Visibility = Visibility.Visible;
@@ -1242,7 +1265,7 @@ namespace Ginger.WindowExplorer
             try
             {
                 //calculate clicked point on mobile
-                System.Drawing.Point pointOnAppScreen = ((DriverBase)mWindowExplorerDriver).GetPointOnAppWindow(ClickedPoint, mScreenShotViewPage.xMainImage.Source.Width, 
+                System.Drawing.Point pointOnAppScreen = ((DriverBase)mWindowExplorerDriver).GetPointOnAppWindow(ClickedPoint, mScreenShotViewPage.xMainImage.Source.Width,
                     mScreenShotViewPage.xMainImage.Source.Height, mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight);
 
                 //get the clicked element
@@ -1278,8 +1301,8 @@ namespace Ginger.WindowExplorer
                 double rectangleWidth = clickedElementInfo.Width;
                 double rectangleHeight = clickedElementInfo.Height;
 
-                if(((DriverBase)mWindowExplorerDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, mScreenShotViewPage.xMainImage.Source.Width, mScreenShotViewPage.xMainImage.Source.Height,
-                    mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight, clickedElementInfo, false))
+                if (((DriverBase)mWindowExplorerDriver).SetRectangleProperties(ref ElementStartPoint, ref ElementMaxPoint, mScreenShotViewPage.xMainImage.Source.Width, mScreenShotViewPage.xMainImage.Source.Height,
+                    mScreenShotViewPage.xMainImage.ActualWidth, mScreenShotViewPage.xMainImage.ActualHeight, clickedElementInfo))
                 {
                     /// Driver/Platform specific calculations
                     rectangleWidth = ElementMaxPoint.X - ElementStartPoint.X;
@@ -1292,8 +1315,15 @@ namespace Ginger.WindowExplorer
                     rectangleHeight = clickedElementInfo.Height;
                 }
 
-                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.LeftProperty, ElementStartPoint.X + ((mScreenShotViewPage.xMainCanvas.ActualWidth - mScreenShotViewPage.xMainImage.ActualWidth) / 2));
-                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + ((mScreenShotViewPage.xMainCanvas.ActualHeight - mScreenShotViewPage.xMainImage.ActualHeight) / 2));
+                double canvasLeftForMainImage = Canvas.GetLeft(mScreenShotViewPage.xMainImage);
+                if (double.IsNaN(canvasLeftForMainImage))
+                    canvasLeftForMainImage = 0;
+                double canvasTopForMainImage = Canvas.GetTop(mScreenShotViewPage.xMainImage);
+                if (double.IsNaN(canvasTopForMainImage))
+                    canvasTopForMainImage = 0;
+
+                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.LeftProperty, ElementStartPoint.X + canvasLeftForMainImage);
+                mScreenShotViewPage.xHighlighterBorder.SetValue(Canvas.TopProperty, ElementStartPoint.Y + canvasTopForMainImage);
                 mScreenShotViewPage.xHighlighterBorder.Margin = new Thickness(0);
 
                 mScreenShotViewPage.xHighlighterBorder.Width = rectangleWidth;
@@ -1328,17 +1358,19 @@ namespace Ginger.WindowExplorer
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (xViewsTabs.SelectedItem == tab)
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                }
                                 else
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
-
-                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                                } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
                         }
                     }
                 }
 
-                if(WindowComboboxRow.Height.Value == 0)
+                if (WindowComboboxRow.Height.Value == 0)
                 {
                     WindowComboboxRow.Height = new GridLength(50);
                 }
@@ -1524,7 +1556,7 @@ namespace Ginger.WindowExplorer
 
             if (!xLiveSpyTabContentFrame.HasContent || xLiveSpyTabContentFrame.Content == null)
             {
-                xLiveSpyTabContentFrame.Content = spyPage;
+                xLiveSpyTabContentFrame.ClearAndSetContent(spyPage);
             }
         }
 

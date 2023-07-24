@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,19 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
-using System;
 using System.Collections.Generic;
-using Ginger.Reports;
-using GingerCore;
-using GingerCore.ALM;
-using GingerCore.DataSource;
-using Amdocs.Ginger.Common.InterfacesLib;
-using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
-using static GingerCore.ALM.PublishToALMConfig;
 using System.ComponentModel;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.Reports;
+using GingerCore.ALM;
+using static GingerCore.ALM.PublishToALMConfig;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -48,7 +42,7 @@ namespace Ginger.Run.RunSetActions
 
         private bool mtoAttachActivitiesGroupReport;
         [IsSerializedForLocalRepository]
-        public bool toAttachActivitiesGroupReport { get { return mtoAttachActivitiesGroupReport; } set { if (mtoAttachActivitiesGroupReport != value) { mtoAttachActivitiesGroupReport = value; OnPropertyChanged(nameof(toAttachActivitiesGroupReport)); } } }        
+        public bool toAttachActivitiesGroupReport { get { return mtoAttachActivitiesGroupReport; } set { if (mtoAttachActivitiesGroupReport != value) { mtoAttachActivitiesGroupReport = value; OnPropertyChanged(nameof(toAttachActivitiesGroupReport)); } } }
 
         private FilterByStatus mFilterStatus;
         [IsSerializedForLocalRepository]
@@ -106,7 +100,7 @@ namespace Ginger.Run.RunSetActions
                 OnPropertyChanged(nameof(RunSetActionPublishToQC.ExportType));
             }
         }
-       
+
         private ObservableList<ExternalItemFieldBase> mAlmFields = new ObservableList<ExternalItemFieldBase>();
         [IsSerializedForLocalRepository]
         public ObservableList<ExternalItemFieldBase> AlmFields
@@ -171,20 +165,25 @@ namespace Ginger.Run.RunSetActions
         {
             RunSetActionPublishToQCOperations.PrepareDuringExecAction(Gingers);
         }
-       
+
         public override void Execute(IReportInfo RI)
         {
             RunSetActionPublishToQCOperations.Execute(RI);
         }
-        
+
         public override string GetEditPage()
         {
             //return new ExportResultsToALMConfigPage(this);
             return "ExportResultsToALMConfigPage";
         }
 
-        
+
 
         public override string Type { get { return "Publish Execution Results to ALM"; } }
+
+        public override eALMTestSetLevel GetAlMTestSetLevel()
+        {
+            return ALMTestSetLevel;
+        }
     }
 }

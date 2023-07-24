@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,7 +30,9 @@ namespace GingerCore
         {
             System.Threading.Tasks.TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>();
             if (storyboard == null)
+            {
                 tcs.SetException(new ArgumentNullException());
+            }
             else
             {
                 EventHandler onComplete = null;
@@ -68,7 +70,7 @@ namespace GingerCore
                 dah.DecelerationRatio = 0.6;
                 Storyboard.SetTarget(dah, w);
                 Storyboard.SetTargetProperty(dah, new PropertyPath(Window.HeightProperty));
-                sb.Children.Add(dah); 
+                sb.Children.Add(dah);
             }
 
             if (changeWidth != 0.0)
@@ -108,7 +110,7 @@ namespace GingerCore
 
                 Storyboard.SetTarget(dax, w);
                 Storyboard.SetTargetProperty(dax, new PropertyPath(Window.LeftProperty));
-                sb.Children.Add(dax); 
+                sb.Children.Add(dax);
             }
 
             // animate window move vertical 
@@ -132,7 +134,7 @@ namespace GingerCore
 
                 Storyboard.SetTarget(day, w);
                 Storyboard.SetTargetProperty(day, new PropertyPath(Window.TopProperty));
-                sb.Children.Add(day); 
+                sb.Children.Add(day);
             }
             return sb;
         }

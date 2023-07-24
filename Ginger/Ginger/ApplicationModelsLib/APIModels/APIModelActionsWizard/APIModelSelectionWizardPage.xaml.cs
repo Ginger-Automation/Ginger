@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ using GingerWPF.WizardLib;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using static Ginger.ExtensionMethods;
 
 namespace Ginger.ApiModelsFolder
 {
@@ -64,8 +63,10 @@ namespace Ginger.ApiModelsFolder
 
             this.Visibility = Visibility.Hidden;
 
-            if(mAddApiModelActionWizardPage.AAMList.Count == 0)
+            if (mAddApiModelActionWizardPage.AAMList.Count == 0)
+            {
                 OpenAPITreeSelection();
+            }
 
             this.Visibility = Visibility.Visible;
         }
@@ -106,7 +107,7 @@ namespace Ginger.ApiModelsFolder
                 foreach (ApplicationAPIModel aamb in selectedList)
                 {
                     mAddApiModelActionWizardPage.AAMList.Add(aamb);
-                }                
+                }
             }
         }
 
@@ -114,6 +115,6 @@ namespace Ginger.ApiModelsFolder
         private void AddApiButtonClicked(object sender, RoutedEventArgs e)
         {
             OpenAPITreeSelection();
-        }        
+        }
     }
 }

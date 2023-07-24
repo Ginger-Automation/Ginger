@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ namespace Amdocs.Ginger.Repository
 {
     //Class to create link to repository item by GUID - which is saved - serialized and contain also the item name in case needed for analyzer when target item Guid not found can auto repair
 
-    public class RepositoryItemKey 
-    {        
+    public class RepositoryItemKey
+    {
         public Guid Guid { get; set; }
         public string ItemName { get; set; }
-                
+
 
         public string Key
         {
@@ -49,6 +49,6 @@ namespace Amdocs.Ginger.Repository
             return Key;
         }
 
-        
+
     }
 }

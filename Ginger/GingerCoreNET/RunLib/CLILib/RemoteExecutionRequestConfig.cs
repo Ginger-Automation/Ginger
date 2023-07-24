@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 var response = client.PostAsync(executionServiceUrl + "api/v1/executions", content);
                 response.Wait(20000);
-                
+
                 var responseString = response.Result.ToString();
                 if (response.Result.StatusCode != System.Net.HttpStatusCode.Created)
                 {
@@ -63,7 +63,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 Reporter.ToLog(eLogLevel.DEBUG, responseString);
 
-                Reporter.ToLog(eLogLevel.INFO,"Remote execution request created with "+ response.Result.Headers.Location.ToString().Split('?')[1]);
+                Reporter.ToLog(eLogLevel.INFO, "Remote execution request created with " + response.Result.Headers.Location.ToString().Split('?')[1]);
 
                 return response.Result.StatusCode.ToString();
             }

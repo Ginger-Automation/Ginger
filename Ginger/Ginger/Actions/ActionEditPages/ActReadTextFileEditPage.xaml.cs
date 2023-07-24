@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,17 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
+using System.Windows;
+using System.Windows.Controls;
 namespace Ginger.Actions
 {
     /// <summary>
     /// Interaction logic for ActReadTextFile.xaml
     /// </summary>
-    public partial class ActReadTextFileEditPage 
+    public partial class ActReadTextFileEditPage
     {
         private ActReadTextFile mAct;
 
@@ -38,10 +38,10 @@ namespace Ginger.Actions
             TextToWrite.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActReadTextFile.Fields.TextToWrite));
             LineNumber.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActReadTextFile.Fields.AppendLineNumber));
 
-            mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            mAct.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
             GingerCore.General.FillComboFromEnumObj(FileActionMode, mAct.FileActionMode);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FileActionMode, ComboBox.SelectedValueProperty, mAct,"FileActionMode");
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FileActionMode, ComboBox.SelectedValueProperty, mAct, "FileActionMode");
 
             GingerCore.General.FillComboFromEnumObj(TextFileEncoding, mAct.TextFileEncoding);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TextFileEncoding, ComboBox.SelectedValueProperty, mAct, "TextFileEncoding");
@@ -70,22 +70,22 @@ namespace Ginger.Actions
             }
             if ((ActReadTextFile.eTextFileActionMode)FileActionMode.SelectedValue == ActReadTextFile.eTextFileActionMode.Append)
             {
-                PanelAppendAt.Visibility = Visibility.Visible;                
+                PanelAppendAt.Visibility = Visibility.Visible;
             }
             else
             {
-                PanelAppendAt.Visibility = Visibility.Collapsed;                
+                PanelAppendAt.Visibility = Visibility.Collapsed;
             }
         }
 
         private void TextFileAppendType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if ((ActReadTextFile.eAppendAt)TextFileAppendType.SelectedValue == ActReadTextFile.eAppendAt.SpecificLine)
-            {                
+            {
                 PanelAppendLine.Visibility = Visibility.Visible;
             }
             else
-            {                
+            {
                 PanelAppendLine.Visibility = Visibility.Collapsed;
             }
         }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerWPF.BusinessFlowsLib;
 using GingerWPF.UserControlsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -35,7 +36,7 @@ namespace Ginger.BusinessFlowWindows
     /// </summary>
     public partial class BusinessFlowsAutomatePage : Page
     {
-        SingleItemTreeViewExplorerPage mBusFlowsPage;      
+        SingleItemTreeViewExplorerPage mBusFlowsPage;
         NewAutomatePage mNewAutomatePage;
 
         public BusinessFlowsAutomatePage()
@@ -59,9 +60,9 @@ namespace Ginger.BusinessFlowWindows
                     Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Loading Automate Page...");
                     if (mNewAutomatePage == null)
                     {
-                        mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);                        
+                        mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
                     }
-                    xContentFrame.Content = mNewAutomatePage;                    
+                    xContentFrame.ClearAndSetContent(mNewAutomatePage);
                     await mNewAutomatePage.LoadBusinessFlowToAutomate((BusinessFlow)args.Object);
                 }
                 finally
@@ -74,8 +75,8 @@ namespace Ginger.BusinessFlowWindows
             {
                 ShiftToBusinessFlowView((BusinessFlow)args.Object);
             }
-        }    
-         
+        }
+
 
         private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -87,18 +88,18 @@ namespace Ginger.BusinessFlowWindows
 
         private void Reset()
         {
-            mBusFlowsPage = null;                      
+            mBusFlowsPage = null;
             ShiftToBusinessFlowView(null);
         }
 
         private void ShiftToBusinessFlowView(BusinessFlow bf)
         {
-            if(mBusFlowsPage == null &&  WorkSpace.Instance.Solution != null)
+            if (mBusFlowsPage == null && WorkSpace.Instance.Solution != null)
             {
                 BusinessFlowsFolderTreeItem busFlowsRootFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
                 mBusFlowsPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.BusinessFlows), eImageType.BusinessFlow, busFlowsRootFolder, busFlowsRootFolder.SaveAllTreeFolderItemsHandler, busFlowsRootFolder.AddItemHandler, treeItemDoubleClickHandler: BusinessFlowsTree_ItemDoubleClick, true);
             }
-            xContentFrame.Content = mBusFlowsPage;
+            xContentFrame.ClearAndSetContent(mBusFlowsPage);
         }
 
         private void BusinessFlowsTree_ItemDoubleClick(object sender, EventArgs e)

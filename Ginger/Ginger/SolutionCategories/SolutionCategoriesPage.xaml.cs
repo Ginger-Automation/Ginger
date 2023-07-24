@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ using System.Windows.Data;
 
 namespace Ginger.SolutionCategories
 {
-    public enum eSolutionCategoriesPageMode { OptionalValuesDefinition, ValuesSelection}
+    public enum eSolutionCategoriesPageMode { OptionalValuesDefinition, ValuesSelection }
     /// <summary>
     /// Interaction logic for SolutionCategoriesPage.xaml
     /// </summary>
@@ -39,10 +39,13 @@ namespace Ginger.SolutionCategories
         ObservableList<SolutionCategoryDefinition> mCategoriesDefinitions;
         bool mReadOnly;
 
-        public SolutionCategoriesPage(eSolutionCategoriesPageMode mode, ObservableList<SolutionCategoryDefinition> categoriesDefinitions = null, bool readOnlyMode=false)
+        public SolutionCategoriesPage()
         {
             InitializeComponent();
+        }
 
+        public void Init(eSolutionCategoriesPageMode mode, ObservableList<SolutionCategoryDefinition> categoriesDefinitions = null, bool readOnlyMode = false)
+        {
             mPageMode = mode;
             mCategoriesDefinitions = categoriesDefinitions;
             if (WorkSpace.Instance.Solution != null)
@@ -58,23 +61,23 @@ namespace Ginger.SolutionCategories
         {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategory.CategoryName), Header = "Category", ReadOnly = true, BindingMode= BindingMode.OneWay, WidthWeight = 20 });            
+            view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategory.CategoryName), Header = "Category", ReadOnly = true, BindingMode = BindingMode.OneWay, WidthWeight = 20 });
 
             if (mPageMode == eSolutionCategoriesPageMode.OptionalValuesDefinition)
             {
                 view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategory.Description), Header = "Description", ReadOnly = mReadOnly, WidthWeight = 25 });
                 view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategory.CategoryOptionalValuesString), Header = "Optional Values", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay });
-                view.GridColsView.Add(new GridColView() { Field = "Edit", WidthWeight = 5, ReadOnly= mReadOnly, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xMainGrid.Resources["xOpenEditLocalPossibleValuesPage"] });
+                view.GridColsView.Add(new GridColView() { Field = "Edit", WidthWeight = 5, ReadOnly = mReadOnly, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xMainGrid.Resources["xOpenEditLocalPossibleValuesPage"] });
             }
             else
             {
                 SetOptionalValues();
-                view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategoryDefinition.Description), Header = "Description", ReadOnly = true, WidthWeight = 25 });               
+                view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategoryDefinition.Description), Header = "Description", ReadOnly = true, WidthWeight = 25 });
                 view.GridColsView.Add(new GridColView() { Field = nameof(SolutionCategoryDefinition.SelectedValueID), Header = "Selected Value", ReadOnly = mReadOnly, WidthWeight = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(valuesListField: nameof(SolutionCategoryDefinition.CategoryOptionalValues), selectedValueField: nameof(SolutionCategoryDefinition.SelectedValueID), selectedValuePathField: nameof(SolutionCategoryValue.Guid), displayMemberPathField: nameof(SolutionCategoryValue.Value), style: this.FindResource("$FlatInputComboBoxInGridCellStyle") as Style) });
             }
             xCategoriesGrid.SetAllColumnsDefaultView(view);
             xCategoriesGrid.InitViewItems();
-            
+
             xCategoriesGrid.ShowTitle = Visibility.Collapsed;
             xCategoriesGrid.ShowEdit = Visibility.Collapsed;
             xCategoriesGrid.ShowUpDown = Visibility.Collapsed;
@@ -93,19 +96,22 @@ namespace Ginger.SolutionCategories
             {
                 xCategoriesGrid.DataSourceList = mCategoriesDefinitions;
             }
-            
+
         }
 
         private void SetOptionalValues()
         {
             foreach (SolutionCategoryDefinition cat in mCategoriesDefinitions)
             {
-                SolutionCategory solCat = mSolutionCategories.Where(x => x.Category == cat.Category).FirstOrDefault();
-                if (cat != null)
+                if (cat!=null)
                 {
-                    cat.CategoryName = solCat.CategoryName;
-                    cat.Description = solCat.Description;
-                    cat.CategoryOptionalValues = solCat.CategoryOptionalValues;
+                    SolutionCategory solCat = mSolutionCategories.FirstOrDefault(x => x.Category == cat.Category);
+                    if (solCat!=null)
+                    {
+                        cat.CategoryName = solCat.CategoryName;
+                        cat.Description = solCat.Description;
+                        cat.CategoryOptionalValues = solCat.CategoryOptionalValues;
+                    } 
                 }
             }
         }

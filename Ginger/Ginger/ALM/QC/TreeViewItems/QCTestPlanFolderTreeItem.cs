@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,11 +18,9 @@ limitations under the License.
 
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.ALM.QC;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.ALM.QC.TreeViewItems
 {
@@ -42,12 +40,12 @@ namespace Ginger.ALM.QC.TreeViewItems
         StackPanel ITreeViewItem.Header()
         {
             if (Folder == "Subject")
-            {                
-                return TreeViewUtils.CreateItemHeader(Folder, "@WorkFlow_16x16.png");            
+            {
+                return TreeViewUtils.CreateItemHeader(Folder, "@WorkFlow_16x16.png");
             }
             else
             {
-                return TreeViewUtils.CreateItemHeader(Folder, "@Folder_16x16.png");            
+                return TreeViewUtils.CreateItemHeader(Folder, "@Folder_16x16.png");
             }
         }
 
@@ -57,11 +55,11 @@ namespace Ginger.ALM.QC.TreeViewItems
             List<string> strParentFolders = ALMIntegration.Instance.GetTestPlanExplorer(Path);
             //Add QC folders to tree children             
             foreach (string sFolder in strParentFolders)
-                {
-                    QCTestPlanFolderTreeItem pfn = new QCTestPlanFolderTreeItem();
-                    pfn.Folder = sFolder;
-                    pfn.Path = Path + @"\" + sFolder;
-                    Childrens.Add(pfn);                    
+            {
+                QCTestPlanFolderTreeItem pfn = new QCTestPlanFolderTreeItem();
+                pfn.Folder = sFolder;
+                pfn.Path = Path + @"\" + sFolder;
+                Childrens.Add(pfn);
             }
 
             return Childrens;
@@ -79,13 +77,13 @@ namespace Ginger.ALM.QC.TreeViewItems
 
         ContextMenu ITreeViewItem.Menu()
         {
-            return mContextMenu;            
+            return mContextMenu;
         }
 
         void ITreeViewItem.SetTools(ITreeView TV)
         {
             //Set Context Menu
-            mContextMenu= new ContextMenu();
+            mContextMenu = new ContextMenu();
         }
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
 using Ginger.GeneralWindows;
 using Ginger.TwoLevelMenuLib;
-using Ginger.Variables;
 using GingerCore;
 using GingerTest.POMs;
 using GingerWPF.BusinessFlowsLib;
@@ -41,7 +40,7 @@ namespace GingerWPFUnitTest.POMs
     {
         // WorkSpaceEventHandler w = (WorkSpaceEventHandler)WorkSpace.Instance.EventHandler;
         Ginger.MainWindow mMainWindow;
-       
+
         public EnvironmentsPOM Environments;
         public AgentsPOM Agents;
         public POMsPOM POMs;
@@ -57,11 +56,11 @@ namespace GingerWPFUnitTest.POMs
         public void Close()
         {
             Dispatcher.Invoke(() =>
-            {                
+            {
                 mMainWindow.CloseWithoutAsking();
-                Dispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background);                
+                Dispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background);
             });
-            
+
         }
 
         public Button TestButton()
@@ -72,41 +71,44 @@ namespace GingerWPFUnitTest.POMs
 
         public void ClickTestButton()
         {
-            mMainWindow.Dispatcher.Invoke(() => {
+            mMainWindow.Dispatcher.Invoke(() =>
+            {
                 Button b = TestButton();
                 b.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
             });
         }
 
         public void ClickRunTab()
-        {            
+        {
         }
         public void ClickAutomateTab()
         {
         }
 
         public void ClickSolutionTab()
-        {         
+        {
         }
 
         internal void ClickResourcesRibbon()
         {
-            mMainWindow.Dispatcher.Invoke(() => {                
+            mMainWindow.Dispatcher.Invoke(() =>
+            {
                 ListView a = (ListView)mMainWindow.FindName("xSolutionTabsListView");
-                a.SelectedItem = null; 
+                a.SelectedItem = null;
                 ListViewItem b = (ListViewItem)mMainWindow.FindName("xResourcesListItem");
                 b.RaiseEvent(new RoutedEventArgs(ListViewItem.SelectedEvent));
                 WaitForPage(typeof(TwoLevelMenuPage));
             });
 
-            
+
         }
 
         internal void ClickConfigurationsRibbon()
         {
 
-            mMainWindow.Dispatcher.Invoke(() => {
-                SleepWithDoEvents(1);                
+            mMainWindow.Dispatcher.Invoke(() =>
+            {
+                SleepWithDoEvents(1);
                 ListView lv = (ListView)mMainWindow.FindName("xSolutionTabsListView");
                 ListViewItem b = (ListViewItem)mMainWindow.FindName("xConfigurationsListItem");
                 lv.SelectedItem = b;
@@ -116,7 +118,8 @@ namespace GingerWPFUnitTest.POMs
 
         internal void ClickBusinessFlowRibbon()
         {
-            mMainWindow.Dispatcher.Invoke(() => {
+            mMainWindow.Dispatcher.Invoke(() =>
+            {
                 SleepWithDoEvents(1);
                 ListView lv = (ListView)mMainWindow.FindName("xSolutionTabsListView");
                 ListViewItem b = (ListViewItem)mMainWindow.FindName("xBusinessFlowsListItem");
@@ -130,8 +133,8 @@ namespace GingerWPFUnitTest.POMs
             SleepWithDoEvents(1);
             Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
             int i = 0;
-            while (true && i <100)
-            {                
+            while (true && i < 100)
+            {
                 Page p = (Page)f.Content;
                 if (p.GetType().FullName == p1.FullName && p.IsVisible)
                 {
@@ -145,14 +148,15 @@ namespace GingerWPFUnitTest.POMs
 
         internal void ChangeSize(int width, int height)
         {
-            Execute(() => {                
+            Execute(() =>
+            {
                 mMainWindow.Width = width;
                 mMainWindow.Height = height;
                 mMainWindow.WindowState = WindowState.Minimized;
                 SleepWithDoEvents(100);
                 mMainWindow.WindowState = WindowState.Normal;
                 //mMainWindow.UpdateLayout();
-                SleepWithDoEvents(100);         
+                SleepWithDoEvents(100);
             });
             SleepWithDoEvents(500);
 
@@ -240,7 +244,7 @@ namespace GingerWPFUnitTest.POMs
                 }
 
                 businessFlow = new BusinessFlowPOM(singleItemTreePage);
-               
+
             });
 
             return businessFlow;
@@ -297,13 +301,13 @@ namespace GingerWPFUnitTest.POMs
                 Frame f3 = (Frame)page2.FindName("xActivitiesListFrame");
                 ActivitiesListViewPage activitiesListPage = (ActivitiesListViewPage)f3.Content;
 
-              ActivityCount =activitiesListPage.ListView.DataSourceList.Count;
+                ActivityCount = activitiesListPage.ListView.DataSourceList.Count;
 
             });
 
             return ActivityCount;
 
-            }
+        }
 
 
         public void ClickOnBackToBFTreeBtn()
@@ -329,9 +333,9 @@ namespace GingerWPFUnitTest.POMs
                     }
                 }
 
-               
 
-                
+
+
 
             });
         }
@@ -339,7 +343,8 @@ namespace GingerWPFUnitTest.POMs
         public EnvironmentsPOM GotoEnvironments()
         {
             Environments = null;
-            Execute(() => {
+            Execute(() =>
+            {
                 ClickResourcesRibbon();
                 Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
                 TwoLevelMenuPage resourcesPage = (TwoLevelMenuPage)f.Content;
@@ -370,11 +375,12 @@ namespace GingerWPFUnitTest.POMs
         public List<string> GetMenus()
         {
             List<string> list = new List<string>();
-            Execute(() => {
+            Execute(() =>
+            {
                 foreach (Menu menu in FindVisualChildren<Menu>(mMainWindow))
-                {                    
-                    list.Add(menu.Name);                    
-                }                
+                {
+                    list.Add(menu.Name);
+                }
             });
             return list;
         }
@@ -405,16 +411,17 @@ namespace GingerWPFUnitTest.POMs
         internal AgentsPOM GotoAgents()
         {
             Agents = null;
-            Execute(() => {
+            Execute(() =>
+            {
                 ClickConfigurationsRibbon();
-                Frame f = (Frame)mMainWindow .FindName("xMainWindowFrame");
+                Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
                 TwoLevelMenuPage p = (TwoLevelMenuPage)f.Content;
-                
+
                 TwoLevelMenuPage configurationsPage = (TwoLevelMenuPage)f.Content;
 
                 ListView lv = (ListView)configurationsPage.FindName("xMainNavigationListView");
                 foreach (TopMenuItem topMenuItem in lv.Items)
-                {                    
+                {
                     if (topMenuItem.AutomationID == "Agents AID")
                     {
                         lv.SelectedItem = topMenuItem;
@@ -431,7 +438,10 @@ namespace GingerWPFUnitTest.POMs
                 }
             });
 
-            if (Agents == null) throw new Exception("Cannot goto Agents");
+            if (Agents == null)
+            {
+                throw new Exception("Cannot goto Agents");
+            }
 
             return Agents;
 
@@ -484,8 +494,9 @@ namespace GingerWPFUnitTest.POMs
         internal GlobalVariablesPOM GotoGlobalVariables()
         {
             GlobalVariables = null;
-            Execute(() => {
-                                
+            Execute(() =>
+            {
+
                 ClickResourcesRibbon();
                 Frame f = (Frame)mMainWindow.FindName("xMainWindowFrame");
                 TwoLevelMenuPage resourcesPage = (TwoLevelMenuPage)f.Content;
@@ -500,14 +511,17 @@ namespace GingerWPFUnitTest.POMs
                         SleepWithDoEvents(100);
                         Frame f1 = (Frame)FindElementByName(resourcesPage, "xSelectedItemFrame");
                         //VariablesPage variablesPage = (VariablesPage)f1.Content;
-                        
-                       // GlobalVariables = new GlobalVariablesPOM(variablesPage);
+
+                        // GlobalVariables = new GlobalVariablesPOM(variablesPage);
                         break;
                     }
                 }
             });
 
-            if (GlobalVariables == null) throw new Exception("Cannot goto Global Variables");
+            if (GlobalVariables == null)
+            {
+                throw new Exception("Cannot goto Global Variables");
+            }
 
             return GlobalVariables;
 
@@ -532,5 +546,5 @@ namespace GingerWPFUnitTest.POMs
         }
 
     }
-        
+
 }

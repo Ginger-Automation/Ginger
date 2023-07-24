@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,43 +17,28 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Expressions;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
-using Ginger.Actions._Common.ActUIElementLib;
 using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowsLibNew.AddActionMenu;
 using Ginger.BusinessFlowWindows;
-using Ginger.Drivers;
-using Ginger.Reports;
 using Ginger.Run;
 using Ginger.UserControls;
-using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.GeneralLib;
-using GingerCore.Platforms;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.WindowExplorer
 {
@@ -234,7 +219,7 @@ namespace Ginger.WindowExplorer
                 if (mPlatform.PlatformType().Equals(ePlatformType.Java) && mElementInfo.ElementType.Contains("JEditor"))
                 {
                     ActInputValue inputPar = DefaultAction.GetOrCreateInputParam(ActUIElement.Fields.IsWidgetsElement);
-                    if(inputPar != null && inputPar.Value == "true")
+                    if (inputPar != null && inputPar.Value == "true")
                     {
                         mElementInfo.ElementTypeEnum = eElementType.EditorPane;
                         (DefaultAction as ActUIElement).ElementType = eElementType.EditorPane;
@@ -249,7 +234,7 @@ namespace Ginger.WindowExplorer
 
                 xActEditPageFrame.Visibility = Visibility.Visible;
 
-                xActEditPageFrame.Content = actEditPage;
+                xActEditPageFrame.ClearAndSetContent(actEditPage);
 
                 xOperationsScrollView.Visibility = Visibility.Collapsed;
             }
@@ -277,7 +262,7 @@ namespace Ginger.WindowExplorer
                 xDataFrameRow.Height = new GridLength(mLastDataGridRowHeight, GridUnitType.Star);
                 xDataFrameSplitter.Visibility = System.Windows.Visibility.Visible;
                 xDataFrameExpander.Visibility = System.Windows.Visibility.Visible;
-                DataFrame.Content = mDataPage;
+                DataFrame.ClearAndSetContent(mDataPage);
             }
             else
             {
@@ -316,7 +301,9 @@ namespace Ginger.WindowExplorer
             xDDLocateBy.ItemsSource = mLocators.Select(l => l.LocateBy).ToList();
 
             if (mLocators.CurrentItem == null)
+            {
                 mLocators.CurrentItem = mElementInfo.Locators.CurrentItem;
+            }
 
             xDDLocateBy.SelectedItem = ((ElementLocator)mLocators.CurrentItem).LocateBy;
 
@@ -472,7 +459,7 @@ namespace Ginger.WindowExplorer
             {
                 if (AvailableActions.CurrentItem == null)
                 {
-                    Reporter.ToUser(eUserMsgKey .AskToSelectAction);
+                    Reporter.ToUser(eUserMsgKey.AskToSelectAction);
                     return;
                 }
 
@@ -510,7 +497,10 @@ namespace Ginger.WindowExplorer
 
         private void AvailableControlActionsGrid_RowChangedEvent(object sender, EventArgs e)
         {
-            if (AvailableActions.CurrentItem == null) return;
+            if (AvailableActions.CurrentItem == null)
+            {
+                return;
+            }
 
             string ActValue = ((Act)AvailableActions.CurrentItem).Value;
             if (!string.IsNullOrEmpty(ActValue))
@@ -530,9 +520,13 @@ namespace Ginger.WindowExplorer
         private void xDDActions_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (xDDActions.SelectedItem == null)
+            {
                 return;
+            }
             else
+            {
                 AvailableActions.CurrentItem = xDDActions.SelectedItem;
+            }
 
             string ActValue = ((Act)AvailableActions.CurrentItem).Value;
             if (!string.IsNullOrEmpty(ActValue))
@@ -543,7 +537,7 @@ namespace Ginger.WindowExplorer
 
         private void xDDLocateBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mLocators.CurrentItem = mLocators.Where(l => l.LocateBy == (eLocateBy)xDDLocateBy.SelectedItem).FirstOrDefault();
+            mLocators.CurrentItem = mLocators.FirstOrDefault(l => l.LocateBy == (eLocateBy)xDDLocateBy.SelectedItem);
             mElementInfo.Locators.CurrentItem = mLocators.CurrentItem;
 
             xLocateValueTxtBlock.Text = (mElementInfo.Locators.CurrentItem as ElementLocator).LocateValue;

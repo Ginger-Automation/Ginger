@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -47,9 +47,9 @@ namespace Ginger.Run
         public string Description { get; set; }
         public string ActivityGroupExternalID { get; set; }
         public string ActivityExternalID { get; set; }
-        public Tuple<string, string>  BFExternalID { get; set; }
+        public Tuple<string, string> BFExternalID { get; set; }
 
-        public DefectSuggestion(Guid failedActionGuid, string runnerName, string businessFlowName, string activitiesGroupName, 
+        public DefectSuggestion(Guid failedActionGuid, string runnerName, string businessFlowName, string activitiesGroupName,
                                 int activitySequence, string activityName, int actionSequence,
                                 string actionDescription, int retryIteration, string errorDetails,
                                 string extraDetails, List<string> screenshotFileNames,

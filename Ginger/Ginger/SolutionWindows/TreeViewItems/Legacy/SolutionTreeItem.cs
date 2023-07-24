@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,16 +17,13 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Ginger.SolutionGeneral;
 using Ginger.Imports.CDL;
-using GingerCore;
+using Ginger.SolutionGeneral;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -36,7 +33,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     public class SolutionTreeItem : TreeViewItemBase, ITreeViewItem
     {
         private SolutionPage mSolutionPage;
-        public Solution Solution { get; set;}
+        public Solution Solution { get; set; }
 
         Object ITreeViewItem.NodeObject()
         {
@@ -65,9 +62,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             string ImageFile = "@Solution_16x16.png";
             image.Source = new BitmapImage(new Uri(@"/Images/" + ImageFile, UriKind.RelativeOrAbsolute));
 
-             // Source Control Image
-             Image SCimage = new Image();
-             SCimage.Source = Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Solution.Folder, ref ItemSourceControlStatus);
+            // Source Control Image
+            Image SCimage = new Image();
+            SCimage.Source = Ginger.SourceControl.SourceControlUI.GetItemSourceControlImage(Solution.Folder, ref ItemSourceControlStatus);
 
             // Labels
             Label lbl1 = new Label();
@@ -81,7 +78,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Label lbl3 = new Label();
             lbl3.Margin = new Thickness(-10, 0, 0, 0);
             lbl3.Content = "'";
-            
+
             // Add into stack
             stack.Children.Add(image);
             stack.Children.Add(SCimage);
@@ -130,24 +127,24 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 TreeViewUtils.AddMenuItem(mContextMenu, "Import CDL", ImportCDL, null, "@Import_16x16.png");
             }
 
-            AddFolderNodeBasicManipulationsOptions(mContextMenu,"Solution",false,false,false,false,false,false,false,false,false, true);
+            AddFolderNodeBasicManipulationsOptions(mContextMenu, "Solution", false, false, false, false, false, false, false, false, false, true);
             AddSourceControlOptions(mContextMenu);
         }
 
         private void ImportCDL(object sender, RoutedEventArgs e)
         {
-            WizardWindow.ShowWizard(new ImportCDLWizard());            
+            WizardWindow.ShowWizard(new ImportCDLWizard());
         }
 
         private void RefreshSolution(object sender, RoutedEventArgs e)
-        {            
+        {
         }
-        
+
         ContextMenu ITreeViewItem.Menu()
         {
             return mContextMenu;
         }
-        
+
         private void Save(object sender, System.Windows.RoutedEventArgs e)
         {
             base.SaveTreeItem(Solution);
@@ -155,7 +152,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void SaveAll(object sender, System.Windows.RoutedEventArgs e)
         {
-            throw new NotImplementedException();            
+            throw new NotImplementedException();
         }
-   }
+    }
 }

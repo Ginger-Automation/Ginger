@@ -43,7 +43,7 @@
                     </Grid.ColumnDefinitions>
                     <Label  Grid.Column="0" Content="Window:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     <ComboBox x:Name="xAgentWindowsComboBox"  Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Center" SelectionChanged="xAgentWindowsComboBox_SelectionChanged" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" />
-                    <usercontrols:ucButton x:Name="xAgentWindowsRefreshBtn" Grid.Column="2" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Refresh" Click="xAgentWindowsRefreshBtn_Click" ToolTip="Refresh Agent windows list" />
+                    <usercontrols:ucButton x:Name="xAgentWindowsRefreshBtn" Grid.Column="2" ButtonType="ImageButton" HorizontalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Refresh" Click="xAgentWindowsRefreshBtn_Click" ToolTip="Refresh Agent windows list" />
                 </Grid>
         </StackPanel>
     </Grid>

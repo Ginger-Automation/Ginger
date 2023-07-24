@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -40,7 +39,7 @@ namespace GingerCore.Actions
             TBH.AddLineBreak();
             TBH.AddText("For example setting value in First Name TextBox for login screen");
             TBH.AddLineBreak();
-            TBH.AddImage("TextBox.png",200,50);
+            TBH.AddImage("TextBox.png", 200, 50);
             TBH.AddLineBreak();
             TBH.AddHeader1("the following sub actions can be selected:");
             TBH.AddLineBreak();
@@ -67,8 +66,8 @@ namespace GingerCore.Actions
             TBH.AddText("Get Height");
             TBH.AddLineBreak();
             TBH.AddText("Get Style");
-            
-        }        
+
+        }
 
         public override string ActionEditPage { get { return "ActTextBoxEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
@@ -83,7 +82,7 @@ namespace GingerCore.Actions
                 {
                     mPlatforms.Add(ePlatformType.Web);
                     // Since, the action isn't supported by Windows Platform hence, it's commented
-                    
+
                     mPlatforms.Add(ePlatformType.Mobile);
                 }
                 return mPlatforms;
@@ -99,10 +98,10 @@ namespace GingerCore.Actions
             SetFocus = 2,
             Clear = 3,
             GetValue = 4,
-            IsDisabled=5,
+            IsDisabled = 5,
             IsRequired = 6,
             GetFont = 7,
-            IsPrepopulated= 8,
+            IsPrepopulated = 8,
             IsDisplayed = 9,
             GetInputLength = 10,
             GetWidth = 22,
@@ -129,7 +128,7 @@ namespace GingerCore.Actions
                 return "TextBox:" + TextBoxAction.ToString();
             }
         }
-        
+
         public override eImageType Image { get { return eImageType.TextBox; } }
 
         Type IObsoleteAction.TargetAction()
@@ -206,7 +205,10 @@ namespace GingerCore.Actions
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
             if (!string.IsNullOrEmpty(this.LocateValue))
+            {
                 newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            }
+
             newAct.ElementType = eElementType.TextBox;
             newAct.Active = true;
 

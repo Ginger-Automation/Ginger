@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,14 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using System;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using System.Diagnostics;
 using System.Reflection;
-using Amdocs.Ginger.Common;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -71,7 +71,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
                     string output = prcsCMD.StandardOutput.ReadToEnd();
                     byte[] cmdOutput = Encoding.Default.GetBytes(output);
-                    msg.Send(cmdOutput,0,cmdOutput.Length,0);
+                    msg.Send(cmdOutput, 0, cmdOutput.Length, 0);
                     cmdOutput = new byte[255];
                 }
             }
@@ -80,5 +80,5 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
-     }
+    }
 }

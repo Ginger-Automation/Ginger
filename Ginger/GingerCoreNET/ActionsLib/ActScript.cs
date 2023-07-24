@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -99,6 +99,9 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string ScriptPath { get; set; }
 
+        [IsSerializedForLocalRepository]
+        public bool IgnoreStdOutErrors { get; set; }
+
         string DataBuffer = "";
         string ErrorBuffer = "";
         public override String ActionType
@@ -119,9 +122,17 @@ namespace GingerCore.Actions
 
         protected void AddError(string outLine)
         {
-            if (!string.IsNullOrEmpty(outLine))
+            if (IgnoreStdOutErrors)
             {
-                ErrorBuffer += outLine + "\n";
+                AddData(outLine);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(outLine))
+                {
+                    if (!(outLine.Contains("warn") || outLine.Contains("info")))
+                        ErrorBuffer += outLine + "\n";
+                }
             }
         }
 
@@ -174,14 +185,25 @@ namespace GingerCore.Actions
                     break;
             }
             p.OutputDataReceived += (proc, outLine) => { AddData(outLine.Data); };
-            p.ErrorDataReceived += (proc, outLine) => { AddError(outLine.Data); };
+            if (IgnoreStdOutErrors)
+            {
+                p.ErrorDataReceived += (proc, outLine) => { AddData(outLine.Data); };
+            }
+            else
+            {
+                p.ErrorDataReceived += (proc, outLine) => { AddError(outLine.Data); };
+            }
             p.Exited += Process_Exited;
             if (string.IsNullOrEmpty(SolutionFolder))
             {
                 if (string.IsNullOrEmpty(ScriptPath))
+                {
                     p.StartInfo.WorkingDirectory = Path.GetDirectoryName(ScriptName);
+                }
                 else
+                {
                     p.StartInfo.WorkingDirectory = ScriptPath;
+                }
             }
             else
             {
@@ -357,8 +379,13 @@ namespace GingerCore.Actions
                 case ActScript.eScriptAct.Script:
                     {
                         foreach (var p in act.InputValues)
+                        {
                             if (!string.IsNullOrEmpty(p.ValueForDriver))
+                            {
                                 cmd += " " + p.ValueForDriver;
+                            }
+                        }
+
                         return cmd;
                     }
                 default:
@@ -405,6 +432,6 @@ namespace GingerCore.Actions
                     }
                 }
             }
-        }
+        }        
     }
 }

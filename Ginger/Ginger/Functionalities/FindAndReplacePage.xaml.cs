@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -71,6 +71,8 @@ namespace Ginger.Functionalities
         }
 
         public eContext mContext;
+
+        public object ItemToSearchOn => mItemToSearchOn;
 
 
         public FindAndReplacePage(eContext context, object itemToSearchOn = null)
@@ -197,11 +199,17 @@ namespace Ginger.Functionalities
 
         private void MarkUnMarkAllActions(bool Status)
         {
-            if (xFoundItemsGrid.DataSourceList.Count <= 0) return;
+            if (xFoundItemsGrid.DataSourceList.Count <= 0)
+            {
+                return;
+            }
+
             if (xFoundItemsGrid.DataSourceList.Count > 0)
             {
                 foreach (object item in xFoundItemsGrid.GetVisibileGridItems())
+                {
                     ((FoundItem)item).IsSelected = Status;
+                }
             }
         }
 
@@ -253,7 +261,9 @@ namespace Ginger.Functionalities
         private void xFindWhatTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
+            {
                 Find();
+            }
         }
 
         private void WorkSpacePropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -374,7 +384,10 @@ namespace Ginger.Functionalities
             finally
             {
                 if (mContext != eContext.AutomatePage)
+                {
                     xSaveButton.Visibility = Visibility.Visible;
+                }
+
                 EnableDisableButtons(true);
                 mFindAndReplaceUtils.ProcessingState = FindAndReplaceUtils.eProcessingState.Pending;
             }
@@ -455,7 +468,11 @@ namespace Ginger.Functionalities
 
             foreach (ItemToSearchIn searchItem in mItemsToSearchIn)
             {
-                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                {
+                    return;
+                }
+
                 mFindAndReplaceUtils.FindItemsByReflection(searchItem.OriginItemObject, searchItem.Item, mFoundItemsList, mFindWhat, mSearchConfig, searchItem.ParentItemToSave, searchItem.ItemParent, searchItem.FoundField);
             }
         }
@@ -466,15 +483,23 @@ namespace Ginger.Functionalities
             {
                 case eContext.SolutionPage:
                     foreach (BusinessFlow BF in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
+                    {
                         mItemsToSearchIn.Add(new ItemToSearchIn(BF, BF, BF, string.Empty, string.Empty));
+                    }
+
                     break;
                 case eContext.AutomatePage:
                     mItemsToSearchIn.Add(new ItemToSearchIn(((BusinessFlow)mItemToSearchOn), ((BusinessFlow)mItemToSearchOn), ((BusinessFlow)mItemToSearchOn), string.Empty, string.Empty));
                     break;
                 case eContext.RunsetPage:
                     foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners)
+                    {
                         foreach (BusinessFlow bf in runner.Executor.BusinessFlows)
+                        {
                             mItemsToSearchIn.Add(new ItemToSearchIn(bf, bf, WorkSpace.Instance.RunsetExecutor.RunSetConfig, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\" + bf.Name, string.Empty));
+                        }
+                    }
+
                     break;
             }
         }
@@ -489,7 +514,11 @@ namespace Ginger.Functionalities
                     {
                         foreach (Activity activity in bf.Activities)
                         {
-                            if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                            if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                            {
+                                return;
+                            }
+
                             mItemsToSearchIn.Add(new ItemToSearchIn(activity, activity, bf, bf.Name, string.Empty));
                         }
                     }
@@ -498,7 +527,11 @@ namespace Ginger.Functionalities
                     ObservableList<Activity> RepoActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                     foreach (Activity activity in RepoActions)
                     {
-                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                        {
+                            return;
+                        }
+
                         mItemsToSearchIn.Add(new ItemToSearchIn(activity, activity, activity, string.Empty, string.Empty));
                     }
                     break;
@@ -507,7 +540,11 @@ namespace Ginger.Functionalities
                     //Pull Activities from current businessflows
                     foreach (Activity Activity in ((BusinessFlow)mItemToSearchOn).Activities)
                     {
-                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                        {
+                            return;
+                        }
+
                         mItemsToSearchIn.Add(new ItemToSearchIn(Activity, Activity, ((BusinessFlow)mItemToSearchOn), ((BusinessFlow)mItemToSearchOn).Name, string.Empty));
                     }
                     break;
@@ -515,14 +552,21 @@ namespace Ginger.Functionalities
                 case eContext.RunsetPage:
                     //Pull Activities from runsets businessflows
                     foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners)
+                    {
                         foreach (BusinessFlow BF in runner.Executor.BusinessFlows)
                         {
                             foreach (Activity activity in BF.Activities)
                             {
-                                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                                {
+                                    return;
+                                }
+
                                 mItemsToSearchIn.Add(new ItemToSearchIn(activity, activity, WorkSpace.Instance.RunsetExecutor.RunSetConfig, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\" + BF.Name, string.Empty));
                             }
                         }
+                    }
+
                     break;
             }
         }
@@ -540,7 +584,11 @@ namespace Ginger.Functionalities
                             string itemParent = bf.Name + @"\" + activity.ActivityName;
                             foreach (Act action in activity.Acts)
                             {
-                                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                                {
+                                    return;
+                                }
+
                                 if (mSubItemType == null || action.GetType() == mSubItemType)
                                 {
                                     mItemsToSearchIn.Add(new ItemToSearchIn(action, action, bf, itemParent, string.Empty));
@@ -556,7 +604,11 @@ namespace Ginger.Functionalities
                         foreach (Act action in activity.Acts)
                         {
                             string itemParent = activity.ItemName;
-                            if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                            if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                            {
+                                return;
+                            }
+
                             if (mSubItemType == null || action.GetType() == mSubItemType)
                             {
                                 mItemsToSearchIn.Add(new ItemToSearchIn(action, action, activity, itemParent, string.Empty));
@@ -568,9 +620,15 @@ namespace Ginger.Functionalities
                     ObservableList<Act> RepoActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
                     foreach (Act action in RepoActions)
                     {
-                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                        {
+                            return;
+                        }
+
                         if (mSubItemType == null || action.GetType() == mSubItemType)
+                        {
                             mItemsToSearchIn.Add(new ItemToSearchIn(action, action, action, string.Empty, string.Empty));
+                        }
                     }
                     break;
 
@@ -581,7 +639,11 @@ namespace Ginger.Functionalities
                         string itemParent = ((BusinessFlow)mItemToSearchOn).Name + @"\" + activity.ActivityName;
                         foreach (Act action in activity.Acts)
                         {
-                            if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                            if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                            {
+                                return;
+                            }
+
                             if (mSubItemType == null || action.GetType() == mSubItemType)
                             {
                                 mItemsToSearchIn.Add(new ItemToSearchIn(action, action, ((BusinessFlow)mItemToSearchOn), itemParent, string.Empty));
@@ -593,6 +655,7 @@ namespace Ginger.Functionalities
                 case eContext.RunsetPage:
                     //Pull Activities from businessflows inside runsets
                     foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners)
+                    {
                         foreach (BusinessFlow bf in runner.Executor.BusinessFlows)
                         {
                             foreach (Activity activity in bf.Activities)
@@ -600,7 +663,11 @@ namespace Ginger.Functionalities
                                 string itemParent = bf.Name + @"\" + activity.ActivityName;
                                 foreach (Act action in activity.Acts)
                                 {
-                                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                                    {
+                                        return;
+                                    }
+
                                     if (mSubItemType == null || action.GetType() == mSubItemType)
                                     {
                                         mItemsToSearchIn.Add(new ItemToSearchIn(action, action, WorkSpace.Instance.RunsetExecutor.RunSetConfig, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\" + itemParent, string.Empty));
@@ -608,6 +675,8 @@ namespace Ginger.Functionalities
                                 }
                             }
                         }
+                    }
+
                     break;
             }
         }
@@ -621,10 +690,16 @@ namespace Ginger.Functionalities
                     //Pull variables from solution global variables
                     foreach (VariableBase VB in WorkSpace.Instance.Solution.Variables)
                     {
-                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                        {
+                            return;
+                        }
+
                         string VariablePath = WorkSpace.Instance.Solution.Name + "\\Global Variables";
                         if (mSubItemType == null || VB.GetType() == mSubItemType)
+                        {
                             mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, WorkSpace.Instance.Solution, VariablePath, string.Empty));
+                        }
                     }
 
                     //pull variables from all repository BF's
@@ -638,15 +713,23 @@ namespace Ginger.Functionalities
                         {
                             string ActivityVariablePath = activity.ItemName;
                             if (mSubItemType == null || VB.GetType() == mSubItemType)
+                            {
                                 mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, activity, ActivityVariablePath, string.Empty));
+                            }
                         }
                     }
                     ObservableList<VariableBase> RepoVariables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
                     foreach (VariableBase VB in RepoVariables)
                     {
-                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                        {
+                            return;
+                        }
+
                         if (mSubItemType == null || VB.GetType() == mSubItemType)
+                        {
                             mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, VB, string.Empty, string.Empty));
+                        }
                     }
                     break;
 
@@ -656,7 +739,10 @@ namespace Ginger.Functionalities
 
                 case eContext.RunsetPage:
                     foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.RunSetConfig.GingerRunners)
+                    {
                         AddVariableFromBusinessFlowList(runner.Executor.BusinessFlows, WorkSpace.Instance.RunsetExecutor.RunSetConfig.Name + "\\" + runner.Name + "\\", WorkSpace.Instance.RunsetExecutor.RunSetConfig);
+                    }
+
                     break;
             }
         }
@@ -668,22 +754,36 @@ namespace Ginger.Functionalities
                 string BFVariableParent = itemPathPrefix + BF.Name;
                 foreach (VariableBase VB in BF.Variables)
                 {
-                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                    {
+                        return;
+                    }
+
                     if (mSubItemType == null || VB.GetType() == mSubItemType)
+                    {
                         mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, BF, BFVariableParent, string.Empty));
+                    }
                 }
                 foreach (Activity activitiy in BF.Activities)
                 {
                     string ActivityVariableParent = itemPathPrefix + BF.Name + @"\" + activitiy.ActivityName;
                     foreach (VariableBase VB in activitiy.Variables)
                     {
-                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                        if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                        {
+                            return;
+                        }
+
                         if (mSubItemType == null || VB.GetType() == mSubItemType)
                         {
                             if (parent == null)
+                            {
                                 mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, BF, ActivityVariableParent, string.Empty));
+                            }
                             else
+                            {
                                 mItemsToSearchIn.Add(new ItemToSearchIn(VB, VB, parent, ActivityVariableParent, string.Empty));
+                            }
                         }
                     }
                 }
@@ -695,7 +795,11 @@ namespace Ginger.Functionalities
             ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
             foreach (RunSetConfig RSC in RunSets)
             {
-                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                {
+                    return;
+                }
+
                 mItemsToSearchIn.Add(new ItemToSearchIn(RSC, RSC, RSC, string.Empty, string.Empty));
             }
         }
@@ -705,9 +809,28 @@ namespace Ginger.Functionalities
             ObservableList<ApplicationAPIModel> ApplicationModels = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>();
             foreach (ApplicationAPIModel AAM in ApplicationModels)
             {
-                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                {
+                    return;
+                }
+
                 if (mSubItemType == null || AAM.GetType() == mSubItemType)
+                {
                     mItemsToSearchIn.Add(new ItemToSearchIn(AAM, AAM, AAM, "Application API Models\\", string.Empty));
+                }
+            }
+            ObservableList<ApplicationPOMModel> ApplicationPomModels = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+            foreach (ApplicationPOMModel AAM in ApplicationPomModels)
+            {
+                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                {
+                    return;
+                }
+
+                if (mSubItemType == null || AAM.GetType() == mSubItemType)
+                {
+                    mItemsToSearchIn.Add(new ItemToSearchIn(AAM, AAM, AAM, "Application Page Object Models\\", string.Empty));
+                }
             }
         }
 
@@ -762,7 +885,9 @@ namespace Ginger.Functionalities
             foreach (Act a in Acts)
             {
                 if (!string.IsNullOrEmpty(a.ActionDescription))
+                {
                     ActsSubItemList.Add(new FindItemType { Name = a.ActionDescription, Type = a.GetType() });
+                }
             }
 
             return ActsSubItemList;
@@ -791,8 +916,9 @@ namespace Ginger.Functionalities
             foreach (ApplicationModelBase a in ApplicationModels)
             {
                 if (!string.IsNullOrEmpty(a.ObjFolderName))
+                {
                     APMsSubItemList.Add(new FindItemType { Name = a.ObjFolderName, Type = a.GetType() });
-
+                }
             }
 
             return APMsSubItemList;
@@ -820,8 +946,9 @@ namespace Ginger.Functionalities
             foreach (VariableBase a in Variables)
             {
                 if (!string.IsNullOrEmpty(a.VariableUIType))
+                {
                     VariablesSubItemList.Add(new FindItemType { Name = a.VariableUIType, Type = a.GetType() });
-
+                }
             }
 
             return VariablesSubItemList;
@@ -872,18 +999,30 @@ namespace Ginger.Functionalities
             }
             ActionEditPage w;
             if (mContext == eContext.RunsetPage)
+            {
                 w = new ActionEditPage(act, General.eRIPageViewMode.View);
+            }
             else if (mContext == eContext.AutomatePage)
+            {
                 w = new ActionEditPage(act, General.eRIPageViewMode.Automation);
+            }
             else if (Parent is BusinessFlow)
+            {
                 w = new ActionEditPage(act, General.eRIPageViewMode.ChildWithSave, Parent as BusinessFlow);
+            }
             else if (Parent is Activity)
+            {
                 w = new ActionEditPage(act, General.eRIPageViewMode.ChildWithSave, actParentActivity: Parent as Activity);
+            }
             else
+            {
                 w = new ActionEditPage(act, General.eRIPageViewMode.SharedReposiotry);
+            }
 
             if (w.ShowAsWindow(eWindowShowStyle.Dialog) == true)
+            {
                 RefreshFoundItemField(actionToView);
+            }
         }
 
         public void ViewVariable(FoundItem variableToViewFoundItem)
@@ -897,23 +1036,38 @@ namespace Ginger.Functionalities
             }
             VariableEditPage w;
             if (mContext == eContext.RunsetPage)
+            {
                 w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.View);
+            }
+
             if (mContext == eContext.AutomatePage)
             {
                 if (Parent != null && Parent is BusinessFlow)
+                {
                     w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.Default, Parent as BusinessFlow);
+                }
                 else if (Parent != null && Parent is Activity)
+                {
                     w = new VariableEditPage(variableToView, null, true, VariableEditPage.eEditMode.Default, Parent as Activity);
+                }
                 else
+                {
                     w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.SharedRepository, Parent);
+                }
             }
             else if (Parent != null && (Parent is Solution || Parent is BusinessFlow || Parent is Activity))
+            {
                 w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.FindAndReplace, Parent);
+            }
             else
+            {
                 w = new VariableEditPage(variableToView, context, true, VariableEditPage.eEditMode.SharedRepository);
+            }
 
             if (w.ShowAsWindow(eWindowShowStyle.Dialog) == true)
+            {
                 RefreshFoundItemField(variableToViewFoundItem);
+            }
         }
 
         private void ViewActivity(FoundItem activityToViewFoundItem)
@@ -922,14 +1076,22 @@ namespace Ginger.Functionalities
             RepositoryItemBase Parent = (RepositoryItemBase)activityToViewFoundItem.ParentItemToSave;
             GingerWPF.BusinessFlowsLib.ActivityPage w;
             if (mContext == eContext.SolutionPage)
-                w = new GingerWPF.BusinessFlowsLib.ActivityPage(activity, new Context() {BusinessFlow = (BusinessFlow)Parent}, General.eRIPageViewMode.ChildWithSave);
+            {
+                w = new GingerWPF.BusinessFlowsLib.ActivityPage(activity, new Context() { BusinessFlow = (BusinessFlow)Parent }, General.eRIPageViewMode.ChildWithSave);
+            }
             else if (mContext == eContext.AutomatePage)
+            {
                 w = new GingerWPF.BusinessFlowsLib.ActivityPage(activity, new Context(), General.eRIPageViewMode.Automation);
+            }
             else
+            {
                 w = new GingerWPF.BusinessFlowsLib.ActivityPage(activity, new Context(), General.eRIPageViewMode.View);
+            }
 
             if (w.ShowAsWindow(eWindowShowStyle.Dialog) == true)
+            {
                 RefreshFoundItemField(activityToViewFoundItem);
+            }
         }
 
         private void ViewBusinessFlow(FoundItem businessFlowToViewFoundItem)
@@ -938,16 +1100,24 @@ namespace Ginger.Functionalities
             RepositoryItemBase Parent = (RepositoryItemBase)businessFlowToViewFoundItem.ParentItemToSave;
             GingerWPF.BusinessFlowsLib.BusinessFlowViewPage w = null;
             if (mContext == eContext.RunsetPage)
+            {
                 w = new GingerWPF.BusinessFlowsLib.BusinessFlowViewPage(businessFlow, new Context(), General.eRIPageViewMode.View);
+            }
             else if (mContext == eContext.AutomatePage)
+            {
                 w = new GingerWPF.BusinessFlowsLib.BusinessFlowViewPage(businessFlow, new Context(), General.eRIPageViewMode.Automation);
+            }
             else
+            {
                 w = new GingerWPF.BusinessFlowsLib.BusinessFlowViewPage(businessFlow, new Context(), General.eRIPageViewMode.Standalone);
+            }
 
             w.Width = 1000;
             w.Height = 800;
             if (w.ShowAsWindow() == true)
+            {
                 RefreshFoundItemField(businessFlowToViewFoundItem);
+            }
         }
 
         private void ViewRunSet(FoundItem runSetToViewFoundItem)
@@ -986,7 +1156,9 @@ namespace Ginger.Functionalities
                 APIModelPage w = new APIModelPage(applicationAPIModel);
 
                 if (w.ShowAsWindow(eWindowShowStyle.Dialog, false, APIModelPage.eEditMode.FindAndReplace) == true)
+                {
                     RefreshFoundItemField(applicationModelToViewFoundItem);
+                }
             }
         }
 
@@ -1025,7 +1197,10 @@ namespace Ginger.Functionalities
         {
             foreach (FoundItem foundItem in FIList)
             {
-                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping) return;
+                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                {
+                    return;
+                }
 
                 try
                 {
@@ -1050,13 +1225,25 @@ namespace Ginger.Functionalities
             //if (xReplaceValueTextBox != null)
             //    xReplaceValueTextBox.Visibility = Visibility.Collapsed;
             if (xReplaceLabel != null)
+            {
                 xReplaceLabel.Visibility = Visibility.Collapsed;
+            }
+
             if (xReplaceButton != null)
+            {
                 xReplaceButton.Visibility = Visibility.Collapsed;
+            }
+
             if (xRow3 != null)
+            {
                 xRow3.Height = new GridLength(0);
+            }
+
             if (xFoundItemsGrid != null)
+            {
                 xFoundItemsGrid.ChangeGridView(eGridView.FindView.ToString());
+            }
+
             EnableDisableReplaceControlsAndFillReplaceComboBox();
         }
 
@@ -1078,7 +1265,9 @@ namespace Ginger.Functionalities
         private void ReplaceValueComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (xReplaceValueComboBox != null && xReplaceValueComboBox.SelectedItem != null)
+            {
                 mValueToReplace = xReplaceValueComboBox.SelectedItem.ToString();
+            }
         }
 
         private void ValueToReplaceTextBoxTextChanges(object sender, TextChangedEventArgs e)

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,9 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Windows;
 
 namespace GingerWPF.WizardLib
 {
@@ -89,7 +86,7 @@ namespace GingerWPF.WizardLib
         }
 
         public void ProcessStarted()
-        {        
+        {
             mWizardWindow.ProcessStarted();
         }
 
@@ -139,9 +136,9 @@ namespace GingerWPF.WizardLib
 
         public void AddPage(string Name, String Title, string SubTitle, IWizardPage Page)
         {
-            WizardPage wp1 = new WizardPage() { Name = Name, Title = Title, SubTitle = SubTitle, Page = Page };            
+            WizardPage wp1 = new WizardPage() { Name = Name, Title = Title, SubTitle = SubTitle, Page = Page };
             Pages.Add(wp1);
-        }        
+        }
 
         //internal void ShowWizard(int width = 800)
         //{
@@ -179,17 +176,17 @@ namespace GingerWPF.WizardLib
         //}
 
         public void Next()
-        {            
+        {
             WizardEventArgs WizardEventArgsLeavingForNextPage = new WizardEventArgs(this, EventType.LeavingForNextPage);
-            GetCurrentPage().Page.WizardEvent(WizardEventArgsLeavingForNextPage);            
+            GetCurrentPage().Page.WizardEvent(WizardEventArgsLeavingForNextPage);
             //TODO: add check if can move next 
             if (!WizardEventArgsLeavingForNextPage.CancelEvent)
             {
                 Pages.MoveNext();
-                GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));                
-            }            
+                GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));
+            }
         }
-        
+
         public void Prev()
         {
             WizardEventArgs WizardEventArgs = new WizardEventArgs(this, EventType.Prev);
@@ -202,7 +199,7 @@ namespace GingerWPF.WizardLib
                 Pages.MovePrev();
                 GetCurrentPage().Page.WizardEvent(new WizardEventArgs(this, EventType.Active));
             }
-           
+
         }
 
         public virtual void Cancel()
@@ -210,13 +207,13 @@ namespace GingerWPF.WizardLib
             WizardEventArgs WizardEventArgs = new WizardEventArgs(this, EventType.Cancel);
             foreach (WizardPage wp in Pages)
             {
-                wp.Page.WizardEvent(WizardEventArgs);                
+                wp.Page.WizardEvent(WizardEventArgs);
             }
         }
 
         public bool IsLastPage()
         {
-            if (Pages.CurrentItem == Pages[Pages.Count-1])
+            if (Pages.CurrentItem == Pages[Pages.Count - 1])
             {
                 return true;
             }

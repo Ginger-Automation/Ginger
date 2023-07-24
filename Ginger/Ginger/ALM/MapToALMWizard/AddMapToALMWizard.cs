@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace Ginger.ALM.MapToALMWizard
 {
@@ -44,7 +43,7 @@ namespace Ginger.ALM.MapToALMWizard
         private ALMTestSet almTestSetDetails; // ALM Test Set Data
         private Dictionary<string, ALMTSTest> reMapActivitiesGroupsDic = new Dictionary<string, ALMTSTest>(); // Get mapped AG's when remap BF: key - AG ExternalID, Value - Mapped Test Case
 
-        
+
         public ALMTestSet AlmTestSetData
         {
             get
@@ -75,7 +74,7 @@ namespace Ginger.ALM.MapToALMWizard
             }
         }
         public override string Title { get { return String.Format("Map To {0} Wizard.", ALMIntegration.Instance.GetALMType()); } }
-               
+
         public AddMapToALMWizard(BusinessFlow businessFlow)
         {
             ALMIntegration.Instance.GetDefaultAlmConfig();
@@ -122,7 +121,7 @@ namespace Ginger.ALM.MapToALMWizard
             try
             {
                 // Validate before saving mapped data
-                if(!ValidateMappingDone())
+                if (!ValidateMappingDone())
                 {
                     return;
                 }
@@ -146,12 +145,12 @@ namespace Ginger.ALM.MapToALMWizard
         /// <returns>validation pass</returns>
         private bool ValidateMappingDone()
         {
-            if(AlmTestSetData is null || AlmTestSetData.TestSetID is null)
+            if (AlmTestSetData is null || AlmTestSetData.TestSetID is null)
             {
-                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business Flow failed Mapping - Test Set not mapped"); 
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business Flow failed Mapping - Test Set not mapped");
                 return false;
             }
-            if(testCasesMappingList.All(tc => tc.aLMTSTest is null))
+            if (testCasesMappingList.All(tc => tc.aLMTSTest is null))
             {
                 Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business Flow failed Mapping - Test Cases not mapped");
                 return false;
@@ -170,14 +169,14 @@ namespace Ginger.ALM.MapToALMWizard
                 {
                     mappedTestCase.activitiesGroup.ExternalID = mappedTestCase.aLMTSTest.TestID;
                     mappedTestCase.activitiesGroup.ExternalID2 = mappedTestCase.aLMTSTest.LinkedTestID;
-                    Activity tempAct; 
+                    Activity tempAct;
                     // Map Test Step
                     foreach (ALMTestStepManualMappingConfig mappedTestStep in mappedTestCase.testStepsMappingList)
                     {
                         if (mappedTestStep.almTestStep != null)
                         {
                             mappedTestStep.activity.ActivityExternalID = mappedTestStep.almTestStep.StepID;
-                            tempAct = mapBusinessFlow.Activities.Where(bAct => bAct.ActivityName == mappedTestStep.activity.ActivityName && bAct.Guid == mappedTestStep.activity.ActivityGuid).FirstOrDefault();
+                            tempAct = mapBusinessFlow.Activities.FirstOrDefault(bAct => bAct.ActivityName == mappedTestStep.activity.ActivityName && bAct.Guid == mappedTestStep.activity.ActivityGuid);
                             {
                                 tempAct.ExternalID = mappedTestStep.activity.ActivityExternalID;
                             }
@@ -198,7 +197,7 @@ namespace Ginger.ALM.MapToALMWizard
                 foreach (ActivityIdentifiers act in ag.ActivitiesIdentifiers)
                 {
                     act.ActivityExternalID = null;
-                    tempAct = mapBusinessFlow.Activities.Where(bAct => bAct.ActivityName == act.ActivityName && bAct.Guid == act.ActivityGuid).FirstOrDefault();
+                    tempAct = mapBusinessFlow.Activities.FirstOrDefault(bAct => bAct.ActivityName == act.ActivityName && bAct.Guid == act.ActivityGuid);
                     {
                         tempAct.ExternalID = null;
                     }
@@ -343,7 +342,7 @@ namespace Ginger.ALM.MapToALMWizard
                     testCasesUnMappedList.Add(testCase);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Failed set Test Set data, Error: {ex.Message}");
             }

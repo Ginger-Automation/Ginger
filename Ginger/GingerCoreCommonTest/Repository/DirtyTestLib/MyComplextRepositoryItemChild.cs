@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,13 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
 
 namespace GingerCoreCommonTest.Repository
 {
@@ -32,7 +27,7 @@ namespace GingerCoreCommonTest.Repository
         public override string ItemName { get { return Name; } set => throw new NotImplementedException(); }
 
         string mName;
-        
+
 
         [IsSerializedForLocalRepository]
         public string Name

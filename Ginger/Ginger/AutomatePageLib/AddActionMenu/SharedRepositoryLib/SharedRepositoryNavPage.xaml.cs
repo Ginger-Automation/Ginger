@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ using Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
-using GingerCore.Variables;
+using GingerCore.GeneralLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,7 +48,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         }
 
 
-        public SharedRepositoryNavPage(Context context)     
+        public SharedRepositoryNavPage(Context context)
         {
             InitializeComponent();
             mContext = context;
@@ -66,16 +66,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     foreach (TabItem tab in xTabRepository.Items)
                     {
                         foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
-
+                        {
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (xTabRepository.SelectedItem == tab)
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                }
                                 else
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
-
-                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                                } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
+                        }
                     }
                 }
             }
@@ -90,7 +93,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (((string)xTabActivitiesGroups.Tag) != "Done")
                 {
                     ActivitiesGroupsRepoPage = new ActivitiesGroupsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ActivitiesGroup>(), mContext);
-                    xFrameActivitiesGroups.Content = ActivitiesGroupsRepoPage;
+                    xFrameActivitiesGroups.ClearAndSetContent(ActivitiesGroupsRepoPage);
                     // Mark that this tab is loaded with info
                     xTabActivitiesGroups.Tag = "Done";
                 }
@@ -101,7 +104,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (((string)xTabActivities.Tag) != "Done")
                 {
                     ActivitiesRepoPage = new ActivitiesRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Activity>(), mContext);
-                    xFrameActivities.Content = ActivitiesRepoPage;
+                    xFrameActivities.ClearAndSetContent(ActivitiesRepoPage);
                     // Mark that this tab is loaded with info
                     xTabActivities.Tag = "Done";
                 }
@@ -112,7 +115,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 if (((string)xTabActions.Tag) != "Done")
                 {
                     ActionsRepoPage = new ActionsRepositoryPage(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<Act>(), mContext);
-                    xFrameActions.Content = ActionsRepoPage;
+                    xFrameActions.ClearAndSetContent(ActionsRepoPage);
                     // Mark that this tab is loaded with info
                     xTabActions.Tag = "Done";
                 }

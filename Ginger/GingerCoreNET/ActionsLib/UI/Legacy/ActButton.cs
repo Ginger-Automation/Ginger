@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -38,8 +37,8 @@ namespace GingerCore.Actions
             TBH.AddText("Use this action in case you need to automate a click on an object from type Button."
                                         + Environment.NewLine + Environment.NewLine +
                                            "For Mobile use this action only in case running the flow on the native browser.");
-        }        
-        
+        }
+
         public override string ActionEditPage { get { return "ActButtonEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
         public override bool ValueConfigsNeeded { get { return true; } }
@@ -85,7 +84,9 @@ namespace GingerCore.Actions
             }
         }
 
-        public override String ActionType { get
+        public override String ActionType
+        {
+            get
             {
                 return "Button." + ButtonAction;
             }
@@ -156,7 +157,10 @@ namespace GingerCore.Actions
                 newAct.ElementLocateValue = String.Copy(this.LocateValue);
             }
             if (!uIElementTypeAssigned)
+            {
                 newAct.ElementType = eElementType.Button;
+            }
+
             newAct.Active = true;
 
             return newAct;

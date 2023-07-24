@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -164,7 +164,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                     return new ListItemUniqueIdentifier() { Color = "Purple", Tooltip = "This is a Auto Learned Activity" };
                 }
             }
-            if (mActivity.Type==eSharedItemType.Link)
+            if (mActivity.Type == eSharedItemType.Link)
             {
                 return new ListItemUniqueIdentifier() { Color = "Orange", Tooltip = "Linked Shared Activity" };
             }
@@ -272,7 +272,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             extraOperationsList.Add(cutAllList);
 
             ListItemOperation copySelected = new ListItemOperation();
-            copySelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute,General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            copySelected.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copySelected.AutomationID = "copySelected";
             copySelected.Group = "Clipboard";
             copySelected.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Copy;
@@ -343,8 +343,8 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 ListItemNotification sharedRepoInd = new ListItemNotification();
                 sharedRepoInd.AutomationID = "sharedRepoInd";
-                sharedRepoInd.ImageType = mActivity.IsLinkedItem ? Amdocs.Ginger.Common.Enums.eImageType.InstanceLink: Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-                sharedRepoInd.ToolTip = mActivity.IsLinkedItem ? string.Format("{0} source is linked to {0} from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity)):string.Format("{0} source is instance from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
+                sharedRepoInd.ImageType = mActivity.IsLinkedItem ? Amdocs.Ginger.Common.Enums.eImageType.InstanceLink : Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
+                sharedRepoInd.ToolTip = mActivity.IsLinkedItem ? string.Format("{0} source is linked to {0} from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity)) : string.Format("{0} source is instance from Shared Repository", GingerDicser.GetTermResValue(eTermResKey.Activity));
                 sharedRepoInd.ImageForeground = Brushes.Orange;
                 sharedRepoInd.BindingObject = mActivity;
                 sharedRepoInd.BindingFieldName = nameof(Activity.IsSharedRepositoryInstance);
@@ -453,7 +453,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             extraOperationsList.Add(resetRest);
 
             ListItemOperation copy = new ListItemOperation();
-            copy.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute,  General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            copy.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.View, General.eRIPageViewMode.ViewAndExecute, General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             copy.AutomationID = "copy";
             copy.Group = "Clipboard";
             copy.GroupImageType = Amdocs.Ginger.Common.Enums.eImageType.Clipboard;
@@ -572,7 +572,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             if (PageViewMode == General.eRIPageViewMode.Automation)
             {
-                ActivitiesGroup group = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == GroupName).FirstOrDefault();
+                ActivitiesGroup group = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == GroupName);
                 if (group != null)
                 {
                     List<ListItemNotification> notificationsList = new List<ListItemNotification>();
@@ -951,14 +951,14 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void AddNewActivityToGroupHandler(object sender, RoutedEventArgs e)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
 
             WizardWindow.ShowWizard(new AddActivityWizard(mContext, activitiesGroup));
         }
 
         private void RenameGroupHandler(object sender, RoutedEventArgs e)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
 
             if (activitiesGroup.Name.Contains("Optimized Activities"))
             {
@@ -972,7 +972,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             {
                 if (!string.IsNullOrEmpty(newName))
                 {
-                    if (mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name.Trim() == newName.Trim()).FirstOrDefault() == null)
+                    if (mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name.Trim() == newName.Trim()) == null)
                     {
                         activitiesGroup.ChangeName(newName);
                         OnActivityListItemEvent(ActivityListItemEventArgs.eEventType.UpdateGrouping);
@@ -987,21 +987,21 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void MoveGroupUpHandler(object sender, RoutedEventArgs e)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
             mContext.BusinessFlow.MoveActivitiesGroupUp(activitiesGroup);
             OnActivityListItemEvent(ActivityListItemEventArgs.eEventType.UpdateGrouping);
         }
 
         private void MoveGroupDownHandler(object sender, RoutedEventArgs e)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
             mContext.BusinessFlow.MoveActivitiesGroupDown(activitiesGroup);
             OnActivityListItemEvent(ActivityListItemEventArgs.eEventType.UpdateGrouping);
         }
 
         private void DeleteGroupHandler(object sender, RoutedEventArgs e)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
             if (Reporter.ToUser(eUserMsgKey.SureWantToDeleteGroup, activitiesGroup.Name) == eUserMsgSelection.Yes)
             {
                 mContext.BusinessFlow.DeleteActivitiesGroup(activitiesGroup);
@@ -1010,7 +1010,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void DisableGroupHandler(object sender, RoutedEventArgs e)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
             foreach (ActivityIdentifiers activityIdt in activitiesGroup.ActivitiesIdentifiers)
             {
                 activityIdt.IdentifiedActivity.Active = false;
@@ -1019,7 +1019,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void ActivateGroupHandler(object sender, RoutedEventArgs e)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
             foreach (ActivityIdentifiers activityIdt in activitiesGroup.ActivitiesIdentifiers)
             {
                 activityIdt.IdentifiedActivity.Active = true;
@@ -1028,7 +1028,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void AddGroupToSRHandler(object sender, RoutedEventArgs e)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
 
             List<RepositoryItemBase> list = new List<RepositoryItemBase>();
             list.Add(activitiesGroup);
@@ -1042,7 +1042,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void SetPublishGroupHandler(object sender, RoutedEventArgs e)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
             activitiesGroup.Publish = !activitiesGroup.Publish;
             foreach (ActivityIdentifiers activityIdnt in activitiesGroup.ActivitiesIdentifiers)
             {
@@ -1052,7 +1052,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void ExportGroupHandler(object sender, RoutedEventArgs e)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
             ObservableList<ActivitiesGroup> list = new ObservableList<ActivitiesGroup>();
             list.Add(activitiesGroup);
             ALMIntegration.Instance.ExportBfActivitiesGroupsToALM(mContext.BusinessFlow, list);
@@ -1120,11 +1120,11 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             if (sender != null)
             {
                 SetItem(sender);
-                activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == mActivity.ActivitiesGroupID).FirstOrDefault();
+                activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == mActivity.ActivitiesGroupID);
             }
             else if (ListView.List.SelectedItems.Count > 0)
             {
-                activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((Activity)(ListView.List.SelectedItems[0])).ActivitiesGroupID).FirstOrDefault();
+                activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((Activity)(ListView.List.SelectedItems[0])).ActivitiesGroupID);
             }
             if (activitiesGroup != null)
             {
@@ -1135,7 +1135,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void CopyGroupHandler(object sender, RoutedEventArgs e)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
             ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
             foreach (ActivityIdentifiers activityIdnt in activitiesGroup.ActivitiesIdentifiers)
             {
@@ -1146,7 +1146,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void CutGroupHandler(object sender, RoutedEventArgs e)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
             ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
             foreach (ActivityIdentifiers activityIdnt in activitiesGroup.ActivitiesIdentifiers)
             {
@@ -1157,7 +1157,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private void PasteInGroupHandler(object sender, RoutedEventArgs e)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
             int insertIndex = mContext.BusinessFlow.Activities.IndexOf(activitiesGroup.ActivitiesIdentifiers[activitiesGroup.ActivitiesIdentifiers.Count - 1].IdentifiedActivity) + 1;
             DoActivitiesPaste(activitiesGroup, insertIndex);
         }
@@ -1200,7 +1200,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                                 //set unique name
                                 GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(GetActivitiesList(), copiedItem, "_Copy");
                                 //Set T.app
-                                if (mContext.BusinessFlow.TargetApplications.Where(x => x.Name == copiedItem.TargetApplication).FirstOrDefault() == null
+                                if (mContext.BusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == copiedItem.TargetApplication) == null
                                                 && mContext.BusinessFlow.TargetApplications.Count > 0)
                                 {
                                     copiedItem.TargetApplication = mContext.BusinessFlow.TargetApplications[0].Name;
@@ -1226,7 +1226,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                                     GingerCoreNET.GeneralLib.General.SetUniqueNameToRepoItem(GetActivitiesList(), item);
                                 }
                                 //Set T.app
-                                if (mContext.BusinessFlow.TargetApplications.Where(x => x.Name == ((Activity)item).TargetApplication).FirstOrDefault() == null
+                                if (mContext.BusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == ((Activity)item).TargetApplication) == null
                                                             && mContext.BusinessFlow.TargetApplications.Count > 0)
                                 {
                                     ((Activity)item).TargetApplication = mContext.BusinessFlow.TargetApplications[0].Name;
@@ -1262,7 +1262,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         private ObservableList<RepositoryItemBase> GetSelectedGroupActivitiesList(object sender)
         {
-            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == ((MenuItem)sender).Tag.ToString()).FirstOrDefault();
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
             ObservableList<RepositoryItemBase> list = new ObservableList<RepositoryItemBase>();
             foreach (ActivityIdentifiers groupActivityIdent in activitiesGroup.ActivitiesIdentifiers)
             {

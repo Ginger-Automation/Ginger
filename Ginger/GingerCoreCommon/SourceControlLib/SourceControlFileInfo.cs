@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ using Amdocs.Ginger.Common;
 
 namespace GingerCoreNET.SourceControl
 {
-    public class SourceControlFileInfo 
-    {      
+    public class SourceControlFileInfo
+    {
 
         public enum eRepositoryItemStatus
         {
@@ -46,6 +46,6 @@ namespace GingerCoreNET.SourceControl
         public string LockedOwner { get; set; }
         public string LockComment { get; set; }
         public string Diff { get; set; }
-      
+
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ namespace GingerCore.Actions.VisualTesting
 
         [JsonProperty]
         public int Height { get; set; }
-        
+
         // Fields use to find match during compare, no need to save
         public VisualElement MatchingElement { get; set; }
     }

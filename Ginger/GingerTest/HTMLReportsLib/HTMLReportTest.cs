@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ namespace GingerTest
         static TestHelper mTestHelper = new TestHelper();
         public TestContext TestContext { get; set; }
 
-        static GingerAutomator mGingerAutomator;        
+        static GingerAutomator mGingerAutomator;
         static string solutionFolder;
 
         [ClassInitialize]
@@ -51,7 +51,7 @@ namespace GingerTest
 
         [ClassCleanup]
         public static void ClassCleanup()
-        {            
+        {
             GingerAutomator.EndSession();
             mTestHelper.ClassCleanup();
         }
@@ -71,7 +71,7 @@ namespace GingerTest
 
 
         private static void CreateTestSolution()
-        {                        
+        {
             string sourceFolder = TestResources.GetTestResourcesFolder(@"Solutions\ReportSR");
             solutionFolder = TestResources.GetTestTempFolder(@"Solutions\ReportSR");
             if (Directory.Exists(solutionFolder))
@@ -83,14 +83,15 @@ namespace GingerTest
             SolutionRepository SR = new SolutionRepository();
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(solutionFolder);
-          
+
             SR.Close();
         }
 
-      
 
-        
-        [TestMethod]  [Timeout(60000)]
+
+
+        [TestMethod]
+        [Timeout(60000)]
         public void AddHTMLReport()
         {
             //Arrange

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,20 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.Plugin.Platform.Web.Actions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Elements
 {
     /// <summary>
     /// Exposes the Functionality for Canvas elements
     /// </summary>
-    public interface ICanvas: IGingerWebElement
+    public interface ICanvas : IGingerWebElement
     {
 
-     
+
         /// <summary>
         /// Draws an object on Canvas. 
         /// </summary>

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     {
         private readonly RepositoryFolder<Agent> mAgentsFolder;
         private AgentsPage mAgentsPage;
-        
+
         public AgentsFolderTreeItem(RepositoryFolder<Agent> agentsFolder)
         {
             mAgentsFolder = agentsFolder;
@@ -55,15 +55,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {           
+        {
             return NewTVItemFolderHeaderStyle(mAgentsFolder);
         }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return GetChildrentGeneric<Agent>(mAgentsFolder);               
+            return GetChildrentGeneric<Agent>(mAgentsFolder);
         }
-        
+
         public override ITreeViewItem GetTreeItem(object item)
         {
             if (item is Agent)
@@ -107,14 +107,19 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             mTreeView = TV;
             mContextMenu = new ContextMenu();
-                                 
+
             if (mAgentsFolder.IsRootFolder)
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Agent", allowDeleteFolder: false, allowRenameFolder: false, allowRefresh: false, allowDeleteAllItems: true);
+            }
             else
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Agent", allowRefresh: false);
+            }
+
             TreeViewUtils.AddMenuItem(mContextMenu, "Refresh Application Agents Lists", RefreshApplicationAgents, null, eImageType.Refresh);
 
-            AddSourceControlOptions(mContextMenu,false,false);          
+            AddSourceControlOptions(mContextMenu, false, false);
         }
 
         public override void AddTreeItem()
@@ -123,12 +128,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         private void RefreshApplicationAgents(object sender, System.Windows.RoutedEventArgs e)
-        {            
+        {
             App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
         }
 
         public override void PostDeleteTreeItemHandler()
-        {            
+        {
             App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.UpdateAppAgentsMapping, null);
         }
     }

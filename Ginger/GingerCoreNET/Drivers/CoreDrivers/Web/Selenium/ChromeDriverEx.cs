@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,20 +16,13 @@ limitations under the License.
 */
 #endregion
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Chromium;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace GingerCore.Drivers
 {
-    public static class ChromeDriverEx 
+    public static class ChromeDriverEx
     {
         public static Screenshot GetFullPageScreenshot(this ChromiumDriver driver)
         {
@@ -56,11 +49,11 @@ namespace GingerCore.Drivers
             }
             metrics["mobile"] = driver.ExecuteScript("return typeof window.orientation !== 'undefined'");
             //Execute the emulation Chrome Command to change browser to a custom device that is the size of the entire page
-            driver.ExecuteChromeCommand("Emulation.setDeviceMetricsOverride", metrics);
+            driver.ExecuteCdpCommand("Emulation.setDeviceMetricsOverride", metrics);
             //You can then just screenshot it as it thinks everything is visible
             Screenshot screenshot = driver.GetScreenshot();
             //This command will return your browser back to a normal, usable form if you need to do anything else with it.
-            driver.ExecuteChromeCommand("Emulation.clearDeviceMetricsOverride", new Dictionary<string, Object>());
+            driver.ExecuteCdpCommand("Emulation.clearDeviceMetricsOverride", new Dictionary<string, Object>());
 
             return screenshot;
         }

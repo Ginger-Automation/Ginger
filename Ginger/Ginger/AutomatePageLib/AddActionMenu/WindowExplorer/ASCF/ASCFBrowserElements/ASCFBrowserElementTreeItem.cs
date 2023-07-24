@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,20 +17,16 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Ginger.Actions.Locators.ASCF;
+using Ginger.WindowExplorer.ASCF.ASCFBrowserElements;
+using GingerCore.Actions;
+using GingerCore.Actions.ASCF;
+using GingerCore.Drivers.ASCF;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Ginger.Actions.Locators.ASCF;
-using Ginger.WindowExplorer.ASCF.ASCFBrowserElements;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Actions.ASCF;
-using GingerCore.Drivers;
-using GingerCore.Drivers.ASCF;
-using HtmlAgilityPack;
-using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.WindowExplorer.ASCF
 {
@@ -48,7 +44,7 @@ namespace Ginger.WindowExplorer.ASCF
             string ImageFileName = "@Info_16x16.png";
             return TreeViewUtils.CreateItemHeader(Name, ImageFileName);
         }
-        
+
         Object ITreeViewItem.NodeObject()
         {
             return ASCFBrowserElementInfo;

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,14 +41,16 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
         public int Id { get { return mProcess.Id; } }
 
         public bool IsProcessExited { get { return mProcess != null ? mProcess.HasExited : false; } }
-        public string MainWindowTitle { get
+        public string MainWindowTitle
+        {
+            get
             {
                 if (mProcess.HasExited)
                 {
                     return "process exited";
                 }
-                
-                return mProcess.MainWindowTitle;                
+
+                return mProcess.MainWindowTitle;
             }
         }
 
@@ -76,7 +78,7 @@ namespace Amdocs.Ginger.CoreNET.PlugInsLib
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Failed to close window", ex);
-               
+
             }
         }
     }

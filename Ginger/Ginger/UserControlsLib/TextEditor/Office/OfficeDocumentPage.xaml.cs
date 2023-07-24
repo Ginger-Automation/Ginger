@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.GeneralLib;
 using System;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -26,8 +27,8 @@ namespace Ginger.UserControlsLib.TextEditor.Office
     /// <summary>
     /// Interaction logic for OfficeDocumentPage.xaml
     /// </summary>
-    public partial class OfficeDocumentPage : System.Windows.Controls.Page, ITextEditorPage 
-    {        
+    public partial class OfficeDocumentPage : System.Windows.Controls.Page, ITextEditorPage
+    {
         string mFileName;
 
         public OfficeDocumentPage()
@@ -54,10 +55,10 @@ namespace Ginger.UserControlsLib.TextEditor.Office
         public void HostWindowInFrame(System.Windows.Controls.Frame fraContainer, System.Windows.Window win)
         {
             object tmp = win.Content;
-            
+
             win.Content = null;
-            
-            fraContainer.Content = new System.Windows.Controls.ContentControl() { Content = tmp };
+
+            fraContainer.ClearAndSetContent(new System.Windows.Controls.ContentControl() { Content = tmp });
         }
 
         IntPtr GetHWND()
@@ -82,7 +83,7 @@ namespace Ginger.UserControlsLib.TextEditor.Office
 
 
         void OpenFile()
-        {            
+        {
             System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo();
             procStartInfo.FileName = mFileName;
             procStartInfo.CreateNoWindow = true;

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
 using System.ComponentModel;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
@@ -41,7 +40,7 @@ namespace Amdocs.Ginger.CoreNET.Run.SolutionCategory
         UserCategory3,
     }
 
-    public class SolutionCategory: RepositoryItemBase
+    public class SolutionCategory : RepositoryItemBase
     {
         public SolutionCategory()
         {
@@ -74,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET.Run.SolutionCategory
             {
                 try
                 {
-                    DescriptionAttribute[] attributes = (DescriptionAttribute[])typeof(eSolutionCategories).GetField(Category.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false);                    
+                    DescriptionAttribute[] attributes = (DescriptionAttribute[])typeof(eSolutionCategories).GetField(Category.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false);
                     if (attributes.Length > 0)
                     {
                         return attributes[0].Description;
@@ -113,7 +112,7 @@ namespace Amdocs.Ginger.CoreNET.Run.SolutionCategory
                 return this.CategoryName;
             }
             set
-            {               
+            {
             }
         }
 
@@ -127,7 +126,7 @@ namespace Amdocs.Ginger.CoreNET.Run.SolutionCategory
                 string OptionalValuesString = string.Empty;
                 foreach (SolutionCategoryValue optionalValue in CategoryOptionalValues)
                 {
-                        OptionalValuesString += optionalValue.Value + ",";
+                    OptionalValuesString += optionalValue.Value + ",";
                 }
                 OptionalValuesString = OptionalValuesString.TrimEnd(',');
                 return OptionalValuesString;

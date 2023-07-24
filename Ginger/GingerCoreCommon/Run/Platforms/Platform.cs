@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,11 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
-using System.Linq;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Platforms
 {
@@ -36,8 +34,9 @@ namespace GingerCore.Platforms
 
         private string mAgentName;
         [IsSerializedForLocalRepository]
-        public string AgentName { 
-            get 
+        public string AgentName
+        {
+            get
             {
                 if (Agent != null)
                 {
@@ -53,23 +52,28 @@ namespace GingerCore.Platforms
                 mAgentName = value;
             }
         }
-       
+
         // Used when running after mapping done and user click run
         private IAgent mAgent;
 
-        public IAgent Agent { get { return mAgent; } set 
-        { 
-            mAgent = value;
-            OnPropertyChanged(nameof(Agent)); 
-            OnPropertyChanged(nameof(AgentName));            
-        } }
+        public IAgent Agent
+        {
+            get { return mAgent; }
+            set
+            {
+                mAgent = value;
+                OnPropertyChanged(nameof(Agent));
+                OnPropertyChanged(nameof(AgentName));
+            }
+        }
 
-        public string Description {
+        public string Description
+        {
             get
             {
                 //TODO: switch case, retur nice desc
                 return PlatformType.ToString();
-            } 
+            }
         }
 
         //public void SetDefualtAgent(ObservableList<Agent> Agents)

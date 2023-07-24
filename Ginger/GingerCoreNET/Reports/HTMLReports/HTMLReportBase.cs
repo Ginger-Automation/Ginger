@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,20 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
+using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
-using GingerCore;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.Reports
 {
     // Base class for HTML report with helper functions to create nice HTML report
-    
+
     public abstract class HTMLReportBase : IHTMLReportBase
     {
         public ReportInfo RI;
@@ -38,7 +37,7 @@ namespace Ginger.Reports
 
         public int Passcount { get { return RI.TotalBusinessFlowsPassed; } }
         public int Failcount { get { return RI.TotalBusinessFlowsFailed; } }
-        public int ActivityCount { get { return RI.TotalActivitiesCount;} }
+        public int ActivityCount { get { return RI.TotalActivitiesCount; } }
 
         public int ActivityPass { get { return RI.TotalActivitiesByRunStatus(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed); } }
         public int ActivityFail { get { return RI.TotalActivitiesByRunStatus(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed); } }
@@ -57,30 +56,32 @@ namespace Ginger.Reports
         public int validationOther { get { return ValidationCount - ValidationPass - validationFail; } }
 
         protected string BizFlowHTMLColumns(BusinessFlowReport BFR)
-        {            
-            BusinessFlow BF=(BusinessFlow) BFR.GetBusinessFlow();
+        {
+            BusinessFlow BF = (BusinessFlow)BFR.GetBusinessFlow();
             XElement xe = new XElement("div", BF.Name);
-            xe.Add(new XElement("td",BF.ElapsedSecs));
-            
-            XElement xstatus = new XElement("td", BF.RunStatus );
+            xe.Add(new XElement("td", BF.ElapsedSecs));
+
+            XElement xstatus = new XElement("td", BF.RunStatus);
             if (BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
             {
                 xstatus.SetAttributeValue("bgColor", "green");
             }
             else
                 if (BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
-                {
-                    xstatus.SetAttributeValue("bgColor", "red");
-                }                
-            
-            xe.Add(xstatus);           
+            {
+                xstatus.SetAttributeValue("bgColor", "red");
+            }
+
+            xe.Add(xstatus);
             return xe.ToString();
         }
 
         protected XNode CreateHTMLTable<T>(IEnumerable<T> items, IEnumerable<string> header, params Func<T, string>[] columns)
         {
             if (!items.Any())
+            {
                 return null;
+            }
 
             var html = items.Aggregate(new XElement("table", new XAttribute("border", 1)),
                 (table, item) =>
@@ -88,7 +89,7 @@ namespace Ginger.Reports
                     table.Add(columns.Aggregate(new XElement("tr"),
                         (row, cell) =>
                         {
-                            row.Add(new XElement("td", EvalColumn(cell, item)));                            
+                            row.Add(new XElement("td", EvalColumn(cell, item)));
                             return row;
                         }));
                     return table;

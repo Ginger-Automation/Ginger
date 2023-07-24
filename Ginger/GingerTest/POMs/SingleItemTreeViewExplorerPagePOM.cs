@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -43,8 +43,8 @@ namespace GingerWPFUnitTest.POMs
             get
             {
                 TreeView1 tv = null;
-                mItemTreeViewExplorer.Dispatcher.Invoke(() => 
-                {                
+                mItemTreeViewExplorer.Dispatcher.Invoke(() =>
+                {
                     tv = (TreeView1)LogicalTreeHelper.FindLogicalNode(mItemTreeViewExplorer, "xTreeView");
                 });
                 return tv;
@@ -54,8 +54,8 @@ namespace GingerWPFUnitTest.POMs
         UCTreeView TreeViewControl
         {
             get
-            {                 
-                UCTreeView tvu = (UCTreeView)FindElementByName(SingleItemTreeViewControl,"xTreeViewTree");                
+            {
+                UCTreeView tvu = (UCTreeView)FindElementByName(SingleItemTreeViewControl, "xTreeViewTree");
                 return tvu;
             }
         }
@@ -63,14 +63,17 @@ namespace GingerWPFUnitTest.POMs
         public TreeViewItem GetRootItem()
         {
             TreeViewItem tv = null;
-            Execute(() => { 
+            Execute(() =>
+            {
                 var items = TreeViewControl.TreeItemsCollection;
                 tv = (TreeViewItem)items[0];
             });
             return tv;
         }
 
-        public UCButtonPOM AddButton { get
+        public UCButtonPOM AddButton
+        {
+            get
             {
                 //AddButton                    
                 ucButton b = (ucButton)FindElementByName(SingleItemTreeViewControl, "xAddButton");
@@ -84,7 +87,8 @@ namespace GingerWPFUnitTest.POMs
             get
             {
                 TreeViewItemPOM TV = null;
-                Execute(() => { 
+                Execute(() =>
+                {
                     TreeView tv = (TreeView)TreeViewControl.FindName("Tree");
                     TreeViewItem tvi = (TreeViewItem)tv.SelectedItem;
                     TV = new TreeViewItemPOM(tvi);
@@ -94,10 +98,11 @@ namespace GingerWPFUnitTest.POMs
         }
 
         internal void SelectRootItem()
-        {                        
-            Execute(() => {
-                GetRootItem().IsSelected = true;                
-            });         
+        {
+            Execute(() =>
+            {
+                GetRootItem().IsSelected = true;
+            });
         }
 
 
@@ -106,7 +111,8 @@ namespace GingerWPFUnitTest.POMs
             TreeViewItem tvi = FindItem(title);
             if (tvi != null)
             {
-                Execute(() => { 
+                Execute(() =>
+                {
                     tvi.IsSelected = true;
                     SleepWithDoEvents(100);
                 });
@@ -114,34 +120,38 @@ namespace GingerWPFUnitTest.POMs
             else
             {
                 throw new Exception("Item not found in treeview: " + title);
-            }            
+            }
         }
 
         TreeViewItem FindItem(string title)
         {
             TreeViewItem tvi = null;
-            Execute(() => 
+            Execute(() =>
             {
                 // retry up to 10 seconds
                 int i = 0;
-                while (tvi == null & i<100)
+                while (tvi == null & i < 100)
                 {
-                    tvi = FindItemInList(GetRootItems(), title);                                        
+                    tvi = FindItemInList(GetRootItems(), title);
                     if (tvi == null)
                     {
                         SleepWithDoEvents(100);
                     }
-                    i++;                    
-                }                                
+                    i++;
+                }
             });
             return tvi;
         }
 
         TreeViewItem FindItemInList(IEnumerable<TreeViewItem> list, string title)
-        {            
+        {
             foreach (TreeViewItem tvi1 in list)
             {
-                if (tvi1.Header.ToString() == "DUMMY") continue;
+                if (tvi1.Header.ToString() == "DUMMY")
+                {
+                    continue;
+                }
+
                 StackPanel sp = (StackPanel)tvi1.Header;
 
                 //ImageMakerControl imc1 = (ImageMakerControl)sp.Children[0];
@@ -161,7 +171,7 @@ namespace GingerWPFUnitTest.POMs
 
                 if ((string)lbl.Content == title)
                 {
-                    return tvi1;                    
+                    return tvi1;
                 }
 
                 //tvi1.IsExpanded = true;
@@ -183,7 +193,8 @@ namespace GingerWPFUnitTest.POMs
         internal object GetSelectedItemNodeObject()
         {
             object selectedItem = null;
-            Execute(() => { 
+            Execute(() =>
+            {
                 selectedItem = (TreeViewControl.CurrentSelectedTreeViewItem).NodeObject();
             });
             return selectedItem;
@@ -192,21 +203,22 @@ namespace GingerWPFUnitTest.POMs
         public Page GetSelectedItemEditPage()
         {
             Page p = null;
-            Execute(() => {
-                Frame frame = (Frame)FindElementByName(mItemTreeViewExplorer, "DetailsFrame");               
-                p = (Page)frame.Content;                
+            Execute(() =>
+            {
+                Frame frame = (Frame)FindElementByName(mItemTreeViewExplorer, "DetailsFrame");
+                p = (Page)frame.Content;
             });
             return p;
         }
 
         public IEnumerable<TreeViewItem> GetRootItems()
-        {            
+        {
             TreeViewItem RootTVI = GetRootItem();
             IEnumerable<TreeViewItem> items = RootTVI.Items.Cast<TreeViewItem>();
-            return items;            
+            return items;
         }
 
-       
+
         /// <summary>
         ///  Check if item exist in the tree, include retry mechanism of 10 sec
         ///  Use it when you expect the item to be fiund
@@ -214,8 +226,8 @@ namespace GingerWPFUnitTest.POMs
         /// <param name="title"></param>
         /// <returns></returns>
         internal bool IsItemExist(string title)
-        {            
-            TreeViewItem tvi = FindItem(title);            
+        {
+            TreeViewItem tvi = FindItem(title);
             if (tvi != null)
             {
                 return true;
@@ -240,7 +252,7 @@ namespace GingerWPFUnitTest.POMs
             {
                 // retry up to 10 seconds
                 int i = 0;
-                while (bFound == true && i < 100) 
+                while (bFound == true && i < 100)
                 {
                     tvi = FindItemInList(GetRootItems(), title);
                     if (tvi == null)
@@ -252,8 +264,8 @@ namespace GingerWPFUnitTest.POMs
                         Thread.Sleep(100);
                         i++;
                     }
-                    
-                } 
+
+                }
             });
             return !bFound;
         }
@@ -261,7 +273,7 @@ namespace GingerWPFUnitTest.POMs
 
         internal void Copy()
         {
-            SelectedItem.ContextMenu["Copy"].Click();            
+            SelectedItem.ContextMenu["Copy"].Click();
         }
 
         internal void Duplicate(string newName)
@@ -279,7 +291,7 @@ namespace GingerWPFUnitTest.POMs
             {
                 CurrentInputBoxWindow.SetText(NewName);
                 CurrentInputBoxWindow.ClickOK();
-            }            
+            }
         }
 
         internal void Cut()

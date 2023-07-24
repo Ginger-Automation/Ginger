@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ namespace GingerCore.ALM.JIRA
         {
             GetJiraDomainProjects();
             List<ProjectArea> currentProjects = jiraDomainsProjectsDataList.Where(x => x.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).Select(prjs => prjs.Projects).FirstOrDefault();
-            IProjectDefinitions selectedProj = currentProjects.Where(prj => prj.ProjectId.ToString() == ALMCore.DefaultAlmConfig.ALMProjectKey).FirstOrDefault();
+            IProjectDefinitions selectedProj = currentProjects.FirstOrDefault(prj => prj.ProjectId.ToString() == ALMCore.DefaultAlmConfig.ALMProjectKey);
             if (selectedProj != null)
             {
                 //Save selected project details
@@ -96,11 +96,11 @@ namespace GingerCore.ALM.JIRA
             if (jiraDomainsProjectsDataList.Count > 0)
             {
                 currentDomainProject = jiraDomainsProjectsDataList.Where(dom => dom.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain)).Select(prj => prj.Projects).FirstOrDefault();
-                jiraProjects = currentDomainProject.ToDictionary(x => x.ProjectId.ToString(), x => x.ProjectName);          
+                jiraProjects = currentDomainProject.ToDictionary(x => x.ProjectId.ToString(), x => x.ProjectName);
             }
             return jiraProjects;
         }
-        
+
         internal List<string> GetJiraDomains()
         {
             LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };

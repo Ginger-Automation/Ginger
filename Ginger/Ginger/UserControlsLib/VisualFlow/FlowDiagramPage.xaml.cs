@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using static Ginger.UserControlsLib.VisualFlow.FlowElement;
 
 namespace Ginger.UserControlsLib.VisualFlow
 {
@@ -39,7 +38,7 @@ namespace Ginger.UserControlsLib.VisualFlow
             Resize,
             Link
         }
-        public double mCanvasHeight=10000;
+        public double mCanvasHeight = 10000;
         public double CanvasHeight
         {
             get
@@ -106,7 +105,7 @@ namespace Ginger.UserControlsLib.VisualFlow
                 mSetHeighLight = value;
             }
         }
-        
+
         public HorizontalAlignment ZoomAlignment
         {
             get
@@ -161,7 +160,10 @@ namespace Ginger.UserControlsLib.VisualFlow
                 fe.Insert(index, FE);
             }
             else
+            {
                 fe.Add(FE);
+            }
+
             ArrangeLinks(fe);
         }
         public void ClearAllFlowElement()
@@ -171,27 +173,31 @@ namespace Ginger.UserControlsLib.VisualFlow
             mCurrentFlowElem = null;
         }
         public void RemoveFlowElem(string e, bool removeLink)
-        {            
+        {
             UIElement FlowEle = null;
             UIElement FlowLink = null;
             foreach (UIElement child in MainCanvas.Children)
-            {              
+            {
                 if (((FrameworkElement)child).Tag.ToString() == e)
-                {                                                               
+                {
                     if (child.GetType() == typeof(FlowLink))
+                    {
                         FlowLink = child;
+                    }
                     else
-                        FlowEle = child;                  
+                    {
+                        FlowEle = child;
+                    }
                 }
             }
             MainCanvas.Children.Remove(FlowEle);
             MainCanvas.Children.Remove(FlowLink);
             GEList.Remove((FlowLink)FlowLink);
-            ArrangeLinks();           
-        }        
-        public void ArrangeLinks(List<FlowElement> fe=null)
-        {            
-            if(fe==null)
+            ArrangeLinks();
+        }
+        public void ArrangeLinks(List<FlowElement> fe = null)
+        {
+            if (fe == null)
             {
                 fe = GetAllFlowElements();
                 MainCanvas.Children.Clear();
@@ -202,7 +208,9 @@ namespace Ginger.UserControlsLib.VisualFlow
             foreach (FlowElement child in fe)
             {
                 if (Prev == null)
+                {
                     Prev = child;
+                }
                 else
                 {
                     LinkFlowElement(Prev, child, index, margin);
@@ -215,7 +223,7 @@ namespace Ginger.UserControlsLib.VisualFlow
             }
             UpdateConnectorsLayout();
         }
-        internal void LinkFlowElement(FlowElement Prev, FlowElement Next, int index,int marginRight)
+        internal void LinkFlowElement(FlowElement Prev, FlowElement Next, int index, int marginRight)
         {
             foreach (FlowLink child in GEList)
             {
@@ -228,10 +236,10 @@ namespace Ginger.UserControlsLib.VisualFlow
                     MainCanvas.Children.Add(child);
                 }
             }
-        }        
-       
+        }
+
         public void MoveFlowElement(int oldindex, int newindex)
-        {            
+        {
             FlowElement ue = null;
             List<FlowElement> fe = new List<FlowElement>();
             fe = GetAllFlowElements();
@@ -239,10 +247,15 @@ namespace Ginger.UserControlsLib.VisualFlow
             foreach (FlowElement child in fe)
             {
                 if (fe.IndexOf(child) == oldindex)
+                {
                     ue = child;
+                }
             }
             if (ue != null)
+            {
                 fe.RemoveAt(oldindex);
+            }
+
             fe.Insert(newindex, ue);
             ArrangeLinks(fe);
         }
@@ -268,11 +281,11 @@ namespace Ginger.UserControlsLib.VisualFlow
 
             if (FE != null)
             {
-                if (mCurrentFlowElem!= null)
+                if (mCurrentFlowElem != null)
                 {
                     mCurrentFlowElem.SetHighLight(false);
                 }
-                
+
                 FE.SetHighLight(SetHighLight);
                 // if Rect connector
                 var UIElement = Mouse.DirectlyOver as UIElement;
@@ -293,15 +306,18 @@ namespace Ginger.UserControlsLib.VisualFlow
                     }
 
                     if (F1.Name == "LeftConnector" || F1.Name == "RightConnector" || F1.Name == "TopConnector" || F1.Name == "BottomConnector")
-                    {                        
-                            // For Drag Drop 
-                            UIElement element = sender as UIElement;
-                            if (element == null)
-                                return;
-                            DragDrop.DoDragDrop(element, new DataObject(FE), DragDropEffects.Link);
-                            mCurrentAction = CurrentAction.Link;
-                            mCurrentFlowElem = FE;
+                    {
+                        // For Drag Drop 
+                        UIElement element = sender as UIElement;
+                        if (element == null)
+                        {
                             return;
+                        }
+
+                        DragDrop.DoDragDrop(element, new DataObject(FE), DragDropEffects.Link);
+                        mCurrentAction = CurrentAction.Link;
+                        mCurrentFlowElem = FE;
+                        return;
                     }
                 }
 
@@ -318,32 +334,51 @@ namespace Ginger.UserControlsLib.VisualFlow
         private FlowElement GetFlowElemFromMosuePosition()
         {
             var UIElement = Mouse.DirectlyOver as UIElement;
-            if (UIElement == null) return null;
-            var v = VisualTreeHelper.GetParent(UIElement);            
+            if (UIElement == null)
+            {
+                return null;
+            }
+
+            var v = VisualTreeHelper.GetParent(UIElement);
             while (true)
             {
-                if (v == null) return null;
+                if (v == null)
+                {
+                    return null;
+                }
+
                 if (v is FlowElement)
-                {                    
+                {
                     return (FlowElement)v;
                 }
                 if (v == this)
                 {
                     return null;
-                }                
-                v = VisualTreeHelper.GetParent(v);                
+                }
+                v = VisualTreeHelper.GetParent(v);
             }
         }
 
         private void MainCanvas_Drop(object sender, DragEventArgs e)
         {
             FrameworkElement elem = sender as FrameworkElement;
-            if (elem == null) return;
+            if (elem == null)
+            {
+                return;
+            }
+
             IDataObject data = e.Data;
-            if (!data.GetDataPresent(typeof(FlowElement))) return;
-            FlowElement source = data.GetData(typeof(FlowElement)) as FlowElement;            
-            if (source == null) return;
-            
+            if (!data.GetDataPresent(typeof(FlowElement)))
+            {
+                return;
+            }
+
+            FlowElement source = data.GetData(typeof(FlowElement)) as FlowElement;
+            if (source == null)
+            {
+                return;
+            }
+
             if (e.Source is FlowElement)
             {
                 FlowLink FL = new FlowLink(source, (FlowElement)e.Source);
@@ -352,7 +387,7 @@ namespace Ginger.UserControlsLib.VisualFlow
                 GEList.Add(FL);
                 SetFlowLinkConnectorsLocations(FL, e);
                 FL.Draw();
-                
+
                 MainCanvas.Children.Add(FL);
             }
         }
@@ -360,7 +395,7 @@ namespace Ginger.UserControlsLib.VisualFlow
         private void SetFlowLinkConnectorsLocations(FlowLink FL, DragEventArgs e)
         {
             // We know the source connector the user clicked on
-            switch(mCurrnetFlowElemControl)
+            switch (mCurrnetFlowElemControl)
             {
                 case "LeftConnector":
                     FL.SourcePosition = FlowLink.eFlowElementPosition.Left;
@@ -392,7 +427,7 @@ namespace Ginger.UserControlsLib.VisualFlow
             Point mp4 = e.GetPosition(FL.Destination.RightConnector);
             double d4 = Point.Subtract(mp4, new Point(0, 0)).Length;
 
-            double min = d1;                        
+            double min = d1;
             FL.DestinationPosition = FlowLink.eFlowElementPosition.Top;
 
             if (d2 < min)
@@ -417,7 +452,7 @@ namespace Ginger.UserControlsLib.VisualFlow
         double GetDistanceFrom(Point p, UIElement c)
         {
             var r = VisualTreeHelper.GetContentBounds(c);
-            double t = p.X - r.Left +  p.Y - r.Top;            
+            double t = p.X - r.Left + p.Y - r.Top;
             return t;
         }
 
@@ -498,7 +533,7 @@ namespace Ginger.UserControlsLib.VisualFlow
                 {
                     if (e is FlowElement)
                     {
-                        yield return (FlowElement)e;                        
+                        yield return (FlowElement)e;
                     }
                 }
             }
@@ -506,7 +541,10 @@ namespace Ginger.UserControlsLib.VisualFlow
 
         private void ZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (this.MainCanvas == null) return;  // will happen only at page load
+            if (this.MainCanvas == null)
+            {
+                return;  // will happen only at page load
+            }
 
             // Set the Canvas scale based on ZoomSlider value
             ScaleTransform ST = new ScaleTransform(e.NewValue, e.NewValue);
@@ -515,7 +553,7 @@ namespace Ginger.UserControlsLib.VisualFlow
             ZoomPanel.ZoomPercentLabel.Content = (int)(e.NewValue * 100) + "%";
         }
 
-        public void SetView(Brush backgroundBrush, bool showZoomPnl = true, bool showScroll=true)            
+        public void SetView(Brush backgroundBrush, bool showZoomPnl = true, bool showScroll = true)
         {
             if (!showZoomPnl)
             {

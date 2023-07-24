@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.Enums;
 using Ginger.Help;
+using GingerCore.GeneralLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -47,7 +48,7 @@ namespace GingerWPF.UserControlsLib
             xTreeView.TreeIcon = itemTypeIcon;
             xTreeView.Background = (Brush)FindResource("$BackgroundColor_LightGray");
 
-            TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);            
+            TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);
             r.IsExpanded = true;
 
             itemTypeRootNode.SetTools(xTreeView);
@@ -55,31 +56,31 @@ namespace GingerWPF.UserControlsLib
             xTreeView.Tree.ItemSelected -= MainTreeView_ItemSelected;
             xTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
 
-            if(treeItemDoubleClickHandler != null)
+            if (treeItemDoubleClickHandler != null)
             {
                 xTreeView.Tree.ItemDoubleClick -= treeItemDoubleClickHandler;
                 xTreeView.Tree.ItemDoubleClick += treeItemDoubleClickHandler;
-            }                
-        }       
+            }
+        }
 
         private void MainTreeView_ItemSelected(object sender, EventArgs e)
         {
             TreeViewItem TVI = (TreeViewItem)sender;
-            object tvItem = TVI.Tag;            
+            object tvItem = TVI.Tag;
 
             if (tvItem is ITreeViewItem)
             {
-                DetailsFrame.Content = ((ITreeViewItem)tvItem).EditPage();
-                if(tvItem is NewTreeViewItemBase)
+                DetailsFrame.ClearAndSetContent(((ITreeViewItem)tvItem).EditPage());
+                if (tvItem is NewTreeViewItemBase)
                 {
-                    ((NewTreeViewItemBase)tvItem).PrepareItemForEdit();                    
-                }                
+                    ((NewTreeViewItemBase)tvItem).PrepareItemForEdit();
+                }
             }
             else
             {
                 DetailsFrame.Content = "View/Edit page is not available yet for the tree item '" + tvItem.GetType().Name + "'";
             }
         }
-       
+
     }
 }

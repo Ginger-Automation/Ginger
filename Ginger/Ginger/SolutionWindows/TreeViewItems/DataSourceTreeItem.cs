@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,24 +16,23 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Ginger.DataSource;
-using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore;
-using GingerCore.DataSource;
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Windows;
-using System.Linq;
-using System.Windows.Controls;
-using Amdocs.Ginger.Common.Enums;
-using GingerWPF.TreeViewItemsLib;
-using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
-using GingerWPF.WizardLib;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Repository;
+using Ginger.DataSource;
 using Ginger.DataSource.ImportExcelWizardLib;
+using GingerCore.DataSource;
 using GingerCoreNET.DataSource;
+using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
+using GingerWPF.WizardLib;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -79,15 +78,17 @@ namespace Ginger.SolutionWindows.TreeViewItems
             //Get Data Source Tables List
             DSDetails.DSTableList = DSDetails.GetTablesList();
             if (DSDetails.DSTableList == null)
+            {
                 DSDetails.DSTableList = new ObservableList<DataSourceTable>();
+            }
 
             foreach (DataSourceTable dsTable in DSDetails.DSTableList)
             {
-                if(TableTreeView == DataSourceFolderTreeItem.eDataTableView.All || (TableTreeView == DataSourceFolderTreeItem.eDataTableView.Key && dsTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue) || (TableTreeView == DataSourceFolderTreeItem.eDataTableView.Customized && dsTable.DSTableType == DataSourceTable.eDSTableType.Customized))
+                if (TableTreeView == DataSourceFolderTreeItem.eDataTableView.All || (TableTreeView == DataSourceFolderTreeItem.eDataTableView.Key && dsTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue) || (TableTreeView == DataSourceFolderTreeItem.eDataTableView.Customized && dsTable.DSTableType == DataSourceTable.eDSTableType.Customized))
                 {
                     DataSourceTableTreeItem DSTTI = new DataSourceTableTreeItem();
                     DSTTI.DSTableDetails = dsTable;
-                    DSTTI.DSDetails= DSDetails;
+                    DSTTI.DSDetails = DSDetails;
                     Childrens.Add(DSTTI);
                 }
             }
@@ -129,13 +130,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
             TreeViewUtils.AddSubMenuItem(importMenu, "Add New Customized Table", AddNewCustomizedTable, null, "@Add_16x16.png");
             TreeViewUtils.AddSubMenuItem(importMenu, "Add New Key Value Table", AddNewKeyValueTable, null, "@Add_16x16.png");
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Commit All", CommitAll,null, "@Commit_16x16.png");
+            TreeViewUtils.AddMenuItem(mContextMenu, "Commit All", CommitAll, null, "@Commit_16x16.png");
             TV.AddToolbarTool("@Commit_16x16.png", "Commit All", new RoutedEventHandler(CommitAll));
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Rename", Rename,null,"@Edit_16x16.png");
+            TreeViewUtils.AddMenuItem(mContextMenu, "Rename", Rename, null, "@Edit_16x16.png");
             TV.AddToolbarTool("@Edit_16x16.png", "Rename", new RoutedEventHandler(Rename));
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Delete", Delete,null, "@Trash_16x16.png");
+            TreeViewUtils.AddMenuItem(mContextMenu, "Delete", Delete, null, "@Trash_16x16.png");
             TV.AddToolbarTool("@Trash_16x16.png", "Delete", new RoutedEventHandler(Delete));
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Export to Excel", ExportToExcel, null, "@Export_16x16.png");
@@ -200,8 +201,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 string name = string.Empty;
                 char[] pathChars = System.IO.Path.GetInvalidPathChars();
-                char[] inValidTableNameChars = new char[pathChars.Length+1];
-                pathChars.CopyTo(inValidTableNameChars,0);
+                char[] inValidTableNameChars = new char[pathChars.Length + 1];
+                pathChars.CopyTo(inValidTableNameChars, 0);
                 inValidTableNameChars[pathChars.Length] = ' ';
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Add New Key Value Table", "Table Name", ref name, inValidTableNameChars))
                 {
@@ -257,7 +258,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Ginger.DataSource.DataSourceExportToExcel DSEE = new Ginger.DataSource.DataSourceExportToExcel();
             DSEE.ShowAsWindow();
 
-            string SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            string SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             string sExcelPath = DSEE.mExcelConfig.ExcelPath;
             string sSheetName = DSEE.mExcelConfig.ExcelSheetName;
 
@@ -293,10 +294,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void RefreshTreeItems()
         {
             mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-            foreach(DataSourceTable dsTable in DSDetails.DSTableList)
+            foreach (DataSourceTable dsTable in DSDetails.DSTableList)
             {
-                if(dsTable.DataTable != null)
+                if (dsTable.DataTable != null)
+                {
                     dsTable.DataTable.RejectChanges();
+                }
             }
         }
         private void DeleteDataSourceItems()
@@ -347,7 +350,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 if (node != null && node is DataSourceTableTreeItem)
                 {
-                    if(((DataSourceTable)node.NodeObject()).DirtyStatus == eDirtyStatus.Modified)
+                    if (((DataSourceTable)node.NodeObject()).DirtyStatus == eDirtyStatus.Modified)
                     {
                         ((DataSourceTableTreeItem)node).SaveTreeItem();
                     }

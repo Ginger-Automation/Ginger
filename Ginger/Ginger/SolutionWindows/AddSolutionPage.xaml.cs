@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.SolutionGeneral;
 using Ginger.Reports;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Text.RegularExpressions;
 
 namespace Ginger.SolutionWindows
 {
@@ -257,7 +257,10 @@ namespace Ginger.SolutionWindows
             dlg.Description = "Select Solution folder";
             dlg.RootFolder = Environment.SpecialFolder.MyComputer;
             if (mSolution.Folder != string.Empty)
+            {
                 dlg.SelectedPath = mSolution.Folder;
+            }
+
             dlg.ShowNewFolderButton = true;
             System.Windows.Forms.DialogResult result = dlg.ShowDialog();
             if (result == System.Windows.Forms.DialogResult.OK)
@@ -285,7 +288,7 @@ namespace Ginger.SolutionWindows
             AddApplicationPage AAP = new AddApplicationPage(mSolution);
             AAP.ShowAsWindow();
 
-            if (mSolution.ApplicationPlatforms.Count() > 0)
+            if (mSolution.ApplicationPlatforms.Any())
             {
                 ApplicationTextBox.Text = mSolution.ApplicationPlatforms[0].AppName;
                 MainPlatformComboBox.SelectedValue = mSolution.ApplicationPlatforms[0].Platform;

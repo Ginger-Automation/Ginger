@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ using System.Xml;
 
 namespace GingerCore.Drivers.InternalBrowserLib
 {
-    public class DeviceEmulation 
+    public class DeviceEmulation
     {
-        public string Devicename {get; set;}
+        public string Devicename { get; set; }
         public int Height { get; set; }
         public int Width { get; set; }
         public string UserAgent { get; set; }
@@ -32,7 +32,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
         public static ObservableList<DeviceEmulation> DevicelistCombo()
         {
             ObservableList<DeviceEmulation> Devices = new ObservableList<DeviceEmulation>();
-            
+
             string devicelist = Properties.Resources.DevicesList;
             XmlDocument xml = new XmlDocument();
             xml.LoadXml(devicelist);

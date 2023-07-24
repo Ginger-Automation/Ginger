@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
@@ -34,7 +33,7 @@ namespace GingerCore.Variables
         private string mPrecisionValue;
 
         private bool? mIsDecimalValue;
-        
+
         [IsSerializedForLocalRepository]
         public bool IsDecimalValue
         {
@@ -51,7 +50,7 @@ namespace GingerCore.Variables
                 {
                     return false;
                 }
-                    
+
                 return Convert.ToBoolean(mIsDecimalValue);
             }
         }
@@ -59,15 +58,15 @@ namespace GingerCore.Variables
         [IsSerializedForLocalRepository]
         public string MinValue
         {
-            get 
+            get
             {
                 if (string.IsNullOrEmpty(mMinValue))
                 {
                     mMinValue = GetMinValue();
                 }
-                return mMinValue; 
+                return mMinValue;
             }
-            set 
+            set
             {
                 mMinValue = value;
                 OnPropertyChanged("MinValue");
@@ -91,16 +90,16 @@ namespace GingerCore.Variables
         [IsSerializedForLocalRepository]
         public string MaxValue
         {
-            get 
-            { 
-                if(string.IsNullOrEmpty(mMaxValue))
+            get
+            {
+                if (string.IsNullOrEmpty(mMaxValue))
                 {
                     mMaxValue = GetMaxValue();
                 }
-                return mMaxValue;             
+                return mMaxValue;
             }
             set
-            { 
+            {
                 mMaxValue = value;
                 OnPropertyChanged("MaxValue");
                 OnPropertyChanged("InitialNumberValue");
@@ -110,7 +109,7 @@ namespace GingerCore.Variables
 
         private string GetMaxValue()
         {
-            if(!IsDecimalValue)
+            if (!IsDecimalValue)
             {
                 return Int32.MaxValue.ToString();
             }
@@ -178,11 +177,11 @@ namespace GingerCore.Variables
         {
             set
             {
-                if(mIsDecimalValue == null)
+                if (mIsDecimalValue == null)
                 {
                     mInitialNumberValue = value;
                 }
-                else if(!Convert.ToBoolean(mIsDecimalValue))
+                else if (!Convert.ToBoolean(mIsDecimalValue))
                 {
                     mInitialNumberValue = GetValidInteger(value);
                 }
@@ -197,7 +196,7 @@ namespace GingerCore.Variables
             }
             get
             {
-                if(string.IsNullOrEmpty(mInitialNumberValue))
+                if (string.IsNullOrEmpty(mInitialNumberValue))
                 {
                     mInitialNumberValue = "0";
                 }
@@ -228,7 +227,7 @@ namespace GingerCore.Variables
 
         private float ConvertStringToNumber(string value)
         {
-           bool isValidNumber = float.TryParse(value, out var validFloat);
+            bool isValidNumber = float.TryParse(value, out var validFloat);
 
             if (!isValidNumber)
             {
@@ -243,7 +242,7 @@ namespace GingerCore.Variables
             return validFloat;
         }
 
-        private  string GetValidInteger(string value)
+        private string GetValidInteger(string value)
         {
             try
             {
@@ -272,7 +271,7 @@ namespace GingerCore.Variables
         {
             if (!Convert.ToBoolean(mIsDecimalValue))
             {
-                 mInitialNumberValue = GetValidInteger(mInitialNumberValue);
+                mInitialNumberValue = GetValidInteger(mInitialNumberValue);
             }
             else
             {
@@ -330,7 +329,7 @@ namespace GingerCore.Variables
             var maxValue = float.Parse(this.MaxValue);
             if ((number < minValue) || (number > maxValue))
             {
-                return  false;
+                return false;
             }
             return true;
         }

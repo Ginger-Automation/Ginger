@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -77,7 +76,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             ObservableList<PluginPackage> Plugins = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<PluginPackage>();
             string PlatformInterface = string.Empty;
 
-            switch(platformType)
+            switch (platformType)
             {
                 case ePlatformType.Web:
                     PlatformInterface = "IWebPlatform";
@@ -90,9 +89,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
             }
 
-            if(!string.IsNullOrEmpty(PlatformInterface))
+            if (!string.IsNullOrEmpty(PlatformInterface))
             {
-                foreach (PluginPackage plugin in Plugins) 
+                foreach (PluginPackage plugin in Plugins)
                 {
                     plugin.PluginPackageOperations = new PluginPackageOperations(plugin);
 
@@ -117,12 +116,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             DriverInfo DI = new DriverInfo(platformType + " Driver");
 
             if (platformType == ePlatformType.Web)
-            {                
+            {
                 DI.services.Add(Agent.eDriverType.SeleniumChrome);
                 DI.services.Add(Agent.eDriverType.SeleniumFireFox);
                 DI.services.Add(Agent.eDriverType.SeleniumEdge);
                 DI.services.Add(Agent.eDriverType.SeleniumIE);
-                DI.services.Add(Agent.eDriverType.SeleniumRemoteWebDriver);                
+                DI.services.Add(Agent.eDriverType.SeleniumRemoteWebDriver);
                 DI.services.Add(Agent.eDriverType.InternalBrowser);
             }
             else if (platformType == ePlatformType.Java)
@@ -131,11 +130,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             else if (platformType == ePlatformType.Mobile)
             {
-                DI.services.Add(Agent.eDriverType.Appium);      
+                DI.services.Add(Agent.eDriverType.Appium);
             }
             else if (platformType == ePlatformType.Windows)
             {
-                DI.services.Add(Agent.eDriverType.WindowsAutomation);                
+                DI.services.Add(Agent.eDriverType.WindowsAutomation);
             }
             else if (platformType == ePlatformType.PowerBuilder)
             {

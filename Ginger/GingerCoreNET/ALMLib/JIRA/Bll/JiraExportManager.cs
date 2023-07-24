@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,13 +26,13 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.JIRA.Data_Contracts;
 using GingerCore.Variables;
-using JiraRepositoryStd;
 using JiraRepositoryStd.BLL;
 using JiraRepositoryStd.Data_Contracts;
 using JiraRepositoryStd.Helpers;
 using JiraRepositoryStd.Settings;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 
@@ -75,7 +75,7 @@ namespace GingerCore.ALM.JIRA.Bll
                 defectsToExport.Add(this.CreateDefectData(defectForOpening, defectsFields));
             }
 
-            if(defectsToExport.Count > 0)
+            if (defectsToExport.Count > 0)
             {
                 var exportedDefects = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, defectsToExport);
                 if (exportedDefects.Count > 0)
@@ -154,7 +154,7 @@ namespace GingerCore.ALM.JIRA.Bll
                     break;
             }
             return comparisionOperator;
-        }         
+        }
 
         /// <summary>
         /// Add attachments to defect id
@@ -205,7 +205,10 @@ namespace GingerCore.ALM.JIRA.Bll
             {
                 var issueTemplate = jiraRepObj.GetFieldFromTemplateByName(ResourceType.DEFECT, ALMCore.DefaultAlmConfig.ALMProjectName, item.Name);
                 if (issueTemplate == null || exportData.ExportFields.ContainsKey(issueTemplate.key))
+                {
                     continue;
+                }
+
                 if (issueTemplate != null)
                 {
                     exportData.ExportFields.Add(issueTemplate.key, new List<IJiraExportData>() { new JiraExportData() { value = item.SelectedValue } });
@@ -224,7 +227,7 @@ namespace GingerCore.ALM.JIRA.Bll
             }
             List<IJiraExportData> tcArray = CreateExportArrayFromActivites(bftestCases);
             JiraIssueExport jiraIssue = CreateJiraTestSet(businessFlow, testSetFields, testCaseFields, tcArray);
-            exportData.Add(jiraIssue);          
+            exportData.Add(jiraIssue);
             var exportResponse = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, exportData);
             if (exportResponse.Count > 0 && exportResponse.First().AuthenticationResponseObj.ErrorCode == 0)
             {
@@ -236,7 +239,10 @@ namespace GingerCore.ALM.JIRA.Bll
                 this.UpdateTestCaseLabel(bftestCases);
             }
             else
+            {
                 responseStr = exportResponse.FirstOrDefault().AuthenticationResponseObj.ErrorDesc;
+            }
+
             return result;
         }
 
@@ -294,7 +300,7 @@ namespace GingerCore.ALM.JIRA.Bll
 
         public bool ExecuteDataToJira(BusinessFlow bizFlow, PublishToALMConfig publishToALMConfig, ref string result)
         {
-            bool resultFlag = false;
+            bool resultFlag = false;          
             if (bizFlow.ExternalID != "0" && (!String.IsNullOrEmpty(bizFlow.ExternalID)))
             {
                 if (string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunName))
@@ -306,7 +312,7 @@ namespace GingerCore.ALM.JIRA.Bll
                 //Create new TEST_EXECUTION for each execution result publish operation
                 var bftestCases = bizFlow.ActivitiesGroups.ToList();
                 List<IJiraExportData> tcArray = CreateExportArrayFromActivites(bftestCases);
-                
+
                 //Get updated fields
                 ObservableList<ExternalItemFieldBase> exitingFields = new ObservableList<ExternalItemFieldBase>(WorkSpace.Instance.Solution.ExternalItemsFields);
                 JiraImportManager jiraImportObj = new JiraImportManager(jiraRepObj);
@@ -316,6 +322,7 @@ namespace GingerCore.ALM.JIRA.Bll
 
                 var testExecutionFields = mergedFields.Where(a => a.ItemType == "TEST_EXECUTION" && (a.ToUpdate || a.Mandatory));
                 var isCreated = CreateTestExecution(bizFlow, tcArray, testExecutionFields);
+                //get the Test set TC's                
 
                 foreach (var actGroup in bizFlow.ActivitiesGroups)
                 {
@@ -335,13 +342,43 @@ namespace GingerCore.ALM.JIRA.Bll
                             stepColl.Add(new JiraRunStepStautus() { comment = comment, status = jiraStatus });
                         }
                         resultFlag = jiraRepObj.ExecuteRunStatusBySteps(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, runs, relevantTcRun.TestCaseRunId);
+
+                        // Attach ActivityGroup execution Report if needed(if Checkbox is selected in GUI)
+                        if (publishToALMConfig.ToAttachActivitiesGroupReport)
+                        {
+                            if ((actGroup.TempReportFolder != null) && (actGroup.TempReportFolder != string.Empty) &&
+                            (System.IO.Directory.Exists(actGroup.TempReportFolder)))
+                            {
+                                //Creating the Zip file - start
+                                string targetZipPath = System.IO.Directory.GetParent(actGroup.TempReportFolder).ToString();
+                                string zipFileName = targetZipPath + "\\" + actGroup.Name.ToString() + "_GingerHTMLReport.zip";
+                                if (System.IO.File.Exists(zipFileName))
+                                {
+                                    System.IO.File.Delete(zipFileName);                                    
+                                }
+                                ZipFile.CreateFromDirectory(actGroup.TempReportFolder, zipFileName);
+                                System.IO.Directory.Delete(actGroup.TempReportFolder, true);
+                                //Creating the Zip file - finish                                
+                                if (this.jiraRepObj.AddAttachment(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, relevantTcRun.TestExecutionId, zipFileName) == null)
+                                {
+                                    result = "Failed to create attachment";
+                                    return false;
+                                }
+                                System.IO.File.Delete(zipFileName);
+                            }
+                        }
                     }
                 }
             }
             if (resultFlag)
+            {
                 result = "Export has been finished successfully";
+            }
             else
+            {
                 result = "Error Has been Happened while export to ALM";
+            }
+
             return resultFlag;
         }
 
@@ -368,7 +405,7 @@ namespace GingerCore.ALM.JIRA.Bll
                         foreach (var actGroup in bizFlow.ActivitiesGroups)
                         {
                             List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == actGroup.Name)).Select(a => a).ToList();
-                            JiraZephyrExecution currentActivitiesGroupExecution = executionList.Where(z => z.IssueId.ToString() == actGroup.ExternalID).FirstOrDefault();
+                            JiraZephyrExecution currentActivitiesGroupExecution = executionList.FirstOrDefault(z => z.IssueId.ToString() == actGroup.ExternalID);
                             if (currentActivitiesGroupExecution != null)
                             {
                                 List<JiraZephyrStepResult> stepResults = jmz.GetZephyrStepResultsList(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
@@ -376,7 +413,7 @@ namespace GingerCore.ALM.JIRA.Bll
                                 foreach (var act in activities)
                                 {
                                     zephyrStepStatus = ConvertGingerStatusToZephyr(act.Status.HasValue ? act.Status.Value : eRunStatus.NA);
-                                    JiraZephyrStepResult currentStepResult = stepResults.Where(z => z.StepId.ToString() == act.ExternalID).FirstOrDefault();
+                                    JiraZephyrStepResult currentStepResult = stepResults.FirstOrDefault(z => z.StepId.ToString() == act.ExternalID);
                                     if (currentStepResult != null)
                                     {
                                         currentStepResult = jmz.UpdateZephyrStepResult(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
@@ -387,7 +424,7 @@ namespace GingerCore.ALM.JIRA.Bll
                                     {
                                         currentStepResult = jmz.CreateZephyrStepResult(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
                                                                                                                                      ALMCore.DefaultAlmConfig.ALMServerURL,
-                                                                                                                                     new JiraZephyrStepResult(  Convert.ToInt32(act.ExternalID),
+                                                                                                                                     new JiraZephyrStepResult(Convert.ToInt32(act.ExternalID),
                                                                                                                                                                 currentActivitiesGroupExecution.IssueId.ToString(),
                                                                                                                                                                 currentActivitiesGroupExecution.Id,
                                                                                                                                                                 ((int)zephyrStepStatus).ToString())).DataResult;
@@ -422,9 +459,14 @@ namespace GingerCore.ALM.JIRA.Bll
                 }
             }
             if (resultFlag)
+            {
                 result = "Export has been finished successfully";
+            }
             else
+            {
                 result = "Error Has been Happened while export to execution results to Jira-Zephyr";
+            }
+
             return resultFlag;
         }
 
@@ -441,8 +483,8 @@ namespace GingerCore.ALM.JIRA.Bll
 
                     foreach (KeyValuePair<Guid, string> defectOpeningResult in defectsOpeningResults)
                     {
-                        KeyValuePair<Guid, Dictionary<string, string>> currentDefect = defectsForOpening.Where(z => z.Key == defectOpeningResult.Key).FirstOrDefault();
-                        JiraZephyrExecution currentActivitiesGroupExecution = executionList.Where(z => z.IssueId.ToString() == currentDefect.Value["ActivityGroupExternalID"]).FirstOrDefault();
+                        KeyValuePair<Guid, Dictionary<string, string>> currentDefect = defectsForOpening.FirstOrDefault(z => z.Key == defectOpeningResult.Key);
+                        JiraZephyrExecution currentActivitiesGroupExecution = executionList.FirstOrDefault(z => z.IssueId.ToString() == currentDefect.Value["ActivityGroupExternalID"]);
                         if (currentDefect.Key != null)
                         {
                             JiraZephyrResponse jiraZephyrResponse = jmz.UpdateExecutionWithDefects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL,
@@ -554,10 +596,10 @@ namespace GingerCore.ALM.JIRA.Bll
         {
             bool result = true;
             List<JiraIssueExport> exportData = new List<JiraIssueExport>();
-            JiraIssueExport jiraIssue = new JiraIssueExport();
+            JiraIssueExport jiraIssue = new JiraIssueExport();            
             jiraIssue.issueType = "Test Execution";
             jiraIssue.resourceType = ResourceType.TEST_CASE_EXECUTION_RECORDS;
-            jiraIssue.ExportFields.Add("project", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMProjectName } });
+            jiraIssue.ExportFields.Add("project", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMProjectKey } });
             jiraIssue.ExportFields.Add("summary", new List<IJiraExportData>() { new JiraExportData() { value = businessFlow.Name + " Test Execution" + DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss") } });
             jiraIssue.ExportFields.Add("description", new List<IJiraExportData>() { new JiraExportData() { value = businessFlow.Description + " Test Execution" } });
             jiraIssue.ExportFields.Add("issuetype", new List<IJiraExportData>() { new JiraExportData() { value = "Test Execution" } });
@@ -566,7 +608,10 @@ namespace GingerCore.ALM.JIRA.Bll
             {
                 var issueTemplate = jiraRepObj.GetFieldFromTemplateByName(ResourceType.TEST_CASE_EXECUTION_RECORDS, ALMCore.DefaultAlmConfig.ALMProjectName, item.Name);
                 if (issueTemplate == null || jiraIssue.ExportFields.ContainsKey(issueTemplate.key))
+                {
                     continue;
+                }
+
                 if (issueTemplate != null)
                 {
                     jiraIssue.ExportFields.Add(issueTemplate.key, new List<IJiraExportData>() { new JiraExportData() { value = item.SelectedValue } });
@@ -574,7 +619,10 @@ namespace GingerCore.ALM.JIRA.Bll
             }
             var testCaseTemplate = jiraRepObj.GetFieldFromTemplateByName(ResourceType.TEST_CASE_EXECUTION_RECORDS, ALMCore.DefaultAlmConfig.ALMProjectKey, "Test Cases");
             if (testCaseTemplate != null && tcArray.Count > 0)
+            {
                 jiraIssue.ExportFields.Add(testCaseTemplate.key, tcArray);
+            }
+
             exportData.Add(jiraIssue);
             var exportExecutionResponse = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, exportData);
             SetBusinessFlowAlmData(exportExecutionResponse, businessFlow);
@@ -629,9 +677,15 @@ namespace GingerCore.ALM.JIRA.Bll
                             string patern = testExecutionKey + "***" + tc.c.Value;
                             List<string> tcRuns = new List<string>();
                             if (!string.IsNullOrEmpty(b.ExternalID2))
+                            {
                                 tcRuns = b.ExternalID2.Split(new string[] { "||" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                            }
+
                             if (!tcRuns.Contains(patern))
+                            {
                                 tcRuns.Add(patern);
+                            }
+
                             b.ExternalID2 = string.Join("||", tcRuns);
                         });
                     }
@@ -661,9 +715,9 @@ namespace GingerCore.ALM.JIRA.Bll
 
         private JiraZephyrResponse CreateZephyrCycle(BusinessFlow businessFlow, long versionId)
         {
-            JiraZephyrCycle zephyrCycle = new JiraZephyrCycle(  ALMCore.DefaultAlmConfig.ALMProjectKey, businessFlow.Name, businessFlow.Description,
+            JiraZephyrCycle zephyrCycle = new JiraZephyrCycle(ALMCore.DefaultAlmConfig.ALMProjectKey, businessFlow.Name, businessFlow.Description,
                                                                 DateTime.Now.ToString("d/MMM/y"), DateTime.Now.ToString("d/MMM/y"), versionId);
-            JiraZephyrResponse response =   jmz.CreateZephyrCycle( ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
+            JiraZephyrResponse response = jmz.CreateZephyrCycle(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
                                                                                                                 ALMCore.DefaultAlmConfig.ALMServerURL, zephyrCycle).DataResult;
             return response;
         }
@@ -684,7 +738,7 @@ namespace GingerCore.ALM.JIRA.Bll
             {
                 System.Threading.Thread.Sleep(1000);
                 List<JiraZephyrCycleFolder> foldersList = GetCycleFoldersList(businessFlow, Convert.ToInt32(versionId), Convert.ToInt32(cycleId));
-                JiraZephyrCycleFolder currentFolder = foldersList.Where(z => z.FolderName == businessFlow.Name).FirstOrDefault();
+                JiraZephyrCycleFolder currentFolder = foldersList.FirstOrDefault(z => z.FolderName == businessFlow.Name);
                 if (currentFolder == null)
                 {
                     folderId = 0;
@@ -699,7 +753,7 @@ namespace GingerCore.ALM.JIRA.Bll
 
         private List<JiraZephyrCycleFolder> GetCycleFoldersList(BusinessFlow businessFlow, long versionId, long cycleId)
         {
-            List<JiraZephyrCycleFolder> response = jmz.GetCycleFoldersList(    ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
+            List<JiraZephyrCycleFolder> response = jmz.GetCycleFoldersList(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
                                                                                                                             ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectKey,
                                                                                                                             versionId.ToString(), cycleId.ToString(), string.Empty, string.Empty).DataResult;
             return response;
@@ -707,7 +761,7 @@ namespace GingerCore.ALM.JIRA.Bll
 
         private bool AddTestsToZephyrCycle(List<ActivitiesGroup> bftestCases, string versionId, string cycleId, long folderId = -1)
         {
-            JiraZephyrResponse response = jmz.AddTestsToCycle( ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
+            JiraZephyrResponse response = jmz.AddTestsToCycle(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
                                                                                                             ALMCore.DefaultAlmConfig.ALMServerURL, versionId, cycleId,
                                                                                                             folderId, ALMCore.DefaultAlmConfig.ALMProjectKey,
                                                                                                             bftestCases.Select(z => z.ExternalID2.ToString()).ToList()).DataResult;
@@ -717,7 +771,7 @@ namespace GingerCore.ALM.JIRA.Bll
         private void CreateTestSetFields(BusinessFlow businessFlow, IEnumerable<ExternalItemFieldBase> testSetFields, JiraIssueExport jiraIssue, List<IJiraExportData> tcIds)
         {
             jiraIssue.resourceType = ResourceType.TEST_SET;
-            jiraIssue.ExportFields.Add("project", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMProjectName } });
+            jiraIssue.ExportFields.Add("project", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMProjectKey } });
             jiraIssue.ExportFields.Add("summary", new List<IJiraExportData>() { new JiraExportData() { value = businessFlow.Name } });
             jiraIssue.ExportFields.Add("description", new List<IJiraExportData>() { new JiraExportData() { value = businessFlow.Description } });
             jiraIssue.ExportFields.Add("issuetype", new List<IJiraExportData>() { new JiraExportData() { value = "Test Set" } });
@@ -727,7 +781,10 @@ namespace GingerCore.ALM.JIRA.Bll
             {
                 var issueTemplate = jiraRepObj.GetFieldFromTemplateByName(ResourceType.TEST_SET, ALMCore.DefaultAlmConfig.ALMProjectName, item.Name);
                 if (issueTemplate == null || jiraIssue.ExportFields.ContainsKey(issueTemplate.key))
+                {
                     continue;
+                }
+
                 if (issueTemplate != null)
                 {
                     jiraIssue.ExportFields.Add(issueTemplate.key, new List<IJiraExportData>() { new JiraExportData() { value = item.SelectedValue } });
@@ -735,7 +792,9 @@ namespace GingerCore.ALM.JIRA.Bll
             }
             var testCaseTemplate = jiraRepObj.GetFieldFromTemplateByName(ResourceType.TEST_SET, ALMCore.DefaultAlmConfig.ALMProjectName, "Test Cases");
             if (testCaseTemplate != null && tcIds.Count > 0)
+            {
                 jiraIssue.ExportFields.Add(testCaseTemplate.key, tcIds);
+            }
         }
 
         public bool ExportActivitesGrToJira(ActivitiesGroup activtiesGroup, IEnumerable<ExternalItemFieldBase> testCaseFields, ref string errorResult)
@@ -746,7 +805,7 @@ namespace GingerCore.ALM.JIRA.Bll
             JiraIssueExport jiraIssue = CreateJiraTestCase(activtiesGroup, testCaseFilterdFields);
             exportData.Add(jiraIssue);
             var exportResponse = jiraRepObj.ExportJiraIssues(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, exportData);
-            
+
             if (exportResponse.Count > 0 && exportResponse.First().AuthenticationResponseObj.ErrorCode == 0)
             {
                 if (string.IsNullOrEmpty(activtiesGroup.ExternalID))
@@ -764,7 +823,10 @@ namespace GingerCore.ALM.JIRA.Bll
                 result = true;
             }
             else
+            {
                 errorResult = exportResponse.FirstOrDefault().AuthenticationResponseObj.ErrorDesc;
+            }
+
             return result;
         }
 
@@ -794,7 +856,7 @@ namespace GingerCore.ALM.JIRA.Bll
             return jiraIssue;
         }
 
-        private void CreateTestCaseFields(  ActivitiesGroup activtiesGroup, IEnumerable<ExternalItemFieldBase> issueFields,
+        private void CreateTestCaseFields(ActivitiesGroup activtiesGroup, IEnumerable<ExternalItemFieldBase> issueFields,
                                             JiraIssueExport jiraIssue, ResourceType resourceType = ResourceType.TEST_CASE)
         {
             jiraIssue.name = activtiesGroup.Name;
@@ -805,13 +867,18 @@ namespace GingerCore.ALM.JIRA.Bll
             jiraIssue.ExportFields.Add("issuetype", new List<IJiraExportData>() { new JiraExportData() { value = "Test" } });
             jiraIssue.ExportFields.Add("reporter", new List<IJiraExportData>() { new JiraExportData() { value = ALMCore.DefaultAlmConfig.ALMUserName } });
             if (!string.IsNullOrEmpty(activtiesGroup.ExternalID2))
+            {
                 jiraIssue.ExportFields.Add("labels", new List<IJiraExportData>() { new JiraExportData() { value = activtiesGroup.ExternalID2 } });
+            }
 
             foreach (var item in issueFields)
             {
                 var issueTemplate = jiraRepObj.GetFieldFromTemplateByName(ResourceType.TEST_CASE, ALMCore.DefaultAlmConfig.ALMProjectName, item.Name);
                 if (issueTemplate == null || jiraIssue.ExportFields.ContainsKey(issueTemplate.key))
+                {
                     continue;
+                }
+
                 if (issueTemplate != null)
                 {
                     jiraIssue.ExportFields.Add(issueTemplate.key, new List<IJiraExportData>() { new JiraExportData() { value = item.SelectedValue } });
@@ -831,7 +898,7 @@ namespace GingerCore.ALM.JIRA.Bll
                                                                                                                                                         activity.IdentifiedActivity.Expected)).DataResult;
                 if ((steps != null) && (steps.stepBeanCollection.Count > 0))
                 {
-                    bf.Activities.Where(z => z.Guid == activity.ActivityGuid).FirstOrDefault().ExternalID = steps.stepBeanCollection[0].id.ToString();
+                    bf.Activities.FirstOrDefault(z => z.Guid == activity.ActivityGuid).ExternalID = steps.stepBeanCollection[0].id.ToString();
                 }
             }
         }
@@ -853,7 +920,7 @@ namespace GingerCore.ALM.JIRA.Bll
 
                     steps.Add(new JiraStepData()
                     {
-                        step_index = (a+1).ToString(),
+                        step_index = (a + 1).ToString(),
                         step_name = activity.ActivityName,
                         step_result = activity.IdentifiedActivity.Expected,
                         step_data = stepDataSb.ToString()
@@ -870,13 +937,18 @@ namespace GingerCore.ALM.JIRA.Bll
             for (var a = 0; a < acts.Count; a++)
             {
                 if (a == 0)
+                {
                     variablesSb.Append("\\n=>Actions: ");
+                }
+
                 variablesSb.Append("\\n");
                 variablesSb.Append((a + 1).ToString());
                 variablesSb.Append(")");
                 variablesSb.Append(acts[a].Description);
                 if (a < acts.Count - 1)
+                {
                     variablesSb.Append(";");
+                }
             }
             return variablesSb.ToString();
         }
@@ -896,7 +968,10 @@ namespace GingerCore.ALM.JIRA.Bll
                 }
             }
             if (variablesSb.Length > 0)
+            {
                 variablesSb.Remove(variablesSb.Length - 1, 1);
+            }
+
             return variablesSb.ToString();
         }
     }

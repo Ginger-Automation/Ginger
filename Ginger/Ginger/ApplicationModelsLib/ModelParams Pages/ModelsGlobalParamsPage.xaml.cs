@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,15 +19,18 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
+using Ginger.SolutionWindows.TreeViewItems;
 using Ginger.UserControls;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Environments;
 using GingerCore.DataSource;
+using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -42,9 +45,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using Ginger.SolutionWindows.TreeViewItems;
-using Amdocs.Ginger.Common.Repository;
-using Ginger.UserControlsLib;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 {
@@ -60,10 +60,12 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             InitializeComponent();
             mSelectionModePage = selectionModePage;
-           
+
             InitApplicationModelsGlobalParamsGrid();
             if (!selectionModePage)
+            {
                 SetGridRowStyle();
+            }
         }
 
         private void ShowGlobalAndLocalParams(ObservableList<AppModelParameter> MergedParamsList)
@@ -71,7 +73,9 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             mModelsGlobalParamsList = new ObservableList<GlobalAppModelParameter>();
 
             foreach (var param in MergedParamsList)
+            {
                 mModelsGlobalParamsList.Add(param as GlobalAppModelParameter);
+            }
         }
 
         private void SetGridRowStyle()
@@ -79,30 +83,30 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             //If row is dirty - show the row header (where line number) in different color
             Style st2 = xModelsGlobalParamsGrid.grdMain.RowHeaderStyle;
             DataTrigger DT2 = new DataTrigger();
-            PropertyPath PT2 = new PropertyPath(nameof(GlobalAppModelParameter.DirtyStatus)); 
-            DT2.Binding = new Binding{ Path = PT2 };
+            PropertyPath PT2 = new PropertyPath(nameof(GlobalAppModelParameter.DirtyStatus));
+            DT2.Binding = new Binding { Path = PT2 };
             DT2.Value = eDirtyStatus.Modified;
             DT2.Setters.Add(new Setter(Control.BackgroundProperty, Brushes.LightPink));
             st2.Triggers.Add(DT2);
         }
 
         private void InitApplicationModelsGlobalParamsGrid()
-        {            
+        {
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.PlaceHolder), Header = gridPlaceholderHeader, WidthWeight = 30, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.Description), Header = "Description", WidthWeight = 30, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.Guid), Header = "ID", WidthWeight = 10, ReadOnly=true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.Guid), Header = "ID", WidthWeight = 10, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.OptionalValuesString), Header = "Optional Values", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay, AllowSorting = true });
 
             if (!mSelectionModePage)
             {
-                xModelsGlobalParamsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Parameter, "Applications Models Global Parameters", saveAllHandler: SaveAllGlobalParametersChanges, addHandler: AddGlobalParam,true);
+                xModelsGlobalParamsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Parameter, "Applications Models Global Parameters", saveAllHandler: SaveAllGlobalParametersChanges, addHandler: AddGlobalParam, true);
 
-                view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, MaxWidth=30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["OpenEditPossibleValuesPage"] });
+                view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 8, MaxWidth = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xPageGrid.Resources["OpenEditPossibleValuesPage"] });
                 view.GridColsView.Add(new GridColView() { Field = nameof(GlobalAppModelParameter.CurrentValue), Header = "Current Value", WidthWeight = 20, AllowSorting = true });
 
-                xModelsGlobalParamsGrid.btnSaveSelectedChanges.AddHandler(Button.ClickEvent, new RoutedEventHandler(SaveSelectedGlobalParametersChanges));                
+                xModelsGlobalParamsGrid.btnSaveSelectedChanges.AddHandler(Button.ClickEvent, new RoutedEventHandler(SaveSelectedGlobalParametersChanges));
                 xModelsGlobalParamsGrid.SetbtnDeleteHandler(new RoutedEventHandler(DeleteSelectedEvent));
                 xModelsGlobalParamsGrid.SetbtnClearAllHandler(DeleteAllEvent);
                 xModelsGlobalParamsGrid.SetbtnCopyHandler(BtnCopyGlobalParamsClicked);
@@ -125,13 +129,13 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 xModelsGlobalParamsGrid.Grid.CellEditEnding += grdMain_CellEditEndingAsync;
             }
 
-            
+
             xModelsGlobalParamsGrid.ShowTitle = Visibility.Collapsed;
             xModelsGlobalParamsGrid.SetAllColumnsDefaultView(view);
             xModelsGlobalParamsGrid.InitViewItems();
 
 
-            mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();          
+            mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
             if (!mSelectionModePage)
             {
                 foreach (GlobalAppModelParameter param in mModelsGlobalParamsList)
@@ -186,7 +190,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 ImportOptionalValuesForParameters im = new ImportOptionalValuesForParameters();
                 List<AppParameters> parameters = GetParameterList();
                 string filePath = im.ExportParametersToExcelFile(parameters, "GlobalParameters");
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = filePath, UseShellExecute = true }); 
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = filePath, UseShellExecute = true });
             }
         }
 
@@ -194,7 +198,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             try
             {
-                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>(),DataSourceFolderTreeItem.eDataTableView.Customized);
+                Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem dataSourcesRoot = new Ginger.SolutionWindows.TreeViewItems.DataSourceFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<DataSourceBase>(), DataSourceFolderTreeItem.eDataTableView.Customized);
                 SingleItemTreeViewSelectionPage mDataSourceSelectionPage = new SingleItemTreeViewSelectionPage("DataSource - Customized Table", eImageType.DataSource, dataSourcesRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
                 List<object> selectedRunSet = mDataSourceSelectionPage.ShowAsWindow();
                 if (selectedRunSet != null && selectedRunSet.Count > 0)
@@ -255,7 +259,9 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             {
                 CurrentGAMP = (GlobalAppModelParameter)xModelsGlobalParamsGrid.CurrentItem;
                 if (IsParamPlaceholderNameConflict(CurrentGAMP))
+                {
                     return;
+                }
             }
 
             if (e.Column.SortMemberPath == nameof(GlobalAppModelParameter.PlaceHolder))
@@ -312,16 +318,18 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             ObservableList<RepositoryItemBase> allVESupportingItems = GetSolutionVEsupportedItems();
 
-            foreach(var item in allVESupportingItems)
+            foreach (var item in allVESupportingItems)
             {
                 if (item is BusinessFlow)
                 {
                     BusinessFlow bf = (BusinessFlow)item;
                     foreach (Activity activity in bf.Activities)
+                    {
                         foreach (Act action in activity.Acts)
                         {
                             UpdateItemModelGlobalParamVeWithNameChange(action, oldName, updatedName);
                         }
+                    }
                 }
                 else
                 {
@@ -354,7 +362,10 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
         public void UpdateItemModelGlobalParamVeWithNameChange(object item, string prevParamName, string newParamName)
         {
-            if (item == null) return;
+            if (item == null)
+            {
+                return;
+            }
 
             string ValueToSearch = "{GlobalAppsModelsParam Name=" + prevParamName + "}";
             string ValueToReplace = "{GlobalAppsModelsParam Name=" + newParamName + "}";
@@ -368,7 +379,9 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                         mi.Name == nameof(RepositoryItemBase.ObjFolderName) || mi.Name == nameof(RepositoryItemBase.ObjFileExt) ||
                         mi.Name == nameof(RepositoryItemBase.ContainingFolder) || mi.Name == nameof(RepositoryItemBase.ContainingFolderFullPath) ||
                         mi.Name == nameof(Act.ActInputValues) || mi.Name == nameof(Act.ActReturnValues) || mi.Name == nameof(Act.ActFlowControls) || mi.Name == nameof(Act.ItemNameField)) //needed?                   
+                    {
                         continue;
+                    }
 
                     //Get the attr value
                     PropertyInfo PI = item.GetType().GetProperty(mi.Name);
@@ -378,13 +391,17 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                         value = PI.GetValue(item, null);
                     }
                     else if (mi.MemberType == MemberTypes.Field)
+                    {
                         value = item.GetType().GetField(mi.Name).GetValue(item);
+                    }
 
                     if (value is IObservableList)
                     {
                         List<dynamic> list = new List<dynamic>();
                         foreach (object o in value)
+                        {
                             UpdateItemModelGlobalParamVeWithNameChange(o, prevParamName, newParamName);
+                        }
                     }
                     else
                     {
@@ -412,7 +429,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             {
                 if (GAMP != CurrentGAMP && GAMP.PlaceHolder == CurrentGAMP.PlaceHolder)
                 {
-                    CurrentGAMP.PlaceHolder = PlaceholderBeforeEdit;                    
+                    CurrentGAMP.PlaceHolder = PlaceholderBeforeEdit;
                     Reporter.ToUser(eUserMsgKey.SpecifyUniqueValue);
                     return true;
                 }
@@ -427,7 +444,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
             string newParamPlaceholder = newModelGlobalParam.PlaceHolder;
 
-            while(InputBoxWindow.GetInputWithValidation("Add Model Global Parameter", "Parameter Name:", ref newParamPlaceholder, System.IO.Path.GetInvalidPathChars().Where(c => c != '<' && c != '>').ToArray<char>()))
+            while (InputBoxWindow.GetInputWithValidation("Add Model Global Parameter", "Parameter Name:", ref newParamPlaceholder, System.IO.Path.GetInvalidPathChars().Where(c => c != '<' && c != '>').ToArray<char>()))
             {
                 newModelGlobalParam.PlaceHolder = newParamPlaceholder;
                 if (!IsParamPlaceholderNameConflict(newModelGlobalParam))
@@ -435,7 +452,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                     newModelGlobalParam.OptionalValuesList.Add(new OptionalValue() { Value = GlobalAppModelParameter.CURRENT_VALUE, IsDefault = true });
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newModelGlobalParam);
                     StartTrackingModelGlobalParameter(newModelGlobalParam);
-                    xModelsGlobalParamsGrid.Grid.SelectedIndex = xModelsGlobalParamsGrid.Grid.Items.Count-1;
+                    xModelsGlobalParamsGrid.Grid.SelectedIndex = xModelsGlobalParamsGrid.Grid.Items.Count - 1;
 
                     //making sure rows numbers are ok
                     xModelsGlobalParamsGrid.Grid.UpdateLayout();
@@ -449,7 +466,9 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             GlobalParamsCopiedItemsList.Clear();
             foreach (GlobalAppModelParameter param in xModelsGlobalParamsGrid.Grid.SelectedItems)
+            {
                 GlobalParamsCopiedItemsList.Add(param);
+            }
         }
 
         private void BtnPastGlobalParamsClicked(object sender, RoutedEventArgs e)
@@ -466,31 +485,47 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         public void SetUniquePlaceHolderName(GlobalAppModelParameter newModelGlobalParam, bool isCopy = false)
         {
             if (isCopy)
+            {
                 newModelGlobalParam.PlaceHolder = newModelGlobalParam.PlaceHolder + "_Copy";
+            }
             else
+            {
                 newModelGlobalParam.PlaceHolder = "{NewGlobalParameter}";
+            }
 
-            if (mModelsGlobalParamsList.Where(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder).FirstOrDefault() == null) return;
+            if (mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder) == null)
+            {
+                return;
+            }
 
             List<GlobalAppModelParameter> samePlaceHolderList = mModelsGlobalParamsList.Where(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder).ToList<GlobalAppModelParameter>();
-            if (samePlaceHolderList.Count == 1 && samePlaceHolderList[0] == newModelGlobalParam) return; //Same internal object
+            if (samePlaceHolderList.Count == 1 && samePlaceHolderList[0] == newModelGlobalParam)
+            {
+                return; //Same internal object
+            }
 
             //Set unique name
             if (isCopy)
             {
-                if ((mModelsGlobalParamsList.Where(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder).FirstOrDefault()) != null)
+                if ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder)) != null)
                 {
                     int counter = 2;
-                    while ((mModelsGlobalParamsList.Where(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder + counter).FirstOrDefault()) != null)
+                    while ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder + counter)) != null)
+                    {
                         counter++;
+                    }
+
                     newModelGlobalParam.PlaceHolder = newModelGlobalParam.PlaceHolder + counter;
                 }
             }
             else
             {
                 int counter = 2;
-                while ((mModelsGlobalParamsList.Where(x => x.PlaceHolder == "{NewGlobalParameter_" + counter.ToString() + "}").FirstOrDefault()) != null)
+                while ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == "{NewGlobalParameter_" + counter.ToString() + "}")) != null)
+                {
                     counter++;
+                }
+
                 newModelGlobalParam.PlaceHolder = "{NewGlobalParameter_" + counter.ToString() + "}";
             }
         }
@@ -557,36 +592,47 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             if (saveAll)
             {
                 foreach (GlobalAppModelParameter globalParam in mModelsGlobalParamsList)
+                {
                     if (globalParam.DirtyStatus != Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
                     {
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(globalParam);
                         itemsSavedCount++;
                     }
+                }
             }
             else
             {
                 foreach (GlobalAppModelParameter selectedGlobalParam in xModelsGlobalParamsGrid.Grid.SelectedItems)
+                {
                     if (selectedGlobalParam.DirtyStatus != Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
                     {
                         WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(selectedGlobalParam);
                         itemsSavedCount++;
                     }
+                }
             }
 
             if (itemsSavedCount == 0)
             {
-                if (saveAll)                    
+                if (saveAll)
+                {
                     Reporter.ToUser(eUserMsgKey.SaveAll, "Nothing found to Save.");
-                else                    
+                }
+                else
+                {
                     Reporter.ToUser(eUserMsgKey.SaveSelected, "Nothing found to Save from the selected Global Parameters.");
-
+                }
             }
             else
             {
-                if (saveAll)                    
+                if (saveAll)
+                {
                     Reporter.ToUser(eUserMsgKey.SaveAll, "All Global Parameters have been saved");
-                else                    
+                }
+                else
+                {
                     Reporter.ToUser(eUserMsgKey.SaveSelected, "Selected Global Parameter/s have been saved");
+                }
             }
         }
 
@@ -597,7 +643,9 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             bool editWasDone = MDPVP.ShowAsWindow();
 
             if (editWasDone)
+            {
                 ((GlobalAppModelParameter)xModelsGlobalParamsGrid.CurrentItem).SaveBackup();
+            }
         }
 
         public List<GlobalAppModelParameter> ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
@@ -620,10 +668,14 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         private void selectBtn_Click(object sender, RoutedEventArgs e)
         {
             foreach (var GAMP in xModelsGlobalParamsGrid.Grid.SelectedItems)
+            {
                 SelectedGlobalParamsFromDialogPage.Add((GlobalAppModelParameter)GAMP);
+            }
 
             if (mGenericWindow != null)
+            {
                 mGenericWindow.Close();
+            }
         }
 
         private void CloseWinClicked(object sender, EventArgs e)
@@ -631,7 +683,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             SelectedGlobalParamsFromDialogPage = null;
             mGenericWindow.Close();
         }
-        private void StartTrackingModelGlobalParameter (GlobalAppModelParameter GAMP)
+        private void StartTrackingModelGlobalParameter(GlobalAppModelParameter GAMP)
         {
             GAMP.StartDirtyTracking();
         }

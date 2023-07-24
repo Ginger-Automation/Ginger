@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,14 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Dynamic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 {
@@ -44,9 +40,9 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
 
             if (AddDummyItem)
             {
-                dynamic expando = new ExpandoObject();                
+                dynamic expando = new ExpandoObject();
                 foreach (string property in mListProperties)
-                {                    
+                {
                     AddProperty(expando, property, null);
                 }
                 Items.Add(expando);

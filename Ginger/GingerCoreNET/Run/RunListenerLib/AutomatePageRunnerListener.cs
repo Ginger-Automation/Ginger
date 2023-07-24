@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,9 +34,10 @@ namespace Amdocs.Ginger.Run
             // Get bulk of message update by timer
 
             // since this is only for doevents we can run on another task and release faster -speed
-            Task.Factory.StartNew(() => {
+            Task.Factory.StartNew(() =>
+            {
                 AutomatePageRunnerListenerGiveUserFeedback.Invoke(this, null);
-            });            
+            });
         }
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,19 +33,19 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
 
         public AddEnvironmentWizard(RepositoryFolder<ProjEnvironment> EnvsFolder)
         {
-            this.EnvsFolder = EnvsFolder;            
-            
+            this.EnvsFolder = EnvsFolder;
+
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Environments Introduction", Page: new AddNewEnvIntroPage());
 
             AddPage(Name: "Environment Details", Title: "Environment Details", SubTitle: "Set New Environment Details", Page: new AddNewEnvDetailsWizardPage());
 
             AddPage(Name: "Environment Applications", Title: "Environment Applications", SubTitle: "Set New Environment Applications", Page: new AddNewEnvAppsPage());
-            
+
             //AddPage(Name: "Save", Title: "Save", SubTitle: "Choose ...", Page: new AddNewEnvironmentSavePage());
         }
 
         public override void Finish()
-        {            
+        {
             //add selected apps
             foreach (EnvApplication app in apps)
             {
@@ -57,7 +57,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
 
             //Save the Environment 
             EnvsFolder.AddRepositoryItem(NewEnvironment);
-            
+
         }
     }
 }

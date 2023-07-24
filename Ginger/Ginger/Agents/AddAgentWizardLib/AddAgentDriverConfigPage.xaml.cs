@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,14 +39,14 @@ namespace Ginger.Agents.AddAgentWizardLib
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    mWizard = ((AddAgentWizard)WizardEventArgs.Wizard);        
+                    mWizard = ((AddAgentWizard)WizardEventArgs.Wizard);
                     break;
 
                 case EventType.Active:
                     AgentDriverConfigPage p = new AgentDriverConfigPage(mWizard.Agent);
                     xDriverConfigFrame.SetContent(p);
                     break;
-            }             
+            }
         }
 
         private void xTestBtn_Click(object sender, RoutedEventArgs e)
@@ -60,6 +60,6 @@ namespace Ginger.Agents.AddAgentWizardLib
             {
                 xTestBtn.IsEnabled = true;
             }
-        }        
+        }
     }
 }

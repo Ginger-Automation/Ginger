@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
 
             AddPage(Name: "Select Plugin Folder", Title: "Select Plugin Folder", SubTitle: "Select Plugin Folder...", Page: new SelectPlugPackageinFolderPage());
 
-            AddPage(Name: "Plugin Info", Title: "Plugin Info", SubTitle: "Plugin Info...", Page: new PlugPackageinInfoPage());            
+            AddPage(Name: "Plugin Info", Title: "Plugin Info", SubTitle: "Plugin Info...", Page: new PlugPackageinInfoPage());
 
             //AddPage(Name: "Add Plugin to Solution Page", Title: "Add Plugin to Solution Page", SubTitle: "Add Plugin to Solution Page ...", Page: new AddPluginPackageToSolutionPage());
         }

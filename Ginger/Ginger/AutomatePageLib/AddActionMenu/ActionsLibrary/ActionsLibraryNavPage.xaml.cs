@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,15 +18,13 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages;
-using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.BusinessFlowPages.AddActionMenu;
-using Ginger.UserControls;
+using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
@@ -35,13 +33,12 @@ using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Media;
-using System.Collections.Specialized;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 {
@@ -134,7 +131,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                             act.ActionId = pluginServiceAction.ActionId;
                             foreach (var v in pluginServiceAction.InputValues)
                             {
-                                if (v.Param == "GA") continue; // not needed
+                                if (v.Param == "GA")
+                                {
+                                    continue; // not needed
+                                }
+
                                 act.InputValues.Add(new ActInputValue() { Param = v.Param, ParamTypeEX = v.ParamTypeStr });
                             }
                             act.Active = true;
@@ -172,7 +173,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     else if (cA.SupportedPlatforms == "All")
                     {
                         if ((cA is ActPlugIn) == false)
+                        {
                             generalActions.Add(cA);
+                        }
                     }
                     else
                     {
@@ -223,7 +226,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 Act a = (Act)Activator.CreateInstance(t);
 
                 if (a.IsSelectableAction == false)
+                {
                     continue;
+                }
 
                 if (mContext.BusinessFlow.CurrentActivity == null)
                 {
@@ -249,7 +254,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     if (a.Platforms.Contains(AP.Platform))
                     {
                         //DO Act.GetSampleAct in base
-                        if ((Acts.Where(c => c.GetType() == a.GetType()).FirstOrDefault()) == null)
+                        if ((Acts.FirstOrDefault(c => c.GetType() == a.GetType())) == null)
                         {
                             a.Description = a.ActionDescription;
                             a.Active = true;
@@ -301,7 +306,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                 }
                 else
+                {
                     Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
+                }
             }
         }
 
@@ -355,16 +362,19 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     foreach (TabItem tab in ActionsTabs.Items)
                     {
                         foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
-
+                        {
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (ActionsTabs.SelectedItem == tab)
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                }
                                 else
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
-
-                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                                } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
+                        }
                     }
                 }
             }

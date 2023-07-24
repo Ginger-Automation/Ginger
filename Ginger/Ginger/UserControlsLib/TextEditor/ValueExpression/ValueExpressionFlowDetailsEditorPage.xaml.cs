@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,21 +16,17 @@ limitations under the License.
 */
 #endregion
 
-using Ginger.UserControlsLib.TextEditor.Common;
-using GingerCore.Variables;
-using System.Collections.Generic;
-using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System.Reflection;
-using Amdocs.Ginger.Repository;
 using Ginger.Run;
-using System.Linq;
-using System;
-using GingerCore.Environments;
+using Ginger.UserControlsLib.TextEditor.Common;
 using GingerCore;
-using System.Collections;
 using GingerCore.Activities;
+using GingerCore.Environments;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Controls;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -100,7 +96,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             if (properties != null)
             {
                 foreach (PropertyInfo prop in properties)
-                {         
+                {
                     if (!typeof(IObservableList).IsAssignableFrom(prop.PropertyType))
                     {
                         lst.Add(prop.Name);
@@ -119,7 +115,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             }
             fieldList.ItemsSource = lst.OrderBy(x => x).ToList();
         }
-        
+
         public void UpdateContent()
         {
             string v = (string)fieldList.SelectedItem;
@@ -127,6 +123,6 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             txt += "{FD Object=" + mObj + " Field=" + v + "}";
             txt += mSelectedContentArgs.TextEditor.Text.Substring(mSelectedContentArgs.EndPos + 1);
             mSelectedContentArgs.TextEditor.Text = txt;
-        }        
+        }
     }
 }

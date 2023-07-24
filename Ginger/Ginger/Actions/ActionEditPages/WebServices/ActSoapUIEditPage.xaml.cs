@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,20 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.UserControls;
+using GingerCore.Actions;
+using GingerCore.Actions.WebServices;
 using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using GingerCore.Actions;
-using GingerCore;
 using System.Xml;
-using System.Diagnostics;
-using Amdocs.Ginger.Repository;
-using GingerCore.Actions.WebServices;
-using Ginger.UserControls;
-using System.Linq;
-using Amdocs.Ginger.Common;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Actions.WebServices
 {
@@ -107,9 +106,11 @@ namespace Ginger.Actions.WebServices
             {
                 foreach (var innerProperty in mAct.ProjectInnerProperties)
                 {
-                    var item = mAct.ProjectProperties.Where(l => l.Param == innerProperty.Param).FirstOrDefault();
+                    var item = mAct.ProjectProperties.FirstOrDefault(l => l.Param == innerProperty.Param);
                     if (item == null)
+                    {
                         mAct.ProjectProperties.Add(innerProperty);
+                    }
                 }
                 mAct.ProjectInnerProperties.Clear();
             }
@@ -212,7 +213,9 @@ namespace Ginger.Actions.WebServices
             string currentValue = mAct.GetInputParamValue(ActSoapUI.Fields.PropertiesOrPlaceHolders);
 
             if (currentValue == null)
+            {
                 return;
+            }
 
             if (currentValue == "PlaceHolders")
             {
@@ -293,7 +296,10 @@ namespace Ginger.Actions.WebServices
                 fileNum++;
                 string newFileName = System.IO.Path.GetFileNameWithoutExtension(destFile);
                 if (newFileName.IndexOf(copySufix) != -1)
+                {
                     newFileName = newFileName.Substring(0, newFileName.IndexOf(copySufix));
+                }
+
                 newFileName = newFileName + copySufix + fileNum.ToString() + System.IO.Path.GetExtension(destFile);
                 destFile = System.IO.Path.Combine(targetPath, newFileName);
             }
@@ -518,12 +524,17 @@ namespace Ginger.Actions.WebServices
             ClearPropertyFromList(ActSoapUiInputValue.ePropertyType.TestCase);
 
             if (TestSuiteComboBox.SelectedValue == null)
+            {
                 return;
+            }
+
             string testSuite = TestSuiteComboBox.SelectedValue.ToString();
 
             string testCase = TestCaseComboBox.SelectedValue.ToString();
             if (string.IsNullOrEmpty(testCase))
+            {
                 return;
+            }
 
             XmlDocument doc = new XmlDocument();
             string XMLFiledValue = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.XMLFile);
@@ -556,7 +567,10 @@ namespace Ginger.Actions.WebServices
             ClearPropertyFromList(ActSoapUiInputValue.ePropertyType.TestSuite);
 
             if (TestSuiteComboBox.SelectedValue == null)
+            {
                 return;
+            }
+
             string testSuite = TestSuiteComboBox.SelectedValue.ToString();
 
             XmlDocument doc = new XmlDocument();
@@ -589,11 +603,16 @@ namespace Ginger.Actions.WebServices
             ClearPropertyFromList(ActSoapUiInputValue.ePropertyType.TestStep);
 
             if (TestSuiteComboBox.SelectedValue == null)
+            {
                 return;
+            }
+
             string testSuite = TestSuiteComboBox.SelectedValue.ToString();
             string testCase = TestCaseComboBox.SelectedValue.ToString();
             if (string.IsNullOrEmpty(testCase))
+            {
                 return;
+            }
 
             XmlDocument doc = new XmlDocument();
             string XMLFiledValue = mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.XMLFile);
@@ -644,12 +663,14 @@ namespace Ginger.Actions.WebServices
 
                 if (mAct.TempProperties.Count > 0)
                 {
-                    var savedProperty = mAct.TempProperties.Where(x => x.Param == testProperty.Param && x.Type == testProperty.Type.ToString()).FirstOrDefault();
+                    var savedProperty = mAct.TempProperties.FirstOrDefault(x => x.Param == testProperty.Param && x.Type == testProperty.Type.ToString());
                     if (savedProperty != null)
                     {
                         var savedPropertyValue = savedProperty.Value;
                         if (!string.IsNullOrEmpty(savedPropertyValue))
+                        {
                             testProperty.Value = savedPropertyValue;
+                        }
                     }
                 }
 
@@ -663,18 +684,20 @@ namespace Ginger.Actions.WebServices
             {
                 foreach (var item in mAct.AllProperties)
                 {
-                    if (mAct.TempProperties.Count() > 0)
+                    if (mAct.TempProperties.Any())
                     {
-                        var result = mAct.TempProperties.Where(x => x.Type.ToString() == item.Type.ToString() && x.Param == item.Param && x.Value == item.Value).FirstOrDefault();
+                        var result = mAct.TempProperties.FirstOrDefault(x => x.Type.ToString() == item.Type.ToString() && x.Param == item.Param && x.Value == item.Value);
                         if (result == null)
                         {
-                            var clearItem = mAct.TempProperties.Where(x => x.Type.ToString() == item.Type.ToString() && x.Param == item.Param).FirstOrDefault();
+                            var clearItem = mAct.TempProperties.FirstOrDefault(x => x.Type.ToString() == item.Type.ToString() && x.Param == item.Param);
                             mAct.TempProperties.Remove(clearItem);
                             mAct.TempProperties.Add(item);
                         }
                     }
                     else
+                    {
                         mAct.TempProperties.Add(item);
+                    }
                 }
                 mAct.AllProperties.Where(l => l.Type == propertyType.ToString()).ToList().All(i => mAct.AllProperties.Remove(i));
             }

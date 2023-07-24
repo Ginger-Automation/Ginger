@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -366,7 +366,10 @@ namespace GingerCore.Actions
                 }
 
                 if (!uIElementTypeAssigned)
+                {
                     NewActUIElement.ElementType = eElementType.Unknown;
+                }
+
                 if (!NewActUIElement.Platforms.Contains(this.Platform))
                 {
                     NewActUIElement.Platform = ePlatformType.Web; // ??? to check
@@ -647,7 +650,9 @@ namespace GingerCore.Actions
             {
                 //nd for backworth support
                 if (GetInputParamValue(Fields.Xoffset) == null && mXoffset != string.Empty)
+                {
                     AddOrUpdateInputParamValue(Fields.Xoffset, mXoffset);
+                }
 
                 return GetInputParamCalculatedValue(Fields.Xoffset);
             }
@@ -666,7 +671,9 @@ namespace GingerCore.Actions
             {
                 //nd for backworth support
                 if (GetInputParamValue(Fields.Yoffset) == null && mYoffset != string.Empty)
+                {
                     AddOrUpdateInputParamValue(Fields.Yoffset, mYoffset);
+                }
 
                 return GetInputParamCalculatedValue(Fields.Yoffset);
             }

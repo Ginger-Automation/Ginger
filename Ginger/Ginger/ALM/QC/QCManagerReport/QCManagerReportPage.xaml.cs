@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,26 +16,26 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.ALM.QC.TreeViewItems;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Activities;
+using GingerCore.ALM.QC;
+using GingerCoreNET.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using Ginger.UserControls;
-using GingerCore;
-using Ginger.ALM.QC.TreeViewItems;
-using GingerCore.Activities;
-using System.Reflection;
-using GingerCore.ALM.QC;
-using GingerCoreNET.GeneralLib;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.ALM.QC
 {
-    enum eViewType { Coverage,Execution }
+    enum eViewType { Coverage, Execution }
 
     enum eExecutionPeriod
     {
@@ -52,14 +52,14 @@ namespace Ginger.ALM.QC
     }
 
     public partial class QCManagerReportPage : Page
-    {        
+    {
         GenericWindow _pageGenericWin = null;
 
         eViewType mViewType = eViewType.Coverage;
         ObservableList<QCTestSetTreeItem> mSelectQcTestSets;
 
         ObservableList<ALMTSTest> mQcTestCasesList = new ObservableList<ALMTSTest>();
-        ObservableList<QCManagerReportTestCaseDetails> mTestCaseDetailsList = new ObservableList<QCManagerReportTestCaseDetails>();        
+        ObservableList<QCManagerReportTestCaseDetails> mTestCaseDetailsList = new ObservableList<QCManagerReportTestCaseDetails>();
 
         eExecutionPeriod mExecutionPeriodSelectedFilter;
         string mExecutionTesterSelectedFilter;
@@ -87,7 +87,7 @@ namespace Ginger.ALM.QC
             mExecutionPeriodSelectedFilter = eExecutionPeriod.Any;
             mExecutionTesterSelectedFilter = "Any";
 
-            ExecutionPeriodFilterComboBox.SelectionChanged +=ExecutionPeriodFilterComboBox_SelectionChanged;
+            ExecutionPeriodFilterComboBox.SelectionChanged += ExecutionPeriodFilterComboBox_SelectionChanged;
             ExecutionTesterFilterComboBox.SelectionChanged += ExecutionTesterFilterComboBox_SelectionChanged;
         }
 
@@ -126,7 +126,7 @@ namespace Ginger.ALM.QC
             view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.ActivitiesGroupName, Header = "Matching " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), WidthWeight = 25, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.ActivitiesGroupAutomationPrecentage, Header = "Automation Coverage", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.NumberOfExecutions, Header = "Executions Count.", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.PassRate, Header = "Pass Rate", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode=BindingMode.OneWay});
+            view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.PassRate, Header = "Pass Rate", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.LastExecutionTime, Header = "Last Execution Time", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = QCManagerReportTestCaseDetails.Fields.LastExecutionStatus, Header = "Last Execution Status", HorizontalAlignment = System.Windows.HorizontalAlignment.Center, WidthWeight = 20, BindingMode = BindingMode.OneWay });
             DetailsGrid.SetAllColumnsDefaultView(view);
@@ -154,12 +154,14 @@ namespace Ginger.ALM.QC
         private void QCTestCaseBrowseBtn_Click(object sender, RoutedEventArgs e)
         {
             mSelectQcTestSets = (ObservableList<QCTestSetTreeItem>)ALMIntegration.Instance.SelectALMTestSets();
-            
+
             if (mSelectQcTestSets != null)
             {
                 QCTestSetsPathTextBox.Text = string.Empty;
                 if (mSelectQcTestSets.Count == 1)
+                {
                     QCTestSetsPathTextBox.Text = mSelectQcTestSets[0].Path;
+                }
                 else if (mSelectQcTestSets.Count > 1)
                 {
                     //get the main folder name
@@ -170,12 +172,16 @@ namespace Ginger.ALM.QC
                         {
                             string path = ts.Path.Remove(ts.Path.LastIndexOf('\\'), ts.Path.Count() - ts.Path.LastIndexOf('\\'));
                             if (path.Length < mainFolderPath.Length)
+                            {
                                 mainFolderPath = path;
+                            }
                         }
                         QCTestSetsPathTextBox.Text = mainFolderPath;
                     }
                     else
+                    {
                         QCTestSetsPathTextBox.Text = mSelectQcTestSets[0].Path;
+                    }
                 }
 
                 LoadData();
@@ -211,7 +217,7 @@ namespace Ginger.ALM.QC
                     foreach (ALMTSTest tc in TS.Tests)
                     {
                         mQcTestCasesList.Add(tc);
-                        int automatedStepsCouter=0;
+                        int automatedStepsCouter = 0;
                         QCManagerReportTestCaseDetails testCaseDetails = new QCManagerReportTestCaseDetails();
                         testCaseDetails.TestSetID = TS.TestSetID;
                         testCaseDetails.TestSetName = TS.TestSetName;
@@ -223,9 +229,15 @@ namespace Ginger.ALM.QC
 
                         ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
                         if (tc.LinkedTestID != null && tc.LinkedTestID != string.Empty)
-                            repoActivsGroup = activitiesGroup.Where(x => x.ExternalID == tc.LinkedTestID).FirstOrDefault();
+                        {
+                            repoActivsGroup = activitiesGroup.FirstOrDefault(x => x.ExternalID == tc.LinkedTestID);
+                        }
+
                         if (repoActivsGroup == null)
-                            repoActivsGroup = activitiesGroup.Where(x => x.ExternalID == tc.TestID).FirstOrDefault();
+                        {
+                            repoActivsGroup = activitiesGroup.FirstOrDefault(x => x.ExternalID == tc.TestID);
+                        }
+
                         if (repoActivsGroup != null)
                         {
                             testCaseDetails.ActivitiesGroupID = repoActivsGroup.Guid;
@@ -234,18 +246,22 @@ namespace Ginger.ALM.QC
                             foreach (ALMTSTestStep step in tc.Steps)
                             {
                                 ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                                Activity repoStepActivity = activities.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+                                Activity repoStepActivity = activities.FirstOrDefault(x => x.ExternalID == step.StepID);
                                 if (repoStepActivity != null)
-                                    if (repoStepActivity.AutomationStatus ==eActivityAutomationStatus.Automated)
+                                {
+                                    if (repoStepActivity.AutomationStatus == eActivityAutomationStatus.Automated)
+                                    {
                                         automatedStepsCouter++;
+                                    }
+                                }
                             }
                         }
                         else
                         {
-                            testCaseDetails.ActivitiesGroupName = "NA";                            
+                            testCaseDetails.ActivitiesGroupName = "NA";
                         }
                         //set automation percentage
-                        double automatedActsPrecanteg=0;
+                        double automatedActsPrecanteg = 0;
                         if (tc.Steps.Count > 0)
                         {
                             automatedActsPrecanteg = ((double)automatedStepsCouter / (double)tc.Steps.Count);
@@ -254,7 +270,9 @@ namespace Ginger.ALM.QC
                             testCaseDetails.ActivitiesGroupAutomationPrecentage = automatedActsPrecanteg.ToString() + "%";
                         }
                         else
+                        {
                             testCaseDetails.ActivitiesGroupAutomationPrecentage = "0%";
+                        }
 
                         //set execution details
                         CalculateTCExecutionDetails(tc, testCaseDetails);
@@ -263,22 +281,25 @@ namespace Ginger.ALM.QC
                     }
                 }
             }
-            
+
             //get the executers names
             var groups = mQcTestCasesList.SelectMany(x => x.Runs).GroupBy(y => y.Tester)
                 .Select(n => new
-            {
-                TesterName = n.Key.ToString(),
-                Count = n.Count()
-            }
+                {
+                    TesterName = n.Key.ToString(),
+                    Count = n.Count()
+                }
             )
-            .OrderBy(n => n.TesterName);    
+            .OrderBy(n => n.TesterName);
             ExecutionTesterFilterComboBox.SelectionChanged -= ExecutionTesterFilterComboBox_SelectionChanged;
             ExecutionTesterFilterComboBox.SelectedItem = null;
             ExecutionTesterFilterComboBox.Items.Clear();
             ExecutionTesterFilterComboBox.Items.Add("Any");
             foreach (var v in groups)
+            {
                 ExecutionTesterFilterComboBox.Items.Add(v.TesterName);
+            }
+
             ExecutionTesterFilterComboBox.SelectedValue = "Any";
             ExecutionTesterFilterComboBox.SelectionChanged += ExecutionTesterFilterComboBox_SelectionChanged;
         }
@@ -290,7 +311,7 @@ namespace Ginger.ALM.QC
             mPassedRunsPrecentage = 0;
             foreach (QCManagerReportTestCaseDetails tcDetails in mTestCaseDetailsList)
             {
-                CalculateTCExecutionDetails(mQcTestCasesList.Where(x => x.LinkedTestID == tcDetails.TestCaseID).FirstOrDefault(), tcDetails);
+                CalculateTCExecutionDetails(mQcTestCasesList.FirstOrDefault(x => x.LinkedTestID == tcDetails.TestCaseID), tcDetails);
             }
         }
 
@@ -332,17 +353,23 @@ namespace Ginger.ALM.QC
         private List<ALMTSTestRun> FilterRuns(List<ALMTSTestRun> runs)
         {
             //filter by tester
-            List<ALMTSTestRun> filteredRuns=null;
+            List<ALMTSTestRun> filteredRuns = null;
             if (mExecutionTesterSelectedFilter == "Any")
+            {
                 filteredRuns = runs;
+            }
             else
+            {
                 filteredRuns = runs.Where(x => x.Tester == mExecutionTesterSelectedFilter).ToList();
+            }
 
             if (filteredRuns.Count > 0)
             {
                 //filter by period
                 if (mExecutionPeriodSelectedFilter != eExecutionPeriod.Any)
+                {
                     return filteredRuns.Where(x => Math.Floor((DateTime.Now - (DateTime.Parse((x.ExecutionDate)))).TotalDays) <= ((int)mExecutionPeriodSelectedFilter)).ToList(); //(expiryDate - DateTime.Now).TotalDays < 30                                    
+                }
             }
 
             return filteredRuns;
@@ -356,7 +383,7 @@ namespace Ginger.ALM.QC
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(RefreshButton);
-            
+
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, null, windowStyle, "QC/ALM Manager Report", this, winButtons);
         }
 
@@ -422,6 +449,6 @@ namespace Ginger.ALM.QC
             RefreshExecutionDetails();
             DetailsGrid.DataSourceList = mTestCaseDetailsList;
             SetPieData();
-        }       
+        }
     }
 }

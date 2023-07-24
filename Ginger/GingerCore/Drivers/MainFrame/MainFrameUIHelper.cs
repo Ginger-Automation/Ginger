@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.UIElement;
-using GingerCore.Actions.Common;
 using GingerCore.Actions.MainFrame;
 using Open3270.TN3270;
 using System;
@@ -89,8 +88,8 @@ namespace GingerCore.Drivers.MainFrame
             {
                 return null;
             }
-           
-            if (XF.Attributes.Protected&& !String.IsNullOrEmpty(XF.Text))
+
+            if (XF.Attributes.Protected && !String.IsNullOrEmpty(XF.Text))
             {
                 return (Control)AddLabel(XF);
             }
@@ -160,7 +159,7 @@ namespace GingerCore.Drivers.MainFrame
                     return Brushes.Red;
                 }
                 return DefaultBursh;
-            }            
+            }
         }
 
         public static void SetupMainframeDriverComponents(MainFrameDriver mDriver, MainFrameDriverWindow MFDW, Canvas ConsoleCanvas)
@@ -245,7 +244,7 @@ namespace GingerCore.Drivers.MainFrame
             c.VerticalAlignment = System.Windows.VerticalAlignment.Top;
             c.Margin = new Thickness(MFDW.WidthPerCharachter * Xldf.Location.left, MFDW.HeightPerRow * Xldf.Location.top, 0, 0);
 
-            
+
             if (c.GetType() == typeof(TextBox))
             {
                 ((TextBox)c).FontSize = 20;
@@ -333,7 +332,7 @@ namespace GingerCore.Drivers.MainFrame
 
             if (XF == null || String.IsNullOrEmpty(Command) || mdriver == null)
             {
-             
+
             }
             else
             {

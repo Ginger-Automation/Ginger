@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,15 +17,14 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Variables;
 using System;
 using System.Text;
-using GingerCore.Variables;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Common.InterfacesLib;
 
 namespace Ginger.Exports.ExportToJava
 {
@@ -47,7 +46,7 @@ namespace Ginger.Exports.ExportToJava
             JavaFileName = @"c:\temp\java\BF1.java";
 
             try
-            {                
+            {
                 System.IO.File.WriteAllText(JavaFileName, GenerateJavafromBusinessFlow(BF), Encoding.UTF8);
             }
             catch (Exception e)
@@ -65,7 +64,7 @@ namespace Ginger.Exports.ExportToJava
             OpenBrackets();
             indent++;
             AddVars("Business Flow", BF.Variables);
-            
+
             foreach (Activity a in BF.Activities)
             {
                 indent++;
@@ -102,7 +101,7 @@ namespace Ginger.Exports.ExportToJava
 
         private void WriteLine(string txt)
         {
-            for(int i=0; i<indent; i++)
+            for (int i = 0; i < indent; i++)
             {
                 Output.Append("\t");
             }
@@ -113,7 +112,7 @@ namespace Ginger.Exports.ExportToJava
         {
             WriteLine("// Actions");
             foreach (Act act in acts)
-            {                
+            {
                 AddActionCode(act);
                 AddActionOutout(act);
             }
@@ -121,7 +120,7 @@ namespace Ginger.Exports.ExportToJava
 
         private void AddActionOutout(Act act)
         {
-            foreach(ActReturnValue ARV in act.ActReturnValues)
+            foreach (ActReturnValue ARV in act.ActReturnValues)
             {
                 AddActReturnValue(ARV);
             }
@@ -131,16 +130,16 @@ namespace Ginger.Exports.ExportToJava
         {
             WriteLine("if (!actual.Equels(" + VE(ARV.Expected) + "))");
             OpenBrackets();
-            WriteLine(Missing + "  Mark step as failed - throw" );
+            WriteLine(Missing + "  Mark step as failed - throw");
             CloseBrackets();
         }
 
         private void AddActionCode(Act act)
         {
-            WriteLine("// Action: " + act.Description);            
+            WriteLine("// Action: " + act.Description);
             if (act is ActGotoURL)
-            {                
-                WriteLine("driver.get(" + VE(act.Value)  + ");");
+            {
+                WriteLine("driver.get(" + VE(act.Value) + ");");
                 return;
             }
             if (act is ActGenElement)
@@ -151,7 +150,7 @@ namespace Ginger.Exports.ExportToJava
 
             if (act is ActTextBox)
             {
-                AddActTextBox((ActTextBox)act);                
+                AddActTextBox((ActTextBox)act);
                 return;
             }
 
@@ -180,8 +179,8 @@ namespace Ginger.Exports.ExportToJava
 
         private void AddActSubmit(ActSubmit act)
         {
-            string s = GetDriverfindElem(act.LocateBy, act.LocateValue);            
-            s += ".Submit();";                    
+            string s = GetDriverfindElem(act.LocateBy, act.LocateValue);
+            s += ".Submit();";
             WriteLine(s);
         }
 
@@ -189,7 +188,7 @@ namespace Ginger.Exports.ExportToJava
         {
             string s = GetDriverfindElem(act.LocateBy, act.LocateValue);
 
-            switch (act.LinkAction )
+            switch (act.LinkAction)
             {
                 case ActLink.eLinkAction.Click:
                     s += ".Click()";
@@ -225,7 +224,7 @@ namespace Ginger.Exports.ExportToJava
 
         private void AddActGenElement(ActGenElement act)
         {
-            
+
             string s = GetDriverfindElem(act.LocateBy, act.LocateValue);
 
             switch (act.GenElementAction)
@@ -251,7 +250,7 @@ namespace Ginger.Exports.ExportToJava
         }
 
         private void AddActTextBox(ActTextBox act)
-        {            
+        {
             string s = GetDriverfindElem(act.LocateBy, act.LocateValue);
 
             switch (act.TextBoxAction)
@@ -298,15 +297,15 @@ namespace Ginger.Exports.ExportToJava
                 case eLocateBy.ByLinkText:
                     lb = "By.linkText";
                     break;
-                case eLocateBy.ByValue:                    
+                case eLocateBy.ByValue:
                     string s1 = "driver.findElement(By.cssSelector(\"input[value='" + VE(locateValue) + "']\"))";
                     return s1;
-                    
+
                 //TODO: add the rest
 
                 default:
                     lb = "By." + Missing + locateBy;
-                    break;                    
+                    break;
             }
 
             string s = "driver.findElement(" + lb + "(" + VE(locateValue) + "))";
@@ -317,7 +316,7 @@ namespace Ginger.Exports.ExportToJava
         {
             string s = "";
             //TODO: check for { if exist return var equivalent or TODOS if VBS etc... handle special VE vals
-           
+
             //temp return it as string
             s = "\"" + value + "\"";
             return s;
@@ -332,7 +331,10 @@ namespace Ginger.Exports.ExportToJava
 
         void AddVars(string section, ObservableList<VariableBase> variables)
         {
-            if (variables.Count == 0) return;
+            if (variables.Count == 0)
+            {
+                return;
+            }
 
             WriteLine("// " + section + " Variables");
             foreach (VariableBase v in variables)
@@ -340,7 +342,7 @@ namespace Ginger.Exports.ExportToJava
                 //TODO: based on type create the relevant var
                 //switch var type
                 WriteLine("\t String " + MakeName(v.Name) + " = \"" + v.Value + "\";");
-            }            
+            }
         }
     }
 }

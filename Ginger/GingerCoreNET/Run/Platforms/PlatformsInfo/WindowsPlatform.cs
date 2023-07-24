@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -99,11 +99,11 @@ namespace GingerCore.Platforms.PlatformsInfo
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.ClickXY);
-                
+
                     break;
 
                 case eElementType.TextBox:
-                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);                  
+                    windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetText);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
@@ -176,7 +176,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                     break;
 
-                case eElementType.TreeView:                    
+                case eElementType.TreeView:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetText);
@@ -194,7 +194,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                     break;
 
-          
+
 
                 case eElementType.DatePicker:
                     windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
@@ -252,11 +252,11 @@ namespace GingerCore.Platforms.PlatformsInfo
             }
 
             windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.IsExist);
-            if(ElementType != eElementType.Window)
+            if (ElementType != eElementType.Window)
             {
                 windowsPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
             }
-            
+
             return windowsPlatformElementActionslist;
         }
 
@@ -574,7 +574,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                 if (actConfig != null)
                 {
                     if (string.IsNullOrWhiteSpace(actConfig.Operation))
+                    {
                         actConfig.Operation = GetDefaultElementOperation(elementInfo.ElementTypeEnum);
+                    }
                 }
                 if ((elementTypeOperations != null) && (elementTypeOperations.Count > 0))
                 {
@@ -646,7 +648,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     return ActUIElement.eElementAction.SetValue.ToString();
 
 
-                case eElementType.Window:                    
+                case eElementType.Window:
                 case eElementType.Dialog:
                     return ActUIElement.eElementAction.Switch.ToString();
 
@@ -769,7 +771,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             {
                 elementTypeEnum = eElementType.Unknown;
             }
-            
+
             return elementTypeEnum;
         }
 

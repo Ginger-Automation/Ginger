@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public string Value { get; set; }
         [IsSerializedForLocalRepository(true)]
         public bool ShowOnUI { get; set; } = true;
-        public override string ItemName { get { return Name; } set { Name = value;  } }
+        public override string ItemName { get { return Name; } set { Name = value; } }
 
     }
 }

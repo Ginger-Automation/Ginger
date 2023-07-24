@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.UserControlsLib;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using amdocs.ginger.GingerCoreNET;
-using Ginger.UserControlsLib;
 
 namespace Ginger.Reports
 {
@@ -31,7 +30,7 @@ namespace Ginger.Reports
     /// Interaction logic for ExecutionResultsConfiguration.xaml
     /// </summary>
     public partial class HTMLReportsConfigurationPage : GingerUIPage
-    {        
+    {
         HTMLReportsConfiguration mHTMLReportConfiguration = new HTMLReportsConfiguration();
 
 
@@ -43,7 +42,7 @@ namespace Ginger.Reports
 
         private void Init()
         {
-            mHTMLReportConfiguration =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            mHTMLReportConfiguration = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             mHTMLReportConfiguration.StartDirtyTracking();
             CurrentItemToSave = WorkSpace.Instance.Solution;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LimitReportFolder, CheckBox.IsCheckedProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.LimitReportFolderSize));
@@ -57,7 +56,9 @@ namespace Ginger.Reports
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SizeTextBox, TextBox.TextProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.HTMLReportConfigurationMaximalFolderSize));
             }
             else
+            {
                 FolderMaxSize.Visibility = Visibility.Collapsed;
+            }
 
             SetControls();
         }
@@ -79,9 +80,9 @@ namespace Ginger.Reports
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralizedReportSettingsGrid, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
         }
-       
 
-        
+
+
 
         private void SelectHTMLReportsFolderButton_Click(object sender, RoutedEventArgs e)
         {
@@ -96,7 +97,7 @@ namespace Ginger.Reports
         {
             if (htmlAutoProdReportSwitchPnl != null)
             {
-                mHTMLReportConfiguration.HTMLReportsAutomaticProdIsEnabled = true;                
+                mHTMLReportConfiguration.HTMLReportsAutomaticProdIsEnabled = true;
             }
         }
 
@@ -104,11 +105,11 @@ namespace Ginger.Reports
         {
             if (htmlAutoProdReportSwitchPnl != null)
             {
-                mHTMLReportConfiguration.HTMLReportsAutomaticProdIsEnabled = false;                
+                mHTMLReportConfiguration.HTMLReportsAutomaticProdIsEnabled = false;
             }
         }
 
-       
+
 
         private void SizeTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -119,7 +120,7 @@ namespace Ginger.Reports
             catch
             {
                 mHTMLReportConfiguration.HTMLReportConfigurationMaximalFolderSize = 0;
-            }         
+            }
         }
 
 
@@ -128,22 +129,24 @@ namespace Ginger.Reports
         {
             DefaultTemplatePickerCbx.ItemsSource = null;
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            if ( WorkSpace.Instance.Solution != null && HTMLReportConfigurations.Count > 0)
+            if (WorkSpace.Instance.Solution != null && HTMLReportConfigurations.Count > 0)
             {
                 DefaultTemplatePickerCbx.ItemsSource = HTMLReportConfigurations;
                 DefaultTemplatePickerCbx.DisplayMemberPath = HTMLReportConfiguration.Fields.Name;
                 DefaultTemplatePickerCbx.SelectedValuePath = HTMLReportConfiguration.Fields.ID;
                 SelectDefualtTemplate();
-            }            
+            }
         }
 
         private void SelectDefualtTemplate()
         {
             if (mDefualtConfig != null)
+            {
                 mDefualtConfig.PropertyChanged -= MDefualtConfig_PropertyChanged;
+            }
 
             ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-            mDefualtConfig = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+            mDefualtConfig = HTMLReportConfigurations.FirstOrDefault(x => (x.IsDefault == true));
             if (mDefualtConfig != null)
             {
                 DefaultTemplatePickerCbx.SelectionChanged -= DefaultTemplatePickerCbx_SelectionChanged;
@@ -156,7 +159,9 @@ namespace Ginger.Reports
         private void MDefualtConfig_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(HTMLReportConfiguration.IsDefault))
+            {
                 SelectDefualtTemplate();
+            }
         }
 
         private void LimitReportFolder_Checked(object sender, RoutedEventArgs e)

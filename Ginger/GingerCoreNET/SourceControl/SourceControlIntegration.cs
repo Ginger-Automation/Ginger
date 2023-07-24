@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,11 +19,9 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Core;
 using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
-using GingerCore;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
@@ -276,7 +274,9 @@ namespace Ginger.SourceControl
             if (!SourceControl.UnLock(path, ref error))
             {
                 if (error != string.Empty)
+                {
                     Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                }
             }
             else
             {

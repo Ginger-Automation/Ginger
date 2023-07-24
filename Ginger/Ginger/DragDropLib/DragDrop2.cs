@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -89,7 +89,11 @@ namespace GingerWPF.DragDropLib
 
         private static void StartDrag(MouseEventArgs e)
         {
-            if (DrgInfo.Header == null) return;
+            if (DrgInfo.Header == null)
+            {
+                return;
+            }
+
             IsDragging = true;
             DataObject data = new DataObject("Header", DrgInfo.Header);
             var v = e.OriginalSource; // The UI element that was clicked can be sub element in grid for example            
@@ -120,7 +124,7 @@ namespace GingerWPF.DragDropLib
                     {
                         _DroppedPoint = e.GetPosition(sender as UcListView);
                     }
-                    if(sender is Ginger.ucGrid)
+                    if (sender is Ginger.ucGrid)
                     {
                         _DroppedPoint = e.GetPosition(sender as Ginger.ucGrid);
                     }

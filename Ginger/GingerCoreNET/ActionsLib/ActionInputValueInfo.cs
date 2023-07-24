@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,13 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 using Amdocs.Ginger.Plugin.Core;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Amdocs.Ginger.Common.Actions
 {
@@ -41,9 +40,9 @@ namespace Amdocs.Ginger.Common.Actions
 
 
         [JsonProperty]
-        
+
         // We use our own json serializer for param attrs
-        [JsonConverter(typeof(AttrsPropertyConverter))]        
+        [JsonConverter(typeof(AttrsPropertyConverter))]
         public List<Attribute> ParamAttrs { get; set; }
 
 
@@ -55,17 +54,41 @@ namespace Amdocs.Ginger.Common.Actions
             get
             {
                 // return only known types else throw
-                if (ParamType == typeof(string)) return "string";
-                if (ParamType == typeof(Int32)) return "int";
-                if (ParamType == typeof(List<string>)) return "List<string>";
-                if (ParamType == typeof(IGingerAction)) return "IGingerAction";
-                if (ParamType == typeof(bool)) return "bool";
+                if (ParamType == typeof(string))
+                {
+                    return "string";
+                }
+
+                if (ParamType == typeof(Int32))
+                {
+                    return "int";
+                }
+
+                if (ParamType == typeof(List<string>))
+                {
+                    return "List<string>";
+                }
+
+                if (ParamType == typeof(IGingerAction))
+                {
+                    return "IGingerAction";
+                }
+
+                if (ParamType == typeof(bool))
+                {
+                    return "bool";
+                }
+
                 if (ParamType.IsEnum)
-                {                    
+                {
                     string vals = "";
                     foreach (object o in Enum.GetValues(ParamType))
                     {
-                        if (vals.Length > 0) vals += ",";
+                        if (vals.Length > 0)
+                        {
+                            vals += ",";
+                        }
+
                         vals += o.ToString();
                     }
                     return "enum{" + vals + "}";
@@ -93,7 +116,7 @@ namespace Amdocs.Ginger.Common.Actions
                     case "String":
                         ParamType = typeof(String);
                         break;
-                    case "Int32": 
+                    case "Int32":
                         ParamType = typeof(Int32);
                         break;
                     case "int":
@@ -111,9 +134,9 @@ namespace Amdocs.Ginger.Common.Actions
                     default:
                         if (value.StartsWith("List<"))
                         {
-                            ParamType = typeof(DynamicListWrapper);                            
+                            ParamType = typeof(DynamicListWrapper);
                         }
-                        else if(value.StartsWith("enum"))
+                        else if (value.StartsWith("enum"))
                         {
                             ParamType = typeof(EnumParamWrapper);
                         }
@@ -129,14 +152,18 @@ namespace Amdocs.Ginger.Common.Actions
         private string GetListItemProperties(Type itemType)
         {
             string s = "";
-            foreach(PropertyInfo PI in itemType.GetProperties())
+            foreach (PropertyInfo PI in itemType.GetProperties())
             {
-                if (s.Length > 0) s += ",";
+                if (s.Length > 0)
+                {
+                    s += ",";
+                }
+
                 s += PI.Name + ":" + PI.PropertyType.Name;
-            }            
-            return "{Properties=" + s + "}" ;
+            }
+            return "{Properties=" + s + "}";
         }
 
-        
+
     }
 }

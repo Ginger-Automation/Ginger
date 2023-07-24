@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,19 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
 using System.Net.Sockets;
 using System.Threading;
-using GingerCoreNET.Drivers.CommunicationProtocol;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
 {
     public class GingerSocketInfo
     {
         private Socket mSocket = null;
-        
+
         public Socket Socket { get { return mSocket; } set { mSocket = value; } }
-        
+
         public const int InitialBufferSize = 1024; // Size of initial receive buffer.  
 
         // Unique session id
@@ -38,20 +38,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         public byte[] buffer = new byte[InitialBufferSize];  // TODO: need to enable it to grow !!!!
 
         public int IncomingRequetsesCounter = 0;
-        public int OutgoingRequetsesCounter = 0;        
+        public int OutgoingRequetsesCounter = 0;
         public int BytesIn = 0;
         public int bytesOut = 0;
-        public int ResponseTimeoutMS = 1000*60*60;//1 hour
-        
+        public int ResponseTimeoutMS = 1000 * 60 * 60;//1 hour
+
         // Class using it attach its handler to Action
         public Action<GingerSocketInfo> MessageHandler { get; set; }
-        
+
         private readonly object mSendLockObject = new object();
         public NewPayLoad DataAsPayload
         {
             get
             {
-                NewPayLoad rc = new NewPayLoad(buffer, true);                
+                NewPayLoad rc = new NewPayLoad(buffer, true);
                 return rc;
             }
         }
@@ -79,7 +79,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         public eProcessingStatus mProcessingStatus = eProcessingStatus.Ready;
         private ManualResetEvent mRequestProcessingDone = new ManualResetEvent(false);
         private ManualResetEvent mSendDone = new ManualResetEvent(false);
-        
+
         public NewPayLoad SendRequest(NewPayLoad payload)
         {
             // get stuck when Ginger close
@@ -87,18 +87,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             {
 
                 Thread.Sleep(new TimeSpan(1));  //TODO: add timeout!!! or??
-            }            
-            
+            }
+
             OutgoingRequetsesCounter++;
             mRequestProcessingDone.Reset();
             mSendDone.Reset();
 
             Response = null;
-            
+
             mProcessingStatus = eProcessingStatus.SendingRequest;
-            
-            byte[] b = payload.GetPackage();            
-            
+
+            byte[] b = payload.GetPackage();
+
             // This is where the actual Payload bytes start being sent
             mSocket.BeginSend(b, 0, b.Length, SocketFlags.None, SendCallback, this);
             bytesOut += b.Length;
@@ -116,7 +116,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             }
             mProcessingStatus = eProcessingStatus.ResponseCompleted;
             mSocket.Blocking = false;
-            
+
             return Response;
         }
 
@@ -136,8 +136,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             {
                 // Console.WriteLine("Send lock obtained");
             };
-            
-            
+
+
             try
             {
                 // Retrieve the state object and the  socket   
@@ -176,7 +176,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                             mProcessingStatus = eProcessingStatus.ResponseStarted;
                             // Create new Payload from the buffer, ignoring the extra space at the end
                             Response = new NewPayLoad(gingerSocketInfo.buffer, true);
-                            
+
                             mProcessingStatus = eProcessingStatus.ResponseCompleted;
                             // we are done with pair of Req/Resp - good job - mission completed
                             // signal receive is complete so ready for processing
@@ -187,7 +187,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                             IncomingRequetsesCounter++;
                             mProcessingStatus = eProcessingStatus.ProcessingRequest;
                             // This is a request  need to respond 
-                            
+
                             switch (Resp.PaylodType)
                             {
                                 case NewPayLoad.ePaylodType.RequestPayload:
@@ -200,12 +200,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                                 default:
                                     throw new InvalidOperationException("Unknown Payload Type, Payload.Name: " + Resp.Name);
                             }
-                            
+
                             mProcessingStatus = eProcessingStatus.SendingResponse;
                             byte[] bb = gingerSocketInfo.Response.GetPackage();
                             bytesOut += bb.Length;
                             mSocket.BeginSend(bb, 0, bb.Length, SocketFlags.None, SendCallback, this);
-                            mSendDone.WaitOne();                           
+                            mSendDone.WaitOne();
                         }
 
                         gingerSocketInfo.BufferPOS = 0;
@@ -241,7 +241,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 }
                 throw e;
             }
-            catch(OutOfMemoryException ex)
+            catch (OutOfMemoryException ex)
             {
                 Console.WriteLine("OutOfMemoryException: ", ex.Message);
                 return;
@@ -259,7 +259,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             if (Req.Name == "GetSession")
             {
                 gingerSocketInfo.Response = new NewPayLoad("SessionID", SessionID);
-                gingerSocketInfo.Response.PaylodType = NewPayLoad.ePaylodType.SocketResponse;  
+                gingerSocketInfo.Response.PaylodType = NewPayLoad.ePaylodType.SocketResponse;
                 return;
             }
             if (Req.Name == "NodeClosing")

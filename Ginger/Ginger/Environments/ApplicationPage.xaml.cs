@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Ginger.UserControlsLib;
+using GingerCore.Environments;
+using GingerCore.GeneralLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Core;
-using Amdocs.Ginger.UserControls;
-using Ginger.UserControlsLib;
-using GingerCore;
-using GingerCore.Environments;
 
 namespace Ginger.Environments
 {
@@ -94,7 +92,7 @@ namespace Ginger.Environments
             {
                 if (ParamsFrame.Content == null)
                 {
-                    ParamsFrame.Content =  new AppGeneralParamsPage(mEnvApplication);                 
+                    ParamsFrame.ClearAndSetContent(new AppGeneralParamsPage(mEnvApplication));
                 }
                 return;
             }
@@ -102,8 +100,8 @@ namespace Ginger.Environments
             if (((TabItem)AppTab.SelectedItem).Name == xDBsTab.Name)
             {
                 if (DBsFrame.Content == null)
-                {                    
-                    DBsFrame.Content = new AppDataBasesPage(mEnvApplication, mContext);
+                {
+                    DBsFrame.ClearAndSetContent(new AppDataBasesPage(mEnvApplication, mContext));
                     return;
                 }
             }
@@ -112,7 +110,7 @@ namespace Ginger.Environments
             {
                 if (UsersFrame.Content == null)
                 {
-                    UsersFrame.Content = new AppLoginUsersPage(mEnvApplication);                    
+                    UsersFrame.ClearAndSetContent(new AppLoginUsersPage(mEnvApplication));
                     return;
                 }
             }
@@ -128,16 +126,19 @@ namespace Ginger.Environments
                     foreach (TabItem tab in AppTab.Items)
                     {
                         foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
-
+                        {
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (AppTab.SelectedItem == tab)
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                }
                                 else
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
-
-                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                                } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
+                        }
                     }
                 }
             }

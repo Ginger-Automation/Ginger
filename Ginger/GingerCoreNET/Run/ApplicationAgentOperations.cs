@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,11 +18,8 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 
 namespace GingerCore.Platforms
@@ -33,7 +30,7 @@ namespace GingerCore.Platforms
         public ApplicationAgentOperations(ApplicationAgent applicationAgent)
         {
             this.ApplicationAgent = applicationAgent;
-            this.ApplicationAgent.ApplicationAgentOperations = this;   
+            this.ApplicationAgent.ApplicationAgentOperations = this;
         }
 
         public List<IAgent> PossibleAgents
@@ -43,7 +40,7 @@ namespace GingerCore.Platforms
                 List<IAgent> possibleAgents = new List<IAgent>();
 
                 //find out the target application platform
-                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == ApplicationAgent.AppName).FirstOrDefault();//todo: make it be based on AppID and not name
+                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == ApplicationAgent.AppName);//todo: make it be based on AppID and not name
                 if (ap != null)
                 {
                     ePlatformType appPlatform = ap.Platform;
@@ -63,14 +60,14 @@ namespace GingerCore.Platforms
                     }
 
                     //adding special case for Web on which also Mobile Web Agents are allowed
-                    if(appPlatform == ePlatformType.Web)
+                    if (appPlatform == ePlatformType.Web)
                     {
                         List<Agent> mobileAgents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => x.Platform == ePlatformType.Mobile).ToList();
                         if (mobileAgents != null)
                         {
                             foreach (IAgent mobileAgent in mobileAgents)
                             {
-                                if (((Agent)mobileAgent).DriverConfiguration.Where(x => x.ItemName == "AppType" && x.Value == "Web").FirstOrDefault() != null)
+                                if (((Agent)mobileAgent).DriverConfiguration.FirstOrDefault(x => x.ItemName == "AppType" && x.Value == "Web") != null)
                                 {
                                     if (((Agent)mobileAgent).AgentOperations == null)
                                     {

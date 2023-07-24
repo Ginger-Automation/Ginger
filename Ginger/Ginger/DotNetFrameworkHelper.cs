@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ using Ginger.Run.RunSetActions;
 using Ginger.SolutionAutoSaveAndRecover;
 using Ginger.SourceControl;
 using GingerCore;
-using GingerCore.Actions;
 using GingerCore.ALM;
 using GingerCore.DataSource;
 using GingerCore.Drivers;
@@ -56,7 +55,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -101,18 +99,18 @@ namespace Ginger
 
             switch (zAgent.DriverType)
             {
-                case Agent.eDriverType.SeleniumFireFox:
+                case eDriverType.SeleniumFireFox:
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.FireFox);
-                case Agent.eDriverType.SeleniumChrome:
+                case eDriverType.SeleniumChrome:
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.Chrome);
-                case Agent.eDriverType.SeleniumIE:
+                case eDriverType.SeleniumIE:
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.IE);
-                case Agent.eDriverType.SeleniumRemoteWebDriver:
+                case eDriverType.SeleniumRemoteWebDriver:
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.RemoteWebDriver);
-                case Agent.eDriverType.SeleniumEdge:
+                case eDriverType.SeleniumEdge:
                     return new SeleniumDriver(SeleniumDriver.eBrowserType.Edge);
 
-                case Agent.eDriverType.Appium:
+                case eDriverType.Appium:
                     return new GenericAppiumDriver(zAgent.BusinessFlow);
 
                 case eDriverType.InternalBrowser:
@@ -147,35 +145,35 @@ namespace Ginger
 
             switch (zAgent.DriverType)
             {
-                case Agent.eDriverType.InternalBrowser:
+                case eDriverType.InternalBrowser:
                     return (typeof(InternalBrowser));
-                case Agent.eDriverType.SeleniumFireFox:
-                case Agent.eDriverType.SeleniumChrome:
-                case Agent.eDriverType.SeleniumIE:
-                case Agent.eDriverType.SeleniumRemoteWebDriver:
-                case Agent.eDriverType.SeleniumEdge:
+                case eDriverType.SeleniumFireFox:
+                case eDriverType.SeleniumChrome:
+                case eDriverType.SeleniumIE:
+                case eDriverType.SeleniumRemoteWebDriver:
+                case eDriverType.SeleniumEdge:
                     return (typeof(SeleniumDriver));
-                case Agent.eDriverType.ASCF:
+                case eDriverType.ASCF:
                     return (typeof(ASCFDriver));
-                case Agent.eDriverType.DOSConsole:
+                case eDriverType.DOSConsole:
                     return (typeof(DOSConsoleDriver));
-                case Agent.eDriverType.UnixShell:
+                case eDriverType.UnixShell:
                     return (typeof(UnixShellDriver));
-                case Agent.eDriverType.PowerBuilder:
+                case eDriverType.PowerBuilder:
                     return (typeof(PBDriver));
-                case Agent.eDriverType.WindowsAutomation:
+                case eDriverType.WindowsAutomation:
                     return (typeof(WindowsDriver));
-                case Agent.eDriverType.WebServices:
+                case eDriverType.WebServices:
                     return (typeof(WebServicesDriver));
-                case Agent.eDriverType.JavaDriver:
+                case eDriverType.JavaDriver:
                     return (typeof(JavaDriver));
-                case Agent.eDriverType.MainFrame3270:
+                case eDriverType.MainFrame3270:
                     return (typeof(MainFrameDriver));
 
                 //case Agent.eDriverType.AndroidADB:
                 //    return (typeof(AndroidADBDriver));                    
 
-                case Agent.eDriverType.Appium:
+                case eDriverType.Appium:
                     return (typeof(GenericAppiumDriver));
 
                 default:
@@ -238,7 +236,7 @@ namespace Ginger
             {
                 Outlook.Application objOutLook = null;
                 // Check whether there is an Outlook process running.
-                if (System.Diagnostics.Process.GetProcessesByName("OUTLOOK").Count() > 0)
+                if (Process.GetProcessesByName("OUTLOOK").Any())
                 {
                     // If so, use the GetActiveObject method to obtain the process and cast it to an ApplicatioInstall-Package Microsoft.Office.Interop.Exceln object.
 
@@ -291,7 +289,9 @@ namespace Ginger
                     foreach (string AttachmentFileName in Attachments)
                     {
                         if (String.IsNullOrEmpty(AttachmentFileName) == false)
+                        {
                             mOutlookMail.Attachments.Add(AttachmentFileName, Type.Missing, Type.Missing, Type.Missing);
+                        }
                     }
 
                     //attachment which is embeded into the email body(images).                       
@@ -299,7 +299,7 @@ namespace Ginger
                     {
                         if (String.IsNullOrEmpty(AttachmentFileName.Key) == false)
                         {
-                            if (System.IO.File.Exists(AttachmentFileName.Key))
+                            if (File.Exists(AttachmentFileName.Key))
                             {
                                 Outlook.Attachment attachment = mOutlookMail.Attachments.Add(AttachmentFileName.Key, Outlook.OlAttachmentType.olEmbeddeditem, null, "");
                                 attachment.PropertyAccessor.SetProperty("http://schemas.microsoft.com/mapi/proptag/0x3712001E", AttachmentFileName.Value);
@@ -348,8 +348,8 @@ namespace Ginger
             List<int> yList = (from ylist in y select ylist.Key).ToList();
             int xAxis = 0;
             string total = "";
-            Chart1.BackColor = System.Drawing.Color.AliceBlue;
-            Chart1.BackColor = System.Drawing.Color.White;
+            Chart1.BackColor = Color.AliceBlue;
+            Chart1.BackColor = Color.White;
             Chart1.Series.Add(new Series());
             ChartArea a1 = new ChartArea();
             a1.Name = "Area";
@@ -364,12 +364,12 @@ namespace Ginger
             Chart1.Series[0]["PieLabelStyle"] = "Outside";
             Chart1.Series[0].BorderWidth = 1;
             Chart1.Series[0].BorderDashStyle = ChartDashStyle.Dot;
-            Chart1.Series[0].BorderColor = System.Drawing.Color.FromArgb(200, 26, 59, 105);
+            Chart1.Series[0].BorderColor = Color.FromArgb(200, 26, 59, 105);
             foreach (KeyValuePair<int, int> l in y)
             {
                 if (l.Key == 0)
                 {
-                    Chart1.Series[0].Points[l.Value].BorderColor = System.Drawing.Color.White;
+                    Chart1.Series[0].Points[l.Value].BorderColor = Color.White;
                     Chart1.Series["Series1"].Points[l.Value].AxisLabel = "";
                     Chart1.Series["Series1"].Points[l.Value].Label = "";
                 }
@@ -378,55 +378,56 @@ namespace Ginger
             Chart1.Series[0].Points[1].Color = Chart1.Series[0].Points[1].LabelForeColor = GingerCore.General.makeColor("#FF0000");
             Chart1.Series[0].Points[2].Color = Chart1.Series[0].Points[2].LabelForeColor = GingerCore.General.makeColor("#ff57ab");
             Chart1.Series[0].Points[3].Color = Chart1.Series[0].Points[3].LabelForeColor = GingerCore.General.makeColor("#1B3651");
-            Chart1.Series[0].Font = new Font("sans-serif", 9, System.Drawing.FontStyle.Bold);
+            Chart1.Series[0].Font = new Font("sans-serif", 9, FontStyle.Bold);
             Chart1.Height = 180;
             Chart1.Width = 310;
             System.Drawing.SolidBrush myBrush = new System.Drawing.SolidBrush(GingerCore.General.makeColor("#e3dfdb"));
             System.Drawing.SolidBrush myBrush1 = new System.Drawing.SolidBrush(GingerCore.General.makeColor("#1B3651"));
             Chart1.Titles.Add("NewTitle");
             Chart1.Titles["Title1"].Text = Title;
-            Chart1.Titles["Title1"].Font = new Font("sans-serif", 11, System.Drawing.FontStyle.Bold);
+            Chart1.Titles["Title1"].Font = new Font("sans-serif", 11, FontStyle.Bold);
             Chart1.Titles["Title1"].ForeColor = GingerCore.General.makeColor("#1B3651");
-            MemoryStream m = new MemoryStream();
-            Chart1.SaveImage(m, ChartImageFormat.Png);
-            Bitmap bitMapImage = new System.Drawing.Bitmap(m);
-            Graphics graphicImage = Graphics.FromImage(bitMapImage);
-            graphicImage.SmoothingMode = SmoothingMode.AntiAlias;
-            graphicImage.FillEllipse(myBrush, 132, 75, 50, 50);
-            total = yList.Sum().ToString();
-            if (total.Length == 1)
+            using (MemoryStream m = new MemoryStream())
             {
-                xAxis = 151;
+                Chart1.SaveImage(m, ChartImageFormat.Png);
+                using (Bitmap bitMapImage = new(m))
+                {
+                    using Graphics graphicImage = Graphics.FromImage(bitMapImage);
+                    graphicImage.SmoothingMode = SmoothingMode.AntiAlias;
+                    graphicImage.FillEllipse(myBrush, 132, 75, 50, 50);
+                    total = yList.Sum().ToString();
+                    if (total.Length == 1)
+                    {
+                        xAxis = 151;
+                    }
+                    else if (total.Length == 2)
+                    {
+                        xAxis = 145;
+                    }
+                    else if (total.Length == 3)
+                    {
+                        xAxis = 142;
+                    }
+                    else if (total.Length == 4)
+                    {
+                        xAxis = 140;
+                    }
+                    graphicImage.DrawString(yList.Sum().ToString(), new Font("sans-serif", 9, FontStyle.Bold), myBrush1, new System.Drawing.Point(xAxis, 91));
+                    bitMapImage.Save(Path.Combine(tempFolder, chartName), ImageFormat.Jpeg);
+                }
             }
-            else if (total.Length == 2)
-            {
-                xAxis = 145;
-            }
-            else if (total.Length == 3)
-            {
-                xAxis = 142;
-            }
-            else if (total.Length == 4)
-            {
-                xAxis = 140;
-            }
-            graphicImage.DrawString(yList.Sum().ToString(), new Font("sans-serif", 9, System.Drawing.FontStyle.Bold), myBrush1, new System.Drawing.Point(xAxis, 91));
-            m = new MemoryStream();
-            bitMapImage.Save(tempFolder + "\\" + chartName, ImageFormat.Jpeg);
-            graphicImage.Dispose();
-            bitMapImage.Dispose();
         }
 
         public void CreateCustomerLogo(object a, string tempFolder)
         {
             HTMLReportConfiguration currentTemplate = (HTMLReportConfiguration)a;
-            System.Drawing.Image CustomerLogo = Ginger.General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
+            System.Drawing.Image CustomerLogo = General.Base64StringToImage(currentTemplate.LogoBase64Image.ToString());
             if (!Directory.Exists(tempFolder))
             {
                 Directory.CreateDirectory(tempFolder);
             }
-            CustomerLogo.Save(tempFolder + "/CustomerLogo.png");
-            Ginger.Reports.HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
+            CustomerLogo.Save(Path.Combine(tempFolder,"CustomerLogo.png"));
+            HTMLReportTemplatePage.EnchancingLoadedFieldsWithDataAndValidating(currentTemplate);
         }
 
         public Dictionary<string, string> TakeDesktopScreenShot(bool captureAllScreens = false)
@@ -449,9 +450,9 @@ namespace Ginger
             return GingerCore.General.MergeVerticallyAndSaveBitmaps(bitmaps);
         }
 
-        public void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
+        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
         {
-            ALM.ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, eALMConnectType.Silence);
+           return ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, eALMConnectType.Silence);
         }
 
         public ITextBoxFormatter CreateTextBoxFormatter(object Textblock)
@@ -461,7 +462,7 @@ namespace Ginger
 
         public string GetALMConfig()
         {
-            return WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType.ToString();
+            return WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm).AlmType.ToString();
         }
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType)
@@ -508,10 +509,10 @@ namespace Ginger
             {
                 emailReadyHtml = emailReadyHtml.Replace("<!--WARNING-->", "");
                 ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-                reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
+                reportsResultFolder = Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                         false,
-                                                                                                                        HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
-                                                                                                                        extraInformationCalculated + "\\" + System.IO.Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
+                                                                                                                        HTMLReportConfigurations.FirstOrDefault(x => (x.ID == rReport.SelectedHTMLReportTemplateID)),
+                                                                                                                        extraInformationCalculated + "\\" + Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
             }
         }
 
@@ -529,7 +530,7 @@ namespace Ginger
 
                 //Make it Generic or Const string for names used for File
                 string NewReportName = string.Empty;
-                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, System.IO.Path.GetInvalidFileNameChars(), false , NewReportTemplate))
+                if (GingerCore.General.GetInputWithValidation("Add Report Template", "Report Template Name:", ref NewReportName, Path.GetInvalidFileNameChars(), false, NewReportTemplate))
                 {
                     NewReportTemplate.Name = NewReportName;
                     WorkSpace.Instance.SolutionRepository.AddRepositoryItem(NewReportTemplate);
@@ -548,10 +549,12 @@ namespace Ginger
 
 
 
-        public void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems)
+        public void ShowRecoveryItemPage()
         {
-            RecoverPage recoverPage = new RecoverPage(recovredItems);
-            recoverPage.ShowAsWindow();
+            using (RecoverPage recoverPage = new RecoverPage())
+            {
+                recoverPage.ShowAsWindow();
+            }
 
         }
 
@@ -595,5 +598,5 @@ namespace Ginger
         }
     }
 }
-    
+
 

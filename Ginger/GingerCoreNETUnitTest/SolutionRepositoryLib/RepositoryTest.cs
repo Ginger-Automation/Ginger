@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -28,7 +27,6 @@ using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.FlowControlLib;
 using GingerCore.Variables;
-using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -36,23 +34,23 @@ using System.IO;
 using System.Linq;
 
 namespace UnitTests.NonUITests
-{    
-    [TestClass]    
+{
+    [TestClass]
     [Level1]
     public class RepositoryTest
-    {        
+    {
 
-        [ClassInitialize]        
+        [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
-            
+
         }
 
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+
         }
 
         [TestInitialize]
@@ -61,7 +59,8 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void BizFlowSaveLoad()
         {
 
@@ -122,7 +121,8 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void BizFlowCheckIsDirtyFalse()
         {
 
@@ -172,8 +172,9 @@ namespace UnitTests.NonUITests
             BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), TempFilepath);
             Assert.IsTrue(BF2.DirtyStatus != Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified);
         }
-        
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void BizFlowClearBackup()
         {
             //Arrange
@@ -181,14 +182,14 @@ namespace UnitTests.NonUITests
             BF.Name = "Businessflow1";
             BF.Description = "Test Clear Backup";
             BF.Activities = new ObservableList<Activity>();
-            
-            Activity a = new Activity() { ActivityName = "Activity 1", Description = "Desciption -1", Status = eRunStatus.Passed };            
+
+            Activity a = new Activity() { ActivityName = "Activity 1", Description = "Desciption -1", Status = eRunStatus.Passed };
             BF.Activities.Add(a);
-            
+
             BF.SaveBackup();
-            Activity b = new Activity() { ActivityName = "Activity 2", Description = "Desciption -2", Status = eRunStatus.Passed };            
+            Activity b = new Activity() { ActivityName = "Activity 2", Description = "Desciption -2", Status = eRunStatus.Passed };
             BF.Activities.Add(b);
-            
+
             string TempFilepath = TestResources.GetTempFile("bfClearBackup.xml");
 
             //Act
@@ -202,10 +203,11 @@ namespace UnitTests.NonUITests
             BF2.Description = "aaa";
 
             // Assert
-            Assert.AreEqual(BF2.Activities.Count,BF.Activities.Count);
+            Assert.AreEqual(BF2.Activities.Count, BF.Activities.Count);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ActivitiesClearBackup()
         {
             //Arrange
@@ -214,31 +216,32 @@ namespace UnitTests.NonUITests
             BF.Name = "Businessflow1";
             BF.Description = "Test Clear Backup";
             BF.Activities = new ObservableList<Activity>();
-            Activity a = new Activity() { ActivityName = "Activity 1", Description = "Desciption -1", Status = eRunStatus.Passed };            
+            Activity a = new Activity() { ActivityName = "Activity 1", Description = "Desciption -1", Status = eRunStatus.Passed };
             BF.Activities.Add(a);
 
-            ActUIElement t = new ActUIElement() { Description = "Set text box ", LocateBy = eLocateBy.ByID, LocateValue = "ID" };                        
+            ActUIElement t = new ActUIElement() { Description = "Set text box ", LocateBy = eLocateBy.ByID, LocateValue = "ID" };
             a.Acts.Add(t);
 
             //Act
-            BF.RepositorySerializer.SaveToFile(BF, FileName);   
+            BF.RepositorySerializer.SaveToFile(BF, FileName);
             a.SaveBackup();
-            ActUIElement g = new ActUIElement() { Description = "goto URL ", LocateValue = "ID" };            
+            ActUIElement g = new ActUIElement() { Description = "goto URL ", LocateValue = "ID" };
             a.Acts.Add(g);
             BF.RepositorySerializer.SaveToFile(BF, FileName);
-            a.SaveBackup();            
+            a.SaveBackup();
             a.RestoreFromBackup();
 
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
-            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);            
+            BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);
             BF2.SaveBackup(); //dirty now just indicate if backup exist
             BF2.Description = "aaa";
 
             // Assert
-            Assert.AreEqual(BF2.Activities[0].Acts.Count, BF.Activities[0].Acts.Count);            
+            Assert.AreEqual(BF2.Activities[0].Acts.Count, BF.Activities[0].Acts.Count);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ActionClearBackup()
         {
             //Arrange
@@ -276,7 +279,8 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void BizFlowCheckIsDirtyTrue()
         {
 
@@ -329,8 +333,9 @@ namespace UnitTests.NonUITests
             BF2.Description = "aaa";
             Assert.IsTrue(BF2.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified);
         }
-                
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void RunSetConfigSaveLoad()
         {
             //Arrange"
@@ -339,36 +344,36 @@ namespace UnitTests.NonUITests
             //Act
             RunSetConfig RSC = new RunSetConfig();
             RSC.Name = "UT RSC1";
-            GingerRunner ARC1= new GingerRunner();
+            GingerRunner ARC1 = new GingerRunner();
             ARC1.Name = " Agent 1";
             BusinessFlowRun BFR = new BusinessFlowRun();
             BFR.BusinessFlowName = "BF1";
             ARC1.BusinessFlowsRunList.Add(BFR);
             RSC.GingerRunners.Add(ARC1);
-            
+
             RSC.RepositorySerializer.SaveToFile(RSC, TempFilepath);
-            
+
             //Assert
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
             RunSetConfig RSC2 = (RunSetConfig)newRepositorySerializer.DeserializeFromFile(typeof(RunSetConfig), TempFilepath);
         }
 
         [TestMethod]
-        
+
         public void DSConditionClassSkipSerializeTest()
         {
             //Arrange
             //Put the BF in Test Resource having class "GingerCore.DataSource.ActDSConditon" serialized in xml
             NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
             string FileName = TestResources.GetTestResourcesFile(@"Repository" + Path.DirectorySeparatorChar + "DS_SkipWhereConditions_Flow.Ginger.BusinessFlow.xml");
-              
+
             //Load BF
             BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
 
 
             //Assert
             Assert.AreEqual(2, businessFlow.Activities.Count, "BF Activities Count");
-            Assert.AreEqual(1, businessFlow.Activities[0].Acts.Count,"Activity Actions Count");
+            Assert.AreEqual(1, businessFlow.Activities[0].Acts.Count, "Activity Actions Count");
 
         }
         //[Ignore]
@@ -432,7 +437,8 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void BizFlowAddActivitiesFromSharedRepoSaveLoad()
         {
 
@@ -440,8 +446,8 @@ namespace UnitTests.NonUITests
             int ActivitiesToCreate = 5;
             string FileName = TestResources.GetTempFile("BFSaveLoad.xml");
 
-            BusinessFlow BF = new BusinessFlow() { Name = "Biz flow 1", Description = "Desc 1"};
-                
+            BusinessFlow BF = new BusinessFlow() { Name = "Biz flow 1", Description = "Desc 1" };
+
             BF.Activities = new ObservableList<Activity>();
 
             for (int i = 1; i <= ActivitiesToCreate; i++)
@@ -477,11 +483,11 @@ namespace UnitTests.NonUITests
             // Assert
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
             BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);
-           Assert.AreEqual(BF2.Activities.Count(), ActivitiesToCreate);
+            Assert.AreEqual(BF2.Activities.Count(), ActivitiesToCreate);
             //Assert.AreEqual(BF2. Activities[0].Asserts.Count(), 1);
             //BF2.Description = "aaa";
 
-           
+
 
 
         }
@@ -489,7 +495,7 @@ namespace UnitTests.NonUITests
 
         private BusinessFlow GetBizFlow()
         {
-            
+
             BusinessFlow bf = new BusinessFlow("Test");
 
             Activity activity = new Activity();
@@ -536,7 +542,8 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void BackUpRestore()
         {
             //Arrange
@@ -566,18 +573,18 @@ namespace UnitTests.NonUITests
 
             //add action with input/output vals
             act1.InputValues = new ObservableList<ActInputValue>();
-            string firstInputValName="Param1";
+            string firstInputValName = "Param1";
             ActInputValue firstInputVal = new ActInputValue() { Param = firstInputValName };
             act1.InputValues.Add(firstInputVal);
             act1.InputValues.Add(new ActInputValue() { Param = "Param2" });
 
             //add flow control
             act1.FlowControls = new ObservableList<FlowControl>();
-            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "A=B", FlowControlAction =eFlowControlAction.GoToActivity });
-            eFlowControlAction secondFlowControlAction =eFlowControlAction.RerunAction;
+            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "A=B", FlowControlAction = eFlowControlAction.GoToActivity });
+            eFlowControlAction secondFlowControlAction = eFlowControlAction.RerunAction;
             GingerCore.FlowControlLib.FlowControl secondFlowControl = new GingerCore.FlowControlLib.FlowControl() { Condition = "C>123", FlowControlAction = secondFlowControlAction };
             act1.FlowControls.Add(secondFlowControl);
-            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "D=111", FlowControlAction =eFlowControlAction.StopRun });
+            act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "D=111", FlowControlAction = eFlowControlAction.StopRun });
 
             //BF Variables
             VariableString v = new VariableString();
@@ -594,7 +601,7 @@ namespace UnitTests.NonUITests
 
             // BF.SaveBackup();            
 
-            BF.SaveBackup();            
+            BF.SaveBackup();
 
             //Erase/Modify some stuff
             BF.Name = "zzzz";
@@ -608,11 +615,11 @@ namespace UnitTests.NonUITests
             act1.InputValues[0].Param = "qqq";
             act1.InputValues.Remove(act1.InputValues[1]);
 
-            act1.FlowControls[1].FlowControlAction =eFlowControlAction.MessageBox;
+            act1.FlowControls[1].FlowControlAction = eFlowControlAction.MessageBox;
             act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "Val=123" });
             act1.FlowControls.Add(new GingerCore.FlowControlLib.FlowControl() { Condition = "Val=555" });
 
-            sl.OptionalValuesList[0].Value="aaaa";
+            sl.OptionalValuesList[0].Value = "aaaa";
             sl.OptionalValuesList.Add(new OptionalValue("44"));
             sl.OptionalValuesList.Add(new OptionalValue("55"));
 
@@ -620,41 +627,42 @@ namespace UnitTests.NonUITests
             BF.RestoreFromBackup();
 
             // Assert            
-           Assert.AreEqual(BF.Name, BizFlowName, "BF.Name");
-           Assert.AreEqual(BF.Description, null, "BF.Description");
+            Assert.AreEqual(BF.Name, BizFlowName, "BF.Name");
+            Assert.AreEqual(BF.Description, null, "BF.Description");
 
             // check enum restore
-           Assert.AreEqual(BF.Status, BusinessFlow.eBusinessFlowStatus.Development, "BF.Status");
-           Assert.AreEqual(BF.Activities.Count(), ActivitiesToCreate + 1, "BF.Activities.Count()");
-            
+            Assert.AreEqual(BF.Status, BusinessFlow.eBusinessFlowStatus.Development, "BF.Status");
+            Assert.AreEqual(BF.Activities.Count(), ActivitiesToCreate + 1, "BF.Activities.Count()");
+
             //check original list ref obj
-           Assert.AreEqual(BF.Activities, OriginalActivitiesObj, "BF.Activities REF");
-           Assert.AreEqual(BF.Activities[0].Description, "desc1", "BF.Activities[0].Description");
-           Assert.AreEqual(BF.Activities[5].ActivityName, "a6", "BF.Activities[5].ActivityName");
+            Assert.AreEqual(BF.Activities, OriginalActivitiesObj, "BF.Activities REF");
+            Assert.AreEqual(BF.Activities[0].Description, "desc1", "BF.Activities[0].Description");
+            Assert.AreEqual(BF.Activities[5].ActivityName, "a6", "BF.Activities[5].ActivityName");
 
             // Check original action ref is back                
-           Assert.AreEqual(BF.Activities[5], a6, "BF.Activities[5] REF");
-           Assert.AreEqual(act1.Description, "Goto URL 1", "act1.Description");
-           Assert.AreEqual(a6.Acts[0], act1, "a6.Acts[0]");
+            Assert.AreEqual(BF.Activities[5], a6, "BF.Activities[5] REF");
+            Assert.AreEqual(act1.Description, "Goto URL 1", "act1.Description");
+            Assert.AreEqual(a6.Acts[0], act1, "a6.Acts[0]");
 
             //check Action input values
-           Assert.AreEqual(act1.InputValues.Count, 2, "act1.InputValues.Count");
-           Assert.AreEqual(act1.InputValues[0], firstInputVal, "act1.InputValues[0] REF");
-           Assert.AreEqual(act1.InputValues[0].Param, firstInputValName, "act1.InputValues[0].Param");
+            Assert.AreEqual(act1.InputValues.Count, 2, "act1.InputValues.Count");
+            Assert.AreEqual(act1.InputValues[0], firstInputVal, "act1.InputValues[0] REF");
+            Assert.AreEqual(act1.InputValues[0].Param, firstInputValName, "act1.InputValues[0].Param");
 
             //check Action flow control
-           Assert.AreEqual(act1.FlowControls.Count, 3, "act1.FlowControls.Count");
-           Assert.AreEqual(act1.FlowControls[1], secondFlowControl, "act1.FlowControls[1] REF");
-           Assert.AreEqual(act1.FlowControls[1].FlowControlAction, secondFlowControlAction, "act1.FlowControls[1].FlowControlAction");
+            Assert.AreEqual(act1.FlowControls.Count, 3, "act1.FlowControls.Count");
+            Assert.AreEqual(act1.FlowControls[1], secondFlowControl, "act1.FlowControls[1] REF");
+            Assert.AreEqual(act1.FlowControls[1].FlowControlAction, secondFlowControlAction, "act1.FlowControls[1].FlowControlAction");
 
             //BF variables
-           Assert.AreEqual(BF.Variables.Count, 2, "BF.Variables.Count");
-           Assert.AreEqual(BF.Variables[1], sl, "BF.Variables[0] REF");
-           Assert.AreEqual(((VariableSelectionList) BF.Variables[1]).OptionalValuesList[0].Value, "11", "BF.Variables[0].Value");
-       }
+            Assert.AreEqual(BF.Variables.Count, 2, "BF.Variables.Count");
+            Assert.AreEqual(BF.Variables[1], sl, "BF.Variables[0] REF");
+            Assert.AreEqual(((VariableSelectionList)BF.Variables[1]).OptionalValuesList[0].Value, "11", "BF.Variables[0].Value");
+        }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void BackUpRestoreBFWithVariableSelectionList()
         {
             //Arrange
@@ -687,26 +695,27 @@ namespace UnitTests.NonUITests
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void BackUpRestoreVariableSelectionList()
         {
             //Arrange            
-                        
+
             VariableSelectionList sl = new VariableSelectionList();
             sl.Name = "Var 2";
             sl.OptionalValuesList = new ObservableList<OptionalValue>();
-            sl.OptionalValuesList.Add(new OptionalValue("11"));            
+            sl.OptionalValuesList.Add(new OptionalValue("11"));
 
             //Act
             sl.SaveBackup();
 
             // Modify the SL
-            sl.OptionalValuesList[0].Value = "00";            
-            
+            sl.OptionalValuesList[0].Value = "00";
+
             sl.RestoreFromBackup();
 
             //Assert           
-           Assert.AreEqual("11", sl.OptionalValuesList[0].Value, "OptionalValuesList[0].Value");           
+            Assert.AreEqual("11", sl.OptionalValuesList[0].Value, "OptionalValuesList[0].Value");
         }
 
         //[TestMethod]  [Timeout(60000)]
@@ -732,7 +741,8 @@ namespace UnitTests.NonUITests
 
         //}
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void TestObjectAttrofOneRepoItem()
         {
             //Check Save and Load of RunSetConfig with Send Email action - RunSetActionSendEmail have 'Email' field which is single object as field, if save load correctly test pass
@@ -763,11 +773,12 @@ namespace UnitTests.NonUITests
             RunSetActionSendEmail RSASE2 = (RunSetActionSendEmail)RSC.RunSetActions[0];
             Assert.AreEqual(RSASE2.Email.MailFrom, MailFrom, "RSC2.MailFrom");
             Assert.AreEqual(RSASE2.Email.MailTo, MailTo, "RSC2.MailTo");
-            Assert.AreEqual(RSASE2.Email.MailCC, MailCC, "RSC2.MailCC");            
+            Assert.AreEqual(RSASE2.Email.MailCC, MailCC, "RSC2.MailCC");
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void BizFlowWithTags()
         {
 
@@ -778,7 +789,7 @@ namespace UnitTests.NonUITests
             BF.Activities = new ObservableList<Activity>();
             Guid g1 = Guid.NewGuid();
             Guid g2 = Guid.NewGuid();
-            BF.Tags.Add(g1);            
+            BF.Tags.Add(g1);
             BF.Tags.Add(g2);
 
             Activity a = new Activity();
@@ -786,7 +797,7 @@ namespace UnitTests.NonUITests
             a.Description = "Desc - 1";
             a.Status = eRunStatus.Passed;
             BF.Activities.Add(a);
-            
+
             //Act
 
             string FileName = TestResources.GetTempFile("BFWithTags.xml");
@@ -797,10 +808,10 @@ namespace UnitTests.NonUITests
             NewRepositorySerializer newRepositorySerializer = new NewRepositorySerializer();
             BusinessFlow BF2 = (BusinessFlow)newRepositorySerializer.DeserializeFromFile(typeof(BusinessFlow), FileName);
 
-           Assert.AreEqual(BF2.Name, BF.Name);
-           Assert.AreEqual(BF2.Description, BF.Description);
-           Assert.AreEqual(BF2.Tags[0], g1);
-           Assert.AreEqual(BF2.Tags[1], g2);
+            Assert.AreEqual(BF2.Name, BF.Name);
+            Assert.AreEqual(BF2.Description, BF.Description);
+            Assert.AreEqual(BF2.Tags[0], g1);
+            Assert.AreEqual(BF2.Tags[1], g2);
 
         }
 
@@ -815,11 +826,11 @@ namespace UnitTests.NonUITests
 
         //    //Act
 
-            
+
         //    BusinessFlow BF = new BusinessFlow();
         //    BF.Name = "Biz flow " + ActivitiesToCreate;
         //    BF.Description = "Desc " + ActivitiesToCreate;
-            
+
         //    BF.Activities = new ObservableList<Activity>();
 
         //    for (int i = 1; i <= ActivitiesToCreate; i++)
@@ -849,9 +860,9 @@ namespace UnitTests.NonUITests
         //    BF.AddVariable(v);
         //    string FileName = Common.getGingerUnitTesterTempFolder() + "bf1.xml";
         //    BF.SaveToFile(FileName);
-            
 
-            
+
+
         //    Stopwatch st = new Stopwatch();
         //    st.Start();
         //    BusinessFlow BF2 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
@@ -865,8 +876,8 @@ namespace UnitTests.NonUITests
         //    Assert.AreEqual(ActivitiesToCreate, BF2.Activities.Count);
         //    Assert.AreEqual(1, BF2.Variables.Count);
 
-            
-            
+
+
 
         //}
 
@@ -878,8 +889,8 @@ namespace UnitTests.NonUITests
         //    string FileName = TestResources.GetTestResourcesFile(@"Repository\BigFlow1.Ginger.BusinessFlow.xml");
 
         //    //Act
-            
-            
+
+
         //    BusinessFlow BF1 = (BusinessFlow)RepositoryItem.LoadFromFile(typeof(BusinessFlow), FileName);
 
         //    int i = BF1.Activities.Count;
@@ -898,7 +909,8 @@ namespace UnitTests.NonUITests
         //}
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void CopyAction()
         {
             //Arrange
@@ -910,7 +922,7 @@ namespace UnitTests.NonUITests
 
             //Assert
             Assert.AreEqual(actGotoURL.Description, a2.Description, "Action description should match");
-            Assert.AreNotEqual(actGotoURL.Guid, a2.Guid,"Action should have a new GUID");
+            Assert.AreNotEqual(actGotoURL.Guid, a2.Guid, "Action should have a new GUID");
 
         }
         [TestMethod]
@@ -948,17 +960,18 @@ namespace UnitTests.NonUITests
             BusinessFlow bfCopy = (BusinessFlow)bf.CreateCopy();
 
             //Assert
-            Assert.AreEqual(bfCopy.Activities.Count, 2,"Activities count should match");
-            Assert.AreEqual(bfCopy.Activities[1].ActivityName, "Activiy2","Activities name validation");
-            Assert.AreNotEqual(bfCopy.Activities[0].Guid, activity1.Guid ,"Activity should have a new guid");
+            Assert.AreEqual(bfCopy.Activities.Count, 2, "Activities count should match");
+            Assert.AreEqual(bfCopy.Activities[1].ActivityName, "Activiy2", "Activities name validation");
+            Assert.AreNotEqual(bfCopy.Activities[0].Guid, activity1.Guid, "Activity should have a new guid");
             Assert.AreNotEqual(bfCopy.Activities[1].Guid, activity2.Guid, "Activity should have a new guid");
         }
 
-  
 
 
-               
-        [TestMethod]  [Timeout(60000)]
+
+
+        [TestMethod]
+        [Timeout(60000)]
         public void FlowcontrolTest_WithBFCreateCopy()
         {
             //Arrange
@@ -967,9 +980,9 @@ namespace UnitTests.NonUITests
             //Act
             BusinessFlow bfCopy = (BusinessFlow)bf.CreateCopy();
 
-            Guid newGuidOfActivity2 = bfCopy.Activities.Where(x => x.ItemName == "Test_New").FirstOrDefault().Guid;
+            Guid newGuidOfActivity2 = bfCopy.Activities.FirstOrDefault(x => x.ItemName == "Test_New").Guid;
 
-            Guid newGuidOfAct2 = bfCopy.Activities[0].Acts.Where(x => x.ItemName == "WaitForApp").FirstOrDefault().Guid;
+            Guid newGuidOfAct2 = bfCopy.Activities[0].Acts.FirstOrDefault(x => x.ItemName == "WaitForApp").Guid;
 
 
             //Assert
@@ -990,9 +1003,9 @@ namespace UnitTests.NonUITests
             //Act
             BusinessFlow bfCopy = (BusinessFlow)bf.CreateCopy(false);
 
-            Guid newGuidOfActivity2 = bfCopy.Activities.Where(x => x.ItemName == "Test_New").FirstOrDefault().Guid;
+            Guid newGuidOfActivity2 = bfCopy.Activities.FirstOrDefault(x => x.ItemName == "Test_New").Guid;
 
-            Guid newGuidOfAct2 = bfCopy.Activities[0].Acts.Where(x => x.ItemName == "WaitForApp").FirstOrDefault().Guid;
+            Guid newGuidOfAct2 = bfCopy.Activities[0].Acts.FirstOrDefault(x => x.ItemName == "WaitForApp").Guid;
 
 
             //Assert
@@ -1003,7 +1016,8 @@ namespace UnitTests.NonUITests
             Assert.AreEqual(bfCopy.Activities[0].Acts[0].Guid, bf.Activities[0].Acts[0].Guid, "Action should have a new guid");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void FlowcontrolTest_WithActivityCreateInstance()
         {
             //Arrange
@@ -1033,7 +1047,7 @@ namespace UnitTests.NonUITests
 
             //Act
             Activity copyActivity = (Activity)activity.CreateInstance();
-            Guid newGuidOfAct2 = copyActivity.Acts.Where(x => x.ItemName == "WaitForApp_Copy").FirstOrDefault().Guid;
+            Guid newGuidOfAct2 = copyActivity.Acts.FirstOrDefault(x => x.ItemName == "WaitForApp_Copy").Guid;
 
             //Assert
             Assert.AreEqual(copyActivity.Acts[0].FlowControls[0].GetGuidFromValue(), newGuidOfAct2);
@@ -1042,7 +1056,8 @@ namespace UnitTests.NonUITests
 
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ActionVariableDependancyTest_WithCreateInstance()
         {
             //Arrange
@@ -1067,7 +1082,7 @@ namespace UnitTests.NonUITests
             activity.Acts.Add(actGotoURL);
             activity.Acts.Add(act2);
 
-          
+
             //Act
             Activity copyActivity = (Activity)activity.CreateInstance();
 
@@ -1094,17 +1109,18 @@ namespace UnitTests.NonUITests
 
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void ActivityVariableDependancyTest_WithCreateInstance()
         {
             //Arrange
             BusinessFlow bf = new BusinessFlow("Test");
 
-            Activity activity = new Activity();         
+            Activity activity = new Activity();
             VariableSelectionList selectionList2 = new VariableSelectionList();
             selectionList2.Name = "activityVariable1";
             selectionList2.OptionalValuesList.Add(new OptionalValue("c"));
-            selectionList2.OptionalValuesList.Add(new OptionalValue("d"));          
+            selectionList2.OptionalValuesList.Add(new OptionalValue("d"));
 
             VariableDependency vd = new VariableDependency(selectionList2.Guid, selectionList2.ItemName, selectionList2.Value);
 
@@ -1116,7 +1132,7 @@ namespace UnitTests.NonUITests
             actDummy.VariablesDependencies.Add(vd);
             activity.Variables.Add(selectionList2);
             activity.Acts.Add(actGotoURL);
-             activity.Acts.Add(actDummy);
+            activity.Acts.Add(actDummy);
             Activity activity2 = new Activity();
             ActDummy act2 = new ActDummy();
             act2.Description = "www.google.com";
@@ -1130,10 +1146,10 @@ namespace UnitTests.NonUITests
 
 
             VariableDependency vd1 = new VariableDependency(selectionList.Guid, selectionList.ItemName, selectionList.Value);
-                 
+
             activity.VariablesDependencies.Add(vd1);
             activity2.VariablesDependencies.Add(vd1);
-     
+
             bf.Activities.RemoveAt(0);
             bf.Activities.Add(activity);
             bf.Activities.Add(activity2);
@@ -1144,8 +1160,8 @@ namespace UnitTests.NonUITests
             bf.RepositorySerializer.SaveToFile(bf, tempFile);
             bf.FilePath = tempFile;
             BusinessFlow bfCopy = (BusinessFlow)bf.CreateInstance();
-         
-            Guid newBFVarGuid = bfCopy.Variables.Where(x => x.Name == "bfVariable1").FirstOrDefault().Guid;
+
+            Guid newBFVarGuid = bfCopy.Variables.FirstOrDefault(x => x.Name == "bfVariable1").Guid;
             Guid newActivityVarGuid = bfCopy.Activities[0].Variables[0].Guid;
 
             //Assert
@@ -1202,11 +1218,11 @@ namespace UnitTests.NonUITests
             Assert.IsTrue(bf.Activities.Contains(activity3));
             Assert.IsFalse(copiedItem.Activities.Contains(activity3));
 
-            Assert.IsNotNull(bf.Activities.Where(a => a.ActivityName == activity2.ActivityName).FirstOrDefault());
-            Assert.IsNull(copiedItem.Activities.Where(a => a.ActivityName == activity2.ActivityName).FirstOrDefault());
+            Assert.IsNotNull(bf.Activities.FirstOrDefault(a => a.ActivityName == activity2.ActivityName));
+            Assert.IsNull(copiedItem.Activities.FirstOrDefault(a => a.ActivityName == activity2.ActivityName));
 
-            Assert.IsNotNull(copiedItem.Activities.Where(a => a.ActivityName == "Test").FirstOrDefault());
-            Assert.IsNull(bf.Activities.Where(a => a.ActivityName == "Test").FirstOrDefault());
+            Assert.IsNotNull(copiedItem.Activities.FirstOrDefault(a => a.ActivityName == "Test"));
+            Assert.IsNull(bf.Activities.FirstOrDefault(a => a.ActivityName == "Test"));
         }
 
         [TestMethod]
@@ -1310,7 +1326,7 @@ namespace UnitTests.NonUITests
 
             //Assert
             Assert.IsNotNull(copiedItem);
-            Assert.AreEqual(copiedItem.ActivitiesGroups.Count,1);
+            Assert.AreEqual(copiedItem.ActivitiesGroups.Count, 1);
             Assert.AreNotSame(sampleFC, copiedItem.Activities[0].Acts[0].FlowControls[0]);
             Assert.AreNotEqual(bf.Guid, copiedItem.Guid);
             Assert.AreEqual(sampleFC.FlowControlAction, copiedItem.Activities[0].Acts[0].FlowControls[0].FlowControlAction);
@@ -1380,12 +1396,12 @@ namespace UnitTests.NonUITests
             Assert.IsNotNull(copiedItem);
             Assert.AreNotSame(dumAct, copiedItem);
             Assert.AreEqual(dumAct.Guid, copiedItem.Guid);
-            Assert.AreEqual(sampleFC.Guid, copiedItem.ActFlowControls[0].Guid);           
+            Assert.AreEqual(sampleFC.Guid, copiedItem.ActFlowControls[0].Guid);
 
             Assert.IsNotNull(copiedItemNew);
             Assert.AreNotSame(dumAct, copiedItemNew);
             Assert.AreNotEqual(dumAct.Guid, copiedItemNew.Guid);
-           Assert.AreNotEqual(sampleFC.Guid, copiedItemNew.ActFlowControls[0].Guid); 
+            Assert.AreNotEqual(sampleFC.Guid, copiedItemNew.ActFlowControls[0].Guid);
         }
 
         [TestMethod]

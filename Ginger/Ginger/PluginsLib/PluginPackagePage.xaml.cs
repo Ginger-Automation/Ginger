@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,13 +37,13 @@ namespace Ginger.PlugInsWindows
         {
             InitializeComponent();
             mPluginPackage = p;
-         
+
             Init();
-         
+
         }
 
         private void Init()
-        {            
+        {
             // xSummaryTextBlock.Text = string.Empty;
             // TextBlockHelper TBH = new TextBlockHelper(txtBlkDescritpion);
             // xSummaryTextBlock.Text = mPluginPackage.des
@@ -60,7 +60,7 @@ namespace Ginger.PlugInsWindows
 
 
         private void SetServicesGrid()
-        {            
+        {
             xServicesGrid.ShowEdit = Visibility.Collapsed;
             xServicesGrid.ShowUpDown = Visibility.Collapsed;
             xServicesGrid.ShowTitle = Visibility.Collapsed;
@@ -85,12 +85,12 @@ namespace Ginger.PlugInsWindows
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            
+
             view.GridColsView.Add(new GridColView() { Field = nameof(PluginServiceActionInfo.ActionId), Header = "Action Id", AllowSorting = true, WidthWeight = 200, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = nameof(PluginServiceActionInfo.Description), Header = "Description", AllowSorting = true, WidthWeight = 400, BindingMode = BindingMode.OneWay });
 
             xServiceActionGrid.SetAllColumnsDefaultView(view);
-            xServiceActionGrid.InitViewItems();            
+            xServiceActionGrid.InitViewItems();
         }
 
         private void SetTextEditorGrid()
@@ -107,10 +107,10 @@ namespace Ginger.PlugInsWindows
             PlugInsEditorActionsGrid.SetAllColumnsDefaultView(view1);
             PlugInsEditorActionsGrid.InitViewItems();
 
-            PlugInsEditorActionsGrid.Grid.ItemsSource = PluginTextEditorHelper.GetTextFileEditors(mPluginPackage); 
+            PlugInsEditorActionsGrid.Grid.ItemsSource = PluginTextEditorHelper.GetTextFileEditors(mPluginPackage);
         }
 
-        
+
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

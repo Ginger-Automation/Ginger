@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -107,7 +107,7 @@ namespace GingerCore.Activities
                 case eFilterBy.Tags:
                     foreach (Guid tagGuid in Tags)
                     {
-                        Guid guid = ((List<Guid>)obj).Where(x => tagGuid.Equals(x) == true).FirstOrDefault();
+                        Guid guid = ((List<Guid>)obj).FirstOrDefault(x => tagGuid.Equals(x) == true);
                         if (!guid.Equals(Guid.Empty))
                             return true;
                     }
@@ -245,7 +245,7 @@ namespace GingerCore.Activities
                 int grpIndex = currentBF.ActivitiesGroups.IndexOf(activitiesGroupInstance);
                 if (grpIndex >= 0)
                 {
-                    int insertIndex = currentBF.Activities.IndexOf(currentBF.Activities.Where(a => a.Guid == activitiesGroupInstance.ActivitiesIdentifiers[0].ActivityGuid).FirstOrDefault());
+                    int insertIndex = currentBF.Activities.IndexOf(currentBF.Activities.FirstOrDefault(a => a.Guid == activitiesGroupInstance.ActivitiesIdentifiers[0].ActivityGuid));
 
                     List<Activity> existingActivities = new List<Activity>();
 
@@ -254,11 +254,11 @@ namespace GingerCore.Activities
                     {
                         ActivityIdentifiers actIDexist = activitiesGroupInstance.ActivitiesIdentifiers[i];
 
-                        Activity exAct = currentBF.Activities.Where(g => g.Guid == actIDexist.ActivityGuid).FirstOrDefault();
+                        Activity exAct = currentBF.Activities.FirstOrDefault(g => g.Guid == actIDexist.ActivityGuid);
 
                         if (exAct == null)
                         {
-                            exAct = currentBF.Activities.Where(g => g.ParentGuid == actIDexist.ActivityGuid).FirstOrDefault();
+                            exAct = currentBF.Activities.FirstOrDefault(g => g.ParentGuid == actIDexist.ActivityGuid);
                         }
 
                         if (exAct != null)
@@ -277,12 +277,12 @@ namespace GingerCore.Activities
                         Activity updatedAct = null;
 
                         // Activity still exist in the group, thus re-add the same activity to the group
-                        updatedAct = existingActivities.Where(a => a.Guid == actID.ActivityGuid).FirstOrDefault();
+                        updatedAct = existingActivities.FirstOrDefault(a => a.Guid == actID.ActivityGuid);
 
                         // In case, group was Replaced/Overwritten
                         if (updatedAct == null)
                         {
-                            updatedAct = existingActivities.Where(a => a.ParentGuid == actID.ActivityGuid).FirstOrDefault();
+                            updatedAct = existingActivities.FirstOrDefault(a => a.ParentGuid == actID.ActivityGuid);
                         }
 
                         if (updatedAct != null)
@@ -294,14 +294,14 @@ namespace GingerCore.Activities
                         // Activity doesn't exist in the group and the shared group is recently updated by addition of this activity, thus add this activity to the group instance in the Business Flow
                         else if (extraDetails != null) //not used anywhere, is needed?
                         {
-                            updatedAct = (extraDetails as ObservableList<Activity>).Where(a => a.ActivityName == actID.ActivityName && a.Guid == actID.ActivityGuid).FirstOrDefault();
+                            updatedAct = (extraDetails as ObservableList<Activity>).FirstOrDefault(a => a.ActivityName == actID.ActivityName && a.Guid == actID.ActivityGuid);
                             if (updatedAct == null)
                             {
-                                updatedAct = (extraDetails as ObservableList<Activity>).Where(a => a.Guid == actID.ActivityGuid).FirstOrDefault();
+                                updatedAct = (extraDetails as ObservableList<Activity>).FirstOrDefault(a => a.Guid == actID.ActivityGuid);
                             }
                             if (updatedAct == null)
                             {
-                                updatedAct = (extraDetails as ObservableList<Activity>).Where(a => a.ActivityName == actID.ActivityName).FirstOrDefault();
+                                updatedAct = (extraDetails as ObservableList<Activity>).FirstOrDefault(a => a.ActivityName == actID.ActivityName);
                             }
 
                             if (updatedAct != null)
@@ -346,13 +346,13 @@ namespace GingerCore.Activities
                     }
                     else
                     {
-                        foreach(ActivityIdentifiers actIdentify in updatedGroup.ActivitiesIdentifiers)
+                        foreach (ActivityIdentifiers actIdentify in updatedGroup.ActivitiesIdentifiers)
                         {
-                            if(actIdentify.ActivityParentGuid != Guid.Empty)
+                            if (actIdentify.ActivityParentGuid != Guid.Empty)
                             {
                                 actIdentify.ActivityGuid = actIdentify.ActivityParentGuid;
                             }
-                        }    
+                        }
                     }
 
                     break;
@@ -486,7 +486,7 @@ namespace GingerCore.Activities
 
         public ActivityIdentifiers GetActivityIdentifiers(Activity activity)
         {
-            return ActivitiesIdentifiers.Where(x => x.IdentifiedActivity == activity).FirstOrDefault();
+            return ActivitiesIdentifiers.FirstOrDefault(x => x.IdentifiedActivity == activity);
         }
 
         public override void PrepareItemToBeCopied()

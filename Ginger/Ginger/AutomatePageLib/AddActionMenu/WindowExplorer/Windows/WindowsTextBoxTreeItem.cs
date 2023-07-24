@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerWPF.UserControlsLib.UCTreeView;
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.WindowExplorer;
 using GingerCore.Actions;
 using GingerCore.Actions.Windows;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System.Windows.Controls;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.Drivers.Windows
 {
@@ -36,17 +36,17 @@ namespace Ginger.Drivers.Windows
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             ObservableList<Act> list = new ObservableList<Act>();
-                list.Add(new ActWindowsControl()
-                {
-                    Description = "Set " + UIAElementInfo.ElementTitle + " Value",
-                    ControlAction = ActWindowsControl.eControlAction.SetValue
-                });
+            list.Add(new ActWindowsControl()
+            {
+                Description = "Set " + UIAElementInfo.ElementTitle + " Value",
+                ControlAction = ActWindowsControl.eControlAction.SetValue
+            });
 
-                list.Add(new ActWindowsControl()
-                {
-                    Description = "Get " + UIAElementInfo.ElementTitle + " Value",
-                    ControlAction = ActWindowsControl.eControlAction.GetValue
-                });
+            list.Add(new ActWindowsControl()
+            {
+                Description = "Get " + UIAElementInfo.ElementTitle + " Value",
+                ControlAction = ActWindowsControl.eControlAction.GetValue
+            });
             return list;
         }
     }

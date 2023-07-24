@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Amdocs.Ginger.Common;
 
 namespace GingerCore.DataSource
-{ 
+{
     public class ActDSConditon : INotifyPropertyChanged
     {
         //TODO: Add Param type and valid value, if it is number , date etc... so we can have controls created for it 
@@ -66,8 +66,8 @@ namespace GingerCore.DataSource
         }
 
         public enum eCondition
-        {   
-            AND,            
+        {
+            AND,
             OR,
             [EnumValueDescription("")]
             EMPTY
@@ -75,13 +75,16 @@ namespace GingerCore.DataSource
 
         public eCondition wCondition { get { return mwCond; } set { mwCond = value; OnPropertyChanged(Fields.wCondition); } }
 
-        public string wTableColumn { get { return mwTableColumn; }
-            set { mwTableColumn = value; OnPropertyChanged(Fields.wTableColumn); } }
-    
+        public string wTableColumn
+        {
+            get { return mwTableColumn; }
+            set { mwTableColumn = value; OnPropertyChanged(Fields.wTableColumn); }
+        }
+
         public eOperator wOperator { get; set; }
 
         public string wValue { get { return mwValue; } set { mwValue = value; OnPropertyChanged(Fields.wValue); } }
-        
+
         public void OnPropertyChanged(string name)
         {
             PropertyChangedEventHandler handler = PropertyChanged;

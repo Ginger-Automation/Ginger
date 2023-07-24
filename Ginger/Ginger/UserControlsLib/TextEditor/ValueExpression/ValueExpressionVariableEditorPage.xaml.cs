@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Ginger.UserControlsLib.TextEditor.Common;
 using GingerCore.Variables;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 {
@@ -47,28 +47,28 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
 
             // Add the variables from solution, current BF and current activity
-            foreach (VariableBase v in  WorkSpace.Instance.Solution.Variables)
+            foreach (VariableBase v in WorkSpace.Instance.Solution.Variables)
             {
                 lst.Add(v.Name);
             }
 
-            if(mContext.BusinessFlow!=null)
+            if (mContext.BusinessFlow != null)
             {
                 foreach (VariableBase v in mContext.BusinessFlow.Variables)
                 {
                     lst.Add(v.Name);
                 }
 
-                if(mContext.BusinessFlow.CurrentActivity!=null)
+                if (mContext.BusinessFlow.CurrentActivity != null)
                 {
                     foreach (VariableBase v in mContext.BusinessFlow.CurrentActivity.Variables)
                     {
                         lst.Add(v.Name);
                     }
                 }
-               
+
             }
-           
+
             if (variable != null && variable.GetType() == typeof(VariableSelectionList))
             {
                 VarsListExtraParams.Visibility = System.Windows.Visibility.Visible;
@@ -84,7 +84,7 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
 
             VarsList.ItemsSource = lst;
         }
-        
+
         public void UpdateContent()
         {
             string v = (string)VarsList.SelectedItem;
@@ -105,6 +105,6 @@ namespace Ginger.UserControlsLib.TextEditor.ValueExpression
             }
 
 
-        }        
+        }
     }
 }

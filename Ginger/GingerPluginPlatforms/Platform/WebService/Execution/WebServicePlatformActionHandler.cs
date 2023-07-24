@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core.ActionsLib;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.WebService.Execution
 {
@@ -56,7 +54,7 @@ namespace Ginger.Plugin.Platform.WebService.Execution
         public void HandleRunAction(IPlatformService service, ref NodePlatformAction platformAction)
         {
             Platformservice = (IWebServicePlatform)service;
- 
+
             RestClient = Platformservice.RestClient;
 
             try
@@ -66,9 +64,9 @@ namespace Ginger.Plugin.Platform.WebService.Execution
                 GingerHttpResponseMessage Response = RestClient.PerformHttpOperation(Request);
                 platformAction.Output.Add("Header: Status Code ", Response.StatusCode.ToString());
 
-                foreach(var RespHeader in Response.Headers)
+                foreach (var RespHeader in Response.Headers)
                 {
-                    platformAction.Output.Add("Header: " + RespHeader.Key,RespHeader.Value);
+                    platformAction.Output.Add("Header: " + RespHeader.Key, RespHeader.Value);
                 }
 
                 platformAction.Output.Add("Request:", Response.RequestBodyString);
@@ -133,11 +131,11 @@ namespace Ginger.Plugin.Platform.WebService.Execution
 
             }
             Request.BodyString = platformAction.InputParams.ContainsKey("RequestBody") ? platformAction.InputParams["RequestBody"].ToString() : "";
-         
 
-     
 
-                if (platformAction.InputParams["Headers"] is Newtonsoft.Json.Linq.JObject JsonObj)
+
+
+            if (platformAction.InputParams["Headers"] is Newtonsoft.Json.Linq.JObject JsonObj)
             {
                 foreach (Newtonsoft.Json.Linq.JProperty Jt in JsonObj.Children())
                 {

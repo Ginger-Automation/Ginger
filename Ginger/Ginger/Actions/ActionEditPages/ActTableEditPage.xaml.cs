@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,20 +17,18 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Actions;
+using GingerCore.Drivers.Common;
+using GingerCore.Helpers;
+using mshtml;
 using System;
 using System.Collections.Generic;
 using System.Windows;
-
 using System.Windows.Controls;
 using System.Windows.Input;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Helpers;
-using GingerCore.Drivers.Common;
-using mshtml;
-using Amdocs.Ginger.Common.UIElement;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace Ginger.Actions
 {
@@ -54,7 +52,7 @@ namespace Ginger.Actions
         ObservableList<Act> mActions = null;
         ObservableList<Act> mOriginalActions = null;
 
-       //Check if its required
+        //Check if its required
         private enum BaseWindow
         {
             WindowExplorer,
@@ -62,22 +60,22 @@ namespace Ginger.Actions
         }
 
         BaseWindow eBaseWindow;
-       public ActTableElement mAct;
+        public ActTableElement mAct;
 
-        public ActTableEditPage(ActTableElement Act=null)
+        public ActTableEditPage(ActTableElement Act = null)
         {
             eBaseWindow = BaseWindow.ActEditPage;
             mAct = Act;
             InitializeComponent();
 
-            GingerCore.General.FillComboFromEnumObj(cmbColSelectorValue, mAct.ColSelectorValue);            
-           
+            GingerCore.General.FillComboFromEnumObj(cmbColSelectorValue, mAct.ColSelectorValue);
+
             GingerCore.General.FillComboFromEnumObj(WhereColumn, mAct.ColSelectorValue);
-            
+
 
             GingerCore.General.FillComboFromEnumObj(WhereProperty, mAct.WhereProperty);
             GingerCore.General.FillComboFromEnumObj(WhereOperator, mAct.WhereOperator);
-            GingerCore.General.FillComboFromEnumObj(ControlActionComboBox, mAct.ControlAction);           
+            GingerCore.General.FillComboFromEnumObj(ControlActionComboBox, mAct.ControlAction);
 
             SetDescriptionDetails();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbColSelectorValue, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.ColSelectorValue);
@@ -91,29 +89,40 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WhereColumn, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.WhereColSelector);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WhereColumnTitle, ComboBox.TextProperty, mAct, ActTableElement.Fields.WhereColumnTitle);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WhereProperty, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.WhereProperty);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WhereOperator, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.WhereOperator);     
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(WhereOperator, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.WhereOperator);
             WhereColumnValue.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActTableElement.Fields.WhereColumnValue));
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ControlActionComboBox, ComboBox.SelectedValueProperty, mAct, ActTableElement.Fields.ControlAction);
             if (WhereColumn.SelectedIndex == -1)
+            {
                 WhereColumn.SelectedIndex = 0;
+            }
+
             if (cmbColSelectorValue.SelectedIndex == -1)
+            {
                 cmbColSelectorValue.SelectedIndex = 0;
+            }
+
             if (WhereProperty.SelectedIndex == -1)
+            {
                 WhereProperty.SelectedIndex = 0;
+            }
+
             if (WhereOperator.SelectedIndex == -1)
+            {
                 WhereOperator.SelectedIndex = 0;
+            }
         }
 
-        public ActTableEditPage(ElementInfo ElementInfo, ObservableList<Act> Actions,ActTableElement Act=null)
-        {            
+        public ActTableEditPage(ElementInfo ElementInfo, ObservableList<Act> Actions, ActTableElement Act = null)
+        {
             eBaseWindow = BaseWindow.WindowExplorer;
             mAct = new ActTableElement();
             mElementInfo = ElementInfo;
             mActions = Actions;
             ShowCellActions();
-            InitializeComponent();            
-            InitTableInfo();            
+            InitializeComponent();
+            InitTableInfo();
             SetComponents();
             SetDescriptionDetails();
         }
@@ -161,7 +170,11 @@ namespace Ginger.Actions
             bool collHeaderCols = true;
             foreach (mshtml.HTMLTableRow row in tab.rows)
             {
-                if (!collHeaderCols) break;
+                if (!collHeaderCols)
+                {
+                    break;
+                }
+
                 if (row != null)
                 {
                     List<string> temp = new List<string>();
@@ -178,8 +191,8 @@ namespace Ginger.Actions
         }
 
         public ActTableEditPage(UIAuto.AutomationElement AE)
-        {   
-            AEControl = AE;       
+        {
+            AEControl = AE;
             calculateGridDimensions();
             LoadGridToArray();
             LoadColumnNameCombo();
@@ -187,41 +200,53 @@ namespace Ginger.Actions
             InitializeComponent();
             SetComponents();
         }
-        
+
         private void UpdateRelatedActions()
         {
             GingerCore.Actions.ActTableElement.eTableAction? previousSelectedControlAction = null;
             if (mActions != null)
-            {               
+            {
                 if (mActions.CurrentItem != null)
+                {
                     if (mActions.CurrentItem is ActTableElement)
+                    {
                         previousSelectedControlAction = ((ActTableElement)mActions.CurrentItem).ControlAction;
-                
+                    }
+                }
+
                 mActions.Clear();
-            }                        
+            }
 
             //This is just example to show the actions can change
             // need to be per selected filter user did
 
             if (cmbColSelectorValue.SelectedIndex != -1)
+            {
                 mAct.ColSelectorValue = (GingerCore.Actions.ActTableElement.eRunColSelectorValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColSelectorValue), cmbColSelectorValue.SelectedValue.ToString());
-            
+            }
+
             string description = "";
             string rowVal = "";
             string colVal = "";
             if (RowNum.IsChecked == true)
-            {               
+            {
                 mAct.LocateRowType = "Row Number";
                 if (RowSelectorValue != null)
                 {
                     if (RowSelectorValue.SelectedIndex != -1)
-                        rowVal = RowSelectorValue.SelectedItem.ToString();                        
+                    {
+                        rowVal = RowSelectorValue.SelectedItem.ToString();
+                    }
                     else
-                        rowVal =  RowSelectorValue.Text;                    
+                    {
+                        rowVal = RowSelectorValue.Text;
+                    }
+
                     description = " on Row:" + rowVal;
-                }                    
+                }
             }
-            else if (AnyRow.IsChecked == true){              
+            else if (AnyRow.IsChecked == true)
+            {
                 mAct.LocateRowType = "Any Row";
                 description = " on Random Row";
             }
@@ -230,84 +255,102 @@ namespace Ginger.Actions
                 mAct.LocateRowType = "By Selected Row";
                 description = " on Selected Row";
             }
-            else if (Where.IsChecked == true){               
+            else if (Where.IsChecked == true)
+            {
                 mAct.LocateRowType = "Where";
                 description = " on Row with condition";
             }
 
             if (cmbColumnValue != null)
-            {                
+            {
                 if (cmbColumnValue.SelectedIndex != -1)
+                {
                     colVal = cmbColumnValue.SelectedItem.ToString();
+                }
                 else
+                {
                     colVal = cmbColumnValue.Text;
-                description= description + " and Column:" + colVal;
+                }
+
+                description = description + " and Column:" + colVal;
             }
 
-            if (eBaseWindow.Equals(BaseWindow.WindowExplorer) &&cmbColSelectorValue.SelectedIndex != -1 && WhereColumn != null && WhereColumn.SelectedIndex != -1 && RowSelectorValue != null
+            if (eBaseWindow.Equals(BaseWindow.WindowExplorer) && cmbColSelectorValue.SelectedIndex != -1 && WhereColumn != null && WhereColumn.SelectedIndex != -1 && RowSelectorValue != null
                 && WhereProperty != null && WhereProperty.SelectedIndex != -1 && WhereOperator != null && WhereOperator.SelectedIndex != -1)
             {
                 // Add some sample for specific cell                
-                mActions.Add(new ActTableElement() { Description = "Get Value of Cell:" + description,
-                                                     ControlAction = ActTableElement.eTableAction.GetValue,
-                                                     ColSelectorValue = mAct.ColSelectorValue,
-                                                     LocateColTitle = colVal,
-                                                     LocateRowType = mAct.LocateRowType,
-                                                     LocateRowValue = rowVal,
-                                                     ByRowNum = (bool)RowNum.IsChecked,
-                                                     ByRandRow = (bool)AnyRow.IsChecked,
-                                                     BySelectedRow = (bool)BySelectedRow.IsChecked,
-                                                     ByWhere = (bool)Where.IsChecked,
-                                                     WhereColSelector =(GingerCore.Actions.ActTableElement.eRunColSelectorValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColSelectorValue), WhereColumn.SelectedValue.ToString()),
-                                                     WhereColumnTitle = WhereColumnTitle.Text,                                            
-                                                     WhereColumnValue = WhereColumnValue.ValueTextBox.Text,                                                     
-                                                     WhereOperator = (GingerCore.Actions.ActTableElement.eRunColOperator)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColOperator), WhereOperator.SelectedValue.ToString()),
-                                                     WhereProperty = (GingerCore.Actions.ActTableElement.eRunColPropertyValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColPropertyValue), WhereProperty.SelectedValue.ToString())});               
-                mActions.Add(new ActTableElement() { Description = "Set Value of Cell: " + description,
-                                                     ControlAction = ActTableElement.eTableAction.SetValue,
-                                                     ColSelectorValue = mAct.ColSelectorValue,
-                                                     LocateColTitle = colVal,
-                                                     LocateRowType = mAct.LocateRowType,
-                                                     LocateRowValue = rowVal,
-                                                     ByRowNum = (bool)RowNum.IsChecked,
-                                                     ByRandRow = (bool)AnyRow.IsChecked,
-                                                     BySelectedRow = (bool)BySelectedRow.IsChecked,
-                                                     ByWhere = (bool)Where.IsChecked,
-                                                     WhereColSelector =(GingerCore.Actions.ActTableElement.eRunColSelectorValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColSelectorValue), WhereColumn.SelectedValue.ToString()),
-                                                     WhereColumnTitle = WhereColumnTitle.Text,
-                                                     WhereColumnValue = WhereColumnValue.ValueTextBox.Text,
-                                                     WhereOperator = (GingerCore.Actions.ActTableElement.eRunColOperator)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColOperator), WhereOperator.SelectedValue.ToString()),
-                                                     WhereProperty = (GingerCore.Actions.ActTableElement.eRunColPropertyValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColPropertyValue), WhereProperty.SelectedValue.ToString())});
-                mActions.Add(new ActTableElement() { Description = "Type Value in Cell: " + description,
-                                                    ControlAction = ActTableElement.eTableAction.Type,
-                                                    ColSelectorValue = mAct.ColSelectorValue,
-                                                    LocateColTitle = colVal,
-                                                    LocateRowType = mAct.LocateRowType,
-                                                    LocateRowValue = rowVal,
-                                                    ByRowNum = (bool)RowNum.IsChecked,
-                                                    ByRandRow = (bool)AnyRow.IsChecked,
-                                                    BySelectedRow = (bool)BySelectedRow.IsChecked,
-                                                    ByWhere = (bool)Where.IsChecked,
-                                                    WhereColSelector = (GingerCore.Actions.ActTableElement.eRunColSelectorValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColSelectorValue), WhereColumn.SelectedValue.ToString()),
-                                                    WhereColumnTitle = WhereColumnTitle.Text,
-                                                    WhereColumnValue = WhereColumnValue.ValueTextBox.Text,
-                                                    WhereOperator = (GingerCore.Actions.ActTableElement.eRunColOperator)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColOperator), WhereOperator.SelectedValue.ToString()),
-                                                    WhereProperty = (GingerCore.Actions.ActTableElement.eRunColPropertyValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColPropertyValue), WhereProperty.SelectedValue.ToString())});
-                mActions.Add(new ActTableElement() { Description = "Click Cell:" + description,
-                                                     ControlAction = ActTableElement.eTableAction.Click,
-                                                     ColSelectorValue = mAct.ColSelectorValue,
-                                                     LocateColTitle = colVal,
-                                                     LocateRowType = mAct.LocateRowType,
-                                                     LocateRowValue = rowVal,
-                                                     ByRowNum = (bool)RowNum.IsChecked,
-                                                     BySelectedRow = (bool)BySelectedRow.IsChecked,
-                                                     ByRandRow = (bool)AnyRow.IsChecked,
-                                                     ByWhere = (bool)Where.IsChecked,
-                                                     WhereColSelector =(GingerCore.Actions.ActTableElement.eRunColSelectorValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColSelectorValue), WhereColumn.SelectedValue.ToString()),
-                                                     WhereColumnTitle = WhereColumnTitle.Text,
-                                                     WhereColumnValue = WhereColumnValue.ValueTextBox.Text,
-                                                     WhereOperator = (GingerCore.Actions.ActTableElement.eRunColOperator)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColOperator), WhereOperator.SelectedValue.ToString()),
-                                                     WhereProperty = (GingerCore.Actions.ActTableElement.eRunColPropertyValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColPropertyValue), WhereProperty.SelectedValue.ToString())});
+                mActions.Add(new ActTableElement()
+                {
+                    Description = "Get Value of Cell:" + description,
+                    ControlAction = ActTableElement.eTableAction.GetValue,
+                    ColSelectorValue = mAct.ColSelectorValue,
+                    LocateColTitle = colVal,
+                    LocateRowType = mAct.LocateRowType,
+                    LocateRowValue = rowVal,
+                    ByRowNum = (bool)RowNum.IsChecked,
+                    ByRandRow = (bool)AnyRow.IsChecked,
+                    BySelectedRow = (bool)BySelectedRow.IsChecked,
+                    ByWhere = (bool)Where.IsChecked,
+                    WhereColSelector = (GingerCore.Actions.ActTableElement.eRunColSelectorValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColSelectorValue), WhereColumn.SelectedValue.ToString()),
+                    WhereColumnTitle = WhereColumnTitle.Text,
+                    WhereColumnValue = WhereColumnValue.ValueTextBox.Text,
+                    WhereOperator = (GingerCore.Actions.ActTableElement.eRunColOperator)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColOperator), WhereOperator.SelectedValue.ToString()),
+                    WhereProperty = (GingerCore.Actions.ActTableElement.eRunColPropertyValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColPropertyValue), WhereProperty.SelectedValue.ToString())
+                });
+                mActions.Add(new ActTableElement()
+                {
+                    Description = "Set Value of Cell: " + description,
+                    ControlAction = ActTableElement.eTableAction.SetValue,
+                    ColSelectorValue = mAct.ColSelectorValue,
+                    LocateColTitle = colVal,
+                    LocateRowType = mAct.LocateRowType,
+                    LocateRowValue = rowVal,
+                    ByRowNum = (bool)RowNum.IsChecked,
+                    ByRandRow = (bool)AnyRow.IsChecked,
+                    BySelectedRow = (bool)BySelectedRow.IsChecked,
+                    ByWhere = (bool)Where.IsChecked,
+                    WhereColSelector = (GingerCore.Actions.ActTableElement.eRunColSelectorValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColSelectorValue), WhereColumn.SelectedValue.ToString()),
+                    WhereColumnTitle = WhereColumnTitle.Text,
+                    WhereColumnValue = WhereColumnValue.ValueTextBox.Text,
+                    WhereOperator = (GingerCore.Actions.ActTableElement.eRunColOperator)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColOperator), WhereOperator.SelectedValue.ToString()),
+                    WhereProperty = (GingerCore.Actions.ActTableElement.eRunColPropertyValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColPropertyValue), WhereProperty.SelectedValue.ToString())
+                });
+                mActions.Add(new ActTableElement()
+                {
+                    Description = "Type Value in Cell: " + description,
+                    ControlAction = ActTableElement.eTableAction.Type,
+                    ColSelectorValue = mAct.ColSelectorValue,
+                    LocateColTitle = colVal,
+                    LocateRowType = mAct.LocateRowType,
+                    LocateRowValue = rowVal,
+                    ByRowNum = (bool)RowNum.IsChecked,
+                    ByRandRow = (bool)AnyRow.IsChecked,
+                    BySelectedRow = (bool)BySelectedRow.IsChecked,
+                    ByWhere = (bool)Where.IsChecked,
+                    WhereColSelector = (GingerCore.Actions.ActTableElement.eRunColSelectorValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColSelectorValue), WhereColumn.SelectedValue.ToString()),
+                    WhereColumnTitle = WhereColumnTitle.Text,
+                    WhereColumnValue = WhereColumnValue.ValueTextBox.Text,
+                    WhereOperator = (GingerCore.Actions.ActTableElement.eRunColOperator)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColOperator), WhereOperator.SelectedValue.ToString()),
+                    WhereProperty = (GingerCore.Actions.ActTableElement.eRunColPropertyValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColPropertyValue), WhereProperty.SelectedValue.ToString())
+                });
+                mActions.Add(new ActTableElement()
+                {
+                    Description = "Click Cell:" + description,
+                    ControlAction = ActTableElement.eTableAction.Click,
+                    ColSelectorValue = mAct.ColSelectorValue,
+                    LocateColTitle = colVal,
+                    LocateRowType = mAct.LocateRowType,
+                    LocateRowValue = rowVal,
+                    ByRowNum = (bool)RowNum.IsChecked,
+                    BySelectedRow = (bool)BySelectedRow.IsChecked,
+                    ByRandRow = (bool)AnyRow.IsChecked,
+                    ByWhere = (bool)Where.IsChecked,
+                    WhereColSelector = (GingerCore.Actions.ActTableElement.eRunColSelectorValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColSelectorValue), WhereColumn.SelectedValue.ToString()),
+                    WhereColumnTitle = WhereColumnTitle.Text,
+                    WhereColumnValue = WhereColumnValue.ValueTextBox.Text,
+                    WhereOperator = (GingerCore.Actions.ActTableElement.eRunColOperator)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColOperator), WhereOperator.SelectedValue.ToString()),
+                    WhereProperty = (GingerCore.Actions.ActTableElement.eRunColPropertyValue)Enum.Parse(typeof(GingerCore.Actions.ActTableElement.eRunColPropertyValue), WhereProperty.SelectedValue.ToString())
+                });
             }
 
             RestoreOriginalActions();
@@ -316,16 +359,22 @@ namespace Ginger.Actions
             if (previousSelectedControlAction != null)
             {
                 if (mActions != null)
+                {
                     foreach (ActTableElement act in mActions)
+                    {
                         if (act.ControlAction == previousSelectedControlAction)
                         {
                             mActions.CurrentItem = act;
                             break;
                         }
+                    }
+                }
             }
             if (mActions != null && mActions.CurrentItem == null && mActions.Count > 0)
-                mActions.CurrentItem = mActions[0]; 
-           
+            {
+                mActions.CurrentItem = mActions[0];
+            }
+
             // Add unique actions for the selected filter/cell
         }
 
@@ -337,7 +386,7 @@ namespace Ginger.Actions
                 {
                     mActions.Add(a);
                 }
-            }            
+            }
         }
 
         private void SetComponents()
@@ -346,7 +395,7 @@ namespace Ginger.Actions
             ControlActionComboBox.Visibility = Visibility.Collapsed;
             OperationTypeRow.Height = new GridLength(0);
 
-            cmbColumnValue.Items.Clear();            
+            cmbColumnValue.Items.Clear();
             WhereColumnTitle.Items.Clear();
 
             for (int i = 0; i < mColNames.Count; i++)
@@ -354,7 +403,7 @@ namespace Ginger.Actions
                 cmbColumnValue.Items.Add(mColNames[i].ToString());
                 WhereColumnTitle.Items.Add(mColNames[i].ToString());
             }
-            
+
             cmbColumnValue.SelectedIndex = 0;
             WhereColumnTitle.SelectedIndex = 0;
 
@@ -363,20 +412,32 @@ namespace Ginger.Actions
                 RowSelectorValue.Items.Add(i.ToString());
             }
             RowSelectorValue.SelectedIndex = 0;
-         
+
             ActTableElement ACJT = new ActTableElement();
             GingerCore.General.FillComboFromEnumObj(cmbColSelectorValue, ACJT.ColSelectorValue);
             if (cmbColSelectorValue.SelectedIndex == -1)
+            {
                 cmbColSelectorValue.SelectedIndex = 0;
+            }
+
             GingerCore.General.FillComboFromEnumObj(WhereColumn, ACJT.ColSelectorValue);
             if (WhereColumn.SelectedIndex == -1)
+            {
                 WhereColumn.SelectedIndex = 0;
+            }
+
             GingerCore.General.FillComboFromEnumObj(WhereProperty, ACJT.WhereProperty);
             if (WhereProperty.SelectedIndex == -1)
-                WhereProperty.SelectedIndex = 0;            
+            {
+                WhereProperty.SelectedIndex = 0;
+            }
+
             GingerCore.General.FillComboFromEnumObj(WhereOperator, ACJT.WhereOperator);
             if (WhereOperator.SelectedIndex == -1)
+            {
                 WhereOperator.SelectedIndex = 0;
+            }
+
             WherePanel.Visibility = Visibility.Collapsed;
             WhereDataRow.Height = new GridLength(0);
             WhereColumnValue.Init(Context.GetAsContext(mAct.Context), ACJT.GetOrCreateInputParam(ActTableElement.Fields.WhereColumnValue));
@@ -389,20 +450,26 @@ namespace Ginger.Actions
                 cmbColumnValue.Items.Clear();
                 for (int i = 0; i < mColNames.Count; i++)
                 {
-                    if (cmbColSelectorValue.SelectedValue.ToString() == ActTableElement.eRunColSelectorValue.ColTitle.ToString())                    
-                        cmbColumnValue.Items.Add(mColNames[i].ToString());                    
-                    else                    
-                        cmbColumnValue.Items.Add(i.ToString());                    
-                }               
-                cmbColumnValue.SelectedIndex = 0;                
+                    if (cmbColSelectorValue.SelectedValue.ToString() == ActTableElement.eRunColSelectorValue.ColTitle.ToString())
+                    {
+                        cmbColumnValue.Items.Add(mColNames[i].ToString());
+                    }
+                    else
+                    {
+                        cmbColumnValue.Items.Add(i.ToString());
+                    }
+                }
+                cmbColumnValue.SelectedIndex = 0;
             }
             SetDescriptionDetails();
         }
 
         private void Row_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(eBaseWindow.Equals(BaseWindow.WindowExplorer))
+            if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
+            {
                 UpdateRelatedActions();
+            }
         }
 
         private void calculateGridDimensions()
@@ -417,9 +484,13 @@ namespace Ginger.Actions
             {
 
                 if (gridHeaderElement.Current.LocalizedControlType == "scroll bar")
+                {
                     gridHeaderElement = UIAuto.TreeWalker.ContentViewWalker.GetNextSibling(gridHeaderElement);
+                }
                 else
+                {
                     break;
+                }
             }
 
             tempElement = gridHeaderElement;
@@ -437,7 +508,10 @@ namespace Ginger.Actions
             tempType = gridHeaderType;
             do
             {
-                if (!(tempType.Equals(gridHeaderType))) break;
+                if (!(tempType.Equals(gridHeaderType)))
+                {
+                    break;
+                }
 
                 columnCount++;
 
@@ -458,11 +532,13 @@ namespace Ginger.Actions
             gridArray = new UIAuto.AutomationElement[rowCount, columnCount];
             tempElement = UIAuto.TreeWalker.ContentViewWalker.GetFirstChild(AEControl);
             for (int i = 0; i < rowCount; i++)
+            {
                 for (int j = 0; j < columnCount; j++)
                 {
                     gridArray[i, j] = tempElement;
                     tempElement = UIAuto.TreeWalker.ContentViewWalker.GetNextSibling(tempElement);
                 }
+            }
         }
 
         private void LoadColumnNameCombo()
@@ -479,9 +555,11 @@ namespace Ginger.Actions
         }
 
         private void RowNum_Checked(object sender, RoutedEventArgs e)
-        {          
-            if (RowSelectorValue != null)                      
-               RowSelectorValue.IsEnabled = true;
+        {
+            if (RowSelectorValue != null)
+            {
+                RowSelectorValue.IsEnabled = true;
+            }
 
             if (WherePanel != null)
             {
@@ -500,7 +578,10 @@ namespace Ginger.Actions
         private void BySelectedRow_Checked(object sender, RoutedEventArgs e)
         {
             if (RowSelectorValue != null)
+            {
                 RowSelectorValue.IsEnabled = true;
+            }
+
             if (WherePanel != null)
             {
                 WherePanel.Visibility = Visibility.Collapsed;
@@ -534,20 +615,24 @@ namespace Ginger.Actions
         }
 
         private void WhereColumn_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {            
+        {
             if (mColNames != null)
             {
                 WhereColumnTitle.Items.Clear();
                 for (int i = 0; i < mColNames.Count; i++)
                 {
                     if (WhereColumn.SelectedValue.ToString() == ActTableElement.eRunColSelectorValue.ColTitle.ToString())
+                    {
                         WhereColumnTitle.Items.Add(mColNames[i].ToString());
+                    }
                     else
+                    {
                         WhereColumnTitle.Items.Add(i.ToString());
+                    }
                 }
-                WhereColumnTitle.SelectedIndex = 0;               
+                WhereColumnTitle.SelectedIndex = 0;
             }
-            SetDescriptionDetails(); 
+            SetDescriptionDetails();
         }
 
         private void SetDescriptionDetails()
@@ -555,29 +640,40 @@ namespace Ginger.Actions
             try
             {
                 if (txtDescription == null || cmbColSelectorValue.SelectedItem == null)
+                {
                     return;
+                }
 
                 txtDescription.Text = string.Empty;
                 TextBlockHelper TBH = new TextBlockHelper(txtDescription);
 
                 TBH.AddText("Select the grid cell located by ");
-                TBH.AddUnderLineText(cmbColSelectorValue.SelectedItem.ToString());   
+                TBH.AddUnderLineText(cmbColSelectorValue.SelectedItem.ToString());
                 TBH.AddText(" ");
                 if (cmbColumnValue.SelectedIndex != -1)
+                {
                     TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString());
+                }
                 else
+                {
                     TBH.AddBoldText(cmbColumnValue.Text);
-                TBH.AddText(" and ");  
+                }
+
+                TBH.AddText(" and ");
                 if (RowNum.IsChecked == true)
-                {   
+                {
                     TBH.AddUnderLineText("row number ");
                     if (RowSelectorValue.SelectedIndex != -1)
+                    {
                         TBH.AddBoldText(RowSelectorValue.SelectedItem.ToString());
+                    }
                     else
+                    {
                         TBH.AddBoldText(RowSelectorValue.Text);
+                    }
                 }
                 else if (AnyRow.IsChecked == true)
-                {                    
+                {
                     TBH.AddUnderLineText("random ");
                     TBH.AddText("row number");
                 }
@@ -587,16 +683,21 @@ namespace Ginger.Actions
                     TBH.AddUnderLineText(WhereColumn.SelectedItem.ToString());
                     TBH.AddText(" ");
                     if (WhereColumnTitle.SelectedIndex != -1)
+                    {
                         TBH.AddBoldText(WhereColumnTitle.SelectedItem.ToString());
+                    }
                     else
+                    {
                         TBH.AddBoldText(WhereColumnTitle.Text);
+                    }
+
                     TBH.AddText(" having control property ");
                     TBH.AddUnderLineText(WhereProperty.SelectedItem.ToString());
                     TBH.AddText(" ");
                     TBH.AddUnderLineText(WhereOperator.SelectedItem.ToString());
                     TBH.AddText(" ");
-                    TBH.AddBoldText(WhereColumnValue.ValueTextBox.Text);                    
-                }                
+                    TBH.AddBoldText(WhereColumnValue.ValueTextBox.Text);
+                }
             }
             catch (Exception ex)
             {
@@ -610,18 +711,18 @@ namespace Ginger.Actions
             {
                 UpdateRelatedActions();
                 SetDescriptionDetails();
-            }  
+            }
         }
 
         private void RowSelectorValue_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             mAct.LocateRowValue = RowSelectorValue.Text;
-       
+
             SetDescriptionDetails();
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
             {
-                UpdateRelatedActions();              
-            }             
+                UpdateRelatedActions();
+            }
         }
 
         private void WhereColumnTitle_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -654,18 +755,18 @@ namespace Ginger.Actions
             {
                 UpdateRelatedActions();
                 SetDescriptionDetails();
-            } 
+            }
         }
 
         private void RowSelectorValue_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
             mAct.LocateRowValue = RowSelectorValue.Text;
-            
+
             SetDescriptionDetails();
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
             {
-                UpdateRelatedActions();               
-            }            
+                UpdateRelatedActions();
+            }
         }
 
         private void WhereColumnTitle_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
@@ -674,28 +775,28 @@ namespace Ginger.Actions
             {
                 UpdateRelatedActions();
                 SetDescriptionDetails();
-            } 
+            }
         }
 
         private void WhereColumnValue_LostFocus(object sender, RoutedEventArgs e)
         {
 
             mAct.WhereColumnValue = WhereColumnValue.ValueTextBox.Text;
-            
-            
+
+
             SetDescriptionDetails();
 
             if (eBaseWindow.Equals(BaseWindow.WindowExplorer))
             {
                 UpdateRelatedActions();
-            }    
+            }
         }
 
         private void RowSelectorValueVE_Click(object sender, RoutedEventArgs e)
         {
             ValueExpressionEditorPage w = new ValueExpressionEditorPage(mAct, ActTableElement.Fields.LocateRowValue, Context.GetAsContext(mAct.Context));
             w.ShowAsWindow(eWindowShowStyle.Dialog);
-            RowSelectorValue.Text = mAct.LocateRowValue;           
-        }        
+            RowSelectorValue.Text = mAct.LocateRowValue;
+        }
     }
 }

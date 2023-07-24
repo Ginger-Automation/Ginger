@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,10 +21,7 @@ using Amdocs.Ginger.Common;
 using Ginger.ALM.Rally;
 using GingerCore;
 using GingerCore.Activities;
-using GingerCore.ALM;
 using GingerCore.ALM.Rally;
-using GingerCore.Platforms;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -98,7 +95,7 @@ namespace Ginger.ALM.Repository
 
                     try
                     {
-                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.ExternalID == RallyID + "=" + testPlan.RallyID).FirstOrDefault();
+                        BusinessFlow existedBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x => x.ExternalID == RallyID + "=" + testPlan.RallyID);
                         if (existedBF != null)
                         {
                             Amdocs.Ginger.Common.eUserMsgSelection userSelection = Reporter.ToUser(eUserMsgKey.TestSetExists, testPlan.Name);
@@ -274,7 +271,7 @@ namespace Ginger.ALM.Repository
         {
             throw new NotImplementedException();
         }
-         
+
 
         public override List<string> GetTestLabExplorer(string path)
         {

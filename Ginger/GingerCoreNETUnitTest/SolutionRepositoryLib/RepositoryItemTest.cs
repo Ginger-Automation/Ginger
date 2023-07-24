@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
-using GingerCore.Activities;
 using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -29,7 +28,7 @@ using System.Linq;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.SolutionRepositoryLib
-{    
+{
     [Level1]
     [TestClass]
     public class RepositoryItemTest
@@ -49,19 +48,19 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
-            
+
         }
 
         [TestCleanup]
         public void TestCleanUp()
         {
-            
+
         }
 
         [TestMethod]
@@ -70,7 +69,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         {
             //Arrange
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            BusinessFlow originalFlow = businessFlows.Where(x => x.Name == "Flow 1").FirstOrDefault();
+            BusinessFlow originalFlow = businessFlows.FirstOrDefault(x => x.Name == "Flow 1");
 
             //Act
             BusinessFlow businessFlowCopy = (BusinessFlow)originalFlow.CreateCopy(true);
@@ -87,7 +86,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         {
             //Arrange
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            BusinessFlow originalFlow = businessFlows.Where(x => x.Name == "Flow 2").FirstOrDefault();
+            BusinessFlow originalFlow = businessFlows.FirstOrDefault(x => x.Name == "Flow 2");
 
             //Act
             BusinessFlow businessFlowCopy = (BusinessFlow)originalFlow.CreateCopy(true);
@@ -105,13 +104,13 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         {
             //Arrange
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            Activity originalActivity = businessFlows.Where(x => x.Name == "Flow 1").FirstOrDefault().Activities[0];
+            Activity originalActivity = businessFlows.FirstOrDefault(x => x.Name == "Flow 1").Activities[0];
 
             //Act
             Activity duplicatedActivity = (Activity)originalActivity.CreateCopy(true);
 
             //Assert
-            Assert.AreEqual(Guid.Empty, duplicatedActivity.ParentGuid);            
+            Assert.AreEqual(Guid.Empty, duplicatedActivity.ParentGuid);
             Assert.AreEqual(originalActivity.Variables[0].Guid, duplicatedActivity.Variables[0].ParentGuid);
         }
 
@@ -121,7 +120,7 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         {
             //Arrange
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            Activity originalActivity = businessFlows.Where(x => x.Name == "Flow 2").FirstOrDefault().Activities[0];
+            Activity originalActivity = businessFlows.FirstOrDefault(x => x.Name == "Flow 2").Activities[0];
 
             //Act
             Activity duplicatedActivity = (Activity)originalActivity.CreateCopy(true);
@@ -174,6 +173,6 @@ namespace GingerCoreNETUnitTest.SolutionRepositoryLib
         //TODO: Add more test for all RI functions
 
 
-      
+
     }
 }

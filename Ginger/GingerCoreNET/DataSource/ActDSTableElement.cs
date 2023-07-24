@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,17 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using GingerCore.Helpers;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.DataSource;
+using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using amdocs.ginger.GingerCoreNET;
+using NPOI.SS.Formula.Functions;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using Amdocs.Ginger.CoreNET.DataSource;
 
 namespace GingerCore.Actions
 {
@@ -61,7 +62,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return "Data Source Manipulation";
+                 return "Data Source Manipulation";
             }
         }
 
@@ -85,7 +86,7 @@ namespace GingerCore.Actions
             if (DataSource.DSType == DataSourceBase.eDSType.LiteDataBase)
             {
                 GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();
-                string Query  = ValueExp.Substring(ValueExp.IndexOf("QUERY=") + 6, ValueExp.Length - (ValueExp.IndexOf("QUERY=") + 7));
+                string Query = ValueExp.Substring(ValueExp.IndexOf("QUERY=") + 6, ValueExp.Length - (ValueExp.IndexOf("QUERY=") + 7));
                 liteDB.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FileFullPath);
 
                 if (this.ExcelConfig != null)
@@ -169,19 +170,19 @@ namespace GingerCore.Actions
 
                             VEETE.Value = ExcelConfig.ExcelSheetName;
                             excelSheetName = VEETE.ValueCalculated;
-                            
+
                             VEETE.Value = ExcelConfig.ExportQueryValue;
                             query = VEETE.ValueCalculated;
 
                             if (ExcelConfig.IsCustomExport)
                             {
-                               query = this.ExcelConfig.CreateQueryWithWhereList(ExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected), ExcelConfig.WhereConditionStringList, DSTableName, DataSourceBase.eDSType.MSAccess);
+                                query = this.ExcelConfig.CreateQueryWithWhereList(ExcelConfig.ColumnList.ToList().FindAll(x => x.IsSelected), ExcelConfig.WhereConditionStringList, DSTableName, DataSourceBase.eDSType.MSAccess);
                             }
                         }
 
                         if (excelFilePath.ToLower().EndsWith(".xlsx"))
                         {
-                            DataSource.ExporttoExcel(DSTableName, excelFilePath, excelSheetName,query.ToLower());
+                            DataSource.ExporttoExcel(DSTableName, excelFilePath, excelSheetName, query.ToLower());
                         }
                         else
                         {
@@ -225,7 +226,7 @@ namespace GingerCore.Actions
                         }
                         else
                         {
-                            Error = "No table present in the DataSource with the name ="+ DSTableName;
+                            Error = "No table present in the DataSource with the name =" + DSTableName;
                         }
                         break;
                     default:
@@ -242,7 +243,7 @@ namespace GingerCore.Actions
             public static readonly string DSName = "DSName";
             public static readonly string DSTableName = "DSTableName";
 
-            
+
             public static readonly string ControlAction = "ControlAction";
             public static readonly string Identifier = "Identifier";
 
@@ -254,7 +255,7 @@ namespace GingerCore.Actions
             public static readonly string QueryValue = "QueryValue";
             public static readonly string ColSelectorValue = "ColSelectorValue";
             public static readonly string WhereOperator = "WhereOperator";
-            
+
             public static readonly string WhereProperty = "WhereProperty";
 
             public static readonly string LocateColTitle = "LocateColTitle";
@@ -262,13 +263,13 @@ namespace GingerCore.Actions
             public static readonly string LocateRowValue = "LocateRowValue";
 
             public static readonly string ByRowNum = "ByRowNum";
-            public static readonly string ByNextAvailable = "ByNextAvailable";            
+            public static readonly string ByNextAvailable = "ByNextAvailable";
             public static readonly string ByWhere = "ByWhere";
 
             public static readonly string WhereColSelector = "WhereColSelector";
             public static readonly string WhereColumnTitle = "WhereColumnTitle";
             public static readonly string WhereColumnValue = "WhereColumnValue";
-            
+
 
             public static readonly string ValueExp = "ValueExpression";
 
@@ -277,25 +278,90 @@ namespace GingerCore.Actions
             public static readonly string ExcelPath = "ExcelPath";
             public static readonly string ExcelSheetName = "ExcelSheetName";
 
-            
+
         }
 
+        private eControlAction mControlAction;
         [IsSerializedForLocalRepository]
-        public eControlAction ControlAction { get; set; }
+        public eControlAction ControlAction
+        {
+            get
+            {
+                return mControlAction;
+            }
+            set
+            {
+                if (mControlAction != value)
+                {
+                    mControlAction = value;
+                    OnPropertyChanged(nameof(ControlAction));
+                }
+            }
+        }
 
+        private string mValueExp;
         [IsSerializedForLocalRepository]
-        public string ValueExp { get; set; }
-        
+        public string ValueExp
+        {
+            get
+            {
+                return mValueExp;
+            }
+            set
+            {
+                if (mValueExp != value)
+                {
+                    mValueExp = value;
+                    OnPropertyChanged(nameof(ValueExp));
+                }
+            }
+        }
+
         public string VarName { get; set; }
 
         [IsSerializedForLocalRepository]
         public string ValueUC { get; set; }
 
-        //[IsSerializedForLocalRepository]
-        public ObservableList<ActDSConditon> WhereConditions { get; set; }
-
+        private ObservableList<ActDSConditon> mWhereConditions;
         [IsSerializedForLocalRepository]
-        public ExportToExcelConfig ExcelConfig { get; set; }
+        public ObservableList<ActDSConditon> WhereConditions
+        {
+            get
+            {
+                return mWhereConditions;
+            }
+            set
+            {
+                if (mWhereConditions != value)
+                {
+                    mWhereConditions = value;
+                    OnPropertyChanged(nameof(WhereConditions));
+                }
+            }
+        }
+
+        private ExportToExcelConfig mExcelConfig;
+        [IsSerializedForLocalRepository]
+        public ExportToExcelConfig ExcelConfig {
+            get
+            {
+                return mExcelConfig;
+            }
+            set
+            {
+                if (mExcelConfig != value)
+                {
+                    if (mExcelConfig != null)
+                    {
+                        mExcelConfig.OnDirtyStatusChanged -= this.RaiseDirtyChanged;
+                    }
+                    mExcelConfig = value;
+                    mExcelConfig.StartDirtyTracking();
+                    mExcelConfig.OnDirtyStatusChanged += this.RaiseDirtyChanged;
+                    OnPropertyChanged(nameof(ExcelConfig));
+                }  
+            }
+        }
 
         public enum eControlAction
         {
@@ -364,36 +430,175 @@ namespace GingerCore.Actions
         }
 
 
+        private string mQueryValue;
         [IsSerializedForLocalRepository]
-        public string QueryValue { get; set; }
+        public string QueryValue {
+            get
+            {
+                return mQueryValue;
+            }
+            set
+            {
+                if (mQueryValue != value)
+                {
+                    mQueryValue = value;
+                    OnPropertyChanged(nameof(QueryValue));
+                }
+            }
+        }
 
-        
+        private string mColSelectorValue;
         [IsSerializedForLocalRepository]
-        public string ColSelectorValue { get; set; }
+        public string ColSelectorValue
+        {
+            get
+            {
+                return mColSelectorValue;
+            }
+            set
+            {
+                if (mColSelectorValue != value)
+                {
+                    mColSelectorValue = value;
+                    OnPropertyChanged(nameof(ColSelectorValue));
+                }
+            }
+        }
 
+        private string mDSName;
         [IsSerializedForLocalRepository]
-        public string DSName { get; set; }
+        public string DSName
+        {
+            get
+            {
+                return mDSName;
+            }
+            set
+            {
+                if (mDSName != value)
+                {
+                    mDSName = value;
+                    OnPropertyChanged(nameof(DSName));
+                }
+            }
+        }
 
+        private bool mCustomized;
         [IsSerializedForLocalRepository]
-        public  bool Customized { get; set; }
+        public bool Customized
+        {
+            get
+            {
+                return mCustomized;
+            }
+            set
+            {
+                if (mCustomized != value)
+                {
+                    mCustomized = value;
+                    OnPropertyChanged(nameof(Customized));
+                }
+            }
+        }
 
+        private bool mByQuery;
         [IsSerializedForLocalRepository]
-        public  bool ByQuery { get; set; }
+        public bool ByQuery { get
+            {
+                return mByQuery;
+            }
+                set { 
+                mByQuery = value;
+                OnPropertyChanged(nameof(ByQuery));
+            }
+        }
 
+        private string mDSTableName;
         [IsSerializedForLocalRepository]
-        public string  DSTableName { get; set; }
+        public string DSTableName
+        {
+            get
+            {
+                return mDSTableName;
+            }
+            set
+            {
+                if(mDSTableName != value)
+                {
+                    mDSTableName = value;
+                    OnPropertyChanged(nameof(DSTableName));
+                }
+            }
+        }
 
+        private eRunColPropertyValue mWhereProperty;
         [IsSerializedForLocalRepository]
-        public eRunColPropertyValue WhereProperty { get; set; }
+        public eRunColPropertyValue WhereProperty {
+            get
+            {
+                return mWhereProperty;
+            }
+            set
+            {
+                if (mWhereProperty != value)
+                {
+                    mWhereProperty = value;
+                    OnPropertyChanged(nameof(WhereProperty));
+                }
+            }
+        }
 
+        private eRunColOperator mWhereOperator;
         [IsSerializedForLocalRepository]
-        public eRunColOperator WhereOperator { get; set; }
-           
-        [IsSerializedForLocalRepository]
-        public bool ByRowNum { get; set; }
+        public eRunColOperator WhereOperator {
+            get { return mWhereOperator; }
+            set
+            {
 
+                if (mWhereOperator != value)
+                {
+                    mWhereOperator = value;
+                    OnPropertyChanged(nameof(WhereOperator));
+                }
+            }
+        }
+
+        private bool mByRowNum;
         [IsSerializedForLocalRepository]
-        public int RowVal { get; set; }
+        public bool ByRowNum {
+            get
+            {
+                return mByRowNum;
+            }
+            set
+            {
+                if (mByRowNum != value)
+                {
+                    mByRowNum = value;
+                    OnPropertyChanged(nameof(ByRowNum));
+                }
+            }
+        }
+
+        private int mRowVal;
+        [IsSerializedForLocalRepository]
+        public int RowVal
+        {
+            get
+            {
+                return mRowVal;
+            }
+            set
+            {
+                if (mRowVal != value)
+                {
+                    mRowVal = value;
+                    OnPropertyChanged(nameof(RowVal));
+                }
+            }
+        }
+
+
         [IsSerializedForLocalRepository]
         public bool ByNextAvailable { get; set; }
 
@@ -411,27 +616,31 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string WhereColumnTitle { get; set; }
         [IsSerializedForLocalRepository]
-        public string WhereColumnValue { get; set; }       
-       
+        public string WhereColumnValue { get; set; }
+
         [IsSerializedForLocalRepository]
-        public string LocateColTitle{ get; set; }
+        public string LocateColTitle { get; set; }
         [IsSerializedForLocalRepository]
         public string LocateRowType { get; set; }
         [IsSerializedForLocalRepository]
-        public string LocateRowValue { get;
-            set; }
+        public string LocateRowValue
+        {
+            get;
+            set;
+        }
 
         string mExcelPath;
         [IsSerializedForLocalRepository]
         public string ExcelPath
         {
-            get { return mExcelPath;  }
-            set {
+            get { return mExcelPath; }
+            set
+            {
 
                 if (mExcelPath != value)
                 {
                     mExcelPath = value;
-                    OnPropertyChanged(nameof(ExcelPath)); 
+                    OnPropertyChanged(nameof(ExcelPath));
                 }
             }
         }
@@ -462,24 +671,34 @@ namespace GingerCore.Actions
 
         public void AddDSCondition(ActDSConditon.eCondition wCond, string wColName, ActDSConditon.eOperator wOper, string wValue, List<string> mColName)
         {
-            
+
             ActDSConditon ADSC = new ActDSConditon();
             ObservableList<string> Condition = new ObservableList<string>();
             if (wCond != ActDSConditon.eCondition.EMPTY)
+            {
                 foreach (ActDSConditon.eCondition item in Enum.GetValues(typeof(ActDSConditon.eCondition)))
+                {
                     if (item.ToString() != "EMPTY")
+                    {
                         Condition.Add(item.ToString());
+                    }
+                }
+            }
+
             List<string> colNames = new List<string>();
             foreach (string sColName in mColName)
+            {
                 colNames.Add(sColName);
+            }
+
             ADSC.PossibleCondValues = Condition;
             ADSC.PossibleColumnValues = colNames;
             WhereConditions.Add(ADSC);
-               
-            ADSC.wCondition = wCond;            
-            ADSC.wTableColumn = wColName;            
+
+            ADSC.wCondition = wCond;
+            ADSC.wTableColumn = wColName;
             ADSC.wOperator = wOper;
-            ADSC.wValue = wValue;                          
+            ADSC.wValue = wValue;
         }
 
         public void UpdateDSConditionColumns(List<string> mColName)
@@ -492,8 +711,10 @@ namespace GingerCore.Actions
             {
                 ADSC.PossibleColumnValues = mColName;
                 if (!mColName.Contains(ADSC.wTableColumn))
+                {
                     ADSC.wTableColumn = mColName[0];
-            }            
+                }
+            }
         }
-        }
+    }
 }

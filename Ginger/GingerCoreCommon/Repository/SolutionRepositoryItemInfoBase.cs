@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,12 +21,12 @@ using System;
 namespace Amdocs.Ginger.Repository
 {
     public abstract class SolutionRepositoryItemInfoBase
-    {      
+    {
         public Type ItemType;
 
         public string ItemFileSystemRootFolder { get; set; }
-        
-        public abstract RepositoryFolderBase ItemRootRepositoryFolder { get;  }
+
+        public abstract RepositoryFolderBase ItemRootRepositoryFolder { get; }
 
         /// <summary>
         /// Get the parent folder of the Repository Item

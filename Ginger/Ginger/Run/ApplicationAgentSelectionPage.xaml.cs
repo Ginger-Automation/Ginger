@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ namespace Ginger.Run
             grdPossibleAgents.InitViewItems();
 
             grdPossibleAgents.Grid.SelectionMode = DataGridSelectionMode.Single;
-            grdPossibleAgents.RowDoubleClick +=grdPossibleAgents_RowDoubleClick;
+            grdPossibleAgents.RowDoubleClick += grdPossibleAgents_RowDoubleClick;
         }
 
         private void SetPossibleAgentsGridData()
@@ -66,7 +66,7 @@ namespace Ginger.Run
             if (mApplicationAgent != null)
             {
                 //find out the target application platform
-                ApplicationPlatform ap = (from x in  WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mApplicationAgent.AppName select x).FirstOrDefault();
+                ApplicationPlatform ap = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mApplicationAgent.AppName select x).FirstOrDefault();
                 if (ap != null)
                 {
                     ePlatformType appPlatform = ap.Platform;
@@ -81,10 +81,15 @@ namespace Ginger.Run
                         foreach (ApplicationAgent mappedApp in mappedApps)
                         {
                             if (mappedApp.Agent.Platform == appPlatform && mappedApp != mApplicationAgent)
+                            {
                                 optionalAgentsList.Remove(mappedApp.Agent);
+                            }
                         }
 
-                        foreach (Agent agent in optionalAgentsList) optionalAgents.Add(agent);
+                        foreach (Agent agent in optionalAgentsList)
+                        {
+                            optionalAgents.Add(agent);
+                        }
                     }
                 }
             }
@@ -101,15 +106,19 @@ namespace Ginger.Run
             }
 
             if (optionalAgents.Count == 0)
+            {
                 Reporter.ToUser(eUserMsgKey.NoOptionalAgent);
+            }
 
             grdPossibleAgents.DataSourceList = optionalAgents;
 
             //select the current mapped agent in the list
-            foreach(Agent agent in optionalAgents)
+            foreach (Agent agent in optionalAgents)
             {
                 if (agent == mApplicationAgent.Agent)
+                {
                     grdPossibleAgents.Grid.SelectedItem = agent;
+                }
             }
         }
 
@@ -122,7 +131,7 @@ namespace Ginger.Run
             ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(mapBtn);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "'"+mApplicationAgent.AppName+"'- Agent Mapping", this, winButtons, true, "Cancel");
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "'" + mApplicationAgent.AppName + "'- Agent Mapping", this, winButtons, true, "Cancel");
         }
 
         private void mapBtn_Click(object sender, RoutedEventArgs e)
@@ -148,9 +157,11 @@ namespace Ginger.Run
                 mApplicationAgent.Agent = selectedAgent;
 
                 //save last used agent on the Solution Target Applications
-                ApplicationPlatform ap =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == mApplicationAgent.AppName).FirstOrDefault();
+                ApplicationPlatform ap = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == mApplicationAgent.AppName);
                 if (ap != null)
+                {
                     ap.LastMappedAgentName = selectedAgent.Name;
+                }
             }
 
             _pageGenericWin.Close();

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,11 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore.Helpers;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run;
-using GingerCore.Platforms;
 using Amdocs.Ginger.Repository;
+using GingerCore.Platforms;
 using System;
 using System.Collections.Generic;
 
@@ -35,7 +34,7 @@ namespace GingerCore.Actions.WebServices
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
         public override bool IsSelectableAction { get { return true; } }
 
-        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH) 
+        public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you want to perform  a SOAP Action.");
             TBH.AddLineBreak();
@@ -80,10 +79,10 @@ namespace GingerCore.Actions.WebServices
             }
 
             platformAction.InputParams.Add("Headers", sHttpHeaders);
-     
 
 
-           
+
+
 
 
             return platformAction;

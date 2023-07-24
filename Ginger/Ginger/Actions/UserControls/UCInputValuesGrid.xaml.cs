@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger.Actions
 {
@@ -54,7 +54,7 @@ namespace Ginger.Actions
         {
             mContext = context;
             DataSource = dataSource;
-            SetVEGrid(gridTitle, paramTitle, valueTitle,  valueForDriverTitle);
+            SetVEGrid(gridTitle, paramTitle, valueTitle, valueForDriverTitle);
         }
 
         public void SetVEGrid(string gridTitle, string paramTitle, string valueTitle, string valueForDriverTitle)
@@ -77,7 +77,7 @@ namespace Ginger.Actions
             VEGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddRow));
         }
 
-         private void VEGridInputGridVEButton_Click(object sender, RoutedEventArgs e)
+        private void VEGridInputGridVEButton_Click(object sender, RoutedEventArgs e)
         {
             ActInputValue AIV = (ActInputValue)VEGrid.CurrentItem;
             ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(AIV, nameof(ActInputValue.Value), mContext);

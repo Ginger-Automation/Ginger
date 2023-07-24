@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.SupportSimulation));
             }
 
-            if(pageViewMode == Ginger.General.eRIPageViewMode.Add)
+            if (pageViewMode == Ginger.General.eRIPageViewMode.Add)
             {
                 xOutputValuesGrid.ShowPaste = Visibility.Visible;
             }
@@ -88,7 +88,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 }
             }
             else
+            {
                 BrowseAndParseResponseFile();
+            }
         }
 
         private void BrowseAndParseResponseFile()
@@ -125,9 +127,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void RefreshOutputColumns(object sender, RoutedEventArgs e)
         {
             if (mApplicationAPIModel.SupportSimulation)
+            {
                 xOutputValuesGrid.ChangeGridView(eGridView.All.ToString());
+            }
             else
+            {
                 xOutputValuesGrid.ChangeGridView(eGridView.NonSimulation.ToString());
+            }
         }
 
         private void SetActReturnValuesGrid()
@@ -159,9 +165,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             xOutputValuesGrid.InitViewItems();
 
             if (mApplicationAPIModel.SupportSimulation == true)
+            {
                 xOutputValuesGrid.ChangeGridView(eGridView.All.ToString());
+            }
             else
+            {
                 xOutputValuesGrid.ChangeGridView(eGridView.NonSimulation.ToString());
+            }
 
             xOutputValuesGrid.ShowTitle = Visibility.Collapsed;
             xOutputValuesGrid.ShowViewCombo = Visibility.Collapsed;
@@ -175,7 +185,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             AppModelParameter selectedParam = ParamSelectionPage.ShowAsWindow();
 
             if (selectedParam != null)
+            {
                 ((ActReturnValue)xOutputValuesGrid.Grid.SelectedItem).Expected = GetParamWithStringTemplate(selectedParam);
+            }
         }
 
         private void SimulatedOutputGridVEButton_Click(object sender, RoutedEventArgs e)
@@ -184,7 +196,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             AppModelParameter selectedParam = ParamSelectionPage.ShowAsWindow();
 
             if (selectedParam != null)
+            {
                 ((ActReturnValue)xOutputValuesGrid.Grid.SelectedItem).SimulatedActual = GetParamWithStringTemplate(selectedParam);
+            }
         }
 
 
@@ -194,7 +208,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             AppModelParameter selectedParam = ParamSelectionPage.ShowAsWindow();
 
             if (selectedParam != null)
+            {
                 ((ActReturnValue)xOutputValuesGrid.Grid.SelectedItem).Param = GetParamWithStringTemplate(selectedParam);
+            }
         }
 
         private void GridPathVEButton_Click(object sender, RoutedEventArgs e)
@@ -203,7 +219,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             AppModelParameter selectedParam = ParamSelectionPage.ShowAsWindow();
 
             if (selectedParam != null)
+            {
                 ((ActReturnValue)xOutputValuesGrid.Grid.SelectedItem).Path = GetParamWithStringTemplate(selectedParam);
+            }
         }
 
         private string GetParamWithStringTemplate(AppModelParameter param)
@@ -243,10 +261,25 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 System.Globalization.CultureInfo culture)
         {
             string status = value.ToString();
-            if (status.Equals(ActReturnValue.eStatus.Passed.ToString())) return System.Windows.Media.Brushes.Green;//System.Drawing.Brushes.Green;
-            if (status.Equals(ActReturnValue.eStatus.Failed.ToString())) return System.Windows.Media.Brushes.Red;
-            if (status.Equals(ActReturnValue.eStatus.Pending.ToString())) return System.Windows.Media.Brushes.Orange;
-            if (status.Equals(ActReturnValue.eStatus.Skipped.ToString())) return System.Windows.Media.Brushes.Black;
+            if (status.Equals(ActReturnValue.eStatus.Passed.ToString()))
+            {
+                return System.Windows.Media.Brushes.Green;//System.Drawing.Brushes.Green;
+            }
+
+            if (status.Equals(ActReturnValue.eStatus.Failed.ToString()))
+            {
+                return System.Windows.Media.Brushes.Red;
+            }
+
+            if (status.Equals(ActReturnValue.eStatus.Pending.ToString()))
+            {
+                return System.Windows.Media.Brushes.Orange;
+            }
+
+            if (status.Equals(ActReturnValue.eStatus.Skipped.ToString()))
+            {
+                return System.Windows.Media.Brushes.Black;
+            }
 
             return System.Drawing.Brushes.Gray;
         }

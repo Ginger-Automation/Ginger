@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ namespace Ginger.Imports.CDL
     {
         public ImportCDLPage()
         {
-            InitializeComponent();            
+            InitializeComponent();
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -36,7 +36,7 @@ namespace Ginger.Imports.CDL
             switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    
+
 
                     break;
                 case EventType.Active:

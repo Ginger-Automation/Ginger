@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerCore;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -62,20 +61,20 @@ namespace Ginger.UserControlsLib.VisualFlow
 
         Path path = new Path();
 
-        public FlowLink(FlowElement Source, FlowElement Destination,bool fromrunTab=false)
+        public FlowLink(FlowElement Source, FlowElement Destination, bool fromrunTab = false)
         {
             this.Source = Source;
             this.Destination = Destination;
-            if(!fromrunTab)
+            if (!fromrunTab)
             {
                 this.MouseLeftButtonDown += GraphEdge_MouseLeftButtonDown;
-            }            
+            }
         }
 
         private void GraphEdge_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             //TODO: move to Canvas to handle
-            SetHighlight(true);                    
+            SetHighlight(true);
             Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Conn click");
         }
 
@@ -95,7 +94,7 @@ namespace Ginger.UserControlsLib.VisualFlow
                     da.Add(5);
                     da.Add(2);
                     shape.StrokeDashArray = da;
-                    
+
                     this.Content = path;
                     break;
                 case eLinkStyle.DataArrow:
@@ -125,12 +124,12 @@ namespace Ginger.UserControlsLib.VisualFlow
             path.Stroke = Brushes.Black;
             path.MinWidth = 1;
             path.MinHeight = 1;
-            
+
             //// Now we set the path to draw a line from source to destination
             string PathData = "";
             PathData += "M " + p1.X + "," + p1.Y;   // M is Move to abs point
             PathData += " L " + p2.X + "," + p2.Y;  // L is draw a line
-            path.Data = Geometry.Parse(PathData);  
+            path.Data = Geometry.Parse(PathData);
             return path;
         }
 
@@ -205,7 +204,11 @@ namespace Ginger.UserControlsLib.VisualFlow
 
         Point GetP2()
         {
-            if (Destination == null) return new Point(0,0); // temp to fix null dest
+            if (Destination == null)
+            {
+                return new Point(0, 0); // temp to fix null dest
+            }
+
             Point p2 = new Point(Destination.Margin.Left, Destination.Margin.Top);
             switch (DestinationPosition)
             {
@@ -231,7 +234,7 @@ namespace Ginger.UserControlsLib.VisualFlow
                     break;
             }
             return p2;
-         }
+        }
 
         public void SetHighlight(bool visible)
         {
@@ -241,5 +244,5 @@ namespace Ginger.UserControlsLib.VisualFlow
                 path.StrokeThickness = 3;
             }
         }
-       }
-   }
+    }
+}

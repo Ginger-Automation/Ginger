@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,37 +22,37 @@ using GingerWPF.UserControlsLib.UCTreeView;
 
 namespace Ginger.WindowExplorer.Java
 {
-    public class JavaElementInfoConverter 
+    public class JavaElementInfoConverter
     {
         internal static ITreeViewItem GetTreeViewItemFor(ElementInfo CI)
         {
-          
+
             JavaElementInfo JEI = (JavaElementInfo)CI;
             switch (JEI.ElementTypeEnum)
             {
                 case eElementType.TextBox:
                     JavaTextBoxTreeItem JTBTI = new JavaTextBoxTreeItem();
-                    JTBTI.JavaElementInfo = JEI;                    
+                    JTBTI.JavaElementInfo = JEI;
                     return JTBTI;
                 case eElementType.Button:
                     JavaButtonTreeItem JBTI = new JavaButtonTreeItem();
-                    JBTI.JavaElementInfo = JEI;                                        
+                    JBTI.JavaElementInfo = JEI;
                     return JBTI;
                 case eElementType.Label:
                     JavaLabelTreeItem JLTI = new JavaLabelTreeItem();
-                    JLTI.JavaElementInfo = JEI;                                        
+                    JLTI.JavaElementInfo = JEI;
                     return JLTI;
                 case eElementType.Browser:
                     JavaBrowserTreeItem JBRTI = new JavaBrowserTreeItem();
-                    JBRTI.JavaElementInfo = JEI;                    
+                    JBRTI.JavaElementInfo = JEI;
                     return JBRTI;
                 case eElementType.CheckBox:
                     JavaCheckBoxTreeItem JCBTI = new JavaCheckBoxTreeItem();
-                    JCBTI.JavaElementInfo = JEI;                    
+                    JCBTI.JavaElementInfo = JEI;
                     return JCBTI;
                 case eElementType.RadioButton:
                     JavaRadioButtonTreeItem JRBTI = new JavaRadioButtonTreeItem();
-                    JRBTI.JavaElementInfo = JEI;                    
+                    JRBTI.JavaElementInfo = JEI;
                     return JRBTI;
                 case eElementType.DatePicker:
                     JavaDatePickerTreeItem JDP = new JavaDatePickerTreeItem();
@@ -60,19 +60,19 @@ namespace Ginger.WindowExplorer.Java
                     return JDP;
                 case eElementType.ComboBox:
                     JavaComboBoxTreeItem JCoBTI = new JavaComboBoxTreeItem();
-                    JCoBTI.JavaElementInfo = JEI;                    
+                    JCoBTI.JavaElementInfo = JEI;
                     return JCoBTI;
                 case eElementType.List:
                     JavaListTreeItem JLiTI = new JavaListTreeItem();
-                    JLiTI.JavaElementInfo = JEI;                    
+                    JLiTI.JavaElementInfo = JEI;
                     return JLiTI;
                 case eElementType.Table:
                     JavaTableTreeItem JTiTI = new JavaTableTreeItem();
-                    JTiTI.JavaElementInfo = JEI;                    
+                    JTiTI.JavaElementInfo = JEI;
                     return JTiTI;
                 case eElementType.ScrollBar:
                     JavaScrollTreeItem JSTI = new JavaScrollTreeItem();
-                    JSTI.JavaElementInfo = JEI;                    
+                    JSTI.JavaElementInfo = JEI;
                     return JSTI;
                 case eElementType.TreeView:
                     JavaTreeTreeItem JTRTI = new JavaTreeTreeItem();
@@ -80,11 +80,11 @@ namespace Ginger.WindowExplorer.Java
                     return JTRTI;
                 case eElementType.MenuItem:
                     JavaMenuTreeItem JMTI = new JavaMenuTreeItem();
-                    JMTI.JavaElementInfo = JEI;                    
+                    JMTI.JavaElementInfo = JEI;
                     return JMTI;
                 case eElementType.Tab:
                     JavaTabTreeItem JTTI = new JavaTabTreeItem();
-                    JTTI.JavaElementInfo = JEI;                    
+                    JTTI.JavaElementInfo = JEI;
                     return JTTI;
                 case eElementType.Iframe:
                     JavaInternalFrameTitleTreeItem JIFTTI = new JavaInternalFrameTitleTreeItem();
@@ -92,9 +92,9 @@ namespace Ginger.WindowExplorer.Java
                     return JIFTTI;
                 default:
                     JavaElementTreeItem JETI = new JavaElementTreeItem();
-                    JETI.JavaElementInfo = JEI;                    
+                    JETI.JavaElementInfo = JEI;
                     return JETI;
-            }	
-        }
+            }
         }
     }
+}

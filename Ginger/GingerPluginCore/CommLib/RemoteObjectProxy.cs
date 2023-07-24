@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,25 +24,25 @@ namespace GingerCoreNET.Drivers.CommunicationProtocol
 {
     // a wrapper class for the objects requested by the clients
     public class RemoteObjectProxy<T> : DispatchProxy
-    {        
+    {
         // Socket client which is used to communicate with the RemoteObjectsServer
         public RemoteObjectsClient mRemoteObjectsClient;
 
         public Guid RemoteObjectGuid { get; set; }
-        
+
         protected override object Invoke(MethodInfo targetMethod, object[] args)
         {
             try
-            {     
-                var result = mRemoteObjectsClient.Invoke(this, targetMethod, args);             
+            {
+                var result = mRemoteObjectsClient.Invoke(this, targetMethod, args);
                 return result;
             }
             catch (Exception ex) when (ex is TargetInvocationException)
-            {                
-                throw ex; 
+            {
+                throw ex;
             }
         }
-        
+
         internal static T Create(RemoteObjectsClient remoteObjectsClient, Guid guid)
         {
             object proxy = Create<T, RemoteObjectProxy<T>>();

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using GingerCore;
 using System;
 using System.Threading.Tasks;
 using System.Timers;
@@ -32,10 +31,10 @@ namespace Ginger
     /// </summary>
     public partial class GingerHelperWindow : Window
     {
-        public DateTime LoadStartTime {get;set;}
+        public DateTime LoadStartTime { get; set; }
 
         Timer t = null;
-    
+
         public GingerHelperWindow()
         {
             t = new Timer();
@@ -46,7 +45,7 @@ namespace Ginger
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             var desktopWorkingArea = System.Windows.SystemParameters.WorkArea;
-            this.Left = desktopWorkingArea.Left+ 5;
+            this.Left = desktopWorkingArea.Left + 5;
             this.Top = desktopWorkingArea.Bottom - this.Height - 5;
 
             //start timer

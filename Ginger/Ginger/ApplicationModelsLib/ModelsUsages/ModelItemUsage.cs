@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ namespace Ginger.ApplicationsModels.ModelsUsages
 
         public Activity HostActivity { get; set; }
 
-        public Act Action { get; set; } 
+        public Act Action { get; set; }
         public string HostActivityName { get; set; }
 
         public RepositoryItemBase UsageItem { get; set; }
@@ -130,7 +130,9 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                 }
             }
             if (ItemParts.Count > 0)
+            {
                 SelectedItemPart = ItemParts[0];
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

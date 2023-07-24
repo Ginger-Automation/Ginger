@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,28 +16,28 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using System;
 using System.ComponentModel;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.SolutionAutoSaveAndRecover
 {
     public enum eRecoveredItemStatus
     {
-        PendingRecover=1,
-        Recovered=2,
-        RecoveredFailed=3,
-        Deleted=4,
-        DeleteFailed=5
+        PendingRecover = 1,
+        Recovered = 2,
+        RecoveredFailed = 3,
+        Deleted = 4,
+        DeleteFailed = 5
     }
     public class RecoveredItem : INotifyPropertyChanged
     {
         public static string RecoverFolderPath = string.Empty;
-        
+
 
         public RepositoryItemBase RecoveredItemObject { get; set; }
 
-        
+
         public eRecoveredItemStatus mStatus { get; set; }
         public eRecoveredItemStatus Status
         {
@@ -58,7 +58,7 @@ namespace Ginger.SolutionAutoSaveAndRecover
         }
 
         string mRecoverPath = null;
-        public string RecoverPath 
+        public string RecoverPath
         {
             get
             {
@@ -73,12 +73,12 @@ namespace Ginger.SolutionAutoSaveAndRecover
                 mRecoverPath = value;
             }
         }
-       
+
         public string RecoverItemName
         {
             get
             {
-                if (RecoveredItemObject!=null)
+                if (RecoveredItemObject != null)
                 {
                     return RecoveredItemObject.ItemName;
                 }
@@ -90,9 +90,9 @@ namespace Ginger.SolutionAutoSaveAndRecover
         }
 
         public bool Selected { get; set; }
-       
-                
-        public string  RecoveredItemType
+
+
+        public string RecoveredItemType
         {
             get
             {

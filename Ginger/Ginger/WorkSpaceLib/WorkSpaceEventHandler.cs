@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ namespace GingerWPF.WorkSpaceLib
     // Ginger.exe Workspace Event Handler
 
     public class WorkSpaceEventHandler : IWorkSpaceEventHandler
-    {        
+    {
         public void AddApplication()
         {
         }
@@ -40,7 +40,7 @@ namespace GingerWPF.WorkSpaceLib
         }
 
         public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
-        {           
+        {
             SourceControlBase.eSourceControlType type = SourceControlIntegration.CheckForSolutionSourceControlType(solution.Folder, ref repositoryRootFolder);
             if (type == SourceControlBase.eSourceControlType.GIT)
             {
@@ -105,7 +105,7 @@ namespace GingerWPF.WorkSpaceLib
         public bool OpenEncryptionKeyHandler(Solution solution)
         {
             SolutionPage solutionPage = new SolutionPage();
-            if(solution==null)
+            if (solution == null)
             {
                 solutionPage.ShowAsWindow();
                 return true;

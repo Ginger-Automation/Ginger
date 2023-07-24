@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Windows.Controls;
-using GingerCoreNET.GeneralLib;
 
 namespace GingerWPF.UserControlsLib
 {
@@ -32,8 +32,8 @@ namespace GingerWPF.UserControlsLib
         public TreeViewExplorerPage(ITreeViewItem Root)
         {
             Init();
-            TreeViewItem r = MainTreeView.Tree.AddItem(Root);             
-            r.IsExpanded = true;            
+            TreeViewItem r = MainTreeView.Tree.AddItem(Root);
+            r.IsExpanded = true;
         }
 
         private void Init()
@@ -48,10 +48,10 @@ namespace GingerWPF.UserControlsLib
 
             MainTreeView.Tree.ItemSelected += MainTreeView_ItemSelected;
 
-            foreach(ITreeViewItem TVI in RootItems)
+            foreach (ITreeViewItem TVI in RootItems)
             {
                 TreeViewItem r = MainTreeView.Tree.AddItem(TVI);
-            }            
+            }
         }
 
         private void MainTreeView_ItemSelected(object sender, EventArgs e)
@@ -60,10 +60,10 @@ namespace GingerWPF.UserControlsLib
             ITreeViewItem TVObj = (ITreeViewItem)TVI.Tag;
             if (TVObj is ITreeViewItem)
             {
-                DetailsFrame.Content = TVObj.EditPage();                                
+                DetailsFrame.ClearAndSetContent(TVObj.EditPage());
             }
             else
-            {                
+            {
                 DetailsFrame.Content = "Object doesn't have edit page yet - " + TVObj.GetType().Name;
             }
         }

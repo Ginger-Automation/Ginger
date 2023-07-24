@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.DataSource;
-using Ginger.Repository;
 using GingerCore.DataSource;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -46,13 +42,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private RepositoryFolder<DataSourceBase> mDataSourcesRepositoryFolder;
 
 
-        public DataSourceFolderTreeItem(RepositoryFolder<DataSourceBase> repositoryFolder, eDataTableView TableView=eDataTableView.All)
+        public DataSourceFolderTreeItem(RepositoryFolder<DataSourceBase> repositoryFolder, eDataTableView TableView = eDataTableView.All)
         {
             mDataSourcesRepositoryFolder = repositoryFolder;
             mDataSourceView = TableView;
         }
 
-        
+
         Object ITreeViewItem.NodeObject()
         {
             return mDataSourcesRepositoryFolder;
@@ -67,7 +63,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {           
+        {
             return NewTVItemFolderHeaderStyle(mDataSourcesRepositoryFolder);
         }
 
@@ -85,7 +81,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             if (item is RepositoryFolderBase)
             {
-                return new DataSourceFolderTreeItem((RepositoryFolder<DataSourceBase>)item,mDataSourceView);
+                return new DataSourceFolderTreeItem((RepositoryFolder<DataSourceBase>)item, mDataSourceView);
             }
 
             throw new Exception("Error unknown item added to Agents folder");
@@ -131,7 +127,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 mDataSourcesPage = new DataSourcesPage();
             }
-            return mDataSourcesPage;            
+            return mDataSourcesPage;
         }
 
         ContextMenu ITreeViewItem.Menu()
@@ -145,9 +141,13 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
 
             if (IsGingerDefualtFolder)
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Data Source", allowCopyItems: false, allowSaveAll: false, allowCutItems: false, allowPaste: false, allowRenameFolder: false, allowDeleteFolder: false, allowDeleteAllItems: true);
+            }
             else
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, "Data Source", allowCopyItems: false, allowSaveAll: false, allowCutItems: false, allowPaste: false);
+            }
 
             AddSourceControlOptions(mContextMenu, false, false);
         }
@@ -157,9 +157,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             List<ITreeViewItem> childNodes = mTreeView.Tree.GetTreeNodeChildsIncludingSubChilds((ITreeViewItem)this);
 
             foreach (ITreeViewItem node in childNodes)
-            {               
+            {
                 if (node != null && node is DataSourceTableTreeItem)
-                {                    
+                {
                     ((DataSourceTableTreeItem)node).SaveTreeItem();
                 }
             }
@@ -176,7 +176,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 {
                     RepositoryItemBase RI = (RepositoryItemBase)node.NodeObject();
                     if (RI != null)
-                    {                        
+                    {
                         if (node is DataSourceTableTreeItem)
                         {
                             ((DataSourceTableTreeItem)node).SaveTreeItem();
@@ -196,10 +196,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
         }
         public override void AddTreeItem()
-        {            
+        {
             AddNewDataSourcePage ADSP = new AddNewDataSourcePage(mDataSourcesRepositoryFolder);
             ADSP.ShowAsWindow();
-           
+
             mTreeView.Tree.RefresTreeNodeChildrens(this);
         }
     }

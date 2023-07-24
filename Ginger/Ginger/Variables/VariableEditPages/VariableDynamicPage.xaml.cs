@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using GingerCore.Variables;
+using System.Windows.Controls;
 
 namespace Ginger.Variables
 {
@@ -30,13 +30,13 @@ namespace Ginger.Variables
         private VariableDynamic mVariableDynamic;
         private Context mContext;
         public VariableDynamicPage(VariableDynamic var, Context context)
-        {            
+        {
             InitializeComponent();
             mContext = context;
             mVariableDynamic = var;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueExpressionTextBox, TextBox.TextProperty, var, nameof(VariableDynamic.ValueExpression));
             ValueExpressionTextBox.Init(mContext, mVariableDynamic, nameof(VariableDynamic.ValueExpression));
-            mVariableDynamic.PropertyChanged +=mVariableDynamic_PropertyChanged; 
+            mVariableDynamic.PropertyChanged += mVariableDynamic_PropertyChanged;
         }
 
         private void mVariableDynamic_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

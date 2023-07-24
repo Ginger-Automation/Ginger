@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,32 +18,32 @@ limitations under the License.
 
 using System;
 
-namespace  Amdocs.Ginger.Plugin.Core.ActionsLib
+namespace Amdocs.Ginger.Plugin.Core.ActionsLib
 {
     public class UIElement
     {
-        public object ElementObject{ get; set; }
-            
-        public string ElementType { get; set; }        
-        
+        public object ElementObject { get; set; }
+
+        public string ElementType { get; set; }
+
         public string Value { get; set; }
-                
+
         public string Path { get; set; }
-        
+
         public string XPath { get; set; }
-                
+
         public Boolean IsExpandable { get; set; }
-        
+
         object mData { get; set; }
-      
+
         public int X { get; set; }
 
         public int Y { get; set; }
-        
+
         public int Width { get; set; }
-        
+
         public int Height { get; set; }
-        
+
         public bool Mandatory { get; set; }
 
         //TODO: Add a new class to keep data like for combo box items or datagrid list etc...

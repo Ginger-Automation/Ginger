@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Windows.Controls;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
 using GingerWPF.UserControlsLib.UCTreeView;
+using System;
+using System.Windows.Controls;
 
 namespace Ginger.Drivers.PowerBuilder
 {
     public class PBWindowTreeItem : PBControlTreeItemBase, ITreeViewItem
-    {        
+    {
         Object ITreeViewItem.NodeObject()
         {
             return base.UIAElementInfo;
@@ -35,7 +35,7 @@ namespace Ginger.Drivers.PowerBuilder
         {
             return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, ElementInfo.GetElementTypeImage(eElementType.Window));
         }
-        
+
         bool ITreeViewItem.IsExpandable()
         {
             return true;

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,19 +16,20 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
+using Ginger.Variables;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Ginger.AnalyzerLib
 {
@@ -36,7 +37,7 @@ namespace Ginger.AnalyzerLib
     {
         static string MissingTargetApp = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " is missing target Application(s)";
         static string MissingActivities = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " is missing " + GingerDicser.GetTermResValue(eTermResKey.Activities);
-        public  static readonly string LegacyOutPutValidationDescription = "Output validation contains legacy operators which are very slow and does not work on Linux";
+        public static readonly string LegacyOutPutValidationDescription = "Output validation contains legacy operators which are very slow and does not work on Linux";
         private static Regex rxVarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public BusinessFlow mBusinessFlow { get; set; }
         private Solution mSolution { get; set; }
@@ -48,9 +49,9 @@ namespace Ginger.AnalyzerLib
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
 
             // Check BF have Target Apps            
-            if (BusinessFlow.TargetApplications == null || BusinessFlow.TargetApplications.Count() == 0)
+            if (BusinessFlow.TargetApplications == null || !BusinessFlow.TargetApplications.Any())
             {
-                AnalyzeBusinessFlow ABF = new AnalyzeBusinessFlow();                    
+                AnalyzeBusinessFlow ABF = new AnalyzeBusinessFlow();
                 ABF.Description = MissingTargetApp;
                 ABF.UTDescription = "MissingTargetApp";
                 ABF.Details = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " doesn't have Target Application(s) defined";
@@ -71,7 +72,7 @@ namespace Ginger.AnalyzerLib
             }
 
             // Check BF have activities
-            if (BusinessFlow.Activities.Count() == 0)
+            if (!BusinessFlow.Activities.Any())
             {
                 AnalyzeBusinessFlow ABF = new AnalyzeBusinessFlow();
                 ABF.UTDescription = "MissingActivities";
@@ -111,7 +112,95 @@ namespace Ginger.AnalyzerLib
                 OutputValidationIssue.FixItHandler = FixOutputValidationIssue;
                 IssuesList.Add(OutputValidationIssue);
             }
+
+            IssuesList.AddRange(AnalyzeForInputValuesRules(BusinessFlow));
+
             return IssuesList;
+        }
+
+        public static List<AnalyzerItemBase> AnalyzeForInputValuesRules(BusinessFlow businessFlow)
+        {
+            List<AnalyzerItemBase> issuesList = new List<AnalyzerItemBase>();
+            ObservableList<VariableBase> bfInputVariables = businessFlow.GetBFandActivitiesVariabeles(true, true);
+            foreach (InputVariableRule ivr in businessFlow.InputVariableRules)
+            {
+                if (ivr.Active)
+                {
+                    VariableBase sVariable = bfInputVariables.FirstOrDefault(v => v.Guid == ivr.SourceVariableGuid);
+                    VariableBase tVariable = bfInputVariables.FirstOrDefault(v => v.Guid == ivr.TargetVariableGuid);
+                    if (sVariable == null || tVariable == null)
+                    {
+                        string vtype = string.Empty;
+                        if (tVariable == null)
+                        {
+                            vtype = "Target ";
+                        }
+                        else if (sVariable == null)
+                        {
+                            vtype = "Source ";
+                        }
+                        AnalyzeBusinessFlow AA = new AnalyzeBusinessFlow();
+                        AA.Description =  "The '" + vtype + GingerDicser.GetTermResValue(eTermResKey.Variable) + "' is missing in Input Variable Rule";
+                        AA.UTDescription = "MissingVariable";
+                        AA.Details = "The '" + vtype + GingerDicser.GetTermResValue(eTermResKey.Variable) + "' Does not exist In Input Variable Rule";
+                        AA.HowToFix = " Create new " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " or Delete it from the input variable rule";
+                        AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                        AA.IssueType = eType.Error;
+                        AA.Impact = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " will fail due to missing " + GingerDicser.GetTermResValue(eTermResKey.Variable);
+                        AA.Severity = eSeverity.High;
+                        AA.IssueCategory = eIssueCategory.MissingVariable;
+                        AA.ItemParent = businessFlow.Name;
+                        AA.ItemClass = "InputVariableRule";
+                        AA.Status = eStatus.NeedFix;
+                        issuesList.Add(AA);
+                    }
+                    else if (sVariable!=null && sVariable.GetType() == typeof(VariableSelectionList))
+                    {
+                        if (((VariableSelectionList)sVariable).OptionalValuesList.Where(x => x.Value == ivr.TriggerValue).Count() < 1)
+                        {
+                            AnalyzeBusinessFlow AA = new AnalyzeBusinessFlow();
+                            AA.Description =  "The 'Source " + GingerDicser.GetTermResValue(eTermResKey.Variable) + "' trigger value used in Input Variable Rule is  missing in Selection List " +
+                                                GingerDicser.GetTermResValue(eTermResKey.Variable) + ": " + sVariable.Name;
+                            AA.UTDescription = "MissingVariableValue";
+                            AA.Details = "The 'Source " + GingerDicser.GetTermResValue(eTermResKey.Variable) + "' trigger value used in Input Variable Rule is  missing in Selection List " +
+                                                GingerDicser.GetTermResValue(eTermResKey.Variable)+ ": " + sVariable.Name;
+                            AA.HowToFix = " Change 'Source " + GingerDicser.GetTermResValue(eTermResKey.Variable)  + " Trigger Value in Input Variable Rule";
+                            AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                            AA.IssueType = eType.Error;
+                            AA.Impact = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " will fail due to missing " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Value";
+                            AA.Severity = eSeverity.High;
+                            AA.IssueCategory = eIssueCategory.MissingVariable;
+                            AA.ItemParent = businessFlow.Name;
+                            AA.ItemClass = "InputVariableRule";
+                            AA.Status = eStatus.NeedFix;
+                            issuesList.Add(AA);
+                        }
+                    }
+                    else if (tVariable!=null && tVariable.GetType() == typeof(VariableSelectionList) && (ivr.OperationType == InputVariableRule.eInputVariableOperation.SetValue || ivr.OperationType == InputVariableRule.eInputVariableOperation.SetOptionalValues))
+                    {
+                        if (((VariableSelectionList)tVariable).OptionalValuesList.Where(x => x.Value == ivr.OperationValue).Count() < 1)
+                        {
+                            AnalyzeBusinessFlow AA = new AnalyzeBusinessFlow();
+                            AA.Description =  "The 'Target " + GingerDicser.GetTermResValue(eTermResKey.Variable) + "' trigger value used in Input Variable Rule is  missing in Selection List " +
+                                                GingerDicser.GetTermResValue(eTermResKey.Variable) + ": " + tVariable.Name;
+                            AA.UTDescription = "MissingVariableValue";
+                            AA.Details = "The 'Target " + GingerDicser.GetTermResValue(eTermResKey.Variable) + "' trigger value used in Input Variable Rule is  missing in Selection List " +
+                                                GingerDicser.GetTermResValue(eTermResKey.Variable)+ ": " + tVariable.Name;
+                            AA.HowToFix = " Change 'Target " + GingerDicser.GetTermResValue(eTermResKey.Variable)  + " Trigger Value in Input Variable Rule";
+                            AA.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                            AA.IssueType = eType.Error;
+                            AA.Impact = GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " will fail due to missing " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Value";
+                            AA.Severity = eSeverity.High;
+                            AA.IssueCategory = eIssueCategory.MissingVariable;
+                            AA.ItemParent = businessFlow.Name;
+                            AA.ItemClass = "InputVariableRule";
+                            AA.Status = eStatus.NeedFix;
+                            issuesList.Add(AA);
+                        }
+                    } 
+                }
+            }
+            return issuesList;
         }
 
         public static List<AnalyzerItemBase> AnalyzeForMissingMandatoryInputValues(BusinessFlow businessFlow)
@@ -152,7 +241,7 @@ namespace Ginger.AnalyzerLib
             int FixedIssueCount = 0;
             foreach (ActReturnValue ARV in ABF.ReturnValues)
             {
-                if (!string.IsNullOrEmpty(ARV.Expected)&&!ARV.Expected.Contains("{"))
+                if (!string.IsNullOrEmpty(ARV.Expected) && !ARV.Expected.Contains("{"))
                 {
                     ARV.Operator = Amdocs.Ginger.Common.Expressions.eOperator.Equals;
                 }
@@ -171,16 +260,16 @@ namespace Ginger.AnalyzerLib
                             }
                         }
 
-                       
+
                     }
                 }
             }
 
-            if(FixedIssueCount==0)
+            if (FixedIssueCount == 0)
             {
                 ABF.Status = eStatus.CannotFix;
             }
-            else if (FixedIssueCount< issueCount)
+            else if (FixedIssueCount < issueCount)
             {
                 ABF.Status = eStatus.PartiallyFixed;
             }
@@ -196,9 +285,9 @@ namespace Ginger.AnalyzerLib
 
             IEnumerable<ObservableList<IAct>> ActionList = businessFlow.Activities.Select(x => x.Acts);
 
-            foreach(ObservableList<IAct> ActList in ActionList)
+            foreach (ObservableList<IAct> ActList in ActionList)
             {
-                foreach(Act action in ActList)
+                foreach (Act action in ActList)
                 {
                     ABF.ReturnValues.AddRange(action.ActReturnValues.Where(x => x.Operator == Amdocs.Ginger.Common.Expressions.eOperator.Legacy));
                 }
@@ -211,10 +300,10 @@ namespace Ginger.AnalyzerLib
             // Take the target app from the solution
             AnalyzeBusinessFlow ABF = (AnalyzeBusinessFlow)sender;
             // Do recheck
-            if (ABF.mBusinessFlow.TargetApplications.Count() == 0)
+            if (!ABF.mBusinessFlow.TargetApplications.Any())
             {
-                if (ABF.mSolution.ApplicationPlatforms.Count == 0)
-                {                    
+                if (!ABF.mSolution.ApplicationPlatforms.Any())
+                {
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The default Application Platform Info is missing, please go to Solution level to add at least one Target Application.");
                     return;
                 }
@@ -222,6 +311,6 @@ namespace Ginger.AnalyzerLib
                 ABF.mBusinessFlow.TargetApplications.Add(new TargetApplication() { AppName = SAN });
                 ABF.Status = eStatus.Fixed;
             }
-        }        
+        }
     }
 }

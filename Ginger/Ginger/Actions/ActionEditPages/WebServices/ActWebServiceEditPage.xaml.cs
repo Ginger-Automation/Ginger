@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
@@ -53,7 +52,7 @@ namespace Ginger.Actions.WebServices
             URLPasswordUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.URLPass, nameof(ActInputValue.Value));
             URLUserUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.URLUser, nameof(ActInputValue.Value));
             SetDynamicGrid();
-            DynamicXMLElementsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddDynamicXMLelement));          
+            DynamicXMLElementsGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddDynamicXMLelement));
         }
 
         private void AddDynamicXMLelement(object sender, RoutedEventArgs e)
@@ -74,21 +73,25 @@ namespace Ginger.Actions.WebServices
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header="Locator" ,WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header="Replace With" ,WidthWeight = 150 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["InputValueExpressionButton"] });            
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Param), Header = "Locator", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.Value), Header = "Replace With", WidthWeight = 150 });
+            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 30, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["InputValueExpressionButton"] });
             view.GridColsView.Add(new GridColView() { Field = nameof(ActInputValue.ValueForDriver), Header = "Replace With Value For Driver", WidthWeight = 150, BindingMode = BindingMode.OneWay });
 
             DynamicXMLElementsGrid.SetAllColumnsDefaultView(view);
             DynamicXMLElementsGrid.InitViewItems();
 
-           DynamicXMLElementsGrid.DataSourceList = mAct.DynamicXMLElements;
+            DynamicXMLElementsGrid.DataSourceList = mAct.DynamicXMLElements;
         }
 
         private void CustomNetworkCreds_Checked(object sender, RoutedEventArgs e)
         {
             CheckBox cb = sender as CheckBox;
-            if (CustomNetworkCreds == null || DefaultNetworkCreds == null) return;
+            if (CustomNetworkCreds == null || DefaultNetworkCreds == null)
+            {
+                return;
+            }
+
             if (cb.IsChecked == true)
             {
                 DefaultNetworkCreds.IsChecked = false;
@@ -112,7 +115,11 @@ namespace Ginger.Actions.WebServices
         private void DefaultNetworkCreds_Checked(object sender, RoutedEventArgs e)
         {
             CheckBox cb = sender as CheckBox;
-            if (CustomNetworkCreds == null || DefaultNetworkCreds == null) return;
+            if (CustomNetworkCreds == null || DefaultNetworkCreds == null)
+            {
+                return;
+            }
+
             if (cb.IsChecked == true)
             {
                 CustomNetworkCreds.IsChecked = false;
@@ -132,7 +139,7 @@ namespace Ginger.Actions.WebServices
                 RowCreds.Height = new GridLength(185);
             }
         }
-        
+
         private void BrowseXmlPathButton_Click(object sender, RoutedEventArgs e)
         {
             if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()

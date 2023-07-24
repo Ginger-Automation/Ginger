@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,22 +17,19 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using Ginger.Drivers.Common;
+using GingerCore.Actions;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Ginger.Drivers.Common;
-using GingerCore.Actions;
-using GingerCore.Drivers;
-using GingerCore.Drivers.Appium;
-using GingerCore.Drivers.Common;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 using System.Xml;
 
 namespace Ginger.WindowExplorer.Appium
 {
-    public class AppiumElementTreeItemBase :  ITreeViewItem, IWindowExplorerTreeItem
+    public class AppiumElementTreeItemBase : ITreeViewItem, IWindowExplorerTreeItem
     {
         public ITreeView TreeView
         {
@@ -52,18 +49,20 @@ namespace Ginger.WindowExplorer.Appium
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             ObservableList<Act> list = new ObservableList<Act>();
-            
-            list.Add(new ActGenElement(){
-                 Description = "Click",
-                 GenElementAction = ActGenElement.eGenElementAction.Click
+
+            list.Add(new ActGenElement()
+            {
+                Description = "Click",
+                GenElementAction = ActGenElement.eGenElementAction.Click
             });
 
-            list.Add(new ActGenElement(){
-                 Description = "Get Custom Attribute text",
-                 GenElementAction = ActGenElement.eGenElementAction.GetCustomAttribute,
-                 Value = "text"
+            list.Add(new ActGenElement()
+            {
+                Description = "Get Custom Attribute text",
+                GenElementAction = ActGenElement.eGenElementAction.GetCustomAttribute,
+                Value = "text"
             });
-            
+
             return list;
         }
 
@@ -79,7 +78,7 @@ namespace Ginger.WindowExplorer.Appium
 
             foreach (ElementInfo EI in Childrens)
             {
-                ITreeViewItem TVI = AppiumElementInfoConverter.GetTreeViewItemFor(EI);                                
+                ITreeViewItem TVI = AppiumElementInfoConverter.GetTreeViewItemFor(EI);
                 list.Add(TVI);
             }
             return list;
@@ -90,7 +89,7 @@ namespace Ginger.WindowExplorer.Appium
 
         bool ITreeViewItem.IsExpandable()
         {
-            return (ElementInfo.ElementObject as XmlNode).HasChildNodes;            
+            return (ElementInfo.ElementObject as XmlNode).HasChildNodes;
         }
 
 
@@ -129,7 +128,7 @@ namespace Ginger.WindowExplorer.Appium
 
 
             return ElementInfo.WindowExplorer.GetElementProperties(ElementInfo);
-            
+
         }
 
         public ObservableList<ActInputValue> GetItemSpecificActionInputValues()

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using System.Collections.Generic;
+using GingerPlugIns.TextEditorLib.Common;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
-using GingerPlugIns.TextEditorLib.Common;
+using System.Collections.Generic;
 
 namespace Ginger.UserControlsLib.TextEditor.Common
 {
@@ -79,7 +79,11 @@ namespace Ginger.UserControlsLib.TextEditor.Common
                             }
 
                             linestart = i;
-                            if (lt.StartsWith(Tag)) linestart++;  // if this is tag line start the folding from next line
+                            if (lt.StartsWith(Tag))
+                            {
+                                linestart++;  // if this is tag line start the folding from next line
+                            }
+
                             line = "";
                         }
                         line = "";

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Gherkin;
 using Gherkin.Ast;
-using Ginger.TagsLib;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.Variables;
@@ -35,14 +34,16 @@ namespace Ginger.GherkinLib
     {
         BusinessFlow mBizFlow;
 
-        Dictionary<string, List<OptionalValue>> ValuesDict;        
+        Dictionary<string, List<OptionalValue>> ValuesDict;
 
         public void CreateScenarios(BusinessFlow BF)
         {
             string FileName = string.Empty;
-            
+
             if (BF.ExternalID != null)
-                    FileName = BF.ExternalID.Replace(@"~",  WorkSpace.Instance.Solution.Folder);
+            {
+                FileName = BF.ExternalID.Replace(@"~", WorkSpace.Instance.Solution.Folder);
+            }
 
             if (!System.IO.File.Exists(FileName))
             {
@@ -53,9 +54,9 @@ namespace Ginger.GherkinLib
 
             Parser parser = new Parser();
             GherkinDocument gherkinDocument = parser.Parse(FileName);
-        
+
             mBizFlow = BF;
-           
+
             ClearGeneretedActivites(mBizFlow);
             ClearOptimizedScenariosVariables(mBizFlow);
 
@@ -102,16 +103,21 @@ namespace Ginger.GherkinLib
                                 while (true)
                                 {
                                     string ColName = General.GetStringBetween(a.ActivityName, "<", ">");
-                                    if (string.IsNullOrEmpty(ColName)) break;
+                                    if (string.IsNullOrEmpty(ColName))
+                                    {
+                                        break;
+                                    }
 
                                     string val = GetExampleValue(x.TableHeader, tr, ColName);
-                                    a.ActivityName = a.ActivityName.Replace("<" + ColName + ">", "\"" + val + "\"");                                   
+                                    a.ActivityName = a.ActivityName.Replace("<" + ColName + ">", "\"" + val + "\"");
 
-                                    VariableBase v = a.Variables.Where(y => y.Name == ColName).FirstOrDefault();
+                                    VariableBase v = a.Variables.FirstOrDefault(y => y.Name == ColName);
 
                                     OptionalValue ov = new OptionalValue(val);
                                     if (ValuesDict.ContainsKey(ColName))
+                                    {
                                         ValuesDict[ColName].Add(ov);
+                                    }
                                     else
                                     {
                                         List<OptionalValue> newList = new List<OptionalValue>();
@@ -135,9 +141,11 @@ namespace Ginger.GherkinLib
                                 {
                                     foreach (OptionalValue ov in ValuesDict[vb.Name])
                                     {
-                                        OptionalValue ExistedOV = ((VariableSelectionList)vb).OptionalValuesList.Where(y => y.Value == ov.Value).FirstOrDefault();
+                                        OptionalValue ExistedOV = ((VariableSelectionList)vb).OptionalValuesList.FirstOrDefault(y => y.Value == ov.Value);
                                         if (ExistedOV == null)
+                                        {
                                             ((VariableSelectionList)vb).OptionalValuesList.Add(ov);
+                                        }
                                     }
                                 }
                             }
@@ -147,7 +155,9 @@ namespace Ginger.GherkinLib
             }
 
             if (!string.IsNullOrEmpty(NotFoundItems))
-                    Reporter.ToUser(eUserMsgKey.GherkinColumnNotExist, NotFoundItems);
+            {
+                Reporter.ToUser(eUserMsgKey.GherkinColumnNotExist, NotFoundItems);
+            }
         }
 
         private void CreateBusinessFlowVar(string varName, string varDescription, string varValue)
@@ -159,7 +169,7 @@ namespace Ginger.GherkinLib
 
             mBizFlow.Variables.Add(v);
         }
-        
+
         private string NotFoundItems = string.Empty;
         private List<string> NotFoundItemsList = new List<string>();
 
@@ -176,12 +186,18 @@ namespace Ginger.GherkinLib
             }
 
             if (NotFoundItemsList.Contains(ColName))
+            {
                 return string.Empty;
+            }
 
             if (string.IsNullOrEmpty(NotFoundItems))
+            {
                 NotFoundItems = ColName;
+            }
             else
+            {
                 NotFoundItems += ", " + ColName;
+            }
 
             NotFoundItemsList.Add(ColName);
 
@@ -218,35 +234,47 @@ namespace Ginger.GherkinLib
             {
                 //TODO: make const for "Optimized Activities"
                 var a = (from x in BF.Activities where x.ActivitiesGroupID != "Optimized Activities" && x.ActivitiesGroupID != "Optimized Activities - Not in Use" select x).FirstOrDefault();
-                if (a == null) break;
-                
+                if (a == null)
+                {
+                    break;
+                }
+
                 BF.Activities.Remove(a);
             }
 
-            foreach(Activity act in BF.Activities)
+            foreach (Activity act in BF.Activities)
             {
                 if (act.IsSharedRepositoryInstance == true)
                 {
                     ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
                     // FIXME to use (true, "", true, act.Tags)
                     Activity a2 = (from x in activities where x.ActivityName == act.ActivityName select x).FirstOrDefault();
-                    if(a2 !=null)
+                    if (a2 != null)
                     {
                         if (a2.Tags != null)
                         {
                             ObservableList<Guid> actTags = new ObservableList<Guid>();
                             foreach (Guid guid in act.Tags)
+                            {
                                 if (a2.Tags.Contains(guid))
+                                {
                                     actTags.Add(guid);
+                                }
+                            }
+
                             act.Tags = actTags;
                         }
                         else
+                        {
                             act.Tags.ClearAll();
+                        }
                     }
                     else
+                    {
                         act.Tags.ClearAll();
-                }                    
-                
+                    }
+                }
+
             }
             BF.Tags.ClearAll();
         }
@@ -257,34 +285,44 @@ namespace Ginger.GherkinLib
             // Each scenario is in one ActivitiesGroup
             ActivitiesGroup AG = new ActivitiesGroup();
             AG.Name = sc.Name;
-            if (index != null) AG.Name += " #" + index;  // Adding Scenario index so it will be unique
+            if (index != null)
+            {
+                AG.Name += " #" + index;  // Adding Scenario index so it will be unique
+            }
+
             mBizFlow.AddActivitiesGroup(AG);
 
             //Add Tags - on ActivitiesGroup and solution if needed
 
             IEnumerable<Tag> TagList = null;
             if (sc is ScenarioOutline)
+            {
                 TagList = ((ScenarioOutline)sc).Tags;
+            }
             else if (sc is Scenario)
-                TagList = ((Scenario)sc).Tags;                       
+            {
+                TagList = ((Scenario)sc).Tags;
+            }
 
             foreach (var t in TagList)
             {
                 Guid tg = GetOrCreateTagInSolution(t.Name);
                 AG.Tags.Add(tg);
             }
-            foreach(Guid guid in mBizFlow.Tags)
+            foreach (Guid guid in mBizFlow.Tags)
+            {
                 AG.Tags.Add(guid);
-            
+            }
+
             foreach (Gherkin.Ast.Step step in sc.Steps)
             {
                 // Find the Activity from the template BF with All activity, create a copy and add to BF
                 string GN = GherkinGeneral.GetActivityGherkinName(step.Text);
                 Activity a = (Activity)SearchActivityByName(GN);
                 if (a != null)
-                {                    
+                {
                     Activity a1 = (Activity)a.CreateCopy(false);
-                    a1.ActivityName = step.Text;                    
+                    a1.ActivityName = step.Text;
                     a1.Active = true;
                     a1.ParentGuid = a1.Guid;
                     Guid g = Guid.NewGuid();
@@ -292,20 +330,30 @@ namespace Ginger.GherkinLib
                     foreach (var t in AG.Tags)
                     {
                         if (!a1.Tags.Contains(t))
+                        {
                             a1.Tags.Add(t);
-                        if(!a.Tags.Contains(t))
+                        }
+
+                        if (!a.Tags.Contains(t))
+                        {
                             a.Tags.Add(t);
+                        }
                     }
                     //Adding feature tags
                     foreach (Guid guid in mBizFlow.Tags)
                     {
                         if (!a1.Tags.Contains(guid))
+                        {
                             a1.Tags.Add(guid);
+                        }
+
                         if (!a.Tags.Contains(guid))
+                        {
                             a.Tags.Add(guid);
+                        }
                     }
-                        
-                    UpdateActivityVars(a1, a.ActivityName);                    
+
+                    UpdateActivityVars(a1, a.ActivityName);
                     mBizFlow.AddActivity(a1, AG);
                 }
                 else
@@ -320,14 +368,18 @@ namespace Ginger.GherkinLib
 
         private Guid GetOrCreateTagInSolution(string TagName)
         {
-            if (TagName.StartsWith("@")) TagName = TagName.Substring(1);
-            Guid TagGuid = (from x in  WorkSpace.Instance.Solution.Tags where x.Name == TagName select x.Guid).FirstOrDefault();
+            if (TagName.StartsWith("@"))
+            {
+                TagName = TagName.Substring(1);
+            }
+
+            Guid TagGuid = (from x in WorkSpace.Instance.Solution.Tags where x.Name == TagName select x.Guid).FirstOrDefault();
             if (TagGuid == Guid.Empty)
             {
                 //TODO: notify the user that tags are added to solution and he needs to save it                    
                 RepositoryItemTag RIT = new RepositoryItemTag() { Name = TagName };
                 TagGuid = RIT.Guid;
-                 WorkSpace.Instance.Solution.Tags.Add(RIT);
+                WorkSpace.Instance.Solution.Tags.Add(RIT);
             }
             return TagGuid;
         }
@@ -346,7 +398,11 @@ namespace Ginger.GherkinLib
 
         private void UpdateActivityVars(Activity a, string Name)
         {
-            if (a.Variables.Count == 0) return;
+            if (a.Variables.Count == 0)
+            {
+                return;
+            }
+
             string s = Name;
             int i = 0;
             while (s.Contains('%'))
@@ -375,7 +431,10 @@ namespace Ginger.GherkinLib
                 i++;
                 string val = General.GetStringBetween(s, "\"", "\"");
                 s = s.Replace('"' + val + '"', "");
-                if (i == idx) return val;
+                if (i == idx)
+                {
+                    return val;
+                }
             }
             return null;
         }

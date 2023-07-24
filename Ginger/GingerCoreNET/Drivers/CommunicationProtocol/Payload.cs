@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
         //UTF16 for String which are created by the user and might have language or special chars
         public static System.Text.UnicodeEncoding UTF16 = new System.Text.UnicodeEncoding();
-        
+
         //Const - Data Type - one byte before each type in package
         const byte StringType = 1;    // string
         const byte IntType = 2;       // int
@@ -68,7 +68,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
         const byte ListPayLoadType = 6;    // List<PayLoad>
         const byte BytesType = 7;    // Byte[]
         const byte KeyValuePair = 8;
-        
+
         // Last char is 255 - looks like space but is not and marking end of packet
         const byte LastByteMarker = 255;
 
@@ -77,7 +77,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
         byte[] mBuffer = new byte[1024];  // strat with initial buffer of 1024, will grow if needed
         int mBufferIndex = 4; // We strat to write data at position 4, the first 4 bytes will be the data length
 
-        public string Name {get; set;}
+        public string Name { get; set; }
 
         public static string PAYLOAD_PARSING_ERROR = "List PayLoad Parsing Error/wrong value type";
 
@@ -87,7 +87,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
             this.Name = Name;
             WriteString(Name);
         }
-        
+
         /// Create Payload from Bytes
         public PayLoad(byte[] bytes)
         {
@@ -97,7 +97,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
             //Verify integrity
             byte b = bytes[bytes.Length - 1];
-            if ( b!= LastByteMarker)
+            if (b != LastByteMarker)
             {
                 throw new Exception("PayLoad Integrity Error - last byte != 255");
             }
@@ -109,7 +109,10 @@ namespace GingerCore.Drivers.CommunicationProtocol
             StringBuilder hex = new StringBuilder(mBuffer.Length * 2);
 
             foreach (byte b in mBuffer)
+            {
                 hex.AppendFormat("{0:x2}", b);
+            }
+
             return hex.ToString();
         }
 
@@ -127,8 +130,8 @@ namespace GingerCore.Drivers.CommunicationProtocol
             mBuffer[mBufferIndex] = LastByteMarker;
             mBufferIndex++;
 
-            SetDataLen(mBufferIndex-4);   //-4 since len is not included
-                                          // TODO: find a way instead of copy to return subset of buffer          
+            SetDataLen(mBufferIndex - 4);   //-4 since len is not included
+                                            // TODO: find a way instead of copy to return subset of buffer          
 
             Array.Resize(ref mBuffer, mBufferIndex); // Cut the extra unused buffer        
 
@@ -149,7 +152,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
             mBuffer[0] = (byte)(Len >> 24);
             mBuffer[1] = (byte)(Len >> 16);
             mBuffer[2] = (byte)(Len >> 8);
-            mBuffer[3] = (byte)Len;            
+            mBuffer[3] = (byte)Len;
         }
 
         private int GetDataLen()
@@ -174,7 +177,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
             }
             else
             {
-                WriteInt(cNULLStringLen);                               
+                WriteInt(cNULLStringLen);
             }
         }
         private void WriteUnicodeString(string val)
@@ -216,7 +219,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
             else
             {
                 return null;
-            }     
+            }
         }
 
         private KeyValuePair<string, string> ReadKeyValuePair()
@@ -227,14 +230,14 @@ namespace GingerCore.Drivers.CommunicationProtocol
             byteValue = ReadValueType();
             string value = ReadString();
 
-            return new KeyValuePair<string, string>(key, value); 
+            return new KeyValuePair<string, string>(key, value);
         }
         private String ReadUnicodeString()
         {
             int len = ReadInt();
-            String s = UTF16.GetString(mBuffer,mBufferIndex,len);
+            String s = UTF16.GetString(mBuffer, mBufferIndex, len);
             mBufferIndex += len;
-            return s;            
+            return s;
         }
 
         private void WriteInt(int val)
@@ -251,9 +254,9 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
         private int ReadInt()
         {
-            int val = ((mBuffer[mBufferIndex]) << 24) + (mBuffer[mBufferIndex + 1] << 16) + (mBuffer[mBufferIndex + 2] << 8) + mBuffer[mBufferIndex +3];            
+            int val = ((mBuffer[mBufferIndex]) << 24) + (mBuffer[mBufferIndex + 1] << 16) + (mBuffer[mBufferIndex + 2] << 8) + mBuffer[mBufferIndex + 3];
             mBufferIndex += 4;
-            return val;          
+            return val;
         }
 
         /// <summary>
@@ -265,11 +268,11 @@ namespace GingerCore.Drivers.CommunicationProtocol
             if (mBufferIndex + Len > mBuffer.Length)
             {
                 int SpaceToAdd = 1024;
-                if (Len > SpaceToAdd) 
+                if (Len > SpaceToAdd)
                 {
                     SpaceToAdd = Len + 1024;  // Make sure that we add enough space to hold the new data
                 }
-                
+
                 Array.Resize(ref mBuffer, mBuffer.Length + SpaceToAdd); // Add more space in chuncks of 1024
             }
         }
@@ -294,8 +297,8 @@ namespace GingerCore.Drivers.CommunicationProtocol
         //1 - Add String Simple UTF8
         public void AddValue(string s)
         {
-            if (s!=null)
-            {               
+            if (s != null)
+            {
                 CheckBuffer(s.Length + 5); // String is 1(type) + 4(len) + data           
             }
             else
@@ -339,26 +342,28 @@ namespace GingerCore.Drivers.CommunicationProtocol
             WriteValueType(StringUTF16Type);
             WriteUnicodeString(val);
         }
-        
+
         //5 Add - List of Strings
-        public void AddValue(List<String> list) 
-	    {
-		    // List is #5
-		    // First we write the size of the List and then String one after another 
+        public void AddValue(List<String> list)
+        {
+            // List is #5
+            // First we write the size of the List and then String one after another 
             if (list != null)
             {
                 int len = 0;
                 foreach (string s in list)
                 {
                     if (s != null)
+                    {
                         len += s.Length;
+                    }
                 }
-                CheckBuffer(len + 5); 
+                CheckBuffer(len + 5);
             }
-		    WriteValueType(ListStringType);
-		    WriteInt(list.Count);
-		    foreach(string s in list)
-		    {
+            WriteValueType(ListStringType);
+            WriteInt(list.Count);
+            foreach (string s in list)
+            {
                 if (isNonAsciiString(s))
                 {
                     WriteUnicodeString(s);
@@ -367,7 +372,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
                 {
                     WriteString(s);
                 }
-		    }
+            }
         }
 
         // 6 List of PayLoad
@@ -405,7 +410,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
         // ----------------------------------------------------------------------------------------------------------------------------------------------------
         //   EOF - Public Add to package functions
         // ----------------------------------------------------------------------------------------------------------------------------------------------------
-        
+
         public List<KeyValuePair<string, string>> GetParsedResult()
         {
             List<KeyValuePair<string, string>> result = new List<KeyValuePair<string, string>>();
@@ -461,7 +466,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
             byte pointByte = ReadValueType();
 
-            if(pointByte == StringType)
+            if (pointByte == StringType)
             {
                 string str = ReadString();
 
@@ -487,9 +492,9 @@ namespace GingerCore.Drivers.CommunicationProtocol
         public string GetValueString()
         {
             byte b = ReadValueType();
-            
+
             if (b == StringType)
-            {                
+            {
                 string s = ReadString();
                 return s;
             }
@@ -502,7 +507,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
         public int GetValueInt()
         {
             byte b = ReadValueType();
-            
+
             if (b == IntType)
             {
                 int val = ReadInt();
@@ -517,7 +522,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
         public string GetValueEnum()
         {
             byte b = ReadValueType();
-            
+
             if (b == EnumValueType)
             {
                 string s = ReadString();
@@ -531,9 +536,9 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
         public string GetStringUTF16()
         {
-            
+
             byte b = ReadValueType();
-            
+
             if (b == StringUTF16Type)
             {
                 string s = ReadUnicodeString();
@@ -549,16 +554,16 @@ namespace GingerCore.Drivers.CommunicationProtocol
         {
             List<string> list = new List<string>();
 
-            byte b = ReadValueType();        
-            
+            byte b = ReadValueType();
+
             if (b == ListStringType)
             {
                 int count = ReadInt();
-                for(int i=0;i<count;i++)
+                for (int i = 0; i < count; i++)
                 {
                     string s = ReadString();
                     list.Add(s);
-                }                
+                }
                 return list;
             }
             else
@@ -572,7 +577,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
         {
             CheckBuffer(Bytes.Length + 4);
 
-            Buffer.BlockCopy(Bytes, 0, mBuffer, mBufferIndex, Bytes.Length);            
+            Buffer.BlockCopy(Bytes, 0, mBuffer, mBufferIndex, Bytes.Length);
             mBufferIndex += Bytes.Length;
         }
 
@@ -580,13 +585,13 @@ namespace GingerCore.Drivers.CommunicationProtocol
         {
             List<PayLoad> list = new List<PayLoad>();
 
-            byte b = ReadValueType();           
+            byte b = ReadValueType();
             if (b == ListPayLoadType)
             {
                 int count = ReadInt(); // How many Payloads we have
                 for (int i = 0; i < count; i++)
                 {
-                    PayLoad PL = ReadPayLoad();                    
+                    PayLoad PL = ReadPayLoad();
                     list.Add(PL);
                 }
                 return list;
@@ -602,7 +607,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
             int len = ReadInt();
             mBufferIndex -= 4;
             Byte[] Bytes = new byte[len + 4];
-            Buffer.BlockCopy(mBuffer, mBufferIndex, Bytes, 0, len +4);
+            Buffer.BlockCopy(mBuffer, mBufferIndex, Bytes, 0, len + 4);
             mBufferIndex += len + 4;
             PayLoad PL = new PayLoad(Bytes);
             return PL;
@@ -645,11 +650,14 @@ namespace GingerCore.Drivers.CommunicationProtocol
                         List<string> list = GetListString();
                         string sList = "";
                         for (int iCount = 0; iCount < list.Count(); iCount++)
+                        {
                             sList = sList + "::" + list[iCount];
+                        }
+
                         s += "List= " + sList + Environment.NewLine;
                         break;
                     case 6:
-                            // List of Payloads          
+                        // List of Payloads          
                         List<PayLoad> PLs = GetListPayLoad();
                         string sPLList = "List of Payloads, len=" + PLs.Count + Environment.NewLine;
                         int PLi = 0;
@@ -662,10 +670,10 @@ namespace GingerCore.Drivers.CommunicationProtocol
                         s += "List of Payloads= " + sPLList + Environment.NewLine;
                         break;
                     case 7:
-                        byte[] b =  GetBytes();
-                          //Bytes - for screen shot or any binary
-                        s += "Bytes(Binary), Len=" + b.Length  + Environment.NewLine;
-                        break; 
+                        byte[] b = GetBytes();
+                        //Bytes - for screen shot or any binary
+                        s += "Bytes(Binary), Len=" + b.Length + Environment.NewLine;
+                        break;
                     default:
                         throw new Exception("Payload.ToString() Error - Unknown ValueType: " + ValueType);
                 }
@@ -742,7 +750,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
                 {
                     AddEnumValue(o);
                 }
-                    //TODO: add all types...
+                //TODO: add all types...
                 else
                 {
                     throw new Exception("Unhandled PayLoad item type: " + o.GetType().Name + "  - " + o.ToString());
@@ -753,7 +761,7 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
         public Byte[] GetBytes()
         {
-            byte b = ReadValueType();                        
+            byte b = ReadValueType();
             if (b == BytesType)
             {
                 int len = ReadInt();
@@ -775,9 +783,9 @@ namespace GingerCore.Drivers.CommunicationProtocol
 
         public enum ErrorCode
         {
-            ElementNotFound=404,
-            CommandTimeOut=408,
-            Unknown=0
+            ElementNotFound = 404,
+            CommandTimeOut = 408,
+            Unknown = 0
         }
     }
 }

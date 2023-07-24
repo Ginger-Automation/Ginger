@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
-using GingerCore.Drivers.Appium;
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.UserControlsLib.TextEditor.XML;
 using System.IO;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.Appium
 {
@@ -36,7 +35,7 @@ namespace Ginger.WindowExplorer.Appium
         {
             mAppiumElementInfo = AEI;
             InitializeComponent();
-        }  
+        }
 
         private void sourceXMLRadioBtn_Checked(object sender, RoutedEventArgs e)
         {

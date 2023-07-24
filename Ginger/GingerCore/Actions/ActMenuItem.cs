@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,15 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET;
+using GingerCore.Actions.Common;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using GingerCore.Helpers;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
 
 namespace GingerCore.Actions
 {
@@ -36,7 +34,7 @@ namespace GingerCore.Actions
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to automate menu items.");
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActMenuItemEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
@@ -48,7 +46,7 @@ namespace GingerCore.Actions
             get
             {
                 if (mPlatforms.Count == 0)
-                {                    
+                {
                     mPlatforms.Add(ePlatformType.Windows);
                     mPlatforms.Add(ePlatformType.ASCF);
                     mPlatforms.Add(ePlatformType.PowerBuilder);
@@ -72,8 +70,8 @@ namespace GingerCore.Actions
         public enum eMenuAction
         {
             Click = 1,
-            Expand=6,
-            Collapse=7
+            Expand = 6,
+            Collapse = 7
         }
 
         public eMenuAction MenuAction
@@ -183,7 +181,9 @@ namespace GingerCore.Actions
                     newAct.AddOrUpdateInputParamValue(ActUIElement.Fields.ValueToSelect, locateValue.Substring(menuLocateValue.IndexOf(';') + 1));
                 }
                 else
+                {
                     newAct.ElementLocateValue = menuLocateValue;
+                }
             }
         }
 
@@ -211,7 +211,9 @@ namespace GingerCore.Actions
                 return returnList;
             }
             else
+            {
                 return sourceString;
+            }
         }
 
     }

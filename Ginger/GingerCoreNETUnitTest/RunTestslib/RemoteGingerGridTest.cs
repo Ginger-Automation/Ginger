@@ -34,7 +34,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             // Add 2 Ginger Nodes with Dummy Driver
             DummyDriver DummyDriver1 = new DummyDriver();
 
-            Task.Factory.StartNew(() => 
+            Task.Factory.StartNew(() =>
             {
                 GingerNodeStarter gingerNodeStarter = new GingerNodeStarter();
                 gingerNodeStarter.StartNode("N1", new DummyDriver(), RemoteGridIP, RemoteGridPort);
@@ -109,9 +109,9 @@ namespace GingerCoreNETUnitTest.RunTestslib
         }
 
         [Ignore]   // use for when we know the remote grid, TODO: enhance the test to start GG on process and plugins then run the test
-        [TestMethod]        
+        [TestMethod]
         public void SendActionToRemoteGridOnProcess()
-        {            
+        {
             // TODO: start the service batch + plugin to connect, for now we use manual bat file for testing
 
             // Arrange
@@ -126,7 +126,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             GingerNodeProxy.RemoteGridPort = 15555; // RemoteGridPort; // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
             GingerNodeInfo gingerNodeInfo = new GingerNodeInfo() { };
-            GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);            
+            GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);
 
             NewPayLoad actionPayLoad = ExecuteOnPlugin.CreateActionPayload(actPlugin);
             for (int i = 0; i < 1000; i++)
@@ -138,7 +138,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             //Assert
             Assert.AreEqual(RemoteGingerGrid.NodeList.Count, 2);
             // Assert.AreEqual("A1 Result", actPlugin.ExInfo);
-            
+
         }
 
         [Ignore]
@@ -161,7 +161,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             //GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);
             ActBrowserElement actBrowserElement = new ActBrowserElement();
             // actBrowserElement.ControlAction = ActBrowserElement.eControlAction.GotoURL;
-            actBrowserElement.InputValues.Add(new Amdocs.Ginger.Repository.ActInputValue() { Param = nameof(ActBrowserElement.ControlAction), Value= "GotoURL", ValueForDriver = "GotoURL" });
+            actBrowserElement.InputValues.Add(new Amdocs.Ginger.Repository.ActInputValue() { Param = nameof(ActBrowserElement.ControlAction), Value = "GotoURL", ValueForDriver = "GotoURL" });
             actBrowserElement.ValueForDriver = "http://www.facebook.com";
             // agent.RunAction(actBrowserElement);
 

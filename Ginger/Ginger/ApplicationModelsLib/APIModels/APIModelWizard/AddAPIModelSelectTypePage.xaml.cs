@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -243,9 +243,13 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 if (URLRadioButton.IsChecked == true)
                 {
                     if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString() || (string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString()))
+                    {
                         xBrowseLoadButton.Visibility = Visibility.Collapsed;
+                    }
                     else if ((!string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString()))
+                    {
                         xBrowseLoadButton.Visibility = Visibility.Visible;
+                    }
                 }
                 else if (FileRadioButton.IsChecked == true)
                 {
@@ -302,7 +306,10 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         private void URLRadioButtonChecked(object sender, RoutedEventArgs e)
         {
             if (URLLable != null)
+            {
                 URLLable.Content = "URL";
+            }
+
             if (xBrowseLoadButton != null)
             {
                 xBrowseLoadButton.ButtonText = "Load";
@@ -318,13 +325,18 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
 
             if (xURLTextBox != null)
+            {
                 xURLTextBox.Text = string.Empty;
+            }
         }
 
         private void FileRadioButtonChecked(object sender, RoutedEventArgs e)
         {
             if (URLLable != null)
+            {
                 URLLable.Content = "File";
+            }
+
             if (xBrowseLoadButton != null)
             {
                 xBrowseLoadButton.ButtonText = "Browse";

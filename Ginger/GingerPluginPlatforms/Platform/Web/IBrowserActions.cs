@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ namespace Ginger.Plugin.Platform.Web
     /// <summary>
     /// Exposes Browser Action
     /// </summary>
-    public interface IBrowserActions: IAlerts
+    public interface IBrowserActions : IAlerts
     {
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Ginger.Plugin.Platform.Web
         /// </summary>
         /// <param name="url"></param>
         /// <param name="OpenIn"></param>
-        void Navigate(string url,string OpenIn);
+        void Navigate(string url, string OpenIn);
         /// <summary>
         /// Gets  URL of Page currently Selected.
         /// </summary>

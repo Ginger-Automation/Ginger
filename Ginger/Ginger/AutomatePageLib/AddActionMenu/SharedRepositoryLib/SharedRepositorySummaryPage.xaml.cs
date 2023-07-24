@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ namespace Ginger.Repository
             ShowData();
         }
 
-        private void ShowData(bool fromCache=true)
+        private void ShowData(bool fromCache = true)
         {
             ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             ActivitiesGroupsCountLabel.Text = activitiesGroup.Count.ToString();
@@ -52,6 +52,6 @@ namespace Ginger.Repository
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             ShowData(false);
-        }               
+        }
     }
 }

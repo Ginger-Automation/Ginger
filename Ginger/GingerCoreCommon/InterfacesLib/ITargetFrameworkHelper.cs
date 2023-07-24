@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ using Ginger.SolutionAutoSaveAndRecover;
 using GingerCore;
 using GingerCore.ALM;
 using GingerCore.Environments;
-using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
@@ -63,7 +62,7 @@ namespace Amdocs.Ginger.Common
         Bitmap GetTaskbarScreenshot();
         string MergeVerticallyAndSaveBitmaps(params Bitmap[] bitmaps);
 
-        void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
+        bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
 
         // string GenerateReportForREportTemplate(string ReportTemplateName, object RI, object RT);
 
@@ -86,7 +85,7 @@ namespace Amdocs.Ginger.Common
 
         bool Revert(string path, SourceControlBase SourceControl);
 
-        void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems);
+        void ShowRecoveryItemPage();
 
         SourceControlBase GetNewSVnRepo();
         void WaitForAutoRunWindowClose();

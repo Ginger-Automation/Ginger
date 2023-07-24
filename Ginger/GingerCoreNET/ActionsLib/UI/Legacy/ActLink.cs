@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -39,7 +38,7 @@ namespace GingerCore.Actions
             TBH.AddText("Use this action in case you need to automate a click on an object from type Link."
                                         + Environment.NewLine + Environment.NewLine +
                                            "For Mobile use this action only in case running the flow on the native browser.");
-        }        
+        }
 
         public override string ActionEditPage { get { return "ActLinkEditPage"; } }
         public override bool ObjectLocatorConfigsNeeded { get { return true; } }
@@ -64,9 +63,9 @@ namespace GingerCore.Actions
         public enum eLinkAction
         {
             Click = 0,
-            Hover= 2, //This is needed for hovering to expand menus.
-            GetValue=3, //for validation
-            Visible=4, //for validation
+            Hover = 2, //This is needed for hovering to expand menus.
+            GetValue = 3, //for validation
+            Visible = 4, //for validation
             GetWidth = 22,
             GetHeight = 23,
             GetStyle = 24,
@@ -85,8 +84,8 @@ namespace GingerCore.Actions
         }
 
         public override String ToString()
-        {            
-                return "Link: " + GetInputParamValue("Value");            
+        {
+            return "Link: " + GetInputParamValue("Value");
         }
 
         public override String ActionType
@@ -161,9 +160,15 @@ namespace GingerCore.Actions
 
             newAct.ElementLocateBy = (eLocateBy)((int)this.LocateBy);
             if (!string.IsNullOrEmpty(this.LocateValue))
+            {
                 newAct.ElementLocateValue = String.Copy(this.LocateValue);
+            }
+
             if (!uIElementTypeAssigned)
+            {
                 newAct.ElementType = eElementType.HyperLink;
+            }
+
             newAct.Active = true;
 
             return newAct;

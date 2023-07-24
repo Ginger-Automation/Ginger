@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,21 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Actions;
+using GingerCore.DataSource;
+using GingerCore.Environments;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.UserControls;
-using GingerCore.Environments;
-using GingerCore;
-using Amdocs.Ginger.Common.Enums;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.DataSource;
-using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore.Actions;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Ginger.Environments
@@ -78,7 +75,7 @@ namespace Ginger.Environments
 
         private async void grdMain_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            switch(e.Column.DisplayIndex) //we have checked for column index for grid
+            switch (e.Column.DisplayIndex) //we have checked for column index for grid
             {
                 case 8://for Password
                     Database selectedEnvDB = (Database)grdAppDbs.CurrentItem;

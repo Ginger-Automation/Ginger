@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -553,7 +553,9 @@ namespace Ginger.Reports.GingerExecutionReport
                     {
                         string executionStatisticsSection = ExtensionMethods.GetStringBetween(ReportHTML, "<!--ExecutionActivitiesDetails_Start-->", "<!--ExecutionActivitiesDetails_End-->");
                         if (!executionStatisticsSection.Equals(string.Empty))
+                        {
                             ReportHTML = ReportHTML.Replace(executionStatisticsSection, "");
+                        }
                     }
                     else
                     {
@@ -703,7 +705,7 @@ namespace Ginger.Reports.GingerExecutionReport
         }
 
         public void CreateGingerLevelReport(GingerReport gr, string ReportLevel, bool calledAsRoot = false, Tuple<Tuple<string, string>, Tuple<string, string>> nextPrevGingerName = null)
-        {           
+        {
             string currentHTMLReportsFolder = HTMLReportMainFolder + Path.DirectorySeparatorChar + ExtensionMethods.folderNameNormalazing(gr.Seq + " " + gr.Name) + Path.DirectorySeparatorChar;
             System.IO.Directory.CreateDirectory(currentHTMLReportsFolder);
 
@@ -1509,16 +1511,16 @@ namespace Ginger.Reports.GingerExecutionReport
                             nextActivitiesGroupName = BusinessFlowReport.ActivitiesGroupReports[BusinessFlowReport.ActivitiesGroupReports.FindIndex(x => x.GUID == ag.GUID) + 1].Name;
                             nextActivitiesGroupSeq = BusinessFlowReport.ActivitiesGroupReports[BusinessFlowReport.ActivitiesGroupReports.FindIndex(x => x.GUID == ag.GUID) + 1].Seq.ToString();
                         }
-                        
+
                         CreateActivityGroupLevelReport(ag, BusinessFlowReport, currentHTMLReportsFolder, ReportLevel + "../../", true, new Tuple<Tuple<string, string>, Tuple<string, string>>(new Tuple<string, string>(prevActivitiesGroupSeq, prevActivitiesGroupName), new Tuple<string, string>(nextActivitiesGroupSeq, nextActivitiesGroupName)));
 
                         try
                         {
-                            BF.ActivitiesGroups.Where(x => x.Guid.ToString() == ag.SourceGuid).FirstOrDefault().TempReportFolder = currentHTMLReportsFolder + Path.DirectorySeparatorChar + ExtensionMethods.folderNameNormalazing(ag.Seq + " " + ag.Name);
+                            BF.ActivitiesGroups.FirstOrDefault(x => x.Guid.ToString() == ag.SourceGuid).TempReportFolder = currentHTMLReportsFolder + Path.DirectorySeparatorChar + ExtensionMethods.folderNameNormalazing(ag.Seq + " " + ag.Name);
                         }
                         catch { }
                         foreach (ActivityReport ac in BusinessFlowReport.Activities.Where(x => ag.ExecutedActivitiesGUID.Select(y => y.ToString()).Contains(x.SourceGuid)).OrderBy(x => x.Seq))
-                        {                            
+                        {
                             CreateActivityLevelReport(ac, currentHTMLReportsFolder + Path.DirectorySeparatorChar + ExtensionMethods.folderNameNormalazing(ag.Seq + " " + ag.Name), ReportLevel + "../");
                         }
                     }
@@ -1551,8 +1553,8 @@ namespace Ginger.Reports.GingerExecutionReport
                 GingerLogo = string.Empty;
             }
             else
-            {                
-                currentHTMLReportsFolder = currentHTMLReportsFolder + Path.DirectorySeparatorChar +"ActivityGroups" + Path.DirectorySeparatorChar + ExtensionMethods.folderNameNormalazing(ActivityGroupReport.Seq + " " + ActivityGroupReport.Name);
+            {
+                currentHTMLReportsFolder = currentHTMLReportsFolder + Path.DirectorySeparatorChar + "ActivityGroups" + Path.DirectorySeparatorChar + ExtensionMethods.folderNameNormalazing(ActivityGroupReport.Seq + " " + ActivityGroupReport.Name);
             }
             System.IO.Directory.CreateDirectory(currentHTMLReportsFolder);
 
@@ -2496,9 +2498,9 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                Image Logoimage=Bitmap.FromFile((Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/images/" + "@BeatLogo.jpg"));
+                Image Logoimage = Bitmap.FromFile((Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/images/" + "@BeatLogo.jpg"));
                 //beatSource.
-                Tuple<int, int> sizes=General.RecalculatingSizeWithKeptRatio(Logoimage, logoWidth, logoHight);
+                Tuple<int, int> sizes = General.RecalculatingSizeWithKeptRatio(Logoimage, logoWidth, logoHight);
 
                 beatLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + General.ImagetoBase64String(Logoimage) + "' style='padding-left:70px'/>";
             }
@@ -2514,7 +2516,7 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                Image gingerSource =  Bitmap.FromFile((Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) +"/images/" +"@GingerLogo_lowRes.jpg"));
+                Image gingerSource = Bitmap.FromFile((Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/images/" + "@GingerLogo_lowRes.jpg"));
                 Tuple<int, int> sizes = General.RecalculatingSizeWithKeptRatio(gingerSource, logoWidth, logoHight);
                 gingerLogo = "<img alt='Embedded Image' width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + General.ImagetoBase64String(gingerSource) + "' style='float:right;padding-left:70px' />";
             }
@@ -2569,9 +2571,9 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             else
             {
-                Image prevImage = Image.FromFile((Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/images/"+ "@ItemPrev.jpg"));
+                Image prevImage = Image.FromFile((Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "/images/" + "@ItemPrev.jpg"));
                 Tuple<int, int> sizes = General.RecalculatingSizeWithKeptRatio(prevImage, itemPrevNextWidth, itemPrevNextHight);
-                itemPrevImage = "<img width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + General.ImagetoBase64String(prevImage)+ "' style='padding-left:1px'/>";
+                itemPrevImage = "<img width='" + sizes.Item1.ToString() + "' height='" + sizes.Item2.ToString() + "' src='" + "data:image/png;base64," + General.ImagetoBase64String(prevImage) + "' style='padding-left:1px'/>";
             }
             return itemPrevImage;
         }
@@ -2639,8 +2641,8 @@ namespace Ginger.Reports.GingerExecutionReport
         public static string CreateGingerExecutionReport(ReportInfo RI, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null, bool isHTMLReportPermanentFolderNameUsed = false, long maxFolderSize = 0)
         {
             GingerExecutionReport gingerExecutionReport = new GingerExecutionReport();
-         
-            gingerExecutionReport.TemplatesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),"Reports","GingerExecutionReport");
+
+            gingerExecutionReport.TemplatesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Reports", "GingerExecutionReport");
 
             if (SelectedHTMLReportConfiguration != null)
             {
@@ -2649,7 +2651,7 @@ namespace Ginger.Reports.GingerExecutionReport
             else
             {
                 var HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-                HTMLReportConfiguration defualtConfig = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                HTMLReportConfiguration defualtConfig = HTMLReportConfigurations.FirstOrDefault(x => (x.IsDefault == true));
                 // TODO - need to delete, template always should be initialize with fields.
                 if (defualtConfig != null)
                 {
@@ -2667,7 +2669,7 @@ namespace Ginger.Reports.GingerExecutionReport
                 return string.Empty;
             }
 
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             if (!calledFromAutomateTab)
             {
                 if ((mHTMLReportsFolder != null) && (mHTMLReportsFolder != string.Empty))
@@ -2682,11 +2684,11 @@ namespace Ginger.Reports.GingerExecutionReport
                 {
                     if (!isHTMLReportPermanentFolderNameUsed)
                     {
-                        gingerExecutionReport.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(Path.Combine(currentConf.HTMLReportsFolder , System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).LogFolder)));
+                        gingerExecutionReport.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(Path.Combine(currentConf.HTMLReportsFolder, System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).LogFolder)));
                     }
                     else
                     {
-                        gingerExecutionReport.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(Path.Combine(currentConf.HTMLReportsFolder , System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name)));
+                        gingerExecutionReport.HTMLReportMainFolder = ExtensionMethods.GetReportDirectory(Path.Combine(currentConf.HTMLReportsFolder, System.IO.Path.GetFileName(((RunSetReport)RI.ReportInfoRootObject).Name)));
                     }
                 }
             }
@@ -2699,7 +2701,7 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 CleanDirectory(gingerExecutionReport.HTMLReportMainFolder);
             }
-            string Folder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder.ToString(), @"HTMLReports"); 
+            string Folder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder.ToString(), @"HTMLReports");
 
             if (currentConf.LimitReportFolderSize)
             {
@@ -2758,7 +2760,7 @@ namespace Ginger.Reports.GingerExecutionReport
             else
             {
                 var HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-                HTMLReportConfiguration defualtConfig = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                HTMLReportConfiguration defualtConfig = HTMLReportConfigurations.FirstOrDefault(x => (x.IsDefault == true));
                 // TODO - need to delete, template always should be initialize with fields.
                 if (defualtConfig != null)
                 {
@@ -2778,7 +2780,7 @@ namespace Ginger.Reports.GingerExecutionReport
 
             if (hTMLReportsConfiguration == null)
             {
-                hTMLReportsConfiguration = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                hTMLReportsConfiguration = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             }
 
             if (hTMLOutputFolder == null)
@@ -2814,17 +2816,17 @@ namespace Ginger.Reports.GingerExecutionReport
             {
                 gingerExecutionReport.HTMLReportMainFolder = hTMLOutputFolder;
             }
-            
+
 
             if (Directory.Exists(gingerExecutionReport.HTMLReportMainFolder))
             {
                 CleanDirectory(gingerExecutionReport.HTMLReportMainFolder);
             }
-           
+
 
             if (hTMLReportsConfiguration.LimitReportFolderSize)
             {
-                 string Folder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder.ToString(), "HTMLReports");
+                string Folder = System.IO.Path.Combine(WorkSpace.Instance.Solution.Folder.ToString(), "HTMLReports");
                 DeleteFolderContentBySizeLimit DeleteFolderContentBySizeLimit = new DeleteFolderContentBySizeLimit(Folder, maxFolderSize);
             }
 
@@ -2854,7 +2856,7 @@ namespace Ginger.Reports.GingerExecutionReport
         public static string CreateActivitiesGroupReportsOfBusinessFlow(ProjEnvironment environment, BusinessFlow BF, bool calledFromAutomateTab = false, HTMLReportConfiguration SelectedHTMLReportConfiguration = null, string mHTMLReportsFolder = null)
         {
             Ginger.Reports.GingerExecutionReport.GingerExecutionReport l = new Ginger.Reports.GingerExecutionReport.GingerExecutionReport();
-            l.TemplatesFolder =Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Reports","GingerExecutionReport");
+            l.TemplatesFolder = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Reports", "GingerExecutionReport");
 
             if (SelectedHTMLReportConfiguration != null)
             {
@@ -2863,7 +2865,7 @@ namespace Ginger.Reports.GingerExecutionReport
             else
             {
                 ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
-                l.currentTemplate = HTMLReportConfigurations.Where(x => (x.IsDefault == true)).FirstOrDefault();
+                l.currentTemplate = HTMLReportConfigurations.FirstOrDefault(x => (x.IsDefault == true));
             }
             if (string.IsNullOrEmpty(BF.ExecutionFullLogFolder))
             {
@@ -3053,11 +3055,13 @@ namespace Ginger.Reports.GingerExecutionReport
 
             var defuatlTemplates = GetSolutionHTMLReportConfigurations().Where(x => (x.IsDefault == true)).ToList();
             foreach (HTMLReportConfiguration template in defuatlTemplates)
+            {
                 if (template != templateToSetAsDefualt)
                 {
                     template.IsDefault = false;
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(template);
                 }
+            }
         }
         public static string GetValueForDriverWithoutDescrypting(string value, Context context)
         {

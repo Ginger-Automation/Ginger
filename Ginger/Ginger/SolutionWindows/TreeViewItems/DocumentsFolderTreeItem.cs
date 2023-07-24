@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,24 +16,23 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Plugin.Core;
+using Amdocs.Ginger.Repository;
 using Ginger.GherkinLib;
+using Ginger.PlugInsWindows;
 using Ginger.UserControlsLib.TextEditor;
-using GingerCore;
+using Ginger.UserControlsLib.TextEditor.Gherkin;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.UserControlsLib.TextEditor.Gherkin;
-using GingerWPF.WizardLib;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
-using Ginger.PlugInsWindows;
-using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -45,7 +44,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
     class DocumentsFolderTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         public string Folder { get; set; }
-                
+
         string mPath;
         public string Path
         {
@@ -61,7 +60,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
                 mPath = value;
             }
-        }  
+        }
         Object ITreeViewItem.NodeObject()
         {
             return null;
@@ -76,7 +75,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {                       
+        {
             return TreeViewUtils.NewRepositoryItemTreeHeader(null, Folder, eImageType.Folder, GetSourceControlImageByPath(Path), false);
         }
 
@@ -89,8 +88,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             //Add Current folder Docs 
             foreach (string f in Directory.GetFiles(Path))
-            {                
-                DocumentTreeItem DTI = new DocumentTreeItem();             
+            {
+                DocumentTreeItem DTI = new DocumentTreeItem();
                 DTI.FileName = System.IO.Path.GetFileName(f);
                 DTI.Path = f;
 
@@ -118,7 +117,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (System.Exception excpt)
             {
-               Reporter.ToLog(eLogLevel.ERROR, "Failed to add Document Folder to tree",excpt);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to add Document Folder to tree", excpt);
             }
         }
 
@@ -130,7 +129,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         //internal void AddDocument(object sender, RoutedEventArgs e)
         //{
         //    CreateNewDocument(sender, e);
-           
+
         //}
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
@@ -140,7 +139,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         ContextMenu ITreeViewItem.Menu()
         {
-            return mContextMenu;            
+            return mContextMenu;
         }
 
         void ITreeViewItem.SetTools(ITreeView TV)
@@ -148,27 +147,32 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mTreeView = TV;
             mContextMenu = new ContextMenu();
 
-            if(TV.Tree.TreeChildFolderOnly == true)
-            { 
+            if (TV.Tree.TreeChildFolderOnly == true)
+            {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", true, false, false, false, false, false, false, true, false, false);
             }
             else
             {
                 if (IsGingerDefualtFolder)
-                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document",allowSaveAll:false, allowAddNew:false,allowCopyItems:false,allowCutItems:false,allowPaste:false, allowRenameFolder: false, allowDeleteFolder: false, allowDeleteAllItems: true);
+                {
+                    AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false, allowRenameFolder: false, allowDeleteFolder: false, allowDeleteAllItems: true);
+                }
                 else
+                {
                     AddFolderNodeBasicManipulationsOptions(mContextMenu, nodeItemTypeName: "Document", allowSaveAll: false, allowAddNew: false, allowCopyItems: false, allowCutItems: false, allowPaste: false);
+                }
+
                 AddSourceControlOptions(mContextMenu, false, false);
 
                 AddImportsAndCreateDocumentsOptions();
             }
-            
+
         }
 
         private void AddImportsAndCreateDocumentsOptions()
         {
             //Creating the Generic menus
-            MenuItem ImportDocumentMenu =  TreeViewUtils.CreateSubMenu(mContextMenu, "Import Document");
+            MenuItem ImportDocumentMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Import Document");
             MenuItem CreateDocumentMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Create Document");
 
             //Creating text and VBS menus
@@ -204,7 +208,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                         TreeViewUtils.AddSubMenuItem(CreateDocumentMenu, "Create " + DocumentName + " Document", CreateNewDocument, extension, "@Add_16x16.png");
                         TreeViewUtils.AddSubMenuItem(ImportDocumentMenu, "Import " + DocumentName + " Document", ImportNewDocument, extension, "@Import_16x16.png");
                     }
-                   
+
                 }
             }
         }
@@ -214,9 +218,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
 
             string FileExtension = ((string)((MenuItem)sender).CommandParameter);
-           
+
             string FileContent = string.Empty;
-            
+
             if (FileExtension == ".txt")
             {
                 FileContent = "Some text";
@@ -225,7 +229,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 FileContent = Properties.Resources.VBSTemplate;
             }
-        
+
             string NewFileName = string.Empty;
             string FullFilePath = string.Empty;
             string headerToShow;
@@ -235,7 +239,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 headerToShow = "New File";
                 lblToShow = "File Name & Extension:";
             }
-           else
+            else
             {
                 headerToShow = string.Format("New {0} File", FileExtension.ToUpper().TrimStart(new char[] { '.' }));
                 lblToShow = "File Name:";
@@ -248,7 +252,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     FullFilePath = FullFilePath + ".txt";
                 }
                 if (!System.IO.Directory.Exists(Path))
+                {
                     Directory.CreateDirectory(System.IO.Path.GetFullPath(Path));
+                }
+
                 if (!System.IO.File.Exists(FullFilePath))
                 {
                     using (Stream fileStream = File.Create(System.IO.Path.GetFullPath(FullFilePath)))
@@ -259,12 +266,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     AddChildToTree(FullFilePath);
                 }
                 else
+                {
                     Reporter.ToUser(eUserMsgKey.NotifyFileSelectedFromTheSolution, FullFilePath);
+                }
             }
         }
 
         private void AddChildToTree(string FullFilePath)
-        {            
+        {
             DocumentTreeItem DTI = new DocumentTreeItem();
             DTI.FileName = System.IO.Path.GetFileName(FullFilePath);
             DTI.Path = FullFilePath;
@@ -282,17 +291,19 @@ namespace Ginger.SolutionWindows.TreeViewItems
             ImportDocumentPage IDP = new ImportDocumentPage(Path, FileExtension.Substring(1).ToUpper(), FileExtension);
             IDP.ShowAsWindow();
             if (IDP.Imported)
+            {
                 AddChildToTree(IDP.mPath);
+            }
         }
 
-         //Gherkin BDD functions
+        //Gherkin BDD functions
         private void ImportGherkinFeatureFile(object sender, RoutedEventArgs e)
-        {   
+        {
             ImportGherkinFeatureWizard mWizard = new ImportGherkinFeatureWizard(this, ImportGherkinFeatureFilePage.eImportGherkinFileContext.DocumentsFolder);
             mWizard.mFolder = this.Path;
             WizardWindow.ShowWizard(mWizard);
-            
-            if(!String.IsNullOrEmpty(mWizard.FetaureFileName))
+
+            if (!String.IsNullOrEmpty(mWizard.FetaureFileName))
             {
                 mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
                 mTreeView.Tree.GetChildItembyNameandSelect(System.IO.Path.GetFileName(mWizard.FetaureFileName), mTreeView.Tree.CurrentSelectedTreeViewItem);
@@ -300,11 +311,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         private void CreateGherkinFeatureFile(object sender, RoutedEventArgs e)
-        { 
+        {
             string FileName = string.Empty;
             if (GingerCore.General.GetInputWithValidation("New Feature File", "File Name:", ref FileName, System.IO.Path.GetInvalidFileNameChars(), false, null))
-            {                
-                string FullFilePath = System.IO.Path.Combine(this.Path + @"\" , FileName + ".feature");
+            {
+                string FullFilePath = System.IO.Path.Combine(this.Path + @"\", FileName + ".feature");
                 if (!System.IO.File.Exists(FullFilePath))
                 {
                     string FileContent = "Feature: Description\r\n\r\n@Tag1 @Tag2\r\n\r\nScenario: Scenario1 Description\r\n       Given \r\n       And \r\n       And \r\n       When \r\n       Then \r\n\r\n\r\n@Tag1 @Tag2\r\n\r\nScenario: Scenario2 Description\r\n       Given \r\n       And \r\n       And \r\n       When \r\n       Then \r\n\r\n@Tag1 @Tag2\r\n\r\n\r\nScenario Outline: eating\r\n  Given there are <start> cucumbers\r\n  When I eat <eat> cucumbers\r\n  Then I should have <left> cucumbers\r\n\r\n  Examples:\r\n    | start | eat | left |\r\n    |  12   |  5  |  7   |\r\n    |  20   |  5  |  15  |";
@@ -313,13 +324,15 @@ namespace Ginger.SolutionWindows.TreeViewItems
                         fileStream.Close();
                     }
                     File.WriteAllText(FullFilePath, FileContent);
-                    
+
                     mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
-                    mTreeView.Tree.GetChildItembyNameandSelect(FileName + ".feature", mTreeView.Tree.CurrentSelectedTreeViewItem);                   
-                    
+                    mTreeView.Tree.GetChildItembyNameandSelect(FileName + ".feature", mTreeView.Tree.CurrentSelectedTreeViewItem);
+
                 }
                 else
+                {
                     Reporter.ToUser(eUserMsgKey.GherkinNotifyFeatureFileExists, FullFilePath);
+                }
             }
         }
 
@@ -329,28 +342,30 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
 
-               System.IO.Directory.CreateDirectory(newFolderPath);
+                System.IO.Directory.CreateDirectory(newFolderPath);
                 DocumentsFolderTreeItem FolderItem = new DocumentsFolderTreeItem();
                 FolderItem.Folder = newFolderName;
                 FolderItem.Path = newFolderPath;
                 mTreeView.Tree.AddChildItemAndSelect((ITreeViewItem)this, (ITreeViewItem)FolderItem);
-                return FolderItem;            
+                return FolderItem;
             }
             catch (Exception ex)
             {
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Add sub folder failed, error: " + ex.Message);
                 return null;
             }
-}
+        }
 
-        public override void  DeleteTreeFolder()
+        public override void DeleteTreeFolder()
         {
             if (Reporter.ToUser(eUserMsgKey.DeleteTreeFolderAreYouSure, Folder) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
             {
                 try
                 {
                     if (Directory.Exists(Path))
+                    {
                         Directory.Delete(Path, true);
+                    }
 
                     mTreeView.Tree.RefreshSelectedTreeNodeParent();
                 }
@@ -364,7 +379,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         public override bool RenameTreeFolder(string originalName, string newFolderName, string newPath)
         {
             try
-            {             
+            {
                 if (Path != newPath)
                 {
                     if (originalName.ToUpper() == newFolderName.ToUpper())//user just changed the name letters case
@@ -377,18 +392,20 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                     Directory.Move(Path, newPath);
                     if (System.IO.Directory.Exists(newPath) == false)
+                    {
                         return false;
+                    }
                 }
                 else
                 {
                     return false;
                 }
-            
+
                 Folder = newFolderName;
 
                 //refresh header and children's (to get new File name)
                 mTreeView.Tree.RefreshSelectedTreeNodeParent();
-               // RefreshTreeFolder(typeof(DocumentsFolderTreeItem), Path);
+                // RefreshTreeFolder(typeof(DocumentsFolderTreeItem), Path);
             }
             catch (Exception ex)
             {

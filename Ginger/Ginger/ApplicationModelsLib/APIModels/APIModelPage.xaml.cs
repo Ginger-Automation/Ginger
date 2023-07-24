@@ -56,10 +56,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             WorkSpace.Instance.RefreshGlobalAppModelParams(mApplicationAPIModel);
             page = new ModelParamsPage(mApplicationAPIModel, viewMode);
-            xDynamicParamsFrame.Content = page;
+            xDynamicParamsFrame.ClearAndSetContent(page);
 
             OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel, viewMode);
-            xOutputTemplateFrame.Content = outputTemplatePage;
+            xOutputTemplateFrame.ClearAndSetContent(outputTemplatePage);
 
             mApplicationAPIModel.AppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
             mApplicationAPIModel.GlobalAppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
@@ -70,10 +70,14 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             mPageViewMode = viewMode;
 
             if (mPageViewMode == General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute)
+            {
                 UpdatePageAsReadOnly();
+            }
 
             if (mPageViewMode == General.eRIPageViewMode.Add)
+            {
                 HttpHeadersGrid.ShowPaste = Visibility.Visible;
+            }
         }
 
         void UpdatePageAsReadOnly()
@@ -188,7 +192,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             //get key object 
             if (mApplicationAPIModel.TargetApplicationKey != null)
             {
-                RepositoryItemKey key =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Guid == mApplicationAPIModel.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
+                RepositoryItemKey key = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Guid == mApplicationAPIModel.TargetApplicationKey.Guid).Select(x => x.Key).FirstOrDefault();
                 if (key != null)
                 {
                     mApplicationAPIModel.TargetApplicationKey = key;
@@ -206,11 +210,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     }
                 }
                 else
-                {                                        
+                {
                     Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
                 }
             }
-            xTargetApplicationComboBox.ComboBox.ItemsSource =  WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x=>x.Platform == ePlatformType.WebServices).ToList();
+            xTargetApplicationComboBox.ComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.WebServices).ToList();
             xTargetApplicationComboBox.ComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.ComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
         }
@@ -352,7 +356,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         public void RefreshRequestKeyValuesGrid()
         {
             if (this.IsLoaded && mApplicationAPIModel.APIModelBodyKeyValueHeaders != null)
+            {
                 mApplicationAPIModel.APIModelBodyKeyValueHeaders.Clear();
+            }
 
             if ((mApplicationAPIModel.APIType == ApplicationAPIUtils.eWebApiType.REST) && mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded)
             {
@@ -368,7 +374,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
         private void SetHTTPHeadersGrid()
         {
-            bool isFieldReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode==General.eRIPageViewMode.ViewAndExecute);
+            bool isFieldReadOnly = (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == General.eRIPageViewMode.ViewAndExecute);
 
             HttpHeadersGrid.Title = "Request Headers";
             HttpHeadersGrid.SetTitleStyle((Style)TryFindResource("@ucGridTitleLightStyle"));
@@ -485,7 +491,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void NetworkCreds_SelectionChanged(object sender, RoutedEventArgs e)
         {
             if (sender == null || BodySelection == null)
+            {
                 return;
+            }
 
             RadioButton rBtn = sender as RadioButton;
             if ((bool)rBtn.IsChecked)
@@ -514,7 +522,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void RequestBodyType_Selection(object sender, RoutedEventArgs e)
         {
             if (sender == null || BodySelection == null)
+            {
                 return;
+            }
 
             RadioButton rBtn = sender as RadioButton;
             if ((bool)rBtn.IsChecked)
@@ -527,7 +537,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                             mApplicationAPIModel.RequestBodyType = ApplicationAPIUtils.eRequestBodyType.FreeText;
                             FreeStackPanel.Visibility = System.Windows.Visibility.Visible;
                             if (!String.IsNullOrEmpty(mApplicationAPIModel.TemplateFileNameFileBrowser))
+                            {
                                 TemplateFileNameFileBrowser.Text = string.Empty;
+                            }
+
                             TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                             RequestBodyTypePanel.Visibility = System.Windows.Visibility.Visible;
                             BodyInputGridPannel.Visibility = System.Windows.Visibility.Collapsed;
@@ -540,7 +553,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                             mApplicationAPIModel.RequestBodyType = ApplicationAPIUtils.eRequestBodyType.TemplateFile;
                             TemplateStackPanel.Visibility = System.Windows.Visibility.Visible;
                             if (!String.IsNullOrEmpty(mApplicationAPIModel.TemplateFileNameFileBrowser))
+                            {
                                 RequestBodyTextBox.Text = string.Empty;
+                            }
+
                             FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                             RequestBodyTypePanel.Visibility = System.Windows.Visibility.Visible;
                             BodyInputGridPannel.Visibility = System.Windows.Visibility.Collapsed;
@@ -551,9 +567,15 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                         if (mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded || mApplicationAPIModel.ContentType == ApplicationAPIUtils.eContentType.FormData)
                         {
                             if (!String.IsNullOrEmpty(mApplicationAPIModel.TemplateFileNameFileBrowser))
+                            {
                                 RequestBodyTextBox.Text = string.Empty;
+                            }
+
                             if (!String.IsNullOrEmpty(mApplicationAPIModel.TemplateFileNameFileBrowser))
+                            {
                                 TemplateFileNameFileBrowser.Text = string.Empty;
+                            }
+
                             FreeStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                             TemplateStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                             RequestBodyTypePanel.Visibility = System.Windows.Visibility.Collapsed;
@@ -578,12 +600,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                     string NewPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents", Path.GetFileName(dlg.FileName));
                     if (!Directory.Exists(Path.GetDirectoryName(NewPath)))
+                    {
                         Directory.CreateDirectory(Path.GetDirectoryName(NewPath));
+                    }
+
                     File.Copy(dlg.FileName, NewPath, true);
                     TemplateFileNameFileBrowser.Text = NewPath.Replace(WorkSpace.Instance.SolutionRepository.SolutionFolder, "~\\");
                 }
                 else
+                {
                     TemplateFileNameFileBrowser.Text = dlg.FileName;
+                }
             }
         }
 
@@ -599,33 +626,50 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 {
                     string NewPath = Path.Combine(WorkSpace.Instance.SolutionRepository.SolutionFolder, "Documents", Path.GetFileName(dlg.FileName));
                     if (!Directory.Exists(Path.GetDirectoryName(NewPath)))
+                    {
                         Directory.CreateDirectory(Path.GetDirectoryName(NewPath));
+                    }
+
                     File.Copy(dlg.FileName, NewPath, true);
                     CertificatePath.Text = NewPath.Replace(WorkSpace.Instance.SolutionRepository.SolutionFolder, "~\\");
                 }
                 else
+                {
                     CertificatePath.Text = dlg.FileName;
+                }
             }
         }
 
         private void SetCustomCredPanel()
         {
             if (mApplicationAPIModel.NetworkCredentials == ApplicationAPIUtils.eNetworkCredentials.Custom)
+            {
                 SP_CustomCreds.Visibility = Visibility.Visible;
-            else SP_CustomCreds.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                SP_CustomCreds.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void SetCertificatePanel()
         {
             if (mApplicationAPIModel.CertificateType == ApplicationAPIUtils.eCretificateType.AllSSL)
+            {
                 CertificateStackPanel.Visibility = Visibility.Collapsed;
-            else CertificateStackPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                CertificateStackPanel.Visibility = Visibility.Visible;
+            }
         }
 
         private void CertificateSelection_Changed(object sender, RoutedEventArgs e)
         {
             if (sender == null || BodySelection == null)
+            {
                 return;
+            }
 
             RadioButton rBtn = sender as RadioButton;
             if ((bool)rBtn.IsChecked)
@@ -698,16 +742,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     foreach (TabItem tab in APIModelTabs.Items)
                     {
                         foreach (object ctrl in ((StackPanel)(tab.Header)).Children)
-
+                        {
                             if (ctrl.GetType() == typeof(TextBlock))
                             {
                                 if (APIModelTabs.SelectedItem == tab)
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                                }
                                 else
+                                {
                                     ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
-
-                                ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
+                                } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
+                        }
                     }
                 }
             }
@@ -720,9 +767,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         private void AuthorizationBox(object sender, SelectionChangedEventArgs e)
         {
             if (mApplicationAPIModel.AuthorizationType == ApplicationAPIUtils.eAuthType.BasicAuthentication)
+            {
                 Auth_Creds.Visibility = Visibility.Visible;
+            }
             else if (mApplicationAPIModel.AuthorizationType == ApplicationAPIUtils.eAuthType.NoAuthentication)
+            {
                 Auth_Creds.Visibility = Visibility.Collapsed;
+            }
         }
         /// <summary>
         /// Apply Ws-Security Header 
@@ -752,13 +803,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             for (int i = 1; i < SoapSecurityContent.Count; i++)
             {
                 AppModelParameter newAppModelParam = new AppModelParameter();
-                if (page.ParamsList.Count == 0)
+                if (!page.ParamsList.Any())
                 {
                     newAppModelParam.PlaceHolder = SoapSecurityContent.ElementAt(i);
                 }
                 else
                 {
-                    if (page.ParamsList.Where(x => x.PlaceHolder.Equals(SoapSecurityContent.ElementAt(i))).Count() == 0)
+                    if (!page.ParamsList.Any(x => x.PlaceHolder.Equals(SoapSecurityContent.ElementAt(i))))
                     {
                         newAppModelParam.PlaceHolder = SoapSecurityContent.ElementAt(i);
                     }
@@ -838,7 +889,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
                     break;
             }
-            if(parentWindow == null)
+            if (parentWindow == null)
             {
                 parentWindow = (Window)App.MainWindow;
             }

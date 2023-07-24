@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,15 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Plugin.Core;
+using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Amdocs.Ginger.Plugin.Core;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger.PlugInsWindows
 {
@@ -46,7 +44,7 @@ namespace Ginger.PlugInsWindows
                 throw new Exception("Plugin UI DLL not found: " + UIDLLFileName);
             }
 
-            
+
             Assembly assembly = Assembly.LoadFrom(UIDLLFileName); // Assembly.UnsafeLoadFrom(UIDLLFileName);               
             var list = from type in assembly.GetTypes()
                        where typeof(ITextEditor).IsAssignableFrom(type) && type.IsAbstract == false

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,28 +17,26 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
+using GingerCore.Actions.Common;
+using GingerCore.Actions.UIAutomation;
+using GingerCore.Actions.VisualTesting;
+using GingerCore.Drivers.Common;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using mshtml;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
-using GingerCore.Actions;
 using System.Drawing;
-using System.Windows.Forms;
-using GingerCore.Drivers.Common;
-using GingerCore.Actions.UIAutomation;
-using mshtml;
-using GingerCore.Drivers.WindowsLib;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Threading;
-using Amdocs.Ginger.Repository;
-using Castle.Components.DictionaryAdapter;
-using Amdocs.Ginger.CoreNET.RunLib;
 using System.Threading.Tasks;
-using GingerCore.Actions.VisualTesting;
-using OpenQA.Selenium;
-using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
+using System.Windows.Forms;
+using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 
 namespace GingerCore.Drivers.PBDriver
 {
@@ -115,7 +113,7 @@ namespace GingerCore.Drivers.PBDriver
                     ((UIAComWrapperHelper)mUIAutomationHelper).BusinessFlow = BusinessFlow;
                     ((UIAComWrapperHelper)mUIAutomationHelper).mPlatform = ePlatformType.PowerBuilder;
                     break;
-                                   
+
             }
             mUIAutomationHelper.ImplicitWait = mImplicitWait;
         }
@@ -138,15 +136,15 @@ namespace GingerCore.Drivers.PBDriver
             {
                 CheckRetrySwitchWindowIsNeeded();
             }
-            if(act.Timeout!=null)
+            if (act.Timeout != null)
             {
                 mUIAutomationHelper.mLoadTimeOut = act.Timeout;
             }
-            
+
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Start Executing action of type '" + actClass + "' Description is" + act.Description);
-                 
+
                 switch (actClass)
                 {
                     case "ActPBControl":
@@ -159,7 +157,7 @@ namespace GingerCore.Drivers.PBDriver
                         HandlePBGenericWidgetControlAction(AGE);
                         break;
                     case "ActBrowserElement":
-                        ActBrowserElement actBE=(ActBrowserElement)act;
+                        ActBrowserElement actBE = (ActBrowserElement)act;
                         HandlePBBrowserElementAction(actBE);
                         break;
                     //TODO: ActSwitchWindow is the correct approach for switch window. And we should guide the users accordingly.
@@ -224,7 +222,7 @@ namespace GingerCore.Drivers.PBDriver
                     //    ActUIAClickOnPoint ACP = (ActUIAClickOnPoint)act;
                     //    if (ACP.ActUIAClickOnPointAction == ActUIAClickOnPoint.eUIAClickOnPointAction.ClickXY) UIA.ClickOnPoint(ACP);
                     //    break;
-                    case "ActScreenShot":                        
+                    case "ActScreenShot":
                         try
                         {
                             //TODO: Implement Multi window capture
@@ -271,35 +269,35 @@ namespace GingerCore.Drivers.PBDriver
                     //    MenuItem(ami);
                     //    break;
                     case "Common.ActUIElement":
-                    //ActUIElement actUIPBC = (ActUIElement)act;
-                    HandleUIElementAction(act);
-                    break;
+                        //ActUIElement actUIPBC = (ActUIElement)act;
+                        HandleUIElementAction(act);
+                        break;
 
                     default:
-                        throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());                        
+                        throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
                 }
             }
             catch (System.Runtime.InteropServices.COMException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType()+ " Description:"+act.Description+" Error details:", e);
-                CheckAndRetryRunAction(act,e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
+                CheckAndRetryRunAction(act, e);
                 return;
             }
             catch (UIAuto.ElementNotAvailableException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
-                CheckAndRetryRunAction(act,e);
+                CheckAndRetryRunAction(act, e);
                 return;
             }
             catch (ArgumentException e)
-            {                
+            {
                 Reporter.ToLog(eLogLevel.ERROR, "Exception at Run action:" + act.GetType() + " Description:" + act.Description + " Error details:", e);
                 CheckAndRetryRunAction(act, e);
                 return;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.WARN, "Exception at Run action",e);
+                Reporter.ToLog(eLogLevel.WARN, "Exception at Run action", e);
                 act.Error = e.Message;
             }
         }
@@ -321,7 +319,7 @@ namespace GingerCore.Drivers.PBDriver
                 }
             }
 
-            
+
             switch (actUIPBC.ElementAction)
             {
                 case ActUIElement.eElementAction.DragDrop:
@@ -372,7 +370,7 @@ namespace GingerCore.Drivers.PBDriver
                     break;
             }
         }
-        
+
         private void HandlePBBrowserElementAction(ActBrowserElement actBE)
         {
             string result = "";
@@ -422,7 +420,7 @@ namespace GingerCore.Drivers.PBDriver
                     }
                     break;
                 case ActBrowserElement.eControlAction.SwitchFrame:
-                    result=mUIAutomationHelper.GetHTMLHelper().SwitchFrame(actBE.LocateBy, actBE.LocateValueCalculated);
+                    result = mUIAutomationHelper.GetHTMLHelper().SwitchFrame(actBE.LocateBy, actBE.LocateValueCalculated);
                     if (result.Equals("true"))
                     {
                         actBE.AddOrUpdateReturnParamActual("Actual", result);
@@ -465,27 +463,27 @@ namespace GingerCore.Drivers.PBDriver
                         {
                             string result = mUIAutomationHelper.SetControlValue(AE, actPBC.ValueForDriver);
                             if (result.StartsWith("True"))
-                            {                                
-                                actPBC.ExInfo = actPBC.ValueForDriver + " Value Set Successfully.";                                
+                            {
+                                actPBC.ExInfo = actPBC.ValueForDriver + " Value Set Successfully.";
                                 actPBC.AddOrUpdateReturnParamActual("Actual", "Passed");
                             }
                             else
                             {
-                                result = result.Replace("False","");
+                                result = result.Replace("False", "");
                                 actPBC.Error = "Validation failed";
-                                actPBC.ExInfo = "Expected Value : "+actPBC.ValueForDriver+" , Actual Value  :  "+result;
+                                actPBC.ExInfo = "Expected Value : " + actPBC.ValueForDriver + " , Actual Value  :  " + result;
                             }
                         }
                         catch (Exception e)
                         {
                             actPBC.ExInfo = e.Message;
-                        }                        
+                        }
                         break;
 
                     case ActPBControl.eControlAction.GetValue:
                         string val = mUIAutomationHelper.GetControlValue(AE);
                         actPBC.AddOrUpdateReturnParamActual("Actual", val);
-                        actPBC.ExInfo = val;                        
+                        actPBC.ExInfo = val;
                         break;
                     case ActPBControl.eControlAction.GetText:
                         string valText = mUIAutomationHelper.GetControlText(AE, actPBC.ValueForDriver);
@@ -494,7 +492,7 @@ namespace GingerCore.Drivers.PBDriver
                         break;
 
                     case ActPBControl.eControlAction.GetFieldValue:
-                        string fieldValue = mUIAutomationHelper.GetControlFieldValue(AE,actPBC.ValueForDriver);
+                        string fieldValue = mUIAutomationHelper.GetControlFieldValue(AE, actPBC.ValueForDriver);
                         actPBC.AddOrUpdateReturnParamActual("Actual", fieldValue);
                         actPBC.ExInfo = fieldValue;
                         break;
@@ -506,7 +504,7 @@ namespace GingerCore.Drivers.PBDriver
                         break;
 
                     case ActPBControl.eControlAction.Select:
-                        string validation= mUIAutomationHelper.SetControlValue(AE, actPBC.ValueForDriver);
+                        string validation = mUIAutomationHelper.SetControlValue(AE, actPBC.ValueForDriver);
                         if (validation.StartsWith("True"))
                         {
                             actPBC.ExInfo = actPBC.ValueForDriver + " Value Set Successfully.";
@@ -531,41 +529,50 @@ namespace GingerCore.Drivers.PBDriver
                             actPBC.Error = status;
                         }
                         else
+                        {
                             actPBC.ExInfo += status;
+                        }
+
                         break;
 
                     case ActPBControl.eControlAction.AsyncClick:
-                        status = mUIAutomationHelper.ClickElement(AE,true);
+                        status = mUIAutomationHelper.ClickElement(AE, true);
                         if (!status.Contains("Clicked Successfully"))
                         {
                             actPBC.Error = status;
                         }
                         else
+                        {
                             actPBC.ExInfo += status;
+                        }
+
                         break;
 
                     case ActPBControl.eControlAction.ClickXY:
-                        mUIAutomationHelper.ClickOnXYPoint(AE,actPBC.ValueForDriver);
+                        mUIAutomationHelper.ClickOnXYPoint(AE, actPBC.ValueForDriver);
                         break;
 
                     case ActPBControl.eControlAction.RightClick:
-                        mUIAutomationHelper.DoRightClick(AE);
+                        mUIAutomationHelper.DoRightClick(AE, actPBC.ValueForDriver);
                         break;
 
                     case ActPBControl.eControlAction.DoubleClick:
-                        mUIAutomationHelper.DoDoubleClick(AE,actPBC.Value);
+                        mUIAutomationHelper.DoDoubleClick(AE, actPBC.Value);
                         break;
 
                     case ActPBControl.eControlAction.Maximize:
                     case ActPBControl.eControlAction.Minimize:
                     case ActPBControl.eControlAction.Restore:
-                        status  = mUIAutomationHelper.SetElementVisualState(AE, actPBC.ControlAction.ToString());
+                        status = mUIAutomationHelper.SetElementVisualState(AE, actPBC.ControlAction.ToString());
                         if (!status.Contains("State set successfully"))
                         {
                             actPBC.Error = status;
                         }
                         else
-                            actPBC.ExInfo += status;                        
+                        {
+                            actPBC.ExInfo += status;
+                        }
+
                         break;
                     case ActPBControl.eControlAction.Resize:
                         status = mUIAutomationHelper.SetElementSize(AE, actPBC.ValueForDriver);
@@ -574,10 +581,13 @@ namespace GingerCore.Drivers.PBDriver
                             actPBC.Error = status;
                         }
                         else
+                        {
                             actPBC.ExInfo += status;
+                        }
+
                         break;
                     case ActPBControl.eControlAction.GetSelected:
-                        string selectedItem= mUIAutomationHelper.GetSelectedItem(AE);
+                        string selectedItem = mUIAutomationHelper.GetSelectedItem(AE);
                         actPBC.AddOrUpdateReturnParamActual("Selected Item", selectedItem);
                         actPBC.ExInfo = selectedItem;
                         break;
@@ -588,7 +598,7 @@ namespace GingerCore.Drivers.PBDriver
                         actPBC.ExInfo = title;
                         break;
 
-                    case ActPBControl.eControlAction.Toggle:                        
+                    case ActPBControl.eControlAction.Toggle:
                         string value = mUIAutomationHelper.ToggleControlValue(AE);
                         actPBC.AddOrUpdateReturnParamActual("Actual", value);
                         actPBC.ExInfo = value;
@@ -604,11 +614,11 @@ namespace GingerCore.Drivers.PBDriver
                         string valueIsExist;
                         if (!(String.IsNullOrEmpty(actPBC.ValueForDriver)))
                         {
-                             valueIsExist = mUIAutomationHelper.IsChildElementExist(actPBC.LocateBy, actPBC.LocateValueCalculated,actPBC.ValueForDriver).ToString();
+                            valueIsExist = mUIAutomationHelper.IsChildElementExist(actPBC.LocateBy, actPBC.LocateValueCalculated, actPBC.ValueForDriver).ToString();
                         }
                         else
                         {
-                             valueIsExist = mUIAutomationHelper.IsElementExist(actPBC.LocateBy, actPBC.LocateValueCalculated).ToString();
+                            valueIsExist = mUIAutomationHelper.IsElementExist(actPBC.LocateBy, actPBC.LocateValueCalculated).ToString();
                         }
                         actPBC.Error = "";
                         actPBC.AddOrUpdateReturnParamActual("Actual", valueIsExist);
@@ -664,15 +674,15 @@ namespace GingerCore.Drivers.PBDriver
             }
             catch (Exception e)
             {
-               Reporter.ToLog(eLogLevel.ERROR, "Exception in HandlePBControlAction", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in HandlePBControlAction", e);
                 throw e;
             }
         }
-        
+
         private void HandlePBGenericWidgetControlAction(ActGenElement actPBC)
         {
             IHTMLElement PBEle = mUIAutomationHelper.GetHTMLHelper().GetActElement(actPBC);
-            if (PBEle == null )
+            if (PBEle == null)
             {
                 actPBC.Error = "Element not Found - " + actPBC.LocateBy + " " + actPBC.LocateValueCalculated;
                 return;
@@ -688,9 +698,14 @@ namespace GingerCore.Drivers.PBDriver
 
                         result = mUIAutomationHelper.GetHTMLHelper().SetValue(PBEle, ValDrv);
                         if (result)
+                        {
                             actPBC.ExInfo = ValDrv + " set";
+                        }
                         else
+                        {
                             actPBC.Error = "Unable to set value to " + ValDrv;
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.SetAttributeValue:
                         string attrName = "value";
@@ -702,20 +717,30 @@ namespace GingerCore.Drivers.PBDriver
                         }
                         result = mUIAutomationHelper.GetHTMLHelper().SetValue(PBEle, attValue, attrName);
                         if (result)
+                        {
                             actPBC.ExInfo = ValDrv + " set";
+                        }
                         else
+                        {
                             actPBC.Error = "Unable to set value to " + ValDrv;
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.SendKeys:
 
                         result = mUIAutomationHelper.GetHTMLHelper().SendKeys(PBEle, ValDrv);
                         if (result)
+                        {
                             actPBC.ExInfo = ValDrv + " Keys Sent";
+                        }
                         else
+                        {
                             actPBC.Error = "Unable to Send Keys " + ValDrv;
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.GetValue:
-                        value = mUIAutomationHelper.GetHTMLHelper().GetValue(PBEle,"value");
+                        value = mUIAutomationHelper.GetHTMLHelper().GetValue(PBEle, "value");
                         if (string.IsNullOrEmpty(value))
                         {
                             actPBC.Error = "Unable to Get value of " + ValDrv;
@@ -725,46 +750,86 @@ namespace GingerCore.Drivers.PBDriver
                             actPBC.AddOrUpdateReturnParamActual("Actual", value.ToString());
                             actPBC.ExInfo = value.ToString();
                         }
-                        break;                    
+                        break;
                     case ActGenElement.eGenElementAction.Click:
                     case ActGenElement.eGenElementAction.AsyncClick:
                         result = mUIAutomationHelper.GetHTMLHelper().Click(PBEle);
-                        if (result) actPBC.ExInfo = "Element Clicked";
-                        else actPBC.Error = "Element Unable to Clicked";
+                        if (result)
+                        {
+                            actPBC.ExInfo = "Element Clicked";
+                        }
+                        else
+                        {
+                            actPBC.Error = "Element Unable to Clicked";
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.ClickAt:
                         result = mUIAutomationHelper.GetHTMLHelper().ClickAt(PBEle, ValDrv);
-                        if (result) actPBC.ExInfo = "Element Clicked";
-                        else actPBC.Error = "Element Unable to Clicked";
+                        if (result)
+                        {
+                            actPBC.ExInfo = "Element Clicked";
+                        }
+                        else
+                        {
+                            actPBC.Error = "Element Unable to Clicked";
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.RightClick:
                         result = mUIAutomationHelper.GetHTMLHelper().RightClick(PBEle, ValDrv);
-                        if (result) actPBC.ExInfo = "Element Right Click Done";
-                        else actPBC.Error = "Element Unable to do Right Click";
+                        if (result)
+                        {
+                            actPBC.ExInfo = "Element Right Click Done";
+                        }
+                        else
+                        {
+                            actPBC.Error = "Element Unable to do Right Click";
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.Enabled:
-                        value = mUIAutomationHelper.GetHTMLHelper().GetValue(PBEle,"disabled");
+                        value = mUIAutomationHelper.GetHTMLHelper().GetValue(PBEle, "disabled");
                         value = value.ToString().ToLower().Equals("false") ? "true" : "false";
                         actPBC.AddOrUpdateReturnParamActual("Actual", value);
                         actPBC.ExInfo = value.ToString();
                         break;
                     case ActGenElement.eGenElementAction.Hover:
                         result = mUIAutomationHelper.GetHTMLHelper().MouseHover(PBEle, ValDrv);
-                        if (result) actPBC.ExInfo = "Element Hover Done";
-                        else actPBC.Error = "Unable to Hover the Element";
+                        if (result)
+                        {
+                            actPBC.ExInfo = "Element Hover Done";
+                        }
+                        else
+                        {
+                            actPBC.Error = "Unable to Hover the Element";
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.ScrollToElement:
                         result = mUIAutomationHelper.GetHTMLHelper().scrolltoElement(PBEle);
-                        if (result) actPBC.ExInfo = "Scroll to Element Done";
-                        else actPBC.Error = "Unable to Scroll to Element";
+                        if (result)
+                        {
+                            actPBC.ExInfo = "Scroll to Element Done";
+                        }
+                        else
+                        {
+                            actPBC.Error = "Unable to Scroll to Element";
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.FireSpecialEvent:
 
                         value = mUIAutomationHelper.GetHTMLHelper().FireSpecialEvent(PBEle, ValDrv);
                         if (value.StartsWith("Error"))
+                        {
                             actPBC.Error = "Unable to fire special event. " + value;
+                        }
                         else
+                        {
                             actPBC.ExInfo = "Fire special event " + value;
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.Visible:
                         value = mUIAutomationHelper.GetHTMLHelper().GetValue(PBEle, "type");
@@ -788,11 +853,18 @@ namespace GingerCore.Drivers.PBDriver
                     case ActGenElement.eGenElementAction.SelectFromDropDownByIndex:
 
                         result = mUIAutomationHelper.GetHTMLHelper().SetValue(PBEle, ValDrv);
-                        if (result) actPBC.ExInfo = ValDrv + " set";
-                        else actPBC.Error = "Unable to Set Value " + ValDrv;
+                        if (result)
+                        {
+                            actPBC.ExInfo = ValDrv + " set";
+                        }
+                        else
+                        {
+                            actPBC.Error = "Unable to Set Value " + ValDrv;
+                        }
+
                         break;
                     case ActGenElement.eGenElementAction.GetInnerText:
-                        value = mUIAutomationHelper.GetHTMLHelper().GetValue(PBEle,"innerText");
+                        value = mUIAutomationHelper.GetHTMLHelper().GetValue(PBEle, "innerText");
                         if (!string.IsNullOrEmpty(value))
                         {
                             actPBC.AddOrUpdateReturnParamActual("Actual", value);
@@ -918,7 +990,7 @@ namespace GingerCore.Drivers.PBDriver
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in HandleMenuControlAction", e);
                 throw e;
             }
-        }      
+        }
 
         private void HandleWindowControlAction(ActWindow actWindow)
         {
@@ -927,13 +999,13 @@ namespace GingerCore.Drivers.PBDriver
                 switch (actWindow.WindowActionType)
                 {
                     case ActWindow.eWindowActionType.IsExist:
-                        string val=mUIAutomationHelper.IsWindowExist(actWindow).ToString();
+                        string val = mUIAutomationHelper.IsWindowExist(actWindow).ToString();
                         actWindow.Error = "";
                         if (String.IsNullOrEmpty(actWindow.Error))
                         {
                             actWindow.AddOrUpdateReturnParamActual("Actual", val);
                             actWindow.ExInfo += val;
-                        }                        
+                        }
                         break;
 
                     case ActWindow.eWindowActionType.Close:
@@ -988,11 +1060,11 @@ namespace GingerCore.Drivers.PBDriver
         public override Act GetCurrentElement()
         { return null; }
 
-        
+
         public override string GetURL()
         { return null; }
 
-        
+
         private void SwitchWindow(ActUIASwitchWindow act)
         {
             mUIAutomationHelper.SwitchWindow(act);
@@ -1031,7 +1103,7 @@ namespace GingerCore.Drivers.PBDriver
         }
         string IWindowExplorer.GetFocusedControl()
         {
-            UIAuto.AutomationElement AE= UIAuto.AutomationElement.FocusedElement;
+            UIAuto.AutomationElement AE = UIAuto.AutomationElement.FocusedElement;
             string s = null;
 
             s = AE.Current.Name + " - " + AE.Current.ClassName + "-" + AE.Current.LocalizedControlType;
@@ -1040,22 +1112,22 @@ namespace GingerCore.Drivers.PBDriver
 
         ElementInfo IWindowExplorer.GetControlFromMousePosition()
         {
-            return GetControlFromMousePosition();           
+            return GetControlFromMousePosition();
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting=null)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting = null)
         {
             return EI;
         }
 
         ObservableList<ControlProperty> IWindowExplorer.GetElementProperties(ElementInfo ElementInfo)
         {
-            return GetElementProperties(ElementInfo);         
+            return GetElementProperties(ElementInfo);
         }
 
         ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
-            return GetElementLocators(ElementInfo);   
+            return GetElementLocators(ElementInfo);
         }
 
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
@@ -1074,9 +1146,15 @@ namespace GingerCore.Drivers.PBDriver
 
         AppWindow IWindowExplorer.GetActiveWindow()
         {
-            if (mUIAutomationHelper.GetCurrentWindow() == null) return null;
+            if (mUIAutomationHelper.GetCurrentWindow() == null)
+            {
+                return null;
+            }
 
-            if (!mUIAutomationHelper.IsWindowValid(mUIAutomationHelper.GetCurrentWindow())) return null;
+            if (!mUIAutomationHelper.IsWindowValid(mUIAutomationHelper.GetCurrentWindow()))
+            {
+                return null;
+            }
 
             AppWindow aw = new AppWindow();
             aw.Title = mUIAutomationHelper.GetWindowInfo(mUIAutomationHelper.GetCurrentWindow());
@@ -1104,17 +1182,17 @@ namespace GingerCore.Drivers.PBDriver
             return mUIAutomationHelper.IsWindowValid(obj);
         }
 
-        
+
         public override void StartRecording()
         {
             mUIAutomationHelper.StartRecording();
         }
-        
+
         public override void StopRecording()
         {
-            
+
         }
-        
+
         void IWindowExplorer.UnHighLightElements()
         {
         }
@@ -1208,7 +1286,11 @@ namespace GingerCore.Drivers.PBDriver
         {
             object elem = mUIAutomationHelper.GetElementAtPoint(new System.Drawing.Point((int)ptX, (int)ptY));
 
-            if (elem == null) return null;
+            if (elem == null)
+            {
+                return null;
+            }
+
             ElementInfo EI;
 
             if (elem.GetType().Equals(typeof(UIAuto.AutomationElement)))

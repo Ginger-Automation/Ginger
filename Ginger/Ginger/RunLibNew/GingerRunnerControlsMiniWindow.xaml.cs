@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.GeneralLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,7 +29,7 @@ namespace GingerWPF.RunLib
     /// </summary>
     public partial class GingerRunnerControlsMiniWindow : Window
     {
-        Window mBigWindow;        
+        Window mBigWindow;
         ContentControl mGingerRunnerControlsPageContentControl;
         Grid mGrid;
         private Action<bool> setMiniView;
@@ -39,7 +40,7 @@ namespace GingerWPF.RunLib
             this.Top = 0;
             this.Left = 0;
 
-            MainFrame.Content = grid;
+            MainFrame.ClearAndSetContent(grid);
             mGingerRunnerControlsPageContentControl = CC;
             mGrid = grid;
             this.setMiniView = setMiniView;
@@ -52,7 +53,7 @@ namespace GingerWPF.RunLib
         private void MaxButton_Click(object sender, RoutedEventArgs e)
         {
             mGingerRunnerControlsPageContentControl.Content = mGrid;
-                
+
             //restore to previous status
             mBigWindow.WindowState = WindowState.Maximized;
             mBigWindow.ShowInTaskbar = true;

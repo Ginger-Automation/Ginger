@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,11 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ginger.TwoLevelMenuLib
 {
@@ -31,7 +26,7 @@ namespace Ginger.TwoLevelMenuLib
         public ObservableList<TopMenuItem> MenuList = new ObservableList<TopMenuItem>();
 
         internal void Add(TopMenuItem topMenuItem)
-        {            
+        {
             MenuList.Add(topMenuItem);
         }
 
@@ -41,7 +36,7 @@ namespace Ginger.TwoLevelMenuLib
             {
                 if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
                 {
-                    if (topMenuItem.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
+                    if (WorkSpace.Instance.Solution!= null && topMenuItem.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
                     {
                         continue;
                     }

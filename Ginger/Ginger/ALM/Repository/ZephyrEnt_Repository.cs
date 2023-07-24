@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ using GingerCore.ALM.QC;
 using GingerCore.ALM.ZephyrEnt.Bll;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -439,7 +438,7 @@ namespace Ginger.ALM.Repository
 
         public override bool ImportSelectedTests(string importDestinationPath, IEnumerable<object> selectedTestSets)
         {
-            if (selectedTestSets != null && selectedTestSets.Count() > 0)
+            if (selectedTestSets != null && selectedTestSets.Any())
             {
                 ObservableList<ZephyrEntPhaseTreeItem> testSetsItemsToImport = new ObservableList<ZephyrEntPhaseTreeItem>();
                 foreach (ZephyrEntPhaseTreeItem testSetItem in selectedTestSets)
@@ -495,9 +494,9 @@ namespace Ginger.ALM.Repository
                             {
                                 if (!string.IsNullOrEmpty(activ.TargetApplication))
                                 {
-                                    if (tsBusFlow.TargetApplications.Where(x => x.Name == activ.TargetApplication).FirstOrDefault() == null)
+                                    if (tsBusFlow.TargetApplications.FirstOrDefault(x => x.Name == activ.TargetApplication) == null)
                                     {
-                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == activ.TargetApplication).FirstOrDefault();
+                                        ApplicationPlatform appAgent = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == activ.TargetApplication);
                                         if (appAgent != null)
                                         {
                                             tsBusFlow.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
@@ -599,24 +598,24 @@ namespace Ginger.ALM.Repository
                 if (almTestSet.TestSetID != almTestSet.TestSetInternalID2)
                 {
                     TreeNode treeNode = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetTestRepositoryFolderById(Convert.ToInt32(almTestSet.TestSetID));
-                    if(treeNode != null)
+                    if (treeNode != null)
                     {
                         almTestSet.TestSetName = treeNode.name;
                     }
                 }
                 else
                 {
-                    List<BaseResponseItem>  testSetResponseItems = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntPhaseById(Convert.ToInt32(almTestSet.TestSetID));
+                    List<BaseResponseItem> testSetResponseItems = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).GetZephyrEntPhaseById(Convert.ToInt32(almTestSet.TestSetID));
                     if (testSetResponseItems is not null && testSetResponseItems.Count > 0)
                     {
                         almTestSet.TestSetName = testSetResponseItems[0].TryGetItem("name").ToString();
                     }
                 }
-                
+
                 // Add test cases
                 almTestSet = ((ZephyrEntCore)ALMIntegration.Instance.AlmCore).ImportTestSetData(almTestSet);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Failed to get Test Set data, {System.Reflection.MethodBase.GetCurrentMethod().Name}: Error - {ex.Message} ");
             }

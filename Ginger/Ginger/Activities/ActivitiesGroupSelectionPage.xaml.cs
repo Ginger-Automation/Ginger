@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ namespace Ginger.BusinessFlowPages
             xGroupComboBox.DisplayMemberPath = nameof(ActivitiesGroup.Name);
             if (businessFlow.ActivitiesGroups.Count > 0)
             {
-                if(parentGroup==null)
+                if (parentGroup == null)
                 {
                     xGroupComboBox.SelectedItem = businessFlow.ActivitiesGroups[0];
                 }
@@ -56,7 +56,7 @@ namespace Ginger.BusinessFlowPages
                 {
                     xGroupComboBox.SelectedItem = parentGroup;
                 }
-              
+
             }
 
             if (mAddPOMActivity)
@@ -78,7 +78,7 @@ namespace Ginger.BusinessFlowPages
             {
                 if (!string.IsNullOrEmpty(groupName))
                 {
-                    if (mBusinessFlow.ActivitiesGroups.Where(x => x.Name.Trim() == groupName.Trim()).FirstOrDefault() == null)
+                    if (mBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name.Trim() == groupName.Trim()) == null)
                     {
                         ActivitiesGroup activitiesGroup = new ActivitiesGroup() { Name = groupName.Trim() };
                         mBusinessFlow.AddActivitiesGroup(activitiesGroup);
@@ -96,7 +96,7 @@ namespace Ginger.BusinessFlowPages
         {
             string title = "Configurations";
 
-            ObservableList<Button> winButtons = new ObservableList<Button>();          
+            ObservableList<Button> winButtons = new ObservableList<Button>();
             Button selectBtn = new Button();
             selectBtn.Content = "Select";
             selectBtn.Click += SelectBtn_Click;

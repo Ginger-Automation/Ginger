@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ namespace Amdocs.Ginger.Plugin.Core
         public override bool CanConvert(Type objectType)
         {
             if (objectType == typeof(List<Attribute>))
-            {             
+            {
                 return true;
             }
             else
@@ -55,17 +55,17 @@ namespace Amdocs.Ginger.Plugin.Core
                 {
                     string name = p.Name;
                     // TODO: get value based on prop type                    
-                    
+
                     if (p.Name == "Property")
                     {
                         string value = (string)p.Value;
-                        if(mAttrTypeDictionary == null)
+                        if (mAttrTypeDictionary == null)
                         {
-                            CreateAttrTypeDictionary();    
+                            CreateAttrTypeDictionary();
                         }
                         Type attrType = null;
                         bool found = mAttrTypeDictionary.TryGetValue(value, out attrType);
-                        
+
                         if (found)
                         {
                             attr = (Attribute)Activator.CreateInstance(attrType);
@@ -74,7 +74,7 @@ namespace Amdocs.Ginger.Plugin.Core
                         {
                             throw new Exception("Cannot create attribute: " + value);
                         }
-                       
+
                         attrs.Add(attr);
                     }
                     else
@@ -91,24 +91,24 @@ namespace Amdocs.Ginger.Plugin.Core
                         }
                         else if (propertyInfo.PropertyType == typeof(List<int>))
                         {
-                            List<int> list = new List<int>();                            
+                            List<int> list = new List<int>();
                             JArray jarr = (JArray)p.Value;
                             foreach (int val in jarr.Children())
                             {
-                                list.Add(val); 
+                                list.Add(val);
                             }
                             propertyInfo.SetValue(attr, list);
                         }
-                        else if(propertyInfo.PropertyType == typeof(bool))
+                        else if (propertyInfo.PropertyType == typeof(bool))
                         {
                             propertyInfo.SetValue(attr, p.Value.Value<bool>());
                         }
-                        else if(propertyInfo.PropertyType == typeof(object))
+                        else if (propertyInfo.PropertyType == typeof(object))
                         {
                             propertyInfo.SetValue(attr, p.Value.Value<object>());
                         }
-                        else if(propertyInfo.PropertyType.IsEnum)
-                        {                            
+                        else if (propertyInfo.PropertyType.IsEnum)
+                        {
                             propertyInfo.SetValue(attr, Enum.Parse(propertyInfo.PropertyType, p.Value.ToString()));
                         }
                         else
@@ -121,7 +121,7 @@ namespace Amdocs.Ginger.Plugin.Core
                     }
                 }
             }
-            
+
             return attrs;
         }
 
@@ -134,36 +134,36 @@ namespace Amdocs.Ginger.Plugin.Core
                                                     select type;
 
             foreach (Type t in actionParamPropertyAttributeTypes)
-            {                
+            {
                 IParamProperty attr = (IParamProperty)Activator.CreateInstance(t);
-                mAttrTypeDictionary.Add(attr.PropertyName, t);                
+                mAttrTypeDictionary.Add(attr.PropertyName, t);
             }
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            if (value == null)  
+            if (value == null)
             {
                 serializer.Serialize(writer, null);
                 return;
             }
 
             List<Attribute> attrs = (List<Attribute>)value;
-            if(attrs.Count == 0)
-            {                
+            if (attrs.Count == 0)
+            {
                 serializer.Serialize(writer, null);
                 return;
             }
-            
+
             writer.WriteStartArray();
             foreach (Attribute attr in attrs)
-            {                
+            {
                 var properties = attr.GetType().GetProperties();
                 writer.WriteStartObject();
                 // First write property name so it will be first in the list
                 writer.WritePropertyName("Property");
                 IParamProperty actionParamProperty = (IParamProperty)attr;
-                string propertyName = actionParamProperty.PropertyName;                
+                string propertyName = actionParamProperty.PropertyName;
                 serializer.Serialize(writer, propertyName);
 
                 foreach (var property in properties)
@@ -173,13 +173,13 @@ namespace Amdocs.Ginger.Plugin.Core
                         continue;
                     }
                     // write property name
-                    writer.WritePropertyName(property.Name);                    
+                    writer.WritePropertyName(property.Name);
                     serializer.Serialize(writer, property.GetValue(attr, null));
                 }
 
                 writer.WriteEndObject();
             }
-            writer.WriteEndArray();            
+            writer.WriteEndArray();
         }
     }
 }

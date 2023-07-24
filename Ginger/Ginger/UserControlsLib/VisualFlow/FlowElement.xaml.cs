@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ namespace Ginger.UserControlsLib.VisualFlow
 
         public Frame GetCustomeShape()
         {
-             return CustomeShape; 
+            return CustomeShape;
         }
 
         public FlowElement(eElementType ElementType, string Caption, double left, double top)
@@ -72,14 +72,14 @@ namespace Ginger.UserControlsLib.VisualFlow
             Init(left, top);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(CaptionLabel, ContentProperty, obj, prop, BindingMode.OneWay);
         }
-        public FlowElement(eElementType ElementType, Page f,double left, double top,double width,double height)
+        public FlowElement(eElementType ElementType, Page f, double left, double top, double width, double height)
         {
             this.ElementType = ElementType;
-            Init(left, top,width,height);
+            Init(left, top, width, height);
             CustomeShape.Content = f;
         }
 
-        void Init(double left, double top,double width=300,double height=150)
+        void Init(double left, double top, double width = 300, double height = 150)
         {
             InitializeComponent();
 
@@ -118,7 +118,7 @@ namespace Ginger.UserControlsLib.VisualFlow
                     break;
                 case eElementType.CustomeShape:
                     SetHighLight(false);
-                    CustomeShape.Visibility = Visibility.Visible;                    
+                    CustomeShape.Visibility = Visibility.Visible;
                     break;
                 default:
                     ActivityShape.Visibility = System.Windows.Visibility.Visible;
@@ -136,9 +136,9 @@ namespace Ginger.UserControlsLib.VisualFlow
         }
 
         public void SetImage(System.Drawing.Image img)
-        {            
+        {
             BitmapImage logo = new BitmapImage();
-            logo.BeginInit();            
+            logo.BeginInit();
             //TODO: use the image from above
             logo.UriSource = new Uri(@"/Images/" + "@Agent_32x32.png", UriKind.RelativeOrAbsolute);
             logo.EndInit();
@@ -158,7 +158,7 @@ namespace Ginger.UserControlsLib.VisualFlow
 
                 HoverInfoLabel.Visibility = Visibility.Visible;
                 SetConnectorsVisibility(Visibility.Visible);
-                SetResizersVisibility(Visibility.Visible);            
+                SetResizersVisibility(Visibility.Visible);
             }
             else
             {
@@ -168,7 +168,7 @@ namespace Ginger.UserControlsLib.VisualFlow
 
                 HoverInfoLabel.Visibility = Visibility.Collapsed;
                 SetConnectorsVisibility(Visibility.Collapsed);
-                SetResizersVisibility(Visibility.Collapsed);             
+                SetResizersVisibility(Visibility.Collapsed);
             }
         }
 
@@ -187,8 +187,8 @@ namespace Ginger.UserControlsLib.VisualFlow
                     {
                         // Get X,Y of r relative to the FlowElemnet we are on    
                         //TODO: replace with grid col 0 width and grid row 0 height
-                        double left = LeftConnector.Width  + r.Margin.Left + r.Width / 2;
-                        double top = TopConnector.Height + r.Margin.Top + r.Height /2;
+                        double left = LeftConnector.Width + r.Margin.Left + r.Width / 2;
+                        double top = TopConnector.Height + r.Margin.Top + r.Height / 2;
                         return new Point(left, top);
                     }
                 }

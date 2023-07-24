@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ namespace GingerTest.POMs.Common
         /// <param name="property">item property as defined in the class</param>
         /// <param name="value">text with of this property</param>
         internal void GotoRow(string property, string value)
-        {            
+        {
             foreach (var item in mGrid.DataSourceList)
             {
                 if (item.GetType().GetProperty(property).GetValue(item).ToString() == value)
@@ -59,7 +59,7 @@ namespace GingerTest.POMs.Common
                     return;
                 }
             }
-            
+
             throw new Exception("Grid item not found for: " + property + "=" + value);
         }
 
@@ -72,7 +72,7 @@ namespace GingerTest.POMs.Common
                 {
                     DataGridCellsPresenter presenter = null;
                     CheckBox checkbox = null;
-                 
+
 
                     Execute(() =>
                     {

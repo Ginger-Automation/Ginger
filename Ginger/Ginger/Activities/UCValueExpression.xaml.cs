@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using GingerCore;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Common;
-using GingerCore;
 
 namespace Ginger.Activities
 {
@@ -36,7 +36,7 @@ namespace Ginger.Activities
         public enum eBrowserType { File, Folder }
         private Environment.SpecialFolder rootFolder;
         Context mContext;
-        
+
         public UCValueExpression()
         {
             InitializeComponent();
@@ -46,11 +46,11 @@ namespace Ginger.Activities
         private void UCValueExpression_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             // If the VE is in Grid, we call this function:
-                if (e.NewValue.GetType() == typeof(ValueExpression))
-                {
-                    ValueExpression ve = (ValueExpression)e.NewValue;                    
-                    Init(mContext, ve.Obj, ve.ObjAttr);                    
-                }
+            if (e.NewValue.GetType() == typeof(ValueExpression))
+            {
+                ValueExpression ve = (ValueExpression)e.NewValue;
+                Init(mContext, ve.Obj, ve.ObjAttr);
+            }
         }
 
         public void Init(Context context, object obj, string AttrName)
@@ -59,7 +59,7 @@ namespace Ginger.Activities
             this.obj = obj;
             this.AttrName = AttrName;
             mContext = context;
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);       
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ValueTextBox, TextBox.TextProperty, obj, AttrName);
         }
 
         public void Init(Context context, object obj, string AttrName, bool isVENeeded = true, bool isBrowseNeeded = false, eBrowserType browserType = eBrowserType.File, string fileType = "*", Environment.SpecialFolder rootFolder = Environment.SpecialFolder.MyComputer, RoutedEventHandler extraBrowserSelectionHandler = null)
@@ -79,7 +79,9 @@ namespace Ginger.Activities
                 BrowseButton.AddHandler(Button.ClickEvent, new RoutedEventHandler(BrowseButton_Click));
 
                 if (extraBrowserSelectionHandler != null)
+                {
                     BrowseButton.Click += extraBrowserSelectionHandler;
+                }
             }
 
             if (!isVENeeded)
@@ -87,7 +89,7 @@ namespace Ginger.Activities
                 MidCol.Width = new GridLength(0);
                 OpenExpressionEditorButton.Visibility = Visibility.Collapsed;
             }
-        }   
+        }
 
         private void OpenExpressionEditorButton_Click(object sender, RoutedEventArgs e)
         {
@@ -129,7 +131,7 @@ namespace Ginger.Activities
             Row.Height = new GridLength(hight);
         }
 
-        public bool IsReadOnly 
+        public bool IsReadOnly
         {
             get { return ValueTextBox.IsReadOnly; }
             set { ValueTextBox.IsReadOnly = value; }

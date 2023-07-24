@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,13 +34,13 @@ namespace GingerTest
 
         public HighlightAdorner(UIElement adornedElement) :
         base(adornedElement)
-        {            
+        {
             visualChildren = new VisualCollection(this);
-            highlighterAdorner.Opacity = 0.20;         
-            visualChildren.Add(highlighterAdorner);            
+            highlighterAdorner.Opacity = 0.20;
+            visualChildren.Add(highlighterAdorner);
             var layer = AdornerLayer.GetAdornerLayer(adornedElement);
             layer.Add(this);
-            adornedElement.InvalidateVisual();          
+            adornedElement.InvalidateVisual();
         }
 
 
@@ -51,7 +51,7 @@ namespace GingerTest
             double desiredHeight = AdornedElement.DesiredSize.Height + 10;
 
             highlighterAdorner.Arrange(new Rect(-10, -10, desiredWidth, desiredHeight));
-            
+
             return finalSize;
         }
 

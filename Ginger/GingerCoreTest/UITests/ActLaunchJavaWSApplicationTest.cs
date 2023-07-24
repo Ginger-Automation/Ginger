@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,17 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Amdocs.Ginger.CoreNET.Execution;
-using Ginger.Run;
-using GingerCore.Actions;
-using GingerCore.Actions.Common;
-using GingerCore.Drivers.CommunicationProtocol;
-using GingerCore.Drivers.JavaDriverLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests.UITests
@@ -56,7 +45,7 @@ namespace UnitTests.UITests
         //    LJA.WaitForWindowTitle = "SimpleTableDemo";
         //    LJA.Port = "9898";
         //    LJA.URL = Common.getGingerUnitTesterDocumentsFolder() + @"JavaTestApp\SimpleTableDemo.jnlp";
-          
+
         //    LJA.Execute();
 
 
@@ -79,7 +68,7 @@ namespace UnitTests.UITests
         //    LJA.WaitForWindowTitle = AppName;
         //    LJA.Port = "9899";
         //    LJA.URL = Common.getGingerUnitTesterDocumentsFolder() + @"JavaTestApp\JavaTestApp.jar";
-          
+
         //    LJA.Execute();
         //    mGR.CalculateActionFinalStatus(LJA);
 

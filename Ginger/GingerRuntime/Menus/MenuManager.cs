@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -54,22 +54,61 @@ namespace Amdocs.Ginger.GingerRuntime
                 {
                     string s = MI.Key.ToString();
 
-                    if (MI.Key == ConsoleKey.D0) s = "0";
-                    if (MI.Key == ConsoleKey.D1) s = "1";
-                    if (MI.Key == ConsoleKey.D2) s = "2";
-                    if (MI.Key == ConsoleKey.D3) s = "3";
-                    if (MI.Key == ConsoleKey.D4) s = "4";
-                    if (MI.Key == ConsoleKey.D5) s = "5";
-                    if (MI.Key == ConsoleKey.D6) s = "6";
-                    if (MI.Key == ConsoleKey.D7) s = "7";
-                    if (MI.Key == ConsoleKey.D8) s = "8";
-                    if (MI.Key == ConsoleKey.D9) s = "9";                    
+                    if (MI.Key == ConsoleKey.D0)
+                    {
+                        s = "0";
+                    }
+
+                    if (MI.Key == ConsoleKey.D1)
+                    {
+                        s = "1";
+                    }
+
+                    if (MI.Key == ConsoleKey.D2)
+                    {
+                        s = "2";
+                    }
+
+                    if (MI.Key == ConsoleKey.D3)
+                    {
+                        s = "3";
+                    }
+
+                    if (MI.Key == ConsoleKey.D4)
+                    {
+                        s = "4";
+                    }
+
+                    if (MI.Key == ConsoleKey.D5)
+                    {
+                        s = "5";
+                    }
+
+                    if (MI.Key == ConsoleKey.D6)
+                    {
+                        s = "6";
+                    }
+
+                    if (MI.Key == ConsoleKey.D7)
+                    {
+                        s = "7";
+                    }
+
+                    if (MI.Key == ConsoleKey.D8)
+                    {
+                        s = "8";
+                    }
+
+                    if (MI.Key == ConsoleKey.D9)
+                    {
+                        s = "9";
+                    }
 
                     s += ". " + MI.Name;
                     Console.WriteLine(s);
                 }
             }
-            
+
             Console.WriteLine("Q. Quit");
             if (CurrentMenu != MenuItems)
             {
@@ -97,7 +136,7 @@ namespace Amdocs.Ginger.GingerRuntime
                         if (MI.Active)
                         {
                             Console.ForegroundColor = ConsoleColor.DarkGreen;
-                            Console.WriteLine(DateTime.Now.ToString() +  " Executing: " + MI.Name);
+                            Console.WriteLine(DateTime.Now.ToString() + " Executing: " + MI.Name);
                             Console.WriteLine("--------------------------------");
                             Stopwatch st = Stopwatch.StartNew();
                             try
@@ -115,8 +154,8 @@ namespace Amdocs.Ginger.GingerRuntime
                                 Console.ResetColor();
                                 return eMenuReturnCode.Exception;
                             }
-                            
-                        }                        
+
+                        }
                     }
                 }
             }

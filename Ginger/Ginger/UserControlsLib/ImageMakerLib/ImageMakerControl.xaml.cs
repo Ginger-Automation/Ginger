@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Core;
+using Amdocs.Ginger.Common.Enums;
+using FontAwesome5;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using FontAwesome5;
-using Amdocs.Ginger.Common.Enums;
-using System.Windows.Media.Animation;
 
 namespace Amdocs.Ginger.UserControls
 {
@@ -590,6 +589,15 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.SelfHealing:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Magic);
                     break;
+                case eImageType.Rules:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Gavel);
+                    break;
+                case eImageType.AdminUser:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserCog, Brushes.OrangeRed);
+                    break;
+                case eImageType.NormalUser:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UserCog);
+                    break;
                 #endregion
 
 
@@ -721,7 +729,10 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Eraser:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Eraser);
                     break;
-
+                case eImageType.Broom:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Broom);
+                    break;
+                    
                 case eImageType.ArrowDown:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_AngleDown);
                     break;

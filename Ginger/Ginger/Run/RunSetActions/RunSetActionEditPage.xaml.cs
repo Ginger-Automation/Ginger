@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
 using System;
 using System.Reflection;
 using System.Windows;
@@ -41,18 +42,18 @@ namespace Ginger.Run.RunSetActions
             xShowIDUC.Init(mRunSetAction);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(NameTextBox, TextBox.TextProperty, RunSetAction, nameof(RunSetActionBase.Name));
             NameTextBox.AddValidationRule(new RunSetOperationNameValidationRule());
-            RunAtComboBox.Init(mRunSetAction, nameof(RunSetActionBase.RunAt),mRunSetAction.GetRunOptions(), ComboBox.SelectedValueProperty);
+            RunAtComboBox.Init(mRunSetAction, nameof(RunSetActionBase.RunAt), mRunSetAction.GetRunOptions(), ComboBox.SelectedValueProperty);
 
             GingerCore.General.FillComboFromEnumObj(ConditionComboBox, RunSetAction.Condition);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ConditionComboBox, ComboBox.SelectedValueProperty, RunSetAction, nameof(RunSetActionBase.Condition));
-            
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(StatusTextBox, TextBox.TextProperty, RunSetAction, nameof(RunSetActionBase.Status));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ErrorsTextBox, TextBox.TextProperty, RunSetAction, nameof(RunSetActionBase.Errors));
 
             //Page p = mRunSetAction.GetEditPage();
             Page p = GetEditPage(mRunSetAction.GetEditPage());
 
-            ActionEditPageFrame.Content = p;
+            ActionEditPageFrame.ClearAndSetContent(p);
 
             if (mRunSetAction.SupportRunOnConfig)
             {

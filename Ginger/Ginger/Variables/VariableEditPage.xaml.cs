@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,8 +19,11 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.Reports.ValidationRules;
 using Ginger.Repository;
+using Ginger.Run;
 using Ginger.SolutionGeneral;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
@@ -34,8 +37,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using Ginger.Reports.ValidationRules;
-using Ginger.UserControlsLib;
 
 namespace Ginger.Variables
 {
@@ -54,7 +55,7 @@ namespace Ginger.Variables
         public enum eEditMode
         {
             SharedRepository = 0,
-            Default=1,
+            Default = 1,
             Global = 4,
             FindAndReplace = 5,
             View = 6
@@ -67,9 +68,9 @@ namespace Ginger.Variables
         public VariableEditPage(VariableBase v, Context context, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.Default, RepositoryItemBase parent = null)
         {
             InitializeComponent();
-           
+
             this.Title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Variable);
-            mVariable = v;                   
+            mVariable = v;
             mVariable.SaveBackup();
             editMode = mode;
             mParent = parent;
@@ -79,10 +80,10 @@ namespace Ginger.Variables
             xVarNameTxtBox.AddValidationRule(new ValidateNotContainSpecificChar(',', "Variable name can't contain a comma (', ')"));
             xVarNameTxtBox.AddValidationRule(new ValidateNotContainSpacesBeforeAfter());
             xShowIDUC.Init(mVariable);
-            mVariable.NameBeforeEdit = mVariable.Name;            
+            mVariable.NameBeforeEdit = mVariable.Name;
             xVarNameTxtBox.GotFocus += XVarNameTxtBox_GotFocus;
             xVarNameTxtBox.LostFocus += XVarNameTxtBox_LostFocus;
-            
+
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVarDescritpiontxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Description));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFormulaTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCurrentValueTextBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);
@@ -91,8 +92,8 @@ namespace Ginger.Variables
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xMandatoryInputCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.MandatoryInput));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xSetAsOutputValueCheckBox, CheckBox.IsCheckedProperty, mVariable, nameof(VariableBase.SetAsOutputValue));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mVariable, nameof(RepositoryItemBase.Publish));
-          
-            if (mode ==eEditMode.Global)
+
+            if (mode == eEditMode.Global)
             {
                 xSetAsInputValueCheckBox.Visibility = Visibility.Hidden;
                 xMandatoryInputCheckBox.Visibility = Visibility.Hidden;
@@ -101,8 +102,8 @@ namespace Ginger.Variables
                 SharedRepoInstanceUC_Col.Width = new GridLength(0);
             }
             else
-            {       
-                if(mode == eEditMode.SharedRepository)
+            {
+                if (mode == eEditMode.SharedRepository)
                 {
                     xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                     SharedRepoInstanceUC_Col.Width = new GridLength(0);
@@ -117,7 +118,7 @@ namespace Ginger.Variables
                     xSharedRepoInstanceUC.Init(mVariable, mContext.BusinessFlow);
                 }
             }
-     
+
             if (setGeneralConfigsAsReadOnly)
             {
                 xVarNameTxtBox.IsEnabled = false;
@@ -140,7 +141,7 @@ namespace Ginger.Variables
             {
                 xVarTypeConfigFrame.IsEnabled = true;
             }
-            
+
             mVariable.PropertyChanged += mVariable_PropertyChanged;
             LoadVarPage();
 
@@ -162,37 +163,37 @@ namespace Ginger.Variables
 
         private async void XVarNameTxtBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            if(mVariable.NameBeforeEdit != mVariable.Name)
+            if (mVariable.NameBeforeEdit != mVariable.Name)
             {
                 await Task.Run(() => UpdateVariableNameChange());
             }
         }
 
         private void LoadVarPage()
-        {           
+        {
             try
             {
                 if (mVariable.VariableEditPage != null)
                 {
                     Type t = Assembly.GetExecutingAssembly().GetType("Ginger.Variables." + mVariable.VariableEditPage);
                     Page varTypeConfigsPage = null;
-                    if (t!= typeof(VariableDynamicPage))
+                    if (t != typeof(VariableDynamicPage))
                     {
-                         varTypeConfigsPage = (Page)Activator.CreateInstance(t, mVariable);
+                        varTypeConfigsPage = (Page)Activator.CreateInstance(t, mVariable);
                     }
                     else
                     {
-                         varTypeConfigsPage = (Page)Activator.CreateInstance(t, mVariable, mContext);
+                        varTypeConfigsPage = (Page)Activator.CreateInstance(t, mVariable, mContext);
                     }
 
-                    
+
                     if (varTypeConfigsPage != null)
-                    {              
+                    {
                         xVarTypeConfigFrame.Content = varTypeConfigsPage;
-                    }                    
+                    }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to load the variable type configurations page", ex);
             }
@@ -221,7 +222,7 @@ namespace Ginger.Variables
             string title = "Edit " + RemoveVariableWord(mVariable.VariableUIType) + " " + GingerDicser.GetTermResValue(eTermResKey.Variable);
 
             switch (editMode)
-            {                
+            {
                 case VariableEditPage.eEditMode.Default:
                 case VariableEditPage.eEditMode.Global:
                 case VariableEditPage.eEditMode.View:
@@ -243,7 +244,7 @@ namespace Ginger.Variables
                     FindAndRepalceSaveBtn.Content = "Save";
                     FindAndRepalceSaveBtn.Click += new RoutedEventHandler(FindAndRepalceSaveBtn_Click);
                     winButtons.Add(FindAndRepalceSaveBtn);
-                    break; 
+                    break;
             }
 
             if (editMode != eEditMode.View)
@@ -279,8 +280,8 @@ namespace Ginger.Variables
             if (SharedRepositoryOperations.CheckIfSureDoingChange(mVariable, "change") == true)
             {
                 try
-                {                    
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mParent);                    
+                {
+                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mParent);
                     saveWasDone = true;
                 }
                 catch
@@ -293,7 +294,7 @@ namespace Ginger.Variables
 
         private void UndoChangesAndClose()
         {
-            Mouse.OverrideCursor = Cursors.Wait;            
+            Mouse.OverrideCursor = Cursors.Wait;
             mVariable.RestoreFromBackup(true);
             Mouse.OverrideCursor = null;
 
@@ -315,7 +316,7 @@ namespace Ginger.Variables
 
         private void okBtn_Click(object sender, RoutedEventArgs e)
         {
-            _pageGenericWin.Close();            
+            _pageGenericWin.Close();
         }
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
@@ -327,7 +328,7 @@ namespace Ginger.Variables
         {
             if (SharedRepositoryOperations.CheckIfSureDoingChange(mVariable, "change") == true)
             {
-                saveWasDone = true;                
+                saveWasDone = true;
                 WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mVariable);
                 _pageGenericWin.Close();
             }
@@ -370,10 +371,10 @@ namespace Ginger.Variables
                     }
                 }
                 varsList.Sort();
-            }            
+            }
 
             //add previous linked variable if needed
-            if (string.IsNullOrEmpty(mVariable.LinkedVariableName)== false)
+            if (string.IsNullOrEmpty(mVariable.LinkedVariableName) == false)
             {
                 if (varsList.Contains(mVariable.LinkedVariableName) == false)
                 {
@@ -390,22 +391,22 @@ namespace Ginger.Variables
             {
                 try
                 {
-                    ActSetVariableValue setValueAct = new ActSetVariableValue();                  
+                    ActSetVariableValue setValueAct = new ActSetVariableValue();
                     setValueAct.VariableName = mVariable.LinkedVariableName;
                     setValueAct.SetVariableValueOption = VariableBase.eSetValueOptions.SetValue;
                     setValueAct.Value = mVariable.Value;
                     setValueAct.RunOnBusinessFlow = mContext.BusinessFlow;
                     setValueAct.Context = mContext;
-                    setValueAct.Execute();                  
+                    setValueAct.Execute();
 
                     if (string.IsNullOrEmpty(setValueAct.Error) == false)
                     {
                         Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked " + GingerDicser.GetTermResValue(eTermResKey.Variable) + ".." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + setValueAct.Error);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked " + GingerDicser.GetTermResValue(eTermResKey.Variable) + "." + System.Environment.NewLine + System.Environment.NewLine+ "Error: " + ex.Message );
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to publish the value to linked " + GingerDicser.GetTermResValue(eTermResKey.Variable) + "." + System.Environment.NewLine + System.Environment.NewLine + "Error: " + ex.Message);
                 }
             }
             else
@@ -428,24 +429,34 @@ namespace Ginger.Variables
         {
             try
             {
-                if (mVariable == null) return;
+                if (mVariable == null)
+                {
+                    return;
+                }
 
                 Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Updating new {0} name '{1}' on all usage instances...", GingerDicser.GetTermResValue(eTermResKey.Variable), mVariable.Name));
                 if (mParent is Solution)
                 {
-                    ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                    Parallel.ForEach(allBF, bfl =>
+                    if (editMode is eEditMode.Global)
                     {
-                        bfl.SetUniqueVariableName(mVariable);
-                        Parallel.ForEach(bfl.Activities, activity =>
+                        ((Solution)mParent).SetUniqueVariableName(mVariable);
+                    }
+                    else
+                    {
+                        ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                        Parallel.ForEach(allBF, bfl =>
                         {
-                            Parallel.ForEach(activity.Acts, action =>
+                            bfl.SetUniqueVariableName(mVariable);
+                            Parallel.ForEach(bfl.Activities, activity =>
                             {
-                                bool changedwasDone = false;
-                                VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                                Parallel.ForEach(activity.Acts, action =>
+                                {
+                                    bool changedwasDone = false;
+                                    VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                                });
                             });
                         });
-                    });
+                    }
                 }
                 else if (mParent is BusinessFlow)
                 {
@@ -470,11 +481,41 @@ namespace Ginger.Variables
                         VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
                     });
                 }
+                if (mVariable.SetAsOutputValue || mParent is Solution)
+                {
+                    UpdateVariableNameInRunsets();
+                }
                 mVariable.NameBeforeEdit = mVariable.Name;
             }
             finally
             {
                 Reporter.HideStatusMessage();
+            }
+        }
+
+        private void UpdateVariableNameInRunsets()
+        {
+            string variableOldName = mVariable.NameBeforeEdit;
+            string variableNewName = mVariable.Name;
+
+            foreach (RunSetConfig runset in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>())
+            {
+                foreach (GingerRunner runner in runset.GingerRunners)
+                {
+                    foreach (BusinessFlowRun bfRun in runner.BusinessFlowsRunList)
+                    {
+                        IEnumerable<VariableBase> variablesMappedToOldName = bfRun.BusinessFlowCustomizedRunVariables
+                            .Where(variable =>
+                            {
+                                return string.Equals(variable.MappedOutputValue, variableOldName);
+                            });
+
+                        foreach (VariableBase variable in variablesMappedToOldName)
+                        {
+                            variable.MappedOutputValue = variableNewName;
+                        }
+                    }
+                }
             }
         }
 

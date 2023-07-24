@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using System.Collections.Generic;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Amdocs.Ginger.Common
 {
     [JsonObject(MemberSerialization.OptIn)]
     public class PluginServiceInfo
-    {        
+    {
         [JsonProperty]
         public string ServiceId { get; set; }
-      
+
         [JsonProperty]
         public string Description { get; set; }
 

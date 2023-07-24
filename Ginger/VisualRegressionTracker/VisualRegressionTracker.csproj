@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <PackageId>VisualRegressionTracker</PackageId>
     <Version>4.8.0</Version>
     <Authors>Daniel Crowe</Authors>
@@ -16,7 +16,7 @@
     <UserSecretsId>6a2532d7-bd00-41ae-a0ca-f02d2e82e569</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
     <OpenApiReference Include="Api.json" SourceUrl="http://localhost:4200/api-json" Options="/OperationGenerationMode:SingleClientFromOperationId" />

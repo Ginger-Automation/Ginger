@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,18 +16,14 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.Environments;
 using Ginger.SolutionGeneral;
-using GingerCore;
-using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using amdocs.ginger.GingerCoreNET;
-using System.Threading.Tasks;
 
 namespace Ginger.SourceControl
 {
@@ -134,6 +130,7 @@ namespace Ginger.SourceControl
                     }
                 }
                 WorkSpace.Instance.UserProfile.SourceControlPass = WorkSpace.Instance.Solution.SourceControl.SourceControlPass;
+                WorkSpace.Instance.UserProfile.SourceControlUser = WorkSpace.Instance.Solution.SourceControl.SourceControlUser;
                 WorkSpace.Instance.Solution.SolutionOperations.SaveSolution(true, Solution.eSolutionItemToSave.SourceControlSettings);
                 WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
                 Close();

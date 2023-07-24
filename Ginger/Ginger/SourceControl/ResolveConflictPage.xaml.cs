@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,9 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using GingerCore;
 using GingerCore.Helpers;
-using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Windows;
@@ -41,7 +39,7 @@ namespace Ginger.SourceControl
             KeepLocal
         }
 
-        public bool IsResolved = true; 
+        public bool IsResolved = true;
 
         GenericWindow genWin = null;
         string mConflictPath = string.Empty;
@@ -63,9 +61,13 @@ namespace Ginger.SourceControl
         private void ConflictResolveOperationCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ConflictResolveOperationCombo.SelectedValue.ToString() == eResolveOperations.AcceptServer.ToString())
+            {
                 mResolveOperation = eResolveOperations.AcceptServer;
+            }
             else
+            {
                 mResolveOperation = eResolveOperations.KeepLocal;
+            }
         }
 
         private void SetMessageText()
@@ -80,7 +82,7 @@ namespace Ginger.SourceControl
             TBH.AddText("Conflicts are usually been created when 2 users working on the same item in parallel and one of the users check-in his changes.");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
-            TBH.AddFormattedText("You probably won't be able to use the item which mention in the path till conflicts will be resolved.", System.Windows.Media.Brushes.Red,true,true);
+            TBH.AddFormattedText("You probably won't be able to use the item which mention in the path till conflicts will be resolved.", System.Windows.Media.Brushes.Red, true, true);
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddText("Please select below if you want to keep your changes or get server changes for each conflict.");

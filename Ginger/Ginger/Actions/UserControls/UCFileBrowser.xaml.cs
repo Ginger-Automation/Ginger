@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using System.Collections.Generic;
 using System.Windows;
@@ -43,10 +42,10 @@ namespace Ginger.Actions
             this.obj = obj;
             this.AttrName = AttrName;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, obj, AttrName);
-           MakePathsRelative= mMakePathsRelative;
+            MakePathsRelative = mMakePathsRelative;
         }
 
-        public void Init(ActInputValue AIV,bool mMakePathsRelative=false)
+        public void Init(ActInputValue AIV, bool mMakePathsRelative = false)
         {
             // If the VE is on stand alone form:
             MakePathsRelative = mMakePathsRelative;

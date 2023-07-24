@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ namespace GingerCoreNET.Application_Models
         public ObservableList<ElementInfo> POMLatestElements = new ObservableList<ElementInfo>();
         public PomSetting pomSetting = null;
         public bool IsLearning { get; set; }
-        List<string> mVisualPropertiesList = new List<string> { "X", "Y", "Height", "Width"};        
+        List<string> mVisualPropertiesList = new List<string> { "X", "Y", "Height", "Width" };
         public DeltaControlProperty.ePropertiesChangesToAvoid PropertiesChangesToAvoid;
         public bool? KeepOriginalLocatorsOrderAndActivation = true;
         public PomLearnUtils PomLearnUtils = null;
@@ -60,11 +60,11 @@ namespace GingerCoreNET.Application_Models
         }
 
         public string SpecificFramePath { get; set; }
-        public List<eElementType> SelectedElementTypesList { get;  set; }
+        public List<eElementType> SelectedElementTypesList { get; set; }
 
         public PomDeltaUtils(ApplicationPOMModel pom, Agent agent)
         {
-            POM = pom;            
+            POM = pom;
             Agent = agent;
             PomLearnUtils = new PomLearnUtils(pom, agent);
             POMLatestElements.CollectionChanged += ElementsListCollectionChanged;
@@ -87,11 +87,11 @@ namespace GingerCoreNET.Application_Models
                 {
                     List<eElementType> selectedElementList = GetSelectedElementList();
 
-                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.pomSetting, POMLatestElements,PomMetaData);
+                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.pomSetting, POMLatestElements, PomMetaData);
                 }
                 else
                 {
-                   await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.pomSetting,POMLatestElements);
+                    await mIWindowExplorerDriver.GetVisibleControls(PomLearnUtils.pomSetting, POMLatestElements);
                 }
                 SetUnidentifiedElementsDeltaDetails();
                 DoEndOfRelearnElementsSorting();
@@ -99,7 +99,7 @@ namespace GingerCoreNET.Application_Models
             finally
             {
                 IsLearning = false;
-            }            
+            }
         }
 
         private List<eElementType> GetSelectedElementList()
@@ -109,7 +109,7 @@ namespace GingerCoreNET.Application_Models
             uIElementList.AddRange(PomLearnUtils.AutoMapAdvanceElementTypesList.ToList());
 
             var selectedElementList = uIElementList.Where(x => x.Selected).Select(y => y.ElementType).ToList();
-            
+
             if (selectedElementList.Count == 0)
             {
                 selectedElementList = SelectedElementTypesList;
@@ -140,17 +140,17 @@ namespace GingerCoreNET.Application_Models
             //get original elements
             ObservableList<ElementInfo> AllCurrentOriginalPOMs = POM.GetUnifiedElementsList();
             //copy original so won't be effected
-            foreach(ElementInfo originalElement in AllCurrentOriginalPOMs)
+            foreach (ElementInfo originalElement in AllCurrentOriginalPOMs)
             {
                 ElementInfo copiedElement = (ElementInfo)originalElement.CreateCopy(false);
                 copiedElement.ElementGroup = originalElement.ElementGroup;
                 POMElementsCopy.Add(copiedElement);
             }
             //try to locate them and pull real IWebElement for them for later comparison
-           
+
             //Task.Run(() =>
             //{
-                mIWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(POMElementsCopy);
+            mIWindowExplorerDriver.CollectOriginalElementsDataForDeltaCheck(POMElementsCopy);
             //});
         }
 
@@ -229,7 +229,7 @@ namespace GingerCoreNET.Application_Models
 
         public void SetMatchingElementDeltaDetails(ElementInfo existingElement, ElementInfo latestElement)
         {
-            DeltaElementInfo matchedDeltaElement = new DeltaElementInfo();            
+            DeltaElementInfo matchedDeltaElement = new DeltaElementInfo();
             //copy possible customized fields from original
             latestElement.Guid = existingElement.Guid;
             latestElement.ElementName = existingElement.ElementName;
@@ -252,11 +252,11 @@ namespace GingerCoreNET.Application_Models
 
                 if (latestLocator.LocateBy == eLocateBy.ByRelXPath)
                 {
-                    matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy && x.LocateValue == latestLocator.LocateValue).FirstOrDefault();
+                    matchingExistingLocator = existingElement.Locators.FirstOrDefault(x => x.LocateBy == latestLocator.LocateBy && x.LocateValue == latestLocator.LocateValue);
                 }
                 else
                 {
-                    matchingExistingLocator = existingElement.Locators.Where(x => x.LocateBy == latestLocator.LocateBy).FirstOrDefault();
+                    matchingExistingLocator = existingElement.Locators.FirstOrDefault(x => x.LocateBy == latestLocator.LocateBy);
                 }
 
                 if (matchingExistingLocator != null)
@@ -312,11 +312,11 @@ namespace GingerCoreNET.Application_Models
 
                 if (latestFLocator.LocateBy == eLocateBy.ByRelXPath)
                 {
-                    matchingExistingFLocator = existingElement.FriendlyLocators.Where(x => x.LocateBy == latestFLocator.LocateBy && x.LocateValue == latestFLocator.LocateValue).FirstOrDefault();
+                    matchingExistingFLocator = existingElement.FriendlyLocators.FirstOrDefault(x => x.LocateBy == latestFLocator.LocateBy && x.LocateValue == latestFLocator.LocateValue);
                 }
                 else
                 {
-                    matchingExistingFLocator = existingElement.FriendlyLocators.Where(x => x.LocateBy == latestFLocator.LocateBy).FirstOrDefault();
+                    matchingExistingFLocator = existingElement.FriendlyLocators.FirstOrDefault(x => x.LocateBy == latestFLocator.LocateBy);
                 }
 
                 if (matchingExistingFLocator != null)
@@ -361,7 +361,7 @@ namespace GingerCoreNET.Application_Models
             }
 
             //not Learned Locators
-            List<ElementLocator> notLearnedLocators = existingElement.Locators.Where(x => latestElement.Locators.Where(y => y.Guid == x.Guid).FirstOrDefault() == null).ToList();
+            List<ElementLocator> notLearnedLocators = existingElement.Locators.Where(x => latestElement.Locators.FirstOrDefault(y => y.Guid == x.Guid) == null).ToList();
             foreach (ElementLocator notLearedLocator in notLearnedLocators)
             {
                 DeltaElementLocator deltaLocator = new DeltaElementLocator();
@@ -370,7 +370,7 @@ namespace GingerCoreNET.Application_Models
                 if (notLearedLocator.IsAutoLearned == true)//deleted
                 {
                     deltaLocator.DeltaStatus = eDeltaStatus.Deleted;
-                    deltaLocator.DeltaExtraDetails = "Locator not exist on latest";                    
+                    deltaLocator.DeltaExtraDetails = "Locator not exist on latest";
                 }
                 else//customized locator so avoid it
                 {
@@ -385,10 +385,10 @@ namespace GingerCoreNET.Application_Models
             }
             if (KeepOriginalLocatorsOrderAndActivation == true)
             {
-                for(int i = 0; i < existingElement.Locators.Count; i++)
+                for (int i = 0; i < existingElement.Locators.Count; i++)
                 {
                     ElementLocator originalLocator = existingElement.Locators[i];
-                    ElementLocator latestLocator = latestElement.Locators.Where(x => x.Guid == originalLocator.Guid).FirstOrDefault();
+                    ElementLocator latestLocator = latestElement.Locators.FirstOrDefault(x => x.Guid == originalLocator.Guid);
 
                     if (latestLocator != null)
                     {
@@ -397,7 +397,7 @@ namespace GingerCoreNET.Application_Models
                         if (originalIndex <= latestElement.Locators.Count)
                         {
                             latestElement.Locators.Move(latestElement.Locators.IndexOf(latestLocator), originalIndex);
-                            matchedDeltaElement.Locators.Move(matchedDeltaElement.Locators.IndexOf(matchedDeltaElement.Locators.Where(x => x.ElementLocator == latestLocator).First()), originalIndex);
+                            matchedDeltaElement.Locators.Move(matchedDeltaElement.Locators.IndexOf(matchedDeltaElement.Locators.First(x => x.ElementLocator == latestLocator)), originalIndex);
                         }
                     }
                 }
@@ -405,7 +405,7 @@ namespace GingerCoreNET.Application_Models
                 for (int i = 0; i < existingElement.FriendlyLocators.Count; i++)
                 {
                     ElementLocator originalFLocator = existingElement.FriendlyLocators[i];
-                    ElementLocator latestFLocator = latestElement.FriendlyLocators.Where(x => x.Guid == originalFLocator.Guid).FirstOrDefault();
+                    ElementLocator latestFLocator = latestElement.FriendlyLocators.FirstOrDefault(x => x.Guid == originalFLocator.Guid);
 
                     if (latestFLocator != null)
                     {
@@ -414,7 +414,7 @@ namespace GingerCoreNET.Application_Models
                         if (originalIndex <= latestElement.FriendlyLocators.Count)
                         {
                             latestElement.FriendlyLocators.Move(latestElement.FriendlyLocators.IndexOf(latestFLocator), originalIndex);
-                            matchedDeltaElement.FriendlyLocators.Move(matchedDeltaElement.FriendlyLocators.IndexOf(matchedDeltaElement.FriendlyLocators.Where(x => x.ElementLocator == latestFLocator).First()), originalIndex);
+                            matchedDeltaElement.FriendlyLocators.Move(matchedDeltaElement.FriendlyLocators.IndexOf(matchedDeltaElement.FriendlyLocators.First(x => x.ElementLocator == latestFLocator)), originalIndex);
                         }
                     }
                 }
@@ -424,13 +424,13 @@ namespace GingerCoreNET.Application_Models
             foreach (ControlProperty latestProperty in latestElement.Properties)
             {
                 DeltaControlProperty deltaProperty = new DeltaControlProperty();
-                ControlProperty matchingExistingProperty = existingElement.Properties.Where(x => x.Name == latestProperty.Name).FirstOrDefault();
+                ControlProperty matchingExistingProperty = existingElement.Properties.FirstOrDefault(x => x.Name == latestProperty.Name);
                 if (matchingExistingProperty != null)
                 {
                     latestProperty.Guid = matchingExistingProperty.Guid;
                     deltaProperty.ElementProperty = latestProperty;
-                    if ((string.IsNullOrWhiteSpace(matchingExistingProperty.Value) == true && string.IsNullOrWhiteSpace(latestProperty.Value) == true) 
-                        || (matchingExistingProperty.Value != null &&  matchingExistingProperty.Value.Equals(latestProperty.Value, StringComparison.OrdinalIgnoreCase)))//Unchanged
+                    if ((string.IsNullOrWhiteSpace(matchingExistingProperty.Value) == true && string.IsNullOrWhiteSpace(latestProperty.Value) == true)
+                        || (matchingExistingProperty.Value != null && matchingExistingProperty.Value.Equals(latestProperty.Value, StringComparison.OrdinalIgnoreCase)))//Unchanged
                     {
                         deltaProperty.DeltaStatus = eDeltaStatus.Unchanged;
                     }
@@ -440,13 +440,13 @@ namespace GingerCoreNET.Application_Models
                             || (PropertiesChangesToAvoid == DeltaControlProperty.ePropertiesChangesToAvoid.OnlySizeAndLocationProperties && mVisualPropertiesList.Contains(deltaProperty.Name) == false))
                         {
                             deltaProperty.DeltaStatus = eDeltaStatus.Changed;
-                            deltaProperty.DeltaExtraDetails = string.Format("Previous value was: '{0}'", matchingExistingProperty.Value);                            
+                            deltaProperty.DeltaExtraDetails = string.Format("Previous value was: '{0}'", matchingExistingProperty.Value);
                         }
                         else
                         {
                             deltaProperty.DeltaStatus = eDeltaStatus.Avoided;
                             deltaProperty.DeltaExtraDetails = string.Format("Previous value was: '{0}' but change was avoided", matchingExistingProperty.Value);
-                        }                        
+                        }
                     }
                 }
                 else//new Property
@@ -465,7 +465,7 @@ namespace GingerCoreNET.Application_Models
                 matchedDeltaElement.Properties.Add(deltaProperty);
             }
             //deleted Properties
-            List<ControlProperty> deletedProperties = existingElement.Properties.Where(x => latestElement.Properties.Where(y => y.Name == x.Name).FirstOrDefault() == null).ToList();
+            List<ControlProperty> deletedProperties = existingElement.Properties.Where(x => latestElement.Properties.FirstOrDefault(y => y.Name == x.Name) == null).ToList();
             foreach (ControlProperty deletedProperty in deletedProperties)
             {
                 DeltaControlProperty deltaProp = new DeltaControlProperty();
@@ -500,7 +500,7 @@ namespace GingerCoreNET.Application_Models
                 {
                     matchedDeltaElement.DeltaExtraDetails = "Locators changed";
                 }
-                else if(modifiedFriendlyLocatorsList.Count > 0)
+                else if (modifiedFriendlyLocatorsList.Count > 0)
                 {
                     matchedDeltaElement.DeltaExtraDetails = "Friendly Locators changed";
                 }
@@ -516,7 +516,7 @@ namespace GingerCoreNET.Application_Models
                 List<DeltaElementLocator> minorLocatorsChangesList = matchedDeltaElement.Locators.Where(x => x.DeltaStatus == eDeltaStatus.Avoided || x.DeltaStatus == eDeltaStatus.Added || x.DeltaStatus == eDeltaStatus.Unknown).ToList();
                 List<DeltaElementLocator> minorFriednlyLocatorsChangesList = matchedDeltaElement.FriendlyLocators.Where(x => x.DeltaStatus == eDeltaStatus.Avoided || x.DeltaStatus == eDeltaStatus.Added || x.DeltaStatus == eDeltaStatus.Unknown).ToList();
                 List<DeltaControlProperty> minorPropertiesChangesList = matchedDeltaElement.Properties.Where(x => x.DeltaStatus == eDeltaStatus.Avoided || x.DeltaStatus == eDeltaStatus.Added || x.DeltaStatus == eDeltaStatus.Unknown).ToList();
-                if (minorLocatorsChangesList.Count > 0 || minorPropertiesChangesList.Count > 0 || minorFriednlyLocatorsChangesList.Count > 0 )
+                if (minorLocatorsChangesList.Count > 0 || minorPropertiesChangesList.Count > 0 || minorFriednlyLocatorsChangesList.Count > 0)
                 {
                     matchedDeltaElement.DeltaExtraDetails = "Unimportant differences exists";
                 }
@@ -527,8 +527,8 @@ namespace GingerCoreNET.Application_Models
 
         private void SetUnidentifiedElementsDeltaDetails()
         {
-            List<ElementInfo> unidentifiedElements = POMElementsCopy.Where(x => DeltaViewElements.Where(y => y.ElementInfo != null && y.ElementInfo.Guid == x.Guid).FirstOrDefault() == null).ToList();
-            
+            List<ElementInfo> unidentifiedElements = POMElementsCopy.Where(x => DeltaViewElements.FirstOrDefault(y => y.ElementInfo != null && y.ElementInfo.Guid == x.Guid) == null).ToList();
+
             var addedElements = DeltaViewElements.Where(d => d.DeltaStatus == eDeltaStatus.Added).ToList();
 
             foreach (ElementInfo deletedElement in unidentifiedElements)
@@ -542,7 +542,7 @@ namespace GingerCoreNET.Application_Models
                     {
                         //var newElementLocdiff = newElement.Locators.ToDictionary(x => x.LocateBy, x => x.LocateValue);
                         //var oldElementLocdiff = deletedElement.Locators.ToDictionary(x => x.LocateBy, x => x.LocateValue);
-                        
+
                         //bool comparisonResult = newElement.Locators(deletedElement, (x, y) => new { x, y }).All(z => Compare(z.x, z.y));
 
                         bool comparisonResult = deletedElement.Locators.All(x => newElement.Locators.Any(y => Compare(x, y)));
@@ -555,8 +555,8 @@ namespace GingerCoreNET.Application_Models
                             var diffProperties = newElementPropeties.Except(oldElementPropeties);
 
                             // check if Parent iframe changed
-                            var parentIFrame = diffProperties.Where(x => x.Key.Contains(ElementProperty.ParentIFrame)).FirstOrDefault();
-                            
+                            var parentIFrame = diffProperties.FirstOrDefault(x => x.Key.Contains(ElementProperty.ParentIFrame));
+
                             var deltaControlProp = CovertToDeltaControlProperty(deletedElement.Properties);
                             if (!string.IsNullOrEmpty(parentIFrame.Value))
                             {
@@ -572,14 +572,16 @@ namespace GingerCoreNET.Application_Models
                             }
                             matchingElementFound = true;
 
-                            var mathchedItemIndex = DeltaViewElements.IndexOf(DeltaViewElements.Where(x => x.ElementInfo.Guid.Equals(newElement.ElementInfo.Guid)).FirstOrDefault());
+                            var mathchedItemIndex = DeltaViewElements.IndexOf(DeltaViewElements.FirstOrDefault(x => x.ElementInfo.Guid.Equals(newElement.ElementInfo.Guid)));
                             //update path of element
                             deletedElement.Path = newElement.ElementInfo.Path;
 
                             var item = ConvertElementToDelta(deletedElement, eDeltaStatus.Changed, deletedElement.ElementGroup, true, "Property Changed");
                             item.Properties = deltaControlProp;
                             if (mathchedItemIndex != -1)
+                            {
                                 DeltaViewElements[mathchedItemIndex] = item;
+                            }
 
                             // add found newElment in removeitem 
                             toRemoveAddedFoundItem = newElement;
@@ -620,7 +622,7 @@ namespace GingerCoreNET.Application_Models
             ObservableList<DeltaControlProperty> deltaControlProperties = new ObservableList<DeltaControlProperty>();
             foreach (ControlProperty property in properties)
             {
-                deltaControlProperties.Add(new DeltaControlProperty() { ElementProperty = property,DeltaStatus= eDeltaStatus.Unchanged});
+                deltaControlProperties.Add(new DeltaControlProperty() { ElementProperty = property, DeltaStatus = eDeltaStatus.Unchanged });
             }
             return deltaControlProperties;
         }
@@ -705,7 +707,7 @@ namespace GingerCoreNET.Application_Models
                         selectedGroup = POM.UnMappedUIElements;
                     }
 
-                    ElementInfo originalElementInfo = originalGroup.Where(x => x.Guid == elementToUpdate.ElementInfo.Guid).First();
+                    ElementInfo originalElementInfo = originalGroup.First(x => x.Guid == elementToUpdate.ElementInfo.Guid);
 
                     //enter it to POM elements instead of existing one
                     int originalItemIndex = GetOriginalItemIndex(originalGroup, originalElementInfo);
@@ -728,7 +730,7 @@ namespace GingerCoreNET.Application_Models
             {
                 if (elementToUpdate.MappedElementInfo != null && elementToUpdate.DeltaStatus.Equals(eDeltaStatus.Deleted))
                 {
-                    var deltaElementToUpdateProp = DeltaViewElements.Where(x => x.IsSelected == true && x.DeltaStatus.Equals(eDeltaStatus.Added) && x.ElementInfo.Guid.ToString().Equals(elementToUpdate.MappedElementInfo)).FirstOrDefault();
+                    var deltaElementToUpdateProp = DeltaViewElements.FirstOrDefault(x => x.IsSelected == true && x.DeltaStatus.Equals(eDeltaStatus.Added) && x.ElementInfo.Guid.ToString().Equals(elementToUpdate.MappedElementInfo));
                     if (deltaElementToUpdateProp != null)
                     {
                         elementToUpdate.ElementInfo.Properties = deltaElementToUpdateProp.ElementInfo.Properties;
@@ -745,12 +747,12 @@ namespace GingerCoreNET.Application_Models
 
         private int GetOriginalItemIndex(ObservableList<ElementInfo> group, ElementInfo copiedItem)
         {
-            return group.IndexOf(group.Where(x => x.Guid == copiedItem.Guid).First());
+            return group.IndexOf(group.First(x => x.Guid == copiedItem.Guid));
         }
 
         private ElementInfo GetOriginalItem(ObservableList<ElementInfo> group, ElementInfo copiedItem)
         {
-            return group.Where(x => x.Guid == copiedItem.Guid).First();
+            return group.First(x => x.Guid == copiedItem.Guid);
         }
 
         public ObservableList<ElementInfo> GetElementInfoListFromDeltaElementInfo(ObservableList<DeltaElementInfo> deltaElementInfos)

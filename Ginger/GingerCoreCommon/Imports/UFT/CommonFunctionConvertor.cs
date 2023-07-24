@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,14 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GingerCore;
-using GingerCore.Actions;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 
 
 namespace Ginger.Imports.UFT
@@ -72,9 +69,9 @@ namespace Ginger.Imports.UFT
             //Clear the Dictionary object
             ActionFromCommonFunction.Clear();
 
-            foreach(CommonFunctionMapping CFP in CommonFunctionMappingList)
+            foreach (CommonFunctionMapping CFP in CommonFunctionMappingList)
             {
-                if (CodeLine.Contains(CFP.Function_Name + "(" )) 
+                if (CodeLine.Contains(CFP.Function_Name + "("))
                 {
                     //Identify the Type of Action
                     if (CFP.Function_Name.Contains("Click")) { ActionType = "Click"; }
@@ -95,15 +92,15 @@ namespace Ginger.Imports.UFT
                     }
 
                     //for Descriptive
-                    if (ParamsLst.Count() > Int32.Parse(CFP.NoOfParameters) )
+                    if (ParamsLst.Count() > Int32.Parse(CFP.NoOfParameters))
                     {
                         ParamDiff = ParamsLst.Count() - Int32.Parse(CFP.NoOfParameters);
                         sParamLocateBy = CFP.LocateBy.Replace("{", "").Replace("}", "").Replace("Param", "").Trim();
                         CollateTill = Int32.Parse(sParamLocateBy) + ParamDiff;
 
-                        for (int i = Int32.Parse(sParamLocateBy); i<= CollateTill; i++ )
+                        for (int i = Int32.Parse(sParamLocateBy); i <= CollateTill; i++)
                         {
-                            sLocateDesc = sLocateDesc + ParamsLst[i] + ","; 
+                            sLocateDesc = sLocateDesc + ParamsLst[i] + ",";
                         }
 
                         if (sLocateDesc.ToUpper().Contains("WEBELEMENT(")) sLocateDesc = GetStringBetween(sLocateDesc, "WebElement(", "),");
@@ -177,7 +174,7 @@ namespace Ginger.Imports.UFT
                 return "";
             }
         }
-        
+
         public override string ItemName
         {
             get

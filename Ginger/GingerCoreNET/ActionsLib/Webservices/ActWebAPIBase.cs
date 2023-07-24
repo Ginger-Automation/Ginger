@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,23 +16,20 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using GingerCore.Helpers;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
-using System.Collections.Generic;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run;
-using GingerCore.Platforms;
-using System.Xml;
-using Newtonsoft.Json.Linq;
+using Amdocs.Ginger.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json;
-using Amdocs.Ginger.Common.GeneralLib;
-using GingerCore.Actions.WebServices.WebAPI;
-using amdocs.ginger.GingerCoreNET;
-using System.Linq;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Xml;
 
 namespace GingerCore.Actions.WebServices
 {
@@ -127,9 +124,13 @@ namespace GingerCore.Actions.WebServices
             {
                 ApplicationAPIUtils.eNetworkCredentials eVal = ApplicationAPIUtils.eNetworkCredentials.Custom;
                 if (Enum.TryParse<ApplicationAPIUtils.eNetworkCredentials>(GetInputParamValue(Fields.NetworkCredentialsRadioButton), out eVal))
+                {
                     return eVal;
+                }
                 else
+                {
                     return ApplicationAPIUtils.eNetworkCredentials.Default;  //default value          
+                }
             }
         }
 
@@ -165,16 +166,24 @@ namespace GingerCore.Actions.WebServices
             get
             {
                 if (IsInputParamExist(Fields.UseLegacyJSONParsing) == false && ReturnValues.Count > 0)
+                {
                     AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "True");//old action- for backward support- for not breaking existing validations using old parsing
+                }
 
                 if (IsInputParamExist(Fields.UseLegacyJSONParsing) == false)
+                {
                     AddOrUpdateInputParamValue(Fields.UseLegacyJSONParsing, "False"); //as default use new JSON parser
+                }
 
                 bool eVal = true;
                 if (bool.TryParse(GetInputParamValue(Fields.UseLegacyJSONParsing), out eVal))
+                {
                     return eVal;
+                }
                 else
+                {
                     return false;  //default value          
+                }
             }
             set
             {
@@ -209,9 +218,13 @@ namespace GingerCore.Actions.WebServices
                 if (ResponseContentType == ApplicationAPIUtils.eContentType.JSon.ToString())
                 {
                     if (!ParseJsonNodesToReturnParams(mAct, ResponseMessage))
+                    {
                         jsonParsinFailed = true;//will try XML parsing instead
+                    }
                     else
+                    {
                         return true;
+                    }
                 }
 
                 if (XMLResponseCanBeParsed && (
@@ -382,7 +395,7 @@ namespace GingerCore.Actions.WebServices
         public void ParseOutput()
         {
 
-            string ResponseMessage = ReturnValues.Where(x => x.Param == "Response:").FirstOrDefault().Actual;
+            string ResponseMessage = ReturnValues.FirstOrDefault(x => x.Param == "Response:").Actual;
             ParseNodesToReturnParams(this, ResponseMessage);
         }
 

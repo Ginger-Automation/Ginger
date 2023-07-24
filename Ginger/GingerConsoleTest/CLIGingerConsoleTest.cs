@@ -1,10 +1,6 @@
 ﻿using GingerTestHelper;
-using GingerUtils;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
 namespace GingerConsoleTest
 {
@@ -45,7 +41,7 @@ namespace GingerConsoleTest
         public void RunCLI()
         {
             // Arrange
-            string[] args = new string[] { "help"};
+            string[] args = new string[] { "help" };
 
 
             //Act

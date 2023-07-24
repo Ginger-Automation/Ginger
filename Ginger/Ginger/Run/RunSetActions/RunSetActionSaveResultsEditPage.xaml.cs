@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Ginger.Reports;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.Reports;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -31,7 +31,7 @@ namespace Ginger.Run.RunSetActions
         {
             InitializeComponent();
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SaveResultstoFolderNameTextBox , TextBox.TextProperty, runSetActionSaveResults, nameof(RunSetActionSaveResults.SaveResultstoFolderName));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SaveResultstoFolderNameTextBox, TextBox.TextProperty, runSetActionSaveResults, nameof(RunSetActionSaveResults.SaveResultstoFolderName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TemplateNameTextBox, TextBox.TextProperty, runSetActionSaveResults, nameof(RunSetActionSaveResults.TemplateName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(OpenExecutionResultsFolderCheckBox, CheckBox.IsCheckedProperty, runSetActionSaveResults, nameof(RunSetActionSaveResults.OpenExecutionResultsFolder));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SaveindividualBFReportCheckBox, CheckBox.IsCheckedProperty, runSetActionSaveResults, nameof(RunSetActionSaveResults.SaveindividualBFReport));

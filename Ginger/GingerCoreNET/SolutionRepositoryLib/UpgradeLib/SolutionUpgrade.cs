@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Concurrent;
@@ -59,15 +58,15 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
         public static IEnumerable<RepositoryFile> GetAllToUpgrade(IEnumerable<RepositoryFile> RepositoryFiles)
         {
             // need ConcurrentBag - since it is thread safe when running in parallel then no need to use lock
-            ConcurrentBag<RepositoryFile> filesToUpgrade = new ConcurrentBag<RepositoryFile>();            
-            
+            ConcurrentBag<RepositoryFile> filesToUpgrade = new ConcurrentBag<RepositoryFile>();
+
             Parallel.ForEach(RepositoryFiles, RF =>
             {
                 string fileVer = string.Empty;
 
                 if (CompareRepoFileVersionToCurrent(RF.FilePath, ref fileVer) == -1)  // TODO: use enum !!!!!!!!!!!!!!!!!!
-                {                    
-                    filesToUpgrade.Add(RF);                    
+                {
+                    filesToUpgrade.Add(RF);
                 }
             });
 
@@ -94,17 +93,25 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 long fileXmlVersion = GetXMLVersionAsLong(line2);
 
                 if (currentVersion == fileXmlVersion)
+                {
                     return 0; //same version
+                }
                 else if (currentVersion > fileXmlVersion)
+                {
                     return -1; //File is from lower version
+                }
                 else if (currentVersion < fileXmlVersion)
+                {
                     return 1; //File is from newer version
+                }
                 else
+                {
                     return -2;//failed to identify and compare the version
+                }
             }
         }
 
-       
+
 
         public static long GetXMLVersionAsLong(string xml)
         {
@@ -181,7 +188,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
         /// <param name="addInfoExtention"></param>
         /// <returns></returns>
         public static ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> GetSolutionFilesWithVersion(IEnumerable<string> solutionFiles, bool addInfoExtention = true)
-        {            
+        {
             // read all XMLs and check for version
             Parallel.ForEach(solutionFiles, FileName =>
             {
@@ -189,15 +196,19 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 eGingerVersionComparisonResult versionRes = CompareSolutionFileGingerVersionToCurrent(FileName, ref fileVer);
 
                 if (addInfoExtention)
+                {
                     solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName + "--> File Version: " + fileVer));
+                }
                 else
+                {
                     solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName));
+                }
             });
 
             return solutionFilesWithVersion;
         }
         internal static bool IsGingerUpgradeNeeded(string solutionFolder, IEnumerable<string> solutionFiles)
-        {                        
+        {
             ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = null;
 
             //check if Ginger Upgrade is needed for loading this Solution
@@ -212,8 +223,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 if (higherVersionFiles.Count > 0)
                 {
                     if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
-                    {                        
-                        WorkSpace.Instance.EventHandler.ShowUpgradeGinger(solutionFolder, higherVersionFiles.ToList());                        
+                    {
+                        WorkSpace.Instance.EventHandler.ShowUpgradeGinger(solutionFolder, higherVersionFiles.ToList());
                     }
                     Reporter.ToLog(eLogLevel.WARN, "Ginger upgrade is needed for loading the Solution, aborting Solution load.");
                     return true;
@@ -225,7 +236,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while checking if Solution requires Ginger Upgrade", ex);
                 return false;
-            }            
+            }
         }
         internal static bool IsUserProceedWithLoadSolutionInNewerGingerVersion(string solutionFolder, IEnumerable<string> solutionFiles)
         {
@@ -311,11 +322,17 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 return eGingerVersionComparisonResult.ComparisonFailed; ;//failed to identify and compare the version
             }
             else if (currentVersionAsLong == fileVersionAsLong)
+            {
                 return eGingerVersionComparisonResult.SameVersion; //same version
+            }
             else if (currentVersionAsLong > fileVersionAsLong)
+            {
                 return eGingerVersionComparisonResult.LowerVersion; //File is from lower version
+            }
             else if (currentVersionAsLong < fileVersionAsLong)
+            {
                 return eGingerVersionComparisonResult.HigherVersion; //File is from newer version
+            }
             else
             {
                 Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to read and compare the Ginger version for the file: '{0}'", filePath));
@@ -323,7 +340,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             }
         }
 
-        
+
 
         /// <summary>
         /// Pull and return the Ginger Version (in String format) which the Solution file was created with 
@@ -383,7 +400,10 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                 }
 
                 if (fileVersion == null)
+                {
                     Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to get the Ginger Version of the file: '{0}'", xmlFilePath));
+                }
+
                 return fileVersion;
             }
             else
@@ -395,7 +415,11 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
 
         public static bool IsLegacyXmlType(string xml)
         {
-            if (xml.Contains("<!--Ginger Repository Item ")) return true;
+            if (xml.Contains("<!--Ginger Repository Item "))
+            {
+                return true;
+            }
+
             return false;
         }
         public static string GetLegacyXMLGingerVersion(string xml, string xmlFilePath)
@@ -419,11 +443,18 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                     for (int indx = 0; indx < match.Value.Length; indx++)
                     {
                         if (match.Value[indx] == '.')
+                        {
                             counter++;
+                        }
+
                         if (counter == 2)
+                        {
                             return ver + ".0.0";
+                        }
                         else
+                        {
                             ver += match.Value[indx];
+                        }
                     }
                     return ver;//something wronge
                 }
@@ -456,7 +487,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
         // Offer to upgrade Solution items to current version
         internal static void CheckSolutionItemsUpgrade(string solutionFolder, string solutionName, List<string> solutionFiles)
         {
-            
+
             try
             {
                 if (WorkSpace.Instance.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
@@ -470,7 +501,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
                     if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
                     {
                         WorkSpace.Instance.EventHandler.ShowUpgradeSolutionItems(SolutionUpgradePageViewMode.UpgradeSolution, solutionFolder, solutionName, lowerVersionFiles.ToList());
-                        
+
                     }
                 }
             }

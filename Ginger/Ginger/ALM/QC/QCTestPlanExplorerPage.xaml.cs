@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,20 +17,18 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Ginger.ALM.QC.TreeViewItems;
+using GingerCore.ALM;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Ginger.ALM.QC.TreeViewItems;
-using GingerCore.ALM.QC;
-using GingerCore.ALM.QCRestAPI;
-using GingerCore.ALM;
 
 namespace Ginger.ALM.QC
 {
     public partial class QCTestPlanExplorerPage : Page
     {
-        public string SelectedPath {get;set;}
+        public string SelectedPath { get; set; }
 
         GenericWindow genWin = null;
 
@@ -57,7 +55,7 @@ namespace Ginger.ALM.QC
 
             SelectedPath = QCTVI.Path;
         }
- 
+
         public string ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             Button selectBtn = new Button();
@@ -98,6 +96,6 @@ namespace Ginger.ALM.QC
                 QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder = false;
             }
         }
-        
+
     }
 }

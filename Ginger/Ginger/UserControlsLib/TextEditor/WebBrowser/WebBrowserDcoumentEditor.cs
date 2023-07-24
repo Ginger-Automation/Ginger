@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,21 +16,22 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Plugin.Core;
+using Ginger.UserControlsLib.TextEditor.Common;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Highlighting;
 using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
-using Ginger.UserControlsLib.TextEditor.Common;
-using ICSharpCode.AvalonEdit.CodeCompletion;
-using GingerPlugIns.TextEditorLib;
-using Amdocs.Ginger.Plugin.Core;
 
 namespace Ginger.UserControlsLib.TextEditor.WebBrowser
 {
     public class WebBrowserDcoumentEditor : TextEditorBase
     {
         public override string Descritpion { get { return "WebBrowser Document"; } }
-        public override Image Icon { get
+        public override Image Icon
+        {
+            get
             {
                 //System.Drawing.Icon icon = System.Drawing.Icon.ExtractAssociatedIcon(filepath);
                 //return new Image( icon.ToBitmap;
@@ -55,9 +56,13 @@ namespace Ginger.UserControlsLib.TextEditor.WebBrowser
             }
         }
 
-        public override ITextEditorPage EditorPage { get {
-                return new WebBrowserDocumentPage();                
-            } }
+        public override ITextEditorPage EditorPage
+        {
+            get
+            {
+                return new WebBrowserDocumentPage();
+            }
+        }
 
         public override IHighlightingDefinition HighlightingDefinition
         {

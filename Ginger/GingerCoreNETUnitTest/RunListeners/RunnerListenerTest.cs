@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace GingerCoreNETUnitTest.RunTestslib
 {
-    
+
     [Level2]
     [TestClass]
     public class RunnerListenerTest
@@ -34,7 +34,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         [ClassCleanup]
         public static void ClassCleanup()
         {
-           
+
         }
 
         [TestInitialize]
@@ -59,7 +59,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             mBF.Activities = new ObservableList<Activity>();
             mBF.Name = "BF TEst time-line events listener";
             mBF.Active = true;
-            Activity activitiy1 = new Activity() { Active = true};
+            Activity activitiy1 = new Activity() { Active = true };
             activitiy1.Active = true;
             mBF.Activities.Add(activitiy1);
 
@@ -101,7 +101,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             //TODO: add more test that timeline is in boundries of parent
         }
 
-        
+
 
     }
 

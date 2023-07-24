@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using GingerCoreNET.Drivers.CommunicationProtocol;
 using System;
 using System.Collections.Generic;
-using GingerCoreNET.Drivers.CommunicationProtocol;
 using System.Reflection;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
@@ -33,13 +33,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
         // one input string which is the object id and return object - callback to the using class - must be set
         public Func<string, object> GetObjectHandler;
 
-        public string Info { get { return mGingerSocketServer.IPInfo; }  }
+        public string Info { get { return mGingerSocketServer.IPInfo; } }
 
         public void Start(int port)
         {
             mGingerSocketServer = new GingerSocketServer2();
             mGingerSocketServer.MessageHandler = MessageHandler;
-            mGingerSocketServer.StartServer(port); 
+            mGingerSocketServer.StartServer(port);
         }
 
         public void ShutDown()
@@ -60,12 +60,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             {
                 case "GetObject":
                     string id = PL.GetValueString();
-                    object  obj = GetObjectHandler(id);
+                    object obj = GetObjectHandler(id);
                     RemoteObjectHandle remoteObjectHandle = new RemoteObjectHandle();
                     Guid guid = Guid.NewGuid();
                     remoteObjectHandle.GUID = guid;
                     remoteObjectHandle.Object = obj;
-                    
+
                     //check if the object have Dispatcher - means GUI element so STA thread then run it on the STA, so we keep the Dispatcher for the invoke part later
                     PropertyInfo PI = obj.GetType().GetProperty("Dispatcher");
                     if (PI != null)
@@ -88,7 +88,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                 case "Invoke":
                     Guid objguid = Guid.Parse(PL.GetValueString());
                     string methodName = PL.GetValueString();
-                    RemoteObjectHandle ROH;                    
+                    RemoteObjectHandle ROH;
                     // Get the object by guid
                     bool bFound = mObjects.TryGetValue(objguid, out ROH);
                     object obj1 = ROH.Object;
@@ -98,9 +98,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                     int ParamCounter = PL.GetValueInt();
 
                     object[] param = new object[ParamCounter];
-                    for (int i=0;i<ParamCounter;i++)
-                    {                        
-                        param[i] = PL.GetValueByObjectType();                        
+                    for (int i = 0; i < ParamCounter; i++)
+                    {
+                        param[i] = PL.GetValueByObjectType();
                     }
 
                     // invoke 
@@ -126,18 +126,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
                     //}
 
                     // return result 
-                    NewPayLoad PLRC = new NewPayLoad("OK");                    
+                    NewPayLoad PLRC = new NewPayLoad("OK");
                     if (rc != null)
                     {
-                        PLRC.AddValueByObjectType(rc);                        
+                        PLRC.AddValueByObjectType(rc);
                     }
                     else
                     {
                         PLRC.AddValue("NULL");
                         PLRC.AddValue("NULL");
                     }
-                    PLRC.ClosePackage();                    
-                    return PLRC;                
+                    PLRC.ClosePackage();
+                    return PLRC;
                 default:
                     throw new InvalidOperationException("Unknown PayLoad Action - " + PL.Name);
             }

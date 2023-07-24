@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using System.Xml.XPath;
 
 namespace GingerCore.Drivers.WebServicesDriverLib
 {
@@ -52,7 +51,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public bool mSoapUIProcessUseShellExecute { get; set; }
         public bool mSoapUIProcessWindowStyle { get; set; }
         public bool mSoapUIProcessCreateNoWindow { get; set; }
-       
+
 
         public SoapUIUtils(Act act, string soapUIDirectoryPath, string reportExportDirectoryPath, string soapUISettingFile, string soapUISettingFilePassword, string projectPassword, bool RunSoapUIProcessAsAdmin, bool SoapUIProcessRedirectStandardError, bool SoapUIProcessRedirectStandardOutput, bool SoapUIProcessUseShellExecute, bool SoapUIProcessWindowStyle, bool SoapUIProcessCreateNoWindow)
         {
@@ -73,13 +72,13 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
             //Creating string for the report extract folder
             string XMLFileName = Path.GetFileName(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.XMLFile)).Replace(".xml", string.Empty);
-            
+
 
             mTimestamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
             string SolutionFolder = mAct.SolutionFolder;
 
             //SoapUIDirectoryPath = SoapUIDirectoryPath.Replace(@"~\", SolutionFolder);
-            SoapUIDirectoryPath =WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(SoapUIDirectoryPath);
+            SoapUIDirectoryPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(SoapUIDirectoryPath);
 
             //Creating Directory to extract the reports.
             //string targetPath = ReportExportDirectoryPath.Replace(@"~\", SolutionFolder);
@@ -89,7 +88,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             {
                 System.IO.Directory.CreateDirectory(targetPath);
             }
-            
+
             //ReportPathWithXMLFolder = System.IO.Path.Combine(ReportExportDirectoryPath.Replace(@"~\", SolutionFolder), mAct.Description + mTimestamp);
             ReportPathWithXMLFolder = System.IO.Path.Combine(WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ReportExportDirectoryPath), mAct.Description + mTimestamp);
 
@@ -145,26 +144,26 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 //The host:port to use when invoking test-requests, overrides only the host part of the endpoint set in the project file
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.HostPort)))
                 { commandParam = commandParam + " -h" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.HostPort) + Quotationmark; }
-               
+
                 //The username to use in any authentications, overrides any username set for any TestRequests
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Username)))
                 { commandParam = commandParam + " -u" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Username) + Quotationmark; }
-                
+
                 //The password to use in any authentications, overrides any password set for any TestRequests
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password)))
                 { commandParam = commandParam + " -p" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password) + Quotationmark; }
-               
+
                 //The domain to use in any authentications, overrides any domain set for any TestRequests
                 if (!string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Domain)))
                 { commandParam = commandParam + " -d" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Domain) + Quotationmark; }
-              
+
                 //Sets the WSS password type, either 'Text' or 'Digest'
                 if (!(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.PasswordWSSType).Equals("")) && !string.IsNullOrEmpty(mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.Password)))
                 {
                     commandParam = commandParam + " -w" + Quotationmark + mAct.GetInputParamCalculatedValue(ActSoapUI.Fields.PasswordWSSType) + Quotationmark;
-                }  
+                }
                 //Sets system property with name=value
-                if (mAct.SystemProperties.Count() > 0)
+                if (mAct.SystemProperties.Any())
                 {
                     foreach (ActInputValue row in mAct.SystemProperties)
                     {
@@ -172,7 +171,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     }
                 }
                 //Sets global property with name=value
-                if (mAct.GlobalProperties.Count() > 0)
+                if (mAct.GlobalProperties.Any())
                 {
                     foreach (ActInputValue row in mAct.GlobalProperties)
                     {
@@ -190,7 +189,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 {
                     commandParam = commandParam + " -v" + Quotationmark + SoapUISettingFilePassword + Quotationmark;
                 }
-                    
+
                 //Sets project password for decryption if project is encrypted
                 if (!string.IsNullOrEmpty(ProjectPassword))
                 {
@@ -223,21 +222,27 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 proc.StartInfo.WorkingDirectory = SoapUIDirectoryPath + @"\bin";
                 proc.StartInfo.Arguments = commandParam;
                 if (mRunSoapUIProcessAsAdmin)
+                {
                     proc.StartInfo.Verb = "runas";
+                }
+
                 proc.StartInfo.RedirectStandardError = mSoapUIProcessRedirectStandardError;
                 proc.StartInfo.RedirectStandardOutput = mSoapUIProcessRedirectStandardOutput;
                 proc.StartInfo.UseShellExecute = mSoapUIProcessUseShellExecute;
-                if(mSoapUIProcessWindowStyle)
+                if (mSoapUIProcessWindowStyle)
+                {
                     proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                }
+
                 proc.StartInfo.CreateNoWindow = mSoapUIProcessCreateNoWindow;
 
                 string output = string.Empty;
                 string error = string.Empty;
-              
+
                 if (mSoapUIProcessRedirectStandardError && mSoapUIProcessRedirectStandardOutput)
                 {
                     proc.Start();
-                  
+
                     output = proc.StandardOutput.ReadToEnd();
                     error = proc.StandardError.ReadToEnd();
                     proc.WaitForExit();
@@ -267,7 +272,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     proc.WaitForExit();
                     return true;
                 }
-                
+
                 return true;
             }
             catch (Exception ex)
@@ -311,16 +316,22 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 string testCaseName = caseNode.Attributes["testCase"].Value;
                 string testCaseStatus = caseNode.Attributes["status"].Value;
                 CasesCounter++;
-                XmlNodeList StepsResults = doc.DocumentElement.SelectNodes("(//*[local-name()='testCaseRunLog']["+ CasesCounter + "]/*[local-name()='testCaseRunLogTestStep'])", manager);
+                XmlNodeList StepsResults = doc.DocumentElement.SelectNodes("(//*[local-name()='testCaseRunLog'][" + CasesCounter + "]/*[local-name()='testCaseRunLogTestStep'])", manager);
                 foreach (XmlNode Stepnode in StepsResults)
                 {
                     string TestStepStatus = Stepnode.Attributes["status"].Value;
                     string testStepName = Stepnode.Attributes["name"].Value;
                     if (!TestStepStatus.Equals("OK"))
-                        if((mAct.Error == null))
+                    {
+                        if ((mAct.Error == null))
+                        {
                             mAct.Error = "The below list of test steps have been failed: " + Environment.NewLine + "TestCase: " + testCaseName + ", TestStep: " + testStepName + ", Status: " + TestStepStatus;
+                        }
                         else
-                            mAct.Error = mAct.Error + Environment.NewLine + "TestCase: " + testCaseName + ", TestStep: " + testStepName + ", Status: " + TestStepStatus ;
+                        {
+                            mAct.Error = mAct.Error + Environment.NewLine + "TestCase: " + testCaseName + ", TestStep: " + testStepName + ", Status: " + TestStepStatus;
+                        }
+                    }
                 }
             }
 
@@ -344,7 +355,10 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             foreach (string fileName in fileEntries)
             {
                 //length validation
-                if (CheckFilePathLength(fileName) == false) continue;
+                if (CheckFilePathLength(fileName) == false)
+                {
+                    continue;
+                }
 
                 if ((fileName.Substring(fileName.Length - 3)).Equals("txt"))
                 {
@@ -353,8 +367,8 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     response = GenerateResponse(fileName);
                     message = GenerateMessage(fileName);
                     properties = GenerateProperties(fileName);
-                     
-                    dict.Add(fileName, new List<string>() { testStepName, request, response, ReportPath, message, properties});
+
+                    dict.Add(fileName, new List<string>() { testStepName, request, response, ReportPath, message, properties });
                 }
             }
 
@@ -388,7 +402,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 {
                     List<string> listNames = OutputNames(fileName);
                     List<string> listValues = OutputValues(fileName);
-                    dict.Add(listNames, listValues );
+                    dict.Add(listNames, listValues);
                 }
             }
             return dict;
@@ -418,7 +432,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             int endMessageIndex = fileContent.IndexOf("----------------- Properties ------------------------------");
             int endMessageIndexForTransfer = fileContent.IndexOf("----------------------------------------------------");
             if (startMessageIndex == -1)
+            {
                 message = string.Empty;
+            }
             else if (endMessageIndex == -1 && endMessageIndexForTransfer != -1)
             {
                 messageLeanth = (endMessageIndexForTransfer - startMessageIndex);
@@ -442,8 +458,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 int startOutputPropertyNameIndex = fileContent.IndexOf("[");
                 int startOutputPropertyValueIndex = fileContent.IndexOf("[[");
                 int endOutputPropertyNameIndex = fileContent.IndexOf("]");
-                if (startOutputPropertyNameIndex == -1 || startOutputPropertyValueIndex <= startOutputPropertyNameIndex || endOutputPropertyNameIndex < startOutputPropertyNameIndex) 
+                if (startOutputPropertyNameIndex == -1 || startOutputPropertyValueIndex <= startOutputPropertyNameIndex || endOutputPropertyNameIndex < startOutputPropertyNameIndex)
+                {
                     break;
+                }
+
                 int outputPropertyNameLeanth = (endOutputPropertyNameIndex - startOutputPropertyNameIndex);
                 string outputPropertyNameSection = fileContent.Substring(startOutputPropertyNameIndex + 1, outputPropertyNameLeanth - 1);
                 listNames.Add(outputPropertyNameSection);
@@ -451,7 +470,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             return listNames;
         }
-        
+
         private List<string> OutputValues(string fileName)
         {
             string fileContent = File.ReadAllText(fileName);
@@ -462,8 +481,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 int startOutputPropertyValueIndex = fileContent.IndexOf("[[");
                 int endText = fileContent.IndexOf("------------ source path -------------");
                 int endOutputPropertyValueIndex = fileContent.IndexOf("]]");
-                if (startOutputPropertyValueIndex == -1 || endText <= startOutputPropertyValueIndex) 
-                 break;
+                if (startOutputPropertyValueIndex == -1 || endText <= startOutputPropertyValueIndex)
+                {
+                    break;
+                }
+
                 int outputPropertyNameLeanth = (endOutputPropertyValueIndex - startOutputPropertyValueIndex);
                 string outputPropertyValueSection = fileContent.Substring(startOutputPropertyValueIndex + 2, outputPropertyNameLeanth - 2);
                 listNames.Add(outputPropertyValueSection);
@@ -476,31 +498,42 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             string fileContent = File.ReadAllText(fileName);
             int contentLeanth = fileContent.Length;
-            int startPropertiesIndex = fileContent.IndexOf("----------------- Properties ------------------------------" );
+            int startPropertiesIndex = fileContent.IndexOf("----------------- Properties ------------------------------");
             int endPropertiesIndex = fileContent.IndexOf("---------------- Request ---------------------------");
             if (startPropertiesIndex == -1)
+            {
                 return string.Empty;
+            }
+
             int PropertiesLeanth = (endPropertiesIndex - startPropertiesIndex);
-            string PropertiesSection = fileContent.Substring(startPropertiesIndex + 61, PropertiesLeanth -61);
+            string PropertiesSection = fileContent.Substring(startPropertiesIndex + 61, PropertiesLeanth - 61);
             return PropertiesSection;
         }
 
         //fetches the requestXML from the generated txt file
         private string GenerateRequest(string fileName)
         {
-            string fileContent =  File.ReadAllText(fileName);
+            string fileContent = File.ReadAllText(fileName);
             int contentLeanth = fileContent.Length;
             int startRequestIndex = fileContent.IndexOf("---------------- Request ---------------------------");
             int endRequestIndex = fileContent.IndexOf("---------------- Response --------------------------");
             if (startRequestIndex == -1)
+            {
                 return string.Empty;
+            }
+
             int RequestLeanth = (endRequestIndex - startRequestIndex);
             string requestSection = fileContent.Substring(startRequestIndex, RequestLeanth);
             string requestXML = string.Empty;
             if (requestSection.IndexOf("<") != -1)
+            {
                 requestXML = requestSection.Substring(requestSection.IndexOf("<"));
+            }
             else
+            {
                 requestXML = requestSection;
+            }
+
             return requestXML;
         }
 
@@ -510,16 +543,23 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             string fileContent = File.ReadAllText(fileName);
             int startResponseIndex = fileContent.IndexOf("---------------- Response --------------------------");
             if (startResponseIndex == -1)
+            {
                 return string.Empty;
+            }
+
             string responseSection = fileContent.Substring(startResponseIndex);
 
             int startResponseXML = responseSection.IndexOf("<");
             if (startResponseXML > -1)
+            {
                 return responseSection.Substring(startResponseXML);
+            }
 
             int startResponseJSON = responseSection.IndexOf("{");
-            if(startResponseJSON > -1)
+            if (startResponseJSON > -1)
+            {
                 return responseSection.Substring(startResponseJSON);
+            }
 
             return string.Empty;
         }
@@ -560,7 +600,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     XmlNodeList suiteProperties = doc.SelectNodes("//*[local-name()='soapui-project']/*[local-name()='testSuite'][@name='" + testSuite + "']/*[local-name()='properties']/*[local-name()='property']", manager);
                     XmlNodeList stepProperties = doc.SelectNodes("//*[local-name()='soapui-project']/*[local-name()='testSuite'][@name='" + testSuite + "']/*[local-name()='testCase'][@name='" + testCase + "']/*[local-name()='testStep'][@type='properties']/*[local-name()='config']/*[local-name()='properties']/*[local-name()='property']", manager);
                     XmlNodeList projectProperties = doc.SelectNodes("//*[local-name()='soapui-project']/*[local-name()='properties']/*[local-name()='property']", manager);
-                   
+
                     foreach (ActSoapUiInputValue AIV in AllProperties)
                     {
                         if (AIV.Type == ActSoapUiInputValue.ePropertyType.Project.ToString())

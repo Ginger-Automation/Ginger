@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,53 +33,53 @@ using System.Linq;
 using System.Reflection;
 
 namespace GingerTest
-{    
+{
     [Ignore] // get stuck
     [TestClass]
     [Level2]
     public class GingerSolutionRepositoryTest
-    {        
+    {
 
-        static SolutionRepository mSolutionRepository;        
+        static SolutionRepository mSolutionRepository;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext TC)
         {
 
             CreateTestSolution();
-            
+
             // Init SR
             mSolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
             WorkSpace.Init(new WorkSpaceEventHandler());
-            Ginger.App.InitClassTypesDictionary();            
-            string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");            
+            Ginger.App.InitClassTypesDictionary();
+            string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");
             mSolutionRepository.Open(TempRepositoryFolder);
         }
 
         [ClassCleanup]
         public static void ClassCleanup()
         {
-            
+
         }
 
         private static void CreateTestSolution()
         {
             // First we create a basic solution with some sample items
-            SolutionRepository SR = new SolutionRepository();            
+            SolutionRepository SR = new SolutionRepository();
             string TempRepositoryFolder = TestResources.GetTestTempFolder(@"Solutions\SRTestTemp");
             if (Directory.Exists(TempRepositoryFolder))
             {
                 Directory.Delete(TempRepositoryFolder, true);
             }
 
-            
+
             SR = GingerSolutionRepository.CreateGingerSolutionRepository();
             SR.Open(TempRepositoryFolder);
 
             ProjEnvironment E1 = new ProjEnvironment() { Name = "E1" };
             SR.AddRepositoryItem(E1);
 
-            
+
 
 
             //RepositoryFolder<MyRepositoryItem> BFRF = SR.GetRepositoryItemRootFolder<MyRepositoryItem>();
@@ -113,9 +113,10 @@ namespace GingerTest
 
         }
 
-      
 
-        [TestMethod]  [Timeout(60000)]
+
+        [TestMethod]
+        [Timeout(60000)]
         public void VerifyEnvcopyIsOK()
         {
             //Arrange
@@ -132,7 +133,8 @@ namespace GingerTest
             Assert.AreEqual(env1.Guid, env1Copy.Guid);
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void EnvRenameshouldKeepOriginalFileName()
         {
             //Arrange
@@ -147,15 +149,16 @@ namespace GingerTest
 
             //Assert              
             Assert.AreEqual(filePath, env1.FilePath);
-            
+
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void EnvRenameDupWithFileNameExist()
         {
             //Arrange
-            ProjEnvironment env1 = new ProjEnvironment() { Name = "MyEnv"};
+            ProjEnvironment env1 = new ProjEnvironment() { Name = "MyEnv" };
             mSolutionRepository.AddRepositoryItem(env1);
 
             //Act            
@@ -170,11 +173,12 @@ namespace GingerTest
 
             // Make sure we got new file name
             Assert.AreNotEqual(env1.FilePath, env2.FilePath);
-            
+
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void EnvRenameDupWithFileNameExistx3()
         {
             //Arrange
@@ -208,7 +212,8 @@ namespace GingerTest
         //TODO: add another test which update value with same and see prop changed didn't trigger
 
         [Ignore] // Temp so the build will pass
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void CheckPropertyChangedTriggered()
         {
             // Scan all RIs for each prop marked with [IsSerializedForLocalRepositoryAttribute] try to change and verify prop changed triggered
@@ -223,16 +228,24 @@ namespace GingerTest
             foreach (Type type in list)
             {
                 Console.WriteLine("CheckPropertyChangedTriggered for type: " + type.FullName);
-                if (type.IsAbstract) continue;
+                if (type.IsAbstract)
+                {
+                    continue;
+                }
+
                 RepositoryItemBase RI = (RepositoryItemBase)Activator.CreateInstance(type);
                 RI.PropertyChanged += RIPropertyChanged;
                 RI.StartDirtyTracking();
 
                 // Properties
                 foreach (PropertyInfo PI in RI.GetType().GetProperties())
-                {                    
+                {
                     var token = PI.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
-                    if (token == null) continue;
+                    if (token == null)
+                    {
+                        continue;
+                    }
+
                     Console.WriteLine("CheckPropertyChangedTriggered for property: " + PI.Name);
                     object newValue = GetNewValue(PI.PropertyType, PI.GetValue(RI));
                     if (newValue != null)
@@ -247,9 +260,13 @@ namespace GingerTest
 
                 // Fields
                 foreach (FieldInfo FI in RI.GetType().GetFields())
-                {                    
+                {
                     var token = FI.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute));
-                    if (token == null) continue;
+                    if (token == null)
+                    {
+                        continue;
+                    }
+
                     Console.WriteLine("CheckPropertyChangedTriggered for property: " + FI.Name);
                     object newValue = GetNewValue(FI.FieldType, FI.GetValue(RI));
                     if (newValue != null)
@@ -268,7 +285,7 @@ namespace GingerTest
 
         int ErrCounter = 0;
         private void CheckChanges(RepositoryItemBase rI, string name, object value)
-        {            
+        {
             if (name != prop)
             {
                 Console.WriteLine("Property missing set with OnPropertychanged - " + rI.GetType().FullName + "." + name);
@@ -347,7 +364,7 @@ namespace GingerTest
             }
             else if (memberType == typeof(RepositoryItemKey))
             {
-                return new RepositoryItemKey() {  Guid = Guid.NewGuid(), ItemName = "NewItem"};
+                return new RepositoryItemKey() { Guid = Guid.NewGuid(), ItemName = "NewItem" };
             }
             else if (CurrentValue is List<string>)
             {

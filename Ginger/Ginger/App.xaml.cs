@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
 using Ginger.ReporterLib;
-using Ginger.Repository;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerCore.Repository;
@@ -42,11 +41,13 @@ namespace Ginger
     /// </summary>
     public partial class App : Application
     {
-        
-        
+
+
         public new static MainWindow MainWindow { get; set; }
 
         private Dictionary<string, Int32> mExceptionsDic = new Dictionary<string, int>();
+
+
 
         public static void LoadApplicationDictionaries(Amdocs.Ginger.Core.eSkinDicsType SkinDicType = Amdocs.Ginger.Core.eSkinDicsType.Default, GingerCore.eTerminologyType TerminologyType = GingerCore.eTerminologyType.Default)
         {
@@ -77,7 +78,7 @@ namespace Ginger
             // set terminology type
             GingerTerminology.TERMINOLOGY_TYPE = TerminologyType;
         }
-        
+
         static bool bDone = false;
 
         public static void InitClassTypesDictionary()
@@ -92,7 +93,7 @@ namespace Ginger
             NewRepositorySerializer.NewRepositorySerializerEvent += RepositorySerializer.NewRepositorySerializer_NewRepositorySerializerEvent;
 
             // Add all RI classes from GingerCore           
-            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCore); 
+            NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.GingerCore);
             // add from Ginger
             NewRepositorySerializer.AddClassesFromAssembly(NewRepositorySerializer.eAssemblyType.Ginger);
 
@@ -103,7 +104,7 @@ namespace Ginger
             list.Add("GingerCore.Actions.ActReturnValue", typeof(ActReturnValue));
             list.Add("GingerCore.Actions.EnhancedActInputValue", typeof(EnhancedActInputValue));
             list.Add("GingerCore.Environments.GeneralParam", typeof(GeneralParam));
-            
+
 
 
             NewRepositorySerializer.AddClasses(list);
@@ -158,7 +159,7 @@ namespace Ginger
         //}
 
         private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        {            
+        {
             Exception ex = e.Exception;
             //WorkSpace.Instance.Telemetry.AddException(ex);
             //Exceptions to avoid because it source is in some .NET issue
@@ -183,7 +184,7 @@ namespace Ginger
 
             if (mExceptionsDic[ex.Message] <= 3)
             {
-                if (WorkSpace.Instance!= null && !WorkSpace.Instance.RunningInExecutionMode)
+                if (WorkSpace.Instance != null && !WorkSpace.Instance.RunningInExecutionMode)
                 {
                     Ginger.GeneralLib.ExceptionDetailsPage.ShowError(ex);
                 }
@@ -239,8 +240,10 @@ namespace Ginger
 
         // Main entry point to Ginger UI/CLI
         private void Application_Startup(object sender, StartupEventArgs e)
-        {            
+        {
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.InitLog4Net();
+
+
 
             bool startGrid = e.Args.Length == 0; // no need to start grid if we have args
             WorkSpace.Init(new WorkSpaceEventHandler(), startGrid);
@@ -251,14 +254,31 @@ namespace Ginger
             }
             // add additional classes from Ginger and GingerCore
             InitClassTypesDictionary();
-           
-            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper());            
-            
-            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();            
+
+            WorkSpace.Instance.InitWorkspace(new GingerWorkSpaceReporter(), new DotNetFrameworkHelper());
+
+            Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
 
             if (!WorkSpace.Instance.RunningInExecutionMode)
             {
-                HideConsoleWindow();                
+                if (WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug)
+                {
+                    try
+                    {
+                        if (!System.Diagnostics.Trace.Listeners.Contains(CustomTraceListener.Instance))
+                        {
+                            System.Diagnostics.Trace.Listeners.Add(CustomTraceListener.Instance);
+
+                            System.Diagnostics.Trace.WriteLine("Ginger Start up", "Info");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Custom Trace listerner ", ex.InnerException);
+                    }
+
+                }
+                HideConsoleWindow();
                 StartGingerUI();// start regular Ginger UI
             }
             else
@@ -267,7 +287,7 @@ namespace Ginger
             }
         }
 
-        
+
         [DllImport("kernel32.dll")]
         static extern IntPtr GetConsoleWindow();
 
@@ -290,9 +310,9 @@ namespace Ginger
         }
 
         private async void RunNewCLI(string[] args)
-        {                    
+        {
             CLIProcessor cLIProcessor = new CLIProcessor();
-           await cLIProcessor.ExecuteArgs(args);
+            await cLIProcessor.ExecuteArgs(args);
 
             // do proper close !!!         
             System.Windows.Application.Current.Shutdown(Environment.ExitCode);
@@ -308,7 +328,7 @@ namespace Ginger
 
             MainWindow = new MainWindow();
             MainWindow.Show();
-            GingerCore.General.DoEvents();            
+            GingerCore.General.DoEvents();
 
             if (WorkSpace.Instance.UserProfile != null)
             {
@@ -322,6 +342,20 @@ namespace Ginger
             MainWindow.Init();
         }
 
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
+            base.OnStartup(e);
+        }
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Exception ex = (Exception)e.ExceptionObject;
+            // log the exception or do other error handling
+            if (ex != null)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "An unhandled exception occurred: ", ex.InnerException);
+            }
+        }
     }
 }

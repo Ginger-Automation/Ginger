@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ namespace GingerCore.NoSqlBase
         public abstract List<string> GetTableList(string Keyspace);
         public abstract List<string> GetKeyspaceList();
         public abstract List<string> GetColumnList(string table);
-        
+
         public abstract void PerformDBAction();
 
         public abstract bool Connect();

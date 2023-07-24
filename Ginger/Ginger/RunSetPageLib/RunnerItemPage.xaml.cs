@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -112,7 +112,10 @@ namespace Ginger.Run
             get
             {
                 if (mItemChilds == null)
+                {
                     LoadChildRunnerItems();
+                }
+
                 return mItemChilds;
             }
         }
@@ -131,7 +134,7 @@ namespace Ginger.Run
 
         public static void SetRunnerItemEvent(RunnerItemEventHandler runnerItemEvent)
         {
-            if(RunnerItemEvent == null)
+            if (RunnerItemEvent == null)
             {
                 RunnerItemEvent -= runnerItemEvent;
                 RunnerItemEvent += runnerItemEvent;
@@ -157,17 +160,23 @@ namespace Ginger.Run
         public void LoadChildRunnerItems()
         {
             mItemChilds = new ObservableList<RunnerItemPage>();
-            
+
             if (ItemObject.GetType() == typeof(BusinessFlow))
-            {            
+            {
                 foreach (Activity ac in ((BusinessFlow)ItemObject).Activities)
                 {
-                    if (ac.GetType() == typeof(ErrorHandler)) continue;//do not show Error Handler for now
+                    if (ac.GetType() == typeof(ErrorHandler))
+                    {
+                        continue;//do not show Error Handler for now
+                    }
 
-                    if (ac.GetType() == typeof(CleanUpActivity)) continue;//do not show Clean Up Activity for now
+                    if (ac.GetType() == typeof(CleanUpActivity))
+                    {
+                        continue;//do not show Clean Up Activity for now
+                    }
 
                     RunnerItemPage ri = new RunnerItemPage(ac);
-                    this.Context.BusinessFlow = (BusinessFlow)ItemObject; 
+                    this.Context.BusinessFlow = (BusinessFlow)ItemObject;
                     ri.Context = this.Context;
                     ri.ItemName = ac.ActivityName;
                     if (string.IsNullOrEmpty(ac.Description))
@@ -186,7 +195,7 @@ namespace Ginger.Run
                 }
             }
             else if (ItemObject.GetType() == typeof(Activity))
-            {                
+            {
                 foreach (GingerCore.Actions.Act act in ((Activity)ItemObject).Acts)
                 {
                     RunnerItemPage ri = new RunnerItemPage(act);
@@ -203,7 +212,7 @@ namespace Ginger.Run
             }
         }
 
-        public RunnerItemPage(object Runnerobj = null, bool ViewMode= false)
+        public RunnerItemPage(object Runnerobj = null, bool ViewMode = false)
         {
             InitializeComponent();
 
@@ -216,7 +225,7 @@ namespace Ginger.Run
                 if (ItemObject.GetType() == typeof(GingerCore.BusinessFlow))
                 {
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(BusinessFlow.RunStatus), BindingMode.OneWay);
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(BusinessFlow.RunStatus),  bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(BusinessFlow.RunStatus), bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBusinessflowActive, ucButton.ButtonImageTypeProperty, ItemObject, nameof(BusinessFlow.Active), bindingConvertor: new ActiveIconConverter(), BindingMode.TwoWay);
                     ((BusinessFlow)ItemObject).PropertyChanged += RunnerItem_BusinessflowPropertyChanged;
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
@@ -225,7 +234,7 @@ namespace Ginger.Run
                 else if (ItemObject.GetType() == typeof(GingerCore.Activity))
                 {
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(Activity.Status), BindingMode.OneWay);
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(Activity.Status),  bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
+                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(Activity.Status), bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
                     ((Activity)ItemObject).PropertyChanged += RunnerItem_ActivityPropertyChanged;
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     xViewRunnerItem.ToolTip = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
@@ -266,7 +275,9 @@ namespace Ginger.Run
             {
                 //Todo : need to see why it is blocking activity,businessflow selection.
                 if (((Act)sender).Status == eRunStatus.Running)
+                {
                     OnRunnerItemEvent(RunnerItemEventArgs.eEventType.SetAsSelectedRequired, this, ItemtType, ItemObject);
+                }
             }
         }
 
@@ -275,7 +286,9 @@ namespace Ginger.Run
             if (e.PropertyName == nameof(Activity.Status))
             {
                 if (((Activity)sender).Status == eRunStatus.Running)
+                {
                     OnRunnerItemEvent(RunnerItemEventArgs.eEventType.SetAsSelectedRequired, this, ItemtType, ItemObject);
+                }
             }
         }
 
@@ -284,7 +297,9 @@ namespace Ginger.Run
             if (e.PropertyName == nameof(BusinessFlow.RunStatus))
             {
                 if (((BusinessFlow)sender).RunStatus == eRunStatus.Running)
+                {
                     OnRunnerItemEvent(RunnerItemEventArgs.eEventType.SetAsSelectedRequired, this, ItemtType, ItemObject);
+                }
             }
         }
 
@@ -295,6 +310,10 @@ namespace Ginger.Run
             {
                 Click(this, e);
             }
+            if(e.Handled)
+            {
+                OnRunnerItemEvent(RunnerItemEventArgs.eEventType.ViewConfiguration, this, ItemtType, ItemObject);
+            }            
         }
         public event RoutedEventHandler ClickAutomate;
         private void xautomateBusinessflow_Click(object sender, RoutedEventArgs e)
@@ -344,22 +363,26 @@ namespace Ginger.Run
         private void xDetailView_Click(object sender, RoutedEventArgs e)
         {
             if (pageGrid.RowDefinitions[1].Height.Value == 0)
+            {
                 ExpandCollapseRunnerItem(true);
+            }
             else
+            {
                 ExpandCollapseRunnerItem(false);
+            }
         }
         public void ExpandCollapseRunnerItem(bool isExpand)
         {
             if (isExpand)
             {
                 pageGrid.RowDefinitions[1].Height = new GridLength(30);
-               // xRunnerItemButtons.Visibility = Visibility.Visible;
+                // xRunnerItemButtons.Visibility = Visibility.Visible;
                 xDetailView.ButtonImageType = eImageType.Collapse;
             }
             else
             {
                 pageGrid.RowDefinitions[1].Height = new GridLength(0);
-               // xRunnerItemButtons.Visibility = Visibility.Collapsed;
+                // xRunnerItemButtons.Visibility = Visibility.Collapsed;
                 xDetailView.ButtonImageType = eImageType.Expand;
             }
         }
@@ -382,10 +405,14 @@ namespace Ginger.Run
 
         private void UserControl_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            if(((RunnerItemPage)sender).ItemObject is Act || ((RunnerItemPage)sender).ItemObject is Activity)
+            if (((RunnerItemPage)sender).ItemObject is Act || ((RunnerItemPage)sender).ItemObject is Activity)
+            {
                 OnRunnerItemEvent(RunnerItemEventArgs.eEventType.ViewRunnerItemRequired, this, ItemtType, ItemObject);
+            }
             else
+            {
                 OnRunnerItemEvent(RunnerItemEventArgs.eEventType.ViewConfiguration, this, ItemtType, ItemObject);
+            }
         }
 
         private void xExportToAlm_Click(object sender, RoutedEventArgs e)
@@ -394,11 +421,13 @@ namespace Ginger.Run
             {
                 ObservableList<BusinessFlow> bfs = new ObservableList<BusinessFlow>();
                 bfs.Add(((BusinessFlow)ItemObject));
-               
+
                 if (!ExportResultsToALMConfigPage.Instance.IsProcessing)
                 {
-                    ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false));
-                    ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+                    if (ExportResultsToALMConfigPage.Instance.Init(bfs, new GingerCore.ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, null, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>(), false, "", false)))
+                    {
+                        ExportResultsToALMConfigPage.Instance.ShowAsWindow();
+                    }
                 }
                 else
                 {
@@ -444,7 +473,7 @@ namespace Ginger.Run
 
             this.DuplicateClick -= xDuplicateBusinessflow_Click;
             this.ClickAutomate -= xautomateBusinessflow_Click;
-            this.ClickGenerateReport -= xGenerateReport_Click;          
+            this.ClickGenerateReport -= xGenerateReport_Click;
             this.ResetBusinessFlowStatus -= xResetStatus_Buss_Flow_Actions_Click;
             this.Click -= xconfig_Click;
             this.RemoveClick -= xremoveBusinessflow_Click;
@@ -459,7 +488,7 @@ namespace Ginger.Run
             BindingOperations.ClearAllBindings(xItemName);
             BindingOperations.ClearAllBindings(xItemDescription);
             BindingOperations.ClearAllBindings(xItemSeparator);
-                   
+
 
             BindingOperations.ClearAllBindings(xRunnerItemContinue);
             BindingOperations.ClearAllBindings(xViewRunnerItem);
@@ -485,29 +514,29 @@ namespace Ginger.Run
 
     }
     public class RunnerItemEventArgs
+    {
+        public enum eEventType
         {
-            public enum eEventType
-            {
-                DoEventsRequired,
-                ContinueRunRequired,
-                SetAsSelectedRequired,
-                ViewRunnerItemRequired,
-                ViewConfiguration
-              
-            }
+            DoEventsRequired,
+            ContinueRunRequired,
+            SetAsSelectedRequired,
+            ViewRunnerItemRequired,
+            ViewConfiguration
 
-            public eEventType EventType;
+        }
 
-            public RunnerItemPage RunnerItemPage;
-            public RunnerItemPage.eRunnerItemType RunnerItemType;
-            public Object RunnerItemObject;
+        public eEventType EventType;
 
-            public RunnerItemEventArgs(eEventType EventType, RunnerItemPage runnerItemPage, RunnerItemPage.eRunnerItemType runnerItemType,  object runnerItemObject)
-            {
-                this.EventType = EventType;
-                this.RunnerItemPage = runnerItemPage;
-                this.RunnerItemType = runnerItemType;
-                this.RunnerItemObject = runnerItemObject;
-            }
-        }    
+        public RunnerItemPage RunnerItemPage;
+        public RunnerItemPage.eRunnerItemType RunnerItemType;
+        public Object RunnerItemObject;
+
+        public RunnerItemEventArgs(eEventType EventType, RunnerItemPage runnerItemPage, RunnerItemPage.eRunnerItemType runnerItemType, object runnerItemObject)
+        {
+            this.EventType = EventType;
+            this.RunnerItemPage = runnerItemPage;
+            this.RunnerItemType = runnerItemType;
+            this.RunnerItemObject = runnerItemObject;
+        }
+    }
 }

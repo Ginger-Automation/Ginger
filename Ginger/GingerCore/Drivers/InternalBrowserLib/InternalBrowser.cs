@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ using System.Xml;
 namespace GingerCore.Drivers.InternalBrowserLib
 {
     public class InternalBrowser : DriverBase, IWindowExplorer
-    {        
+    {
         private InternalBrowserWindow mFrmBrowser;
         private WebBrowser mBrowserControl;
 
@@ -47,12 +47,12 @@ namespace GingerCore.Drivers.InternalBrowserLib
         }
 
         public InternalBrowser(BusinessFlow BF)
-        {            
-            BusinessFlow = BF;            
+        {
+            BusinessFlow = BF;
         }
 
         public override void StartDriver()
-        {            
+        {
             General.CheckRegistryValues();
             CreateSTA(ShowDriverWindow);
         }
@@ -76,19 +76,19 @@ namespace GingerCore.Drivers.InternalBrowserLib
             try
             {
                 if (mFrmBrowser != null)
-                {                    
+                {
                     mFrmBrowser.Close();
-                    mFrmBrowser = null;                    
+                    mFrmBrowser = null;
                 }
                 mBrowserControl = null;
-                BusinessFlow = null;                
+                BusinessFlow = null;
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error when try to close IB Driver - " + ex.Message);
             }
             IsBrowserLoaded = false;
-        }        
+        }
 
         public override Act GetCurrentElement()
         {
@@ -119,12 +119,12 @@ namespace GingerCore.Drivers.InternalBrowserLib
             //    if (etype == "select")
             //    {
             //        //TODO:
-                    
+
             //    }
             //}
             return null;
         }
-        
+
         public override void RunAction(Act act)
         {
             //TODO: move to base class, and use only driver specific calls, so will not be duplicate
@@ -148,35 +148,88 @@ namespace GingerCore.Drivers.InternalBrowserLib
                     case "ActTextBox":
                         //TODO: switch case
                         ActTextBox ATB = (ActTextBox)act;
-                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.SetValue || ATB.TextBoxAction == ActTextBox.eTextBoxAction.SetValueFast) SetTextBoxValue(ATB);
-                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.GetValue) GetTextBoxValue(ATB);
-                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.IsDisabled) IsTextBoxDisabled(ATB);
-                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.GetFont) GetTextBoxFont(ATB);
-                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.IsPrepopulated) IsTextBoxPrepopulated(ATB);
-                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.IsDisplayed) IsTextBoxDisplayed(ATB);
-                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.GetInputLength) GetTextBoxInputLength(ATB);
+                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.SetValue || ATB.TextBoxAction == ActTextBox.eTextBoxAction.SetValueFast)
+                        {
+                            SetTextBoxValue(ATB);
+                        }
+
+                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.GetValue)
+                        {
+                            GetTextBoxValue(ATB);
+                        }
+
+                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.IsDisabled)
+                        {
+                            IsTextBoxDisabled(ATB);
+                        }
+
+                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.GetFont)
+                        {
+                            GetTextBoxFont(ATB);
+                        }
+
+                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.IsPrepopulated)
+                        {
+                            IsTextBoxPrepopulated(ATB);
+                        }
+
+                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.IsDisplayed)
+                        {
+                            IsTextBoxDisplayed(ATB);
+                        }
+
+                        if (ATB.TextBoxAction == ActTextBox.eTextBoxAction.GetInputLength)
+                        {
+                            GetTextBoxInputLength(ATB);
+                        }
+
                         break;
                     case "ActLabel":
                         ActLabel alb = (ActLabel)act;
                         if (alb.LabelAction == ActLabel.eLabelAction.IsVisible)
+                        {
                             CheckLabelDisplayed(alb);
+                        }
+
                         if (alb.LabelAction == ActLabel.eLabelAction.GetInnerText)
+                        {
                             GetLabelName(alb);
+                        }
+
                         break;
                     case "ActPassword":
                         ActPassword APwd = (ActPassword)act;
-                        if (APwd.PasswordAction == ActPassword.ePasswordAction.SetValue) SetPasswordValue(APwd);
-                        if (APwd.PasswordAction == ActPassword.ePasswordAction.GetSize) GetPasswordSize(APwd);
-                        if (APwd.PasswordAction == ActPassword.ePasswordAction.IsDisabled) IsPasswordBoxDisabled(APwd);
+                        if (APwd.PasswordAction == ActPassword.ePasswordAction.SetValue)
+                        {
+                            SetPasswordValue(APwd);
+                        }
+
+                        if (APwd.PasswordAction == ActPassword.ePasswordAction.GetSize)
+                        {
+                            GetPasswordSize(APwd);
+                        }
+
+                        if (APwd.PasswordAction == ActPassword.ePasswordAction.IsDisabled)
+                        {
+                            IsPasswordBoxDisabled(APwd);
+                        }
+
                         break;
                     case "ActLink":
                         ActLink Alink = (ActLink)act;
                         if (Alink.LinkAction == ActLink.eLinkAction.GetValue)
+                        {
                             GetLinkValue(Alink);
+                        }
                         else if (Alink.LinkAction == ActLink.eLinkAction.Visible)
+                        {
                             IsLinkVisible(Alink);
+                        }
                         else
+                        {
                             ClickLink(Alink);
+                        }
+
                         break;
                     case "ActButton":
                         ActButtonHandler((ActButton)act);
@@ -188,12 +241,17 @@ namespace GingerCore.Drivers.InternalBrowserLib
                     case "ActRadioButton":
                         ActRadioButton rb = (ActRadioButton)act;
                         if (rb.RadioButtonAction == ActRadioButton.eActRadioButtonAction.GetValue)
+                        {
                             GetRadioButtonValue(act, rb);
+                        }
                         else if (rb.RadioButtonAction == ActRadioButton.eActRadioButtonAction.IsDisabled)
+                        {
                             IsRadioButtonDisabled(act, rb);
+                        }
                         else if (rb.RadioButtonAction == ActRadioButton.eActRadioButtonAction.GetAvailableValues)
+                        {
                             GetRadioButtonAvailableValues(act, rb);
-
+                        }
                         else
                         {
                             switch (act.LocateBy)
@@ -207,7 +265,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                                 case eLocateBy.ByID:
                                     SelectRadioButtonByID(act, rb, act.GetInputParamCalculatedValue("Value"));
                                     break;
-                                    
+
                                 default:
                                     act.Error = act.LocateBy.ToString() + " not implemented for RadioButton yet.";
                                     break;
@@ -322,7 +380,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
         private void PWLElementHandler(ActPWL act)
         {
             IHTMLElement e, e1;
-            e = mFrmBrowser.TryGetActElementByLocator(act);            
+            e = mFrmBrowser.TryGetActElementByLocator(act);
             e1 = mFrmBrowser.TryGetActElementByLocator(new ActPWL() { LocateBy = act.OLocateBy, LocateValue = act.OLocateValue, LocateValueCalculated = act.OLocateValue });
 
             switch (act.PWLAction)
@@ -403,7 +461,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                     }
                     else
                     {
-                        act.AddOrUpdateReturnParamActual("Actual", Math.Abs(e.offsetTop + e.offsetHeight  - e1.offsetTop - e1.offsetHeight).ToString());
+                        act.AddOrUpdateReturnParamActual("Actual", Math.Abs(e.offsetTop + e.offsetHeight - e1.offsetTop - e1.offsetHeight).ToString());
                     }
                     break;
                 case ActPWL.ePWLAction.GetVDistanceBottom2Top:
@@ -455,63 +513,52 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         private void SmartSyncHandler(ActSmartSync act)
         {
-            IHTMLElement e = mFrmBrowser.TryGetActElementByLocator(act);
-           
+            int maxTimeout = GetMaxTimeout(act);
+
             Stopwatch st = new Stopwatch();
-            int waitTime = 0;
-            try
-            {
-                if (string.IsNullOrEmpty(act.GetInputParamValue("Value")))
-                    waitTime = 5;
-                else
-                    waitTime = Convert.ToInt32(act.GetInputParamCalculatedValue("Value"));
-            }
-            catch (Exception)
-            {
-                waitTime = 5;
-            }
+            st.Reset();
+            st.Start();
+
+            IHTMLElement e;
+            const string strConstDisplayed = "Displayed";
+            const string strConstEnabled = "Enabled";
+
             switch (act.SmartSyncAction)
             {
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
-                    st.Reset();
-                    st.Start();
-
-                    while (!(e != null && ((bool)e.getAttribute("Displayed")==true || (bool)e.getAttribute("Enabled")==true)))
+                    do
                     {
-                        Thread.Sleep(100);
-                        e = mFrmBrowser.TryGetActElementByLocator(act);
-                        if (st.ElapsedMilliseconds > waitTime * 1000)
+                        if (st.ElapsedMilliseconds > maxTimeout * 1000)
                         {
                             act.Error = "Smart Sync of WaitUntilDisplay is timeout";
                             break;
                         }
-                    }
+
+                        Thread.Sleep(100);
+
+                        e = mFrmBrowser.TryGetActElementByLocator(act);
+
+                    } while (!(e != null && ((bool)e.getAttribute(strConstDisplayed) || (bool)e.getAttribute(strConstEnabled))));
                     break;
+
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
-                    st.Reset();
-
-                    if (e == null)
+                    do
                     {
-                        return;
-                    }
-                    else
-                    {
-                        st.Start();
-
-                        while (e != null && (bool)e.getAttribute("Displayed") != true)
+                        if (st.ElapsedMilliseconds > maxTimeout * 1000)
                         {
-                            Thread.Sleep(100);
-                            e = mFrmBrowser.TryGetActElementByLocator(act);
-                            if (st.ElapsedMilliseconds > waitTime * 1000)
-                            {
-                                act.Error = "Smart Sync of WaitUntilDisapear is timeout";
-                                break;
-                            }
+                            act.Error = "Smart Sync of WaitUntilDisapear is timeout";
+                            break;
                         }
 
-                    }
+                        Thread.Sleep(100);
+
+                        e = mFrmBrowser.TryGetActElementByLocator(act);                        
+
+                    } while (e != null && (!(bool)e.getAttribute(strConstDisplayed)));
                     break;
             }
+
+            st.Stop();
             return;
         }
 
@@ -522,7 +569,11 @@ namespace GingerCore.Drivers.InternalBrowserLib
             {
                 case ActGenElement.eGenElementAction.Click:
                     e = mFrmBrowser.TryGetActElementByLocator(act);
-                    if (e != null) e.click();
+                    if (e != null)
+                    {
+                        e.click();
+                    }
+
                     break;
                 case ActGenElement.eGenElementAction.GetInnerText:
                     e = mFrmBrowser.TryGetActElementByLocator(act);
@@ -535,21 +586,21 @@ namespace GingerCore.Drivers.InternalBrowserLib
                     e = mFrmBrowser.TryGetActElementByLocator(act);
                     if (e != null)
                     {
-                        act.AddOrUpdateReturnParamActual("Actual", e.innerText);                       
+                        act.AddOrUpdateReturnParamActual("Actual", e.innerText);
                     }
                     break;
                 case ActGenElement.eGenElementAction.GetCustomAttribute:
                     e = mFrmBrowser.TryGetActElementByLocator(act);
                     if (e != null)
                     {
-                        string CustomAttributeReturnValue="";
+                        string CustomAttributeReturnValue = "";
                         XmlDocument CurrentNode = new XmlDocument();
                         CurrentNode.LoadXml(e.outerHTML);
                         if (CurrentNode.ChildNodes[0].Attributes.Count > 0)
                         {
                             foreach (XmlAttribute xa in CurrentNode.ChildNodes[0].Attributes)
                             {
-                                if (xa.Name == act.Value){CustomAttributeReturnValue = xa.Value;}
+                                if (xa.Name == act.Value) { CustomAttributeReturnValue = xa.Value; }
                             }
                         }
                         act.AddOrUpdateReturnParamActual("Actual", CustomAttributeReturnValue);
@@ -557,7 +608,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                     break;
 
                 case ActGenElement.eGenElementAction.SwitchFrame:
-                    mshtml.FramesCollection frames = 
+                    mshtml.FramesCollection frames =
                         ((mshtml.HTMLDocument)mFrmBrowser.mDocument).frames;
                     mshtml.IHTMLWindow2 tFrame = null;
                     for (int i = 0; i < frames.length; i++)
@@ -585,12 +636,12 @@ namespace GingerCore.Drivers.InternalBrowserLib
                     e = mFrmBrowser.TryGetActElementByLocator(act);
                     mshtml.HTMLSelectElement se = (mshtml.HTMLSelectElement)e;
                     if (se != null)
-                    {                        
+                    {
                         try
                         {
                             se.selectedIndex = Convert.ToInt32(act.GetInputParamCalculatedValue("Value"));
                         }
-                        catch (Exception )
+                        catch (Exception)
                         {
                             try
                             {
@@ -618,32 +669,43 @@ namespace GingerCore.Drivers.InternalBrowserLib
                     e = mFrmBrowser.TryGetActElementByLocator(act);
 
                     if (e != null)
+                    {
                         act.AddOrUpdateReturnParamActual("Actual", (e.style.display == "none") ? "False" : "True");
+                    }
                     else
-                        act.AddOrUpdateReturnParamActual("Actual", "False" );        
+                    {
+                        act.AddOrUpdateReturnParamActual("Actual", "False");
+                    }
+
                     break;
-                    
+
                 case ActGenElement.eGenElementAction.SetValue:
                     e = mFrmBrowser.TryGetActElementByLocator(act);
                     if (e != null)
-                        ((mshtml.HTMLInputTextElement)e).value = act.GetInputParamCalculatedValue("Value");    
+                    {
+                        ((mshtml.HTMLInputTextElement)e).value = act.GetInputParamCalculatedValue("Value");
+                    }
+
                     break;
-                    
+
                 case ActGenElement.eGenElementAction.Wait:
                     Thread.Sleep(Convert.ToInt32(act.GetInputParamCalculatedValue("Value")) * 1000);
                     break;
                 case ActGenElement.eGenElementAction.KeyType:
                     e = mFrmBrowser.TryGetActElementByLocator(act);
-                   if (e != null)
-                       ((mshtml.HTMLInputTextElement)e).value = act.GetInputParamCalculatedValue("Value");                       
+                    if (e != null)
+                    {
+                        ((mshtml.HTMLInputTextElement)e).value = act.GetInputParamCalculatedValue("Value");
+                    }
+
                     break;
-                    
-                case ActGenElement.eGenElementAction.Back:                    
+
+                case ActGenElement.eGenElementAction.Back:
                     mFrmBrowser.browser.GoBack();
                     break;
 
                 case ActGenElement.eGenElementAction.MsgBox:
-                    string msg = act.GetInputParamCalculatedValue("Value");                    
+                    string msg = act.GetInputParamCalculatedValue("Value");
                     Reporter.ToUser(eUserMsgKey.ScriptPaused);
                     break;
 
@@ -658,7 +720,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             mshtml.HTMLInputTextElement t = (mshtml.HTMLInputTextElement)e1;
             if (t != null)
             {
-                ATB.AddOrUpdateReturnParamActual("Actual", t.value);             
+                ATB.AddOrUpdateReturnParamActual("Actual", t.value);
             }
         }
 
@@ -702,14 +764,14 @@ namespace GingerCore.Drivers.InternalBrowserLib
                 ATB.AddOrUpdateReturnParamActual("Actual", (t.style.visibility != "hidden").ToString());
             }
         }
-        
+
         private void IsTextBoxDisabled(ActTextBox ATB)
         {
             IHTMLElement e1 = mFrmBrowser.TryGetActElementByLocator(ATB);
             mshtml.HTMLInputTextElement t = (mshtml.HTMLInputTextElement)e1;
             if (t != null)
             {
-                ATB.AddOrUpdateReturnParamActual("Actual", t.disabled+"");
+                ATB.AddOrUpdateReturnParamActual("Actual", t.disabled + "");
             }
         }
 
@@ -732,7 +794,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
                 alb.AddOrUpdateReturnParamActual("Actual", true + "");
             }
         }
-        
+
         private void GetDropDownListValidValues(Act act)
         {
             HTMLSelectElement element = (HTMLSelectElement)mFrmBrowser.TryGetActElementByLocator(act);
@@ -777,7 +839,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
         }
 
         private void GetLinkValue(ActLink Alink)
-        {               
+        {
             IHTMLElement el = mFrmBrowser.TryGetActElementByLocator(Alink);
             if (el != null)
             {
@@ -813,31 +875,38 @@ namespace GingerCore.Drivers.InternalBrowserLib
             if (actButton.ButtonAction == ActButton.eButtonAction.GetValue)
             {
 
-                 actButton.AddOrUpdateReturnParamActual("Actual", (string)e1.getAttribute("Value"));
+                actButton.AddOrUpdateReturnParamActual("Actual", (string)e1.getAttribute("Value"));
                 return;
             }
             else if (actButton.ButtonAction == ActButton.eButtonAction.IsDisabled)
             {
-                try {
-                    actButton.AddOrUpdateReturnParamActual("Actual", (string)e1.getAttribute("Disabled")); }
-                catch (Exception ) {
+                try
+                {
+                    actButton.AddOrUpdateReturnParamActual("Actual", (string)e1.getAttribute("Disabled"));
+                }
+                catch (Exception)
+                {
                     if (actButton.GetReturnParam("Return Value") == "")
-                        actButton.AddOrUpdateReturnParamActual("Actual","False");
+                    {
+                        actButton.AddOrUpdateReturnParamActual("Actual", "False");
+                    }
                 }
                 return;
             }
             else if (actButton.ButtonAction == ActButton.eButtonAction.GetFont)
-            {                
-                try {
-                actButton.AddOrUpdateReturnParamActual("Actual",e1.style.font);
+            {
+                try
+                {
+                    actButton.AddOrUpdateReturnParamActual("Actual", e1.style.font);
                 }
-                catch (Exception ex){ Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 return;
             }
             else if (actButton.ButtonAction == ActButton.eButtonAction.IsDisplayed)
             {
-                try {
-                actButton.AddOrUpdateReturnParamActual("Actual", e1.style.display);
+                try
+                {
+                    actButton.AddOrUpdateReturnParamActual("Actual", e1.style.display);
                 }
                 catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                 return;
@@ -847,45 +916,53 @@ namespace GingerCore.Drivers.InternalBrowserLib
                 ClickButton(actButton);
             }
         }
-        
+
         private void SetTextBoxValue(ActTextBox ATB)
-        {            
+        {
             IHTMLElement e1 = mFrmBrowser.TryGetActElementByLocator(ATB);
             mshtml.HTMLInputTextElement t = (mshtml.HTMLInputTextElement)e1;
             if (t != null)
             {
                 t.value = ATB.GetInputParamCalculatedValue("Value");
-            }            
+            }
         }
 
         private void SetPasswordValue(ActPassword a)
         {
             IHTMLElement e1 = mFrmBrowser.TryGetActElementByLocator(a);
             mshtml.HTMLInputTextElement t = (mshtml.HTMLInputTextElement)e1;
-            if (t != null) t.value = a.GetInputParamCalculatedValue("Value");   
+            if (t != null)
+            {
+                t.value = a.GetInputParamCalculatedValue("Value");
+            }
         }
 
         private void GetPasswordSize(ActPassword a)
         {
             IHTMLElement e1 = mFrmBrowser.TryGetActElementByLocator(a);
             mshtml.HTMLInputTextElement t = (mshtml.HTMLInputTextElement)e1;
-            if (t != null) { a.AddOrUpdateReturnParamActual("Actual", t.getAttribute("size") + "");
-           
-            }  
+            if (t != null)
+            {
+                a.AddOrUpdateReturnParamActual("Actual", t.getAttribute("size") + "");
+
+            }
         }
 
         private void IsPasswordBoxDisabled(ActPassword a)
         {
             IHTMLElement e1 = mFrmBrowser.TryGetActElementByLocator(a);
             mshtml.HTMLInputTextElement t = (mshtml.HTMLInputTextElement)e1;
-            if (t != null) a.AddOrUpdateReturnParamActual("Actual", t.getAttribute("Disabled") + ""); 
+            if (t != null)
+            {
+                a.AddOrUpdateReturnParamActual("Actual", t.getAttribute("Disabled") + "");
+            }
         }
 
         #region Checkbox methods
 
         private void CheckCheckbox(ActCheckbox cb)
         {
-            IHTMLElement e1 =mFrmBrowser.TryGetActElementByLocator(cb);
+            IHTMLElement e1 = mFrmBrowser.TryGetActElementByLocator(cb);
             mshtml.IHTMLElement2 t = (mshtml.IHTMLElement2)e1;
             if ((bool)e1.getAttribute("checked") == false)
             {
@@ -937,7 +1014,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             mshtml.IHTMLElement t = (mshtml.IHTMLElement)e1;
             cb.AddOrUpdateReturnParamActual("Actual", e1.style.display);
         }
-        
+
         #endregion //Checkbox methods
 
         #region Radio Button methods
@@ -954,19 +1031,19 @@ namespace GingerCore.Drivers.InternalBrowserLib
                 }
             }
         }
-        
+
         private void SelectRadioButtonByValue(Act a, ActRadioButton rb, string val)
         {
 
             List<IHTMLElement> RBs = LocateRadioButtonElements(a, rb.LocateBy, rb.LocateValueCalculated);
-                for (int i = 0; i < RBs.Count; i++)
+            for (int i = 0; i < RBs.Count; i++)
+            {
+                if (RBs[i].getAttribute("value") == val)
                 {
-                    if (RBs[i].getAttribute("value") == val)
-                    {
-                        RBs[i].click();
-                        i = RBs.Count;
-                    }
+                    RBs[i].click();
+                    i = RBs.Count;
                 }
+            }
         }
 
         private void SelectRadioButtonByID(Act a, ActRadioButton rb, string val)
@@ -993,16 +1070,31 @@ namespace GingerCore.Drivers.InternalBrowserLib
                     switch (LocatorType)
                     {
                         case eLocateBy.ByID:
-                            if (h.getAttribute("ID") == LocValue) l.Add(h);
+                            if (h.getAttribute("ID") == LocValue)
+                            {
+                                l.Add(h);
+                            }
+
                             break;
                         case eLocateBy.ByName:
-                            if (h.getAttribute("NAME") == LocValue) l.Add(h);
+                            if (h.getAttribute("NAME") == LocValue)
+                            {
+                                l.Add(h);
+                            }
+
                             break;
                         case eLocateBy.ByCSS:
-                            if (h.getAttribute("CLASS") == LocValue) l.Add(h);
+                            if (h.getAttribute("CLASS") == LocValue)
+                            {
+                                l.Add(h);
+                            }
+
                             break;
                         case eLocateBy.ByValue:
-                            if (h.getAttribute("value") == LocValue) l.Add(h);
+                            if (h.getAttribute("value") == LocValue)
+                            {
+                                l.Add(h);
+                            }
 
                             break;
                         case eLocateBy.ByXPath:
@@ -1045,11 +1137,11 @@ namespace GingerCore.Drivers.InternalBrowserLib
             List<IHTMLElement> RBs = LocateRadioButtonElements(a, rb.LocateBy, rb.LocateValueCalculated);
             for (int i = 0; i < RBs.Count; i++)
             {
-                aValues = RBs[i].getAttribute("value") + "|"+aValues;
+                aValues = RBs[i].getAttribute("value") + "|" + aValues;
             }
             rb.AddOrUpdateReturnParamActual("Actual", aValues);
         }
-        
+
         #endregion // Radio Button methods
 
         #region DropDownList methods
@@ -1057,18 +1149,20 @@ namespace GingerCore.Drivers.InternalBrowserLib
         private void SelectDropDownListOptionByIndex(ActDropDownList dd, int i)
         {
             mshtml.HTMLSelectElement sel = (mshtml.HTMLSelectElement)mFrmBrowser.TryGetActElementByLocator(dd);
-            if(sel!=null)
+            if (sel != null)
+            {
                 sel.selectedIndex = i;
+            }
         }
-        
+
         private void SelectDropDownListOptionByText(ActDropDownList dd, string s)
         {
             mshtml.HTMLSelectElement sel = (mshtml.HTMLSelectElement)mFrmBrowser.TryGetActElementByLocator(dd);
-            if (sel.length>0)
+            if (sel.length > 0)
             {
-                for (int i=0; i < sel.length-1;i++)
+                for (int i = 0; i < sel.length - 1; i++)
                 {
-                    if (sel.item(i).ToString() == s) 
+                    if (sel.item(i).ToString() == s)
                     {
                         sel.selectedIndex = i;
                         return;
@@ -1081,7 +1175,9 @@ namespace GingerCore.Drivers.InternalBrowserLib
         {
             mshtml.HTMLSelectElement sel = (mshtml.HTMLSelectElement)mFrmBrowser.TryGetActElementByLocator(dd);
             if (sel != null)
+            {
                 sel.setAttribute("value", s);
+            }
         }
 
         private void GetDropDownListSelectedValue(ActDropDownList dd)
@@ -1111,7 +1207,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             HTMLSelectElement element = (HTMLSelectElement)mFrmBrowser.TryGetActElementByLocator(dd);
             if (element == null)
             {
-                dd.AddOrUpdateReturnParamActual("Actual","ERROR - Element not Found");
+                dd.AddOrUpdateReturnParamActual("Actual", "ERROR - Element not Found");
                 return;
             }
             dd.AddOrUpdateReturnParamActual("Actual", element.style.font);
@@ -1123,20 +1219,20 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         private void SelectMultiselectListOptionsByIndex(ActMultiselectList l, List<int> vals)
         {
-           // HtmlElement h = getActElementByLocator(l);
-           // HtmlElementCollection coll = mBrowserControl.Document.GetElementsByTagName("option");
-           // int i = 0;
-           //foreach (HtmlElement element in coll)
-           //{
-           //    if (element.Parent==h) 
-           //    {
-           //        i++;
-           //        if (vals.Contains(i))
-           //        {
-           //            element.SetAttribute("selected", "true");
-           //        }
-           //    }
-           //}
+            // HtmlElement h = getActElementByLocator(l);
+            // HtmlElementCollection coll = mBrowserControl.Document.GetElementsByTagName("option");
+            // int i = 0;
+            //foreach (HtmlElement element in coll)
+            //{
+            //    if (element.Parent==h) 
+            //    {
+            //        i++;
+            //        if (vals.Contains(i))
+            //        {
+            //            element.SetAttribute("selected", "true");
+            //        }
+            //    }
+            //}
         }
 
         private void SelectMultiselectListOptionsByText(ActMultiselectList l, List<string> vals)
@@ -1176,7 +1272,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
         }
 
         #endregion //MultiselectList methods
-        
+
         private void GotoURL(ActGotoURL act)
         {
             mFrmBrowser.GotoURL(act.ValueForDriver);
@@ -1187,14 +1283,16 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return "TBD";
         }
 
-        
 
-      
+
+
 
         public override void HighlightActElement(Act act)
         {
-            if(mFrmBrowser!=null)
+            if (mFrmBrowser != null)
+            {
                 mFrmBrowser.HighLightActElement(act);
+            }
         }
 
         public void HalfHalf()
@@ -1206,9 +1304,9 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         public override bool IsRunning()
         {
-          return IsBrowserLoaded;
+            return IsBrowserLoaded;
         }
-        
+
         List<AppWindow> IWindowExplorer.GetAppWindows()
         {
             List<AppWindow> list = new List<AppWindow>();
@@ -1219,7 +1317,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             list.Add(AW);
             return list;
         }
-        
+
         async Task<List<ElementInfo>> IWindowExplorer.GetVisibleControls(PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
             //TODO: impl
@@ -1237,7 +1335,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         }
 
-        
+
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
             //TODO: keep old element border and restore it
@@ -1268,7 +1366,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return null;
         }
 
-        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo,PomSetting pomSetting=null)
+        ObservableList<ElementLocator> IWindowExplorer.GetElementLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             return null;
         }
@@ -1277,7 +1375,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
         {
             return null;
         }
-        
+
         string IWindowExplorer.GetFocusedControl()
         {
             //TODO: return current focused control of the window
@@ -1289,7 +1387,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return null;
         }
 
-        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting=null)
+        public ElementInfo LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting = null)
         {
             return EI;
         }
@@ -1301,7 +1399,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             aw.Title = "Current Window";
             return aw;
         }
-        
+
         public override void StartRecording()
         {
 
@@ -1309,7 +1407,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
 
         public override void StopRecording()
         {
-            
+
         }
 
         ObservableList<ElementInfo> IWindowExplorer.GetElements(ElementLocator EL)
@@ -1407,7 +1505,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
             return null;
         }
 
-        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo,PomSetting pomSetting= null)
+        public ObservableList<ElementLocator> GetElementFriendlyLocators(ElementInfo ElementInfo, PomSetting pomSetting = null)
         {
             throw new NotImplementedException();
         }

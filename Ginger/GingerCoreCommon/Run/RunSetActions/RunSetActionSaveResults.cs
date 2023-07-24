@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,19 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET;
-using Amdocs.Ginger.CoreNET.Execution;
-
-
-using Amdocs.Ginger.Repository;
-using Ginger.Reports;
-using GingerCore;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.Reports;
+using GingerCore.ALM;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -68,7 +61,7 @@ namespace Ginger.Run.RunSetActions
         {
             RunSetActionSaveResultsOperations.Execute(RI);
         }
-        
+
         public override string GetEditPage()
         {
             //RunSetActionSaveResultsEditPage p = new RunSetActionSaveResultsEditPage(this);
@@ -81,7 +74,10 @@ namespace Ginger.Run.RunSetActions
             throw new NotImplementedException();
         }
 
-
+        public override PublishToALMConfig.eALMTestSetLevel GetAlMTestSetLevel()
+        {
+            throw new NotImplementedException();
+        }
 
         public override string Type { get { return "Save Results"; } }
     }

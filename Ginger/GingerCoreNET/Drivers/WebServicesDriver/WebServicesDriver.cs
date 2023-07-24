@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         [UserConfigured]
         [UserConfiguredDescription("Related only to SoapUI | SoapUI-Project's password")]
         public string SoapUIProjectPassword { get; set; }
-        
+
         [UserConfigured]
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Related only to SoapUI | Run SoapUI Process as Admin")]
@@ -126,8 +126,13 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             get
             {
                 if (mDriverWindow != null)
+                {
                     return true;
-                else return false;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 
@@ -172,7 +177,10 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public override void StartDriver()
         {
             if (ShowDriverWindowOnLaunch)
+            {
                 CreateSTA(ShowDriverWindow);
+            }
+
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
@@ -227,7 +235,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             else if (act is ActWebAPIModel ActWAPIM)
             {
                 //pull pointed API Model
-                ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == ((ActWebAPIModel)act).APImodelGUID).FirstOrDefault();
+                ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(((ActWebAPIModel)act).APImodelGUID);
                 if (AAMB == null)
                 {
                     act.Error = "Failed to find the pointed API Model";
@@ -283,7 +291,10 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             else if (act is ActSoapUI)
             {
                 if (string.IsNullOrEmpty(SoapUIDirectoryPath))
+                {
                     throw new Exception("SoapUI Directory Path has not been set to the Agent");
+                }
+
                 runSoapCommand(act);
             }
             else if (act is ActWebAPISoap || act is ActWebAPIRest)
@@ -299,7 +310,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 }
 
                 //pull pointed API Model
-                ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == ((ActWebAPIModel)act).APImodelGUID).FirstOrDefault();
+                ApplicationAPIModel AAMB = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(((ActWebAPIModel)act).APImodelGUID);
                 if (AAMB == null)
                 {
                     act.Error = "Failed to find the pointed API Model";
@@ -346,10 +357,14 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         private string ReplacePlaceHolderParameneterWithActual(string ValueBeforeReplacing, ObservableList<EnhancedActInputValue> APIModelDynamicParamsValue)
         {
             if (string.IsNullOrEmpty(ValueBeforeReplacing))
+            {
                 return string.Empty;
+            }
 
             foreach (EnhancedActInputValue EAIV in APIModelDynamicParamsValue)
+            {
                 ValueBeforeReplacing = ValueBeforeReplacing.Replace(EAIV.Param, EAIV.ValueForDriver);
+            }
 
             return ValueBeforeReplacing;
         }
@@ -360,9 +375,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             act.ExInfo = actWebAPI.ExInfo;
             act.RawResponseValues = actWebAPI.RawResponseValues;
         }
-        
-       
-        
+
+
+
 
         private void HandleWebApiRequest(ActWebAPIBase act)
         {
@@ -384,7 +399,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     bool dontFailActionOnBadResponse = false;
                     Boolean.TryParse(act.GetInputParamCalculatedValue(ActWebAPIBase.Fields.DoNotFailActionOnBadRespose), out dontFailActionOnBadResponse);
                     if (!dontFailActionOnBadResponse)
+                    {
                         mWebAPI.ValidateResponse();
+                    }
 
                     Reporter.ToLog(eLogLevel.DEBUG, "ValidateResponse passed successfully");
 
@@ -406,6 +423,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
             //return the command string and checking if it been populated successfully
             if (soapUIUtils.Command(ref command))
+            {
                 //checking if the process got started successfully
                 if (soapUIUtils.StartProcess(command))
                 {
@@ -415,6 +433,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     TestToOutput(soapUIUtils, act);
 
                 }
+            }
         }
 
         private void TestToOutput(SoapUIUtils soapUIUtils, Act act)
@@ -433,16 +452,19 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 if (!string.IsNullOrEmpty(kpr.Value[2]))
                 {
                     string responseQouteFixed = string.Empty;
-                   
+
                     //if response is JSON format then not replace double quotes
                     if (kpr.Value[2].IndexOf("{") > -1)
+                    {
                         responseQouteFixed = kpr.Value[2];
+                    }
                     else
+                    {
                         responseQouteFixed = kpr.Value[2].Replace("\"", "");
-                   
+                    }
 
                     responseQouteFixed = responseQouteFixed.Replace("\0", "");
-                       
+
                     act.AddOrUpdateReturnParamActual(kpr.Value[0] + "-Response", responseQouteFixed);
                     if (((ActSoapUI)act).AddXMLResponse_Value)
                     {
@@ -482,10 +504,12 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     propertiesQouteFixed = propertiesQouteFixed.Replace("\0", "");
                     act.AddOrUpdateReturnParamActual(kpr.Value[0] + "-Properties", kpr.Value[5]);
                 }
-
-                act.RawResponseValues = mWebAPI.ResponseFileContent;
-                act.AddOrUpdateReturnParamActual("Raw Request: ", mWebAPI.RequestFileContent);
-                act.AddOrUpdateReturnParamActual("Raw Response: ", mWebAPI.ResponseFileContent);
+                if(mWebAPI is not null)
+                {
+                    act.RawResponseValues = mWebAPI.ResponseFileContent;
+                    act.AddOrUpdateReturnParamActual("Raw Request: ", mWebAPI.RequestFileContent);
+                    act.AddOrUpdateReturnParamActual("Raw Response: ", mWebAPI.ResponseFileContent);
+                }
             }
 
             Dictionary<List<string>, List<string>> dictValues = new Dictionary<List<string>, List<string>>();
@@ -493,12 +517,14 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             foreach (KeyValuePair<List<string>, List<string>> Kpr in dictValues)
             {
                 int index = 0;
-                if (Kpr.Key.Count() != 0 && Kpr.Value.Count() != 0)
+                if (Kpr.Key.Any() && Kpr.Value.Any())
+                {
                     foreach (string property in Kpr.Key)
                     {
                         act.AddOrUpdateReturnParamActual(Kpr.Key[index], Kpr.Value[index]);
                         index++;
                     }
+                }
             }
         }
 
@@ -619,18 +645,18 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 {
                     SetStatus("Received response, Length=" + resp.Length + ", Elapsed (ms)= " + st.ElapsedMilliseconds);
                     mDriverWindow.UpdateResponseTextBox(ResponseCode);
-              
+
                     mDriverWindow.UpdateResponseTextBox(ResponseCode);
                 }
 
                 mActWebService.AddOrUpdateReturnParamActual("FullReponseXML", resp);
-                
+
                 XmlDocument xmlReqDoc = new XmlDocument();
                 xmlReqDoc.LoadXml(resp);
                 if (mIsDriverWindowLaunched)
                 {
                     mDriverWindow.updateResponseXMLText(ConvertHTMLTags(resp));
-                  
+
                 }
 
                 if (SaveResponseXML)
@@ -656,7 +682,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 return true;
             }
             catch (Exception e)
-            {      
+            {
                 mActWebService.Error = "Failed to complete the WebServices action.";
                 mActWebService.ExInfo = e.Message;
                 return false;
@@ -675,13 +701,16 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 xmlFilesDir = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(SavedXMLDirectoryPath) + @"\" + fileType + "XMLs";
 
                 if (!Directory.Exists(xmlFilesDir))
+                {
                     Directory.CreateDirectory(xmlFilesDir);
+                }
+
                 String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss") + "_" + Guid.NewGuid();
                 xmlDoc.Save(xmlFilesDir + @"\" + mActWebService.Description + "_" + timeStamp + "_" + fileType + ".xml");
                 fileName = mActWebService.Description + "_" + timeStamp + "_" + fileType + ".xml";
             }
             catch (Exception e)
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.FailedToCreateRequestResponse, e.Message);
             }
             return fileName;
@@ -692,7 +721,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             if (mIsDriverWindowLaunched)
             {
                 mDriverWindow.UpdateStatusLabel(Status);
-               
+
             }
         }
 
@@ -701,7 +730,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             return "TBD";
         }
 
-        
+
         public override void HighlightActElement(Act act)
         {
         }
@@ -728,8 +757,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 }
             }
             else
+            {
                 return true;
-
+            }
         }
 
         private string ConvertHTMLTags(string txt)

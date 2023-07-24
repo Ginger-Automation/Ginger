@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ namespace GingerCore.Actions.Common
             public static string XCoordinate = "XCoordinate";
             public static string YCoordinate = "YCoordinate";
             public static string ValueToSelect = "ValueToSelect";
-            public static string Value = "Value";            
+            public static string Value = "Value";
 
             //Used for Drag & Drop Action
             public static string TargetElementType = "TargetElementType";
@@ -522,7 +522,7 @@ namespace GingerCore.Actions.Common
             Submit,
             [EnumValueDescription("Run Java Script")]
             RunJavaScript,
-            
+
             //Adding For java driver checkbox element
             [EnumValueDescription("Is Checked")]
             IsChecked,
@@ -553,8 +553,8 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Mouse Drag Drop")]
             MouseDragDrop,
         }
-        
-       
+
+
         public eElementType ElementType
         {
             get { return GetOrCreateInputParam<eElementType>(Fields.ElementType, eElementType.Unknown); }
@@ -581,10 +581,10 @@ namespace GingerCore.Actions.Common
             }
         }
 
- 
+
         public eLocateBy ElementLocateBy
         {
-            get { return GetOrCreateInputParam<eLocateBy>(Fields.ElementLocateBy,eLocateBy.NA); }
+            get { return GetOrCreateInputParam<eLocateBy>(Fields.ElementLocateBy, eLocateBy.NA); }
             set
             {
                 GetOrCreateInputParam(Fields.ElementLocateBy).Value = value.ToString();
@@ -594,10 +594,10 @@ namespace GingerCore.Actions.Common
             }
         }
 
-     
+
         public eLocateBy TargetLocateBy
         {
-            get { return GetOrCreateInputParam<eLocateBy>(Fields.TargetLocateBy,eLocateBy.NA); }
+            get { return GetOrCreateInputParam<eLocateBy>(Fields.TargetLocateBy, eLocateBy.NA); }
             set
             {
                 GetOrCreateInputParam(Fields.TargetLocateBy).Value = value.ToString();
@@ -609,7 +609,7 @@ namespace GingerCore.Actions.Common
 
         public eElementType TargetElementType
         {
-            get { return GetOrCreateInputParam<eElementType>(Fields.TargetElementType,eElementType.Unknown); }
+            get { return GetOrCreateInputParam<eElementType>(Fields.TargetElementType, eElementType.Unknown); }
             set
             {
                 GetOrCreateInputParam(Fields.TargetElementType).Value = value.ToString();
@@ -618,10 +618,10 @@ namespace GingerCore.Actions.Common
 
             }
         }
-      
+
         public eElementType HandleElementType
         {
-            get { return GetOrCreateInputParam<eElementType>(Fields.HandleElementType,eElementType.Unknown); }
+            get { return GetOrCreateInputParam<eElementType>(Fields.HandleElementType, eElementType.Unknown); }
             set
             {
                 GetOrCreateInputParam(Fields.HandleElementType).Value = value.ToString();
@@ -630,10 +630,10 @@ namespace GingerCore.Actions.Common
 
             }
         }
-  
+
         public eElementAction HandleActionType
         {
-            get { return GetOrCreateInputParam<eElementAction>(Fields.HandleActionType,eElementAction.Unknown); }
+            get { return GetOrCreateInputParam<eElementAction>(Fields.HandleActionType, eElementAction.Unknown); }
             set
             {
                 GetOrCreateInputParam(Fields.HandleActionType).Value = value.ToString();
@@ -785,7 +785,7 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Activate Row")]
             ActivateRow,
             [EnumValueDescription("Is Visible")]
-            isVisible,            
+            isVisible,
             [EnumValueDescription("Select All Rows")]
             SelectAllRows,
             [EnumValueDescription("Right Click")]
@@ -866,9 +866,14 @@ namespace GingerCore.Actions.Common
                 if ((xy != null) && (xy.Count() > 1))
                 {
                     if (!double.TryParse(xy[0].Split('=')[1], out X))
+                    {
                         X = 0;
+                    }
+
                     if (!double.TryParse(xy[1].Split('=')[1], out Y))
+                    {
                         Y = 0;
+                    }
                 }
                 else
                 {
@@ -898,16 +903,26 @@ namespace GingerCore.Actions.Common
                     if (xy[0].Contains("="))
                     {
                         if (!double.TryParse(xy[0].Split('=')[1], out X))
+                        {
                             X = 0;
+                        }
+
                         if (!double.TryParse(xy[1].Split('=')[1], out Y))
+                        {
                             Y = 0;
+                        }
                     }
                     else
                     {
                         if (!double.TryParse(xy[0], out X))
+                        {
                             X = 0;
+                        }
+
                         if (!double.TryParse(xy[1], out Y))
+                        {
                             Y = 0;
+                        }
                     }
                 }
                 else
@@ -944,14 +959,14 @@ namespace GingerCore.Actions.Common
             }
         }
 
-        public Drivers.CommunicationProtocol.PayLoad GetPayLoad(ElementLocator elementLocator=null)
+        public Drivers.CommunicationProtocol.PayLoad GetPayLoad(ElementLocator elementLocator = null)
         {
             string payLoadName = @"UIElementAction";
             if (Convert.ToBoolean(this.GetInputParamValue(Fields.IsWidgetsElement)))
             {
                 payLoadName = @"WidgetsUIElementAction";
             }
-            PayLoad PL = new PayLoad(payLoadName);           
+            PayLoad PL = new PayLoad(payLoadName);
             // Make it generic function in Act.cs to be used by other actions
             List<PayLoad> PLParams = new List<PayLoad>();
             foreach (ActInputValue AIV in this.InputValues)
@@ -965,11 +980,11 @@ namespace GingerCore.Actions.Common
             PL.AddListPayLoad(PLParams);
 
             //for Java POM Element
-            if(elementLocator != null)
+            if (elementLocator != null)
             {
                 PL.AddKeyValuePair(elementLocator.LocateBy.ToString(), elementLocator.LocateValue);
             }
-            
+
             PL.ClosePackage();
 
             return PL;
@@ -1012,12 +1027,12 @@ namespace GingerCore.Actions.Common
             }
         }
 
-        
+
 
         public NewPayLoad GetActionPayload()
         {
             // Need work to cover all options per platfrom !!!!!!!!!!!!!!!!!!!!
-       //TODO:     // Make it generic function in Act.cs to be used by other actions
+            //TODO:     // Make it generic function in Act.cs to be used by other actions
 
             NewPayLoad PL = new NewPayLoad("RunPlatformAction");
             PL.AddValue("UIElementAction");
@@ -1028,7 +1043,7 @@ namespace GingerCore.Actions.Common
                 string Name = FI.Name;
                 string Value = GetOrCreateInputParam(Name).ValueForDriver;
 
-                if(string.IsNullOrEmpty(Value))
+                if (string.IsNullOrEmpty(Value))
                 {
                     object Output = this.GetType().GetProperty(Name) != null ? this.GetType().GetProperty(Name).GetValue(this, null) : string.Empty;
 
@@ -1070,7 +1085,7 @@ namespace GingerCore.Actions.Common
             return "UIElementAction";
         }
 
-        
+
 
         public string ElementLocateValueForDriver
         {
@@ -1121,7 +1136,7 @@ namespace GingerCore.Actions.Common
                     platformAction.InputParams.Add(aiv.Param, ValueforDriver);
                 }
             }
-        
+
 
             Dictionary<string, string> Locators = new Dictionary<string, string>();
             Locators.Add(ElementLocateBy.ToString(), ElementLocateValueForDriver);
@@ -1140,10 +1155,10 @@ namespace GingerCore.Actions.Common
             //Below code is for backward compatibility
             //It will move the correct value to "LocateRowType" and remove the other fields
             string currentValue = this.GetInputParamValue("RowSelectorRadioParam");
-            if(!string.IsNullOrEmpty(currentValue))
+            if (!string.IsNullOrEmpty(currentValue))
             {
 
-                switch(currentValue)
+                switch (currentValue)
                 {
                     case "RowNum":
                         currentValue = "Row Number";
@@ -1155,7 +1170,7 @@ namespace GingerCore.Actions.Common
 
                     case "BySelectedRow":
                         currentValue = "By Selected Row";
-                        break;                        
+                        break;
                 }
                 this.AddOrUpdateInputParamValue(ActUIElement.Fields.LocateRowType, currentValue);
                 this.RemoveInputParam("RowSelectorRadioParam");

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,20 +21,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.ApplicationModelsLib.POMModels
 {
@@ -58,9 +47,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void SetAPIModelGridData()
         {
             if (mPOMsFolder.IsRootFolder)
+            {
                 xPOMModelsGrid.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
+            }
             else
+            {
                 xPOMModelsGrid.DataSourceList = mPOMsFolder.GetFolderItems();
+            }
         }
 
         private void SetAPIModelsGridView()

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,15 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace Amdocs.Ginger.Common.GeneralLib
 {
-    
+
     [JsonObject(MemberSerialization.OptIn)]
     public class BetaFeature : INotifyPropertyChanged
     {
@@ -32,7 +29,7 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         [JsonProperty]
         public bool Selected { get { return mSelected; } set { if (mSelected != value) { mSelected = value; OnPropertyChanged(ID); } } }
-        
+
         public string Group { get; set; }
 
         [JsonProperty]

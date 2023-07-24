@@ -25,14 +25,14 @@ namespace GingerCoreNETUnitTest.RosLynTestLib
     [Level1]
     public class GlobalsTest
     {
-        
 
-        [ClassInitialize]        
+
+        [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-              
+
         }
-        
+
 
         //[TestMethod]  [Timeout(60000)]
         //public void StartFireFoxDriver()
@@ -45,9 +45,9 @@ namespace GingerCoreNETUnitTest.RosLynTestLib
         //    //Act            
         //    // g.LoadPluginPackage(@"C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\PluginPackages\SeleniumPluginPackage.1.0.0");
         //    g.LoadPluginPackage(@"C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\SeleniumPlugin\bin\Debug\netstandard2.0");
-            
+
         //    g.StartNode("Selenium FireFox Driver", "Selenium 1");
-            
+
 
         //    //TODO: add asserts and clean + close driver
 

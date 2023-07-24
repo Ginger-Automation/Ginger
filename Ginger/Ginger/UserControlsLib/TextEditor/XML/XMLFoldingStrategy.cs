@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,15 +21,15 @@ using ICSharpCode.AvalonEdit.Folding;
 
 namespace Ginger.UserControlsLib.TextEditor.XML
 {
-	/// <summary>
-	/// Allows producing foldings from a document based on Gherkin -> Scenario.
-	/// </summary>
-	public class XMLFoldingStrategy : IFoldingStrategy
+    /// <summary>
+    /// Allows producing foldings from a document based on Gherkin -> Scenario.
+    /// </summary>
+    public class XMLFoldingStrategy : IFoldingStrategy
     {
         XmlFoldingStrategy foldingStrategy = new XmlFoldingStrategy();
 
         public void UpdateFolding(FoldingManager manager, TextDocument document)
-        {                        
+        {
             foldingStrategy.UpdateFoldings(manager, document);
         }
     }

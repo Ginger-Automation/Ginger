@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using Amdocs.Ginger.Common.Repository;
 
 namespace Amdocs.Ginger.Common
@@ -28,7 +27,7 @@ namespace Amdocs.Ginger.Common
     public interface IObservableList : ICollection, IList, INotifyCollectionChanged, INotifyPropertyChanged
     {
         void Move(int oldIndex, int newIndex);
-       
+
         object CurrentItem { get; set; }
 
         void Undo();
@@ -37,18 +36,18 @@ namespace Amdocs.Ginger.Common
 
         void SaveUndoData();
 
-        bool LazyLoad { get;}
+        bool LazyLoad { get; }
 
         bool AvoidLazyLoad { get; set; }
 
-        LazyLoadListDetails LazyLoadDetails { get; set; }        
+        LazyLoadListDetails LazyLoadDetails { get; set; }
 
         List<object> ListItems { get; }
 
         //void DoLazyLoadItem(string s);
 
-        bool SyncCurrentItemWithViewSelectedItem { get; set; } 
-        bool SyncViewSelectedItemWithCurrentItem { get; set; } 
+        bool SyncCurrentItemWithViewSelectedItem { get; set; }
+        bool SyncViewSelectedItemWithCurrentItem { get; set; }
 
         string FilterStringData { get; set; }
     }

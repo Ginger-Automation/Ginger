@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ namespace Ginger
     public partial class ucSharedRepoInstance : UserControl
     {
         RepositoryItemBase mItem = null;
-        RepositoryItemBase mLinkedRepoItem=null;
+        RepositoryItemBase mLinkedRepoItem = null;
         BusinessFlow mBusinessFlow = null;
         bool mLinkIsByExternalID = false;
         bool mLinkIsByParentID = false;
@@ -76,7 +76,7 @@ namespace Ginger
             if (mLinkedRepoItem == null)
             {
                 LinkStatusImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.NonSharedRepositoryItem;
-                LinkStatusImage.ToolTip = "The item is not linked to Shared Repository."+ Environment.NewLine +"Click to add it to Shared Repository.";
+                LinkStatusImage.ToolTip = "The item is not linked to Shared Repository." + Environment.NewLine + "Click to add it to Shared Repository.";
                 UpdateRepoBtn.ToolTip = "Upload to Shared Repository";
             }
             else
@@ -84,10 +84,10 @@ namespace Ginger
                 LinkStatusImage.ImageType = mItem.IsLinkedItem ? Amdocs.Ginger.Common.Enums.eImageType.InstanceLinkOrange : Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
 
                 string ItemName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(mLinkedRepoItem.ItemName);
-                
+
                 if (mLinkIsByParentID || mLinkIsByExternalID)
                 {
-                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + Path.Combine(mLinkedRepoItem.ContainingFolder,ItemName) + "'." + Environment.NewLine + "Click to un-link it.";
+                    LinkStatusImage.ToolTip = "The item is linked to the Shared Repository item: '" + Path.Combine(mLinkedRepoItem.ContainingFolder, ItemName) + "'." + Environment.NewLine + "Click to un-link it.";
                 }
                 else
                 {
@@ -116,13 +116,21 @@ namespace Ginger
         {
             //TODO find a way to make in generic
             if (mLinkedRepoItem is Activity)
+            {
                 (new GingerWPF.BusinessFlowsLib.ActivityPage((Activity)mLinkedRepoItem, new Context(), General.eRIPageViewMode.SharedReposiotry)).ShowAsWindow(startupLocationWithOffset: true);
+            }
             else if (mLinkedRepoItem is VariableBase)
+            {
                 (new VariableEditPage((VariableBase)mLinkedRepoItem, null, false, VariableEditPage.eEditMode.SharedRepository)).ShowAsWindow(eWindowShowStyle.Dialog, startupLocationWithOffset: true);
+            }
             else if (mLinkedRepoItem is Act)
+            {
                 (new ActionEditPage((Act)mLinkedRepoItem, General.eRIPageViewMode.SharedReposiotry, new GingerCore.BusinessFlow(), new GingerCore.Activity())).ShowAsWindow(startupLocationWithOffset: true);
+            }
             else if (mLinkedRepoItem is GingerCore.Activities.ActivitiesGroup)
+            {
                 (new Activities.ActivitiesGroupPage((GingerCore.Activities.ActivitiesGroup)mLinkedRepoItem, null, Activities.ActivitiesGroupPage.eEditMode.SharedRepository)).ShowAsWindow(startupLocationWithOffset: true);
+            }
         }
 
         private void LinkStatusImageBtn_Click(object sender, RoutedEventArgs e)
@@ -145,12 +153,12 @@ namespace Ginger
                 }
             }
             else
-            {               
-                if (mItem!=null)
+            {
+                if (mItem != null)
                 {
-                    WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mItem)); 
+                    WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, mItem));
                 }
-                SetRepoLinkStatus();            
+                SetRepoLinkStatus();
             }
         }
 

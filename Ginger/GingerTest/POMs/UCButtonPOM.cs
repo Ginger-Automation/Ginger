@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,39 +34,40 @@ namespace GingerWPFUnitTest.POMs
         {
             get
             {
-                return ucButton; 
+                return ucButton;
             }
         }
 
         public void Click()
-        {            
-            Task.Factory.StartNew(() => { 
+        {
+            Task.Factory.StartNew(() =>
+            {
                 Dispatcher.Invoke(() =>
-                {                                                                         
+                {
                     Execute(() =>
-                    {                    
+                    {
                         mButton.DoClick();
                     });
                 });
             });
-            
-             SleepWithDoEvents(500);            
+
+            SleepWithDoEvents(500);
         }
 
-     
+
         public bool IsEnabled
         {
             get
             {
                 bool b = false;
                 Execute(() =>
-                {                    
+                {
                     b = mButton.IsEnabled;
                 });
                 return b;
             }
         }
-        
-        public string Text { get { return mButton.ButtonText;  }  }
+
+        public string Text { get { return mButton.ButtonText; } }
     }
 }

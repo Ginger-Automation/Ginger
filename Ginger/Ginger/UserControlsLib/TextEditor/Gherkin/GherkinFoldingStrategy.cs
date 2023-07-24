@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using System.Collections.Generic;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Folding;
+using System.Collections.Generic;
 
 namespace Ginger.UserControlsLib.TextEditor
 {
-	/// <summary>
-	/// Allows producing foldings from a document based on Gherkin -> Scenario.
-	/// </summary>
-	public class GherkinFoldingStrategy : IFoldingStrategy
+    /// <summary>
+    /// Allows producing foldings from a document based on Gherkin -> Scenario.
+    /// </summary>
+    public class GherkinFoldingStrategy : IFoldingStrategy
     {
         const string Tag = "@";
         const string Scenario = "Scenario:";
@@ -37,23 +37,24 @@ namespace Ginger.UserControlsLib.TextEditor
             IEnumerable<NewFolding> newFoldings = CreateNewFoldings(document, out firstErrorOffset);
             manager.UpdateFoldings(newFoldings, firstErrorOffset);
         }
-		
-		public IEnumerable<NewFolding> CreateNewFoldings(TextDocument document, out int firstErrorOffset)
-		{
-			firstErrorOffset = -1;
-			return CreateNewFoldings(document);
-		}
-		
-		public IEnumerable<NewFolding> CreateNewFoldings(ITextSource document)
-		{
-			List<NewFolding> newFoldings = new List<NewFolding>();
-            
+
+        public IEnumerable<NewFolding> CreateNewFoldings(TextDocument document, out int firstErrorOffset)
+        {
+            firstErrorOffset = -1;
+            return CreateNewFoldings(document);
+        }
+
+        public IEnumerable<NewFolding> CreateNewFoldings(ITextSource document)
+        {
+            List<NewFolding> newFoldings = new List<NewFolding>();
+
             //TODO: string Examples = "Examples:";   // will be nested handle like braces
 
             string line = "";
             int linestart = 0;
 
-            for (int i = 0; i < document.TextLength; i++) {
+            for (int i = 0; i < document.TextLength; i++)
+            {
                 char c = document.GetCharAt(i);
                 line += c;
                 // we check when we find new line
@@ -71,23 +72,27 @@ namespace Ginger.UserControlsLib.TextEditor
                                 newFoldings.Add(new NewFolding(linestart, ScenarioEnd));
                             }
                         }
-                        
+
                         linestart = i;
-                        if (lt.StartsWith(Tag)) linestart++;  // if this is tag line start the folding from next line
-                        line = "";                        
-                    }                    
+                        if (lt.StartsWith(Tag))
+                        {
+                            linestart++;  // if this is tag line start the folding from next line
+                        }
+
+                        line = "";
+                    }
                     line = "";
                 }
-			}
+            }
 
             // for the last scenario
-            if (linestart > 0 )
+            if (linestart > 0)
             {
                 newFoldings.Add(new NewFolding(linestart, document.TextLength));
             }
 
-            newFoldings.Sort((a,b) => a.StartOffset.CompareTo(b.StartOffset));
-			return newFoldings;
-		}
+            newFoldings.Sort((a, b) => a.StartOffset.CompareTo(b.StartOffset));
+            return newFoldings;
+        }
     }
 }

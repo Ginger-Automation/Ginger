@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,7 +30,8 @@ namespace GingerCore
         Activity, Activities,
         ConversionMechanism,
         Variable, Variables,
-        RunSet, RunSets
+        RunSet, RunSets,
+        TargetApplication
     }
 
     public enum eSkinDicsType
@@ -43,7 +44,8 @@ namespace GingerCore
         Default,
         Testing,
         Gherkin,
-        TDM
+        TDM,
+        MBT
     }
 
     public enum eUserType
@@ -72,7 +74,7 @@ namespace GingerCore
             {
                 string strValue = "";
                 if (!string.IsNullOrEmpty(prefixString)) strValue = prefixString;
-                if (!string.IsNullOrEmpty(strValue)) strValue = strValue + " " + termResValue.ToString();  else strValue = termResValue.ToString();
+                if (!string.IsNullOrEmpty(strValue)) strValue = strValue + " " + termResValue.ToString(); else strValue = termResValue.ToString();
                 if (!string.IsNullOrEmpty(suffixString)) strValue = strValue + " " + suffixString;
                 if (setToUpperCase) strValue = strValue.ToUpper();
                 return strValue;
@@ -81,7 +83,7 @@ namespace GingerCore
             {
                 return string.Empty;  //key not found
             }
-        }        
+        }
 
     }
 }

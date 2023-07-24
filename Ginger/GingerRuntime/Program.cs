@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ namespace Amdocs.Ginger.GingerRuntime
 
             try
             {
-                if (args.Count() > 0)
+                if (args.Any())
                 {
                     if (args.Count() == 1 && args[0].ToLower().Trim() == "menu")
                     {
@@ -82,7 +82,10 @@ namespace Amdocs.Ginger.GingerRuntime
                         while (Keepalive)
                         {
                             MenuManager.eMenuReturnCode rc = mMenuManager.ShowMenu();
-                            if (rc == MenuManager.eMenuReturnCode.Quit) return;
+                            if (rc == MenuManager.eMenuReturnCode.Quit)
+                            {
+                                return;
+                            }
                         }
                     }
                     else

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using System.Windows;
-using System.Windows.Controls;
+using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
-using Ginger.Repository;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Agents
 {
@@ -36,7 +35,7 @@ namespace Ginger.Agents
 
         public AgentsPage(RepositoryFolder<Agent> agentsFolder)
         {
-            InitializeComponent();           
+            InitializeComponent();
             SetAgentsGridView();
 
             if (agentsFolder.IsRootFolder)
@@ -48,11 +47,11 @@ namespace Ginger.Agents
                 xAgentsGrd.DataSourceList = agentsFolder.GetFolderItems();
             }
         }
-        
+
         private void SetAgentsGridView()
         {
             xAgentsGrd.SetTitleLightStyle = true;
-            
+
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(Agent.Name), WidthWeight = 150 });
@@ -63,6 +62,6 @@ namespace Ginger.Agents
             xAgentsGrd.ShowTagsFilter = Visibility.Visible;
         }
 
-        
+
     }
 }

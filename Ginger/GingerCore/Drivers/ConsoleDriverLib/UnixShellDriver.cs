@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -105,7 +105,17 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
         public override void Disconnect()
         {
-            UnixClient.Disconnect();
+            try
+            {
+                if (UnixClient != null)
+                {
+                    UnixClient.Disconnect();
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Unix Agent disconnect failed.", ex);
+            }
         }
 
         public override string ConsoleWindowTitle()
@@ -136,7 +146,10 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     throw new Exception("One of Settings of Agent is Empty ");
                 }
                 if (Password == null)
+                {
                     Password = "";
+                }
+
                 try
                 {
                     System.Net.Sockets.TcpClient client = new System.Net.Sockets.TcpClient(Host, Port);
@@ -160,8 +173,10 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 }
 
 
-                if (!string.IsNullOrEmpty(PrivateKeyPassPhrase))    
+                if (!string.IsNullOrEmpty(PrivateKeyPassPhrase))
+                {
                     passPhrase = PrivateKeyPassPhrase;
+                }
 
                 if (File.Exists(PrivateKey))
                 {
@@ -175,16 +190,23 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 connectionInfo.Timeout = new TimeSpan(0, 0, SSHConnectionTimeout);
                 UnixClient = new SshClient(connectionInfo);
 
-               Task task = Task.Factory.StartNew(() =>
-                {
-                    UnixClient.Connect();
+                Task task = Task.Factory.StartNew(() =>
+                 {
+                     try
+                     {
+                         UnixClient.Connect();
 
-                    if (UnixClient.IsConnected)
-                    {
-                        UnixClient.SendKeepAlive();
-                        ss = UnixClient.CreateShellStream("dumb", 240, 24, 800, 600, 1024);
-                    }
-                });
+                         if (UnixClient.IsConnected)
+                         {
+                             UnixClient.SendKeepAlive();
+                             ss = UnixClient.CreateShellStream("dumb", 240, 24, 800, 600, 1024);
+                         }
+                     }
+                     catch (Exception ex)
+                     {
+                         Reporter.ToLog(eLogLevel.ERROR, "Error while connecting to Unix Client.", ex);
+                     }
+                 });
 
                 Stopwatch st = Stopwatch.StartNew();
 
@@ -257,7 +279,10 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 while (!sreader.EndOfStream)
                 {
                     if (!this.IsDriverRunning)
+                    {
                         break;
+                    }
+
                     reply.AppendLine(sreader.ReadLine());
                     Thread.Sleep(1000);
                 }
@@ -269,7 +294,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 {
                     ss.WriteByte(System.Convert.ToByte(Convert.ToInt32(command)));
                 }
-                catch(Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
             else
             {
@@ -278,25 +303,36 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             try
             {
                 if (mWait == 0 || mWait == null)
+                {
                     mWait = this.ImplicitWait;
+                }
+
                 if (mWait == 0)
+                {
                     mWait = 30;
+                }
 
                 DateTime startingTime = DateTime.Now;
                 bool expOut = false;
                 Regex regExp;
                 mExpString = string.IsNullOrEmpty(mExpString) ? "" : mExpString;
                 if (mExpString != "" && command != "\u0003\n")
+                {
                     regExp = new Regex(@"~~~GINGER_RC_END~~~|" + mExpString);
+                }
                 else
+                {
                     regExp = new Regex(@"\> |\$ |\% |assword: |\. |~~~GINGER_RC_END~~~");
+                }
 
                 while ((DateTime.Now - startingTime).TotalSeconds <= mWait && taskFinished != true)
                 {
                     if (!this.IsDriverRunning)
+                    {
                         break;
+                    }
 
-                    reply.AppendLine(sreader.ReadToEnd());                    
+                    reply.AppendLine(sreader.ReadToEnd());
                     Thread.Sleep(1000);
                     if (regExp.Matches(reply.ToString()).Count > 0)
                     {
@@ -307,7 +343,9 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                             expOut = true;
                         }
                         else
+                        {
                             break;
+                        }
                     }
 
                     if (sreader.EndOfStream)
@@ -322,8 +360,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     }
                 }
                 if (command != "\u0003\n")
-                {                    
-                    mConsoleDriverWindow.ConsoleWriteText(reply.ToString(),true);
+                {
+                    mConsoleDriverWindow.ConsoleWriteText(reply.ToString(), true);
                     reply.Clear();
                 }
                 taskFinished = true;
@@ -331,8 +369,8 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, ex.Message);
-            }            
-            mConsoleDriverWindow.ConsoleWriteText(reply.ToString(),true);
+            }
+            mConsoleDriverWindow.ConsoleWriteText(reply.ToString(), true);
             reply.Clear();
         }
 
@@ -345,7 +383,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                     return GetParameterizedCommand(act);
                 case ActConsoleCommand.eConsoleCommand.ParametrizedCommand:
                     return GetParameterizedCommand(act);
-               
+
                 case ActConsoleCommand.eConsoleCommand.Script:
 
                     VerifyFTPConnected();
@@ -364,13 +402,22 @@ namespace GingerCore.Drivers.ConsoleDriverLib
 
                     UnixFTPClient.ChangePermissions(UnixScriptFilePath, 777);
                     foreach (var p in act.InputValues)
+                    {
                         if (!string.IsNullOrEmpty(p.Value))
+                        {
                             cmd += " " + p.ValueForDriver;
+                        }
+                    }
+
                     if (UnixScriptFilePath.Trim().EndsWith(".sh", StringComparison.CurrentCultureIgnoreCase))
+                    {
                         return "dos2unix " + UnixScriptFilePath + ";sh " + UnixScriptFilePath + cmd;
+                    }
                     else
+                    {
                         return "dos2unix " + UnixScriptFilePath + "; " + UnixScriptFilePath + cmd;
-               
+                    }
+
                 default:
                     Reporter.ToLog(eLogLevel.WARN, "Error - unknown command");
                     ErrorMessageFromDriver += "Error - unknown command";
@@ -384,7 +431,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             foreach (ActInputValue AIV in act.InputValues)
             {
                 string calcValue;
-                if (string.IsNullOrEmpty(AIV.Value)==false && AIV.Value.StartsWith("~"))//workaround for keeping the ~ to work on linux
+                if (string.IsNullOrEmpty(AIV.Value) == false && AIV.Value.StartsWith("~"))//workaround for keeping the ~ to work on linux
                 {
                     string prefix;
                     if (AIV.Value.StartsWith("~/") || AIV.Value.StartsWith("~\\"))
@@ -403,9 +450,13 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 }
 
                 if (command != null)
+                {
                     command = command + " " + calcValue;
+                }
                 else
+                {
                     command = calcValue;
+                }
             }
             return command;
         }
@@ -425,10 +476,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                             new PasswordAuthenticationMethod(UserName, Password)
                         );
             }
-             
+
 
             if (!string.IsNullOrEmpty(PrivateKeyPassPhrase))
+            {
                 passPhrase = PrivateKeyPassPhrase;
+            }
 
             if (File.Exists(PrivateKey))
             {
@@ -439,7 +492,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                         )
                );
             }
-            
+
             if (UnixFTPClient == null)
             {
                 UnixFTPClient = new SftpClient(connectionInfo);

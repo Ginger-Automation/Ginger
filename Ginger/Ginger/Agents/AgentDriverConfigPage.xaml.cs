@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,25 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Ginger.Drivers;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Drivers;
+using GingerCore.GeneralLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Ginger.Agents
 {
@@ -46,7 +36,7 @@ namespace Ginger.Agents
     {
         Agent mAgent;
 
-        enum eConfigsViewType { Grid,Page};
+        enum eConfigsViewType { Grid, Page };
         eConfigsViewType mConfigsViewType;
 
         public AgentDriverConfigPage(Agent agent)
@@ -92,7 +82,7 @@ namespace Ginger.Agents
                 if (p != null)
                 {
 
-                    DriverConfigurationFrame.Content = p;
+                    DriverConfigurationFrame.ClearAndSetContent(p);
                 }
             }
             else
@@ -101,7 +91,7 @@ namespace Ginger.Agents
                 DriverConfigurationGrid.Visibility = System.Windows.Visibility.Visible;
                 DriverConfigurationFrame.Visibility = System.Windows.Visibility.Collapsed;
                 SetGridView();
-            }            
+            }
         }
 
         private void Agent_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -127,7 +117,7 @@ namespace Ginger.Agents
 
             DriverConfigurationGrid.SetAllColumnsDefaultView(view);
             DriverConfigurationGrid.InitViewItems();
-            
+
             DriverConfigurationGrid.AddToolbarTool("@Reset_16x16.png", "Reset Parameters", new RoutedEventHandler(ResetAgentDriverConfigs));
 
             DriverConfigurationGrid.DataSourceList = mAgent.DriverConfiguration;

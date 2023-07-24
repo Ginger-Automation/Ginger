@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Windows.Controls;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions.Common;
+using System;
+using System.Windows.Controls;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -31,7 +31,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         ActUIElement mAction;
         public UIElementJavaPlatformPage(ActUIElement Action)
         {
-            InitializeComponent();            
+            InitializeComponent();
 
             mAction = Action;
 
@@ -56,10 +56,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
                     mAction.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.Medium.ToString());
                 }
                 else
+                {
                     mAction.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle, ActUIElement.eWaitForIdle.None.ToString());
+                }
             }
             WaitforIdleComboBox.Init(mAction.GetOrCreateInputParam(ActUIElement.Fields.WaitforIdle), typeof(ActUIElement.eWaitForIdle));
 
-        }       
+        }
     }
 }

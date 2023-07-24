@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore;
 
 namespace Ginger.Reports
 {
-    class HTMLDetailedReport : HTMLReportBase 
+    class HTMLDetailedReport : HTMLReportBase
     {
         public override string CreateReport(ReportInfo RI)
         {
@@ -37,12 +36,12 @@ namespace Ginger.Reports
             {
                 return "There are no " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " to create report";
             }
-            
+
             string BFTableFlows = "";
             string ValFailColor = "#b01318";
             string ActFailColor = "#b01318";
             string AtvFailColor = "#b01318";
-            string BFFailColor = "#D9181E";       
+            string BFFailColor = "#D9181E";
             double TableSize = 140;
             string bftable = "";
 
@@ -51,10 +50,10 @@ namespace Ginger.Reports
             if (ActivityFail == 0) { AtvFailColor = "#105b00"; }
             if (ActionFail == 0) { ActFailColor = "#105b00"; }
             if (Failcount == 0) { BFFailColor = "#109300"; }
-            
+
             foreach (BusinessFlowReport BFR in BizFlows)
             {
-                BusinessFlow BF =(BusinessFlow) BFR.GetBusinessFlow();
+                BusinessFlow BF = (BusinessFlow)BFR.GetBusinessFlow();
                 bftable = "";
                 string runColor = "#00000";
                 TableSize = TableSize + 16.7;
@@ -65,7 +64,7 @@ namespace Ginger.Reports
                 else if (BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
                 {
                     runColor = "#D9181E";
-                }               
+                }
 
                 //format BF duration
                 string FormatedDuration1 = string.Format("{0:D2}h:{1:D2}m:{2:D2}s", 0, 0, 0); //Added as part of resolving defect 2147
@@ -76,7 +75,7 @@ namespace Ginger.Reports
                 }
 
                 //Added as part of resolving defect 2147
-                if (BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running ) 
+                if (BF.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
                 {
                     BF.RunStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                 }
@@ -89,7 +88,7 @@ namespace Ginger.Reports
                     {
                         a.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped;
                     }
-                    
+
                     if (a.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed)
                     {
                         runColor = "#107400";
@@ -111,7 +110,7 @@ namespace Ginger.Reports
                             @"</td>
                             </tr>";
                 }
-                
+
 
                 BFTableFlows = BFTableFlows + @"<tr>
                 <td align=""left"" style=""border-bottom:1pt solid black;color:#00000;font-family:sans-serif;font-size:14px;font-weight:bold;"">
@@ -127,7 +126,7 @@ namespace Ginger.Reports
                 BFTableFlows = BFTableFlows + bftable;
                 bftable = "";
             }
-            TimeSpan t = RI.TotalExecutionTime; 
+            TimeSpan t = RI.TotalExecutionTime;
             string FormatedDuration = string.Format("{0:D2}h:{1:D2}m:{2:D2}s", t.Hours, t.Minutes, t.Seconds);
 
             string html = @"<!--[if mso]><body xmlns:v=""urn:schemas-microsoft-com:vml"" xmlns:w=""urn:schemas-microsoft-com:office:word"" xmlns:wp=""http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"" xmlns:w=""http://schemas.openxmlformats.org/wordprocessingml/2006/main"" xmlns:mc=""http://schemas.openxmlformats.org/markup-compatibility/2006"" xmlns:a=""http://schemas.openxmlformats.org/drawingml/2006/main"" xmlns:wps=""http://schemas.microsoft.com/office/word/2010/wordprocessingShape"" align=""center"" style=""padding-top: 0 !important; padding-bottom: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; margin:0 !important; width: 100% !important; -webkit-text-size-adjust: 100% !important; -ms-text-size-adjust: 100% !important; -webkit-font-smoothing: antialiased !important; padding-top: 0; padding-bottom: 0; padding-top: 0; padding-bottom: 0; background-repeat: repeat; width: 100% !important; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased;"" offset=""0"" toppadding=""0"" leftpadding=""0"" paddingwidth=""0"" paddingheight=""0"">
@@ -178,7 +177,7 @@ namespace Ginger.Reports
                                                                     <v:fill type=""gradient"" color=""#BBBABB"" color2=""#D6D4D7"" color3=""#E7E3E3"" angle=""0"" />
                                                                     <w:anchorlock />
     <center style=""v-text-anchor:top;color:#000000;font-family:sans-serif;font-size:16px;font-weight:bold;"">
-        Execution Environment : " + RI.ExecutionEnv + 
+        Execution Environment : " + RI.ExecutionEnv +
     @"</center>
                                                                 </v:roundrect>
                                                                </tr>
@@ -275,7 +274,7 @@ namespace Ginger.Reports
         @"</b><br />
         <br style=""display:block; margin-top:20px; line-height:15px;"" />
         <b style=""color:#000000;font-family:sans-serif;font-size:14px;font-weight:bold;"">
-            # "+GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)+@":
+            # " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + @":
         </b><br />
         <b style=""color:#000000;font-family:sans-serif;font-size:12px;font-weight:normal"">
             " + BizFlows.Count().ToString() +
@@ -304,7 +303,7 @@ namespace Ginger.Reports
                                                                                         <v:fill type=""gradient"" color=""#66ab69"" color2=""#D6D4D7"" angle=""0"" />
                                                                                         <w:anchorlock />
         <center style=""v-text-anchor:top;color:#000000;font-family:sans-serif;font-size:24px;font-weight:bold;"">
-            " +GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, setToUpperCase:true)+@" PASSED
+            " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, setToUpperCase: true) + @" PASSED
             <br /> 
         </center>
         <v:line from=""30px,70px"" to=""160px,70px"" style=""z-index:2"">
@@ -328,7 +327,7 @@ namespace Ginger.Reports
                                                                                         <v:fill type=""gradient"" color=""#ac6766"" color2=""#D6D4D7"" angle=""0"" />
                                                                                         <w:anchorlock />
         <center style=""v-text-anchor:top;color:#000000;font-family:sans-serif;font-size:24px;font-weight:bold;"">
-            "+GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, setToUpperCase:true)+ @" FAILED
+            " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, setToUpperCase: true) + @" FAILED
             <br /> 
         </center>
         <v:line from=""30px,70px"" to=""160px,70px"" style=""z-index:2"">
@@ -478,13 +477,13 @@ namespace Ginger.Reports
                                                                                             <tr>
                                                                                                 <td colspan=""3"" style=""vertical-align: top;border-bottom:thick solid #000;padding-bottom:15px"" width=""550"">
                                                                                                     <center style=""v-text-anchor:middle;color:#FF6E00;font-family:sans-serif;font-size:36px;font-weight:bold;text-shadow:20px 12px 5px #ff0000;"">
-                                                                                                        "+GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, setToUpperCase:true)+@" DETAILS
+                                                                                                        " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows, setToUpperCase: true) + @" DETAILS
                                                                                                     </center>
                                                                                                 </td>
                                                                                             </tr>
                                                                                             <tr>
                                                                                                 <td align=""left"" style=""border-bottom:1pt solid black;color:#00000;font-family:sans-serif;font-size:20px;font-weight:bold;padding-bottom:3px;padding-top:3px"">
-                                                                                                    "+GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)+@" Name
+                                                                                                    " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + @" Name
                                                                                                 </td>
                                                                                                 <td align=""center"" width=""60"" style=""border-bottom:1pt solid black;color:#00000;font-family:sans-serif;font-size:18px;font-weight:bold;"">
                                                                                                     Duration
@@ -648,7 +647,7 @@ namespace Ginger.Reports
                                                                     </b><br />
                                                                     <br style=""display:block; margin-top:20px; line-height:15px;"" />
                                                                     <b style=""color:#000000;font-family:sans-serif;font-size:14px;font-weight:bold;"">
-                                                                        # "+GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)+@":
+                                                                        # " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + @":
                                                                     </b><br />
                                                                     <b style=""color:#000000;font-family:sans-serif;font-size:12px;font-weight:normal"">
                                                                         134
@@ -675,7 +674,7 @@ namespace Ginger.Reports
                                                             <v:fill type=""gradient"" color=""#66ab69"" color2=""#D6D4D7"" angle=""0"" />
                                                             <w:anchorlock />
                                                             <center style=""v-text-anchor:top;color:#000000;font-family:sans-serif;font-size:24px;font-weight:bold;"">
-                                                                " + GingerDicser.GetTermResValue(eTermResKey.Activities, setToUpperCase:true) + @" PASSED
+                                                                " + GingerDicser.GetTermResValue(eTermResKey.Activities, setToUpperCase: true) + @" PASSED
                                                                 <br /> <br />
                                                             </center>
                                                             <v:line from=""30px,70px"" to=""160px,70px"" style=""z-index:2"">
@@ -737,13 +736,13 @@ namespace Ginger.Reports
                                                                 <tr>
                                                                     <td colspan=""3"" style=""vertical-align: top;border-bottom:thick solid #000;padding-bottom:15px"" width=""550"">
                                                                         <center style=""v-text-anchor:middle;color:#FF6E00;font-family:sans-serif;font-size:36px;font-weight:bold;text-shadow:20px 12px 5px #ff0000;"">
-                                                                            " +GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, setToUpperCase:true) + @" DETAILS
+                                                                            " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, setToUpperCase: true) + @" DETAILS
                                                                         </center>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td align=""left"" style=""border-bottom:1pt solid black;color:#00000;font-family:sans-serif;font-size:20px;font-weight:bold;padding-bottom:3px;padding-top:3px"">
-                                                                        " +GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + @" Name
+                                                                        " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + @" Name
                                                                     </td>
                                                                     <td align=""center"" width=""60"" style=""border-bottom:1pt solid black;color:#00000;font-family:sans-serif;font-size:18px;font-weight:bold;"">
                                                                         Duration
@@ -776,7 +775,7 @@ namespace Ginger.Reports
                                                                 </tr>
                                                                 <tr>
                                                                     <td align=""left"" style=""border-bottom:1pt solid black;color:#00000;font-family:sans-serif;font-size:14px;font-weight:bold;"">
-                                                                        SCRM - Create Customer Aqcuistion Flow with Super Duper Long " +GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + @" Name for Wrapping
+                                                                        SCRM - Create Customer Aqcuistion Flow with Super Duper Long " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + @" Name for Wrapping
                                                                     </td>
                                                                     <td align=""center"" width=""60"" style=""border-bottom:1pt solid black;color:#00000;font-family:sans-serif;font-size:14px;font-weight:bold;"">
                                                                         33641

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,12 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
-using GingerCore;
+using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
 using GingerCore.Actions.Java;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.WindowExplorer.Java
 {
@@ -41,16 +40,16 @@ namespace Ginger.WindowExplorer.Java
             {
                 Description = "Set " + Name + " ON",
                 ControlAction = ActJavaElement.eControlAction.SetValue,
-                Value="true"
+                Value = "true"
             });
 
             list.Add(new ActJavaElement()
             {
                 Description = "Set " + Name + " OFF",
                 ControlAction = ActJavaElement.eControlAction.SetValue,
-                Value="false"
-            }); 
-            
+                Value = "false"
+            });
+
             list.Add(new ActJavaElement()
             {
                 Description = "Toggle Checkbox " + Name,

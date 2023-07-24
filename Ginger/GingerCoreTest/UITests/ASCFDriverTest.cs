@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,24 +16,14 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Diagnostics;
-using System.Text;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Drivers;
-using GingerCore.Drivers.ASCF;
-using GingerCore.Platforms;
-using GingerCore.Variables;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using GingerCore.Actions.Common;
 
 
 namespace UnitTests.UITests.ASCFDriverTest
 {
     [TestClass]
 
-    public class ASCFDriverTest 
+    public class ASCFDriverTest
     {/*
 
         BusinessFlow mBF;
@@ -938,7 +928,7 @@ namespace UnitTests.UITests.ASCFDriverTest
         */
 
 
-        
+
     }
-    
+
 }

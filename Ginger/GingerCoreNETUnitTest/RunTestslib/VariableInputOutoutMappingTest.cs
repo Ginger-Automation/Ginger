@@ -1,17 +1,12 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Environments;
-using GingerCoreNETUnitTest.WorkSpaceLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace GingerCoreNETUnitTest.RunTestslib
@@ -104,7 +99,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
         {
             //Arrange         
             ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            BusinessFlow targetBusinessFlow = businessFlows.Where(b => b.Name.Contains("Check Variables")).FirstOrDefault();
+            BusinessFlow targetBusinessFlow = businessFlows.FirstOrDefault(b => b.Name.Contains("Check Variables"));
             ObservableList<GingerCore.Variables.VariableBase> lstVariables = targetBusinessFlow.Activities[0].Variables;
             //Act
             RunSetConfig runSetConfig = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>() where x.Name == "Check Variables Run Set" select x).SingleOrDefault();
@@ -112,7 +107,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault();
             WorkSpace.Instance.RunsetExecutor.InitRunners();
             ObservableList<GingerCore.Variables.VariableBase> lstRunSetVariables = runSetConfig.GingerRunners[0].BusinessFlowsRunList[0].BusinessFlowCustomizedRunVariables;
-            
+
             //Assert
             Assert.AreEqual(null, lstRunSetVariables[0].Value, "Var A is supposed to be equal to null");
             Assert.AreNotEqual(lstVariables[1].Value, lstRunSetVariables[1].Value, "Var B should be different in Run Set and Business Flow");

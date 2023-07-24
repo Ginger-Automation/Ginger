@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ using System.Windows.Shapes;
 
 namespace Ginger.GeneralWindows.HelpLayout
 {
-    public sealed class DrawArrow 
+    public sealed class DrawArrow
     {
         /// <summary>
         /// Draw arrow between 2 points
@@ -34,7 +34,7 @@ namespace Ginger.GeneralWindows.HelpLayout
         public static Shape DrawLinkArrow(Point p1, Point p2)
         {
             GeometryGroup lineGroup = new GeometryGroup();
-            
+
             PathGeometry pathGeometry = new PathGeometry();
             PathFigure pathFigure = new PathFigure();
             Point p = new Point(p2.X, p2.Y);

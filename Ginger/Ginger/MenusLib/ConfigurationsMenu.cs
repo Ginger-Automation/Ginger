@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ using Ginger.TwoLevelMenuLib;
 using GingerWPF.UserControlsLib;
 using System;
 using System.Windows.Controls;
+using GingerCore;
 
 namespace Ginger.ConfigurationsLib
 {
@@ -43,8 +44,8 @@ namespace Ginger.ConfigurationsLib
                 if (mMenusPage == null)
                 {
                     mMenusPage = new TwoLevelMenuPage(GetMenu());
-                     WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
-                     WorkSpace.Instance.UserProfile.PropertyChanged += WorkSpacePropertyChanged;
+                    WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
+                    WorkSpace.Instance.UserProfile.PropertyChanged += WorkSpacePropertyChanged;
                 }
                 return mMenusPage;
             }
@@ -66,7 +67,7 @@ namespace Ginger.ConfigurationsLib
         {
             TwoLevelMenu twoLevelMenu = new TwoLevelMenu();
 
-            TopMenuItem targetApplicationsMenu = new TopMenuItem(eImageType.Application, "Target Applications", ConsoleKey.T, "Target Applications AID", "Name & Platforms of the Applications which been tested in current Solution");
+            TopMenuItem targetApplicationsMenu = new TopMenuItem(eImageType.Application, GingerDicser.GetTermResValue(eTermResKey.TargetApplication), ConsoleKey.T, "Target Applications AID", "Name & Platforms of the Applications which been tested in current Solution");
             targetApplicationsMenu.Add(eImageType.Application, "", GetTargetApplicationsPage, ConsoleKey.T, "", "AID");
             twoLevelMenu.Add(targetApplicationsMenu);
 
@@ -101,7 +102,7 @@ namespace Ginger.ConfigurationsLib
 
         private static Page ReportsConfig()
         {
-            return new HTMLReportsConfigurationPage();            
+            return new HTMLReportsConfigurationPage();
         }
 
         private static Page ExecutionLoggerConfig()
@@ -111,21 +112,21 @@ namespace Ginger.ConfigurationsLib
         }
 
         private static Page AgentsList()
-        {            
+        {
             AgentsFolderTreeItem AgentsRoot = new AgentsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<GingerCore.Agent>());
             AgentsRoot.IsGingerDefualtFolder = true;
-            SingleItemTreeViewExplorerPage agentsPage = new SingleItemTreeViewExplorerPage("Agents", eImageType.Agent, AgentsRoot, AgentsRoot.SaveAllTreeFolderItemsHandler, AgentsRoot.AddItemHandler, isSaveButtonHidden: true);                        
+            SingleItemTreeViewExplorerPage agentsPage = new SingleItemTreeViewExplorerPage("Agents", eImageType.Agent, AgentsRoot, AgentsRoot.SaveAllTreeFolderItemsHandler, AgentsRoot.AddItemHandler, isSaveButtonHidden: true);
             return agentsPage;
         }
 
 
         private static Page GetTagsPage()
         {
-             return new TagsPage(TagsPage.eViewMode.Solution);            
+            return new TagsPage(TagsPage.eViewMode.Solution);
         }
 
         private static Page ReportsList()
-        {          
+        {
             HTMLGingerReportsTreeItem reportsRoot = new HTMLGingerReportsTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<HTMLReportConfiguration>());
             reportsRoot.IsGingerDefualtFolder = true;
             SingleItemTreeViewExplorerPage reportsPage = new SingleItemTreeViewExplorerPage("Reports Templates", eImageType.Report, reportsRoot, reportsRoot.SaveAllTreeFolderItemsHandler, reportsRoot.AddItemHandler, isSaveButtonHidden: true);

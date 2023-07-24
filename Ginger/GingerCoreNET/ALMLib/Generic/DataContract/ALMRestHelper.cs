@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.CoreNET.ALMLib.DataContract
         public static IEnumerable<XElement> GetFieldsElements(XElement fields)
         {
             var fieldsElements = fields.Elements("Fields").Elements();
-            if (fields.Elements("Fields").Elements().Count() == 0)
+            if (!fields.Elements("Fields").Elements().Any())
             {
                 fieldsElements = fields.Elements();
             }

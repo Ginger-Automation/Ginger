@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,13 +17,8 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using GingerCore;
 using GingerCore.Environments;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Ginger.Environments
@@ -44,8 +39,8 @@ namespace Ginger.Environments
         }
         private bool IsEnvNameExist(string value)
         {
-            return (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>() where x.Name == value select x).SingleOrDefault() != null;
+            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any(x=>x.Name == value);
         }
     }
-    
+
 }

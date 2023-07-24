@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -160,7 +160,9 @@ namespace GingerCore.Platforms.PlatformsInfo
                 if (actConfig != null)
                 {
                     if (string.IsNullOrWhiteSpace(actConfig.Operation))
+                    {
                         actConfig.Operation = GetDefaultElementOperation(elementInfo.ElementTypeEnum);
+                    }
                 }
                 if ((elementTypeOperations != null) && (elementTypeOperations.Count > 0))
                 {
@@ -171,8 +173,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                         ElementLocateValue = actConfig.LocateValue,
                         Value = actConfig.ElementValue
                     };
-                    
-                    if(elementInfo.ElementTypeEnum.Equals(eElementType.Table))
+
+                    if (elementInfo.ElementTypeEnum.Equals(eElementType.Table))
                     {
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.WhereColumnValue, actConfig.WhereColumnValue);
                         elementAction.GetOrCreateInputParam(ActUIElement.Fields.LocateRowType, actConfig.LocateRowType);
@@ -210,10 +212,10 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.TreeView:
                 case eElementType.MenuItem:
                 case eElementType.List:
-                case eElementType.RadioButton:                
+                case eElementType.RadioButton:
                 case eElementType.Button:
                 case eElementType.TableItem:
-                    return  ActUIElement.eElementAction.Click.ToString();
+                    return ActUIElement.eElementAction.Click.ToString();
 
                 case eElementType.CheckBox:
                     return ActUIElement.eElementAction.Toggle.ToString();
@@ -224,10 +226,10 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.ComboBox:
                     return ActUIElement.eElementAction.Select.ToString();
                 case eElementType.Span:
-                case eElementType.Label:                    
-                    return ActUIElement.eElementAction.GetValue.ToString();                    
+                case eElementType.Label:
+                    return ActUIElement.eElementAction.GetValue.ToString();
                 case eElementType.Window:
-                    return ActUIElement.eElementAction.Switch.ToString();                                    
+                    return ActUIElement.eElementAction.Switch.ToString();
                 case eElementType.EditorPane:
                     return ActUIElement.eElementAction.InitializeJEditorPane.ToString();
                 case eElementType.Table:
@@ -240,13 +242,13 @@ namespace GingerCore.Platforms.PlatformsInfo
                     return ActUIElement.eElementAction.AcceptDialog.ToString();
 
                 case eElementType.ScrollBar:
-                   return ActUIElement.eElementAction.ScrollDown.ToString();
-                default:                    
+                    return ActUIElement.eElementAction.ScrollDown.ToString();
+                default:
                     return ActUIElement.eElementAction.Unknown.ToString();
             }
         }
 
-        private static ActUIElement CreateUIElementAction(ElementInfo elementInfo,ActUIElement.eElementAction action)
+        private static ActUIElement CreateUIElementAction(ElementInfo elementInfo, ActUIElement.eElementAction action)
         {
             return new ActUIElement()
             {
@@ -451,7 +453,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.Button:
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
-                    
+
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsVisible);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.MouseClick);
@@ -464,7 +466,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetText);
-          
+
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeys);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SendKeyPressRelease);
                     //
@@ -475,11 +477,11 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.ComboBox:
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Select);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncSelect);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SelectByIndex);                  
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SelectByIndex);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetItemCount);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
-                    
-                   
+
+
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByIndex);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetAllValues);
@@ -495,14 +497,14 @@ namespace GingerCore.Platforms.PlatformsInfo
 
                     break;
                 case eElementType.CheckBox:
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Toggle);                    
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Toggle);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetValue);
                     //
-                    
+
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetName);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsMandatory);
@@ -518,7 +520,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncSelect);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
-          
+
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
 
@@ -535,7 +537,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.List:
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Click);
-                
+
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsVisible);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsEnabled);
@@ -587,7 +589,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 case eElementType.DatePicker:
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.SetDate);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValue);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);           
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetControlProperty);
                     break;
 
                 case eElementType.ScrollBar:
@@ -628,7 +630,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetValueByIndex);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Toggle);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.AsyncClick);
-                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetName);                   
+                    javaPlatformElementActionslist.Add(ActUIElement.eElementAction.GetName);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.Switch);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.IsExist);
                     javaPlatformElementActionslist.Add(ActUIElement.eElementAction.CloseWindow);
@@ -654,7 +656,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         public override List<ActUIElement.eElementAction> GetPlatformWidgetsUIActionsList(eElementType ElementType)
         {
             List<ActUIElement.eElementAction> widgetsActionslist = new List<ActUIElement.eElementAction>();
-            
+
             //common action type for all elementType
             widgetsActionslist.Add(ActUIElement.eElementAction.IsVisible);
             widgetsActionslist.Add(ActUIElement.eElementAction.RunJavaScript);
@@ -754,7 +756,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override List<eElementType> GetPlatformUIElementsType()
         {
-            if(mJavaPlatformElementActionslist==null)
+            if (mJavaPlatformElementActionslist == null)
             {
                 mJavaPlatformElementActionslist = base.GetPlatformUIElementsType();
                 mJavaPlatformElementActionslist.Add(eElementType.EditorPane);
@@ -769,11 +771,11 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             if (mPlatformElementTypeOperations == null)
             {
-                mPlatformElementTypeOperations = new List<ElementTypeData>();                
+                mPlatformElementTypeOperations = new List<ElementTypeData>();
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
                     ElementType = eElementType.Unknown,
-                    IsCommonElementType = false           
+                    IsCommonElementType = false
                 });
 
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
@@ -799,7 +801,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     ElementType = eElementType.RadioButton,
                     IsCommonElementType = true
                 });
-               
+
                 mPlatformElementTypeOperations.Add(new ElementTypeData()
                 {
                     ElementType = eElementType.TextBox,
@@ -899,7 +901,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             return mPlatformElementTypeOperations;
         }
 
-        public override Dictionary<string,ObservableList<UIElementFilter>> GetUIElementFilterList()
+        public override Dictionary<string, ObservableList<UIElementFilter>> GetUIElementFilterList()
         {
             ObservableList<UIElementFilter> uIBasicElementFilters = new ObservableList<UIElementFilter>();
             ObservableList<UIElementFilter> uIAdvancedElementFilters = new ObservableList<UIElementFilter>();
@@ -913,7 +915,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 else
                 {
                     var isSelected = elementTypeOperation.IsCommonElementType;
-                    if(elementTypeOperation.ElementType.Equals(eElementType.Browser))
+                    if (elementTypeOperation.ElementType.Equals(eElementType.Browser))
                     {
                         isSelected = true;
                     }
@@ -1040,7 +1042,7 @@ namespace GingerCore.Platforms.PlatformsInfo
 
         public override ObservableList<ElementLocator> GetLearningLocators()
         {
-            ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();            
+            ObservableList<ElementLocator> learningLocatorsList = new ObservableList<ElementLocator>();
             learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByName, Help = "Very Recommended (usually unique)" });
             learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByID, Help = "Very Recommended (usually unique), Supported for widgets elements only" });
             learningLocatorsList.Add(new ElementLocator() { Active = true, LocateBy = eLocateBy.ByRelXPath, Help = "Recommended (sensitive to page design changes),Supported for widgets elements only" });

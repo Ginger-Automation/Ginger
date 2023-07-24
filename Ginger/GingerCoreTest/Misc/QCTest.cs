@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ limitations under the License.
 //            List<string> Domains = QCConnect.GetQCDomains();
 
 //            //Assert
-//            Assert.IsTrue(Domains.Count() > 0);
+//            Assert.IsTrue(Domains.Any());
 //           Assert.AreEqual(Domains[0], "Dom1");
 //           Assert.AreEqual(Domains[1], "Dom2");
 //            //...
@@ -87,7 +87,7 @@ limitations under the License.
 //            List<string> DomainProject = QCConnect.GetQCDomainProjects("aaa");
 
 //            //Assert
-//            Assert.IsTrue(DomainProject.Count() > 0);
+//            Assert.IsTrue(DomainProject.Any());
 //           Assert.AreEqual(DomainProject[0], "Proj1");
 //           Assert.AreEqual(DomainProject[1], "Proj2");
 //            //...
@@ -162,7 +162,7 @@ limitations under the License.
 //            List<string> testPlanPathList = QCConnect.GetTestPlanExplorer("Subject");
 
 //            //Assert            
-//            Assert.IsTrue(testPlanPathList.Count() > 0);
+//            Assert.IsTrue(testPlanPathList.Any());
 
 //            //...
 //        }
@@ -176,7 +176,7 @@ limitations under the License.
 //            List<string> testlabPathList = QCConnect.GetTestLabExplorer("Root");
 
 //            //Assert            
-//            Assert.IsTrue(testlabPathList.Count() > 0);
+//            Assert.IsTrue(testlabPathList.Any());
 
 //            //...
 //        }

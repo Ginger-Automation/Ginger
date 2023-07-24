@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Drivers.CommunicationProtocol;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
+using GingerCore.GeneralLib;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
@@ -155,7 +156,7 @@ namespace Ginger.GingerGridLib
                 GingerGridNodePage p = new GingerGridNodePage(GNA);
                 // Connect to LiveView Channel - this is not via Run act
                 Frame f = new Frame();
-                f.Content = p;
+                f.ClearAndSetContent(p);
                 xServicesGrid.Children.Add(f);
 
                 Grid.SetRow(f, row);
@@ -173,7 +174,10 @@ namespace Ginger.GingerGridLib
         private void BuildUIGrid()
         {
             int total = mGingerGrid.NodeList.Count;
-            if (total == 0) return;
+            if (total == 0)
+            {
+                return;
+            }
             //TODO: verify the display UI per below algorithm, if good use it also in RunSet
 
             //First we decide how many rows columns
@@ -286,8 +290,8 @@ namespace Ginger.GingerGridLib
                 {
                     // using repeated function calls below instead of usual iteration
                     //because list changes every time delete is called
-                    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>()[0]);
-                } while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().Count != 0);
+                    WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<RemoteServiceGrid>());
+                } while (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().Any());
                 WorkSpace.Instance.CurrentSelectedItem = null;
             }
         }
@@ -317,7 +321,7 @@ namespace Ginger.GingerGridLib
             RemoteServiceGrid remoteServiceGrid = new RemoteServiceGrid() { Name = "Remote Grid " + remoteGridCount, Host = SocketHelper.GetLocalHostIP(), HostPort = 15555, Active = true };
             StartTrackingRemoteServiceGrid(remoteServiceGrid);
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(remoteServiceGrid);
-            xRemoteServiceGrid.Grid.SelectedIndex = xRemoteServiceGrid.Grid.Items.Count-1;
+            xRemoteServiceGrid.Grid.SelectedIndex = xRemoteServiceGrid.Grid.Items.Count - 1;
         }
 
         private void SetRemoteGridView()

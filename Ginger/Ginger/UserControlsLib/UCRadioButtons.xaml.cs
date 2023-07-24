@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,11 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
-using NJsonSchema.Infrastructure;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace Ginger.UserControlsLib
 {
@@ -39,7 +37,7 @@ namespace Ginger.UserControlsLib
             InitializeComponent();
         }
 
-       public enum eUCYesNoRadioButton
+        public enum eUCYesNoRadioButton
         {
             Yes,
             No
@@ -53,17 +51,20 @@ namespace Ginger.UserControlsLib
         /// <param name="act">The Created Action incstance</param>
         /// <param name="radioParam">The Field which the current selection will be save</param>
         /// <param name="extraRadioClickedHandler">The Handler for extra functionality to be implemented under the EditPage</param>
-        public void Init(Type enumType,Panel panel,ActInputValue actValue, RoutedEventHandler extraRadioClickedHandler = null)
+        public void Init(Type enumType, Panel panel, ActInputValue actValue, RoutedEventHandler extraRadioClickedHandler = null)
         {
             bindingObject = actValue;
             Array.ForEach((int[])Enum.GetValues(enumType),
                 val =>
                 {
-                    
-                    var button = new RadioButton() { Tag = Enum.GetName(enumType, val), Name = Enum.GetName(enumType, val), Content = GingerCore.General.GetEnumValueDescription(enumType, Enum.GetName(enumType, val)), Margin= new Thickness(5,5,0,0), Style= (Style)TryFindResource("@InputRadioButtonStyle") };
+
+                    var button = new RadioButton() { Tag = Enum.GetName(enumType, val), Name = Enum.GetName(enumType, val), Content = GingerCore.General.GetEnumValueDescription(enumType, Enum.GetName(enumType, val)), Margin = new Thickness(5, 5, 0, 0), Style = (Style)TryFindResource("@InputRadioButtonStyle") };
                     button.AddHandler(Button.ClickEvent, new RoutedEventHandler(RadioButton_Click));//default handler
                     if (extraRadioClickedHandler != null)
-                          button.Click += extraRadioClickedHandler;//extra handler
+                    {
+                        button.Click += extraRadioClickedHandler;//extra handler
+                    }
+
                     panel.Children.Add(button);
                 });
 
@@ -102,8 +103,8 @@ namespace Ginger.UserControlsLib
                     if (extraRadioButtonCheckedHandler != null)
                     {
                         button.Checked += extraRadioButtonCheckedHandler;//extra handler
-                    }                       
-                        
+                    }
+
                     panel.Children.Add(button);
 
 
@@ -137,15 +138,15 @@ namespace Ginger.UserControlsLib
 
         public void RadioButton_Click(object sender, RoutedEventArgs e)
         {
-            if(bindingObject is ActInputValue)
+            if (bindingObject is ActInputValue)
             {
                 ((ActInputValue)bindingObject).Value = (((RadioButton)sender).Tag).ToString();
-            }                
+            }
             else
             {
-                string value = ((RadioButton)sender).Tag?.ToString();              
+                string value = ((RadioButton)sender).Tag?.ToString();
                 bindingObject.GetType().GetProperty(propertyName).SetValue(bindingObject, Enum.Parse(enumType, value));
-            }                
+            }
         }
     }
 }

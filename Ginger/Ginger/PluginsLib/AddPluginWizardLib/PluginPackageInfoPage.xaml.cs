@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ using Amdocs.Ginger.Repository;
 using Ginger;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Controls;
 
 namespace GingerWPF.PluginsLib.AddPluginWizardLib
@@ -37,12 +35,12 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
 
         public PlugPackageinInfoPage()
         {
-            InitializeComponent();                                 
+            InitializeComponent();
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
-            switch(WizardEventArgs.EventType)
+            switch (WizardEventArgs.EventType)
             {
                 case EventType.Init:
                     wiz = (AddPluginPackageWizard)WizardEventArgs.Wizard;
@@ -73,7 +71,7 @@ namespace GingerWPF.PluginsLib.AddPluginWizardLib
                     break;
 
             }
-            
+
         }
 
         private void PluginsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)

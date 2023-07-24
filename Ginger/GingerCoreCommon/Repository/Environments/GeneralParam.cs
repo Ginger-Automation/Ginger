@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +36,8 @@ namespace Amdocs.Ginger.Repository
 
         private string mDescription;
         [IsSerializedForLocalRepository]
-        public string Description {
+        public string Description
+        {
             get
             {
                 return mDescription;
@@ -66,7 +65,7 @@ namespace Amdocs.Ginger.Repository
                 if (mValue != value)
                 {
                     mValue = value;
-                    OnPropertyChanged(Fields.Value);                
+                    OnPropertyChanged(Fields.Value);
                 }
             }
         }
@@ -85,10 +84,10 @@ namespace Amdocs.Ginger.Repository
                 }
             }
         }
-        public string NameBeforeEdit{ get; set; }
+        public string NameBeforeEdit { get; set; }
         private bool mEncryptValue;
         [IsSerializedForLocalRepository]
-        public bool Encrypt 
+        public bool Encrypt
         {
             get
             {
@@ -117,16 +116,29 @@ namespace Amdocs.Ginger.Repository
                 //Get the attr value
                 PropertyInfo PI = item.GetType().GetProperty(mi.Name);
                 dynamic value = null;
-                if (mi.MemberType == MemberTypes.Property)
-                    value = PI.GetValue(item);
+                if (mi.MemberType == MemberTypes.Property && PI != null)
+                {
+                    try
+                    {
+                        value = PI.GetValue(item);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                    }
+                }
                 else if (mi.MemberType == MemberTypes.Field)
-                    value = item.GetType().GetField(mi.Name).GetValue(item);
+                { 
+                    value = item.GetType().GetField(mi.Name).GetValue(item); 
+                }
 
                 if (value is IObservableList)
                 {
                     List<dynamic> list = new List<dynamic>();
                     foreach (object o in value)
-                        UpdateNameChangeInItem(o, app, prevVarName, newVarName, ref ItemWasChanged);
+                    { 
+                        UpdateNameChangeInItem(o, app, prevVarName, newVarName, ref ItemWasChanged); 
+                    }
                 }
                 else
                 {
@@ -135,7 +147,7 @@ namespace Amdocs.Ginger.Repository
                         {
                             try
                             {
-                                if (PI.CanWrite)
+                                if (PI != null && PI.CanWrite)
                                 {
                                     string stringValue = value.ToString();
                                     string placeHolder = "{EnvParam App=YYY Param=XXX}";
@@ -150,11 +162,85 @@ namespace Amdocs.Ginger.Repository
                                     }
                                 }
                             }
-                            catch (Exception ex) { Console.WriteLine(ex.StackTrace); }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                            }
                         }
                     }
                 }
             }
+        }
+
+        public static bool IsParamBeingUsedInBFs(object action, string appName, string paramOldName)
+        {
+            var actionMembers = action.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
+            foreach (MemberInfo mi in actionMembers)
+            {
+                if (Common.GeneralLib.General.IsFieldToAvoidInVeFieldSearch(mi.Name))
+                { 
+                    continue; 
+                }
+
+                dynamic value = GetActionMemberValue(action, mi);
+                if (value == null)
+                {
+                    continue;
+                }
+
+                if (value is IObservableList)
+                {
+                    foreach (object o in value)
+                    {
+                        if (IsParamBeingUsedInBFs(o, appName, paramOldName))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        string stringValue = value.ToString();
+                        string oldParamPlaceHolder = $"{'{'}EnvParam App={appName} Param={paramOldName}{'}'}";
+
+                        if (stringValue != null && stringValue.Contains(oldParamPlaceHolder))
+                        {
+                            return true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static dynamic GetActionMemberValue(object action, MemberInfo mi)
+        {
+            PropertyInfo PI = action.GetType().GetProperty(mi.Name);
+            dynamic value = null;
+
+            try
+            {
+                if (mi.MemberType == MemberTypes.Property && PI != null)
+                {
+                    value = PI.GetValue(action);
+                }
+                else if (mi.MemberType == MemberTypes.Field)
+                {
+                    value = action.GetType().GetField(mi.Name).GetValue(action);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+            }
+
+            return value;
         }
 
         public override string ItemName

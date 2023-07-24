@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ using Amdocs.Ginger.Common;
 using Ginger.Actions.UserControls;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
+using GingerCore.GeneralLib;
 using System;
 using System.Drawing;
 using System.IO;
@@ -53,7 +53,7 @@ namespace Ginger.Actions.VisualTesting
 
             //Visual Testing Engine
             VisualTestingEngineComboBox.Init(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.VisualAnalyzer, ActVisualTesting.eVisualTestingAnalyzer.VRT.ToString()), typeof(ActVisualTesting.eVisualTestingAnalyzer), false, new SelectionChangedEventHandler(VisualTestingEngineComboBox_SelectionChanged));
-            
+
             //Saved baseline image path for that action
             CurrentBaselineImagePathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.SavedBaseImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "*", BaseLineFileSelected_Click);
             UpdateBaseLineImage();
@@ -61,11 +61,11 @@ namespace Ginger.Actions.VisualTesting
 
             CurrentBaselineImagePathTxtBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
             //Saved Applitools baseline image path
-            
+
             //Saved Target image file path
             TargetImageFileNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.SavedTargetImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "*", BrowseTargetImageFromFile_Click);
             UpdateTargetImage();
-            
+
             ShowCompareResult();
             ChangeAppScreenSizeComboBox.Init(mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ChangeAppWindowSize, ActVisualTesting.eChangeAppWindowSize.None.ToString()), typeof(ActVisualTesting.eChangeAppWindowSize), false, new SelectionChangedEventHandler(ChangeAppWindowSize_Changed));
 
@@ -73,7 +73,7 @@ namespace Ginger.Actions.VisualTesting
             HeightUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.SetAppWindowHeight, "0"), true);
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFullPageScreenshotCheckbox, CheckBox.IsCheckedProperty, mAct, nameof(mAct.IsFullPageScreenshot));
-            
+
             if (mAct.IsTargetSourceFromScreenshot)
             {
                 TargetScreenShotRadioButton.IsChecked = true;
@@ -107,32 +107,47 @@ namespace Ginger.Actions.VisualTesting
                     xCompareOrCreateBaselinesRadioButtons.Visibility = ConvertVisibility(EventArgs.visibility);
                     xBaselineAndTargetImages.Visibility = ConvertVisibility(EventArgs.visibility);
                     if (ConvertVisibility(EventArgs.visibility) == Visibility.Visible)
+                    {
                         xBaselineAndTargetImagesRow.Height = new GridLength(400, GridUnitType.Pixel);
+                    }
                     else
+                    {
                         xBaselineAndTargetImagesRow.Height = new GridLength(400, GridUnitType.Star);
+                    }
+
                     break;
 
                 case VisualTestingEventArgs.eEventType.SetTargetSectionVisibility:
                     xDiffrenceImageFrame.Visibility = ConvertVisibility(EventArgs.visibility);
                     if (ConvertVisibility(EventArgs.visibility) == Visibility.Visible)
+                    {
                         xDiffrenceImageFrameRow.Height = new GridLength(500, GridUnitType.Pixel);
+                    }
                     else
+                    {
                         xDiffrenceImageFrameRow.Height = new GridLength(500, GridUnitType.Star);
+                    }
+
                     break;
 
                 case VisualTestingEventArgs.eEventType.SetResultsSectionVisibility:
                     xResultImageHeader.Visibility = ConvertVisibility(EventArgs.visibility);
                     if (ConvertVisibility(EventArgs.visibility) == Visibility.Visible)
+                    {
                         xResultImageHeaderRow.Height = new GridLength(30, GridUnitType.Pixel);
+                    }
                     else
+                    {
                         xResultImageHeaderRow.Height = new GridLength(30, GridUnitType.Star);
+                    }
+
                     break;
             }
         }
 
         private Visibility ConvertVisibility(eVisualTestingVisibility eVisualTestingVisibility)
         {
-            switch(eVisualTestingVisibility)
+            switch (eVisualTestingVisibility)
             {
                 case eVisualTestingVisibility.Visible:
                     return Visibility.Visible;
@@ -178,18 +193,18 @@ namespace Ginger.Actions.VisualTesting
             if (mAct.CompareResult is BitmapImage)
             {
                 ScreenShotViewPage p = new ScreenShotViewPage("Compare Result", (BitmapImage)mAct.CompareResult);
-                xDiffrenceImageFrame.Content = p;
+                xDiffrenceImageFrame.ClearAndSetContent(p);
                 return;
             }
 
             if (mAct.CompareResult is Bitmap)
             {
                 ScreenShotViewPage p = new ScreenShotViewPage("Compare Result", (Bitmap)mAct.CompareResult);
-                xDiffrenceImageFrame.Content = p;
+                xDiffrenceImageFrame.ClearAndSetContent(p);
                 return;
             }
 
-            xDiffrenceImageFrame.Content = null;
+            xDiffrenceImageFrame.ClearAndSetContent(null);
         }
 
         private void UpdateTargetImage()
@@ -201,7 +216,7 @@ namespace Ginger.Actions.VisualTesting
                     if (mAct.ScreenShots.Count >= 2)
                     {
                         ScreenShotViewPage p = new ScreenShotViewPage("Target Image", mAct.ScreenShots[1]); // TODO: get it from act as target image
-                        TargetImageFrame.Content = p;
+                        TargetImageFrame.ClearAndSetContent(p);
                     }
                 }
                 else
@@ -211,7 +226,7 @@ namespace Ginger.Actions.VisualTesting
                     if (File.Exists(filename))
                     {
                         ScreenShotViewPage p = new ScreenShotViewPage("Target Image", mAct.TargetFileName);
-                        TargetImageFrame.Content = p;
+                        TargetImageFrame.ClearAndSetContent(p);
                     }
                 }
             });
@@ -232,7 +247,7 @@ namespace Ginger.Actions.VisualTesting
             }
             // send with null bitmap will show image not found
             ScreenShotViewPage p = new ScreenShotViewPage("Baseline Image", b);
-            BaseImageFrame.Content = p;
+            BaseImageFrame.ClearAndSetContent(p);
         }
 
         private void VisualTestingEngineComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -249,7 +264,7 @@ namespace Ginger.Actions.VisualTesting
                         mApplitoolsComparePage.visualCompareAnalyzerIntegration.VisualTestingEvent += VisualCompareAnalyzerIntegration_VisualTestingEvent;
                     }
                     mApplitoolsComparePage.InitLayout();
-                    EngineConfigFrame.Content = mApplitoolsComparePage;
+                    EngineConfigFrame.ClearAndSetContent(mApplitoolsComparePage);
                     xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
                     break;
 
@@ -260,7 +275,7 @@ namespace Ginger.Actions.VisualTesting
                         mBitmapPixelsComaprePage.visualCompareAnalyzerIntegration.VisualTestingEvent += VisualCompareAnalyzerIntegration_VisualTestingEvent;
                     }
                     mBitmapPixelsComaprePage.InitLayout();
-                    EngineConfigFrame.Content = mBitmapPixelsComaprePage;
+                    EngineConfigFrame.ClearAndSetContent(mBitmapPixelsComaprePage);
                     xFullPageScreenshotCheckbox.Visibility = Visibility.Visible;
                     break;
 
@@ -271,7 +286,7 @@ namespace Ginger.Actions.VisualTesting
                         mUIElementsBitmapComparisonPage.visualCompareAnalyzerIntegration.VisualTestingEvent += VisualCompareAnalyzerIntegration_VisualTestingEvent;
                     }
                     mUIElementsBitmapComparisonPage.InitLayout();
-                    EngineConfigFrame.Content = mUIElementsBitmapComparisonPage;
+                    EngineConfigFrame.ClearAndSetContent(mUIElementsBitmapComparisonPage);
                     xFullPageScreenshotCheckbox.Visibility = Visibility.Visible;
                     break;
                 case ActVisualTesting.eVisualTestingAnalyzer.VRT:
@@ -281,7 +296,7 @@ namespace Ginger.Actions.VisualTesting
                         mVRtComparisonPage.visualCompareAnalyzerIntegration.VisualTestingEvent += VisualCompareAnalyzerIntegration_VisualTestingEvent;
                     }
                     mVRtComparisonPage.InitLayout();
-                    EngineConfigFrame.Content = mVRtComparisonPage;
+                    EngineConfigFrame.ClearAndSetContent(mVRtComparisonPage);
                     xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
 
                     if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl) || string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.ApiKey) || string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.Project))
@@ -290,7 +305,7 @@ namespace Ginger.Actions.VisualTesting
                     }
                     break;
                 default:
-                    EngineConfigFrame.Content = null;
+                    EngineConfigFrame.ClearAndSetContent(null);
                     xSetApplicationScreenSize.Visibility = Visibility.Collapsed;
                     xCompareOrCreateBaselinesRadioButtons.Visibility = Visibility.Collapsed;
                     xBaselineAndTargetImages.Visibility = Visibility.Collapsed;
@@ -333,7 +348,7 @@ namespace Ginger.Actions.VisualTesting
                 return null;
             }
         }
-        
+
         //Maybe we don't need this method - to check
         //Helper method - Convert Bitmap to ImageSource
         private BitmapImage BitmapToImageSource(Bitmap bitmap)
@@ -376,7 +391,7 @@ namespace Ginger.Actions.VisualTesting
             TargetScreenShotLabel.Visibility = Visibility.Visible;
             TargetImageFileNameUCVE.Visibility = Visibility.Collapsed;
             mAct.TargetFileName = null; // must clear, since Isscreen shot depends on it
-            TargetImageFrame.Content = null;
+            TargetImageFrame.ClearAndSetContent(null);
         }
 
         private void TargetImageFileRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -389,13 +404,16 @@ namespace Ginger.Actions.VisualTesting
         private void CreateBaseline_Click(object sender, RoutedEventArgs e)
         {
             Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
-            BaseImageFrame.Content = null;
+            BaseImageFrame.ClearAndSetContent(null);
             string FileName = General.GetFullFilePath(CurrentBaselineImagePathTxtBox.ValueTextBox.Text);
 
             //TODO: add try catch if delete failed
             try
             {
-                if (File.Exists(FileName)) DeleteOldFile(FileName);
+                if (File.Exists(FileName))
+                {
+                    DeleteOldFile(FileName);
+                }
             }
             catch (Exception ex)
             {

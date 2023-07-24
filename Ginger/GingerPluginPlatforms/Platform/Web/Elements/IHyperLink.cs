@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,16 +17,13 @@ limitations under the License.
 #endregion
 
 using Ginger.Plugin.Platform.Web.Actions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Ginger.Plugin.Platform.Web.Elements
 {
     /// <summary>
     /// Exposes operation for Hyperlink.
     /// </summary>
-    public interface IHyperLink: IGingerWebElement,IClick
+    public interface IHyperLink : IGingerWebElement, IClick
     {
         /// <summary>
         /// Gets The value of Hyperlink.
@@ -35,7 +32,7 @@ namespace Ginger.Plugin.Platform.Web.Elements
         string GetValue();
 
 
-//TODO:  Pending Definations for multiclick
+        //TODO:  Pending Definations for multiclick
         //        string MultiClicks();
     }
 }

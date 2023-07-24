@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 extern alias UIAComWrapperNetstandard;
-using UIAuto = UIAComWrapperNetstandard::System.Windows.Automation;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
@@ -28,10 +27,11 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Windows.Automation;
 
 namespace Ginger.UserControlsLib.UCListView
 {
@@ -104,7 +104,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
             set
             {
-                SetValue(ListHelperProperty, value);               
+                SetValue(ListHelperProperty, value);
                 SetInitViewWithHelper();
                 SetItemMainView();
             }
@@ -147,16 +147,16 @@ namespace Ginger.UserControlsLib.UCListView
             CollapseItem();
         }
 
-        private void SetInitViewWithHelper()            
+        private void SetInitViewWithHelper()
         {
             if (ListHelper != null)
             {
                 if (ListHelper.AllowExpandItems == false)
                 {
                     CollapseItem();
-                    xExpandCollapseBtn.Visibility = Visibility.Collapsed;                    
+                    xExpandCollapseBtn.Visibility = Visibility.Collapsed;
                 }
-                else if(ListHelper.ExpandItemOnLoad)
+                else if (ListHelper.ExpandItemOnLoad)
                 {
                     ExpandItem();
                 }
@@ -177,10 +177,11 @@ namespace Ginger.UserControlsLib.UCListView
 
                 this.Dispatcher.Invoke(() =>
                 {
-                    if (Item is RepositoryItemBase)
+                    if (Item is RepositoryItemBase repositoryItemBase)
                     {
-                        ((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
-                        ((RepositoryItemBase)Item).PropertyChanged += Item_PropertyChanged;
+                        string allProperties = string.Empty;
+                        PropertyChangedEventManager.RemoveHandler(source: repositoryItemBase, handler: Item_PropertyChanged, propertyName: allProperties);
+                        PropertyChangedEventManager.AddHandler(source: repositoryItemBase, handler: Item_PropertyChanged, propertyName: allProperties);
                     }
 
                     if (!string.IsNullOrEmpty(mItemIconField))
@@ -224,12 +225,12 @@ namespace Ginger.UserControlsLib.UCListView
 
             mMainViewWasSet = true;
         }
-            
+
 
         private void SetItemSubView()
         {
             if (!mSubViewWasSet)
-            {                
+            {
                 mItemDescriptionField = ListHelper.GetItemDescriptionField();
                 mItemTagsField = ListHelper.GetItemTagsField();
                 mItemErrorField = ListHelper.GetItemErrorField();
@@ -251,9 +252,9 @@ namespace Ginger.UserControlsLib.UCListView
 
         public void ClearBindings()
         {
-            ParentList.UcListViewEvent -= ParentList_UcListViewEvent;
-            ParentList.List.SelectionChanged -= ParentList_SelectionChanged;
-            ((RepositoryItemBase)Item).PropertyChanged -= Item_PropertyChanged;
+            WeakEventManager<UcListView, UcListViewEventArgs>.RemoveHandler(source: ParentList, eventName: nameof(UcListView.UcListViewEvent), handler: ParentList_UcListViewEvent);
+            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: ParentList.List, eventName: nameof(Selector.SelectionChanged), handler: ParentList_SelectionChanged);
+            PropertyChangedEventManager.RemoveHandler(source: (RepositoryItemBase)Item, handler: Item_PropertyChanged, propertyName: string.Empty);
 
             BindingOperations.ClearAllBindings(xItemIcon);
             foreach (ImageMakerControl notification in xItemNotificationsPnl.Children)
@@ -278,7 +279,7 @@ namespace Ginger.UserControlsLib.UCListView
             this.ClearControlsBindings();
         }
 
-        private void ParentList_UcListViewEvent(UcListViewEventArgs EventArgs)
+        private void ParentList_UcListViewEvent(object? sender, UcListViewEventArgs EventArgs)
         {
             switch (EventArgs.EventType)
             {
@@ -392,7 +393,7 @@ namespace Ginger.UserControlsLib.UCListView
                 if (operations != null && operations.Count > 0)
                 {
                     xItemOperationsPnl.Visibility = Visibility.Visible;
-                    foreach (ListItemOperation operation in operations.Where(x=>x.SupportedViews.Contains(ListHelper.PageViewMode)).ToList())
+                    foreach (ListItemOperation operation in operations.Where(x => x.SupportedViews.Contains(ListHelper.PageViewMode)).ToList())
                     {
                         ucButton operationBtn = new ucButton();
                         operationBtn.SetValue(AutomationProperties.AutomationIdProperty, operation.AutomationID);
@@ -430,7 +431,7 @@ namespace Ginger.UserControlsLib.UCListView
                         xItemOperationsPnl.Children.Add(operationBtn);
                     }
                 }
-                
+
                 if (xItemOperationsPnl.Children.Count == 0)
                 {
                     xItemOperationsPnl.Visibility = Visibility.Collapsed;
@@ -496,7 +497,7 @@ namespace Ginger.UserControlsLib.UCListView
                         {
                             //need to add to Group
                             bool addedToGroup = false;
-                            foreach(MenuItem item in ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items)
+                            foreach (MenuItem item in ((MenuItem)(xItemExtraOperationsMenu.Items[0])).Items)
                             {
                                 if (item.Header.ToString() == operation.Group)
                                 {
@@ -506,7 +507,7 @@ namespace Ginger.UserControlsLib.UCListView
                                     break;
                                 }
                             }
-                            if(!addedToGroup)
+                            if (!addedToGroup)
                             {
                                 //creating the group and adding
                                 MenuItem groupMenuitem = new MenuItem();
@@ -599,7 +600,7 @@ namespace Ginger.UserControlsLib.UCListView
         }
 
 
-        private void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Item_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == mItemNameField || e.PropertyName == mItemNameExtentionField || e.PropertyName == mItemMandatoryField)
             {
@@ -609,7 +610,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 SetItemDescription();
             }
-            SetItemUniqueIdentifier();         
+            SetItemUniqueIdentifier();
         }
 
         private void xExpandCollapseBtn_Click(object sender, RoutedEventArgs e)
@@ -628,7 +629,10 @@ namespace Ginger.UserControlsLib.UCListView
 
         public void ExpandItem()
         {
-            if (ListHelper.AllowExpandItems == false) return;
+            if (ListHelper.AllowExpandItems == false)
+            {
+                return;
+            }
 
             this.Dispatcher.Invoke(() =>
                 {
@@ -659,10 +663,10 @@ namespace Ginger.UserControlsLib.UCListView
                     if (parent != null)
                     {
                         ParentList = (UcListView)parent;
-                        ParentList.UcListViewEvent -= ParentList_UcListViewEvent;
-                        ParentList.UcListViewEvent += ParentList_UcListViewEvent;
-                        ParentList.List.SelectionChanged -= ParentList_SelectionChanged;
-                        ParentList.List.SelectionChanged += ParentList_SelectionChanged;
+                        WeakEventManager<UcListView, UcListViewEventArgs>.RemoveHandler(ParentList, nameof(UcListView.UcListViewEvent), ParentList_UcListViewEvent);
+                        WeakEventManager<UcListView, UcListViewEventArgs>.AddHandler(ParentList, nameof(UcListView.UcListViewEvent), ParentList_UcListViewEvent);
+                        WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(ParentList.List, nameof(Selector.SelectionChanged), ParentList_SelectionChanged);
+                        WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(ParentList.List, nameof(Selector.SelectionChanged), ParentList_SelectionChanged);
                     }
                     OnPropertyChanged(nameof(IsSelected));
                 }
@@ -670,7 +674,7 @@ namespace Ginger.UserControlsLib.UCListView
             });
         }
 
-        private void ParentList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ParentList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(IsSelected));
         }
@@ -738,7 +742,7 @@ namespace Ginger.UserControlsLib.UCListView
                             fullname += string.Format(" [{0}]", extension.ToString());
                         }
                     }
-                  
+
                     xItemNameTxtBlock.ToolTip = fullname;
                 }
                 catch (Exception ex)
@@ -753,7 +757,7 @@ namespace Ginger.UserControlsLib.UCListView
         {
             this.Dispatcher.Invoke(() =>
             {
-                
+
                 try
                 {
                     string fullDesc = string.Empty;

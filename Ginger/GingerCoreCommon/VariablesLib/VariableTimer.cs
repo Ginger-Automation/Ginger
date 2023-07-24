@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ namespace GingerCore.Variables
         }
 
         private eTimerUnit mTimerUnit;
-        
+
         [IsSerializedForLocalRepository]
         public eTimerUnit TimerUnit
         {
@@ -60,13 +60,13 @@ namespace GingerCore.Variables
             }
         }
 
-        public override string VariableEditPage { get { return  "VariableTimerPage"; } }
+        public override string VariableEditPage { get { return "VariableTimerPage"; } }
 
         public Boolean IsStopped { get; set; }
 
         public override string GetFormula()
         {
-            return "Timer unit="+ TimerUnit.ToString();
+            return "Timer unit=" + TimerUnit.ToString();
         }
 
         private string mValue;
@@ -78,7 +78,7 @@ namespace GingerCore.Variables
 
                 if (RunWatch.IsRunning)
                 {
-                  mValue= GetElapsedValue();
+                    mValue = GetElapsedValue();
                 }
 
                 return mValue;
@@ -116,14 +116,14 @@ namespace GingerCore.Variables
             return elapsed;
         }
 
-        public void StartTimer(bool isContinue=false)
-        { 
+        public void StartTimer(bool isContinue = false)
+        {
             if (timer == null)
             {
                 timer = new Timer();
             }
 
-            if(isContinue==false)
+            if (isContinue == false)
                 RunWatch.Reset();
 
             if (TimerUnit == eTimerUnit.MilliSeconds)
@@ -134,12 +134,12 @@ namespace GingerCore.Variables
                 timer.Interval = new TimeSpan(0, 0, 1, 0, 0).TotalMinutes;
             if (TimerUnit == eTimerUnit.Hours)
                 timer.Interval = new TimeSpan(0, 1, 0, 0, 0).TotalHours;
-            
+
             RunWatch.Start();
             timer.Start();
             timer.Elapsed += dispatcherTimerElapsedTick;
         }
-              
+
 
         public void StopTimer()
         {
@@ -173,7 +173,7 @@ namespace GingerCore.Variables
             }
         }
 
-       
+
         public override bool GenerateAutoValue(ref string errorMsg)
         {
             //NA

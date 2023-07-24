@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Agents;
 using GingerCore.Environments;
+using GingerCore.GeneralLib;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -51,11 +52,11 @@ namespace Ginger.Run
             mRunner.UpdateApplicationAgents();
             if (mPageViewMode == ePageViewMode.AutomatePage)
             {
-                xAppAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mRunner, mContext);
+                xAppAgentsMappingFrame.ClearAndSetContent(new ApplicationAgentsMapPage(mRunner, mContext));
             }
             else
             {
-                xAppAgentsMappingFrame.Content = new ApplicationAgentsMapPage(mRunner, mContext, false);
+                xAppAgentsMappingFrame.ClearAndSetContent(new ApplicationAgentsMapPage(mRunner, mContext, false));
             }
 
             List<int> waitOptions = new List<int>() { 0, 1, 2, 3, 4, 5 };

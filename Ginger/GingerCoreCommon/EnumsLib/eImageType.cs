@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,6 +44,8 @@ namespace Amdocs.Ginger.Common.Enums
         VRT,
         Applitools,
         Sealights,
+        NormalUser,
+        AdminUser,
         #endregion
 
 
@@ -190,6 +192,7 @@ namespace Amdocs.Ginger.Common.Enums
         Cut,
         Paste,
         WindowRestore,
+        Rules,
         #endregion
 
         #region Items Images
@@ -200,7 +203,7 @@ namespace Amdocs.Ginger.Common.Enums
         KidsDrawing,
         Folder,
         ItemModified,
-        Email,        
+        Email,
         Parameter,
         ListGroup,
         FlowDiagram,
@@ -220,17 +223,18 @@ namespace Amdocs.Ginger.Common.Enums
         Question,
         Help,
         Info,
-        Screen,        
+        Screen,
         Globe,
         Service,
         FileVideo,
-        Ticket,        
+        Ticket,
         Pointer,
         Camera,
         Recording,
         Wrench,
         Settings,
         Eraser,
+        Broom,
         Power,
         ArrowDown,
         ArrowRight,

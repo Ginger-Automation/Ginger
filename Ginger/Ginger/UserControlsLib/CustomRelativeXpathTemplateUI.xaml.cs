@@ -1,7 +1,7 @@
 using Amdocs.Ginger.Common;
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ namespace Ginger.UserControlsLib.POMLearnig
 
             CustomRelativeXpathTemplate iOSTemplate = new CustomRelativeXpathTemplate() { Value = "type == '{type}' AND value BEGINSWITH[c] '{value}' AND visible == {visible}", Status = CustomRelativeXpathTemplate.SyntaxValidationStatus.Passed };
 
-            if (RelativeXpathTemplateList.Where(t => t.Value == iOSTemplate.Value).FirstOrDefault() == null)
+            if (RelativeXpathTemplateList.FirstOrDefault(t => t.Value == iOSTemplate.Value) == null)
             {
                 RelativeXpathTemplateList.Insert(0, iOSTemplate);
                 RelativeXpathTemplateList.RemoveAt(2);

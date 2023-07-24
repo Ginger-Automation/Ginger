@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,13 +17,10 @@ limitations under the License.
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 
 namespace GingerCore.Drivers.Updater
@@ -47,7 +44,7 @@ namespace GingerCore.Drivers.Updater
                     string gingerlocation = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
                     string chromedriverpath = Path.Combine(gingerlocation, "chromedriver.exe");
                     var chromeDriverProcesses = System.Diagnostics.Process.GetProcesses().Where(pr => pr.ProcessName == "chromedriver"); // without '.exe'
-                   //killing all active chromedriver
+                                                                                                                                         //killing all active chromedriver
                     foreach (var process in chromeDriverProcesses)
                     {
                         foreach (System.Diagnostics.ProcessModule module in process.Modules)

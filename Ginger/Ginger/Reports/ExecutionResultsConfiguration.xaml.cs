@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,18 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Ginger.UserControlsLib;
 using System;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore;
-using Ginger.UserControls;
-using amdocs.ginger.GingerCoreNET;
-using System.Windows.Input;
-using System.Text.RegularExpressions;
-using Ginger.ValidationRules;
-using Ginger.UserControlsLib;
 
 namespace Ginger.Reports
 {
@@ -109,7 +103,7 @@ namespace Ginger.Reports
             }
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralExecutionLoggerExpander, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter(), BindingMode: System.Windows.Data.BindingMode.OneWay);
-            
+
             if (_selectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.No)
             {
                 SetExecutionLoggerRadioButtonToOff();

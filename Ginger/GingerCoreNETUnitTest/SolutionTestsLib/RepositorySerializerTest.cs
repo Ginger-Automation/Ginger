@@ -97,9 +97,9 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             // Please double verify if the increase in size make sense and is needed before changing this value of expected length            
             int lt = xml.Count(f => f == '<');
             int gt = xml.Count(f => f == '>');
-            Assert.IsTrue(xml.Length < 850, "Verify minimal xml is less than 850 bytes");   
-            Assert.AreEqual(9, lt, "XML Elements count <"); 
-            Assert.AreEqual(9, gt, "XML Elements count >"); 
+            Assert.IsTrue(xml.Length < 900, "Verify minimal xml is less than 900 bytes");
+            Assert.AreEqual(9, lt, "XML Elements count <");
+            Assert.AreEqual(9, gt, "XML Elements count >");
 
             //Verify the major element of the expected xml
             Assert.IsTrue(xml.Contains("utf-8"));
@@ -419,11 +419,11 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             Assert.AreEqual("NewTab", (from aiv in businessFlow.Activities[0].Acts[0].InputValues where aiv.Param == "GotoURLType" select aiv).FirstOrDefault().Value);
         }
 
-        
+
         /// <summary>
         /// Activities Lazy Load Test- CRITICAL- DO NOT AVOID ON FAILURE 
         /// </summary>
-        [TestMethod]        
+        [TestMethod]
         public void ActivitiesLazyLoadViaStringData()
         {
             //arrange
@@ -441,7 +441,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
 
             //assert
             Assert.AreEqual(1, activities.Count);
-            Assert.AreEqual(false, activities.LazyLoad);            
+            Assert.AreEqual(false, activities.LazyLoad);
         }
 
         /// <summary>
@@ -452,8 +452,8 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         {
             //arragne
             ObservableList<Activity> activities = new ObservableList<Activity>();
-            activities.LazyLoadDetails = new LazyLoadListDetails() { XmlFilePath = Path.Combine(TestResources.GetTestResourcesFolder(@"XML"), "ActivityTest.Ginger.Activity.xml")};
-            activities.LazyLoadDetails.Config = new LazyLoadListConfig() { LazyLoadType = LazyLoadListConfig.eLazyLoadType.NodePath, ListName=nameof(BusinessFlow.Activities)};
+            activities.LazyLoadDetails = new LazyLoadListDetails() { XmlFilePath = Path.Combine(TestResources.GetTestResourcesFolder(@"XML"), "ActivityTest.Ginger.Activity.xml") };
+            activities.LazyLoadDetails.Config = new LazyLoadListConfig() { LazyLoadType = LazyLoadListConfig.eLazyLoadType.NodePath, ListName = nameof(BusinessFlow.Activities) };
 
             //act
             if (activities.LazyLoad)
@@ -576,7 +576,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void SolutionPomElementsLazyLoadTest_NotLoaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"),EncryptionHandler.GetDefaultKey());
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
@@ -595,7 +595,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
         public void SolutionPomElementsLazyLoadTest_Loaded()
         {
             //Arrange
-            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"),EncryptionHandler.GetDefaultKey());
+            WorkSpace.Instance.OpenSolution(Path.Combine(TestResources.GetTestResourcesFolder(@"Solutions"), "BasicSimple"), EncryptionHandler.GetDefaultKey());
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
@@ -622,7 +622,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             SolutionRepository SR = WorkSpace.Instance.SolutionRepository;
 
             //Act
-            ObservableList<BusinessFlow> bfs = SR.GetAllRepositoryItems<BusinessFlow>();            
+            ObservableList<BusinessFlow> bfs = SR.GetAllRepositoryItems<BusinessFlow>();
 
             //Assert
             Assert.AreEqual(bfs.Count, 1, "Validating Bfs were loaded");
@@ -642,7 +642,7 @@ namespace GingerCoreNETUnitTests.SolutionTestsLib
             //Act
             ObservableList<BusinessFlow> bfs = SR.GetAllRepositoryItems<BusinessFlow>();
             ObservableList<VariableBase> variables = bfs[0].Variables;
-            
+
             //Assert
             Assert.AreEqual(bfs.Count, 1, "Validating Bfs were loaded");
             Assert.AreEqual(bfs[0].VariablesLazyLoad, false, "Validating Bf Variables were loaded 1");

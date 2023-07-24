@@ -1,5 +1,4 @@
 ﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +15,7 @@ namespace GingerCoreNETUnitTest
             // Called once when the test assembly is loaded
             // We provide the assembly to GingerTestHelper.TestResources so it can locate the 'TestResources' folder path
             TestResources.Assembly = Assembly.GetExecutingAssembly();
-            
+
             InitWS();
         }
 

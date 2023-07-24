@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GingerCore.Environments
 {
@@ -37,7 +38,7 @@ namespace GingerCore.Environments
         string GetCalculatedWithDecryptTrue(string value);
         string GetConnectionString();
         List<string> GetTablesColumns(string table);
-        List<string> GetTablesList(string Keyspace = null);
+        Task<List<string>> GetTablesListAsync(string Keyspace = null);
         string GetRecordCount(string SQL);
         bool MakeSureConnectionIsOpen();
         void SplitUserIdPassFromTNS();

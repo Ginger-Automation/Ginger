@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ namespace Ginger.ApplicationModelsLib
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             bool isEnabled = false;
-            if(value != null)
+            if (value != null)
             {
                 eElementType eType = (eElementType)value;
                 if (ElementInfo.IsElementTypeSupportingOptionalValues(eType))

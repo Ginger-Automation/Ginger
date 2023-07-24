@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,26 +17,24 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
+using GingerCore.Drivers.CommunicationProtocol;
+using GingerCore.Drivers.JavaDriverLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Drivers;
-using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.Drivers.CommunicationProtocol;
-using GingerCore.Drivers.JavaDriverLib;
-using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
 
 namespace Ginger.WindowExplorer.Java
 {
-    class JavaWindowTreeItem :  JavaElementTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
+    class JavaWindowTreeItem : JavaElementTreeItemBase, ITreeViewItem, IWindowExplorerTreeItem
     {
         Object ITreeViewItem.NodeObject()
         {
-            return base.JavaElementInfo;  
+            return base.JavaElementInfo;
         }
 
         StackPanel ITreeViewItem.Header()
@@ -46,9 +44,9 @@ namespace Ginger.WindowExplorer.Java
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            return base.Childrens(); 
+            return base.Childrens();
         }
-                    
+
         bool ITreeViewItem.IsExpandable()
         {
             return IsExpandable;
@@ -79,13 +77,13 @@ namespace Ginger.WindowExplorer.Java
 
             list.Add(new ActWindow()
             {
-                Description = "Check If  " + Name + " Exist",               
+                Description = "Check If  " + Name + " Exist",
                 WindowActionType = ActWindow.eWindowActionType.IsExist
             });
 
             list.Add(new ActWindow()
             {
-                Description = "Close Window-  " + Name ,
+                Description = "Close Window-  " + Name,
                 WindowActionType = ActWindow.eWindowActionType.Close
             });
             return list;
@@ -122,7 +120,7 @@ namespace Ginger.WindowExplorer.Java
                     else
                     {
                         List<String> valueList = prop.GetListString();
-                        PropValue =valueList.ElementAt(0);
+                        PropValue = valueList.ElementAt(0);
                     }
 
                     list.Add(new ControlProperty() { Name = PropName, Value = PropValue });

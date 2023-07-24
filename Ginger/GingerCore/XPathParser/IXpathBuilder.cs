@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,10 +19,12 @@ limitations under the License.
 using System.Collections.Generic;
 using System.Xml.XPath;
 
-namespace GingerCore.XPathParser {
-    public interface IXPathBuilder<Node> {
+namespace GingerCore.XPathParser
+{
+    public interface IXPathBuilder<Node>
+    {
         // Should be called once per build
-        void StartBuild();                 
+        void StartBuild();
 
         // Should be called after build for result tree post-processing
         Node EndBuild(Node result);
@@ -36,7 +38,7 @@ namespace GingerCore.XPathParser {
         Node Axis(XPathAxis xpathAxis, XPathNodeType nodeType, string prefix, string name);
 
         Node JoinStep(Node left, Node right);
-        
+
         // reverseStep is how parser communicates to builder difference between "ansestor[1]" and "(ansestor)[1]" 
         Node Predicate(Node node, Node condition, bool reverseStep);
 

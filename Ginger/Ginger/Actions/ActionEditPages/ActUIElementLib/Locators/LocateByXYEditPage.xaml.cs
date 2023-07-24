@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.Actions.Common;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore.Actions.Common;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -53,12 +53,18 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             double X;
             bool b = double.TryParse(txtLocateValueX.ValueTextBox.Text, out X);
-            if (!b) X = 0;
+            if (!b)
+            {
+                X = 0;
+            }
 
             double Y;
             bool b2 = double.TryParse(txtLocateValueY.ValueTextBox.Text, out Y);
-            if (!b2) Y = 0;
-                        
+            if (!b2)
+            {
+                Y = 0;
+            }
+
             mAction.SetLocateByXYValues(X, Y, mlocateValueParentObject, mlocateValueField);
         }
     }

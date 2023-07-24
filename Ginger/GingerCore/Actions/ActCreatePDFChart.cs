@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,9 +17,8 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Repository;
-using GingerCore.Properties;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using PdfSharpCore;
 using PdfSharpCore.Charting;
@@ -28,11 +27,6 @@ using PdfSharpCore.Pdf;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
-
 using System.IO;
 using System.Linq;
 namespace GingerCore.Actions
@@ -42,7 +36,7 @@ namespace GingerCore.Actions
         public override string ActionDescription { get { return "Create PDF Chart Action"; } }
         public override string ActionUserDescription { get { return "Create PDF Chart from CSV data"; } }
         private List<string> Params;
-        private ChartFrame chartFrame=new ChartFrame();
+        private ChartFrame chartFrame = new ChartFrame();
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
             TBH.AddText("Use this action in case you need to create PDF chart from CSV file.");
@@ -70,8 +64,8 @@ namespace GingerCore.Actions
         }
         public enum eExcelActionType
         {
-            ReadData = 0,     
-            WriteData = 1,              
+            ReadData = 0,
+            WriteData = 1,
         }
 
         public new static partial class Fields
@@ -90,10 +84,10 @@ namespace GingerCore.Actions
             set
             {
                 AddOrUpdateInputParamValue("DataFileName", value);
-                OnPropertyChanged(Fields.DataFileName);                
-            }            
+                OnPropertyChanged(Fields.DataFileName);
+            }
         }
-             
+
         public string ParamName
         {
             get
@@ -125,31 +119,37 @@ namespace GingerCore.Actions
         }
 
         public override eImageType Image { get { return eImageType.PDFFile; } }
-        
+
         public override void Execute()
         {
-              GenerateChart();             
+            GenerateChart();
         }
 
         public int getIndexOfParam()
         {
-            if(!string.IsNullOrEmpty(GetDataFileName()))
+            if (!string.IsNullOrEmpty(GetDataFileName()))
             {
                 StreamReader sr = new StreamReader(GetDataFileName());
                 var lines = new List<string[]>();
 
-                while (!sr.EndOfStream && lines.Count<=0)
+                while (!sr.EndOfStream && lines.Count <= 0)
                 {
-                    string[] Line = sr.ReadLine().Split(',').Select(a=>a.Trim()).ToArray();
+                    string[] Line = sr.ReadLine().Split(',').Select(a => a.Trim()).ToArray();
                     lines.Add(Line);
                 }
-                if (lines[0]!=null)
+                if (lines[0] != null)
+                {
                     Params = lines[0].ToList();
-             }
-             if (Params != null)
+                }
+            }
+            if (Params != null)
+            {
                 return Params.IndexOf(ParamName);
-             else
+            }
+            else
+            {
                 return -1;
+            }
         }
 
         public void GenerateChart()
@@ -159,7 +159,7 @@ namespace GingerCore.Actions
                 Chart chart = new Chart(ChartType.Column2D);
                 Series series = null;
                 string dataFileName = GetDataFileName();
-                if(string.IsNullOrEmpty(dataFileName))
+                if (string.IsNullOrEmpty(dataFileName))
                 {
                     this.Error = " Empty File Name ";
                     return;
@@ -189,26 +189,26 @@ namespace GingerCore.Actions
                 chart.PlotArea.LineFormat.Visible = true;
 
                 chart.Legend.Docking = DockingType.Right;
-                
+
                 chart.DataLabel.Type = DataLabelType.Value;
                 chart.DataLabel.Position = DataLabelPosition.OutsideEnd;
 
 
-                string filename = System.IO.Path.Combine(SolutionFolder , @"Documents\", Guid.NewGuid().ToString().ToUpper() + ".pdf");
+                string filename = System.IO.Path.Combine(SolutionFolder, @"Documents\", Guid.NewGuid().ToString().ToUpper() + ".pdf");
                 PdfDocument document = new PdfDocument(filename);
                 chartFrame.Location = new XPoint(30, 30);
                 chartFrame.Size = new XSize(500, 600);
                 chartFrame.Add(chart);
 
                 PdfPage page = document.AddPage();
-                page.Size = PageSize.Letter;        
+                page.Size = PageSize.Letter;
 
                 XGraphics gfx = XGraphics.FromPdfPage(page);
                 chartFrame.Draw(gfx);
                 document.Close();
                 Process.Start(new ProcessStartInfo() { FileName = FileName, UseShellExecute = true });
             }
-            catch 
+            catch
             {
                 this.Error = "Something went wrong when generating the PDF reports";
             }
@@ -218,37 +218,43 @@ namespace GingerCore.Actions
         {
             StreamReader sr = new StreamReader(filePath);
             var lines = new List<string[]>();
-            
+
             while (!sr.EndOfStream)
             {
                 string[] Line = sr.ReadLine().Split(',');
-                string[] newLine=new string[Line.Length];
+                string[] newLine = new string[Line.Length];
                 string tempLine;
                 int i = 0;
-                foreach(string ln in Line)
+                foreach (string ln in Line)
                 {
                     if (ln.StartsWith("\"") || ln.EndsWith("\""))
                     {
                         tempLine = ln.Replace("\"", "");
                     }
                     else
+                    {
                         tempLine = ln;
+                    }
+
                     newLine[i++] = tempLine;
                 }
-                lines.Add(newLine);            
+                lines.Add(newLine);
             }
 
-            Params=lines[0].Select(a=>a.Trim()).ToList();
+            Params = lines[0].Select(a => a.Trim()).ToList();
             lines.RemoveAt(0);
             return lines;
         }
 
         private Dictionary<string, string[]> GetRenderingData(string filePath)
         {
-            var data=readDataFromCSV(filePath);
+            var data = readDataFromCSV(filePath);
             if (data == null)
+            {
                 return null;
-            Dictionary<string,string[]> tmp = new Dictionary<string,string[]>();
+            }
+
+            Dictionary<string, string[]> tmp = new Dictionary<string, string[]>();
 
             foreach (var el in data)
             {
@@ -261,15 +267,19 @@ namespace GingerCore.Actions
                     try
                     {
                         if (Convert.ToDateTime(el[1]) >= Convert.ToDateTime(tmp[el[0]][1]))
+                        {
                             tmp[el[0]] = el;
+                        }
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, "", e);
                     }
                 }
                 else
+                {
                     continue;
+                }
             }
             return tmp;
         }

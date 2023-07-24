@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GingerCoreNETUnitTest.Script
-{    
+{
     [TestClass]
     [Level1]
     public class VBSNumericTests
@@ -53,7 +53,8 @@ namespace GingerCoreNETUnitTest.Script
         }
         #endregion
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void SimpleExpressionTest()
         {
             //Arrange
@@ -66,7 +67,8 @@ namespace GingerCoreNETUnitTest.Script
             Assert.AreEqual("2", result, "Simple Expression Test");
         }
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void RoundExpressionTest()
         {
             //Arrange
@@ -89,7 +91,8 @@ namespace GingerCoreNETUnitTest.Script
         }
 
 
-        [TestMethod]  [Timeout(60000)]
+        [TestMethod]
+        [Timeout(60000)]
         public void IntExpressionTest()
         {
             //Arrange

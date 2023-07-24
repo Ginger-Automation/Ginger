@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,28 +17,22 @@ limitations under the License.
 #endregion
 
 //using amdocs.ginger.GingerCoreNET;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.Common.Run;
-using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
-using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
 
 namespace GingerCore
@@ -126,7 +120,7 @@ namespace GingerCore
             Completed,
             FailedToStart
         }
-        
+
         [IsSerializedForLocalRepository]
         public bool Active { get; set; }
 
@@ -149,7 +143,7 @@ namespace GingerCore
                 }
             }
         }
-        public eStatus Status 
+        public eStatus Status
         {
             get
             {
@@ -167,7 +161,7 @@ namespace GingerCore
                 case eFilterBy.Tags:
                     foreach (Guid tagGuid in Tags)
                     {
-                        Guid guid = ((List<Guid>)obj).Where(x => tagGuid.Equals(x) == true).FirstOrDefault();
+                        Guid guid = ((List<Guid>)obj).FirstOrDefault(x => tagGuid.Equals(x) == true);
                         if (!guid.Equals(Guid.Empty))
                         {
                             return true;
@@ -277,7 +271,7 @@ namespace GingerCore
             return Name;
         }
 
-       
+
         public void CancelTMSTATask(object sender, DoWorkEventArgs e)
         {
             if (MSTATask == null)
@@ -447,7 +441,7 @@ namespace GingerCore
 
         public DriverConfigParam GetOrCreateParam(string parameter, string defaultValue = null)
         {
-            DriverConfigParam configParam = DriverConfiguration.Where(x => x.Parameter == parameter).FirstOrDefault();
+            DriverConfigParam configParam = DriverConfiguration.FirstOrDefault(x => x.Parameter == parameter);
             if (configParam != null)
             {
                 return configParam;
@@ -538,7 +532,7 @@ namespace GingerCore
             if (DriverType == eDriverType.WindowsAutomation)
             {
                 //Upgrading Action timeout for windows driver from default 10 secs to 30 secs
-                DriverConfigParam actionTimeoutParameter = DriverConfiguration.Where(x => x.Parameter == "ActionTimeout").FirstOrDefault();
+                DriverConfigParam actionTimeoutParameter = DriverConfiguration.FirstOrDefault(x => x.Parameter == "ActionTimeout");
 
                 if (actionTimeoutParameter != null && actionTimeoutParameter.Value == "10" && actionTimeoutParameter.Description.Contains("10"))
                 {

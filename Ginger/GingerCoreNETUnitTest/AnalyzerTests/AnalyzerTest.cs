@@ -14,7 +14,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
     [TestClass]
     [Level1]
     public class AnalyzerTest
-    {        
+    {
         static SolutionRepository SR;
 
         [ClassInitialize]
@@ -61,14 +61,14 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
         {
             //Arrange
             //Put the BF in Test Resource
-             NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
+            NewRepositorySerializer RepositorySerializer = new NewRepositorySerializer();
 
-             string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "AnalyzerTestSolution" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "MissingVariableUsedOnlyInSetVariable.Ginger.BusinessFlow.xml");
+            string FileName = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "AnalyzerTestSolution" + Path.DirectorySeparatorChar + "BusinessFlows" + Path.DirectorySeparatorChar + "MissingVariableUsedOnlyInSetVariable.Ginger.BusinessFlow.xml");
 
             //Load BF
             BusinessFlow businessFlow = (BusinessFlow)RepositorySerializer.DeserializeFromFile(FileName);
 
-                   
+
             ObservableList<AnalyzerItemBase> mIssues = new ObservableList<AnalyzerItemBase>();
             AnalyzerUtils mAnalyzerUtils = new AnalyzerUtils();
             WorkSpace.Instance.SolutionRepository = SR;
@@ -108,7 +108,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
             Assert.AreEqual(AnalyzerItemBase.eSeverity.High, mIssues[0].Severity);
             Assert.AreEqual("The Variable 'username' is missing", mIssues[0].Description);
             Assert.AreEqual(AnalyzerItemBase.eType.Error, mIssues[0].IssueType);
-            Assert.AreEqual(AnalyzerItemBase.eCanFix.Yes, mIssues[0].CanAutoFix, "Auto Fix validation when missing variable is used only in Set variable action"); 
+            Assert.AreEqual(AnalyzerItemBase.eCanFix.Yes, mIssues[0].CanAutoFix, "Auto Fix validation when missing variable is used only in Set variable action");
 
         }
 
@@ -137,7 +137,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
             mAnalyzerUtils.RunBusinessFlowAnalyzer(businessFlow, mIssues);
             //Asert
             Assert.AreEqual(4, mIssues.Count);
-            AnalyzerItemBase missingVariableIssue= mIssues.Where(x => x.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable).FirstOrDefault();
+            AnalyzerItemBase missingVariableIssue = mIssues.FirstOrDefault(x => x.IssueCategory == AnalyzerItemBase.eIssueCategory.MissingVariable);
 
             Assert.AreEqual(AnalyzerItemBase.eSeverity.High, missingVariableIssue.Severity);
             Assert.AreEqual("The Variable 'username' is missing", missingVariableIssue.Description);
@@ -146,7 +146,7 @@ namespace GingerCoreNETUnitTest.AnalyzerTests
 
         }
 
-        
+
     }
 
 }

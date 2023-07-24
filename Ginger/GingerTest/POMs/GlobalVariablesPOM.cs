@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,19 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using Ginger;
-using Ginger.Variables;
-using GingerCore.Variables;
-using GingerTest.POMs.Common;
 using GingerWPFUnitTest.POMs;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 
 namespace GingerTest.POMs
 {

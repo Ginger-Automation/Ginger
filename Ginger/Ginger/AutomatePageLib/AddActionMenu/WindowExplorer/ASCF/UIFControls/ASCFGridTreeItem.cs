@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using Ginger.WindowExplorer;
 using GingerCore.Drivers.ASCF;
 using GingerWPF.UserControlsLib.UCTreeView;
+using System.Windows.Controls;
 
 namespace Ginger.Actions.Locators.ASCF
 {
@@ -42,7 +42,7 @@ namespace Ginger.Actions.Locators.ASCF
         {
             return null;
         }
-        
+
         ContextMenu ITreeViewItem.Menu()
         {
             return null;

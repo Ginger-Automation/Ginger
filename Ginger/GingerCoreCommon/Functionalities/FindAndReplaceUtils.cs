@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
+using Amdocs.Ginger.Repository;
 
 namespace Amdocs.Ginger.Common.Functionalities
 {
@@ -61,7 +60,7 @@ namespace Amdocs.Ginger.Common.Functionalities
             }
         }
 
-        public void FindItemsByReflection(RepositoryItemBase OriginItemObject, RepositoryItemBase item, ObservableList<FoundItem> foundItemsList, string textToFind ,SearchConfig searchConfig, RepositoryItemBase parentItemToSave, string itemParent, string foundField)
+        public void FindItemsByReflection(RepositoryItemBase OriginItemObject, RepositoryItemBase item, ObservableList<FoundItem> foundItemsList, string textToFind, SearchConfig searchConfig, RepositoryItemBase parentItemToSave, string itemParent, string foundField)
         {
             var properties = item.GetType().GetMembers().Where(x => x.MemberType == MemberTypes.Property || x.MemberType == MemberTypes.Field);
 
@@ -71,8 +70,8 @@ namespace Amdocs.Ginger.Common.Functionalities
                 {
                     if (mi.Name == nameof(ActInputValue.ValueForDriver) || mi.Name == /*nameof(RepositoryItemBase.mBackupDic)*/ "mBackupDic" || mi.Name == nameof(RepositoryItemBase.FileName) || mi.Name == nameof(RepositoryItemBase.Guid) ||
                     mi.Name == nameof(RepositoryItemBase.ObjFolderName) || mi.Name == nameof(RepositoryItemBase.ObjFileExt) || mi.Name == "ScreenShots" ||
-                    mi.Name == nameof(RepositoryItemBase.ContainingFolder) || mi.Name == nameof(RepositoryItemBase.ContainingFolderFullPath) || mi.Name == nameof(RepositoryItemBase.Guid) || mi.Name == nameof(RepositoryItemBase.ParentGuid) || mi.Name == "Created" || mi.Name == "Version" || mi.Name == "CreatedBy" || mi.Name == "LastUpdate" || mi.Name == "LastUpdateBy") 
-                    continue;
+                    mi.Name == nameof(RepositoryItemBase.ContainingFolder) || mi.Name == nameof(RepositoryItemBase.ContainingFolderFullPath) || mi.Name == nameof(RepositoryItemBase.Guid) || mi.Name == nameof(RepositoryItemBase.ParentGuid) || mi.Name == "Created" || mi.Name == "Version" || mi.Name == "CreatedBy" || mi.Name == "LastUpdate" || mi.Name == "LastUpdateBy")
+                        continue;
 
 
                     //Get the attr value
@@ -100,9 +99,9 @@ namespace Amdocs.Ginger.Common.Functionalities
                         else if (mi.MemberType == MemberTypes.Field)
                             value = item.GetType().GetField(mi.Name).GetValue(item);
                     }
-                    catch 
+                    catch
                     {
-                        
+
                         continue;
                     }
 
@@ -172,7 +171,7 @@ namespace Amdocs.Ginger.Common.Functionalities
                                     else
                                         finalFoundFieldPath = foundField + @"\" + mi.Name;
 
-                                    FoundItem foundItem = foundItemsList.Where(x => x.FieldName == mi.Name && x.FieldValue == stringValue && x.ItemObject == item).FirstOrDefault();
+                                    FoundItem foundItem = foundItemsList.FirstOrDefault(x => x.FieldName == mi.Name && x.FieldValue == stringValue && x.ItemObject == item);
                                     if (foundItem == null)
                                     {
                                         List<string> OptionalValuseToReplaceList = new List<string>();
@@ -193,28 +192,28 @@ namespace Amdocs.Ginger.Common.Functionalities
 
                                         foundItemsList.Add(new FoundItem() { OriginObject = OriginItemObject, ItemObject = item, ParentItemToSave = parentItemToSave, FieldName = mi.Name, FieldValue = stringValue, ItemParent = itemParent, FoundField = finalFoundFieldPath, OptionalValuesToRepalce = OptionalValuseToReplaceList });
                                     }
-                                        
+
                                     else
                                     {
                                     }
                                 }
 
                             }
-                            catch 
+                            catch
                             {
 
                             }
                         }
                     }
                 }
-                catch 
+                catch
                 {
 
-                }                
+                }
             }
         }
 
-        public bool ReplaceItem(SearchConfig searchConfig ,string findWhat, FoundItem FI,string newValue)
+        public bool ReplaceItem(SearchConfig searchConfig, string findWhat, FoundItem FI, string newValue)
         {
             try
             {
@@ -297,7 +296,7 @@ namespace Amdocs.Ginger.Common.Functionalities
 
 
             }
-            catch 
+            catch
             {
                 return false;
             }

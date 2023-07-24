@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace Ginger.ALM.MapToALMWizard
                     }
                     break;
                 case EventType.LeavingForNextPage:
-                    if(mIsBusinessFlowMapped)
+                    if (mIsBusinessFlowMapped)
                     {
                         return;
                     }
@@ -61,14 +62,14 @@ namespace Ginger.ALM.MapToALMWizard
                     break;
             }
         }
-        
+
         #region Binds
         /// <summary>
         /// Bind ALM Test Set Tree.
         /// </summary>
         private void BindTestSet()
         {
-                load_frame.Content = GetALMTree();
+            load_frame.ClearAndSetContent(GetALMTree());
         }
         #endregion
         #region Functions
@@ -90,7 +91,7 @@ namespace Ginger.ALM.MapToALMWizard
                     ChangeTestSetPageVisibility();
                     mWizard.UpdateMappedTestCasesCollections();
                     mWizard.RemapTestCasesLists();
-                    WizardPage nextPage = mWizard.Pages.Where(p => p.Page is TestCasesMappingPage).FirstOrDefault();
+                    WizardPage nextPage = mWizard.Pages.FirstOrDefault(p => p.Page is TestCasesMappingPage);
                     (nextPage.Page as TestCasesMappingPage).xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";
                 }
             }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,19 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using ICSharpCode.AvalonEdit.Highlighting;
-using System.Collections.Generic;
-using System.Windows.Controls;
-using System.IO;
-using System.Xml;
+using Amdocs.Ginger.Plugin.Core;
 using Ginger.UserControlsLib.TextEditor.Common;
 using ICSharpCode.AvalonEdit.CodeCompletion;
-using GingerPlugIns.TextEditorLib;
-using Amdocs.Ginger.Plugin.Core;
+using ICSharpCode.AvalonEdit.Highlighting;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Controls;
+using System.Xml;
 
 namespace Ginger.UserControlsLib.TextEditor
 {
-    public abstract class TextEditorBase 
+    public abstract class TextEditorBase
     {
         // TODO: clean or virtual        
 
@@ -62,7 +61,7 @@ namespace Ginger.UserControlsLib.TextEditor
             }
         }
 
-        public abstract List<ITextEditorToolBarItem> Tools { get; }       
+        public abstract List<ITextEditorToolBarItem> Tools { get; }
 
         public virtual string Title()
         {

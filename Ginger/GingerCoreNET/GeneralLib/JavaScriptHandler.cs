@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,11 +19,9 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using NUglify;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.GeneralLib
 {
@@ -35,21 +33,21 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             ArrayBuffer, BrowserWaitForIdle, html2canvas, HTMLSpy
         }
 
-        static public string GetJavaScriptFileContent(eJavaScriptFile javaScriptFile, bool performManifyJS=false)
+        static public string GetJavaScriptFileContent(eJavaScriptFile javaScriptFile, bool performManifyJS = false)
         {
             string content = string.Empty;
 
             try
             {
                 var assembly = Assembly.GetExecutingAssembly();
-                string jsResourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(string.Format("{0}.js", javaScriptFile.ToString())));                
+                string jsResourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(string.Format("{0}.js", javaScriptFile.ToString())));
                 using (Stream stream = assembly.GetManifestResourceStream(jsResourceName))
                 using (StreamReader reader = new StreamReader(stream))
                 {
                     content = reader.ReadToEnd();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the content of the JavaScript file called:'{0}'", javaScriptFile.ToString()), ex);
                 return null;
@@ -78,9 +76,9 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 }
                 return result.Code + ";";
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to Minify the JS",ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Minify the JS", ex);
                 return null;
             }
         }

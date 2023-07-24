@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,18 +17,11 @@ limitations under the License.
 #endregion
 
 //using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using GingerCore.DataSource;
-using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Mail;
-using Microsoft.CodeAnalysis.Text;
-using System.IO;
+using Amdocs.Ginger.Repository;
 
 namespace GingerCore.GeneralLib
-{    
+{
 
     public class Email : RepositoryItemBase
     {
@@ -42,6 +35,11 @@ namespace GingerCore.GeneralLib
         public enum eEmailMethod
         {
             SMTP, OUTLOOK
+        }
+
+        public enum readEmailMethod
+        {
+            MSGraphAPI, IMAP
         }
 
         [IsSerializedForLocalRepository]
@@ -67,7 +65,7 @@ namespace GingerCore.GeneralLib
 
         private string mMailFromDisplayName;
         [IsSerializedForLocalRepository]
-         public string MailFromDisplayName
+        public string MailFromDisplayName
         {
             get
             {
@@ -193,8 +191,25 @@ namespace GingerCore.GeneralLib
         [IsSerializedForLocalRepository]
         public string Event { get; set; }
 
+        private eEmailMethod mEmailMethod;
         [IsSerializedForLocalRepository]
-        public eEmailMethod EmailMethod { get; set; }
+        public eEmailMethod EmailMethod 
+        { 
+            get
+            {
+                return mEmailMethod;
+            }
+            set
+            {
+                if(mEmailMethod != value)
+                {
+                    mEmailMethod = value;
+                    OnPropertyChanged(nameof(EmailMethod));
+                }
+            }
+        }
+
+        public readEmailMethod ReadEmailMethod { get; set; }
 
         private bool mEnableSSL = true;
         [IsSerializedForLocalRepository(true)]
@@ -206,6 +221,7 @@ namespace GingerCore.GeneralLib
                 if (mEnableSSL != value)
                 {
                     mEnableSSL = value;
+                    OnPropertyChanged(nameof(EnableSSL));
                 }
             }
         }
@@ -219,6 +235,7 @@ namespace GingerCore.GeneralLib
                 if (mCertificatePath != value)
                 {
                     mCertificatePath = value;
+                    OnPropertyChanged(nameof(CertificatePath));
                 }
             }
         }
@@ -232,10 +249,29 @@ namespace GingerCore.GeneralLib
                 if (mIsValidationRequired != value)
                 {
                     mIsValidationRequired = value;
+                    OnPropertyChanged(nameof(IsValidationRequired));
                 }
             }
         }
-        public static string CertificatePasswordUCValueExpression { get; set; }
+
+        private string mCertificatePasswordUCValueExpression;
+        [IsSerializedForLocalRepository]
+        public string CertificatePasswordUCValueExpression 
+        {
+            get
+            {
+                return mCertificatePasswordUCValueExpression;
+            }
+            set
+            {
+                if(mCertificatePasswordUCValueExpression != value)
+                {
+                    mCertificatePasswordUCValueExpression = value;
+                    OnPropertyChanged(nameof(CertificatePasswordUCValueExpression));
+                }
+            }
+        }
+
         private bool mConfigureCredential = false;
         [IsSerializedForLocalRepository(false)]
         public bool ConfigureCredential
@@ -246,6 +282,7 @@ namespace GingerCore.GeneralLib
                 if (mConfigureCredential != value)
                 {
                     mConfigureCredential = value;
+                    OnPropertyChanged(nameof(ConfigureCredential));
                 }
             }
         }
@@ -266,7 +303,7 @@ namespace GingerCore.GeneralLib
         }
 
 
-        
+
 
     }
 }

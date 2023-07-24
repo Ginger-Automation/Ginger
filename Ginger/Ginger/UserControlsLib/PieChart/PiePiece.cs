@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Shapes;
-using System.Windows.Media;
 using System.Windows;
-using Ginger.Util;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace Ginger.UserControlsLib.PieChart
 {
@@ -79,7 +78,8 @@ namespace Ginger.UserControlsLib.PieChart
         public double WedgeAngle
         {
             get { return (double)GetValue(WedgeAngleProperty); }
-            set {
+            set
+            {
                 SetValue(WedgeAngleProperty, value);
                 this.Percentage = (value / 360.0);
             }
@@ -177,7 +177,7 @@ namespace Ginger.UserControlsLib.PieChart
         /// Draws the pie piece
         /// </summary>
         private void DrawGeometry(StreamGeometryContext context)
-        {           
+        {
             Point innerArcStartPoint = Utils.ComputeCartesianCoordinate(RotationAngle, InnerRadius);
             innerArcStartPoint.Offset(CentreX, CentreY);
 
@@ -190,7 +190,7 @@ namespace Ginger.UserControlsLib.PieChart
             Point outerArcEndPoint = Utils.ComputeCartesianCoordinate(RotationAngle + WedgeAngle, Radius);
             outerArcEndPoint.Offset(CentreX, CentreY);
 
-            bool largeArc = WedgeAngle>180.0;
+            bool largeArc = WedgeAngle > 180.0;
 
             // Full Pie/Circle then no push out and just draw full Circle
             //360 --> 359 is due to bug which will make empty figure - so temp solution, TODO: fix me

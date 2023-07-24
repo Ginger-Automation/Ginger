@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ namespace Ginger.Actions.PlugIns
     public partial class ActPlugInEditPage : Page
     {
         ActPlugIn mAct;
-        
+
         public ActPlugInEditPage(ActPlugIn act)
         {
             InitializeComponent();
@@ -58,15 +58,15 @@ namespace Ginger.Actions.PlugIns
 
             foreach (ActInputValue param in mAct.InputValues)
             {
-                ActionInputValueInfo actionInputValueInfo = (from x in actionInputsDetails where x.Param == param.Param select x).SingleOrDefault();
+                ActionInputValueInfo actionInputValueInfo = actionInputsDetails.FirstOrDefault(x=> x.Param == param.Param);
                 // update the type based on the info json of the plugin
                 param.ParamType = actionInputValueInfo.ParamType;
-                
+
                 // Add ActionInputValueUserControl for the param value to edit
                 ActionInputValueUserControl actionInputValueUserControl = new ActionInputValueUserControl(Context.GetAsContext(mAct.Context), param, actionInputValueInfo.ParamAttrs);
                 DockPanel.SetDock(actionInputValueUserControl, Dock.Top);
-                actionInputValueUserControl.Margin = new Thickness(0,10,0,0);
-                xActionInputControlsPnl.Children.Add(actionInputValueUserControl);               
+                actionInputValueUserControl.Margin = new Thickness(0, 10, 0, 0);
+                xActionInputControlsPnl.Children.Add(actionInputValueUserControl);
             }
         }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -47,9 +47,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         }
 
         StackPanel ITreeViewItem.Header()
-        {                                                                                    
+        {
             return NewTVItemHeaderStyle(ProjEnvironment);
-        }        
+        }
 
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
@@ -74,7 +74,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void Applications_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             if (mTreeView != null) //TODO: add handling to make sure this will never be Null and won't be set only on SetTools
+            {
                 mTreeView.Tree.RefresTreeNodeChildrens(this);
+            }
         }
 
         bool ITreeViewItem.IsExpandable()
@@ -103,16 +105,16 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Add New Application", AddApplication, null, eImageType.Add);
             AddItemNodeBasicManipulationsOptions(mContextMenu);
-            AddSourceControlOptions(mContextMenu);            
-        }       
-        
+            AddSourceControlOptions(mContextMenu);
+        }
+
         private void AddApplication(object sender, RoutedEventArgs e)
         {
             string appName = string.Empty;
             EnvApplication app = new EnvApplication();
             if (GingerCore.General.GetInputWithValidation("Add Application", "Application Name:", ref appName, null, false, app))
             {
-                app.Name= appName;
+                app.Name = appName;
                 ProjEnvironment.Applications.Add(app);
             }
         }

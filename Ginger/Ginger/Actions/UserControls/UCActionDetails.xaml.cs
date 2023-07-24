@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions.Common;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Actions._Common
 {
@@ -31,7 +31,7 @@ namespace Ginger.Actions._Common
         public UCActionDetails()
         {
             InitializeComponent();
-            this.DataContextChanged += UserControl_DataContextChanged;   
+            this.DataContextChanged += UserControl_DataContextChanged;
         }
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -43,7 +43,7 @@ namespace Ginger.Actions._Common
 
                 // Each action return the info and/or a list of values to show AIVs
                 if (!string.IsNullOrEmpty(AD.Info))
-                {                    
+                {
                     ActionDetailsLabel.Content = AD.Info;
                 }
                 else

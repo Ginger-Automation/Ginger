@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,20 +20,11 @@ using GingerCore;
 using GingerCore.Helpers;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Resources;
-using System.Windows.Shapes;
 
 namespace Ginger.WizardLib
 {
@@ -72,7 +63,7 @@ namespace Ginger.WizardLib
                     l = l.Substring(4);
                     TBH.AddFormattedText(l, foregroundColor, true);
                 }
-                else if(l.Length == 0)
+                else if (l.Length == 0)
                 {
                     TBH.AddLineBreak();
                 }
@@ -89,7 +80,7 @@ namespace Ginger.WizardLib
             Uri uri = new Uri(@"" + location, UriKind.RelativeOrAbsolute);
             StreamResourceInfo MarkDown = Application.GetResourceStream(uri);
             byte[] b = new byte[MarkDown.Stream.Length];
-            MarkDown.Stream.Read(b,0, (int)MarkDown.Stream.Length);
+            MarkDown.Stream.Read(b, 0, (int)MarkDown.Stream.Length);
             string txt = System.Text.Encoding.UTF8.GetString(b);
             return txt;
         }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,24 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Core;
-using GingerCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using amdocs.ginger.GingerCoreNET;
 namespace Ginger.User
 {
     /// <summary>
@@ -48,34 +35,21 @@ namespace Ginger.User
         {
             InitializeComponent();
 
-            mOriginalTerminologyType =  WorkSpace.Instance.UserProfile.TerminologyDictionaryType;
-            xTerminologyTypeComboBox.BindControl( WorkSpace.Instance.UserProfile, nameof(UserProfile.TerminologyDictionaryType));
-            xTerminologyTypeNoteLbl.Visibility = Visibility.Collapsed;
+            mOriginalTerminologyType = WorkSpace.Instance.UserProfile.TerminologyDictionaryType;
+            xTerminologyTypeComboBox.BindControl(WorkSpace.Instance.UserProfile, nameof(UserProfile.TerminologyDictionaryType));
 
-            xLoggingLevelComboBox.BindControl( WorkSpace.Instance.UserProfile, nameof(UserProfile.AppLogLevel));
+            xLoggingLevelComboBox.BindControl(WorkSpace.Instance.UserProfile, nameof(UserProfile.AppLogLevel));
 
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoLoadLastSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAskToUpgradeSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAskToRecoverSolutionCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToRecoverSolutions));            
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoLoadLastRunSetCheckBox, CheckBox.IsCheckedProperty,  WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastRunSet));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoLoadLastSolutionCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAskToUpgradeSolutionCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.DoNotAskToUpgradeSolutions));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAutoLoadLastRunSetCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastRunSet));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xShowSourceControlStatusIconCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.ShowSourceControlStatusIcon));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xShowEnterpriseFeatures, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.ShowEnterpriseFeatures));
-        }
-
-        private void xTerminologyTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if ((GingerCore.eTerminologyType)xTerminologyTypeComboBox.SelectedValue != mOriginalTerminologyType)
-            {
-                xTerminologyTypeNoteLbl.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                xTerminologyTypeNoteLbl.Visibility = Visibility.Collapsed;
-            }
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool startupLocationWithOffset = false)
         {
-             WorkSpace.Instance.UserProfile.SaveBackup();
+            WorkSpace.Instance.UserProfile.SaveBackup();
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button saveBtn = new Button();
@@ -98,7 +72,7 @@ namespace Ginger.User
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
-             WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
+            WorkSpace.Instance.UserProfile.UserProfileOperations.SaveUserProfile();
             _pageGenericWin.Close();
         }
 
@@ -112,8 +86,29 @@ namespace Ginger.User
 
         private void UndoChangesAndClose()
         {
-             WorkSpace.Instance.UserProfile.RestoreFromBackup(true);
+            WorkSpace.Instance.UserProfile.RestoreFromBackup(true);
             _pageGenericWin.Close();
+        }
+
+        private void Expender_Expanded(object sender, RoutedEventArgs e)
+        {
+            CollapseAllExpanderExceptCurrent((Expander)sender);
+        }
+
+        private void CollapseAllExpanderExceptCurrent(Expander currentExpander)
+        {
+            if (currentExpander != xGeneralExpender && xGeneralExpender != null)
+            {
+                xGeneralExpender.IsExpanded = false;
+            }
+            if(currentExpander != xAutoLoadExpender && xAutoLoadExpender != null)
+            {
+                xAutoLoadExpender.IsExpanded = false;
+            }
+            if(currentExpander != xSourceControlExpender && xSourceControlExpender != null)
+            {
+                xSourceControlExpender.IsExpanded = false;
+            }
         }
     }
 }

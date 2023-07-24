@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,10 +20,6 @@ using Amdocs.Ginger.UserControls;
 using Ginger.Agents;
 using GingerCore;
 using GingerWPFUnitTest.POMs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
@@ -31,7 +27,7 @@ namespace GingerTest.POMs.Common
 {
     public class ucAgentControlPOM : GingerPOMBase
     {
-    
+
         ucAgentControl mUCAgentControl;
         public ucAgentControlPOM(ucAgentControl ucAgentControl)
         {
@@ -40,7 +36,8 @@ namespace GingerTest.POMs.Common
 
         public void SelectValueUCAgentControl(Agent agent)
         {
-            Execute(() => {
+            Execute(() =>
+            {
                 ComboBox comboBox = (ComboBox)FindElementByAutomationID<ComboBox>(mUCAgentControl, "AgentsComboBox AID");
                 comboBox.SelectedValue = agent;
             });

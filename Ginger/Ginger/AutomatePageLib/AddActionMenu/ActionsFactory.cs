@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,13 +24,11 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.ApiModelsFolder;
-using Ginger.Repository;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
 using GingerCore.Activities;
-using GingerCore.Drivers.Common;
 using GingerCore.Environments;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -58,17 +56,21 @@ namespace Ginger.BusinessFlowPages
         public static int AddActionsHandler(object mItem, Context mContext, int targetIndex = -1)
         {
             Act instance = null;
-            ePlatformType currentActivityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == mContext.Activity.TargetApplication select x.Platform).FirstOrDefault();
 
             if (mContext.Activity != null)
             {
                 mContext.BusinessFlow.CurrentActivity = mContext.Activity;//so new Actions will be added to correct Activity
+            }
+            else { 
+                return -1;
             }
             if (!mContext.Activity.EnableEdit && mContext.Activity.IsLinkedItem)
             {
                 Reporter.ToUser(eUserMsgKey.EditLinkSharedActivities);
                 return -1;
             }
+
+            ePlatformType currentActivityPlatform = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x=> x.AppName == mContext.Activity.TargetApplication).Platform;
             if (mItem is Act)
             {
                 Act selectedAction = mItem as Act;
@@ -192,11 +194,13 @@ namespace Ginger.BusinessFlowPages
             }
             else
             {
-                instance = (Act)selectedAction.CreateCopy();
+                //GetNewAction might change the list of InputValues, hence calling before CreateCopy
                 if (selectedAction is IObsoleteAction && (selectedAction as IObsoleteAction).IsObsoleteForPlatform(mContext.Platform))
                 {
                     eUserMsgSelection userSelection;
-                    if (((IObsoleteAction)selectedAction).GetNewAction() == null)
+                    bool hasNewAction = ((IObsoleteAction)selectedAction).GetNewAction() == null;
+                    instance = (Act)selectedAction.CreateCopy();
+                    if (hasNewAction)
                     {
                         userSelection = Reporter.ToUser(eUserMsgKey.WarnAddLegacyAction, ((IObsoleteAction)selectedAction).TargetActionTypeName());
                         if (userSelection == eUserMsgSelection.No)
@@ -223,6 +227,10 @@ namespace Ginger.BusinessFlowPages
                         }
                     }
                 }
+                else
+                {
+                    instance = (Act)selectedAction.CreateCopy();
+                }
 
                 for (int i = 0; i < selectedAction.InputValues.Count; i++)
                 {
@@ -238,7 +246,7 @@ namespace Ginger.BusinessFlowPages
 
                     //Check if target already exist else add it
                     // TODO: search only in targetplugin type
-                    TargetPlugin targetPlugin = (TargetPlugin)(from x in mContext.BusinessFlow.TargetApplications where x.Name == p.ServiceId select x).SingleOrDefault();
+                    TargetPlugin targetPlugin = (TargetPlugin)mContext.BusinessFlow.TargetApplications.FirstOrDefault(x=>  x.Name == p.ServiceId);
                     if (targetPlugin == null)
                     {
                         // check if interface add it
@@ -271,7 +279,7 @@ namespace Ginger.BusinessFlowPages
             string elementVal = string.Empty;
             if (elementInfo.OptionalValuesObjectsList.Count > 0)
             {
-                elementVal = Convert.ToString(elementInfo.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
+                elementVal = Convert.ToString(elementInfo.OptionalValuesObjectsList.FirstOrDefault(v => v.IsDefault).Value);
             }
 
             ElementActionCongifuration actionConfigurations = new ElementActionCongifuration
@@ -301,7 +309,7 @@ namespace Ginger.BusinessFlowPages
             bool copyAsLink = true;
             if (!string.IsNullOrWhiteSpace(ActivitiesGroupID))
             {
-                parentGroup = businessFlow.ActivitiesGroups.Where(g => g.Name == ActivitiesGroupID).FirstOrDefault();
+                parentGroup = businessFlow.ActivitiesGroups.FirstOrDefault(g => g.Name == ActivitiesGroupID);
             }
 
             var activitiesGroupSelectionPage = new ActivitiesGroupSelectionPage(businessFlow, parentGroup, IsPomActivity);
@@ -335,7 +343,7 @@ namespace Ginger.BusinessFlowPages
                     //map activities target application to BF if missing in BF
                     userSelection = businessFlow.MapTAToBF(userSelection, activityIns, WorkSpace.Instance.Solution.ApplicationPlatforms);
                     businessFlow.SetActivityTargetApplication(activityIns);
-                    if(insertIndex >= 0)
+                    if (insertIndex >= 0)
                     {
                         businessFlow.ActivitiesGroups.Move(businessFlow.ActivitiesGroups.IndexOf(parentGroup), insertIndex);
                     }

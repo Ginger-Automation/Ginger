@@ -16,7 +16,7 @@ using System.Threading;
 namespace GingerCoreNETUnitTest.PluginsLib
 {
     // Generic platform plugin tester
-    
+
     [Ignore]  // Fail on Linux with permission denied, on Mac get stuck
     [TestClass]
     [Level3]
@@ -24,7 +24,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
     {
         static TestHelper mTestHelper = new TestHelper();
         public TestContext TestContext { get; set; }
-        
+
         static Agent agent;
 
         [ClassInitialize]
@@ -45,7 +45,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
             WorkSpace.Instance.PlugInsManager.AddPluginPackage(pluginFolder);
 
             // Start Agent
-            
+
             agent = new Agent();
             agent.AgentType = Agent.eAgentType.Service;
             agent.PluginId = "SeleniumPlugin";
@@ -64,7 +64,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
             if (GG.NodeList.Count == 0)
             {
-                throw new Exception ("GG.NodeList.Count == 0");
+                throw new Exception("GG.NodeList.Count == 0");
             }
 
             mTestHelper.Log("Done Waiting");
@@ -90,11 +90,11 @@ namespace GingerCoreNETUnitTest.PluginsLib
             mTestHelper.TestCleanup();
         }
 
-        [TestMethod]        
+        [TestMethod]
         public void GotoURL()
         {
             // Arrange
-            ActBrowserElement actBrowserElementFake = new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL,  Value = "http://www.facebook.com" };            
+            ActBrowserElement actBrowserElementFake = new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, Value = "http://www.facebook.com" };
 
             // Act
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElementFake);
@@ -109,21 +109,21 @@ namespace GingerCoreNETUnitTest.PluginsLib
         {
             // Arrange
             // ActUIElement actUIElement  // Until we will have ActUIElement in GingerCoreNEt we create a fake actions
-            ActBrowserElement actBrowserElement = new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, Value = "http://www.facebook.com" };            
+            ActBrowserElement actBrowserElement = new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, Value = "http://www.facebook.com" };
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElement);
 
             // Act
-            ActUIElement actUIElementFake = new ActUIElement() { ElementLocateBy = eLocateBy.ByID, ElementLocateValue = "u_0_e", ElementType = eElementType.TextBox, ElementAction = ActUIElement.eElementAction.SetText};
+            ActUIElement actUIElementFake = new ActUIElement() { ElementLocateBy = eLocateBy.ByID, ElementLocateValue = "u_0_e", ElementType = eElementType.TextBox, ElementAction = ActUIElement.eElementAction.SetText };
             for (int i = 0; i < 10; i++)
             {
                 actUIElementFake.Value = "#" + i;
                 ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actUIElementFake);
-                Assert.IsTrue(string.IsNullOrEmpty(actUIElementFake.Error), "no Error #" +  i);
+                Assert.IsTrue(string.IsNullOrEmpty(actUIElementFake.Error), "no Error #" + i);
             }
 
             // Assert
             Assert.IsTrue(string.IsNullOrEmpty(actBrowserElement.Error));
-            
+
 
         }
 
@@ -134,10 +134,10 @@ namespace GingerCoreNETUnitTest.PluginsLib
             ActBrowserElement actBrowserElement = new ActBrowserElement() { ControlAction = ActBrowserElement.eControlAction.GotoURL, Value = "http://www.facebook.com" };
             ActUIElement setTextBoxAction = new ActUIElement() { ElementLocateBy = eLocateBy.ByID, ElementLocateValue = "u_0_e", ElementType = eElementType.TextBox, ElementAction = ActUIElement.eElementAction.SetText, Value = "hello" };
             ActUIElement getTextBoxAction = new ActUIElement() { ElementLocateBy = eLocateBy.ByID, ElementLocateValue = "u_0_e", ElementType = eElementType.TextBox, ElementAction = ActUIElement.eElementAction.GetText };
-            
+
             // Act
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, actBrowserElement);
-            
+
             setTextBoxAction.Value = "12345";
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, setTextBoxAction);
             ExecuteOnPlugin.ExecutePlugInActionOnAgent(agent, getTextBoxAction);
@@ -152,7 +152,7 @@ namespace GingerCoreNETUnitTest.PluginsLib
 
         }
 
-      
+
 
     }
 }

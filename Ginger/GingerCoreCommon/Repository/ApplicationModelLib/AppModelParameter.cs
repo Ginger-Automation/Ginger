@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
-using System.Linq;
 
 namespace Amdocs.Ginger.Repository
 {
     public class AppModelParameter : RepositoryItemBase, IParentOptionalValuesObject
     {
-        
+
         public virtual string ParamLevel { get { return "Local"; } set { } }
 
         string mPlaceHolder = string.Empty;
@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.Repository
             }
             set
             {
-                if(mDescription != value)
+                if (mDescription != value)
                 {
                     mDescription = value;
                     OnPropertyChanged(nameof(Description));
@@ -154,13 +154,14 @@ namespace Amdocs.Ginger.Repository
 
 
 
-        public string OptionalValuesString {
+        public string OptionalValuesString
+        {
             get
             {
                 string OptionalValuesString = string.Empty;
                 foreach (OptionalValue optionalValue in OptionalValuesList)
                 {
-                    if(optionalValue.IsDefault)
+                    if (optionalValue.IsDefault)
                         OptionalValuesString += optionalValue.Value + "*,";
                     else
                         OptionalValuesString += optionalValue.Value + ",";
@@ -175,7 +176,7 @@ namespace Amdocs.Ginger.Repository
         {
         }
 
-        public AppModelParameter(string PlaceHolder, string Description, string TagName,string NodeXpath, ObservableList<OptionalValue> OptionalValuesList)
+        public AppModelParameter(string PlaceHolder, string Description, string TagName, string NodeXpath, ObservableList<OptionalValue> OptionalValuesList)
         {
             this.PlaceHolder = PlaceHolder;
             this.Description = Description;
@@ -186,7 +187,7 @@ namespace Amdocs.Ginger.Repository
 
         public string GetDefaultValue()
         {
-            OptionalValue defaultValue = OptionalValuesList.Where(x => x.IsDefault == true).FirstOrDefault();
+            OptionalValue defaultValue = OptionalValuesList.FirstOrDefault(x => x.IsDefault == true);
             if (defaultValue != null)
                 return defaultValue.Value;
             return string.Empty;
@@ -218,5 +219,5 @@ namespace Amdocs.Ginger.Repository
         {
             OnPropertyChanged(nameof(AppModelParameter.OptionalValuesString));
         }
-    }   
+    }
 }

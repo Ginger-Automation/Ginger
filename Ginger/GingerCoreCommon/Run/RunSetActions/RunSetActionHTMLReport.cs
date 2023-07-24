@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,20 +16,15 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.Reports;
-using Amdocs.Ginger;
+using GingerCore.ALM;
 //using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore;
-using GingerCore.DataSource;
 //using Ginger.Reports.GingerExecutionkReport;
 //using Amdocs.Ginger.CoreNET.Logger;
-using System.IO;
 //using Amdocs.Ginger.CoreNET.Utility;
 
 namespace Ginger.Run.RunSetActions
@@ -64,7 +59,7 @@ namespace Ginger.Run.RunSetActions
                 OnPropertyChanged(nameof(HTMLReportFolderName));
             }
         }
-        
+
         [IsSerializedForLocalRepository]
         public int selectedHTMLReportTemplateID { get; set; }
 
@@ -76,16 +71,21 @@ namespace Ginger.Run.RunSetActions
 
         public override void Execute(IReportInfo RI)
         {
-            RunSetActionHTMLReportOperations.Execute(RI);
+            RunSetActionHTMLReportOperations?.Execute(RI);
         }
 
         public override string GetEditPage()
         {
-           // RunSetActionHTMLReportEditPage p = new RunSetActionHTMLReportEditPage(this);
+            // RunSetActionHTMLReportEditPage p = new RunSetActionHTMLReportEditPage(this);
             return "RunSetActionHTMLReportEditPage";
         }
 
         public override void PrepareDuringExecAction(ObservableList<GingerRunner> Gingers)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override PublishToALMConfig.eALMTestSetLevel GetAlMTestSetLevel()
         {
             throw new NotImplementedException();
         }

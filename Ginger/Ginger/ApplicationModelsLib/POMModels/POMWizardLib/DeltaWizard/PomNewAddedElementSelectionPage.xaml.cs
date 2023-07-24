@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
-using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -53,7 +53,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             mPomDeltaViewPage.xMainElementsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
 
             mPomDeltaViewPage.xMainElementsGrid.txtSearch.Text = searchText;
-            xNewPomElementsPageFrame.Content = mPomDeltaViewPage;
+            xNewPomElementsPageFrame.ClearAndSetContent(mPomDeltaViewPage);
 
 
             // set LiveSpy Agent
@@ -73,13 +73,13 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 {
                     xLiveSpy.SetLableStatusText("Element found in new added list");
                     xLiveSpy.mWinExplorer.LearnElementInfoDetails(elementInfo);
-                    var deltaElement = mDeltaElements.Where(x => x.ElementInfo.XPath.Equals(elementInfo.XPath)).FirstOrDefault();
+                    var deltaElement = mDeltaElements.FirstOrDefault(x => x.ElementInfo.XPath.Equals(elementInfo.XPath));
                     if (deltaElement != null)
                     {
                         mDeltaElements.CurrentItem = deltaElement;
                         mPomDeltaViewPage.xMainElementsGrid.ScrollToViewCurrentItem();
                     }
-                   
+
                 }
                 else
                 {
@@ -88,7 +88,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             }
         }
 
- 
+
         internal DeltaElementInfo ShowAsWindow(string winTitle)
         {
             ObservableList<Button> windowButtons = new ObservableList<Button>();

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ namespace Ginger.POMsLib
 
             //mPOM = POM;
 
-            
+
 
             //mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, mPOM.ScreenShot);
             //ScreenshotFrame.Content = mScreenShotViewPage;
@@ -200,7 +200,7 @@ namespace Ginger.POMsLib
 
         private void C_TextChanged(object sender, TextChangedEventArgs e)
         {
-            
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -217,11 +217,11 @@ namespace Ginger.POMsLib
             //act.ElementType = eElementType.Button;
             //act.ElementLocateValue = @"\POM\App\v1\Login\loginbutton";  //TODO: fix me
             //act.ElementAction = ActUIElement.eElementAction.Click;
-            
+
             //App.BusinessFlow.AddAct(act);
         }
 
-       
+
         private void RecordButton_Click(object sender, RoutedEventArgs e)
         {
             mRecording = !mRecording;

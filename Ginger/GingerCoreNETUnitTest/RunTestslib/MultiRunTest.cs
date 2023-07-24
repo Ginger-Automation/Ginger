@@ -1,6 +1,5 @@
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.CoreNET.Run;
-using Amdocs.Ginger.Repository;
 using GingerCore.Actions.PlugIns;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.DriversLib;
@@ -14,7 +13,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
     [TestClass]
     public class MultiRunTest
     {
-        static GingerGrid GG;        
+        static GingerGrid GG;
 
 
         [ClassInitialize]
@@ -26,11 +25,11 @@ namespace GingerCoreNETUnitTest.RunTestslib
             GG.Start();
 
             // Add 2 Ginger Nodes with Dummy Driver
-            DummyDriver DummyDriver1 = new DummyDriver();            
+            DummyDriver DummyDriver1 = new DummyDriver();
             GingerNode GN = new GingerNode(DummyDriver1);
             GN.StartGingerNode("N1", HubIP: SocketHelper.GetLocalHostIP(), HubPort: GingerHubPort);
 
-            DummyDriver DummyDriver2 = new DummyDriver();            
+            DummyDriver DummyDriver2 = new DummyDriver();
             GingerNode GingerNode2 = new GingerNode(DummyDriver2);
             GingerNode2.StartGingerNode("N2", HubIP: SocketHelper.GetLocalHostIP(), HubPort: GingerHubPort);
         }
@@ -159,7 +158,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
             ExecuteOnPlugin.ParseActionResult(rc, a1);
         }
 
-       
+
 
     }
 }

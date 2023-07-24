@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.CoreNET
             return runSetReports;
         }
 
-        public List<RunSetReport> GetRunsetExecutionInfo(Guid soluionGuid,Guid runsetGuid)
+        public List<RunSetReport> GetRunsetExecutionInfo(Guid soluionGuid, Guid runsetGuid)
         {
             var runSetReports = new List<RunSetReport>();
             var baseURI = GetReportDataServiceUrl();
@@ -77,7 +77,7 @@ namespace Amdocs.Ginger.CoreNET
         }
         private static string GetReportDataServiceUrl()
         {
-            var baseURI = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().CentralizedReportDataServiceURL;
+            var baseURI = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).CentralizedReportDataServiceURL;
 
             if (!string.IsNullOrEmpty(baseURI) && !baseURI.EndsWith("/"))
             {
@@ -101,7 +101,7 @@ namespace Amdocs.Ginger.CoreNET
                     StartTimeStamp = Convert.ToDateTime(runsetHLInfo.StartTime).ToUniversalTime(),
                     EndTimeStamp = Convert.ToDateTime(runsetHLInfo.EndTime).ToUniversalTime(),
                     Elapsed = runsetHLInfo.Duration,
-                    ExecutionDurationHHMMSS = GingerCoreNET.GeneralLib.General.TimeConvert((runsetHLInfo.Duration/1000).ToString()),
+                    ExecutionDurationHHMMSS = GingerCoreNET.GeneralLib.General.TimeConvert((runsetHLInfo.Duration / 1000).ToString()),
                     RunSetExecutionStatus = runStatus,
                     DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.Remote
                 });
@@ -124,7 +124,7 @@ namespace Amdocs.Ginger.CoreNET
         }
         private static string GetReportHTMLServiceUrl()
         {
-            var baseURI = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault().CentralizedHtmlReportServiceURL;
+            var baseURI = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).CentralizedHtmlReportServiceURL;
 
             if (!string.IsNullOrEmpty(baseURI))
             {

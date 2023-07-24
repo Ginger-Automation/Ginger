@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -43,13 +43,13 @@ namespace Ginger.Run
     {
         GenericWindow genWin = null;
         ObservableList<BusinessFlow> mBfs = new ObservableList<BusinessFlow>();
-        PublishToALMConfig mPublishToALMConfig = new PublishToALMConfig();        
+        PublishToALMConfig mPublishToALMConfig = new PublishToALMConfig();
         public bool IsProcessing = false;
         ValueExpression mVE = null;
         public ExportResultsToALMConfigPage(RunSetActionPublishToQC runSetActionPublishToQC)
         {
             InitializeComponent();
-            Context context = new Context() ;
+            Context context = new Context();
             if (runSetActionPublishToQC.VariableForTCRunName == null)
             {
                 runSetActionPublishToQC.VariableForTCRunName = "GingerRun_{CS Exp=DateTime.Now}";
@@ -60,7 +60,7 @@ namespace Ginger.Run
             BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.isVariableInTCRunUsed));
             BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.toAttachActivitiesGroupReport));
             xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));
-            xALMTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType), 
+            xALMTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType),
                 GingerCore.General.GetEnumValuesForComboAndAddExtraValues(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = RunSetActionPublishToQC.AlmTypeDefault, Value = RunSetActionPublishToQC.AlmTypeDefault } }), ComboBox.TextProperty);
             xALMTestSetLevelCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.ALMTestSetLevel), Enum.GetValues(typeof(eALMTestSetLevel)).Cast<eALMTestSetLevel>().ToList(), ComboBox.SelectedValueProperty);
             xALMTestSetLevelCbx.ComboBox.SelectionChanged += xALMTestSetLevelCbx_SelectionChanged;
@@ -88,7 +88,7 @@ namespace Ginger.Run
             xFilterByStatusDroplist.BindControl(mPublishToALMConfig, nameof(PublishToALMConfig.FilterStatus));
         }
 
-        static ExportResultsToALMConfigPage mInstance= null;
+        static ExportResultsToALMConfigPage mInstance = null;
         public static ExportResultsToALMConfigPage Instance
         {
             get
@@ -101,21 +101,30 @@ namespace Ginger.Run
             }
         }
 
-        public void Init(ObservableList<BusinessFlow> bfs, ValueExpression VE)
+        public bool Init(ObservableList<BusinessFlow> bfs, ValueExpression VE)
         {
             this.Title = "Export Results To ALM";
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
-            xALMTypeCbx.Init(AlmConfig.AlmType, nameof(RunSetActionPublishToQC.PublishALMType), Enum.GetValues(typeof(eALMType)).Cast<eALMType>().ToList(), ComboBox.SelectedValueProperty);
-            xALMTestSetLevelCbx.Init(PublishToALMConfig.eALMTestSetLevel.BusinessFlow, nameof(RunSetActionPublishToQC.ALMTestSetLevel), Enum.GetValues(typeof(eALMTestSetLevel)).Cast<eALMTestSetLevel>().ToList(), ComboBox.SelectedValueProperty);
-            xALMTypeCbx.ComboBox.SelectedValue = AlmConfig.AlmType;
-            xALMTestSetLevelCbx.ComboBox.SelectedValue = PublishToALMConfig.eALMTestSetLevel.BusinessFlow;
-            xALMTestSetLevelCbx.IsEnabled = false;
-            xALMTypeCbx.IsEnabled = false;
-            mBfs = bfs;
-            mVE = VE;
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
+            if (AlmConfig != null)
+            {
+                xALMTypeCbx.Init(AlmConfig.AlmType, nameof(RunSetActionPublishToQC.PublishALMType), Enum.GetValues(typeof(eALMType)).Cast<eALMType>().ToList(), ComboBox.SelectedValueProperty);
+                xALMTestSetLevelCbx.Init(PublishToALMConfig.eALMTestSetLevel.BusinessFlow, nameof(RunSetActionPublishToQC.ALMTestSetLevel), Enum.GetValues(typeof(eALMTestSetLevel)).Cast<eALMTestSetLevel>().ToList(), ComboBox.SelectedValueProperty);
+                xALMTypeCbx.ComboBox.SelectedValue = AlmConfig.AlmType;
+                xALMTestSetLevelCbx.ComboBox.SelectedValue = PublishToALMConfig.eALMTestSetLevel.BusinessFlow;
+                xALMTestSetLevelCbx.IsEnabled = false;
+                xALMTypeCbx.IsEnabled = false;
+                mBfs = bfs;
+                mVE = VE;
+                return true;
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please configure ALM Settings");
+                return false;
+            }
         }
         internal void ShowAsWindow()
-        {                                               
+        {
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button SaveAllButton = new Button();
             SaveAllButton.Content = "Export To ALM";
@@ -125,21 +134,22 @@ namespace Ginger.Run
             this.Height = 180;
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, winButtons, true);
         }
-                
+
         private async void xExportToALMBtn_Click(object sender, RoutedEventArgs e)
-        {            
+        {
             string result = string.Empty;
             xExportToALMLoadingIcon.Visibility = Visibility.Visible;
             IsProcessing = true;
             mPublishToALMConfig.CalculateTCRunName(mVE);
-            await Task.Run(() => {
-                 ALMIntegration.Instance.ExportBusinessFlowsResultToALM(mBfs, ref result, mPublishToALMConfig, eALMConnectType.Auto, true);
-               });
+            await Task.Run(() =>
+            {
+                ALMIntegration.Instance.ExportBusinessFlowsResultToALM(mBfs, ref result, mPublishToALMConfig, eALMConnectType.Auto, true);
+            });
             IsProcessing = false;
-            xExportToALMLoadingIcon.Visibility = Visibility.Collapsed;          
-            Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALM, result);            
+            xExportToALMLoadingIcon.Visibility = Visibility.Collapsed;
+            Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALM, result);
         }
-       
+
         private void UseVariableInTCRunNameCbx_Unchecked(object sender, RoutedEventArgs e)
         {
             if (!(bool)UseVariableInTCRunNameCbx.IsChecked)
@@ -154,15 +164,15 @@ namespace Ginger.Run
             {
                 VariableForTCRunNamePanel.IsEnabled = true;
             }
-        }        
+        }
         private void AttachActivitiesGroupReportCbx_Unchecked(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
         private void AttachActivitiesGroupReportCbx_Checked(object sender, RoutedEventArgs e)
         {
-            
+
         }
 
         private void xSetFieldsBtn_Click(object sender, RoutedEventArgs e)
@@ -174,7 +184,7 @@ namespace Ginger.Run
             }
             else
             {
-                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(alm => alm.AlmType.ToString().Equals(xALMTypeCbx.ComboBoxSelectedValue.ToString())).FirstOrDefault();
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(alm => alm.AlmType.ToString().Equals(xALMTypeCbx.ComboBoxSelectedValue.ToString()));
             }
             if (AlmConfig is null)
             {
@@ -187,13 +197,13 @@ namespace Ginger.Run
             }
             else
             {
-               
+
                 try
                 {
                     ALMIntegration.Instance.UpdateALMType(AlmConfig.AlmType, true);
                     ObservableList<ExternalItemFieldBase> almItemFields = ALMIntegration.Instance.GetALMItemFieldsREST(true, AlmDataContractsStd.Enums.ResourceType.ALL, null);
                     ObservableList<ExternalItemFieldBase> operationItemFields = new ObservableList<ExternalItemFieldBase>();
-                    foreach(ExternalItemFieldBase field in mPublishToALMConfig.AlmFields)
+                    foreach (ExternalItemFieldBase field in mPublishToALMConfig.AlmFields)
                     {
                         operationItemFields.Add(field);
                     }
@@ -251,7 +261,7 @@ namespace Ginger.Run
         }
         private void xALMTypeCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(xALMTypeCbx.ComboBoxSelectedValue is not null && xALMTypeCbx.ComboBoxSelectedValue.ToString().Equals(RunSetActionPublishToQC.AlmTypeDefault))
+            if (xALMTypeCbx.ComboBoxSelectedValue is not null && xALMTypeCbx.ComboBoxSelectedValue.ToString().Equals(RunSetActionPublishToQC.AlmTypeDefault))
             {
                 xSetFieldsBtn.Visibility = Visibility.Collapsed;
                 return;

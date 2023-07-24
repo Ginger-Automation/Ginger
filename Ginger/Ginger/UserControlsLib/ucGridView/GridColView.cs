@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ namespace Ginger.UserControls
         public GridColView()
         {
             CellTemplate = null;
-            CellValuesList = null;            
+            CellValuesList = null;
             HorizontalAlignment = HorizontalAlignment.Left;
         }
 
@@ -38,13 +38,13 @@ namespace Ginger.UserControls
             CheckBox,
             ComboBox,
             Link,
-            Template,            
+            Template,
             DataColGrid,
             Image,
             ImageMaker,
         }
 
-        public string Field { get; set; }             
+        public string Field { get; set; }
         public eGridColStyleType? StyleType { get; set; }
         public DataTemplate CellTemplate { get; set; }
 
@@ -61,7 +61,7 @@ namespace Ginger.UserControls
         public IEnumerable CellValuesList { get; set; }
         public BindingMode? BindingMode { get; set; }
 
-        public string Header { get; set; }   
+        public string Header { get; set; }
         public double? MaxWidth { get; set; }
         public double? WidthWeight { get; set; }
         public int? Order { get; set; }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.Actions;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore.Actions;
 
 namespace Ginger.Actions
 {
@@ -39,54 +39,54 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "UIATextBoxAction");
 
             //TODO add dynamic parent windows population
-           // lstParentWindows = new ObservableCollection<string>();
-           // lstParentWindows.Add("Root");
-           // lstParentWindows.Add("Parent Window");
-           // ParentComboBox.ItemsSource = lstParentWindows;
+            // lstParentWindows = new ObservableCollection<string>();
+            // lstParentWindows.Add("Root");
+            // lstParentWindows.Add("Parent Window");
+            // ParentComboBox.ItemsSource = lstParentWindows;
         }
 
         void OnWindowClosing(object sender, RoutedEventArgs e)
         {
-        //    //added closing event for UIAutomation parent event
-        //    //TODO make parent window element locator object oriented
-        //    if (currentAct.GetType() == typeof(GingerCore.Actions.ActUIATextBox) || currentAct.GetType() == typeof(GingerCore.Actions.ActUIAButton))
-        //    {
-        //        try
-        //        {
-        //            UIAutomation UIA = new UIAutomation();
-        //            if (RootWindow)
-        //            {
-        //                if (currentAct.LocateValue.IndexOf('#') < 0) { currentAct.LocateValue = currentAct.LocateValue + "#RootWindow"; return; }
+            //    //added closing event for UIAutomation parent event
+            //    //TODO make parent window element locator object oriented
+            //    if (currentAct.GetType() == typeof(GingerCore.Actions.ActUIATextBox) || currentAct.GetType() == typeof(GingerCore.Actions.ActUIAButton))
+            //    {
+            //        try
+            //        {
+            //            UIAutomation UIA = new UIAutomation();
+            //            if (RootWindow)
+            //            {
+            //                if (currentAct.LocateValue.IndexOf('#') < 0) { currentAct.LocateValue = currentAct.LocateValue + "#RootWindow"; return; }
 
-        //                if (currentAct.LocateValue.IndexOf('#') >= 0)
-        //                {
-        //                    string[] lstLocateValue = currentAct.LocateValue.Split('#');
-        //                    currentAct.LocateValue = lstLocateValue[0] + "#RootWindow";
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (currentAct.LocateValue.IndexOf('#') < 0)
-        //                {
-        //                    currentAct.LocateValue = currentAct.LocateValue + "#" + UIA.getSelectedLocators(olParentLocators); return;
-        //                }
-        //                if (currentAct.LocateValue.IndexOf('#') >= 0)
-        //                {
-        //                    string[] lstLocateValue = currentAct.LocateValue.Split('#');
-        //                    currentAct.LocateValue = lstLocateValue[0] + "#" + UIA.getSelectedLocators(olParentLocators); return;
-        //                }
-        //            }
-        //        }
-        //        catch (Exception ex) { }
-                
-        //    }
-            
+            //                if (currentAct.LocateValue.IndexOf('#') >= 0)
+            //                {
+            //                    string[] lstLocateValue = currentAct.LocateValue.Split('#');
+            //                    currentAct.LocateValue = lstLocateValue[0] + "#RootWindow";
+            //                }
+            //            }
+            //            else
+            //            {
+            //                if (currentAct.LocateValue.IndexOf('#') < 0)
+            //                {
+            //                    currentAct.LocateValue = currentAct.LocateValue + "#" + UIA.getSelectedLocators(olParentLocators); return;
+            //                }
+            //                if (currentAct.LocateValue.IndexOf('#') >= 0)
+            //                {
+            //                    string[] lstLocateValue = currentAct.LocateValue.Split('#');
+            //                    currentAct.LocateValue = lstLocateValue[0] + "#" + UIA.getSelectedLocators(olParentLocators); return;
+            //                }
+            //            }
+            //        }
+            //        catch (Exception ex) { }
+
+            //    }
+
         }
 
         public void SetGridView()
         {
         }
-        
+
         private void ActionNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,9 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using GingerCore.Environments;
-using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System.Linq;
@@ -34,7 +32,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
     public partial class AddNewEnvAppsPage : Page, IWizardPage
     {
         AddEnvironmentWizard mWizard;
-        
+
         public AddNewEnvAppsPage()
         {
             InitializeComponent();
@@ -47,7 +45,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
                 case EventType.Init:
                     mWizard = (AddEnvironmentWizard)WizardEventArgs.Wizard;
 
-                    foreach (ApplicationPlatform appPlat in  WorkSpace.Instance.Solution.ApplicationPlatforms)
+                    foreach (ApplicationPlatform appPlat in WorkSpace.Instance.Solution.ApplicationPlatforms)
                     {
                         EnvApplication envApp = new EnvApplication() { Name = appPlat.AppName };
                         envApp.Active = true;
@@ -61,8 +59,8 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
 
                     xAppsListBox.ItemsSource = mWizard.apps;
                     break;
-                
-            }  
+
+            }
 
         }
 
@@ -72,8 +70,9 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
             EnvApplication envApp = new EnvApplication() { Name = newAppName };
             if (GingerCore.General.GetInputWithValidation("Add Environment Application", "Application Name:", ref newAppName, null, false, envApp))
             {
-                if (mWizard.apps.Where(x => x.Name == newAppName).FirstOrDefault() == null)
-                {                    
+                if (mWizard.apps.FirstOrDefault(x => x.Name == newAppName) == null)
+                {
+                    envApp.Name = newAppName;
                     envApp.Active = true;
                     mWizard.apps.Add(envApp);
                 }

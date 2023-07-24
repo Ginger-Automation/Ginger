@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,7 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
 using GingerCore.Platforms;
@@ -26,9 +28,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace GingerCore.Actions
 {
@@ -150,6 +149,8 @@ namespace GingerCore.Actions
             CloseAll,
             [EnumValueDescription("Get Browser Logs")]
             GetBrowserLog,
+            [EnumValueDescription("Get Console Logs")]
+            GetConsoleLog,
             [EnumValueDescription("Refresh")]
             Refresh,
             [EnumValueDescription("Navigate Back")]
@@ -184,7 +185,7 @@ namespace GingerCore.Actions
         {
             get
             {
-                return GetOrCreateInputParam<eLocateBy>(Act.Fields.LocateBy,eLocateBy.NA);
+                return GetOrCreateInputParam<eLocateBy>(Act.Fields.LocateBy, eLocateBy.NA);
             }
             set
             {
@@ -218,8 +219,8 @@ namespace GingerCore.Actions
             }
             set
             {
-                 AddOrUpdateInputParamValue(Fields.ControlAction, value.ToString());
-     
+                AddOrUpdateInputParamValue(Fields.ControlAction, value.ToString());
+
                 OnPropertyChanged(nameof(ControlAction));
             }
         }
@@ -330,7 +331,7 @@ namespace GingerCore.Actions
         {
             return "BrowserAction";
         }
-        
+
         public override String ActionType
         {
             get
@@ -369,9 +370,9 @@ namespace GingerCore.Actions
                     platformAction.InputParams.Add(aiv.Param, aiv.ValueForDriver);
                 }
             }
-     
 
-            return platformAction;            
+
+            return platformAction;
         }
 
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)
@@ -397,7 +398,7 @@ namespace GingerCore.Actions
             All,
             [EnumValueDescription("Fetch/XHR")]
             FetchOrXHR,
-            
+
         }
 
         [IsSerializedForLocalRepository]

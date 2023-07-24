@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,9 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
-using GingerCore;
-using System;
-using System.ComponentModel;
 
 namespace GingerCoreNET.ALMLib
 {
@@ -162,6 +159,21 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
+        private string mALMProjectGUID;
+        [IsSerializedForLocalRepository]
+        public string ALMProjectGUID
+        {
+            get { return mALMProjectGUID; }
+            set
+            {
+                if (mALMProjectGUID != value)
+                {
+                    mALMProjectGUID = value;
+                    OnPropertyChanged(nameof(ALMProjectGUID));
+                }
+            }
+        }
+
         private string mALMConfigPackageFolderPath;
         [IsSerializedForLocalRepository]
         public string ALMConfigPackageFolderPath
@@ -203,6 +215,34 @@ namespace GingerCoreNET.ALMLib
             set
             {
                 mAlmType = value;
+            }
+        }
+
+        private string mIsTestSuite;
+        public string IsTestSuite
+        {
+            get { return mIsTestSuite; }
+            set
+            {
+                if (mIsTestSuite != value)
+                {
+                    mIsTestSuite = value;
+                    OnPropertyChanged(nameof(IsTestSuite));
+                }
+            }
+        }
+
+        private string mDefectFieldAPI;
+        public string DefectFieldAPI
+        {
+            get { return mDefectFieldAPI; }
+            set
+            {
+                if (mDefectFieldAPI != value)
+                {
+                    mDefectFieldAPI = value;
+                    OnPropertyChanged(nameof(DefectFieldAPI));
+                }
             }
         }
 

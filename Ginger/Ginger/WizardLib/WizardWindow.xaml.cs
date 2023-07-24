@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Ginger;
-using GingerCore;
+using GingerCore.GeneralLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common;
 using System.Windows.Threading;
 
 namespace GingerWPF.WizardLib
@@ -116,11 +116,11 @@ namespace GingerWPF.WizardLib
             CurrentWizardWindow = null;
         }
 
-       
+
         void RefreshCurrentPage()
         {
             WizardPage page = mWizard.GetCurrentPage();
-            PageFrame.Content = page.Page;
+            PageFrame.ClearAndSetContent(page.Page);
             tbSubTitle.Text = page.SubTitle;
             // sync the list too
             NavigationList.SelectedItem = page;
@@ -225,13 +225,13 @@ namespace GingerWPF.WizardLib
                         {
                             Ginger.Agents.ucAgentControl agentControl = (Ginger.Agents.ucAgentControl)child;
                             bindingExpression = agentControl.GetBindingExpression(Ginger.Agents.ucAgentControl.SelectedAgentProperty);
-                        }                        
+                        }
 
                         if (bindingExpression != null)
                         {
                             // do if there is validation bindingExpression.
-                            bindingExpression.UpdateSource();                            
-                            
+                            bindingExpression.UpdateSource();
+
                             if (bindingExpression.HasValidationError)
                             {
                                 errorsFound = true;
@@ -242,20 +242,24 @@ namespace GingerWPF.WizardLib
                         if (errorsFound == false)
                         {
                             if (child is ucGrid)
-                            { 
+                            {
                                 errorsFound = ((ucGrid)child).HasValidationError();
                             }
                             else if (child is UCTreeView)
-                            { 
+                            {
                                 errorsFound = ((UCTreeView)child).HasValidationError();
                             }
                         }
                     }
 
                     if (errorsFound == true)
+                    {
                         return;
+                    }
                     else
+                    {
                         SearchValidationsRecursive(child);
+                    }
                 }
             }
         }
@@ -304,7 +308,7 @@ namespace GingerWPF.WizardLib
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {            
+        {
             WindowCloseWasHandled = true;
 
             if (xProcessingImage.Visibility == Visibility.Visible)
@@ -315,15 +319,15 @@ namespace GingerWPF.WizardLib
             {
                 //if (Reporter.ToUser(eUserMsgKey.WizardSureWantToCancel) == eUserMsgSelection.Yes)
                 //{
-                    mWizard.Cancel();
-                    if (sender != null && sender is bool && (bool)sender == false)
-                    {
-                        return;//close already been done
-                    }
-                    else
-                    {
-                        CloseWizard();
-                    }
+                mWizard.Cancel();
+                if (sender != null && sender is bool && (bool)sender == false)
+                {
+                    return;//close already been done
+                }
+                else
+                {
+                    CloseWizard();
+                }
                 //}
             }
         }
@@ -419,7 +423,7 @@ namespace GingerWPF.WizardLib
         {
             xNextButton.IsEnabled = isEnabled;
         }
-        
+
         bool WindowCloseWasHandled = false;
 
         private void CloseWindowClicked(object sender, System.ComponentModel.CancelEventArgs e)

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -87,6 +87,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             browserActElementList.Add(ActBrowserElement.eControlAction.GetMessageBoxText);
             browserActElementList.Add(ActBrowserElement.eControlAction.SetAlertBoxText);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetBrowserLog);
+            browserActElementList.Add(ActBrowserElement.eControlAction.GetConsoleLog);
             browserActElementList.Add(ActBrowserElement.eControlAction.StartMonitoringNetworkLog);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetNetworkLog);
             browserActElementList.Add(ActBrowserElement.eControlAction.StopMonitoringNetworkLog);
@@ -120,7 +121,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             switch (ElementType)
             {
                 default:
-                    ElementTypeData elementTypeOperations = GetPlatformElementTypesData().Where(x => x.ElementType == ElementType).FirstOrDefault();
+                    ElementTypeData elementTypeOperations = GetPlatformElementTypesData().FirstOrDefault(x => x.ElementType == ElementType);
                     if (elementTypeOperations != null)
                     {
                         if (elementTypeOperations.ActionType == typeof(ActUIElement))
@@ -137,7 +138,7 @@ namespace GingerCore.Platforms.PlatformsInfo
         {
             ObservableList<Act> UIElementsActionsList = new ObservableList<Act>();
 
-            ElementTypeData elementTypeOperations = GetPlatformElementTypesData().Where(x => x.ElementType == elementInfo.ElementTypeEnum).FirstOrDefault();
+            ElementTypeData elementTypeOperations = GetPlatformElementTypesData().FirstOrDefault(x => x.ElementType == elementInfo.ElementTypeEnum);
             if ((elementTypeOperations != null) && ((elementTypeOperations.ElementOperationsList != null)) && (elementTypeOperations.ElementOperationsList.Count > 0))
             {
                 if (elementTypeOperations.ActionType == typeof(ActBrowserElement))
@@ -173,11 +174,13 @@ namespace GingerCore.Platforms.PlatformsInfo
             Act elementAction = null;
             if (elementInfo != null)
             {
-                ElementTypeData elementTypeOperations = GetPlatformElementTypesData().Where(x => x.ElementType == elementInfo.ElementTypeEnum).FirstOrDefault();
+                ElementTypeData elementTypeOperations = GetPlatformElementTypesData().FirstOrDefault(x => x.ElementType == elementInfo.ElementTypeEnum);
                 if (actConfig != null)
                 {
                     if (string.IsNullOrWhiteSpace(actConfig.Operation))
+                    {
                         actConfig.Operation = GetDefaultElementOperation(elementInfo.ElementTypeEnum);
+                    }
                 }
                 if ((elementTypeOperations != null) && ((elementTypeOperations.ElementOperationsList != null)) && (elementTypeOperations.ElementOperationsList.Count > 0))
                 {
@@ -380,7 +383,8 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     ElementType = eElementType.ScrollBar,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  //ActUIElement.eElementAction.ScrollUp, //not yet supported by SelenuimDriver
+                    ElementOperationsList = new List<Enum>()
+                    {  //ActUIElement.eElementAction.ScrollUp, //not yet supported by SelenuimDriver
                        //ActUIElement.eElementAction.ScrollDown,
                        //ActUIElement.eElementAction.ScrollLeft,
                        //ActUIElement.eElementAction.ScrollRight
@@ -546,7 +550,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 {
                     ElementType = eElementType.Window,
                     ActionType = typeof(ActUIElement),
-                    ElementOperationsList = new List<Enum>() {  ActUIElement.eElementAction.Switch }
+                    ElementOperationsList = new List<Enum>() { ActUIElement.eElementAction.Switch }
                 });
 
                 //------Must be last one for calculating all supported Element operations

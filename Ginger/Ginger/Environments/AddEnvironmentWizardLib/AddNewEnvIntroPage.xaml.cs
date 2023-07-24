@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -38,25 +38,25 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
             SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
             //Application info
             TBH.AddFormattedText("For What Environments are Needed?", foregroundColor, true);
-            TBH.AddLineBreak();            
-            TBH.AddFormattedText("Environments are needed for storing data like: login credentials, DB/Unix servers connection information and similar details which changed per testing environments." , foregroundColor);
+            TBH.AddLineBreak();
+            TBH.AddFormattedText("Environments are needed for storing data like: login credentials, DB/Unix servers connection information and similar details which changed per testing environments.", foregroundColor);
             TBH.AddLineBreak();
             TBH.AddFormattedText("Idea is that you will be able to map your automation flow to a generic detail of the Environment and then control the actual used data by simply changing the selected Environment to execute with", foregroundColor);
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddFormattedText("How to Integrate Environment Details in Automation Flow?", foregroundColor, true);
-            TBH.AddLineBreak();            
+            TBH.AddLineBreak();
             TBH.AddFormattedText("Use the Value Expression editor for adding Environment value expression in any input field which support it", foregroundColor);
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddLineBreak();
             TBH.AddFormattedText("Important to Know:", foregroundColor, true);
-            TBH.AddLineBreak();            
+            TBH.AddLineBreak();
             TBH.AddFormattedText("All configured Environments must have identical Applications/Parameters/DB/Unix names- only actual end point data value supposed to be different for each Environment ", foregroundColor);
             TBH.AddLineBreak();
             TBH.AddLineBreak();
-            TBH.AddLineBreak();        
+            TBH.AddLineBreak();
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)

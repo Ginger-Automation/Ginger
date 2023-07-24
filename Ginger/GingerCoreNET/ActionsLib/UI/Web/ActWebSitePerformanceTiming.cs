@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 namespace GingerCore.Actions
 {
-    public class ActWebSitePerformanceTiming :  Act
+    public class ActWebSitePerformanceTiming : Act
     {
         public new static partial class Fields
         {
@@ -37,11 +37,11 @@ namespace GingerCore.Actions
         public override string ActionUserDescription { get { return "The Navigation Timing Action provides data that can be used to measure the performance of a website."; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
-        {            
+        {
             TBH.AddText("Use this action to log end-to-end latency of web site to CSV file later on you can analyze trend and much more of each parameter");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
-            
+
             TBH.AddBoldText("CSV File Name - if exist will append result to this file");
             TBH.AddLineBreak();
             TBH.AddBoldText("Details - Column for additional info like URL used, variable etc");
@@ -144,7 +144,7 @@ namespace GingerCore.Actions
 
         // TODO: make unique icon
         public override eImageType Image { get { return eImageType.ChartLine; } }
-        
+
         public string CSVFileName
         {
             get
@@ -175,14 +175,17 @@ namespace GingerCore.Actions
 
             string FileName = GetInputParamValue(Fields.CSVFileName);
 
-            if (string.IsNullOrEmpty(FileName)) return;
+            if (string.IsNullOrEmpty(FileName))
+            {
+                return;
+            }
 
             if (!System.IO.File.Exists(FileName))
-            {                
+            {
                 string header = "Action Description, Details";
                 foreach (ActReturnValue ARV in ReturnValues)
-                {                    
-                    header += ", " + ARV.Param;                    
+                {
+                    header += ", " + ARV.Param;
                 }
                 System.IO.File.AppendAllText(FileName, header + Environment.NewLine);
             }

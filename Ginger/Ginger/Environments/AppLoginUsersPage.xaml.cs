@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,11 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows;
-using System.Windows.Controls;
 using Ginger.UserControls;
 using GingerCore.Environments;
-using GingerCore;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Environments
 {
@@ -46,7 +45,7 @@ namespace Ginger.Environments
         private void AddLogin(object sender, RoutedEventArgs e)
         {
             AppOwner.LoginUsers.Add(new LoginUser() { UserProfileName = "Profile " + AppOwner.LoginUsers.Count, Type = "", Username = "", Password = "" });
-        }    
+        }
 
         #endregion Events
 

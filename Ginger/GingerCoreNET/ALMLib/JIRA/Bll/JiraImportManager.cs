@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using JiraRepositoryStd;
 using JiraRepositoryStd.Data_Contracts;
 using JiraRepositoryStd.Settings;
 using System;
@@ -97,7 +96,10 @@ namespace GingerCore.ALM.JIRA
             }
             foreach (var field in testCaseFieldsList.DataResult)
             {
-                if (string.IsNullOrEmpty(field.name)) continue;
+                if (string.IsNullOrEmpty(field.name))
+                {
+                    continue;
+                }
 
                 ExternalItemFieldBase itemfield = new ExternalItemFieldBase();
                 itemfield.ID = field.name;
@@ -126,7 +128,10 @@ namespace GingerCore.ALM.JIRA
         {
             try
             {
-                if (testSet == null) return null;
+                if (testSet == null)
+                {
+                    return null;
+                }
 
                 //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
@@ -150,7 +155,7 @@ namespace GingerCore.ALM.JIRA
                         if (toAddStepActivity)
                         {
                             //not in group- need to add it
-                            busFlow.AddActivity(stepActivity, tcActivsGroup);                            
+                            busFlow.AddActivity(stepActivity, tcActivsGroup);
                         }
 
                         //pull TC-Step parameters and add them to the Activity level
@@ -174,8 +179,12 @@ namespace GingerCore.ALM.JIRA
                         foreach (JiraTestStep step in tc.Steps)
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
-                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
-                            if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
+                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                            if (actIdent == null || actIdent.IdentifiedActivity == null)
+                            {
+                                break;//something wrong- shouldnt be null
+                            }
+
                             Activity act = actIdent.IdentifiedActivity;
                             int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                             int bfActIndx = busFlow.Activities.IndexOf(act);
@@ -187,11 +196,17 @@ namespace GingerCore.ALM.JIRA
                             {
                                 groupIndx++;
                                 if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
-                                        tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
+                                        tc.Steps.FirstOrDefault(x => x.StepID == ident.ActivityExternalID) == null)
+                                {
                                     continue;//activity which not originaly came from the TC
+                                }
+
                                 numOfSeenSteps++;
 
-                                if (numOfSeenSteps >= stepIndx) break;
+                                if (numOfSeenSteps >= stepIndx)
+                                {
+                                    break;
+                                }
                             }
                             ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                             if (identOnPlace.ActivityGuid != act.Guid)
@@ -281,8 +296,12 @@ namespace GingerCore.ALM.JIRA
                         foreach (JiraTestStep step in tc.Steps)
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
-                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
-                            if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
+                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                            if (actIdent == null || actIdent.IdentifiedActivity == null)
+                            {
+                                break;//something wrong- shouldnt be null
+                            }
+
                             Activity act = actIdent.IdentifiedActivity;
                             int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                             int bfActIndx = busFlow.Activities.IndexOf(act);
@@ -294,11 +313,17 @@ namespace GingerCore.ALM.JIRA
                             {
                                 groupIndx++;
                                 if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
-                                        tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
+                                        tc.Steps.FirstOrDefault(x => x.StepID == ident.ActivityExternalID) == null)
+                                {
                                     continue;//activity which not originaly came from the TC
+                                }
+
                                 numOfSeenSteps++;
 
-                                if (numOfSeenSteps >= stepIndx) break;
+                                if (numOfSeenSteps >= stepIndx)
+                                {
+                                    break;
+                                }
                             }
                             ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                             if (identOnPlace.ActivityGuid != act.Guid)
@@ -329,7 +354,10 @@ namespace GingerCore.ALM.JIRA
         {
             try
             {
-                if (testSet == null) return null;
+                if (testSet == null)
+                {
+                    return null;
+                }
 
                 //Create Business Flow
                 BusinessFlow busFlow = new BusinessFlow();
@@ -377,8 +405,12 @@ namespace GingerCore.ALM.JIRA
                         foreach (JiraTestStep step in tc.Steps)
                         {
                             int stepIndx = tc.Steps.IndexOf(step) + 1;
-                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
-                            if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
+                            ActivityIdentifiers actIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                            if (actIdent == null || actIdent.IdentifiedActivity == null)
+                            {
+                                break;//something wrong- shouldnt be null
+                            }
+
                             Activity act = actIdent.IdentifiedActivity;
                             int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                             int bfActIndx = busFlow.Activities.IndexOf(act);
@@ -390,11 +422,17 @@ namespace GingerCore.ALM.JIRA
                             {
                                 groupIndx++;
                                 if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
-                                        tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
+                                        tc.Steps.FirstOrDefault(x => x.StepID == ident.ActivityExternalID) == null)
+                                {
                                     continue;//activity which not originaly came from the TC
+                                }
+
                                 numOfSeenSteps++;
 
-                                if (numOfSeenSteps >= stepIndx) break;
+                                if (numOfSeenSteps >= stepIndx)
+                                {
+                                    break;
+                                }
                             }
                             ActivityIdentifiers identOnPlace = tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                             if (identOnPlace.ActivityGuid != act.Guid)
@@ -426,11 +464,13 @@ namespace GingerCore.ALM.JIRA
             //get the param value
             string paramSelectedValue = string.Empty;
             bool? isflowControlParam = null;
-            JiraTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+            JiraTestParameter tcParameter = tc.Parameters.FirstOrDefault(x => x.Name.ToUpper() == param.ToUpper());
 
             //get the param value
             if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
+            {
                 paramSelectedValue = tcParameter.Value;
+            }
             else
             {
                 isflowControlParam = null;//empty value
@@ -454,13 +494,17 @@ namespace GingerCore.ALM.JIRA
             {
                 isflowControlParam = false;
                 if (paramSelectedValue.StartsWith("$$_"))
+                {
                     paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
+                }
             }
             else if (paramSelectedValue != "<Empty>")
+            {
                 isflowControlParam = true;
+            }
 
             //check if already exist param with that name
-            VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+            VariableBase stepActivityVar = stepActivity.Variables.FirstOrDefault(x => x.Name.ToUpper() == param.ToUpper());
             if (stepActivityVar == null)
             {
                 //#Param not exist so add it
@@ -514,14 +558,16 @@ namespace GingerCore.ALM.JIRA
             //add the variable selected value                          
             if (stepActivityVar is VariableSelectionList)
             {
-                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == paramSelectedValue).FirstOrDefault();
+                OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.FirstOrDefault(x => x.Value == paramSelectedValue);
                 if (stepActivityVarOptionalVar == null)
                 {
                     //no such variable value option so add it
                     stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
                     ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
                     if (isflowControlParam == true)
+                    {
                         stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
+                    }
                 }
                 //set the selected value
                 ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
@@ -533,7 +579,9 @@ namespace GingerCore.ALM.JIRA
                 {
                     stepActivityVar.Value = paramSelectedValue;
                     if (stepActivityVar is VariableString)
+                    {
                         ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
+                    }
                 }
                 catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
@@ -544,7 +592,9 @@ namespace GingerCore.ALM.JIRA
                 stepActivityVar.LinkedVariableName = linkedVariable;
             }
             else
+            {
                 stepActivityVar.LinkedVariableName = string.Empty;//clear old links
+            }
         }
 
         private void ConvertJiraStepToActivity(BusinessFlow busFlow, JiraTest tc, ActivitiesGroup tcActivsGroup, JiraTestStep step, out Activity stepActivity, out bool toAddStepActivity)
@@ -552,15 +602,15 @@ namespace GingerCore.ALM.JIRA
             toAddStepActivity = false;
 
             //check if mapped activity exist in repository
-            Activity repoStepActivity = GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+            Activity repoStepActivity = GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
             if (repoStepActivity != null)
             {
                 //check if it is part of the Activities Group
-                ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                ActivityIdentifiers groupStepActivityIdent = tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                 if (groupStepActivityIdent != null)
                 {
                     //already in Activities Group so get link to it
-                    stepActivity = busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                    stepActivity = busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                     // in any case update description/expected/name - even if "step" was taken from repository
                     stepActivity.Description = StripHTML(step.Description);
                     //stepActivity.Expected = StripHTML(step.Expected);
@@ -591,7 +641,10 @@ namespace GingerCore.ALM.JIRA
             ActivitiesGroup tcActivsGroup;
             ActivitiesGroup repoActivsGroup = null;
             if (repoActivsGroup == null)
-                repoActivsGroup = GingerActivitiesGroupsRepo.Where(x => x.ExternalID == tc.TestKey).FirstOrDefault();
+            {
+                repoActivsGroup = GingerActivitiesGroupsRepo.FirstOrDefault(x => x.ExternalID == tc.TestKey);
+            }
+
             if (repoActivsGroup != null)
             {
                 List<Activity> repoNotExistsStepActivity = GingerActivitiesRepo.Where(z => repoActivsGroup.ActivitiesIdentifiers.Select(y => y.ActivityExternalID).ToList().Contains(z.ExternalID))
@@ -611,7 +664,7 @@ namespace GingerCore.ALM.JIRA
                 tcActivsGroup.ExternalID2 = tc.Labels;
                 busFlow.AddActivitiesGroup(tcActivsGroup);
                 busFlow.ImportActivitiesGroupActivitiesFromRepository(tcActivsGroup, GingerActivitiesRepo, ApplicationPlatforms, true);
-              
+
                 busFlow.AttachActivitiesGroupsAndActivities();
             }
             else //TC not exist in Ginger repository so create new one
@@ -648,7 +701,9 @@ namespace GingerCore.ALM.JIRA
                 Regex reg = new Regex("<[^>]+>", RegexOptions.IgnoreCase);
                 var stripped = reg.Replace(HTMLText, "");
                 if (toDecodeHTML)
+                {
                     stripped = HttpUtility.HtmlDecode(stripped);
+                }
 
                 stripped = stripped.TrimStart(new char[] { '\r', '\n' });
                 stripped = stripped.TrimEnd(new char[] { '\r', '\n' });
@@ -800,7 +855,7 @@ namespace GingerCore.ALM.JIRA
                                             {
                                                 stepDescription[1] = stepAnonymous.data;
                                             }
-                                            test.Steps.Add(new JiraTestStep() { StepID = stepAnonymous.id.ToString(), StepName = stepAnonymous.step, Description = StripHTML(stepDescription[1]) , Variables = stepVariables[1]});
+                                            test.Steps.Add(new JiraTestStep() { StepID = stepAnonymous.id.ToString(), StepName = stepAnonymous.step, Description = StripHTML(stepDescription[1]), Variables = stepVariables[1] });
                                         }
                                         break;
                                 }
@@ -906,7 +961,11 @@ namespace GingerCore.ALM.JIRA
         }
         public void UpdateBFSelectedAG(ref BusinessFlow busFlow, Dictionary<string, JiraTest> activitiesGroupToUpdatedData)
         {
-            if ((busFlow == null) || (activitiesGroupToUpdatedData.Count == 0)) return;
+            if ((busFlow == null) || (activitiesGroupToUpdatedData.Count == 0))
+            {
+                return;
+            }
+
             Dictionary<string, string> busVariables = new Dictionary<string, string>();
 
             int startGroupActsIndxInBf = 0;
@@ -917,7 +976,10 @@ namespace GingerCore.ALM.JIRA
                 foreach (Activity activityToRemove in activitiesToRemove)
                 {
                     if (startGroupActsIndxInBf < busFlow.Activities.IndexOf(activityToRemove))
+                    {
                         startGroupActsIndxInBf = busFlow.Activities.IndexOf(activityToRemove);
+                    }
+
                     busFlow.Activities.Remove(activityToRemove);
                 }
                 var activityGroupsToRemove = busFlow.ActivitiesGroups.Where(x => x.ExternalID == tc.TestKey).ToList();
@@ -952,15 +1014,15 @@ namespace GingerCore.ALM.JIRA
                     bool toAddStepActivity = false;
 
                     //check if mapped activity exist in repository
-                    Activity repoStepActivity = (Activity)GingerActivitiesRepo.Where(x => x.ExternalID == step.StepID).FirstOrDefault();
+                    Activity repoStepActivity = (Activity)GingerActivitiesRepo.FirstOrDefault(x => x.ExternalID == step.StepID);
                     if (repoStepActivity != null)
                     {
                         //check if it is part of the Activities Group
-                        ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
+                        ActivityIdentifiers groupStepActivityIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
                         if (groupStepActivityIdent != null)
                         {
                             //already in Activities Group so get link to it
-                            stepActivity = (Activity)busFlow.Activities.Where(x => x.Guid == groupStepActivityIdent.ActivityGuid).FirstOrDefault();
+                            stepActivity = (Activity)busFlow.Activities.FirstOrDefault(x => x.Guid == groupStepActivityIdent.ActivityGuid);
                         }
                         else//not in ActivitiesGroup so get instance from repo
                         {
@@ -983,7 +1045,7 @@ namespace GingerCore.ALM.JIRA
                     if (toAddStepActivity)
                     {
                         //not in group- need to add it
-                        busFlow.AddActivity(stepActivity, tcActivsGroup, startGroupActsIndxInBf++);                        
+                        busFlow.AddActivity(stepActivity, tcActivsGroup, startGroupActsIndxInBf++);
                     }
 
                     //pull TC-Step parameters and add them to the Activity level
@@ -995,11 +1057,13 @@ namespace GingerCore.ALM.JIRA
                         //get the param value
                         string paramSelectedValue = string.Empty;
                         bool? isflowControlParam = null;
-                        JiraTestParameter tcParameter = tc.Parameters.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                        JiraTestParameter tcParameter = tc.Parameters.FirstOrDefault(x => x.Name.ToUpper() == param.ToUpper());
 
                         //get the param value
                         if (tcParameter != null && tcParameter.Value != null && tcParameter.Value != string.Empty)
+                        {
                             paramSelectedValue = tcParameter.Value;
+                        }
                         else
                         {
                             isflowControlParam = null;//empty value
@@ -1028,13 +1092,17 @@ namespace GingerCore.ALM.JIRA
                         {
                             isflowControlParam = false;
                             if (paramSelectedValue.StartsWith("$$_"))
+                            {
                                 paramSelectedValue = paramSelectedValue.Substring(3);//get value without "$$_"
+                            }
                         }
                         else if (paramSelectedValue != "<Empty>")
+                        {
                             isflowControlParam = true;
+                        }
 
                         //check if already exist param with that name
-                        VariableBase stepActivityVar = stepActivity.Variables.Where(x => x.Name.ToUpper() == param.ToUpper()).FirstOrDefault();
+                        VariableBase stepActivityVar = stepActivity.Variables.FirstOrDefault(x => x.Name.ToUpper() == param.ToUpper());
                         if (stepActivityVar == null)
                         {
                             //#Param not exist so add it
@@ -1088,14 +1156,16 @@ namespace GingerCore.ALM.JIRA
                         //add the variable selected value                          
                         if (stepActivityVar is VariableSelectionList)
                         {
-                            OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.Where(x => x.Value == paramSelectedValue).FirstOrDefault();
+                            OptionalValue stepActivityVarOptionalVar = ((VariableSelectionList)stepActivityVar).OptionalValuesList.FirstOrDefault(x => x.Value == paramSelectedValue);
                             if (stepActivityVarOptionalVar == null)
                             {
                                 //no such variable value option so add it
                                 stepActivityVarOptionalVar = new OptionalValue(paramSelectedValue);
                                 ((VariableSelectionList)stepActivityVar).OptionalValuesList.Add(stepActivityVarOptionalVar);
                                 if (isflowControlParam == true)
+                                {
                                     stepActivity.AutomationStatus = eActivityAutomationStatus.Development;//reset status because new param value was added
+                                }
                             }
                             //set the selected value
                             ((VariableSelectionList)stepActivityVar).SelectedValue = stepActivityVarOptionalVar.Value;
@@ -1107,7 +1177,9 @@ namespace GingerCore.ALM.JIRA
                             {
                                 stepActivityVar.Value = paramSelectedValue;
                                 if (stepActivityVar is VariableString)
+                                {
                                     ((VariableString)stepActivityVar).InitialStringValue = paramSelectedValue;
+                                }
                             }
                             catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
                         }
@@ -1118,7 +1190,9 @@ namespace GingerCore.ALM.JIRA
                             stepActivityVar.LinkedVariableName = linkedVariable;
                         }
                         else
+                        {
                             stepActivityVar.LinkedVariableName = string.Empty;//clear old links
+                        }
                     }
                 }
 
@@ -1128,8 +1202,12 @@ namespace GingerCore.ALM.JIRA
                     foreach (JiraTestStep step in tc.Steps)
                     {
                         int stepIndx = tc.Steps.IndexOf(step) + 1;
-                        ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.StepID).FirstOrDefault();
-                        if (actIdent == null || actIdent.IdentifiedActivity == null) break;//something wrong- shouldnt be null
+                        ActivityIdentifiers actIdent = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.StepID);
+                        if (actIdent == null || actIdent.IdentifiedActivity == null)
+                        {
+                            break;//something wrong- shouldnt be null
+                        }
+
                         Activity act = (Activity)actIdent.IdentifiedActivity;
                         int groupActIndx = tcActivsGroup.ActivitiesIdentifiers.IndexOf(actIdent);
                         int bfActIndx = busFlow.Activities.IndexOf(act);
@@ -1141,11 +1219,17 @@ namespace GingerCore.ALM.JIRA
                         {
                             groupIndx++;
                             if (string.IsNullOrEmpty(ident.ActivityExternalID) ||
-                                    tc.Steps.Where(x => x.StepID == ident.ActivityExternalID).FirstOrDefault() == null)
+                                    tc.Steps.FirstOrDefault(x => x.StepID == ident.ActivityExternalID) == null)
+                            {
                                 continue;//activity which not originaly came from the TC
+                            }
+
                             numOfSeenSteps++;
 
-                            if (numOfSeenSteps >= stepIndx) break;
+                            if (numOfSeenSteps >= stepIndx)
+                            {
+                                break;
+                            }
                         }
                         ActivityIdentifiers identOnPlace = (ActivityIdentifiers)tcActivsGroup.ActivitiesIdentifiers[groupIndx];
                         if (identOnPlace.ActivityGuid != act.Guid)
@@ -1169,21 +1253,25 @@ namespace GingerCore.ALM.JIRA
         {
             JiraTestSet testSet = GetTestSetData(new JiraTestSet { Key = busFlow.ExternalID });
             Dictionary<string, JiraTest> activitiesGroupToUpdatedData = GetJiraSelectedTestsData(busFlow.ExternalID, busFlow.ActivitiesGroups.Select(actid => actid.ExternalID).ToList());
-            if (busFlow == null) return;
+            if (busFlow == null)
+            {
+                return;
+            }
+
             busFlow.Name = testSet.Name;
             busFlow.Description = testSet.Description;
             UpdateBFSelectedAG(ref busFlow, activitiesGroupToUpdatedData);
         }
-        public Dictionary<string,JiraTest> GetJiraSelectedTestsData(string testSetID, List<string> TCsIds = null)
+        public Dictionary<string, JiraTest> GetJiraSelectedTestsData(string testSetID, List<string> TCsIds = null)
         {
-            Dictionary<string,JiraTest> existsTestInJira = new Dictionary<string, JiraTest>();
+            Dictionary<string, JiraTest> existsTestInJira = new Dictionary<string, JiraTest>();
 
             JiraTestSet testSet = GetTestSetData(new JiraTestSet { Key = testSetID });
             if (testSet != null && testSet.Tests.Count > 0)
             {
-                foreach(string tc in TCsIds)
+                foreach (string tc in TCsIds)
                 {
-                    existsTestInJira.Add(tc,testSet.Tests.Where(tst => tst.TestKey.Equals(tc)).FirstOrDefault());
+                    existsTestInJira.Add(tc, testSet.Tests.FirstOrDefault(tst => tst.TestKey.Equals(tc)));
                 }
             }
 

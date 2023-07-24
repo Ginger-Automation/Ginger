@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,20 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
 using GingerCore.Environments;
-using GingerCore.Helpers;
 using GingerCore.NoSqlBase;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
-using amdocs.ginger.GingerCoreNET;
 
 namespace GingerCore.Actions
 {
@@ -90,14 +89,48 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string Keyspace { set; get; }
 
+        public string mTable;
         [IsSerializedForLocalRepository]
-        public string Table { set; get; }
+        public string Table 
+        { 
+            get
+            {
+                return mTable;
+            }
+            set 
+            { 
+                mTable = value; 
+                OnPropertyChanged(Fields.Table); 
+            }
+        }
 
+        public string mColumn;
         [IsSerializedForLocalRepository]
-        public string Column { set; get; }
+        public string Column 
+        { 
+            get 
+            { 
+                return mColumn; 
+            } 
+            set 
+            { mColumn = value;
+              OnPropertyChanged(Fields.Column); 
+            } 
+        }
 
+        public string mWhere;
         [IsSerializedForLocalRepository]
-        public string Where { set; get; }
+        public string Where 
+        { 
+            get 
+            { 
+                return mWhere;
+            } 
+            set 
+            { mWhere = value; 
+              OnPropertyChanged(Fields.Where); 
+            } 
+        }
 
         public string PrimaryKey
         {
@@ -164,9 +197,13 @@ namespace GingerCore.Actions
                 try
                 {
                     if (DB != null && (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase || DB.DBType == Database.eDBTypes.MongoDb || DB.DBType == Database.eDBTypes.CosmosDb))
+                    {
                         return eDatabaseTye.NoSQL;
+                    }
                     else
+                    {
                         return eDatabaseTye.Relational;
+                    }
                 }
 
                 catch
@@ -211,12 +248,29 @@ namespace GingerCore.Actions
                     return returnValue;
                 }
                 else
+                {
                     return false;
+                }
             }
         }
 
+        private eDBValidationType mDBValidationType;
         [IsSerializedForLocalRepository]
-        public eDBValidationType DBValidationType { get; set; }
+        public eDBValidationType DBValidationType
+        {
+            get
+            {
+                return mDBValidationType;
+            }
+            set
+            {
+                if(mDBValidationType != value)
+                {
+                    mDBValidationType = value;
+                    OnPropertyChanged(nameof(DBValidationType));
+                }
+            }
+        }
 
         private string mInsertJson = string.Empty;
 
@@ -277,7 +331,9 @@ namespace GingerCore.Actions
             }
 
             if (SetDBConnection() == false)
+            {
                 return;//Failed to find the DB in the Environment
+            }
 
             switch (DatabaseType)
             {
@@ -367,7 +423,7 @@ namespace GingerCore.Actions
             }
 
             string AppNameCalculated = ValueExpression.Calculate(this.AppName);
-            EnvApplication App = (from a in RunOnEnvironment.Applications where a.Name == AppNameCalculated select a).FirstOrDefault();
+            EnvApplication App = RunOnEnvironment.Applications.FirstOrDefault(app => string.Equals(app.Name, AppNameCalculated));
             if (App == null)
             {
                 Error = "The mapped Environment Application '" + AppNameCalculated + "' was not found in the '" + RunOnEnvironment.Name + "' Environment which was selected for execution.";
@@ -375,7 +431,7 @@ namespace GingerCore.Actions
             }
 
             string DBNameCalculated = ValueExpression.Calculate(DBName);
-            DB = (Database)(from d in App.Dbs where d.Name == DBNameCalculated select d).FirstOrDefault();
+            DB = (Database)App.Dbs.FirstOrDefault(db => string.Equals(db.Name, DBNameCalculated));
             if (DB == null)
             {
                 Error = "The mapped DB '" + DBNameCalculated + "' was not found in the '" + AppNameCalculated + "' Environment Application.";
@@ -385,8 +441,10 @@ namespace GingerCore.Actions
             DB.ProjEnvironment = RunOnEnvironment;
             DB.BusinessFlow = RunOnBusinessFlow;
 
-            DatabaseOperations databaseOperations = new DatabaseOperations(DB);
-            DB.DatabaseOperations = databaseOperations;
+            if (DB.DatabaseOperations == null)
+            {
+                DB.DatabaseOperations = new DatabaseOperations(DB);
+            }
 
             return true;
         }
@@ -395,7 +453,10 @@ namespace GingerCore.Actions
         {
             string calcSQL = GetInputParamCalculatedValue("SQL");
             if (string.IsNullOrEmpty(calcSQL))
+            {
                 Error = "Fail to run Update SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error = Missing Query";
+            }
+
             string val = DB.DatabaseOperations.GetRecordCount(calcSQL);
             this.AddOrUpdateReturnParamActual("Record Count", val);
         }
@@ -418,7 +479,9 @@ namespace GingerCore.Actions
                 }
 
                 if (string.IsNullOrEmpty(calcSQL))
+                {
                     Error = "Fail to run Update SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error = Missing Query";
+                }
 
                 string val = DB.DatabaseOperations.fUpdateDB(calcSQL, CommitDB_Value);
                 this.AddOrUpdateReturnParamActual("Impacted Lines", val);
@@ -427,14 +490,18 @@ namespace GingerCore.Actions
             catch (Exception e)
             {
                 if (string.IsNullOrEmpty(Error))
+                {
                     this.Error = "Fail to run Update SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= " + e.Message;
-
+                }
             }
         }
         private void SimpleSQLOneValueHandler()
         {
             if (string.IsNullOrEmpty(Where))
+            {
                 Where = "rownum<2";
+            }
+
             string val = DB.DatabaseOperations.fTableColWhere(Table, Column, Where);
             this.AddOrUpdateReturnParamActual(Column, val);
         }
@@ -460,11 +527,15 @@ namespace GingerCore.Actions
             {
                 GetSqlValueFromFilePath();
                 if (string.IsNullOrEmpty(calcSQL))
+                {
                     this.Error = "Fail to run Free SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= Missing SQL Query.";
+                }
 
                 updateQueryParams();
                 foreach (ActInputValue param in QueryParams)
+                {
                     calcSQL = calcSQL.Replace("<<" + param.ItemName + ">>", param.ValueForDriver);
+                }
 
                 List<object> DBResponse = DB.DatabaseOperations.FreeSQL(calcSQL, queryTimeout);
 
@@ -472,7 +543,10 @@ namespace GingerCore.Actions
                 List<List<string>> Records = (List<List<string>>)DBResponse.ElementAt(1);
 
 
-                if (Records.Count == 0) return;
+                if (Records.Count == 0)
+                {
+                    return;
+                }
 
                 int recordcount = Records.Count;
                 for (int j = 0; j < Records.Count; j++)
@@ -499,9 +573,13 @@ namespace GingerCore.Actions
             catch (Exception e)
             {
                 if (string.IsNullOrEmpty(ErrorString))
+                {
                     this.Error = "Fail to run Free SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= " + e.Message;
+                }
                 else
+                {
                     this.Error = "Fail to execute query: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= " + ErrorString;
+                }
 
                 if (e.Message.ToUpper().Contains("COULD NOT LOAD FILE OR ASSEMBLY 'ORACLE.MANAGEDDATAACCESS"))
                 {

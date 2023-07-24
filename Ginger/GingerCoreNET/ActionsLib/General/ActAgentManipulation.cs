@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
-using GingerCore.Helpers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace GingerCore.Actions
 {
@@ -47,23 +47,27 @@ namespace GingerCore.Actions
             {
                 eAgenTManipulationActionType eVal = eAgenTManipulationActionType.CloseAgent;
                 if (Enum.TryParse<eAgenTManipulationActionType>(GetInputParamValue(Fields.AgentManipulationActionType), out eVal))
+                {
                     return eVal;
+                }
                 else
+                {
                     return eAgenTManipulationActionType.CloseAgent;  //default value          
+                }
             }
         }
 
         public override void Execute()
         {
-            switch ( AgentManipulationActionType)
+            switch (AgentManipulationActionType)
             {
                 case eAgenTManipulationActionType.CloseAgent:
-                    if (((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent)==null)
+                    if (((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent) == null)
                     {
-                        this.Error= "Agent is not mapped for the activity";
+                        this.Error = "Agent is not mapped for the activity";
                     }
 
-                    if(((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status == Agent.eStatus.Completed || ((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status == Agent.eStatus.NotStarted)
+                    if (((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status == Agent.eStatus.Completed || ((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status == Agent.eStatus.NotStarted)
                     {
                         this.ExInfo = "Agent is not running";
                     }
@@ -74,22 +78,28 @@ namespace GingerCore.Actions
                     }
 
                     if (((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status != Agent.eStatus.FailedToStart)
+                    {
                         ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations.Close();
+                    }
+
                     break;
                 case eAgenTManipulationActionType.StartAgent:
                     if (((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status == Agent.eStatus.Running)
+                    {
                         break;
-                    else if(((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status == Agent.eStatus.Starting)
+                    }
+                    else if (((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status == Agent.eStatus.Starting)
                     {
                         ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations.Close();
-                    }else if (((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status == Agent.eStatus.FailedToStart)
+                    }
+                    else if (((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status == Agent.eStatus.FailedToStart)
                     {
                         ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations.ResetAgentStatus(((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status);
                         this.ExInfo = "Agent is not running, failed to start status is reset.";
                     }
                     ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).DSList = DSList;
                     ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations.StartDriver();
-                        
+
                     break;
                 case eAgenTManipulationActionType.RestartAgent:
                     if (((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent) == null)
@@ -107,9 +117,13 @@ namespace GingerCore.Actions
                         this.ExInfo = "Agent is not running, failed to start status is reset.";
                     }
                     if (((AgentOperations)((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Status != Agent.eStatus.FailedToStart)
+                    {
                         ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations.Close();
+                        Thread.Sleep(2000);
+                    }
                     ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).DSList = DSList;
-                    ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations.StartDriver();              
+                    ((Agent)RunOnBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations.StartDriver();
+                    Thread.Sleep(2000);
                     break;
             }
         }
@@ -120,9 +134,9 @@ namespace GingerCore.Actions
 
         public enum eAgenTManipulationActionType
         {
-          CloseAgent,
-          StartAgent,
-          RestartAgent,
+            CloseAgent,
+            StartAgent,
+            RestartAgent,
         }
 
         private void StartAndValidateAgentStatus()

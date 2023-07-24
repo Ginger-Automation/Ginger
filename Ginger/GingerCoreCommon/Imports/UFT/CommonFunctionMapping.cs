@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
-using GingerCore;
 using GingerCore.Actions;
 
 
@@ -26,7 +24,7 @@ namespace Ginger.Imports.UFT
 {
     public class CommonFunctionMapping : RepositoryItemBase
     {
-        public  static class Fields
+        public static class Fields
         {
             public static string Function_Name = "Function_Name";
             public static string Action_Description = "Action_Description";
@@ -39,8 +37,8 @@ namespace Ginger.Imports.UFT
         public string Function_Name { get; set; }
 
         [IsSerializedForLocalRepository]
-        public Act TargetAction; 
-        
+        public Act TargetAction;
+
         [IsSerializedForLocalRepository]
         public string LocateBy { get; set; }
 
@@ -49,7 +47,7 @@ namespace Ginger.Imports.UFT
 
         [IsSerializedForLocalRepository]
         public string NoOfParameters { get; set; }
-        
+
         public string Action_Description// ActionInfo
         {
             get

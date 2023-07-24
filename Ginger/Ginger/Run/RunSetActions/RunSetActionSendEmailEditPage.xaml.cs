@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Reports;
 using Ginger.UserControls;
-using GingerCore.GeneralLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,7 +35,7 @@ namespace Ginger.Run.RunSetActions
     {
         private RunSetActionSendEmail runSetActionEmailReport;
 
-        
+
         public RunSetActionSendEmailEditPage(RunSetActionSendEmail runSetActionSendEmail)
         {/*
             InitializeComponent();
@@ -82,7 +81,11 @@ namespace Ginger.Run.RunSetActions
             SetGridView();
             AttachmentsGrid.AddButton("Add Report", AddReport);
             AttachmentsGrid.AddButton("Add File", AddFile);
-            if (runSetActionEmailReport.EmailAttachments == null) runSetActionEmailReport.EmailAttachments = new ObservableList<EmailAttachment>();
+            if (runSetActionEmailReport.EmailAttachments == null)
+            {
+                runSetActionEmailReport.EmailAttachments = new ObservableList<EmailAttachment>();
+            }
+
             AttachmentsGrid.DataSourceList = runSetActionEmailReport.EmailAttachments;
         }
 
@@ -92,7 +95,7 @@ namespace Ginger.Run.RunSetActions
             {
                 DefaultExt = ".*",
                 Filter = "All Files (*.*)|*.*"
-            },false) is string fileName)
+            }, false) is string fileName)
             {
                 runSetActionEmailReport.EmailAttachments.Add(new EmailAttachment() { Name = fileName, AttachmentType = EmailAttachment.eAttachmentType.File });
             }
@@ -100,7 +103,7 @@ namespace Ginger.Run.RunSetActions
 
         private void AddReport(object sender, RoutedEventArgs e)
         {
-            ReportTemplateSelector RTS = new ReportTemplateSelector();            
+            ReportTemplateSelector RTS = new ReportTemplateSelector();
             RTS.ShowAsWindow();
             if (RTS.SelectedReportTemplate != null)
             {
@@ -116,8 +119,8 @@ namespace Ginger.Run.RunSetActions
 
             viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.AttachmentType), WidthWeight = 50, BindingMode = BindingMode.OneTime });
             viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.Name), WidthWeight = 300 });
-            viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.ZipIt), WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });            
-            
+            viewCols.Add(new GridColView() { Field = nameof(EmailAttachment.ZipIt), WidthWeight = 50, StyleType = GridColView.eGridColStyleType.CheckBox });
+
             AttachmentsGrid.SetAllColumnsDefaultView(view);
             AttachmentsGrid.InitViewItems();
         }
@@ -150,26 +153,28 @@ namespace Ginger.Run.RunSetActions
         }
 
         private void CustomHTMLReportComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {  
-            
+        {
+
             BodyWebBrowser.Visibility = System.Windows.Visibility.Visible;
             ReportInfo RI = new ReportInfo(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, WorkSpace.Instance.RunsetExecutor);
             string html = String.Empty;
-            
+
             if (CustomHTMLReportComboBox.SelectedItem == null)
+            {
                 return;
+            }
 
             ObservableList<HTMLReportTemplate> HTMLReportTemplates = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>();
             foreach (HTMLReportTemplate htr in HTMLReportTemplates)
             {
-               if(htr.Name==CustomHTMLReportComboBox.SelectedItem.ToString())
-               {
-                   html = htr.HTML;
-               }
+                if (htr.Name == CustomHTMLReportComboBox.SelectedItem.ToString())
+                {
+                    html = htr.HTML;
+                }
             }
 
-            HTMLReportPage HTP = new HTMLReportPage(RI,html);
-            
+            HTMLReportPage HTP = new HTMLReportPage(RI, html);
+
             BodyWebBrowser.NavigateToString(HTP.HTML);
         }
 

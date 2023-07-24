@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,13 +17,13 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Ginger.Run;
+using GingerCore;
+using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ginger.Run;
-using GingerCore.Platforms;
-using GingerCore;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace Ginger.AnalyzerLib
 {
@@ -36,13 +36,13 @@ namespace Ginger.AnalyzerLib
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
 
             // check that we have BFs
-            if (GR.Executor.BusinessFlows.Count() == 0)
+            if (!GR.Executor.BusinessFlows.Any())
             {
                 AnalyzeGingerRunner AGR = CreateNewIssue(IssuesList, GR);
                 AGR.Description = "Runner is missing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
                 AGR.Details = "Nothing to run";
-                AGR.HowToFix = "Add " +GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + "to the Runner or delete the Runner";
-                AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;                   
+                AGR.HowToFix = "Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + "to the Runner or delete the Runner";
+                AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                 AGR.IssueType = eType.Warning;
                 AGR.Impact = "Waste of resources";
                 AGR.Severity = eSeverity.Medium;
@@ -54,8 +54,10 @@ namespace Ginger.AnalyzerLib
             {
                 if (string.IsNullOrEmpty(AA.AgentName))
                 {
-                    if (GR.Executor.SolutionApplications.Where(x => (x.AppName == AA.AppName && x.Platform == ePlatformType.NA)).FirstOrDefault() != null)
+                    if (GR.Executor.SolutionApplications.FirstOrDefault(x => (x.AppName == AA.AppName && x.Platform == ePlatformType.NA)) != null)
+                    {
                         continue;
+                    }
                     //create error
                     AnalyzeGingerRunner AGR = CreateNewIssue(IssuesList, GR);
                     AGR.ItemParent = GR.Name;

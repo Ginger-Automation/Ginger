@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,26 +16,26 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
 using Ginger.GherkinLib;
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
+using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.IO;
 using static Ginger.GherkinLib.ImportGherkinFeatureFilePage;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Repository;
-using Ginger.SolutionWindows.TreeViewItems;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
-    public class ImportGherkinFeatureWizard : WizardBase 
+    public class ImportGherkinFeatureWizard : WizardBase
     {
         // shared data across pages goes here        
-                
+
         public string mFolder;
-        public bool Imported;        
+        public bool Imported;
         public BusinessFlow BizFlow;
         public GenericWindow genWin;
         public eImportGherkinFileContext mContext;
@@ -45,16 +45,16 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
         public ITreeViewItem bizFlowTargetFolder { get; set; }
         public ITreeViewItem featureTargetFolder { get; set; }
-        
+
         public ImportGherkinFeatureWizard(ITreeViewItem folder, eImportGherkinFileContext context)
-        {            
-            mContext = context;            
+        {
+            mContext = context;
             if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
-            { 
+            {
                 bizFlowTargetFolder = folder;
             }
             else
-            { 
+            {
                 featureTargetFolder = folder;
             }
             importGherkinTargetFolder = new ImportGherkinTargetFolder(mContext);
@@ -68,7 +68,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
             AddPage(Name: "SelectFile", Title: "Select Feature File", SubTitle: "Choose ...", Page: new ImportGherkinFeatureFilePage());
 
-            if(mContext == eImportGherkinFileContext.DocumentsFolder)
+            if (mContext == eImportGherkinFileContext.DocumentsFolder)
             {
                 AddPage(Name: "SelectBusinessFlowFolder", Title: "Target " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Path", SubTitle: "Select Target Folder...", Page: importGherkinTargetFolder);
             }
@@ -81,25 +81,30 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         public override void Finish()
         {
             if (mContext == eImportGherkinFileContext.BusinessFlowFolder)
+            {
                 featureTargetFolder = (ITreeViewItem)importGherkinTargetFolder.mTargetFolder;
+            }
             else
-                bizFlowTargetFolder = (ITreeViewItem)importGherkinTargetFolder.mTargetFolder;           
+            {
+                bizFlowTargetFolder = (ITreeViewItem)importGherkinTargetFolder.mTargetFolder;
+            }
+
             mFeatureFile = Import();
             if (mFeatureFile == "")
             {
                 FetaureFileName = "";
                 return;
-            }               
+            }
 
             Imported = true;
             if (!string.IsNullOrEmpty(mFeatureFile))
             {
-                GherkinPage GP = new GherkinPage();                
-                bool Compiled = GP.Load(mFeatureFile);                                
+                GherkinPage GP = new GherkinPage();
+                bool Compiled = GP.Load(mFeatureFile);
                 if (Compiled)
                 {
-                    string BizFlowName =  System.IO.Path.GetFileName(mFeatureFile).Replace(".feature", "");
-                    GP.CreateNewBF(BizFlowName, mFeatureFile,(RepositoryFolder<BusinessFlow>)(bizFlowTargetFolder).NodeObject());
+                    string BizFlowName = System.IO.Path.GetFileName(mFeatureFile).Replace(".feature", "");
+                    GP.CreateNewBF(BizFlowName, mFeatureFile, (RepositoryFolder<BusinessFlow>)(bizFlowTargetFolder).NodeObject());
                     GP.CreateActivities();
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(GP.mBizFlow);
                     BizFlow = GP.mBizFlow;
@@ -113,30 +118,30 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         }
 
         private string Import()
-        {            
+        {
             if (String.IsNullOrEmpty(mFeatureFile) || !File.Exists(mFeatureFile))
-            { 
+            {
                 return String.Empty;
             }
 
             FetaureFileName = System.IO.Path.GetFileName(mFeatureFile);
             string targetFile = Path.Combine(((DocumentsFolderTreeItem)featureTargetFolder).NodePath(), FetaureFileName);
-            
+
             if (targetFile == mFeatureFile)
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.GherkinNotifyFeatureFileSelectedFromTheSolution, targetFile);
                 return String.Empty;
             }
 
             // TODO: make the check earlier in wizard !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Remove
             if (File.Exists(targetFile))
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.GherkinNotifyFeatureFileExists, targetFile);
                 return String.Empty;
             }
 
             File.Copy(mFeatureFile, targetFile);
-            Reporter.ToUser(eUserMsgKey.GherkinFeatureFileImportedSuccessfully, targetFile);            
+            Reporter.ToUser(eUserMsgKey.GherkinFeatureFileImportedSuccessfully, targetFile);
             ((DocumentsFolderTreeItem)featureTargetFolder).TreeView.Tree.RefresTreeNodeChildrens(featureTargetFolder);
 
             return targetFile;

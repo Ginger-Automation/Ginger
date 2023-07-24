@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             mActionParamProperties = actionParamProperties;
 
             ResetControls();
-            
+
             mLabel = Regex.Replace(Regex.Replace(Regex.Replace(mActInputValue.Param, @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2"), @"(\P{Ll}\p{Ll})", m => m.ToString().ToLower());
             mLabel = char.ToUpper(mLabel[0]) + mLabel.Substring(1);
             SetParamLayout();
@@ -70,35 +70,35 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             {
                 return;
             }
-            
+
             foreach (Attribute attr in mActionParamProperties)
-            {               
+            {
                 if (attr.GetType() == typeof(MandatoryAttribute))
                 {
                     xTextBoxInputPnl.Background = Brushes.Orange;
                     //TODO: add AddValidationRule in the UC - but there are 3 UCs !? !!!!!!!!!!!!!!!                  
-                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new EmptyValidationRule());                    
+                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new EmptyValidationRule());
                 }
-                else if(attr.GetType() == typeof(MaxValueAttribute))
-                {                           
-                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MaxValueValidationRule(((MaxValueAttribute)attr).MaxValue));                    
+                else if (attr.GetType() == typeof(MaxValueAttribute))
+                {
+                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MaxValueValidationRule(((MaxValueAttribute)attr).MaxValue));
                 }
-                else if(attr.GetType() == typeof(MinValueAttribute))
-                {                    
-                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MinValueValidationRule(((MinValueAttribute)attr).MinValue));                                        
-                }          
-                else if(attr.GetType() == typeof(MaxLengthAttribute))
+                else if (attr.GetType() == typeof(MinValueAttribute))
+                {
+                    xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MinValueValidationRule(((MinValueAttribute)attr).MinValue));
+                }
+                else if (attr.GetType() == typeof(MaxLengthAttribute))
                 {
                     xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MaxLengthValidationRule(((MaxLengthAttribute)attr).MaxLength));
                 }
-                else if(attr.GetType() == typeof(MinLengthAttribute))
+                else if (attr.GetType() == typeof(MinLengthAttribute))
                 {
                     xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new MinLegthValidationRule(((MinLengthAttribute)attr).MinLength));
                 }
-                else if(attr.GetType() == typeof(InvalidValueAttribute))
+                else if (attr.GetType() == typeof(InvalidValueAttribute))
                 {
-                    InvalidValueValidationRule invalidValueValidationRule = (InvalidValueValidationRule)xTextBoxInputTextBox.ValueTextBox.GetValidationRule(TextBox.TextProperty, typeof(InvalidValueValidationRule));                   
-                    if(invalidValueValidationRule is null)
+                    InvalidValueValidationRule invalidValueValidationRule = (InvalidValueValidationRule)xTextBoxInputTextBox.ValueTextBox.GetValidationRule(TextBox.TextProperty, typeof(InvalidValueValidationRule));
+                    if (invalidValueValidationRule is null)
                     {
                         xTextBoxInputTextBox.ValueTextBox.AddValidationRule(new InvalidValueValidationRule(((InvalidValueAttribute)attr).InvalidValue));
                     }
@@ -124,17 +124,17 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         }
 
         private void SetParamLayout()
-        {                     
+        {
             // read and process param attrs like Label, Tooltip, Location
             if (mActionParamProperties == null)
             {
                 return;
             }
-            
+
             foreach (Attribute attr in mActionParamProperties)
             {
                 if (attr.GetType() == typeof(LabelAttribute))
-                {                    
+                {
                     mLabel = ((LabelAttribute)attr).Label;
                 }
                 else if (attr.GetType() == typeof(TooltipAttribute))
@@ -182,7 +182,7 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
         }
 
         private void SetControlToInputValue()
-        {          
+        {
             if (string.IsNullOrEmpty(mActInputValue.Value) && mDefaultValue != null)
             {
                 mActInputValue.Value = mDefaultValue.ToString();
@@ -191,22 +191,22 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             if (mActInputValue.ParamType == typeof(string) || mActInputValue.ParamType == typeof(int) || mActInputValue.ParamType == null)
             {
                 xTextBoxInputPnl.Visibility = Visibility.Visible;
-                xTextBoxInputLabel.Content = mLabel;                                
-                xTextBoxInputTextBox.Init(mContext, mActInputValue, nameof(ActInputValue.Value),isBrowseNeeded : mBrowseNeeded, browserType : mBrowseType, fileType : mFileType, rootFolder: mFolderType);
+                xTextBoxInputLabel.Content = mLabel;
+                xTextBoxInputTextBox.Init(mContext, mActInputValue, nameof(ActInputValue.Value), isBrowseNeeded: mBrowseNeeded, browserType: mBrowseType, fileType: mFileType, rootFolder: mFolderType);
                 return;
-            }           
+            }
 
             if (mActInputValue.ParamType == typeof(bool))
             {
                 xCheckBoxInput.Visibility = Visibility.Visible;
-                xCheckBoxInput.Content = mLabel;               
+                xCheckBoxInput.Content = mLabel;
                 xCheckBoxInput.BindControl(mActInputValue, nameof(ActInputValue.Value));
                 return;
             }
 
             if (mActInputValue.ParamType == typeof(DynamicListWrapper))
             {
-                if(mActInputValue.ListDynamicValue == null && mDefaultValue!=null)
+                if (mActInputValue.ListDynamicValue == null && mDefaultValue != null)
                 {
                     mActInputValue.ListDynamicValue = (dynamic)mDefaultValue;
                 }
@@ -229,24 +229,24 @@ namespace Ginger.UserControlsLib.ActionInputValueUserControlLib
             {
                 xComboBoxInputPnl.Visibility = Visibility.Visible;
                 xComboBoxInputLabel.Content = string.Format("{0}:", mLabel);
-                
+
 
                 string enumValues = mActInputValue.ParamTypeEX.Replace("enum{", "");
                 enumValues = enumValues.Replace("}", "");
 
                 string[] avv = enumValues.Split(',');
-                foreach(string v in avv)
+                foreach (string v in avv)
                 {
                     xComboBoxInputComboBox.Items.Add(v);
                 }
-                
+
                 xComboBoxInputComboBox.BindControl(mActInputValue, nameof(ActInputValue.Value));
                 return;
             }
 
             throw new System.Exception("unknown parameter type to create control: " + mActInputValue.ParamType.FullName);
 
-        }        
+        }
 
         #region List Grid Handlers
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -59,7 +59,9 @@ namespace GingerCore.ALM.QCRestAPI
 
                     int order = 1;
                     foreach (ActivityIdentifiers actIdent in activitiesGroup.ActivitiesIdentifiers)
+                    {
                         CreateTestStep(test, (Activity)actIdent.IdentifiedActivity, designStepsFields, designStepsParamsFields, order++);
+                    }
                 }
                 else //##update existing test case
                 {
@@ -167,10 +169,14 @@ namespace GingerCore.ALM.QCRestAPI
                                         if (field.ToUpdate || field.Mandatory)
                                         {
                                             if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+                                            {
                                                 runToExport.ElementsField.Add(field.ExternalID, field.SelectedValue);
+                                            }
                                             else
+                                            {
                                                 try { runToExport.ElementsField.Add(field.ExternalID, "NA"); }
                                                 catch { }
+                                            }
                                         }
                                     }
 
@@ -212,7 +218,7 @@ namespace GingerCore.ALM.QCRestAPI
                                             }
                                             System.IO.Directory.Delete(activGroup.TempReportFolder, true);
                                             //Creating the Zip file - finish
-                                            
+
                                             ALMResponseData attachmentResponse = QCRestAPIConnect.CreateAttachment(ResourceType.TEST_RUN, currentRun.Id, zipFileName);
 
                                             if (!attachmentResponse.IsSucceed)
@@ -235,11 +241,11 @@ namespace GingerCore.ALM.QCRestAPI
                                         //search for matching activity based on ID and not order, un matching steps need to be left as No Run
                                         //Removing this because runStep.Name is null string stepName = runStep.Name;
                                         //Adding this as runSteps has extra element which is not required. 
-                                        if (runStep.ElementsField.Count==0)
+                                        if (runStep.ElementsField.Count == 0)
                                         {
                                             break;
                                         }
-                                        Activity matchingActivity = activities.Where(x => x.ExternalID == runStep.ElementsField["desstep-id"].ToString()).FirstOrDefault();
+                                        Activity matchingActivity = activities.FirstOrDefault(x => x.ExternalID == runStep.ElementsField["desstep-id"].ToString());
                                         if (matchingActivity != null)
                                         {
                                             switch (matchingActivity.Status)
@@ -248,7 +254,11 @@ namespace GingerCore.ALM.QCRestAPI
                                                     runStep.Status = "Failed";
                                                     List<IAct> failedActs = matchingActivity.Acts.Where(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList();
                                                     string errors = string.Empty;
-                                                    foreach (Act act in failedActs) errors += act.Error + Environment.NewLine;
+                                                    foreach (Act act in failedActs)
+                                                    {
+                                                        errors += act.Error + Environment.NewLine;
+                                                    }
+
                                                     runStep.Actual = errors;
                                                     runStep.ElementsField["status"] = "Failed";
                                                     runStep.ElementsField["actual"] = errors;
@@ -289,9 +299,13 @@ namespace GingerCore.ALM.QCRestAPI
                                         {
                                             //Step not exist in Ginger so left as "No Run" unless it is step data
                                             if (runStep.Name.ToUpper() == "STEP DATA")
+                                            {
                                                 runStep.ElementsField["status"] = "Passed";
+                                            }
                                             else
+                                            {
                                                 runStep.ElementsField["status"] = "No Run";
+                                            }
                                         }
 
                                         QCItem stepToUpdate = ConvertObjectValuesToQCItem(runStep, ResourceType.RUN_STEP);
@@ -303,12 +317,16 @@ namespace GingerCore.ALM.QCRestAPI
                                     //get all execution status for all steps
                                     ObservableList<string> stepsStatuses = new ObservableList<string>();
                                     foreach (QCRunStep runStep in runSteps)
+                                    {
                                         //condition to avoid that extra element present in the runSteps
                                         if (runStep.ElementsField.Count > 0)
-                                        stepsStatuses.Add(runStep.Status);//removed runStep.Status which is null
+                                        {
+                                            stepsStatuses.Add(runStep.Status);//removed runStep.Status which is null
+                                        }
+                                    }
 
                                     //update the TC general status based on the activities status collection.                                
-                                    if (stepsStatuses.Where(x => x == "Failed").Count() > 0)
+                                    if (stepsStatuses.Any(x => x == "Failed"))
                                     {
                                         currentRun.Status = "Failed";
                                         currentRun.ElementsField["status"] = "Failed";
@@ -338,7 +356,9 @@ namespace GingerCore.ALM.QCRestAPI
                                 }
                             }
                             if (result != string.Empty)
+                            {
                                 return false;
+                            }
                         }
                     }
                     else
@@ -385,10 +405,14 @@ namespace GingerCore.ALM.QCRestAPI
                 if ((field.ToUpdate || field.Mandatory) && !test.ElementsField.ContainsKey(field.ExternalID))
                 {
                     if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+                    {
                         test.ElementsField.Add(field.ExternalID, field.SelectedValue);
+                    }
                     else
+                    {
                         try { test.ElementsField.Add(field.ExternalID, "NA"); }
                         catch { }
+                    }
                 }
             }
 
@@ -418,10 +442,14 @@ namespace GingerCore.ALM.QCRestAPI
                 if (field.ToUpdate || field.Mandatory)
                 {
                     if (string.IsNullOrEmpty(field.ExternalID) == false && field.SelectedValue != "NA")
+                    {
                         testSet.ElementsField[field.ExternalID] = field.SelectedValue;
+                    }
                     else
+                    {
                         try { testSet.ElementsField[field.ID] = "NA"; }
                         catch { }
+                    }
                 }
             }
 
@@ -460,10 +488,14 @@ namespace GingerCore.ALM.QCRestAPI
                 if (field.ToUpdate || field.Mandatory)
                 {
                     if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+                    {
                         step.ElementsField.Add(field.ExternalID, field.SelectedValue);
+                    }
                     else
+                    {
                         try { step.ElementsField.Add(field.ExternalID, "NA"); }
                         catch { }
+                    }
                 }
             }
 
@@ -493,10 +525,14 @@ namespace GingerCore.ALM.QCRestAPI
                             if (field.ToUpdate || field.Mandatory)
                             {
                                 if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+                                {
                                     newParam.ElementsField.Add(field.ExternalID, field.SelectedValue);
+                                }
                                 else
+                                {
                                     try { newParam.ElementsField.Add(field.ExternalID, "NA"); }
                                     catch { }
+                                }
                             }
                         }
 
@@ -516,7 +552,9 @@ namespace GingerCore.ALM.QCRestAPI
             {
                 actsDesc = "Actions:<br />";
                 foreach (Act act in activity.Acts)
+                {
                     actsDesc += act.Description + "<br />";
+                }
             }
             description = description.Replace("<<&Actions&>>", actsDesc);
             step.Description = description;
@@ -528,9 +566,13 @@ namespace GingerCore.ALM.QCRestAPI
             activity.ExternalID = response.IdCreated;
 
             if (activity.ExternalID != null)
+            {
                 return true;
+            }
             else
+            {
                 return false;
+            }
         }
 
         private static void CreateNewTestInstances(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> existingActivitiesGroups, QCTestSet testSet, ObservableList<ExternalItemFieldBase> testInstancesFields, bool createNewAll = true)
@@ -550,11 +592,11 @@ namespace GingerCore.ALM.QCRestAPI
             {
                 QCTestInstanceColl testInstances = ImportFromQCRest.ImportTestSetInstanceData(testSet);
                 ObservableList<ActivitiesGroup> existingActivitiesGroupsList = new ObservableList<ActivitiesGroup>();
-                
+
                 //skip already existing instances
                 foreach (QCTestInstance testInstance in testInstances)
                 {
-                    ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString())).FirstOrDefault();
+                    ActivitiesGroup ag = businessFlow.ActivitiesGroups.FirstOrDefault(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString()));
                     if (ag != null)
                     {
                         existingActivitiesGroupsList.Add(ag);
@@ -591,10 +633,14 @@ namespace GingerCore.ALM.QCRestAPI
                 if ((field.ToUpdate || field.Mandatory) && ((field.ExternalID != "test-id") && (field.ExternalID != "cycle-id") && (field.ExternalID != "order-id") && (field.ExternalID != "test-order")))
                 {
                     if (string.IsNullOrEmpty(field.ExternalID) == false && field.SelectedValue != "NA")
+                    {
                         testInstance.ElementsField[field.ExternalID] = field.SelectedValue;
+                    }
                     else
+                    {
                         try { testInstance.ElementsField[field.ID] = "NA"; }
                         catch { }
+                    }
                 }
             }
 
@@ -616,9 +662,9 @@ namespace GingerCore.ALM.QCRestAPI
             // Add new steps
             for (int i = 0; i < activitiesGroup.ActivitiesIdentifiers.Count; i++)
             {
-                if(activitiesGroup.ActivitiesIdentifiers[i].ActivityExternalID == null)
+                if (activitiesGroup.ActivitiesIdentifiers[i].ActivityExternalID == null)
                 {
-                    CreateTestStep(test,(Activity) activitiesGroup.ActivitiesIdentifiers[i].IdentifiedActivity, designStepsFields, designStepsParamsFields, i + 1);
+                    CreateTestStep(test, (Activity)activitiesGroup.ActivitiesIdentifiers[i].IdentifiedActivity, designStepsFields, designStepsParamsFields, i + 1);
                 }
             }
 
@@ -629,7 +675,7 @@ namespace GingerCore.ALM.QCRestAPI
                 {
                     QCRestAPIConnect.DeleteEntity(ResourceType.DESIGN_STEP, step.Id);
                     testCaseDesignStep.Remove(step);
-                } 
+                }
             }
 
             //delete the existing parameters
@@ -645,7 +691,7 @@ namespace GingerCore.ALM.QCRestAPI
 
             foreach (QCTestCaseStep step in testCaseDesignStep)
             {
-                Activity identifiedActivity =(Activity) activitiesGroup.ActivitiesIdentifiers.Where(x => x.ActivityExternalID == step.Id).FirstOrDefault().IdentifiedActivity;
+                Activity identifiedActivity = (Activity)activitiesGroup.ActivitiesIdentifiers.FirstOrDefault(x => x.ActivityExternalID == step.Id).IdentifiedActivity;
                 //set item fields
                 foreach (ExternalItemFieldBase field in designStepsFields)
                 {
@@ -654,7 +700,9 @@ namespace GingerCore.ALM.QCRestAPI
                         if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
                         {
                             if (step.ElementsField.ContainsKey(field.ExternalID))
+                            {
                                 step.ElementsField[field.ExternalID] = field.SelectedValue;
+                            }
                         }
                     }
                 }
@@ -683,10 +731,14 @@ namespace GingerCore.ALM.QCRestAPI
                                 if (field.ToUpdate || field.Mandatory)
                                 {
                                     if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
+                                    {
                                         newParam.ElementsField.Add(field.ExternalID, field.SelectedValue);
+                                    }
                                     else
+                                    {
                                         try { newParam.ElementsField.Add(field.ExternalID, "NA"); }
                                         catch { }
+                                    }
                                 }
                             }
 
@@ -707,7 +759,9 @@ namespace GingerCore.ALM.QCRestAPI
                 {
                     actsDesc = "Actions:<br />";
                     foreach (Act act in identifiedActivity.Acts)
+                    {
                         actsDesc += act.Description + "<br />";
+                    }
                 }
                 description = description.Replace("<<&Actions&>>", actsDesc);
                 step.Description = description;
@@ -732,12 +786,16 @@ namespace GingerCore.ALM.QCRestAPI
                     if (string.IsNullOrEmpty(field.SelectedValue) == false && field.SelectedValue != "NA")
                     {
                         if (test.ElementsField.ContainsKey(field.ExternalID))
+                        {
                             test.ElementsField[field.ExternalID] = field.SelectedValue;
+                        }
                     }
 
                     else
+                    {
                         try { test.ElementsField.Add(field.ExternalID, "NA"); }
                         catch { }
+                    }
                 }
             }
 
@@ -763,10 +821,12 @@ namespace GingerCore.ALM.QCRestAPI
                 if (field.ToUpdate || field.Mandatory)
                 {
                     if (string.IsNullOrEmpty(field.ExternalID) == false && field.SelectedValue != "NA")
+                    {
                         if (testSet.ElementsField.ContainsKey(field.ID))
                         {
                             testSet.ElementsField[field.ExternalID] = field.SelectedValue;
                         }
+                    }
                 }
             }
 
@@ -791,9 +851,11 @@ namespace GingerCore.ALM.QCRestAPI
 
             foreach (QCTestInstance testInstance in testInstances)
             {
-                ActivitiesGroup ag = businessFlow.ActivitiesGroups.Where(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString())).FirstOrDefault();
+                ActivitiesGroup ag = businessFlow.ActivitiesGroups.FirstOrDefault(x => (x.ExternalID == testInstance.TestId.ToString() && x.ExternalID2 == testInstance.Id.ToString()));
                 if (ag == null)
+                {
                     QCRestAPIConnect.DeleteEntity(ResourceType.TEST_CYCLE, testInstance.Id);
+                }
                 else
                 {
                     existingActivitiesGroups.Add(ag);
@@ -834,7 +896,9 @@ namespace GingerCore.ALM.QCRestAPI
             foreach (var keyValue in itemVals.ElementsField)
             {
                 if (keyValue.Key != "order-id")
+                {
                     itemWithValues.Fields.Add(keyValue.Key, keyValue.Value);
+                }
             }
 
             if (itemVals.GetType().GetProperty("Id") != null)
@@ -856,7 +920,9 @@ namespace GingerCore.ALM.QCRestAPI
             if (itemVals.GetType().GetProperty("Path") != null && itemVals.GetType().GetProperty("Path").GetValue(itemVals, null) != null && !isUpdate)
             {
                 if (!(type == ResourceType.TEST_SET))
+                {
                     itemWithValues.Fields.Add("hierarchical-path", itemVals.GetType().GetProperty("Path").GetValue(itemVals, null));
+                }
             }
             if (itemVals.GetType().GetProperty("DefualtValue") != null && itemVals.GetType().GetProperty("DefualtValue").GetValue(itemVals, null) != null)
             {

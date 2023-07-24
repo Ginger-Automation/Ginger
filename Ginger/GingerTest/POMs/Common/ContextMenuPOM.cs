@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,9 +18,6 @@ limitations under the License.
 
 using GingerWPFUnitTest.POMs;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,7 +25,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace GingerTest.POMs.Common
-{    
+{
     public class ContextMenuPOM : GingerPOMBase
     {
         ContextMenu mContextMenu;
@@ -47,7 +44,8 @@ namespace GingerTest.POMs.Common
             get
             {
                 ContextMenuItemPOM c = null;
-                Execute(() => { 
+                Execute(() =>
+                {
                     foreach (MenuItem MI in mContextMenu.Items)
                     {
                         if (MI.Header.ToString() == header)
@@ -55,7 +53,7 @@ namespace GingerTest.POMs.Common
                             c = new ContextMenuItemPOM(MI);
                             break;
                         }
-                    }                    
+                    }
                 });
                 if (c != null)
                 {
@@ -69,7 +67,7 @@ namespace GingerTest.POMs.Common
             }
         }
 
-        
+
 
         // TODO: get items - to compare menu as joined string
 
@@ -83,7 +81,8 @@ namespace GingerTest.POMs.Common
                     MI.RaiseEvent(new MouseEventArgs(Mouse.PrimaryDevice, 0) { RoutedEvent = Mouse.MouseEnterEvent });
                     SleepWithDoEvents(100);
                     // TODO: run on thread as modal dialog might pop up
-                    Task.Factory.StartNew(() => {
+                    Task.Factory.StartNew(() =>
+                    {
                         MI.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
                         SleepWithDoEvents(100);
                     });

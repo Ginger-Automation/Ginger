@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,19 +16,16 @@ limitations under the License.
 */
 #endregion
 
-using GingerCore.Actions;
-using System.Windows.Controls;
-using System.Windows;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using System.Windows.Media.Imaging;
-using System.IO;
-using System;
 using Ginger.Actions.UserControls;
-using System.Drawing;
-using System.Linq;
-using amdocs.ginger.GingerCoreNET;
 using GingerCore;
+using GingerCore.Actions;
+using GingerCore.GeneralLib;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {
@@ -56,6 +53,8 @@ namespace Ginger.Actions
         private void BindControls()
         {
             xOperationNameComboBox.Init(mAct, nameof(mAct.MobileDeviceAction), typeof(ActMobileDevice.eMobileDeviceAction), ActionNameComboBox_SelectionChanged);
+
+            xAuthResultComboBox.Init(mAct, nameof(mAct.AuthResultSimulation), typeof(ActMobileDevice.eAuthResultSimulation), AuthResultComboBox_SelectionChanged);
 
             xKeyPressComboBox.Init(mAct, nameof(mAct.MobilePressKey), typeof(ActMobileDevice.ePressKey));
 
@@ -140,7 +139,7 @@ namespace Ginger.Actions
             }
             // send with null bitmap will show image not found
             ScreenShotViewPage p = new ScreenShotViewPage("Baseline Image", FileName);
-            SimulatedPhotoFrame.Content = p;
+            SimulatedPhotoFrame.ClearAndSetContent(p);
             if (p.BitmapImage == null)
             {
                 return string.Empty;
@@ -153,13 +152,48 @@ namespace Ginger.Actions
             SetControlsView();
         }
 
+        private void AuthResultComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ChangeAuthResultDetailsComboBox();
+        }
+
+        private void ChangeAuthResultDetailsComboBox()
+        {
+            switch (mAct.AuthResultSimulation)
+            {
+                case ActMobileDevice.eAuthResultSimulation.Success:
+                    {
+                        xAuthResultDetailsLbl.Visibility = Visibility.Collapsed;
+                        xAuthResultDetailsComboBox.Visibility = Visibility.Collapsed;
+                        break;
+                    }
+                case ActMobileDevice.eAuthResultSimulation.Failure:
+                    {
+                        xAuthResultDetailsLbl.Visibility = Visibility.Visible;
+                        xAuthResultDetailsComboBox.Visibility = Visibility.Visible;
+                        xAuthResultDetailsComboBox.Init(mAct, nameof(mAct.AuthResultDetailsFailureSimulation), typeof(ActMobileDevice.eAuthResultDetailsFailureSimulation));
+                        break;
+                    }
+                case ActMobileDevice.eAuthResultSimulation.Cancel:
+                    {
+                        xAuthResultDetailsComboBox.Visibility = Visibility.Visible;
+                        xAuthResultDetailsComboBox.Init(mAct, nameof(mAct.AuthResultDetailsCancelSimulation), typeof(ActMobileDevice.eAuthResultDetailsCancelSimulation));
+                        break;
+                    }
+                default:
+                    xAuthResultDetailsLbl.Visibility = Visibility.Collapsed;
+                    xAuthResultDetailsComboBox.Visibility = Visibility.Collapsed;
+                    break;
+            }
+        }
+
         private void SetControlsView()
         {
             xKeyPressPnl.Visibility = Visibility.Collapsed;
             xXY1Pnl.Visibility = Visibility.Collapsed;
             xXY2Pnl.Visibility = Visibility.Collapsed;
             xPhotoSimulationPnl.Visibility = Visibility.Collapsed;
-
+            xAuthSimulationPnl.Visibility = Visibility.Collapsed;
 
             switch (mAct.MobileDeviceAction)
             {
@@ -180,7 +214,11 @@ namespace Ginger.Actions
                     xXY2Pnl.Visibility = Visibility.Visible;
                     break;
                 case ActMobileDevice.eMobileDeviceAction.SimulatePhoto:
+                case ActMobileDevice.eMobileDeviceAction.SimulateBarcode:
                     xPhotoSimulationPnl.Visibility = Visibility.Visible;
+                    break;
+                case ActMobileDevice.eMobileDeviceAction.SimulateBiometrics:
+                    xAuthSimulationPnl.Visibility = Visibility.Visible;
                     break;
             }
         }

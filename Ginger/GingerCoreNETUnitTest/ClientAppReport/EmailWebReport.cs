@@ -114,7 +114,7 @@ namespace GingerCoreNETUnitTest.ClientAppReport
             //Assert.AreEqual(....
         }
 
-        
+
         [TestMethod]
         public void CopyWebRep()
         {

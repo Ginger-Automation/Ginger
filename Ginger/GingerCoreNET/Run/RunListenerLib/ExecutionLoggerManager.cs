@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using static GingerCore.ALM.PublishToALMConfig;
 using Activity = GingerCore.Activity;
 
 namespace Ginger.Run
@@ -176,7 +177,9 @@ namespace Ginger.Run
             object AGR = mExecutionLogger.SetReportActivityGroup(activityGroup, mContext.BusinessFlow, offlineMode);
 
             if (!offlineMode)
+            {
                 ExecutionProgressReporterListener.AddExecutionDetailsToLog(ExecutionProgressReporterListener.eExecutionPhase.End, GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), string.Format("{0} (ID:{1}, ParentID:{2})", activityGroup.Name, activityGroup.Guid, activityGroup.ExecutionParentGuid), AGR);
+            }
         }
 
         public override void RunnerRunStart(uint eventTime, GingerRunner gingerRunner, bool offlineMode = false)
@@ -480,7 +483,9 @@ namespace Ginger.Run
                 string executionLogFolder = string.Empty;
                 //if offline mode then execution logger path exists in action object so making executionLogFolder empty to avoid duplication of path.
                 if (!offlineMode)
+                {
                     executionLogFolder = mExecutionLogger.ExecutionLogfolder;
+                }
                 //ActionReport AR = new ActionReport(action, mContext);  
 
                 //if action call the Shared actvity then mContext.Activity and mCurrentActivity will be different,so keeping the shared activity in temp variable
@@ -497,18 +502,11 @@ namespace Ginger.Run
                     //
                     // Defects Suggestion section (to be considered to remove to separate function)
                     //
-                    if (action.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
+                    if (action.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && !WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Any(z => z != null && z.FailedActionGuid == action.Guid))
                     {
-                        //if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(z => z.FailedActionGuid == action.Guid).ToList().Count > 0)
-                        //    return;
+                        //Get the ALM test Set Level for publish Result to ALM
+                        bool IsRunTestSetLevel = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(x => x.ItemName == "Publish Execution Results to ALM")?.GetAlMTestSetLevel() == eALMTestSetLevel.RunSet ? true : false;
 
-                        //
-                        ActivitiesGroup currrentGroup = mContext.BusinessFlow.ActivitiesGroups.Where(x => x.Name == mCurrentActivity.ActivitiesGroupID).FirstOrDefault();
-                        string currrentGroupName = string.Empty;
-                        if (currrentGroup != null)
-                            currrentGroupName = currrentGroup.Name;
-
-                        //
                         List<string> screenShotsPathes = new List<string>();
                         bool isScreenshotButtonEnabled = false;
                         if ((action.ScreenShots != null) && (action.ScreenShots.Count > 0))
@@ -519,34 +517,35 @@ namespace Ginger.Run
                         // 
                         bool automatedOpeningFlag = false;
                         if (action.FlowControls.Where(x => x.FlowControlAction == eFlowControlAction.FailureIsAutoOpenedDefect && action.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed).ToList().Count > 0)
-                            automatedOpeningFlag = true;
-
-                        // OMG !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-                        //
-                        StringBuilder description = new StringBuilder();
-                        description.Append("&#60;html&#62;&#60;body&#62;&#60;b&#62;" + this.GingerData.GingerName + "&#60;b&#62;&#60;br&#62;");
-                        description.Append("&#60;div&#62;&#60;ul style='list - style - type:circle'&#62;&#60;li&#62;&#60;b&#62;" + mContext.BusinessFlow.Name + " (failed)&#60;b&#62;&#60;/li&#62;");
-                        if (currrentGroupName != string.Empty)
                         {
+                            automatedOpeningFlag = true;
+                        }
+
+                        ActivitiesGroup currentGroup = new ActivitiesGroup();
+                        StringBuilder description = new StringBuilder();
+                        description.Append("&#60;html&#62;&#60;body&#62;&#60;b&#62;").Append(this.GingerData.GingerName).Append("&#60;b&#62;&#60;br&#62;");
+                        description.Append("&#60;div&#62;&#60;ul style='list - style - type:circle'&#62;&#60;li&#62;&#60;b&#62;").Append(mContext.BusinessFlow.Name).Append(" (failed)&#60;b&#62;&#60;/li&#62;");
+                        if (!IsRunTestSetLevel)
+                        {
+                            currentGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == mCurrentActivity.ActivitiesGroupID);
                             description.Append("&#60;ul style = 'list - style - type:square'&#62;");
-                            this.mCurrentBusinessFlow.ActivitiesGroups.ToList().TakeWhile(x => x.Name != mCurrentActivity.ActivitiesGroupID).ToList().ForEach(r => { description.Append("&#60;li&#62;" + r.Name + "&#60;/li&#62;"); });
-                            description.Append("&#60;li&#62;&#60;b&#62;" + currrentGroupName + " (failed)&#60;b&#62;&#60;/li&#62;");
+                            this.mCurrentBusinessFlow.ActivitiesGroups.ToList().TakeWhile(x => x.Name != mCurrentActivity.ActivitiesGroupID).ToList().ForEach(r => { description.Append("&#60;li&#62;").Append(r.Name).Append("&#60;/li&#62;"); });
+                            description.Append("&#60;li&#62;&#60;b&#62;").Append(currentGroup.Name).Append(" (failed)&#60;b&#62;&#60;/li&#62;");
                             description.Append("&#60;ul style = 'list - style - type:upper-roman'&#62;");
-                            this.mCurrentBusinessFlow.Activities.Where(x => currrentGroup.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(x.Guid)).ToList().TakeWhile(x => x.Guid != mCurrentActivity.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;" + r.ActivityName + "&#60;/li&#62;"); });
-                            description.Append("&#60;li&#62;&#60;b&#62;" + mCurrentActivity.ActivityName + " (failed)&#60;b&#62;&#60;/li&#62;");
+                            this.mCurrentBusinessFlow.Activities.Where(x => currentGroup.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(x.Guid)).ToList().TakeWhile(x => x.Guid != mCurrentActivity.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;").Append(r.ActivityName).Append("&#60;/li&#62;"); });
+                            description.Append("&#60;li&#62;&#60;b&#62;").Append(mCurrentActivity.ActivityName).Append(" (failed)&#60;b&#62;&#60;/li&#62;");
                             description.Append("&#60;ul style = 'list - style - type:disc'&#62;");
                             mCurrentActivity.Acts.TakeWhile(x => x.Guid != action.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;" + r.Description + "&#60;/li&#62;"); });
-                            description.Append("&#60;li&#62;&#60;b&#62;&#60;font color='#ff0000'b&#62;" + action.Description + " (failed)&#60;/font&#62;&#60;b&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/div&#62;&#60;/body&#62;&#60;/html&#62;");
+                            description.Append("&#60;li&#62;&#60;b&#62;&#60;font color='#ff0000'b&#62;").Append(action.Description).Append("(failed)&#60;/font&#62;&#60;b&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/div&#62;&#60;/body&#62;&#60;/html&#62;");
                         }
                         else
                         {
                             description.Append("&#60;ul style = 'list - style - type:upper-roman'&#62;");
-                            mContext.BusinessFlow.Activities.TakeWhile(x => x.Guid != mCurrentActivity.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;" + r.ActivityName + "&#60;/li&#62;"); });
+                            mContext.BusinessFlow.Activities.TakeWhile(x => x.Guid != mCurrentActivity.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;").Append(r.ActivityName).Append("&#60;/li&#62;"); });
                             description.Append("&#60;li&#62;&#60;b&#62;" + mCurrentActivity.ActivityName + " (failed)&#60;b&#62;&#60;/li&#62;");
                             description.Append("&#60;ul style = 'list - style - type:disc'&#62;");
-                            mCurrentActivity.Acts.TakeWhile(x => x.Guid != action.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;" + r.Description + "&#60;/li&#62;"); });
-                            description.Append("&#60;li&#62;&#60;b&#62;&#60;font color='#ff0000'b&#62;" + action.Description + " (failed)&#60;/font&#62;&#60;b&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/div&#62;&#60;/body&#62;&#60;/html&#62;");
+                            mCurrentActivity.Acts.TakeWhile(x => x.Guid != action.Guid).ToList().ForEach(r => { description.Append("&#60;li&#62;").Append(r.Description).Append("&#60;/li&#62;"); });
+                            description.Append("&#60;li&#62;&#60;b&#62;&#60;font color='#ff0000'b&#62;").Append(action.Description).Append(" (failed)&#60;/font&#62;&#60;b&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/li&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/ul&#62;&#60;/div&#62;&#60;/body&#62;&#60;/html&#62;");
                         }
 
                         if (GingerData.GingerName == null)
@@ -554,14 +553,11 @@ namespace Ginger.Run
                             GingerData.GingerName = "";
                         }
 
-                        if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Where(z => z.FailedActionGuid == action.Guid).ToList().Count == 0)
-                        {
-                            WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Add(new DefectSuggestion(action.Guid, this.GingerData.GingerName, mContext.BusinessFlow.Name, currrentGroupName,
-                                                                                           mContext.BusinessFlow.ExecutionLogActivityCounter, mCurrentActivity.ActivityName, mCurrentActivity.ExecutionLogActionCounter,
-                                                                                           action.Description, action.RetryMechanismCount, action.Error, action.ExInfo, screenShotsPathes,
-                                                                                           isScreenshotButtonEnabled, automatedOpeningFlag, description.ToString(),
-                                                                                           currrentGroup.ExternalID, mCurrentActivity.ExternalID, new Tuple<string, string>(mContext.BusinessFlow.ExternalID, mContext.BusinessFlow.ExternalID2)));
-                        }
+                        WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Add(new DefectSuggestion(action.Guid, this.GingerData.GingerName, mContext.BusinessFlow.Name, IsRunTestSetLevel ? mContext.BusinessFlow.Name : currentGroup.Name,
+                                                                                       mContext.BusinessFlow.ExecutionLogActivityCounter, mCurrentActivity.ActivityName, mCurrentActivity.ExecutionLogActionCounter,
+                                                                                       action.Description, action.RetryMechanismCount, action.Error, action.ExInfo, screenShotsPathes,
+                                                                                       isScreenshotButtonEnabled, automatedOpeningFlag, description.ToString(),
+                                                                                       IsRunTestSetLevel ? mContext.BusinessFlow.ExternalID : currentGroup.ExternalID, mCurrentActivity.ExternalID, new Tuple<string, string>(mContext.BusinessFlow.ExternalID, !string.IsNullOrEmpty(mContext.BusinessFlow.ExternalID2) ? mContext.BusinessFlow.ExternalID2 : string.Empty)));
                     }
                     //
                     // Defects Suggestion section - end
@@ -646,7 +642,7 @@ namespace Ginger.Run
         {
             try
             {
-                HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+                HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
                 string exec_folder = GetRunSetLastExecutionLogFolderOffline();
                 string reportsResultFolder = string.Empty;
                 reportsResultFolder = Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(exec_folder), false, null, null, false, currentConf.HTMLReportConfigurationMaximalFolderSize);
@@ -676,7 +672,7 @@ namespace Ginger.Run
         //Move to GingerRunnerLogger
         public void GenerateBusinessFlowOfflineReport(Context context, string reportsResultFolder, string RunsetName = null)
         {
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             string exec_folder = string.Empty;
             exec_folder = GenerateBusinessflowOfflineExecutionLogger(context, RunsetName);
             if (string.IsNullOrEmpty(exec_folder))
@@ -773,16 +769,21 @@ namespace Ginger.Run
             {
                 //handle root directory
                 if (Directory.Exists(logFolderPath))
+                {
                     executionLoggerHelper.CleanDirectory(logFolderPath);
+                }
                 else
+                {
                     Directory.CreateDirectory(logFolderPath);
+                }
+
                 GingerExecutionEngine Gr = new GingerExecutionEngine(new GingerRunner());
                 mCurrentBusinessFlow = businessFlow;
                 businessFlow.OffilinePropertiesPrep(logFolderPath);
                 System.IO.Directory.CreateDirectory(businessFlow.ExecutionLogFolder);
                 foreach (Activity activity in businessFlow.Activities)
                 {
-                    ActivitiesGroup currentActivityGroup = businessFlow.ActivitiesGroups.Where(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid)).FirstOrDefault();
+                    ActivitiesGroup currentActivityGroup = businessFlow.ActivitiesGroups.FirstOrDefault(x => x.ActivitiesIdentifiers.Select(z => z.ActivityGuid).ToList().Contains(activity.Guid));
                     if (currentActivityGroup != null)
                     {
                         currentActivityGroup.ExecutionLogFolder = logFolderPath;

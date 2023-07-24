@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using GingerCore.Helpers;
-using GingerCore.Properties;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -27,9 +27,6 @@ using System.Data;
 using System.Data.OleDb;
 using System.IO;
 using System.Text;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.CoreNET;
 
 namespace GingerCore.Actions
 {
@@ -175,7 +172,9 @@ namespace GingerCore.Actions
         {
             string[] lines = new string[] { };
             if (File.Exists(TemplateFileName))
+            {
                 lines = System.IO.File.ReadAllLines(TemplateFileName);
+            }
 
             StringBuilder sbheader = new StringBuilder();
             StringBuilder sbdata = new StringBuilder();
@@ -187,7 +186,10 @@ namespace GingerCore.Actions
             {
 
                 if (string.IsNullOrEmpty(l))
+                {
                     continue;
+                }
+
                 if (l.StartsWith("#GINGER_REM"))
                 {
                     continue;
@@ -255,7 +257,10 @@ namespace GingerCore.Actions
                 {
                     List<string> lds = ProcessData(l);
                     foreach (var ld in lds)
+                    {
                         sbdata.AppendLine(ld);
+                    }
+
                     continue;
                 }
                 if (inTrailer)
@@ -299,7 +304,10 @@ namespace GingerCore.Actions
                 for (int j = 0; j < tmp.Length; j++)
                 {
                     if (headers.Length < j)
+                    {
                         continue;
+                    }
+
                     template = template.Replace(",,", ",#,");
                     template = template.Replace("{Param=" + headers[j] + "}", tmp[j]);
                 }
@@ -345,7 +353,10 @@ namespace GingerCore.Actions
             finally
             {
                 if (conn.State == ConnectionState.Open)
+                {
                     conn.Close();
+                }
+
                 conn.Dispose();
                 cmd.Dispose();
                 da.Dispose();

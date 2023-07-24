@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
-namespace GingerCore.DragDrop 
+namespace GingerCore.DragDrop
 {
     public class dragParams { public bool exitFlag = false; }
     /// <summary>
@@ -103,7 +103,7 @@ namespace GingerCore.DragDrop
             await Dispatcher.BeginInvoke((Action)delegate
             {
                 this.Close();
-            }); 
+            });
         }
         #endregion mousetracker
 
@@ -116,7 +116,7 @@ namespace GingerCore.DragDrop
             if (dragType == "VariableBase") { img = @"/Images/@Variable_32x32.png"; dragText = dragText.Replace("VariableBase Item", "Variable Item"); }
             if (dragType == "Act") { img = @"/Images/@Action_32x32.png"; dragText = dragText.Replace("Act Item", "Action Item"); }
             SetStringWidth();
-            
+
             tbDragText.Text = dragText;
 
             ImageBrush imgBrush = new ImageBrush();
@@ -128,7 +128,7 @@ namespace GingerCore.DragDrop
         public static int newHeight { get; set; }
         public static int newWidth { get; set; }
         public int duration { get; set; }
-        public static string dragType {get;set;}
+        public static string dragType { get; set; }
         public static string dragText { get; set; }
         public static bool exitFlag { get; set; }
 
@@ -163,7 +163,7 @@ namespace GingerCore.DragDrop
         /// <param name="durationMilisec"></param>
         public void AnimateResize(double changeWidth = 0d, double changeHeight = 0d, double durationMilisec = 200.0)
         {
-            Storyboard sb = new Storyboard { Duration = new Duration(TimeSpan.FromMilliseconds(durationMilisec)) }; 
+            Storyboard sb = new Storyboard { Duration = new Duration(TimeSpan.FromMilliseconds(durationMilisec)) };
 
             DoubleAnimationUsingKeyFrames daw;
             DoubleAnimationUsingKeyFrames dah;
@@ -182,7 +182,7 @@ namespace GingerCore.DragDrop
                 dah.DecelerationRatio = 0.6;
                 Storyboard.SetTarget(dah, this);
                 Storyboard.SetTargetProperty(dah, new PropertyPath(Window.HeightProperty));
-                sb.Children.Add(dah); 
+                sb.Children.Add(dah);
             }
 
             if (changeWidth != 0.0)
@@ -222,7 +222,7 @@ namespace GingerCore.DragDrop
 
                 Storyboard.SetTarget(dax, this);
                 Storyboard.SetTargetProperty(dax, new PropertyPath(Window.LeftProperty));
-                sb.Children.Add(dax); 
+                sb.Children.Add(dax);
             }
 
             // animate window move vertical 
@@ -248,15 +248,15 @@ namespace GingerCore.DragDrop
                 Storyboard.SetTargetProperty(day, new PropertyPath(Window.TopProperty));
                 sb.Children.Add(day);
             }
-            
+
             sb.Begin();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.AnimateResize(newWidth - 38 ,newHeight - 38, 1000.0);
+            this.AnimateResize(newWidth - 38, newHeight - 38, 1000.0);
             //run mouse binding on separate thread
-            Parallel.Invoke(()=>{bindmouse();});
+            Parallel.Invoke(() => { bindmouse(); });
         }
 
         private void VisualDragWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

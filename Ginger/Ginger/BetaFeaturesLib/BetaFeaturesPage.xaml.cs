@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ namespace Ginger
             FeatureListView.ItemsSource = WorkSpace.Instance.BetaFeatures.Features;
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(FeatureListView.ItemsSource);
             // Add grouping only once
-            if (view.GroupDescriptions.Count == 0) 
+            if (view.GroupDescriptions.Count == 0)
             {
                 PropertyGroupDescription groupDescription = new PropertyGroupDescription(nameof(BetaFeature.Group));
                 view.GroupDescriptions.Add(groupDescription);
@@ -75,19 +75,19 @@ namespace Ginger
         private void xCompressSolutionButton_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             ObservableList<BusinessFlow> BFs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-            
+
             foreach (BusinessFlow BF in BFs)
             {
-                foreach(Activity activity in BF.Activities)
+                foreach (Activity activity in BF.Activities)
                 {
-                    foreach(Act act in activity.Acts)
+                    foreach (Act act in activity.Acts)
                     {
-                        if(act is ActGenElement)
+                        if (act is ActGenElement)
                         {
                             ActInputValue AIV1 = (from x in act.InputValues where x.Param == "Xoffset" select x).SingleOrDefault();
                             if (AIV1 != null && AIV1.Value == "0")
                             {
-                                act.InputValues.Remove(AIV1);                                
+                                act.InputValues.Remove(AIV1);
                             }
                             ActInputValue AIV2 = (from x in act.InputValues where x.Param == "Yoffset" select x).SingleOrDefault();
                             if (AIV2 != null && AIV2.Value == "0")
@@ -108,7 +108,7 @@ namespace Ginger
 
             // TODO: save all other items
 
-           Reporter.ToUser(eUserMsgKey.StaticInfoMessage,"Done");
+            Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Done");
         }
 
         private void XMessageTestWindow_Click(object sender, RoutedEventArgs e)

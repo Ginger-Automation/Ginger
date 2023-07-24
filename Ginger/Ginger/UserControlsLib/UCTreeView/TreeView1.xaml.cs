@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using GingerCoreNET.SolutionRepositoryLib;
-using GingerWPF.TreeViewItemsLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -236,7 +234,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 await Task.Delay(1000);
                 return txt != xSearchTextBox.Text;
             }
-            if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString) return;
+            if (await UserKeepsTyping() || xSearchTextBox.Text == mSearchString)
+            {
+                return;
+            }
 
             mSearchString = xSearchTextBox.Text;
             await SearchAsync();

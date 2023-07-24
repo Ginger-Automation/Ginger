@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -66,15 +62,17 @@ namespace GingerATS
         public static bool MoveXmlReaderToSpecificNode(XmlReader xmlReader, string nodeName)
         {
             try
-            {                
+            {
                 while (xmlReader.Read())
                 {
                     if (xmlReader.Name.ToUpper().Contains(nodeName.ToUpper()))
+                    {
                         return true;
+                    }
                 }
                 return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -89,7 +87,9 @@ namespace GingerATS
                     if (xmlReader.Name.ToUpper().Contains(nodeName.ToUpper()))
                     {
                         if (xmlReader.GetAttribute(attributeName) == attributeValue)
+                        {
                             return true;
+                        }
                     }
                 }
                 return false;
@@ -102,7 +102,7 @@ namespace GingerATS
 
         public static string GetNodeAttributeValue(string xmlFilePath, string nodeName, string attributeName)
         {
-            XmlReader xmlReader=null;
+            XmlReader xmlReader = null;
             try
             {
                 xmlReader = GingerATSXmlReader.GetXMLReaderFromFile(xmlFilePath);
@@ -110,7 +110,7 @@ namespace GingerATS
                 {
                     if (GingerATSXmlReader.MoveXmlReaderToSpecificNode(xmlReader, nodeName))
                     {
-                        string attributeValue= xmlReader.GetAttribute(attributeName);
+                        string attributeValue = xmlReader.GetAttribute(attributeName);
                         xmlReader.Close();
                         return attributeValue;
                     }
@@ -122,20 +122,27 @@ namespace GingerATS
             catch (Exception)
             {
                 if (xmlReader != null)
+                {
                     xmlReader.Close();
+                }
+
                 return null;
             }
         }
 
-        public static bool ValidateNodeAttributsValue(string xmlPathOrString, string nodeName, List<NodeAttributeValidation> attributesToValidate, bool getReaderFromString=false)
+        public static bool ValidateNodeAttributsValue(string xmlPathOrString, string nodeName, List<NodeAttributeValidation> attributesToValidate, bool getReaderFromString = false)
         {
             XmlReader xmlReader = null;
             try
             {
                 if (!getReaderFromString)
+                {
                     xmlReader = GingerATSXmlReader.GetXMLReaderFromFile(xmlPathOrString);
+                }
                 else
+                {
                     xmlReader = GingerATSXmlReader.GetXMLReaderFromString(xmlPathOrString);
+                }
 
                 while (GingerATSXmlReader.MoveXmlReaderToSpecificNode(xmlReader, nodeName))
                 {
@@ -154,18 +161,26 @@ namespace GingerATS
                             {
                                 case NodeAttributeValidation.eNodeAttributeValidationType.Equal:
                                     if (attributeValue == attributToValidate.Value)
+                                    {
                                         matchingAttributesNum++;
+                                    }
+
                                     break;
                                 case NodeAttributeValidation.eNodeAttributeValidationType.Contains:
                                     if (attributeValue != null && attributeValue.Contains(attributToValidate.Value))
+                                    {
                                         matchingAttributesNum++;
+                                    }
+
                                     break;
                                 case NodeAttributeValidation.eNodeAttributeValidationType.CommaSeperatedListValue:
                                     if (attributeValue != null)
                                     {
                                         string[] listValues = attributeValue.Split(';');
                                         if (listValues.Where(x => x == attributToValidate.Value).FirstOrDefault() != null)
+                                        {
                                             matchingAttributesNum++;
+                                        }
                                     }
                                     break;
                                 case NodeAttributeValidation.eNodeAttributeValidationType.NewLineSeperatedListValue:
@@ -173,7 +188,9 @@ namespace GingerATS
                                     {
                                         string[] listValues = attributeValue.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
                                         if (listValues.Where(x => x == attributToValidate.Value).FirstOrDefault() != null)
+                                        {
                                             matchingAttributesNum++;
+                                        }
                                     }
                                     break;
                             }
@@ -192,7 +209,10 @@ namespace GingerATS
             catch (Exception)
             {
                 if (xmlReader != null)
+                {
                     xmlReader.Close();
+                }
+
                 return false;
             }
         }
@@ -201,15 +221,15 @@ namespace GingerATS
         {
             XDocument doc;
             try
-            {                
+            {
                 doc = XDocument.Load(xmlFilePath);
                 string nodeXml = doc.Root.Element(nodeName).ToString();
                 doc = null;
-                return nodeXml;                
+                return nodeXml;
             }
             catch (Exception)
             {
-                doc= null;
+                doc = null;
                 return string.Empty;
             }
         }
@@ -232,6 +252,6 @@ namespace GingerATS
             this.Value = value;
             this.ValidationType = validationType;
             this.ValidateInUpperCase = validateInUpperCase;
-        }        
+        }
     }
 }

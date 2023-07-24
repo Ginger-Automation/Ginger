@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -90,16 +90,20 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             get
             {
                 if (Agent != null)
+                {
                     return ((IWindowExplorer)(((AgentOperations)Agent.AgentOperations).Driver));
+                }
                 else
+                {
                     return null;
+                }
             }
         }
 
         public Bitmap ScreenShot { get; set; }
         public string SpecificFramePath { get; set; }
 
-        public PomLearnUtils(ApplicationPOMModel pom, Agent agent=null, RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
+        public PomLearnUtils(ApplicationPOMModel pom, Agent agent = null, RepositoryFolder<ApplicationPOMModel> pomModelsFolder = null)
         {
             POM = pom;
             mAgent = agent;
@@ -118,7 +122,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 }
             }
 
-            if(Agent != null)
+            if (Agent != null)
             {
                 POM.LastUsedAgent = Agent.Guid;
             }
@@ -190,13 +194,13 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             LearnScreenShot();
             POM.PageURL = ((DriverBase)((AgentOperations)Agent.AgentOperations).Driver).GetURL();
             POM.Name = IWindowExplorerDriver.GetActiveWindow().Title;
-            
+
             // appending Specific frame title in POM name
             if (!string.IsNullOrEmpty(SpecificFramePath))
             {
-                var frame = IWindowExplorerDriver.GetWindowAllFrames().Where(x => x.Path.Equals(SpecificFramePath)).FirstOrDefault();
-                
-                if(frame != null)
+                var frame = IWindowExplorerDriver.GetWindowAllFrames().FirstOrDefault(x => x.Path.Equals(SpecificFramePath));
+
+                if (frame != null)
                 {
                     POM.Name = string.Concat(POM.Name, " : ", frame.Title);
                 }
@@ -209,13 +213,13 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             {
                 if (SelectedElementTypesList.Count > 0)
                 {
-                    await IWindowExplorerDriver.GetVisibleControls(pomSetting,mElementsList, POM.ApplicationPOMMetaData);
+                    await IWindowExplorerDriver.GetVisibleControls(pomSetting, mElementsList, POM.ApplicationPOMMetaData);
                 }
             }
             else
             {
                 pomSetting.filteredElementType = null;
-               await IWindowExplorerDriver.GetVisibleControls(pomSetting, mElementsList, POM.ApplicationPOMMetaData);
+                await IWindowExplorerDriver.GetVisibleControls(pomSetting, mElementsList, POM.ApplicationPOMMetaData);
             }
 
         }
@@ -265,7 +269,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             List<ElementLocator> orderedLocatorsList = element.Locators.OrderBy(m => mElementLocatorsList.IndexOf(m.LocateBy)).ToList();
             foreach (ElementLocator elemLoc in orderedLocatorsList)
             {
-                elemLoc.Active = ElementLocatorsSettingsList.Any(m => m.LocateBy == elemLoc.LocateBy) && ElementLocatorsSettingsList.Where(m => m.LocateBy == elemLoc.LocateBy).FirstOrDefault().Active;
+                elemLoc.Active = ElementLocatorsSettingsList.Any(m => m.LocateBy == elemLoc.LocateBy) && ElementLocatorsSettingsList.FirstOrDefault(m => m.LocateBy == elemLoc.LocateBy).Active;
             }
             element.Locators = new ObservableList<ElementLocator>(orderedLocatorsList);
 
@@ -319,14 +323,14 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             string uname = name;
             try
             {
-                if (elements.Where(p => p.ElementName == name).Count() > 0)
+                if (elements.Any(p => p.ElementName == name))
                 {
                     bool isFound = false;
                     int count = 2;
                     while (!isFound)
                     {
                         string postfix = string.Format("{0}_{1}", name, count);
-                        if (elements.Where(p => p.ElementName == postfix).Count() > 0)
+                        if (elements.Any(p => p.ElementName == postfix))
                         {
                             count++;
                         }

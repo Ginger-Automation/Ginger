@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,21 +17,19 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System;
-using System.Collections.Generic;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Ginger.WindowExplorer.Windows;
-using Ginger.WindowExplorer;
-using System.Windows.Controls;
-using Ginger.Drivers.WindowsAutomation;
-using GingerCore;
-using GingerCore.Actions;
-using GingerCore.Drivers;
-using GingerCore.Drivers.Common;
-using Ginger.Drivers.UIA;
-using GingerCore.Actions.UIAutomation;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
+using Ginger.Drivers.UIA;
+using Ginger.Drivers.WindowsAutomation;
+using Ginger.WindowExplorer;
+using Ginger.WindowExplorer.Windows;
+using GingerCore.Actions;
+using GingerCore.Actions.UIAutomation;
+using GingerCore.Drivers.Common;
+using GingerWPF.UserControlsLib.UCTreeView;
+using System;
+using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace Ginger.Drivers.Windows
 {
@@ -59,7 +57,7 @@ namespace Ginger.Drivers.Windows
             return TreeViewUtils.CreateItemHeader(UIAElementInfo.ElementTitle, Amdocs.Ginger.Common.Enums.eImageType.Agent);
         }
 
-        List<ITreeViewItem> ITreeViewItem.Childrens()        
+        List<ITreeViewItem> ITreeViewItem.Childrens()
         {
             List<ITreeViewItem> list = new List<ITreeViewItem>();
             {
@@ -70,8 +68,8 @@ namespace Ginger.Drivers.Windows
                     if (EI.GetType() == typeof(UIAElementInfo))
                     {
                         //TODO: move convrter to here                
-                         TVI = WindowsElementConverter.GetWindowsElementTreeItem(EI);
-                        
+                        TVI = WindowsElementConverter.GetWindowsElementTreeItem(EI);
+
                     }
                     else
                     {
@@ -85,7 +83,7 @@ namespace Ginger.Drivers.Windows
 
         bool ITreeViewItem.IsExpandable()
         {
-            return base.IsExpandable;          
+            return base.IsExpandable;
         }
 
         Page ITreeViewItem.EditPage(Amdocs.Ginger.Common.Context mContext)
@@ -104,7 +102,7 @@ namespace Ginger.Drivers.Windows
 
         ObservableList<ControlProperty> IWindowExplorerTreeItem.GetElementProperties()
         {
-           return ((UIAutomationDriverBase) (UIAElementInfo.WindowExplorer)).mUIAutomationHelper.GetElementProperties(UIAElementInfo.ElementObject);
+            return ((UIAutomationDriverBase)(UIAElementInfo.WindowExplorer)).mUIAutomationHelper.GetElementProperties(UIAElementInfo.ElementObject);
         }
 
         public ObservableList<ActInputValue> GetItemSpecificActionInputValues()

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
-using GingerCore;
 using System;
 using System.Xml;
+using Amdocs.Ginger.Common;
 
 namespace Ginger.UserConfig
 {
@@ -54,7 +53,7 @@ namespace Ginger.UserConfig
             else
             {
                 IsSupportAutomate = true;
-                IsSupportExecution = 
+                IsSupportExecution =
                 IsSupportReports = true;
                 IsSupportSourceControl = true;
                 IsSupportALM = true;

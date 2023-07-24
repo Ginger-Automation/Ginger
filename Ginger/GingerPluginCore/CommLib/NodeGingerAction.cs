@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Plugin.Core;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.RunLib
 {
@@ -29,14 +27,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         private string mExInfo;
 
         public NodeActionOutput Output { get; } = new NodeActionOutput();
-        public string Id { get =>throw new NotImplementedException(); set =>throw new NotImplementedException(); }
-        public string ExInfo { get { return mExInfo; } }  
+        public string Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string ExInfo { get { return mExInfo; } }
 
-        public string Errors { get { return mErrors; } } 
-                
+        public string Errors { get { return mErrors; } }
+
 
         public void AddError(string error)
-        {            
+        {
             if (mErrors != null)
             {
                 mErrors += Environment.NewLine;
@@ -58,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         }
 
         public void AddOutput(string param, object value, string path = null)
-        {            
+        {
             if (value == null)
             {
                 Output.Add(param, "", path);
@@ -67,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             {
                 // temp to string!!! - FIXME: enable all type output
                 Output.Add(param, value.ToString(), path);
-            }            
+            }
         }
 
         public void Log(string text, LogLevel logLevel = LogLevel.Info)

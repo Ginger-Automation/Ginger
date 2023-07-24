@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,16 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.WindowExplorer;
 using GingerCore.Actions;
 using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.Actions.Locators.ASCF
 {
-    class ASCFLabelTreeItem : ASCFControlTreeItem, ITreeViewItem,  IWindowExplorerTreeItem
+    class ASCFLabelTreeItem : ASCFControlTreeItem, ITreeViewItem, IWindowExplorerTreeItem
     {
         StackPanel ITreeViewItem.Header()
         {
@@ -42,7 +41,7 @@ namespace Ginger.Actions.Locators.ASCF
             ActASCFControl a1 = new ActASCFControl();
             a1.Description = "Get " + ASCFControlInfo.Path + " Value";
             a1.LocateBy = eLocateBy.ByName;
-            a1.LocateValue = ASCFControlInfo.Path;            
+            a1.LocateValue = ASCFControlInfo.Path;
             a1.ControlAction = ActASCFControl.eControlAction.GetControlProperty;
             a1.ControlProperty = ActASCFControl.eControlProperty.Value;
             list.Add(a1);

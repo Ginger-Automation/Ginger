@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,21 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.ALM.QC.TreeViewItems;
-using GingerWPF.UserControlsLib.UCTreeView;
+using Ginger.ALM.Qtest.TreeViewItems;
 using GingerCore;
-using GingerCore.ALM.QC;
+using GingerCore.ALM;
+using GingerCore.ALM.Qtest;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using GingerCore.ALM.QCRestAPI;
-using GingerCore.ALM;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.ALM.Qtest;
-using Ginger.ALM.Qtest.TreeViewItems;
 
 namespace Ginger.ALM.Qtest
 {

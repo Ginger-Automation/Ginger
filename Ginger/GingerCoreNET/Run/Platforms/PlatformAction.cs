@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.CoreNET.Run;
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -45,15 +45,15 @@ namespace GingerCore.Platforms
     //  Fields must match exactly PlatformActionData
     /// </summary>
     public struct PlatformAction
-    {        
+    {
 
 
         public string ActionType { get; }
 
         public Dictionary<string, object> InputParams;
-        
+
         public PlatformAction(IActPluginExecution Action)
-        {            
+        {
 
             ActionType = Action.GetName();
             InputParams = new Dictionary<string, object>();

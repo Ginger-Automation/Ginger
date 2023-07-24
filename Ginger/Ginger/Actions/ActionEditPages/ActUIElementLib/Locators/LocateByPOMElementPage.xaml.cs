@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,28 +16,27 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows;
-using System.Windows.Controls;
-using GingerCore.Actions.Common;
-using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
-using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Repository;
 using amdocs.ginger.GingerCoreNET;
-using GingerCore;
-using Amdocs.Ginger.Common.Enums;
-using System.Collections.Generic;
-using Amdocs.Ginger.Common.UIElement;
-using Ginger.UserControls;
 using Amdocs.Ginger.Common;
-using System.Windows.Data;
-using System;
-using System.Linq;
-using GingerCore.Platforms;
-using GingerCore.Actions;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
+using Ginger.Actions.UserControls;
 using Ginger.ApplicationModelsLib.POMModels;
 using Ginger.Run;
+using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
+using Ginger.UserControls;
+using GingerCore;
+using GingerCore.GeneralLib;
+using GingerCore.Platforms;
+using GingerWPF.UserControlsLib.UCTreeView;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media.Imaging;
-using Ginger.Actions.UserControls;
 
 namespace Ginger.Actions._Common.ActUIElementLib
 {
@@ -48,7 +47,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
     {
         SingleItemTreeViewSelectionPage mApplicationPOMSelectionPage = null;
         public ApplicationPOMModel SelectedPOM = null;
-        RepositoryFolder<ApplicationPOMModel> mPOMModelFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();       
+        RepositoryFolder<ApplicationPOMModel> mPOMModelFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationPOMModel>();
         string mLocateValue;
         public bool OnlyPOMSelection { get; set; }
 
@@ -113,7 +112,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             DataContext = this;
 
             SetControlsGridView();
-            if(mOnlyPOMRequest)
+            if (mOnlyPOMRequest)
             {
                 HideElementSelection();
             }
@@ -139,13 +138,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
                             xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
 
                             Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                            ElementInfo selectedPOMElement = (ElementInfo)SelectedPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                            ElementInfo selectedPOMElement = (ElementInfo)SelectedPOM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
                             if (selectedPOMElement == null)
                             {
                                 Reporter.ToUser(eUserMsgKey.POMElementSearchByGUIDFailed);
                             }
                             else
-                            {                                
+                            {
                                 xPOMElementsGrid.Grid.SelectedItem = selectedPOMElement;
                                 //SetElementTypeProperty(selectedPOMElement.ElementTypeEnum); //we don't want it to overwrite user type selection in case it is diffrent from element type                                
                                 SetElementViewText(selectedPOMElement.ElementName, selectedPOMElement.ElementTypeEnum.ToString());
@@ -184,11 +183,11 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             if (mApplicationPOMSelectionPage == null)
             {
-                ApplicationPOMsTreeItem pOMsRoot = new ApplicationPOMsTreeItem(mPOMModelFolder);              
+                ApplicationPOMsTreeItem pOMsRoot = new ApplicationPOMsTreeItem(mPOMModelFolder);
                 mApplicationPOMSelectionPage = new SingleItemTreeViewSelectionPage("Page Objects Model Element", eImageType.ApplicationPOMModel, pOMsRoot,
                                                                                     SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,
-                                                                                    new Tuple<string, string>(  nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
-                                                                                                                nameof(ApplicationPOMModel.TargetApplicationKey.ItemName),                                                                                                                 
+                                                                                    new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
+                                                                                                                nameof(ApplicationPOMModel.TargetApplicationKey.ItemName),
                                                                                                                 mTargetApplication));
             }
 
@@ -269,13 +268,13 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             //string pathToShow;
             //pathToShow = mSelectedPOM.FilePath.Substring(0, mSelectedPOM.FilePath.LastIndexOf("\\")).Substring(mPOMModelFolder.FolderFullPath.Length) + @"\" + mSelectedPOM.ItemName;
-            xPomPathTextBox.Text = SelectedPOM.NameWithRelativePath; 
+            xPomPathTextBox.Text = SelectedPOM.NameWithRelativePath;
             xViewPOMBtn.Visibility = Visibility.Visible;
             if (onlyPOMRequest)
             {
                 xViewPOMElementBtn.Visibility = Visibility.Visible;
             }
-            
+
         }
 
         private void POMElementComboBox_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
@@ -294,7 +293,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             xPOMElementsGrid.Visibility = Visibility.Collapsed;
             xSelectElement.Visibility = Visibility.Collapsed;
             xElementScreenShotFrame.Visibility = Visibility.Collapsed;
-            ArrowExpended = false;            
+            ArrowExpended = false;
             if (xPOMElementsGrid.Grid.SelectedItem != null)
             {
                 ElementInfo selectedElement = (ElementInfo)xPOMElementsGrid.Grid.SelectedItem;
@@ -314,7 +313,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (selectedElement.ScreenShotImage != null)
             {
                 source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(selectedElement.ScreenShotImage.ToString()));
-                xElementScreenShotFrame.Content = new ScreenShotViewPage(selectedElement?.ElementName, source, false);
+                xElementScreenShotFrame.ClearAndSetContent(new ScreenShotViewPage(selectedElement?.ElementName, source, false));
                 xElementScreenShotFrame.Visibility = Visibility.Visible;
             }
         }
@@ -328,14 +327,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementName), Header = "Name", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.Description), Header = "Description", WidthWeight = 30, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.ElementTypeEnumDescription), Header = "Type", WidthWeight = 40, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.OptionalValuesObjectsListAsString), Header = "Possible Values", WidthWeight = 40, ReadOnly = true, BindingMode = BindingMode.OneWay});
+            view.GridColsView.Add(new GridColView() { Field = nameof(ElementInfo.OptionalValuesObjectsListAsString), Header = "Possible Values", WidthWeight = 40, ReadOnly = true, BindingMode = BindingMode.OneWay });
             xPOMElementsGrid.SetAllColumnsDefaultView(view);
             xPOMElementsGrid.InitViewItems();
         }
 
         private void HighlightElementClicked(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent currentAgent = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.Where(z => z.AppName == mTargetApplication).FirstOrDefault();
+            ApplicationAgent currentAgent = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.FirstOrDefault(z => z.AppName == mTargetApplication);
             if ((currentAgent == null) || !(((AgentOperations)((Agent)currentAgent.Agent).AgentOperations).Driver is IWindowExplorer) || (((AgentOperations)((Agent)currentAgent.Agent).AgentOperations).Status != Agent.eStatus.Running))
             {
                 Reporter.ToUser(eUserMsgKey.NoRelevantAgentInRunningStatus);
@@ -364,7 +363,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
         {
             SetSelectedElement();
         }
-    
+
         private void XPOMElementsGrid_RowDoubleClick(object sender, EventArgs e)
         {
             SetSelectedElement();
@@ -387,7 +386,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             mPOMEditPage.ShowAsWindow(eWindowShowStyle.Dialog);
 
             //refresh Elements list
-            if(SelectedPOM.DirtyStatus == eDirtyStatus.Modified || mPOMEditPage.IsPageSaved)
+            if (SelectedPOM.DirtyStatus == eDirtyStatus.Modified || mPOMEditPage.IsPageSaved)
             {
                 UpdatePomSelection();
             }

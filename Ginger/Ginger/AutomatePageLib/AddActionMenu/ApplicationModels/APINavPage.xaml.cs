@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.AddActionMenu;
+using GingerCore.GeneralLib;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -44,6 +45,12 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             mContext = context;
 
+            ConfigureAPIPage();
+            mContext.PropertyChanged += MContext_PropertyChanged;
+        }
+
+        private void ConfigureAPIPage()
+        {
             AppApiModelsFolderTreeItem mAPIsRoot = new AppApiModelsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>(), true);
             mItemTypeRootNode = mAPIsRoot;
             mAPIPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, mItemTypeRootNode, SingleItemTreeViewSelectionPage.eItemSelectionType.Multi, true,
@@ -53,10 +60,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mItemTypeRootNode.SetTools(mAPIPage.xTreeView);
             mAPIPage.xTreeView.SetTopToolBarTools(mAPIsRoot.SaveAllTreeFolderItemsHandler, mAPIsRoot.AddAPIModelFromDocument, RefreshTreeItems, AddActionToListHandler);
 
-            mContext.PropertyChanged += MContext_PropertyChanged;
-            xAPIFrame.Content = mAPIPage;
+            xAPIFrame.ClearAndSetContent(mAPIPage);
         }
-
         private void MContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (this.IsVisible && MainAddActionsNavigationPage.IsPanelExpanded)
@@ -89,12 +94,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             if (mContext.Activity != null)
             {
-                mAPIPage.xTreeView.Tree.TreeNodesFilterByField = new Tuple<string, string>(nameof(ApplicationAPIModel.TargetApplicationKey)
-                                                                    + "." + nameof(ApplicationAPIModel.TargetApplicationKey.ItemName), mContext.Activity.TargetApplication);
-                mAPIPage.xTreeView.Tree.FilterType = UCTreeView.eFilteroperationType.Equals;
+                ConfigureAPIPage();
             }
-            mAPIPage.xTreeView.Tree.SelectItem(mItemTypeRootNode);
-            mAPIPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
         }
 
         public void ReLoadPageItems()

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,19 +29,19 @@ namespace GingerWPFDriverWindow
     /// </summary>
     public partial class MainWindow : Window
     {
-        RemoteObjectsServer mRemoteObjectsServer;        
-        
+        RemoteObjectsServer mRemoteObjectsServer;
+
         public MainWindow()
         {
             InitializeComponent();
-            StartServer();            
+            StartServer();
         }
 
         public void Adddisplay(Page driverPage)
         {
             MainFrame.Content = driverPage;
         }
-        
+
         private void StartServer()
         {
             mRemoteObjectsServer = new RemoteObjectsServer();
@@ -53,12 +53,13 @@ namespace GingerWPFDriverWindow
         private object GetObjectHandler(string id)
         {
             Page driverPage = null;
-            this.Dispatcher.Invoke(() => {
+            this.Dispatcher.Invoke(() =>
+            {
                 //TODO: temp fix me, based on id create the obj
-                Assembly a = Assembly.LoadFrom(@"C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerWebServicesPluginWPF\bin\Debug\GingerWebServicesPluginWPF.dll"); 
+                Assembly a = Assembly.LoadFrom(@"C:\Yaron\TFS\Ginger\Devs\GingerNextVer_Dev\GingerWebServicesPluginWPF\bin\Debug\GingerWebServicesPluginWPF.dll");
                 driverPage = (Page)a.CreateInstance("GingerWebServicesPluginWPF.WebServicesDriverPage");
                 Adddisplay(driverPage);
-                
+
             });
             return driverPage;
         }

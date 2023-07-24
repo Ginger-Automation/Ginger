@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using GingerCore.Actions.Windows;
+using System.Windows.Controls;
 
 namespace Ginger.Actions.Windows
 {
@@ -34,7 +34,7 @@ namespace Ginger.Actions.Windows
 
             mAct = Act;
 
-            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, mAct.ControlAction);            
+            GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, mAct.ControlAction);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, ActWindowsControl.Fields.ControlAction);
         }
 
@@ -43,11 +43,11 @@ namespace Ginger.Actions.Windows
             switch (mAct.ControlAction)
             {
                 case ActWindowsControl.eControlAction.SetValue:
-                    //TODO: show ValueTextBox
+                //TODO: show ValueTextBox
                 case ActWindowsControl.eControlAction.GetValue:
                     //TODO: hide ValueTextBox
                     break;
-                    
+
             }
         }
     }

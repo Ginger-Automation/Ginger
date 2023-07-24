@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -54,14 +54,14 @@ namespace Amdocs.Ginger.Repository
                 // we catch the result for speed
                 if (mFileType == null)
                 {
-                    mFileType = GetFileType();                    
+                    mFileType = GetFileType();
                 }
                 return mFileType;
             }
         }
 
         private eFileType? GetFileType()
-        {            
+        {
             string s = Path.GetFileName(FilePath);
             if (s.Contains(".BusinessFlow.xml")) return eFileType.BusinessFlow;   // TODO: use const
             if (s.Contains(".Agent.xml")) return eFileType.Agent;   // TODO: use const

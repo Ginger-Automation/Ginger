@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ namespace GingerCore.Drivers.MainFrame
 
             MainFrameUIHelper.SetupMainframeDriverComponents(mDriver, this, ConsoleCanvas);
         }
-       
+
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
             Refresh();
@@ -133,7 +133,10 @@ namespace GingerCore.Drivers.MainFrame
                 if (RecordBtn.IsChecked == true)
                 {
                     if (mDriver.mBusinessFlow == null)
+                    {
                         return;
+                    }
+
                     ActMainframeSendKey AMSK = new ActMainframeSendKey();
                     AMSK.Description = ("Send " + key.ToString() + " Key to Mainframe ");
                     mDriver.mBusinessFlow.CurrentActivity.Acts.Add((Actions.Act)AMSK);

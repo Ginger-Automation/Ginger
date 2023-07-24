@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,10 +20,8 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
-using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository.AddItemToRepositoryWizard;
-using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerWPF.DragDropLib;
@@ -99,18 +97,20 @@ namespace Ginger.Repository
         {
             Act dragedItem = (Act)((DragInfo)sender).Data;
             if (dragedItem != null)
-            {                
+            {
                 WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, dragedItem));
                 //refresh and select the item
                 try
-               {
-                   xActionListView.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
+                {
+                    xActionListView.DataSourceList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
 
-                    Act dragedItemInGrid = ((IEnumerable<Act>)xActionListView.DataSourceList).Where(x => x.Guid == dragedItem.Guid).FirstOrDefault();
-                   if (dragedItemInGrid != null)
-                       xActionListView.List.SelectedItem = dragedItemInGrid;
-               }
-               catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
+                    Act dragedItemInGrid = ((IEnumerable<Act>)xActionListView.DataSourceList).FirstOrDefault(x => x.Guid == dragedItem.Guid);
+                    if (dragedItemInGrid != null)
+                    {
+                        xActionListView.List.SelectedItem = dragedItemInGrid;
+                    }
+                }
+                catch (Exception ex) { Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex); }
             }
         }
 
@@ -122,21 +122,21 @@ namespace Ginger.Repository
             xActionListView.PreviewDragItem += grdActions_PreviewDragItem;
             xActionListView.xTagsFilter.Visibility = Visibility.Visible;
         }
-                       
+
         private void EditAction(object sender, RoutedEventArgs e)
         {
             if (xActionListView.CurrentItem != null)
             {
                 Act a = (Act)xActionListView.CurrentItem;
                 ActionEditPage actedit = new ActionEditPage(a, General.eRIPageViewMode.SharedReposiotry, new GingerCore.BusinessFlow(), new GingerCore.Activity());
-                actedit.ShowAsWindow(eWindowShowStyle.Dialog);             
+                actedit.ShowAsWindow(eWindowShowStyle.Dialog);
             }
             else
             {
                 Reporter.ToUser(eUserMsgKey.AskToSelectItem);
             }
         }
-        
+
         private void grdActions_grdMain_ItemMouseDoubleClick(object sender, EventArgs e)
         {
             EditAction(sender, new RoutedEventArgs());

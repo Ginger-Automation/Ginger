@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,15 +16,10 @@ limitations under the License.
 */
 #endregion
 using System;
-using System.ComponentModel;
 using System.Collections.Generic;
-using GingerCore;
-using Amdocs.Ginger.Common;
-using GingerCore.Activities;
-using GingerCore.Variables;
-using GingerCore.Actions;
+using System.ComponentModel;
 using System.Linq;
-using Ginger.Repository.AddItemToRepositoryWizard;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 
 namespace Ginger.Repository.ItemToRepositoryWizard
@@ -32,7 +27,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
     public class ItemValidationBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-       
+
         public RepositoryItemBase UsageItem { get; set; }
 
         public static ObservableList<ItemValidationBase> mIssuesList = new ObservableList<ItemValidationBase>();
@@ -42,14 +37,14 @@ namespace Ginger.Repository.ItemToRepositoryWizard
         public string ItemName { get; set; }
         public string ItemClass { get; set; }
         public string IssueDescription { get; set; }
-        public string IssueResolution{ get; set; }
+        public string IssueResolution { get; set; }
         public string ItemNewName { get; set; }
         public List<String> missingVariablesList { get; set; }
 
         public enum eIssueType
-        {            
+        {
             DuplicateName,
-            MissingVariables           
+            MissingVariables
         }
 
         public eIssueType mIssueType;
@@ -59,10 +54,10 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             get
             {
                 return mIssueType.ToString();
-            }           
+            }
             set
             {
-                mIssueType =(eIssueType)Enum.Parse(typeof(eIssueType),value);
+                mIssueType = (eIssueType)Enum.Parse(typeof(eIssueType), value);
             }
         }
 
@@ -75,7 +70,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             }
         }
 
-      
+
 
         public static ItemValidationBase CreateNewIssue(RepositoryItemBase rItem)
         {
@@ -85,7 +80,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
             // TODO: remove me and use RepositoryItemBase
             //ITB.ItemClass = RepositoryItem.GetShortType(rItem.GetType());
             ITB.ItemClass = rItem.GetItemType();
-            
+
             return ITB;
         }
 

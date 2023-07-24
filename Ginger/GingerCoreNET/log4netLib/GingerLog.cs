@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,22 +39,22 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             get
             {
                 if (mGingerLogFile == null)
-                {                 
+                {
                     mGingerLogFile = Path.Combine(Common.GeneralLib.General.LocalUserApplicationDataFolderPath, "WorkingFolder", "Logs", "Ginger_Log.txt");
                 }
                 return mGingerLogFile;
             }
         }
 
-        
+
         public static void InitLog4Net()
         {
-          var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());            
-            string xmltext = Getlog4netConfig();            
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            string xmltext = Getlog4netConfig();
             xmltext = xmltext.Replace("${filename}", GingerLogFile);  // replace with full log path and filename
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(xmltext);
-            XmlConfigurator.Configure(logRepository, doc.DocumentElement);            
+            XmlConfigurator.Configure(logRepository, doc.DocumentElement);
         }
 
         static string Getlog4netConfig()
@@ -71,7 +71,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
         }
 
         public static void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null)
-        {            
+        {
             try
             {
                 switch (logLevel)
@@ -111,7 +111,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             stringBuilder.Append(ApplicationInfo.ApplicationName).Append(Environment.NewLine);
             stringBuilder.Append("Version: " + ApplicationInfo.ApplicationVersionWithInfo).Append(Environment.NewLine);
             stringBuilder.Append("Executer Path: ").Append(Assembly.GetEntryAssembly().Location).Append(Environment.NewLine);
-            stringBuilder.Append("Log File Path: " + GingerLogFile).Append(Environment.NewLine);            
+            stringBuilder.Append("Log File Path: " + GingerLogFile).Append(Environment.NewLine);
             stringBuilder.Append("*******************************************************************************************************************").Append(Environment.NewLine);
             stringBuilder.Append(Environment.NewLine);
 

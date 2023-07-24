@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,13 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Reflection;
 
 namespace Amdocs.Ginger.GingerRuntime
 {
@@ -34,12 +32,12 @@ namespace Amdocs.Ginger.GingerRuntime
         // MenuItem StartServiceMenuItem;
         // static GingerConsoleScriptGlobals g = new GingerConsoleScriptGlobals();
         public MenuItem GetMenu()
-        {            
+        {
             // StartServiceMenuItem = new MenuItem(ConsoleKey.D2, "Start Service", () => StartService(), true);
             //StartServiceMenuItem = new MenuItem(ConsoleKey.D3, "Load Plugin and run Action", () => LoadPluginAndRunAction(), true);
             CreatePluginServicesinfojsonMenuItem = new MenuItem(ConsoleKey.D4, "Create Plugin Services info json", () => CreatePluginServicesinfojson(), true);
             CreatePluginPackageMenuItem = new MenuItem(ConsoleKey.D5, "Create Plugin Package", () => CreatePluginPackage(), true);
-            MenuItem GingerGridMenu = new MenuItem(ConsoleKey.P, "Plugin Menu");           
+            MenuItem GingerGridMenu = new MenuItem(ConsoleKey.P, "Plugin Menu");
             GingerGridMenu.SubItems.Add(CreatePluginServicesinfojsonMenuItem);
             GingerGridMenu.SubItems.Add(CreatePluginPackageMenuItem);
             return GingerGridMenu;
@@ -62,15 +60,15 @@ namespace Amdocs.Ginger.GingerRuntime
                 Console.WriteLine("StartupDLL: " + p.PluginPackageOperations.StartupDLL);
                 Console.WriteLine("---------------------------------------------------------");
                 Console.WriteLine("Creating ServicesInfo.json");
-                
+
                 p.PluginPackageOperations.CreateServicesInfo();
 
-                string DLLFile = Path.Combine(folder, p.PluginPackageOperations.StartupDLL);                
+                string DLLFile = Path.Combine(folder, p.PluginPackageOperations.StartupDLL);
                 FileVersionInfo myFileVersionInfo = FileVersionInfo.GetVersionInfo(DLLFile);
 
                 string PackageVersion = myFileVersionInfo.ProductVersion.ToString();
 
-                Console.WriteLine("PackageVersion: " + PackageVersion);                                  
+                Console.WriteLine("PackageVersion: " + PackageVersion);
 
                 Console.WriteLine("Creating Zipfile");
                 string ZipFolder = Directory.GetParent(folder).FullName;
@@ -117,11 +115,11 @@ namespace Amdocs.Ginger.GingerRuntime
             }
         }
 
-       
+
 
         //private void StartService()
         //{
-            
+
         //    //TODO: let the user choose
         //    // Console.WriteLine("Starting Selenium Chrome Driver");
         //    // g.StartNode("Selenium Chrome Driver", "Chrome1");
@@ -141,8 +139,8 @@ namespace Amdocs.Ginger.GingerRuntime
 
         //    gingerNodeStarter.StartNode(nodeName, service, ipAddr, System.Convert.ToInt32(portNumber));
         //}
-        
 
-       
+
+
     }
 }

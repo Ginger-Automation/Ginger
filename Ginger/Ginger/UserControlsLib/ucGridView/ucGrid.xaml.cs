@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -104,7 +104,7 @@ namespace Ginger
                 {
                     if (mObjList != null)
                     {
-                        mObjList.PropertyChanged -= ObjListPropertyChanged;
+                        PropertyChangedEventManager.RemoveHandler(source: mObjList, handler: ObjListPropertyChanged, propertyName: string.Empty);
                     }
                     mObjList = value;
                     if (mObjList != null)
@@ -112,10 +112,7 @@ namespace Ginger
                         BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
                     }
 
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        mCollectionView = new CollectionViewSource() { Source = mObjList }.View;
-                    });
+                    mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
 
                     if (mCollectionView != null)
                     {
@@ -134,7 +131,7 @@ namespace Ginger
                     }
                     this.Dispatcher.Invoke(() =>
                     {
-                        grdMain.ItemsSource = mCollectionView;
+                        grdMain.ItemsSource = mObjList;
 
                         // Make the first row selected
                         if (value != null && value.Count > 0)
@@ -143,7 +140,7 @@ namespace Ginger
                             grdMain.CurrentItem = value[0];
                             // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
                             mObjList.CurrentItem = value[0];
-                        }
+                        }                        
                     });
                     UpdateFloatingButtons();
                 }
@@ -154,8 +151,8 @@ namespace Ginger
                 }
                 if (mObjList != null)
                 {
-                    mObjList.PropertyChanged += ObjListPropertyChanged;
-                    mObjList.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+                    PropertyChangedEventManager.AddHandler(source: mObjList, handler: ObjListPropertyChanged, propertyName: string.Empty);
+                    CollectionChangedEventManager.AddHandler(source: mObjList, handler: CollectionChangedMethod);
                 }
             }
             get
@@ -189,20 +186,26 @@ namespace Ginger
         private bool FilterGridRows(object obj)
         {
             if (string.IsNullOrEmpty(mFilterSearchText) && (mFilterSelectedTags == null || mFilterSelectedTags.Count == 0))
+            {
                 return true;
+            }
 
             //Filter by search text            
             if (!string.IsNullOrEmpty(mFilterSearchText))
             {
                 if (TextFilter(obj, mFilterSearchText) == true)
+                {
                     return true;
+                }
             }
 
             //Filter by Tags            
             if (mFilterSelectedTags != null && mFilterSelectedTags.Count > 0)
             {
                 if (TagsFilter(obj, mFilterSelectedTags) == true)
+                {
                     return true;
+                }
             }
 
             return false;
@@ -276,7 +279,9 @@ namespace Ginger
                     {
 
                         foreach (object cell in row.Row.ItemArray)
+                        {
                             sb.Append(cell.ToString()).Append("~");
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -333,7 +338,9 @@ namespace Ginger
             // Set undo to 0 so will not get the error: “Cannot Undo or Redo while undo unit is open.”            
             txtSearch.UndoLimit = 0;
             if (Tags == null)
+            {
                 Tags = new ObservableList<Guid>();
+            }
 
             TagsViewer.Init(Tags);
             TagsViewer.TagsStackPanlChanged += TagsViewer_TagsStackPanlChanged;
@@ -361,15 +368,19 @@ namespace Ginger
             get
             {
                 if (comboView.SelectedItem != null)
+                {
                     return comboView.SelectedItem.ToString();
+                }
                 else
+                {
                     return string.Empty;
+                }
             }
         }
 
         #endregion ##### Control Objects
 
-        private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
+        private void CollectionChangedMethod(object? sender, NotifyCollectionChangedEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -469,7 +480,9 @@ namespace Ginger
                 xEnhancedHeaderSaveAllButton.Visibility = Visibility.Visible;
             }
             else
+            {
                 xEnhancedHeaderSaveAllButton.Visibility = Visibility.Collapsed;
+            }
 
             if (addHandler != null)
             {
@@ -477,7 +490,9 @@ namespace Ginger
                 xEnhancedHeaderAddButton.Visibility = Visibility.Visible;
             }
             else
+            {
                 xEnhancedHeaderAddButton.Visibility = Visibility.Collapsed;
+            }
         }
 
         public Visibility ShowRefresh
@@ -557,9 +572,13 @@ namespace Ginger
             {
                 TagsViewer.xTagsStackPanl.IsEnabled = value;
                 if (value == true)
+                {
                     TagsViewer.xAddTagBtn.Visibility = Visibility.Visible;
+                }
                 else
+                {
                     TagsViewer.xAddTagBtn.Visibility = Visibility.Collapsed;
+                }
             }
         }
 
@@ -570,7 +589,9 @@ namespace Ginger
             set
             {
                 if (mIsSupportDragDrop == value)
+                {
                     return;
+                }
                 else if (value == false)
                 {
                     DragDrop2.UnHookEventHandlers(this);
@@ -600,7 +621,9 @@ namespace Ginger
                     AllowReorderRow = true;
                 }
                 else
+                {
                     AllowReorderRow = false;
+                }
             }
         }
         public Visibility ShowUndo
@@ -680,7 +703,11 @@ namespace Ginger
 
             DataView dtView = dataTable.AsDataView();
             ObservableList<DataRowView> rowslist = new ObservableList<DataRowView>();
-            foreach (DataRowView row in dtView) rowslist.Add(row);
+            foreach (DataRowView row in dtView)
+            {
+                rowslist.Add(row);
+            }
+
             mObjList = rowslist;
             mObjList.PropertyChanged += ObjListPropertyChanged;
             grdMain.ItemsSource = dtView;
@@ -706,7 +733,9 @@ namespace Ginger
         public void ScrollToViewCurrentItem()
         {
             if (mObjList.CurrentItem != null)
+            {
                 grdMain.ScrollIntoView(mObjList.CurrentItem);
+            }
         }
 
         private void btnClearAll_Click(object sender, RoutedEventArgs e)
@@ -846,9 +875,13 @@ namespace Ginger
         private void grdMain_SelectionChanged(object sender, MouseButtonEventArgs e)
         {
             if (DisableUserItemSelectionChange)
+            {
                 SkipItemSelection = true;
+            }
             else
+            {
                 SkipItemSelection = false;
+            }
         }
 
 
@@ -860,9 +893,15 @@ namespace Ginger
                 return;
             }
 
-            if (mObjList == null) return;
+            if (mObjList == null)
+            {
+                return;
+            }
 
-            if (mObjList.CurrentItem == grdMain.SelectedItem) return;
+            if (mObjList.CurrentItem == grdMain.SelectedItem)
+            {
+                return;
+            }
 
             DataGridRow r = (DataGridRow)grdMain.ItemContainerGenerator.ContainerFromItem(grdMain.SelectedItem);
             if (r != null)
@@ -872,7 +911,9 @@ namespace Ginger
             }
 
             if (mObjList != null)
+            {
                 mObjList.CurrentItem = grdMain.SelectedItem; // .CurrentItem;
+            }
 
             SetUpDownButtons();
             e.Handled = true;
@@ -941,13 +982,20 @@ namespace Ginger
             else
             {
                 if (string.IsNullOrEmpty(search))
+                {
                     ((DataView)grdMain.ItemsSource).RowFilter = string.Empty;
+                }
                 else
                 {
                     string filter = string.Empty;
                     foreach (DataColumn col in ((DataView)grdMain.ItemsSource).Table.Columns)
+                    {
                         if ((col.DataType.Name.Equals("String")))
+                        {
                             filter += "[" + col.ColumnName + "] LIKE '%" + search + "%' OR ";
+                        }
+                    }
+
                     filter = filter.Substring(0, filter.LastIndexOf("OR"));
                     ((DataView)grdMain.ItemsSource).RowFilter = filter;
                 }
@@ -989,7 +1037,9 @@ namespace Ginger
                 }
             }
             else
+            {
                 e.Row.Header = mObjList.IndexOf(e.Row.Item) + 1;
+            }
         }
 
         private void Row_DoubleClick(object sender, System.Windows.RoutedEventArgs e)
@@ -1046,10 +1096,15 @@ namespace Ginger
 
 
             if (label.Trim() != "")
+            {
                 AddLabel(label);
+            }
 
             if (fieldName.Trim() != "")
+            {
                 t.Name = fieldName;
+            }
+
             toolbar.Items.Add(t);
             return t;
         }
@@ -1064,10 +1119,14 @@ namespace Ginger
             cmb.Style = this.FindResource("@InputComboBoxStyle") as Style;
 
             if (label.Trim() != "")
+            {
                 AddLabel(label);
+            }
 
             if (fieldName.Trim() != "")
+            {
                 cmb.Name = fieldName;
+            }
             //cmb.SelectedIndex = 0;
             toolbar.Items.Add(cmb);
             return cmb;
@@ -1089,7 +1148,9 @@ namespace Ginger
             b.Padding = new Thickness(2, 0, 0, 0);
             b.Content = txt;
             if (handler != null)
+            {
                 b.AddHandler(CheckBox.ClickEvent, handler);
+            }
 
             pnl.Children.Add(b); //using dock panel for getting regular check box design
             toolbar.Items.Add(pnl);
@@ -1099,7 +1160,7 @@ namespace Ginger
         #endregion ##### External Methods
 
         #region ##### Internal Methods
-        private void ObjListPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ObjListPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             GingerCore.General.DoEvents();
             if (e.PropertyName == "CurrentItem")
@@ -1137,12 +1198,18 @@ namespace Ginger
         public IEnumerable<DataGridRow> GetDataGridRows(DataGrid grid)
         {
             var itemsSource = grid.ItemsSource as IEnumerable;
-            if (itemsSource == null) yield return null;
+            if (itemsSource == null)
+            {
+                yield return null;
+            }
 
             foreach (var item in itemsSource)
             {
                 var row = grid.ItemContainerGenerator.ContainerFromItem(item) as DataGridRow;
-                if (null != row) yield return row;
+                if (null != row)
+                {
+                    yield return row;
+                }
             }
         }
 
@@ -1176,21 +1243,32 @@ namespace Ginger
         {
             _DefaultViewName = view.Name;
             if (!_GridViews.ContainsKey(view.Name))
+            {
                 _GridViews.Add(view.Name, view);
+            }
+
             if (!comboView.Items.Contains(view.Name))
+            {
                 comboView.Items.Add(view.Name);
+            }
         }
 
         public void updateAndSelectCustomView(GridViewDef view)
         {
             if (!_GridViews.ContainsKey(view.Name))
+            {
                 _GridViews.Add(view.Name, view);
+            }
 
             if (_GridViews[view.Name].GridColsView.Count != view.GridColsView.Count)
+            {
                 _GridViews[view.Name] = view;
+            }
 
             if (!comboView.Items.Contains(view.Name))
+            {
                 comboView.Items.Add(view.Name);
+            }
 
             SetView(view);
             SetGridColumnsWidth();
@@ -1203,12 +1281,17 @@ namespace Ginger
         public void AddCustomView(GridViewDef view)
         {
             if (!_GridViews.ContainsKey(view.Name))
+            {
                 _GridViews.Add(view.Name, view);
+            }
+
             if (!comboView.Items.Contains(view.Name))
             {
                 comboView.Items.Add(view.Name);
                 if (comboView.Items.Count > 1)
+                {
                     ShowViewCombo = System.Windows.Visibility.Visible;
+                }
             }
         }
 
@@ -1216,7 +1299,10 @@ namespace Ginger
         public void RemoveCustomView(string viewName)
         {
             if (_GridViews.ContainsKey(viewName))
+            {
                 _GridViews.Remove(viewName);
+            }
+
             if (comboView.Items.Contains(viewName))
             {
                 if (Convert.ToString(comboView.SelectedItem) == viewName && _DefaultViewName != viewName)
@@ -1227,7 +1313,9 @@ namespace Ginger
                 {
                     comboView.Items.Remove(viewName);
                     if (comboView.Items.Count <= 1)
+                    {
                         ShowViewCombo = System.Windows.Visibility.Collapsed;
+                    }
                 }
             }
         }
@@ -1241,7 +1329,9 @@ namespace Ginger
                 }
             }
             if (comboView.Items.Contains(_DefaultViewName))
+            {
                 comboView.SelectedItem = _DefaultViewName;
+            }
         }
 
         public void ChangeGridView(string viewName)
@@ -1306,16 +1396,22 @@ namespace Ginger
                     DataGridColumn gridCol = null;
 
                     if (_CurrentGridCols.ContainsKey(colView.Field))
+                    {
                         gridCol = _CurrentGridCols[colView.Field];
-
+                    }
                     else if ((gridCol == null) || (colView.BindingMode != null) || (colView.CellTemplate != null))
                     {
                         //Set the col binding
                         Binding binding = new Binding(colView.Field);
                         if (colView.BindingMode != null)
+                        {
                             binding.Mode = (BindingMode)colView.BindingMode;
+                        }
                         else
+                        {
                             binding.Mode = BindingMode.TwoWay;
+                        }
+
                         binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
 
                         //Set the col cells style type
@@ -1334,11 +1430,18 @@ namespace Ginger
 
                                 ((DataGridCheckBoxColumn)gridCol).Binding = binding;
                                 if (colView.MaxWidth == null)
+                                {
                                     colView.MaxWidth = 100;
+                                }
+
                                 if (colView.ReadOnly == true)
+                                {
                                     ((DataGridCheckBoxColumn)gridCol).ElementStyle = FindResource("@ReadOnlyCheckBoxGridCellElemntStyle") as Style;
+                                }
                                 else
+                                {
                                     ((DataGridCheckBoxColumn)gridCol).ElementStyle = FindResource("@GridCellCheckBoxStyle") as Style;
+                                }
 
                                 break;
 
@@ -1356,20 +1459,29 @@ namespace Ginger
                                     //or we can get just simple list of strings if not CEI list
                                     // Assume we got List<string>
                                     if (colView.ComboboxDisplayMemberField != null && colView.ComboboxDisplayMemberField != "")
+                                    {
                                         ((DataGridComboBoxColumn)gridCol).DisplayMemberPath = colView.ComboboxDisplayMemberField;
+                                    }
+
                                     if (colView.ComboboxSelectedValueField != null && colView.ComboboxSelectedValueField != "")
                                     {
                                         ((DataGridComboBoxColumn)gridCol).SelectedValuePath = colView.ComboboxSelectedValueField;
                                         ((DataGridComboBoxColumn)gridCol).SelectedValueBinding = binding;
                                     }
                                     else
+                                    {
                                         ((DataGridComboBoxColumn)gridCol).TextBinding = binding;
+                                    }
                                 }
 
                                 if (!colView.ComboboxSortBy.IsNullOrEmpty() && colView.CellValuesList is IObservableList)
+                                {
                                     ((DataGridComboBoxColumn)gridCol).ItemsSource = ((IObservableList)colView.CellValuesList).AsCollectionViewOrderBy(colView.ComboboxSortBy);
+                                }
                                 else
+                                {
                                     ((DataGridComboBoxColumn)gridCol).ItemsSource = (IEnumerable)colView.CellValuesList;
+                                }
 
                                 break;
 
@@ -1382,7 +1494,10 @@ namespace Ginger
                                 gridCol = new DataGridTemplateColumn();
                                 ((DataGridTemplateColumn)gridCol).CellTemplate = colView.CellTemplate;
                                 if (colView.ReadOnly == true)
+                                {
                                     ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
+                                }
+
                                 break;
 
                             case GridColView.eGridColStyleType.Text:
@@ -1391,24 +1506,37 @@ namespace Ginger
                                 ((DataGridTextColumn)gridCol).Binding = binding;
 
                                 if (colView.HorizontalAlignment == System.Windows.HorizontalAlignment.Center)
+                                {
                                     ((DataGridTextColumn)gridCol).ElementStyle = FindResource("@TextBlockGridCellElemntStyle_CenterAlign") as Style;
+                                }
                                 else if (colView.HorizontalAlignment == System.Windows.HorizontalAlignment.Right)
+                                {
                                     ((DataGridTextColumn)gridCol).ElementStyle = FindResource("@TextBlockGridCellElemntStyle_RightAlign") as Style;
+                                }
 
                                 if (colView.PropertyConverter != null)
+                                {
                                     ((DataGridTextColumn)gridCol).ElementStyle = SetColumnPropertyConverter(colView.PropertyConverter.Converter, colView.PropertyConverter.Property);
+                                }
 
                                 if (colView.Style != null)
+                                {
                                     ((DataGridTextColumn)gridCol).ElementStyle = colView.Style;
+                                }
+
                                 break;
                         }
                     }
 
                     //Set the col design
                     if (colView.Header != null && colView.Header != string.Empty)
+                    {
                         gridCol.Header = colView.Header;
+                    }
                     else
+                    {
                         gridCol.Header = colView.Field;
+                    }
 
                     if (colView.WidthWeight != null)
                     {
@@ -1435,16 +1563,24 @@ namespace Ginger
                     }
 
                     if (colView.Order != null)
+                    {
                         gridCol.DisplayIndex = (int)colView.Order;
+                    }
 
                     if (colView.SortDirection != null)
+                    {
                         gridCol.SortDirection = colView.SortDirection;
+                    }
 
                     if (colView.Visible == false)
+                    {
                         gridCol.Visibility = System.Windows.Visibility.Collapsed;
+                    }
 
                     if (colView.ReadOnly == true)
+                    {
                         gridCol.IsReadOnly = true;
+                    }
 
                     //Add the column to the grid 
                     if (!grdMain.Columns.Contains(gridCol))
@@ -1521,14 +1657,18 @@ namespace Ginger
             else
             {
                 if (allowEdit == true)
+                {
                     combo.SetValue(ComboBox.IsEditableProperty, true);
+                }
             }
             if (selectedByDefault == true)
             {
                 combo.SetValue(ComboBox.SelectedIndexProperty, 0);
             }
             if (comboSelectionChangedHandler != null)
+            {
                 combo.AddHandler(ComboBox.SelectionChangedEvent, comboSelectionChangedHandler);
+            }
 
             template.VisualTree = combo;
             return template;
@@ -1563,7 +1703,9 @@ namespace Ginger
             else
             {
                 if (allowEdit == true)
+                {
                     combo.SetValue(ComboBox.IsEditableProperty, true);
+                }
             }
             if (selectedByDefault == true)
             {
@@ -1571,7 +1713,9 @@ namespace Ginger
             }
 
             if (comboSelectionChangedHandler != null)
+            {
                 combo.AddHandler(ComboBox.SelectionChangedEvent, comboSelectionChangedHandler);
+            }
 
             template.VisualTree = combo;
             return template;
@@ -1664,12 +1808,18 @@ namespace Ginger
 
         public void SetGridColumnsWidth()
         {
-            if (mainDockPanel.ActualWidth == 0) return;
+            if (mainDockPanel.ActualWidth == 0)
+            {
+                return;
+            }
             ////Splitting the available free space between all visible columns based on their WidthWeight
 
             SetGridRowHeaderWidth();
             if (Double.IsNaN(grdMain.RowHeaderWidth))
+            {
                 grdMain.RowHeaderWidth = 0;
+            }
+
             double pnlWidth = grdMain.ActualWidth - grdMain.RowHeaderWidth;
             double gridColsWidthWeight = 0;
             List<DataGridColumn> visibleCols = new List<DataGridColumn>();
@@ -1691,11 +1841,15 @@ namespace Ginger
                     foreach (DataGridColumn visCol in visibleCols)
                     {
                         if (!Double.IsNaN(widthWeightUnitSize))
+                        {
                             visCol.Width = visCol.Width.Value * widthWeightUnitSize;
+                        }
                     }
 
                     if (AllowHorizentalScroll == false)
+                    {
                         FixLastColumn();
+                    }
                 }
             }
             UpdateFloatingButtons();
@@ -1703,7 +1857,10 @@ namespace Ginger
 
         private void SetGridRowHeaderWidth()
         {
-            if (mObjList == null) return;
+            if (mObjList == null)
+            {
+                return;
+            }
 
             // Calculate the needed row header based on rows count , each digit needs width 8, min 25 - 3 digits
             // assuming no one will present more the 99000 records on grid...
@@ -1880,7 +2037,7 @@ namespace Ginger
             List<ComboEnumItem> itemsList = GingerCore.General.GetEnumValuesForCombo(enumType);
             if (defaultOptionText != null)
             {
-                ComboEnumItem existingDefaultItem = itemsList.Where(x => x.text == defaultOptionText).FirstOrDefault();
+                ComboEnumItem existingDefaultItem = itemsList.FirstOrDefault(x => x.text == defaultOptionText);
                 if (existingDefaultItem != null)
                 {
                     comboBox.ItemsSource = itemsList;
@@ -1962,7 +2119,9 @@ namespace Ginger
             {
                 var row = (DataGridRow)grdMain.ItemContainerGenerator.ContainerFromItem(item);
                 if (row != null)
+                {
                     row.Header = row.GetIndex() + 1;
+                }
             }
         }
 
@@ -1982,7 +2141,10 @@ namespace Ginger
             {
                 int selectedItemsCount = this.GetSelectedItems().Count;
                 //no drag if we are in the middle of Edit
-                if (row.IsEditing) return;
+                if (row.IsEditing)
+                {
+                    return;
+                }
 
                 // No drag if we are in grid cell which is not the regular TextBlock = regular cell not in edit mode
                 if (Info.OriginalSource.GetType() != typeof(TextBlock))
@@ -2051,7 +2213,11 @@ namespace Ginger
             // first check if we did drag and drop in the same grid then it is a move - reorder
             if (Info.DragSource == this && !isSourceEqualTargetDragAndDrop)
             {
-                if (!(btnUp.Visibility == System.Windows.Visibility.Visible)) return;  // Do nothing if reorder up/down arrow are not allowed
+                if (!(btnUp.Visibility == System.Windows.Visibility.Visible))
+                {
+                    return;  // Do nothing if reorder up/down arrow are not allowed
+                }
+
                 return;
             }
 
@@ -2105,13 +2271,22 @@ namespace Ginger
 
         private void UpdateFloatingButtons()
         {
-            if (mFloatingButtons == null || mFloatingButtons.Count == 0) return;
+            if (mFloatingButtons == null || mFloatingButtons.Count == 0)
+            {
+                return;
+            }
+
             this.Dispatcher.Invoke(() =>
             {
                 foreach (Button b in mFloatingButtons)
+                {
                     b.Visibility = System.Windows.Visibility.Collapsed;
+                }
 
-                if (grdMain.SelectedItem == null) return;
+                if (grdMain.SelectedItem == null)
+                {
+                    return;
+                }
 
                 // Put the button on the current Grid Row in the column end
                 Dictionary<int, double> colFlotingBtnsSize = new Dictionary<int, double>();
@@ -2122,7 +2297,10 @@ namespace Ginger
                     grdMain.UpdateLayout();
                     grdMain.ScrollIntoView(grdMain.Items[grdMain.SelectedIndex]);
                     r = (DataGridRow)grdMain.ItemContainerGenerator.ContainerFromItem(grdMain.SelectedItem);
-                    if (r == null) return;
+                    if (r == null)
+                    {
+                        return;
+                    }
                 }
                 Point rel = r.TranslatePoint(new Point(0, 0), grdMain);
                 bHieght = rel.Y;
@@ -2135,16 +2313,24 @@ namespace Ginger
 
                     double marginleft = 0;
                     if (!double.IsNaN(grdMain.RowHeaderWidth))
+                    {
                         marginleft = grdMain.RowHeaderWidth;
+                    }
+
                     for (int i = 0; i <= col; i++)
                     {
                         marginleft += grdMain.Columns[i].ActualWidth;
                     }
 
                     if (colFlotingBtnsSize.Keys.Contains(col))
+                    {
                         colFlotingBtnsSize[col] = colFlotingBtnsSize[col] + b.ActualWidth + 2;
+                    }
                     else
+                    {
                         colFlotingBtnsSize.Add(col, b.ActualWidth);
+                    }
+
                     marginleft -= colFlotingBtnsSize[col] + 2;
 
                     b.Margin = new Thickness(marginleft, bHieght, 0, 0);
@@ -2156,17 +2342,24 @@ namespace Ginger
 
         private void ClearFloatingButtons()
         {
-            if (mFloatingButtons == null || mFloatingButtons.Count == 0) return;
+            if (mFloatingButtons == null || mFloatingButtons.Count == 0)
+            {
+                return;
+            }
 
             //clean existing buttons
             foreach (Button b in mFloatingButtons)
+            {
                 b.Visibility = System.Windows.Visibility.Collapsed;
+            }
         }
 
         private void grdMain_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             if (e.VerticalChange > 0)
+            {
                 ClearFloatingButtons();
+            }
         }
 
         private int GetCheckedRowCount()
@@ -2211,11 +2404,19 @@ namespace Ginger
                 switch (rule)
                 {
                     case eUcGridValidationRules.CantBeEmpty:
-                        if (Grid.Items.Count == 0) validationRes = true;
+                        if (Grid.Items.Count == 0)
+                        {
+                            validationRes = true;
+                        }
+
                         break;
 
                     case eUcGridValidationRules.OnlyOneItem:
-                        if (Grid.Items.Count != 1) validationRes = true;
+                        if (Grid.Items.Count != 1)
+                        {
+                            validationRes = true;
+                        }
+
                         break;
 
                     case eUcGridValidationRules.CheckedRowCount:
@@ -2232,9 +2433,13 @@ namespace Ginger
 
             //set border color based on validation
             if (validationRes == true)
+            {
                 Grid.BorderBrush = System.Windows.Media.Brushes.Red;
+            }
             else
+            {
                 Grid.BorderBrush = FindResource("$Color_DarkBlue") as Brush;
+            }
 
             return validationRes;
         }

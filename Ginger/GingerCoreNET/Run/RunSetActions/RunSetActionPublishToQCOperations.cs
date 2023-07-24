@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,21 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Repository;
-using System;
-using System.Collections.Generic;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Ginger.Reports;
 using GingerCore;
-using GingerCore.ALM;
-using amdocs.ginger.GingerCoreNET;
-using GingerCore.DataSource;
-using Amdocs.Ginger.Common.InterfacesLib;
-using static Ginger.Run.RunSetActions.RunSetActionBase;
-using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
-using static GingerCore.ALM.PublishToALMConfig;
 using GingerCore.Activities;
+using GingerCore.ALM;
+using GingerCore.DataSource;
+using System;
+using static Ginger.Run.RunSetActions.RunSetActionBase;
+using static GingerCore.ALM.PublishToALMConfig;
+using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -75,7 +72,7 @@ namespace Ginger.Run.RunSetActions
                 PublishToALMConfig.PublishALMType = almType;
             }
 
-            PublishToALMConfig.ALMTestSetLevel = RunSetActionPublishToQC.ALMTestSetLevel; 
+            PublishToALMConfig.ALMTestSetLevel = RunSetActionPublishToQC.ALMTestSetLevel;
             PublishToALMConfig.ExportType = RunSetActionPublishToQC.ExportType;
             PublishToALMConfig.AlmFields = RunSetActionPublishToQC.AlmFields;
             PublishToALMConfig.TestSetFolderDestination = RunSetActionPublishToQC.TestSetFolderDestination;
@@ -95,7 +92,15 @@ namespace Ginger.Run.RunSetActions
                 {
                     if (bfs.Count > 0)
                     {
-                        TargetFrameworkHelper.Helper.ExportVirtualBusinessFlowToALM(bfs[0], PublishToALMConfig, false, eALMConnectType.Silence, PublishToALMConfig.TestSetFolderDestination, PublishToALMConfig.TestCaseFolderDestination);
+                        if (!TargetFrameworkHelper.Helper.ExportVirtualBusinessFlowToALM(bfs[0], PublishToALMConfig, false, eALMConnectType.Silence, PublishToALMConfig.TestSetFolderDestination, PublishToALMConfig.TestCaseFolderDestination))
+                        {
+                            RunSetActionPublishToQC.Errors = result;
+                            RunSetActionPublishToQC.Status = eRunSetActionStatus.Failed;
+                        }
+                        else
+                        {
+                            RunSetActionPublishToQC.Status = eRunSetActionStatus.Completed;
+                        }
                     }
                     else
                     {
@@ -141,7 +146,7 @@ namespace Ginger.Run.RunSetActions
                 foreach (GingerRunner runSetrunner in runSetExec.Runners)
                 {
                     // if executor is null when run if from file
-                    if(runSetrunner.Executor is null)
+                    if (runSetrunner.Executor is null)
                     {
                         runSetrunner.Executor = new GingerExecutionEngine(runSetrunner);
                     }
@@ -161,7 +166,7 @@ namespace Ginger.Run.RunSetActions
                         virtualBF.AddActivitiesGroup(virtualAG);
                         foreach (Activity runSetAct in runSetBF.Activities)
                         {
-                            virtualBF.AddActivity(runSetAct, virtualAG);
+                            virtualBF.AddActivity((Activity)runSetAct.CreateCopy(false), virtualAG, -1, false);
                         }
                     }
                 }
@@ -169,7 +174,7 @@ namespace Ginger.Run.RunSetActions
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert Run Set to BF for ALM Export" , ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert Run Set to BF for ALM Export", ex);
                 return null;
             }
         }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,9 @@ limitations under the License.
 */
 #endregion
 
-using System.Windows.Controls;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
-using GingerCore.GeneralLib;
+using System.Windows.Controls;
 
 namespace Ginger.Actions
 {
@@ -37,8 +36,8 @@ namespace Ginger.Actions
 
             GingerCore.General.FillComboFromEnumObj(LogTypeComboBox, mAct.SelectedLogLevel);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LogTypeComboBox, ComboBox.SelectedValueProperty, mAct, nameof(ActLogAction.SelectedLogLevel));
-            
-            LogValue.BindControl(Context.GetAsContext(mAct.Context), mAct, ActLogAction.Fields.LogText);            
+
+            LogValue.BindControl(Context.GetAsContext(mAct.Context), mAct, ActLogAction.Fields.LogText);
         }
     }
 }

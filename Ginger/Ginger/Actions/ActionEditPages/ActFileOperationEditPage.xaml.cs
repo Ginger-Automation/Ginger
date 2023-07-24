@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,18 +16,18 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Windows;
-using System.Windows.Controls;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Applitools;
 using GingerCore.Actions;
+using System.Windows;
+using System.Windows.Controls;
 namespace Ginger.Actions
 {
     /// <summary>
     /// Interaction logic for ActReadTextFile.xaml
     /// </summary>
-    public partial class ActFileOperationEditPage 
+    public partial class ActFileOperationEditPage
     {
         private ActFileOperations mAct;
 
@@ -36,48 +36,78 @@ namespace Ginger.Actions
             InitializeComponent();
             mAct = act;
             TextFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.SourceFilePath), true, true, UCValueExpression.eBrowserType.File);
-            DestinationFolderTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder),true,true,UCValueExpression.eBrowserType.File);
+
+            DestinationFolderTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActFileOperations.Fields.DestinationFolder), true, true, UCValueExpression.eBrowserType.Folder);
+
             xRunArgumentsTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActFileOperations.Arguments)), true, false);
 
-            mAct.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+            mAct.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
 
             GingerCore.General.FillComboFromEnumObj(FileActionMode, mAct.FileOperationMode);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FileActionMode, ComboBox.SelectedValueProperty, mAct, "FileOperationMode");
+            UpdateBrowserTypes();
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
         {
             if (General.SetupBrowseFile(new System.Windows.Forms.OpenFileDialog()) is string fileName)
-            { 
+            {
                 TextFileNameTextBox.ValueTextBox.Text = fileName;
             }
+            if (General.SetupBrowseFolder(new System.Windows.Forms.FolderBrowserDialog()) is string folderName)
+            {
+                TextFileNameTextBox.ValueTextBox.Text = folderName;
+            }
         }
-        
+
         private void FileActionMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateBrowserTypes();
+        }
+
+        /// <summary>
+        /// Update browsertype according to selected file action. Some needs file browser and some needs folder browser
+        /// </summary>
+        private void UpdateBrowserTypes()
         {
             if (FileActionMode.SelectedValue != null)
             {
                 if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Copy
-                    ||(ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.ForceCopy
-                   || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Move 
-                   || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.UnZip )
+                    || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.ForceCopy
+                   || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Move
+                   || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.UnZip)
                 {
                     PanelToWrite.Visibility = Visibility.Visible;
+                    DestinationFolderTextBox.BrowserType = UCValueExpression.eBrowserType.Folder;
                 }
                 else
                 {
                     PanelToWrite.Visibility = Visibility.Collapsed;
+                    DestinationFolderTextBox.BrowserType = UCValueExpression.eBrowserType.File;
+                }
 
+                if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.CheckFolderExists
+                  || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.DeleteDirectoryFiles
+                  || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.DeleteDirectory)
+                {
+                    TextFileNameTextBox.BrowserType = UCValueExpression.eBrowserType.Folder;
+                }
+                else
+                {
+                    TextFileNameTextBox.BrowserType = UCValueExpression.eBrowserType.File;
                 }
 
                 if ((ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.RunCommand
                     || (ActFileOperations.eFileoperations)FileActionMode.SelectedValue == ActFileOperations.eFileoperations.Execute)
+                {
                     xPanelRunArguments.Visibility = Visibility.Visible;
+                }
                 else
+                {
                     xPanelRunArguments.Visibility = Visibility.Collapsed;
+                }
+
             }
-
-
         }
     }
 }

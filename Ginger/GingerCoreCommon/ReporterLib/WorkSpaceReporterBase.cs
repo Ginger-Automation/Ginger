@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ namespace Amdocs.Ginger.Common
     public abstract class WorkSpaceReporterBase
     {
         public abstract void ToLog(eLogLevel logLevel, string messageToLog, Exception exceptionToLog = null);
-                
+
         public void ToConsole(eLogLevel logLevel, string message)
-        {            
+        {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("[").Append(logLevel).Append(" | ").Append(DateTime.Now.ToString("HH:mm:ss:fff_dd-MMM")).Append("] ").Append(message).Append(Environment.NewLine);
 
@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.Common
                 case eLogLevel.WARN:
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
                     break;
-               
+
             }
             Console.WriteLine(stringBuilder.ToString());
             Console.ResetColor();
@@ -61,6 +61,6 @@ namespace Amdocs.Ginger.Common
 
         public abstract eUserMsgSelection ToUser(string messageText, string caption, eUserMsgOption buttonsType, eUserMsgIcon messageImage, eUserMsgSelection defualtResualt);
 
-        public abstract void ToStatus(eStatusMsgType messageType, string statusText);        
+        public abstract void ToStatus(eStatusMsgType messageType, string statusText);
     }
 }

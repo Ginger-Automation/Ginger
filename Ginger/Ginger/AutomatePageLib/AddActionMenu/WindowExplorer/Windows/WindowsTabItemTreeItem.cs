@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,11 +17,11 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
 using Ginger.WindowExplorer;
 using GingerCore.Actions;
 using GingerCore.Actions.Windows;
 using GingerWPF.UserControlsLib.UCTreeView;
+using System.Windows.Controls;
 
 namespace Ginger.Drivers.Windows
 {
@@ -35,12 +35,12 @@ namespace Ginger.Drivers.Windows
         ObservableList<Act> IWindowExplorerTreeItem.GetElementActions()
         {
             ObservableList<Act> list = new ObservableList<Act>();
-           
-                list.Add(new ActWindowsControl()
-                {
-                    Description = "Select Tab " + UIAElementInfo.ElementTitle,
-                    ControlAction = ActWindowsControl.eControlAction.Select
-                });
+
+            list.Add(new ActWindowsControl()
+            {
+                Description = "Select Tab " + UIAElementInfo.ElementTitle,
+                ControlAction = ActWindowsControl.eControlAction.Select
+            });
             return list;
         }
     }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ using GingerCore.Actions;
 using GingerCore.Environments;
 using GingerCoreNET.Drivers.CommunicationProtocol;
 using GingerCoreNET.DriversLib;
-using GingerCoreNET.RosLynLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -146,7 +145,10 @@ namespace Ginger.GingerCoreNETTestLib
                 v = (int)Math.Floor(74 * random.NextDouble() + 48);
 
                 while (!(Enumerable.Range(48, 10).Contains(v) || Enumerable.Range(97, 26).Contains(v) || Enumerable.Range(65, 26).Contains(v)))
+                {
                     v = (int)Math.Floor(74 * random.NextDouble() + 48);
+                }
+
                 ch = Convert.ToChar(v);
 
                 builder.Append(ch);

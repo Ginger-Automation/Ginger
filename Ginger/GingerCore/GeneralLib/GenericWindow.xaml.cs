@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,9 +68,14 @@ namespace Ginger
             //set style
             CurrentWinStyle = windowStyle;
             if (CurrentWinStyle == eWindowShowStyle.Dialog)
+            {
                 PinBtn.Visibility = System.Windows.Visibility.Visible;
+            }
             else
+            {
                 PinBtn.Visibility = System.Windows.Visibility.Collapsed;
+            }
+
             NeedToReShow = false;
 
             //set title
@@ -89,13 +95,22 @@ namespace Ginger
 
                     //keep window min width & height
                     if (windowPage.MinWidth > 0)
+                    {
                         mPageOriginalWidth = windowPage.MinWidth;
+                    }
                     else if (windowPage.Width > 0)
+                    {
                         mPageOriginalWidth = windowPage.Width;
+                    }
+
                     if (windowPage.MinHeight > 0)
+                    {
                         mPageOriginalHeight = windowPage.MinHeight;
+                    }
                     else if (windowPage.Height > 0)
+                    {
                         mPageOriginalHeight = windowPage.Height;
+                    }
 
                     if (mPageOriginalWidth == -1)
                     {
@@ -118,9 +133,14 @@ namespace Ginger
                         foreach (System.Windows.Forms.Screen scr in allScreens)
                         {
                             if (scr.Bounds.Width < screenWidth)
+                            {
                                 screenWidth = scr.Bounds.Width;
+                            }
+
                             if (scr.Bounds.Height < screenHeight)
+                            {
                                 screenHeight = scr.Bounds.Height;
+                            }
                         }
                     }
 
@@ -128,17 +148,29 @@ namespace Ginger
                     if (Convert.ToString(windowPage.Tag) != "PageSizeWasModified")
                     {
                         if (windowPage.Width > 0)
+                        {
                             windowPage.Width = ((windowPage.Width / 1280) * screenWidth);//relative to screen size
+                        }
+
                         if (windowPage.Width > screenWidth)
+                        {
                             windowPage.Width = screenWidth - widthDelta - 100;
+                        }
 
                         if (windowPage.Height > 0)
+                        {
                             windowPage.Height = ((windowPage.Height / 1024) * screenHeight);//relative to screen size
+                        }
+
                         if (windowPage.Height > screenHeight)
+                        {
                             windowPage.Height = screenHeight - heightDelta - 100;
+                        }
 
                         if (windowPage.Tag == null)
+                        {
                             windowPage.Tag = "PageSizeWasModified";
+                        }
                     }
 
                     //set min height and width
@@ -147,7 +179,10 @@ namespace Ginger
                         if (windowPage.Width < windowPage.MinWidth)
                         {
                             if (windowPage.MinWidth > screenWidth)
+                            {
                                 windowPage.MinWidth = screenWidth - widthDelta - 100;
+                            }
+
                             windowPage.Width = windowPage.MinWidth;
                         }
                     }
@@ -156,7 +191,10 @@ namespace Ginger
                         if (windowPage.Height < windowPage.MinHeight)
                         {
                             if (windowPage.MinHeight > screenHeight)
+                            {
                                 windowPage.MinHeight = screenHeight - heightDelta - 100;
+                            }
+
                             windowPage.Height = windowPage.MinHeight;
                         }
                     }
@@ -173,7 +211,7 @@ namespace Ginger
             //set page content
             if (windowPage != null)
             {
-                PageFrame.Content = windowPage;
+                PageFrame.ClearAndSetContent(windowPage);
             }
 
 
@@ -202,7 +240,10 @@ namespace Ginger
                     btn.HorizontalAlignment = System.Windows.HorizontalAlignment.Right;
                     Thickness margin = btn.Margin;
                     if (margin.Right < 10)
+                    {
                         margin.Right = 10;
+                    }
+
                     btn.Margin = margin;
                     btn.Style = this.FindResource("$RoundTextButtonStyle_Generic") as Style;
                     DockPanel.SetDock(btn, Dock.Right);
@@ -215,7 +256,10 @@ namespace Ginger
                 loaderElement.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
                 Thickness margin = loaderElement.Margin;
                 if (margin.Left < 10)
+                {
                     margin.Left = 10;
+                }
+
                 loaderElement.Margin = margin;
                 //loaderElement.Style = this.FindResource("$RoundTextButtonStyle_Generic") as Style;
                 DockPanel.SetDock(loaderElement, Dock.Left);
@@ -238,7 +282,10 @@ namespace Ginger
                 mCloseEventHandler.Invoke(this, new RoutedEventArgs());
             }
             else
+            {
                 this.Close();
+            }
+
             parentWindow.IsEnabled = true;
         }
 
@@ -246,9 +293,14 @@ namespace Ginger
         {
             NeedToReShow = true;
             if (CurrentWinStyle == eWindowShowStyle.Dialog)
+            {
                 ReShowStyle = eWindowShowStyle.Free;
+            }
             else
+            {
                 ReShowStyle = eWindowShowStyle.Dialog;
+            }
+
             this.Close();
         }
 
@@ -295,7 +347,10 @@ namespace Ginger
                 Page contentPage = (Page)PageFrame.Content;
 
                 if (this.ActualWidth - 20 > mPageOriginalWidth)
+                {
                     contentPage.Width = this.ActualWidth - 20;
+                }
+
                 if (mPageOriginalWidth > 0 && this.ActualWidth < mPageOriginalWidth)
                 {
                     WindowScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Visible;
@@ -306,7 +361,10 @@ namespace Ginger
                 }
 
                 if (this.ActualHeight - 100 > mPageOriginalHeight)
+                {
                     contentPage.Height = this.ActualHeight - 100;
+                }
+
                 if (mPageOriginalHeight > 0 && this.Height < mPageOriginalHeight)
                 {
                     WindowScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Visible;
@@ -355,9 +413,13 @@ namespace Ginger
                     genWindow.Top = 200;
                 }
                 if (winStyle == eWindowShowStyle.Dialog || winStyle == eWindowShowStyle.OnlyDialog)
+                {
                     genWindow.ShowDialog();
+                }
                 else
+                {
                     genWindow.Show();
+                }
             }
             while (genWindow.NeedToReShow);
         }

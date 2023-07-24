@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,11 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.UserControls;
 using Ginger.UserControlsLib.UCListView;
-using GingerCore;
-using GingerCore.Actions;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -31,7 +27,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
     public class ElementInfoListViewHelper : IListViewHelper
     {
         ElementInfo mElementInfo;
-        
+
         public General.eRIPageViewMode PageViewMode { get; set; }
 
         UcListView mListView = null;
@@ -183,7 +179,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             ListItemOperation ViewLinkedInstances = new ListItemOperation();
             ViewLinkedInstances.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.AddFromModel };
             ViewLinkedInstances.AutomationID = "HighlightElement";
-            ViewLinkedInstances.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Pointer;
+            ViewLinkedInstances.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Visible;
             ViewLinkedInstances.ToolTip = "Highlight Element";
             ViewLinkedInstances.OperationHandler = HighlightElementClicked;
             operationsList.Add(ViewLinkedInstances);

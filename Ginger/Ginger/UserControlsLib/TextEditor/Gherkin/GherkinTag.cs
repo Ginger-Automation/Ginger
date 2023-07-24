@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,11 +17,6 @@ limitations under the License.
 #endregion
 
 using Gherkin.Ast;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ginger.UserControlsLib.TextEditor.Gherkin
 {
@@ -30,11 +25,11 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
         Tag mGherkinTag;
         public GherkinTag(Tag GT)
         {
-            mGherkinTag = GT;            
+            mGherkinTag = GT;
         }
         public string Name { get { return mGherkinTag.Name; } }
 
-        public int Line { get { return mGherkinTag.Location.Line ; } }
+        public int Line { get { return mGherkinTag.Location.Line; } }
 
         public int Column { get { return mGherkinTag.Location.Column; } }
 

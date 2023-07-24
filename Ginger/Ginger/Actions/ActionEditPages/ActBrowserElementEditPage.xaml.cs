@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Repository;
 using Ginger.Actions._Common.ActUIElementLib;
 using Ginger.UserControls;
 using GingerCore.Actions;
@@ -29,8 +30,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Amdocs.Ginger.Repository;
-using System.Windows.Data;
 
 namespace Ginger.Actions
 {
@@ -69,7 +68,7 @@ namespace Ginger.Actions
             xGotoURLTypeRadioButton.Init(typeof(ActBrowserElement.eGotoURLType), xGotoURLTypeRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.GotoURLType, ActBrowserElement.eGotoURLType.Current.ToString()));
             xURLSrcRadioButton.Init(typeof(ActBrowserElement.eURLSrc), xURLSrcRadioButtonPnl, mAct.GetOrCreateInputParam(ActBrowserElement.Fields.URLSrc, ActBrowserElement.eURLSrc.Static.ToString()), URLSrcRadioButton_Clicked);
             xMonitorURLRadioButton.Init(typeof(ActBrowserElement.eMonitorUrl), xMonitorURLRadioButtonPnl, mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl), ActBrowserElement.eMonitorUrl.AllUrl.ToString()), MonitorURLRadioButton_Clicked);
-            xRequestTypeRadioButton.Init(typeof(ActBrowserElement.eRequestTypes), xRequestTypeRadioButtonPnl, mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes), ActBrowserElement.eRequestTypes.All.ToString()), RequestTypeRadioButton_Clicked);
+            xRequestTypeRadioButton.Init(typeof(ActBrowserElement.eRequestTypes), xRequestTypeRadioButtonPnl, mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes), ActBrowserElement.eRequestTypes.FetchOrXHR.ToString()), RequestTypeRadioButton_Clicked);
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy);
             xImplicitWaitVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.ImplicitWait);
             SetGridView();
@@ -173,6 +172,12 @@ namespace Ginger.Actions
                     xUpdateNetworkUrlGridPnl.Visibility = System.Windows.Visibility.Visible;
                 }
             }
+            else if (mAct.ControlAction == ActBrowserElement.eControlAction.GetConsoleLog)
+            {
+                ResetPOMView();
+                xValueGrid.Visibility = System.Windows.Visibility.Visible;
+                xValueLabel.Content = "Text File Path:";
+            }
             else
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.InitializeBrowser)
@@ -209,7 +214,7 @@ namespace Ginger.Actions
                     xLocateValueVE.Visibility = System.Windows.Visibility.Collapsed;
                     xLocateValueEditFrame.Visibility = System.Windows.Visibility.Visible;
                     Page p = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), null, null, mAct, nameof(ActBrowserElement.LocateValue));
-                    xLocateValueEditFrame.Content = p;
+                    xLocateValueEditFrame.ClearAndSetContent(p);
                     break;
                 default:
                     xLocateValueVE.Visibility = System.Windows.Visibility.Visible;
@@ -222,7 +227,7 @@ namespace Ginger.Actions
         {
             RadioButton rbSender = sender as RadioButton;
 
-            if(rbSender.Content.ToString() == ActBrowserElement.eURLSrc.Static.ToString())
+            if (rbSender.Content.ToString() == ActBrowserElement.eURLSrc.Static.ToString())
             {
                 ValueUC.Visibility = System.Windows.Visibility.Visible;
                 xPOMUrlFrame.Visibility = System.Windows.Visibility.Collapsed;
@@ -242,7 +247,7 @@ namespace Ginger.Actions
         private void SetLocateValueFrame()
         {
             LocateByPOMElementPage locateByPOMElementPage = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), mAct, null, mAct, nameof(ActBrowserElement.Fields.PomGUID), true);
-            xPOMUrlFrame.Content = locateByPOMElementPage;
+            xPOMUrlFrame.ClearAndSetContent(locateByPOMElementPage);
         }
 
         private void SetGridView()

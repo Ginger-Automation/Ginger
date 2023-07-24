@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,18 +19,15 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.Actions;
-using Ginger.BusinessFlowWindows;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
-using GingerCore.DataSource;
 using GingerCore.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -52,12 +49,16 @@ namespace Ginger.AnalyzerLib
 
         AnalyzerUtils mAnalyzerUtils = new AnalyzerUtils();
 
+        Brush _brush = new SolidColorBrush(Colors.Red);
+
+        Brush _brushDefault = (SolidColorBrush)new BrushConverter().ConvertFromString("#152B37");
+
         private AnalyzedObject mAnalyzedObject;
 
         GenericWindow _pageGenericWin = null;
 
         ObservableList<AnalyzerItemBase> mIssues = new ObservableList<AnalyzerItemBase>();
-       
+
         private Solution mSolution;
         private BusinessFlow businessFlow;
         private RunSetConfig mRunSetConfig;
@@ -72,10 +73,11 @@ namespace Ginger.AnalyzerLib
             get { return mAnalyzerCompleted; }
         }
 
-        public int TotalHighAndCriticalIssues
-        {
-            get { return (mIssues.Where(x => (x.Severity.ToString() == "High")).Count() + mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count()); }
-        }
+        public int TotalIssues { get; set; }    
+
+        public int TotalHighAndCriticalIssues { get; set; }
+        
+        public int AutoFixIssues { get; set; }
        
         private bool mAnalyzeDoneOnce = false;
         private bool mAnalyzeWithUI = true;
@@ -87,34 +89,42 @@ namespace Ginger.AnalyzerLib
             SetAnalyzerItemsGridView();
 
             AnalyzerItemsGrid.DataSourceList = mIssues;
-
-            mIssues.CollectionChanged += MIssues_CollectionChanged; 
+            IssuesCounterLabel.Content = "Total Issues: ";
+            CriticalAndHighIssuesLabel.Content = "Total High & Critical Issues: ";
+            CanAutoFixLable.Content = "Can be Auto Fixed: ";
+            mIssues.CollectionChanged -= MIssues_CollectionChanged;
+            mIssues.CollectionChanged += MIssues_CollectionChanged;
         }
-        
+
         private void MIssues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Dispatcher.Invoke(() =>
-        {
-            IssuesCounterLabel.Content = "Total Issues: ";
-            IssuesCountLabel.Content = mIssues.Count();
-            if ((mIssues.Where(x => (x.Severity.ToString() == "High")).Count()) > 0 || (mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count()) > 0)
-            {
-                CriticalAndHighIssuesLabel.Content = "Total High & Critical Issues: ";
-                CriticalAndHighIssuesLabelCounter.Content = (mIssues.Where(x => (x.Severity.ToString() == "High")).Count() + mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count());
-                CriticalAndHighIssuesLabelCounter.Foreground = new SolidColorBrush(Colors.Red);
-                CriticalAndHighIssuesLabel.Visibility = Visibility.Visible;
-            }
-            if ((mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count()) > 0)
-            {
-                CanAutoFixLable.Content = "Can be Auto Fixed: ";
-                CanAutoFixLableCounter.Content = mIssues.Where(x => (x.CanAutoFix.ToString() == "Yes")).Count();
-                CanAutoFixLable.Visibility = Visibility.Visible;
-            }
-
-        });
-
+            {               
+                if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.NewItems != null)
+                {                   
+                    foreach (AnalyzerItemBase item in e.NewItems)
+                    {
+                        TotalIssues++;
+                        IssuesCountLabel.Content = TotalIssues;
+                        if (item.Severity == AnalyzerItemBase.eSeverity.High || item.Severity == AnalyzerItemBase.eSeverity.Critical)
+                        {
+                            TotalHighAndCriticalIssues++;
+                            CriticalAndHighIssuesLabelCounter.Content = TotalHighAndCriticalIssues;
+                            if (TotalHighAndCriticalIssues == 1)
+                            {
+                                CriticalAndHighIssuesLabelCounter.Foreground = _brush;                                
+                            }
+                        }
+                        else if(item.CanAutoFix == AnalyzerItemBase.eCanFix.Yes)
+                        {
+                            AutoFixIssues++;
+                            CanAutoFixLableCounter.Content = AutoFixIssues;                            
+                        }
+                    }                                   
+                }
+            });            
         }
-
+        
         public void Init(Solution Solution)
         {
             mAnalyzedObject = AnalyzedObject.Solution;
@@ -122,7 +132,7 @@ namespace Ginger.AnalyzerLib
             AnalyzerItemsGrid.Title = "'" + mSolution.Name + "' Solution Issues";
         }
 
-        public void Init(Solution Solution, BusinessFlow BusinessFlow,bool selfHealingAutoFixIssue=false)
+        public void Init(Solution Solution, BusinessFlow BusinessFlow, bool selfHealingAutoFixIssue = false)
         {
             mAnalyzedObject = AnalyzedObject.BusinessFlow;
             mSolution = Solution;
@@ -149,7 +159,7 @@ namespace Ginger.AnalyzerLib
             {
                 await Analyze();
             }
-           
+
         }
 
         private async void RerunButton_Click(object sender, RoutedEventArgs e)
@@ -162,7 +172,7 @@ namespace Ginger.AnalyzerLib
             mIssues.CollectionChanged -= MIssues_CollectionChanged;
             mIssues.CollectionChanged += MIssues_CollectionChanged;
             CriticalAndHighIssuesLabelCounter.Content = "0";
-            CriticalAndHighIssuesLabelCounter.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#152B37");   //"#20334f";
+            CriticalAndHighIssuesLabelCounter.Foreground = _brushDefault;   //"#20334f";
             CanAutoFixLableCounter.Content = "0";
             await Analyze();
         }
@@ -177,10 +187,13 @@ namespace Ginger.AnalyzerLib
         {
             // Each analyzer will set to true once completed, this is prep for multi run in threads for speed
             mIssues.Clear();
+            TotalIssues = 0;
+            TotalHighAndCriticalIssues = 0;
+            AutoFixIssues = 0;
             BusyInProcess = true;
             mAnalyzerCompleted = false;
             mAnalyzeDoneOnce = true;
-            
+
             try
             {
                 if (mAnalyzeWithUI)
@@ -215,7 +228,7 @@ namespace Ginger.AnalyzerLib
             {
                 if (mAnalyzerUtils.SelfHealingAutoFixIssue)
                 {
-                    for (var index = mIssues.Count - 1;index >=0 ; index--)
+                    for (var index = mIssues.Count - 1; index >= 0; index--)
                     {
                         if (mIssues[index].CanAutoFix == AnalyzerItemBase.eCanFix.Yes && mIssues[index].FixItHandler != null)
                         {
@@ -224,13 +237,13 @@ namespace Ginger.AnalyzerLib
                         }
                     }
                 }
-                
+
 
                 BusyInProcess = false;
                 mAnalyzerCompleted = true;
                 SetAnalayzeProceesAsCompleted();
             }
-            
+
         }
 
         private void SetAnalayzeProceesAsCompleted()
@@ -248,7 +261,8 @@ namespace Ginger.AnalyzerLib
 
         private void SetUIAfterAnalyzerCompleted()
         {
-            try {
+            try
+            {
                 Dispatcher.Invoke(() =>
                 {
                     StatusLabel.Visibility = Visibility.Collapsed;
@@ -263,10 +277,13 @@ namespace Ginger.AnalyzerLib
                         ObservableList<AnalyzerItemBase> SortedList = new ObservableList<AnalyzerItemBase>();
 
                         foreach (AnalyzerItemBase issue in mIssues.OrderBy(nameof(AnalyzerItemBase.Severity)))
-                            SortedList.Add(issue);                        
+                        {
+                            SortedList.Add(issue);
+                        }
+
                         mIssues = SortedList;
                         AnalyzerItemsGrid.DataSourceList = mIssues;
-                        AnalyzerItemsGrid.Grid.SelectedItem = mIssues[0];
+                        AnalyzerItemsGrid.Grid.SelectedItem = mIssues[0];                       
                     });
                 }
             }
@@ -278,7 +295,7 @@ namespace Ginger.AnalyzerLib
 
         //private void RunRunSetConfigAnalyzer(RunSetConfig mRunSetConfig)
         //{
-            
+
         //        List<AnalyzerItemBase> issues = RunSetConfigAnalyzer.Analyze(mRunSetConfig);
         //        AddIssues(issues);
         //        //TODO: check agents is not dup in different GR
@@ -311,7 +328,7 @@ namespace Ginger.AnalyzerLib
         //        }
 
         //        SetAnalayzeProceesAsCompleted();
-            
+
         //}
 
         //private List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, bool markCompletion = true)
@@ -323,7 +340,7 @@ namespace Ginger.AnalyzerLib
         //    SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name);
         //    List<AnalyzerItemBase> issues = AnalyzeBusinessFlow.Analyze(mSolution, businessFlow);
         //    AddIssues(issues);
-           
+
         //    // Removing Parallel.Foreach as its freezing on main thread when running from CLI
 
         //        //Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
@@ -357,7 +374,7 @@ namespace Ginger.AnalyzerLib
         //     {
         //         SetAnalayzeProceesAsCompleted();
         //     }
-         
+
         //    return usedVariablesInBF;
 
         //}
@@ -494,7 +511,7 @@ namespace Ginger.AnalyzerLib
         //        }
         //    }            
         //}
-    
+
         private void SetStatus(string txt)
         {
             // GingerCore.General.DoEvents();
@@ -577,12 +594,12 @@ namespace Ginger.AnalyzerLib
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
-            
+
             view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.SeverityIcon), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 2.5, AllowSorting = true, MaxWidth = 20 });
             view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Selected), Header = "Selected", WidthWeight = 3, MaxWidth = 50, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.AnalyzerItems.Resources["FieldActive"] });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemClass), Header = "Item Type", WidthWeight = 3 ,AllowSorting = true });
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemClass), Header = "Item Type", WidthWeight = 3, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemName), Header = "Item Name", WidthWeight = 10, AllowSorting = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemParent), Header= "Item Parent", WidthWeight = 10, AllowSorting = true });                       
+            view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.ItemParent), Header = "Item Parent", WidthWeight = 10, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Description), Header = "Issue", WidthWeight = 15, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.Severity), Header = "Severity", WidthWeight = 3, MaxWidth = 50, AllowSorting = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(AnalyzerItemBase.CanAutoFix), Header = "Auto Fixed?", WidthWeight = 3, AllowSorting = true });
@@ -625,7 +642,7 @@ namespace Ginger.AnalyzerLib
             //FixSelectedButton.Click += new RoutedEventHandler(FixSelectedButton_Click);
             FixSelectedButton.Click += async (o, e) =>
             {
-                if (mIssues.Where(x=> x.Selected==true).ToList().Count == 0)
+                if (mIssues.Where(x => x.Selected == true).ToList().Count == 0)
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Please select issue to fix.");
                     return;
@@ -640,7 +657,7 @@ namespace Ginger.AnalyzerLib
                 SetStatus("Starting to Fix Selected Items...");
                 StatusLabel.Visibility = Visibility.Visible;
                 try
-                { 
+                {
                     await Task.Run(() => FixSelectedItems());
                 }
                 finally
@@ -648,7 +665,7 @@ namespace Ginger.AnalyzerLib
                     BusyInProcess = false;
                 }
                 SetStatus("Finished to Fix Selected Items.");
-                StatusLabel.Visibility = Visibility.Collapsed;               
+                StatusLabel.Visibility = Visibility.Collapsed;
             };
             winButtons.Add(FixSelectedButton);
 
@@ -663,20 +680,22 @@ namespace Ginger.AnalyzerLib
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, title, this, winButtons);
 
             if (mAnalyzeDoneOnce)
+            {
                 SetUIAfterAnalyzerCompleted();
+            }
         }
 
         private void MarkUnMark(object sender, RoutedEventArgs e)
         {
-                List<AnalyzerItemBase> autoFixItemsList = mIssues.Where(x => x.CanAutoFix == AnalyzerItemBase.eCanFix.Yes).ToList();
-                if (autoFixItemsList!= null && autoFixItemsList.Count>0)
+            List<AnalyzerItemBase> autoFixItemsList = mIssues.Where(x => x.CanAutoFix == AnalyzerItemBase.eCanFix.Yes).ToList();
+            if (autoFixItemsList != null && autoFixItemsList.Count > 0)
+            {
+                bool flagToset = (!autoFixItemsList[0].Selected);
+                foreach (AnalyzerItemBase item in autoFixItemsList)
                 {
-                    bool flagToset = (!autoFixItemsList[0].Selected);
-                    foreach (AnalyzerItemBase item in autoFixItemsList)
-                    {
-                        item.Selected = flagToset;
-                    }
+                    item.Selected = flagToset;
                 }
+            }
         }
 
         private async void SaveAllFixedItems_Click(object sender, RoutedEventArgs e)
@@ -694,7 +713,7 @@ namespace Ginger.AnalyzerLib
                 SetStatus("Starting to Save Fixed Items...");
                 StatusLabel.Visibility = Visibility.Visible;
                 try
-                { 
+                {
                     await Task.Run(() => SaveAllFixedItems());
                 }
                 finally
@@ -702,18 +721,18 @@ namespace Ginger.AnalyzerLib
                     BusyInProcess = false;
                 }
                 SetStatus("Finished to Save Selected Items.");
-                StatusLabel.Visibility = Visibility.Collapsed;                
+                StatusLabel.Visibility = Visibility.Collapsed;
             }
         }
 
         private void SaveAllFixedItems()
         {
-            Dictionary<BusinessFlow, List<AnalyzerItemBase>> itemsWhichWereSaved = new Dictionary<BusinessFlow, List<AnalyzerItemBase>>();            
+            Dictionary<BusinessFlow, List<AnalyzerItemBase>> itemsWhichWereSaved = new Dictionary<BusinessFlow, List<AnalyzerItemBase>>();
             foreach (AnalyzerItemBase AI in mIssues)
             {
                 if (AI.Status == AnalyzerItemBase.eStatus.Fixed)
                 {
-                    BusinessFlow bs = null;                    
+                    BusinessFlow bs = null;
                     if (AI.GetType() == typeof(AnalyzeBusinessFlow))
                     {
                         bs = ((AnalyzeBusinessFlow)AI).mBusinessFlow;
@@ -725,36 +744,42 @@ namespace Ginger.AnalyzerLib
                     else if (AI.GetType() == typeof(AnalyzeAction))
                     {
                         bs = ((AnalyzeAction)AI).mBusinessFlow;
-                    }                   
+                    }
                     //TODO: add support for Run Set save
                     //using Dic so each BF will be saved only once  
-                    if(bs!=null)
+                    if (bs != null)
                     {
                         if (itemsWhichWereSaved.ContainsKey(bs) == false)
+                        {
                             itemsWhichWereSaved.Add(bs, new List<AnalyzerItemBase>() { AI });
+                        }
                         else
+                        {
                             itemsWhichWereSaved[bs].Add(AI);
+                        }
                     }
                 }
-            }            
+            }
             //do Bf's Save
             foreach (KeyValuePair<BusinessFlow, List<AnalyzerItemBase>> bfToSave in itemsWhichWereSaved)
             {
                 if (bfToSave.Key != null)
                 {
-                    SetStatus("Saving " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":")  + bfToSave.Key.Name);
-                    
+                    SetStatus("Saving " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":") + bfToSave.Key.Name);
+
                     WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bfToSave.Key);
                     foreach (AnalyzerItemBase ai in bfToSave.Value)
+                    {
                         ai.Status = AnalyzerItemBase.eStatus.FixedSaved;
+                    }
                 }
             }
-            
+
 
         }
 
         private void FixSelectedItems()
-        {            
+        {
             foreach (AnalyzerItemBase AI in mIssues)
             {
                 if (AI.Selected && AI.Status == AnalyzerItemBase.eStatus.NeedFix)
@@ -762,7 +787,7 @@ namespace Ginger.AnalyzerLib
                     if (AI.FixItHandler != null)
                     {
                         //Reporter.ToGingerHelper(eStatusMsgKey.AnalyzerFixingIssues, null, AI.ItemName);
-                        SetStatus("Fixing: " + AI.ItemName);                      
+                        SetStatus("Fixing: " + AI.ItemName);
                         AI.FixItHandler.Invoke(AI, null);
                         //Reporter.CloseGingerHelper();                        
                     }
@@ -781,7 +806,7 @@ namespace Ginger.AnalyzerLib
             {
                 AnalyzeAction currentAnalyzeAction = (AnalyzeAction)AnalyzerItemsGrid.CurrentItem;
                 Act actionIssue = currentAnalyzeAction.mAction;
-                actionIssue.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
+                actionIssue.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
                 ActionEditPage actedit = new ActionEditPage(actionIssue, General.eRIPageViewMode.ChildWithSave, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
                 //setting the BusinessFlow on the Action in Order to save 
                 //actedit.mActParentBusinessFlow = ((AnalyzeAction)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
@@ -811,7 +836,7 @@ namespace Ginger.AnalyzerLib
             AnalyzerItemBase a = (AnalyzerItemBase)AnalyzerItemsGrid.CurrentItem;
 
             if (a != null)
-            {                
+            {
                 if (a.ItemClass != null)
                 {
                     TBH.AddLineBreak();

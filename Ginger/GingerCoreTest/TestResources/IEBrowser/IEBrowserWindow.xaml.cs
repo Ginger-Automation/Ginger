@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,23 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
+using GingerTestHelper;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using GingerTestHelper;
-using mshtml;
-using UnitTests;
 
 namespace GingerUnitTests.Documents.IEBrowser
 {
@@ -54,14 +41,14 @@ namespace GingerUnitTests.Documents.IEBrowser
 
         private void FillScriptsCombo()
         {
-            
+
             string[] Files = Directory.GetFiles(SnippestFolder);
             foreach (string ScriptFileName in Files)
             {
                 //Show only the file name
-                ScriptSnippestComboBox.Items.Add(ScriptFileName.Replace(SnippestFolder,""));
+                ScriptSnippestComboBox.Items.Add(ScriptFileName.Replace(SnippestFolder, ""));
             }
-            
+
         }
 
         private void ScriptSnippestComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -89,7 +76,7 @@ namespace GingerUnitTests.Documents.IEBrowser
         }
 
         private void RunScriptonBrowser(string Script)
-        {           
+        {
             dynamic rc = browser.InvokeScript("eval", Script);
             OutputTextBox.Text = rc + "";
         }
@@ -102,24 +89,24 @@ namespace GingerUnitTests.Documents.IEBrowser
         private void InjectGingerHTMLHelperButton_Click(object sender, RoutedEventArgs e)
         {
             //TODO: check if Jquery already exist befire injecting
-            
-            string script = GingerCore.Helpers.HTMLHelper.GetJquery();            
+
+            string script = GingerCore.Helpers.HTMLHelper.GetJquery();
             InvokeScript(script);
 
             //TODO: check if not already injected, set a flag
 
             script = GetXPathScript();
             InvokeScript(script);
-            
-            script = GingerCore.Helpers.HTMLHelper.GetGingerHTMLHelper();            
+
+            script = GingerCore.Helpers.HTMLHelper.GetGingerHTMLHelper();
             InvokeScript(script);
         }
 
         //TODO: move me to HTMLHelper
         private string GetXPathScript()
         {
-            
-            string script = GingerCore.Helpers.HTMLHelper.wgxpath_install();            
+
+            string script = GingerCore.Helpers.HTMLHelper.wgxpath_install();
 
             // string script = File.ReadAllText(@"c:\temp\xpath.js");
             // script = "function aa(){} alert('aaa');";
@@ -139,7 +126,7 @@ namespace GingerUnitTests.Documents.IEBrowser
             OutputTextBox.Text = "";
         }
 
-        
+
 
 
 

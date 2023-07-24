@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Ginger.AnalyzerLib
@@ -53,9 +52,8 @@ namespace Ginger.AnalyzerLib
 
             //foreach (BusinessFlow BF in BFs)
             Parallel.ForEach(BFs, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
-            {
-                List<string> tempList = RunBusinessFlowAnalyzer(BF, issuesList);
-                MergeVariablesList(usedVariablesInSolution, tempList);
+            {                
+                MergeVariablesList(usedVariablesInSolution, RunBusinessFlowAnalyzer(BF, issuesList));                
             });
             ReportUnusedVariables(solution, usedVariablesInSolution, issuesList);
         }
@@ -83,10 +81,10 @@ namespace Ginger.AnalyzerLib
                     if (!checkedGuidList.Contains(BF.Guid))//check if it already was analyzed
                     {
                         checkedGuidList.Add(BF.Guid);
-                        BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == BF.Guid).FirstOrDefault();
+                        BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(BF.Guid);
                         if (actualBf != null)
                         {
-                            RunBusinessFlowAnalyzer(actualBf, issuesList, includeMandatoryInputsAnalyze:false);
+                            RunBusinessFlowAnalyzer(actualBf, issuesList, includeMandatoryInputsAnalyze: false);
                         }
                     }
                 });
@@ -145,14 +143,13 @@ namespace Ginger.AnalyzerLib
                         }
 
                     }
-
-                    List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
-                    MergeVariablesList(usedVariablesInActivity, tempList);
+                    
+                    MergeVariablesList(usedVariablesInActivity, AnalyzeAction.GetUsedVariableFromAction(action));                    
                 });
+                
 
-                List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
-
-                MergeVariablesList(usedVariablesInActivity, activityVarList);
+                MergeVariablesList(usedVariablesInActivity, AnalyzeActivity.GetUsedVariableFromActivity(activity));
+                
                 ReportUnusedVariables(activity, usedVariablesInActivity, issuesList);
                 MergeVariablesList(usedVariablesInBF, usedVariablesInActivity);
 

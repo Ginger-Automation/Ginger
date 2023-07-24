@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
-using System.Windows.Controls;
+using Amdocs.Ginger.Common.UIElement;
 using Ginger.WindowExplorer;
 using GingerCore.Actions;
 using GingerCore.Actions.Windows;
 using GingerWPF.UserControlsLib.UCTreeView;
-using Amdocs.Ginger.Common.UIElement;
+using System.Windows.Controls;
 
 namespace Ginger.Drivers.Windows
 {
@@ -37,19 +37,19 @@ namespace Ginger.Drivers.Windows
         {
             ObservableList<Act> list = new ObservableList<Act>();
 
-                list.Add(new ActWindowsControl()
-                {
-                    Description = "Click " + UIAElementInfo.ElementTitle,
-                    ControlAction = ActWindowsControl.eControlAction.Click
-                });
+            list.Add(new ActWindowsControl()
+            {
+                Description = "Click " + UIAElementInfo.ElementTitle,
+                ControlAction = ActWindowsControl.eControlAction.Click
+            });
 
-                list.Add(new ActWindowsControl()
-                {
-                    Description = "Get Button Text " + UIAElementInfo.ElementTitle,
-                    ControlAction = ActWindowsControl.eControlAction.GetControlProperty,
-                    Value = "Text"
-                });
-           
+            list.Add(new ActWindowsControl()
+            {
+                Description = "Get Button Text " + UIAElementInfo.ElementTitle,
+                ControlAction = ActWindowsControl.eControlAction.GetControlProperty,
+                Value = "Text"
+            });
+
             return list;
         }
     }

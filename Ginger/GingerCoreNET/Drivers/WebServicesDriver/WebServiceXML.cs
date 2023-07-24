@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using System.Text;
-using System.Net;    
 using System.IO;
-using System.Net.Security;  
+using System.Net;
+using System.Net.Security;
+using System.Text;
 
-public class WebServiceXML {
+public class WebServiceXML
+{
 
     public int ServiceConnectionTimeOut { get; set; }
 
@@ -34,7 +35,7 @@ public class WebServiceXML {
                     return true;
                 }
                 );
-        
+
         HttpWebRequest req = (HttpWebRequest)WebRequest.Create(URL);
         req.Method = "POST";
         req.ContinueTimeout = ServiceConnectionTimeOut <= 0 ? 350 : ServiceConnectionTimeOut;
@@ -57,11 +58,11 @@ public class WebServiceXML {
 
         byte[] reqBytes = new UTF8Encoding().GetBytes(xmlRequest);
         req.ContentLength = reqBytes.Length;
-        
-            using (Stream reqStream = req.GetRequestStream())
-            {
-                reqStream.Write(reqBytes, 0, reqBytes.Length);
-            }
+
+        using (Stream reqStream = req.GetRequestStream())
+        {
+            reqStream.Write(reqBytes, 0, reqBytes.Length);
+        }
 
         HttpWebResponse resp;
         string xmlResponse = null;
@@ -89,5 +90,5 @@ public class WebServiceXML {
                 return xmlResponse;
             }
         }
-    }    
+    }
 }

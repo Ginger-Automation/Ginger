@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,37 +16,23 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using GingerCore.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using GingerCore.Actions.WebServices;
-using System.Net.Http;
-using System.Net.Security;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using System.IO;
-using Org.BouncyCastle.X509;
 using Ginger.Run;
-using System.Reflection;
-using OpenQA.Selenium.DevTools.V99.DOM;
-using static System.Net.WebRequestMethods;
-using File = System.IO.File;
-using DocumentFormat.OpenXml.EMMA;
-using Microsoft.Graph;
-using Azure.Identity;
-using System.Text;
-using System.Threading.Tasks;
+using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using MongoDB.Driver;
-using Microsoft.Graph.Extensions;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Diagnostics;
-using GingerCore.DataSource;
-using GingerCore.Environments;
+using System.Net;
+using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
+using File = System.IO.File;
+using Microsoft.Graph;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 
 namespace GingerCore.Actions.Communication
 {
@@ -84,6 +70,14 @@ namespace GingerCore.Actions.Communication
             SendEmail = 1,
             ReadEmail = 2
         }
+
+        public enum ReadEmailActionType
+        {
+            MSGraphAPI = 1,
+            IMAP = 2
+        }
+
+
 
         public new static partial class Fields
         {
@@ -125,8 +119,8 @@ namespace GingerCore.Actions.Communication
             get { return "Email" + eMailActionType.ToString(); }
         }
 
-        public eEmailActionType eMailActionType 
-        { 
+        public eEmailActionType eMailActionType
+        {
             get
             {
                 return GetOrCreateInputParam(nameof(eMailActionType), eEmailActionType.SendEmail);
@@ -135,6 +129,19 @@ namespace GingerCore.Actions.Communication
             {
                 AddOrUpdateInputParamValue(nameof(eMailActionType), value.ToString());
                 OnPropertyChanged(nameof(eMailActionType));
+            }
+        }
+
+        public ReadEmailActionType readMailActionType
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(readMailActionType), ReadEmailActionType.MSGraphAPI);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(readMailActionType), value.ToString());
+                OnPropertyChanged(nameof(readMailActionType));
             }
         }
 
@@ -195,7 +202,33 @@ namespace GingerCore.Actions.Communication
                 OnPropertyChanged(nameof(MSGraphClientId));
             }
         }
-        
+
+        public string IMapHost
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(IMapHost), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(IMapHost), value);
+                OnPropertyChanged(nameof(IMapHost));
+            }
+        }
+
+        public string IMapPort
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(IMapPort), "").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(IMapPort), value);
+                OnPropertyChanged(nameof(IMapPort));
+            }
+        }
+
         public string MSGraphTenantId
         {
             get
@@ -222,18 +255,18 @@ namespace GingerCore.Actions.Communication
             }
         }
 
-        public string FilterFolderName
+        public string FilterFolderNames
         {
             get
             {
-                return GetOrCreateInputParam(nameof(FilterFolderName), "").Value;
+                return GetOrCreateInputParam(nameof(FilterFolderNames), "").Value;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(FilterFolderName), value);
-                OnPropertyChanged(nameof(FilterFolderName));
+                AddOrUpdateInputParamValue(nameof(FilterFolderNames), value);
+                OnPropertyChanged(nameof(FilterFolderNames));
             }
-        }
+        }     
 
         public string FilterFrom
         {
@@ -325,6 +358,71 @@ namespace GingerCore.Actions.Communication
                 OnPropertyChanged(nameof(DownloadAttachments));
             }
         }
+
+        public bool ReadUnreadMails
+        {
+            get
+            {
+                return bool.Parse(GetOrCreateInputParam(nameof(ReadUnreadMails), false.ToString()).Value);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ReadUnreadMails), value.ToString());
+                OnPropertyChanged(nameof(ReadUnreadMails));
+            }
+        }
+
+        public bool ReadAllMails
+        {
+            get
+            {
+                return bool.Parse(GetOrCreateInputParam(nameof(ReadAllMails), true.ToString()).Value);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ReadAllMails), value.ToString());
+                OnPropertyChanged(nameof(ReadAllMails));
+            }
+        }
+
+
+        public bool MarkMailsAsRead
+        {
+            get
+            {
+                return bool.Parse(GetOrCreateInputParam(nameof(MarkMailsAsRead), false.ToString()).Value);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MarkMailsAsRead), value.ToString());
+                OnPropertyChanged(nameof(MarkMailsAsRead));
+            }
+        }
+        public bool MarkMailsAsNotRead
+        {
+            get
+            {
+                return bool.Parse(GetOrCreateInputParam(nameof(MarkMailsAsNotRead), true.ToString()).Value);
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(MarkMailsAsNotRead), value.ToString());
+                OnPropertyChanged(nameof(MarkMailsAsNotRead));
+            }
+        }
+        public string  ReadCount
+        {
+            get
+            {
+                return GetOrCreateInputParam(nameof(ReadCount), "50").Value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(ReadCount), value);
+                OnPropertyChanged(nameof(ReadCount));
+            }
+        }
+
 
         public string AttachmentDownloadPath
         {
@@ -507,7 +605,9 @@ namespace GingerCore.Actions.Communication
                     return returnValue;
                 }
                 else
+                {
                     return false;
+                }
             }
         }
         #endregion  
@@ -532,7 +632,10 @@ namespace GingerCore.Actions.Communication
 
             bool isSuccess;
             if (!string.IsNullOrEmpty(Host))
+            {
                 email.SMTPMailHost = Host;
+            }
+
             try { email.SMTPPort = Convert.ToInt32(this.GetInputParamCalculatedValue(nameof(Port))); }
             catch { email.SMTPPort = 25; }
 
@@ -579,7 +682,7 @@ namespace GingerCore.Actions.Communication
                         }
                         if (certificate.Equals(actualCertificate))
                         {
-                            ExInfo = "Uploaded certificate is vaslidated";
+                            ExInfo = "Uploaded certificate is validated";
                             return true;
                         }
                         else
@@ -636,35 +739,75 @@ namespace GingerCore.Actions.Communication
                 Error = email.Event;
             }
         }
-
         private void ReadEmails()
         {
-            IEmailReadOperations emailReadOperations = new EmailReadOperations();
-            EmailReadFilters filters = CreateEmailReadFilters();
-            MSGraphConfig config = CreateMSGraphConfig();
-            int index = 1;
-            emailReadOperations.ReadEmails(filters, config, email => 
+            // if (string.IsNullOrEmpty(GetInputParamCalculatedValue(nameof(ReadCount))) || int.TryParse(GetInputParamCalculatedValue(nameof(ReadCount)), out int cnt) == false)
+            if (GetInputParamCalculatedValue(nameof(ReadCount)) != "" && int.TryParse(GetInputParamCalculatedValue(nameof(ReadCount)), out int cnt) == false)
             {
-                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.From), email.From, index.ToString());
-                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Subject), email.Subject, index.ToString());
-                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Body), email.Body, index.ToString());
-                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.HasAttachments), email.HasAttachments.ToString(), index.ToString());
-                AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.ReceivedDateTime), email.ReceivedDateTime.ToString(), index.ToString());
-                if (DownloadAttachments && FilterHasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes)
+                Error = "Error: Inavlid Input for Limit of Emails. Please provide a Numeric Value";
+                return;
+            }
+            EmailReadFilters filters = CreateEmailReadFilters();
+            EmailReadConfig config = CreateAuthenticationConfig();
+            IEmailReadOperations emailReadOperations;
+
+            if (string.IsNullOrEmpty(config.UserEmail) || string.IsNullOrEmpty(config.UserPassword))
+            {
+                Error = "Error: Inavlid username/password provided. Please provide valid username/password.";
+                return;
+            }            
+            if ( readMailActionType == ReadEmailActionType.MSGraphAPI)
+            {
+                if (string.IsNullOrEmpty(config.ClientId) || string.IsNullOrEmpty(config.TenantId))
                 {
-                    IEnumerable<(string filename, string filepath)> fileNamesAndPaths = DownloadAttachmentFiles(email);
-                    foreach((string filename, string filepath) in fileNamesAndPaths)
-                    {
-                        AddOrUpdateReturnParamActualWithPath(filename, filepath, index.ToString());
-                    }
+                    Error = "Error: Inavlid Client/Tenant Id provided. Please provide valid Client/Tenant Id.";
+                    return;
                 }
-                index++;
+                emailReadOperations = new EmailReadMSGraphOperations();
+            }
+            else
+            {
+                int a;
+                if (string.IsNullOrEmpty(config.IMapHost) || !int.TryParse(config.IMapPort, out a))
+                {
+                    Error = "Error: Inavlid Host OR Port provided. Please provide valid Host Name and Port Number";
+                    return;
+                }
+                emailReadOperations = new EmailReadGmailOperations();
+            }
+            
+            int index = 0;
+            emailReadOperations.ReadEmails(filters, config, email =>
+            {
+                if (email!=null)
+                {
+                    index++;
+                    AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.From), email.From, index.ToString());
+                    AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Subject), email.Subject, index.ToString());
+                    AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.Body), email.Body, index.ToString());
+                    AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.HasAttachments), email.HasAttachments.ToString(), index.ToString());
+                    AddOrUpdateReturnParamActualWithPath(nameof(ReadEmail.ReceivedDateTime), email.ReceivedDateTime.ToString(), index.ToString());
+                    if (DownloadAttachments && FilterHasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes)
+                    {
+                        IEnumerable<(string filename, string filepath)> fileNamesAndPaths = DownloadAttachmentFiles(email);
+                        foreach ((string filename, string filepath) in fileNamesAndPaths)
+                        {
+                            AddOrUpdateReturnParamActualWithPath(filename, filepath, index.ToString());
+                        }
+                    } 
+                }
             }).Wait();
+
+            if (index == 0)
+            {
+                Error = "Error: No Emails found matching the filters. Please veriy the filters again.";
+                return;
+            }
         }
 
         private EmailReadFilters CreateEmailReadFilters()
         {
-            string calculatedFolderName = GetInputParamCalculatedValue(nameof(FilterFolderName));
+            string calculatedFolderName = GetInputParamCalculatedValue(nameof(FilterFolderNames));
             string calculatedFrom = GetInputParamCalculatedValue(nameof(FilterFrom));
             string calculatedTo = GetInputParamCalculatedValue(nameof(FilterTo));
             string calculatedSubject = GetInputParamCalculatedValue(nameof(FilterSubject));
@@ -672,6 +815,18 @@ namespace GingerCore.Actions.Communication
             string calculatedAttachmentContentType = GetInputParamCalculatedValue(nameof(FilterAttachmentContentType));
             string calculatedAttachmentDownloadPath = GetInputParamCalculatedValue(nameof(AttachmentDownloadPath));
             string calculatedReceivedStartDate = GetInputParamCalculatedValue(nameof(FilterReceivedStartDate));
+            string readUnread = GetInputParamCalculatedValue(nameof(ReadUnreadMails));
+            string markAsRead = GetInputParamCalculatedValue(nameof(MarkMailsAsRead));
+            string markAsNotRead = GetInputParamCalculatedValue(nameof(MarkMailsAsNotRead));
+            int calculatedReadCount;
+            if (!string.IsNullOrEmpty(GetInputParamCalculatedValue(nameof(ReadCount))))
+            {
+                calculatedReadCount = Convert.ToInt32(GetInputParamCalculatedValue(nameof(ReadCount)));
+            }
+            else
+            {
+                calculatedReadCount = 50;
+            }            
             DateTime receivedStartDate = DateTime.MinValue;
             if (!string.IsNullOrEmpty(calculatedReceivedStartDate))
             {
@@ -687,7 +842,7 @@ namespace GingerCore.Actions.Communication
             EmailReadFilters filters = new()
             {
                 Folder = FilterFolder,
-                FolderName = calculatedFolderName,
+                FolderNames = calculatedFolderName,
                 From = calculatedFrom,
                 To = calculatedTo,
                 Subject = calculatedSubject,
@@ -696,13 +851,17 @@ namespace GingerCore.Actions.Communication
                 AttachmentContentType = calculatedAttachmentContentType,
                 AttachmentDownloadPath = calculatedAttachmentDownloadPath,
                 ReceivedStartDate = receivedStartDate,
-                ReceivedEndDate = receivedEndDate
+                ReceivedEndDate = receivedEndDate,
+                ReadUnread = Convert.ToBoolean(readUnread),
+                ReadCount = calculatedReadCount,
+                MarkRead = Convert.ToBoolean(markAsRead)
+
             };
 
             return filters;
         }
 
-        private MSGraphConfig CreateMSGraphConfig()
+        private EmailReadConfig CreateAuthenticationConfig()
         {
             string calculatedUserEmail = GetInputParamCalculatedValue(nameof(ReadUserEmail));
             string calculatedUserPassword = GetInputParamCalculatedValue(nameof(ReadUserPassword));
@@ -710,11 +869,16 @@ namespace GingerCore.Actions.Communication
             {
                 calculatedUserPassword = EncryptionHandler.DecryptwithKey(calculatedUserPassword);
             }
+            string calculatedIMapHost = GetInputParamCalculatedValue(nameof(IMapHost));
+            string calculatedIMapPort = GetInputParamCalculatedValue(nameof(IMapPort));
             string calculatedMSGraphClientId = GetInputParamCalculatedValue(nameof(MSGraphClientId));
             string calculatedMSGraphTenantId = GetInputParamCalculatedValue(nameof(MSGraphTenantId));
+            
 
-            MSGraphConfig config = new()
+            EmailReadConfig config = new()
             {
+                IMapHost = calculatedIMapHost,
+                IMapPort = calculatedIMapPort,
                 UserEmail = calculatedUserEmail,
                 UserPassword = calculatedUserPassword,
                 ClientId = calculatedMSGraphClientId,
@@ -728,7 +892,7 @@ namespace GingerCore.Actions.Communication
         {
             string calculatedAttachmentDownloadPath = GetInputParamCalculatedValue(nameof(AttachmentDownloadPath));
             if (string.IsNullOrEmpty(calculatedAttachmentDownloadPath))
-            {
+            {               
                 throw new InvalidOperationException("Invalid attachment download path");
             }
 
@@ -741,22 +905,26 @@ namespace GingerCore.Actions.Communication
 
             List<(string filename, string filepath)> fileNamesAndPaths = new();
 
-            foreach (ReadEmail.Attachment attachment in email.Attachments)
+            if (email.Attachments != null)
             {
-                if (expectedContentTypes != null && expectedContentTypes.Count() > 0 && 
-                    !expectedContentTypes.Any(expectedContentType => expectedContentType.Equals(attachment.ContentType)))
-                {
-                    continue;
-                }
                 string downloadFolder = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedAttachmentDownloadPath);
                 if (!System.IO.Directory.Exists(downloadFolder))
                 {
                     System.IO.Directory.CreateDirectory(downloadFolder);
                 }
-                string filePath = Path.Combine(downloadFolder, attachment.Name);
-                string uniqueFilePath = GetUniqueFilePath(filePath);
-                File.WriteAllBytes(uniqueFilePath, attachment.ContentBytes);
-                fileNamesAndPaths.Add((attachment.Name, uniqueFilePath));
+                foreach (ReadEmail.Attachment attachment in email.Attachments)
+                {
+                    if (expectedContentTypes != null && 
+                        !expectedContentTypes.Any(expectedContentType => expectedContentType.Equals(attachment.ContentType)))
+                    {
+                        continue;
+                    }
+                   
+                    string uniqueFilePath = GetUniqueFilePath(Path.Combine(downloadFolder, attachment.Name));
+                    File.WriteAllBytes(uniqueFilePath, attachment.ContentBytes);
+                    fileNamesAndPaths.Add((attachment.Name, uniqueFilePath));
+                }
+
             }
 
             return fileNamesAndPaths;

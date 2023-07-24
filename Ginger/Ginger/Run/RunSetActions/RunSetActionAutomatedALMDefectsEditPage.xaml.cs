@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -53,22 +53,22 @@ namespace Ginger.Run.RunSetActions
         {
             CurrentProfilePickerCbx.ItemsSource = null;
 
-            if ( WorkSpace.Instance.Solution != null)
+            if (WorkSpace.Instance.Solution != null)
             {
                 CurrentProfilePickerCbx.ItemsSource = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
                 CurrentProfilePickerCbx.DisplayMemberPath = nameof(ALMDefectProfile.Name).ToString();
                 CurrentProfilePickerCbx.SelectedValuePath = nameof(ALMDefectProfile.ID).ToString();
                 if (runSetActionAutomatedALMDefects.SelectedDefectsProfileID != 0)
                 {
-                    CurrentProfilePickerCbx.SelectedIndex = CurrentProfilePickerCbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)CurrentProfilePickerCbx.ItemsSource).Where(x => (x.ID == runSetActionAutomatedALMDefects.SelectedDefectsProfileID)).FirstOrDefault());
+                    CurrentProfilePickerCbx.SelectedIndex = CurrentProfilePickerCbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)CurrentProfilePickerCbx.ItemsSource).FirstOrDefault(x => (x.ID == runSetActionAutomatedALMDefects.SelectedDefectsProfileID)));
                     if (CurrentProfilePickerCbx.SelectedIndex == -1)
                     {
-                        CurrentProfilePickerCbx.SelectedIndex = CurrentProfilePickerCbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)CurrentProfilePickerCbx.ItemsSource).Where(x => (x.IsDefault == true)).FirstOrDefault());
+                        CurrentProfilePickerCbx.SelectedIndex = CurrentProfilePickerCbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)CurrentProfilePickerCbx.ItemsSource).FirstOrDefault(x => (x.IsDefault == true)));
                     }
                 }
                 else
                 {
-                    CurrentProfilePickerCbx.SelectedIndex = CurrentProfilePickerCbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)CurrentProfilePickerCbx.ItemsSource).Where(x => (x.IsDefault == true)).FirstOrDefault());
+                    CurrentProfilePickerCbx.SelectedIndex = CurrentProfilePickerCbx.Items.IndexOf(((ObservableList<ALMDefectProfile>)CurrentProfilePickerCbx.ItemsSource).FirstOrDefault(x => (x.IsDefault == true)));
                 }
             }
         }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -28,8 +28,6 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.PlugIns;
-using GingerCore.Actions.WebServices;
-using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCoreNET.Drivers.CommunicationProtocol;
@@ -66,11 +64,11 @@ namespace Amdocs.Ginger.CoreNET.Run
         {
             Console.WriteLine("In GetGingerNodeInfoForPluginAction..");
 
-            bool DoStartSession = false;            
+            bool DoStartSession = false;
             bool isSessionService = WorkSpace.Instance.PlugInsManager.IsSessionService(pluginId, serviceID);
             GingerNodeInfo gingerNodeInfo;
-            string key = null;   
-            
+            string key = null;
+
             if (isSessionService)
             {
                 key = pluginId + "." + serviceID;
@@ -134,7 +132,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
             // keep the proxy on agent
             GingerNodeProxy GNP = WorkSpace.Instance.LocalGingerGrid.GetNodeProxy(gingerNodeInfo); // FIXME for remote grid !!!!!!!!!!!
-            
+
 
             //TODO: check if service is session start session only once
             if (DoStartSession)
@@ -147,7 +145,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             return gingerNodeInfo;
         }
 
-      
+
 
         private static GingerNodeInfo GetGingerNode(string ServiceId)
         {
@@ -187,7 +185,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
         // Use for action which run on Agent - session
         public static void ExecutePlugInActionOnAgent(Agent agent, IActPluginExecution actPlugin)
-        {                        
+        {
             NewPayLoad payload = GeneratePlatformActionPayload(actPlugin, agent);
 
 
@@ -198,8 +196,8 @@ namespace Amdocs.Ginger.CoreNET.Run
             NewPayLoad RC = ((AgentOperations)agent.AgentOperations).GingerNodeProxy.RunAction(payload);
 
 
-       
-            
+
+
             ParseActionResult(RC, (Act)actPlugin);
 
 
@@ -216,7 +214,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                }
                */
 
-            if(agent.Platform==GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.WebServices)
+            if (agent.Platform == GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.WebServices)
             {
                 Webserviceplatforminfo Platfrominfo = new Webserviceplatforminfo();
                 Platfrominfo.PostExecute(agent, (Act)actPlugin);
@@ -233,11 +231,11 @@ namespace Amdocs.Ginger.CoreNET.Run
             string serviceID = actPlugin.ServiceId;
             RemoteServiceGrid remoteServiceGrid = FindRemoteGrid(actPlugin.ServiceId);
 
-            
+
 
             // Temp !!!!!!!!!!!!!!!!! change to get GingerNodePorxy for Remote grid
             GingerNodeInfo gingerNodeInfo = new GingerNodeInfo();
-            GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);            
+            GingerNodeProxy gingerNodeProxy = new GingerNodeProxy(gingerNodeInfo, true);
             NewPayLoad RC = gingerNodeProxy.RunAction(p);
         }
 
@@ -246,7 +244,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             // !!!!
 
             // TODO: loop over all remote grid !!!!!!!!!!!!!!!
-            RemoteServiceGrid remoteServiceGrid = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>().FirstOrDefault();  // !!!!!!!!!!!!!!
+            RemoteServiceGrid remoteServiceGrid = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<RemoteServiceGrid>();  // !!!!!!!!!!!!!!
             string remoteGridHost = remoteServiceGrid.Host;
             int RemoteGridPort = remoteServiceGrid.HostPort;
             return remoteServiceGrid;
@@ -280,7 +278,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
                 st.Stop();
                 long millis = st.ElapsedMilliseconds;
-                actPlugin.ExInfo +=  "Elapsed: " + millis + "ms";
+                actPlugin.ExInfo += "Elapsed: " + millis + "ms";
             }
             catch (Exception ex)
             {
@@ -299,8 +297,8 @@ namespace Amdocs.Ginger.CoreNET.Run
 
         public static void ParseActionResult(NewPayLoad RC, Act actPlugin)
         {
-      
-            
+
+
             // After we send it we parse the driver response
             if (RC.Name == "ActionResult")
             {
@@ -373,7 +371,10 @@ namespace Amdocs.Ginger.CoreNET.Run
             foreach (ActInputValue AP in ActPlugIn.InputValues)
             {
                 // Why we need GA?
-                if (AP.Param == "GA") continue;
+                if (AP.Param == "GA")
+                {
+                    continue;
+                }
                 // TODO: use const
                 NewPayLoad p = new NewPayLoad("P");   // To save network traffic we send just one letter
                 p.AddValue(AP.Param);
@@ -416,7 +417,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             List<ActionInputValueInfo> paramsList = WorkSpace.Instance.PlugInsManager.GetActionEditInfo(actPlugIn.PluginId, actPlugIn.ServiceId, actPlugIn.ActionId);
             foreach (ActInputValue AP in actPlugIn.InputValues)
             {
-                ActionInputValueInfo actionInputValueInfo = (from x in paramsList where x.Param == AP.Param select x).SingleOrDefault();
+                ActionInputValueInfo actionInputValueInfo = paramsList.FirstOrDefault(x => x.Param == AP.Param);
                 AP.ParamType = actionInputValueInfo.ParamType;
             }
         }
@@ -471,7 +472,7 @@ namespace Amdocs.Ginger.CoreNET.Run
                     AddPOMLocators(ref platformAction, ref actUi, agent.ProjEnvironment, agent.BusinessFlow);
                 }
             }
-            
+
             // TODO: calculate VE ??!!            
 
             NewPayLoad payload = new NewPayLoad("RunPlatformAction");
@@ -502,7 +503,7 @@ namespace Amdocs.Ginger.CoreNET.Run
 
 
                 Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                ElementInfo selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
 
 
                 if (selectedPOMElement == null)
@@ -563,17 +564,17 @@ namespace Amdocs.Ginger.CoreNET.Run
 
 
                 }
-            }                       
+            }
         }
 
-        
-        
+
+
         internal static void FindNodeAndRunAction(ActPlugIn act)
-        {            
+        {
             // If we have remote grid(s) then we go for remote run
             ObservableList<RemoteServiceGrid> remoteServiceGrids = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RemoteServiceGrid>();
-            if (remoteServiceGrids.Count > 0)
-            {                
+            if (remoteServiceGrids.Any())
+            {
                 ExecuteActionOnRemotePlugin(act);
             }
             else

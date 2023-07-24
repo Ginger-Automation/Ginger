@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public EventHandler UpdateBusinessflowActivities;
 
         public override void GiveUserFeedback(uint eventTime)
-        {          
+        {
             UpdateStat.Invoke(this, null);
         }
         public override void ActionStart(uint eventTime, Act action)
@@ -63,12 +63,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             UpdateStat.Invoke(this, null);
         }
 
-        public override void ActivityStart(uint eventTime, Activity activity, bool continuerun=false)
+        public override void ActivityStart(uint eventTime, Activity activity, bool continuerun = false)
         {
             UpdateStat.Invoke(this, null);
         }
 
-        public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode= false)
+        public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
             UpdateStat.Invoke(this, null);
         }
@@ -84,9 +84,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
 
         public override void DynamicActivityWasAddedToBusinessflow(uint eventTime, BusinessFlow businessFlow)
-        {            
+        {
             UpdateBusinessflowActivities.Invoke(businessFlow, null);
         }
-       
+
     }
 }

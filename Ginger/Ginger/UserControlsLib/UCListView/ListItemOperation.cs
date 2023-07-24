@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ namespace Ginger.UserControlsLib.UCListView
     public class ListItemOperation
     {
         public string Group = null;
-        public eImageType GroupImageType; 
+        public eImageType GroupImageType;
 
         public string Header;
         public eImageType ImageType;

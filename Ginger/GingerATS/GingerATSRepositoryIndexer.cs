@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,11 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
 using System.Xml;
 
 namespace GingerATS
@@ -79,7 +74,9 @@ namespace GingerATS
                 {
                     SetRepositoryItemDetails(repoItem);
                     if (repoItem.XmlFileDetails != null && repoItem.XmlFileDetails != string.Empty)
+                    {
                         indexerRecords.Add(repoItem.XmlFileDetails);
+                    }
                 }
             }
 
@@ -115,7 +112,9 @@ namespace GingerATS
                     {
                         SetRepositoryItemDetails(repoItem);
                         if (repoItem.XmlFileDetails != null && repoItem.XmlFileDetails != string.Empty)
+                        {
                             UpdatedIndexerRecords.Add(repoItem.XmlFileDetails);
+                        }
                     }
                 }
             }
@@ -143,7 +142,9 @@ namespace GingerATS
                 }
 
                 if (succeedWritingFile == false && tryingCounter > 3 && savedEx != null)
+                {
                     throw savedEx;
+                }
             }
         }
 
@@ -170,9 +171,13 @@ namespace GingerATS
             }
 
             if (succeedReadingFile == false && tryingCounter > 3 && savedEx != null)
+            {
                 throw savedEx;
+            }
             else
+            {
                 return IndexerLines;
+            }
         }
 
         private List<GingerRepositoryItem> GetAllRepositoryFiles()
@@ -186,13 +191,17 @@ namespace GingerATS
             {
                 string[] files = Directory.GetFiles(activitiesGroupsFolderPath, "*", SearchOption.AllDirectories);
                 if (files != null && files.Length > 0)
+                {
                     foreach (string filePath in files)
+                    {
                         if (!filePath.ToUpper().Contains("PREVVERSIONS") && !filePath.ToUpper().Contains(".SVN") && Path.GetExtension(filePath).ToUpper() == ".XML")
                         {
                             GingerRepositoryItem activitiesGroupItem = new GingerRepositoryItem(eGingerRepoItemType.ActivitiesGroup);
                             activitiesGroupItem.FilePath = filePath;
                             repoFilesList.Add(activitiesGroupItem);
                         }
+                    }
+                }
             }
 
             //Get the Activities items
@@ -202,13 +211,17 @@ namespace GingerATS
             {
                 string[] files = Directory.GetFiles(activitiesFolderPath, "*", SearchOption.AllDirectories);
                 if (files != null && files.Length > 0)
+                {
                     foreach (string filePath in files)
+                    {
                         if (!filePath.ToUpper().Contains("PREVVERSIONS") && !filePath.ToUpper().Contains(".SVN") && Path.GetExtension(filePath).ToUpper() == ".XML")
                         {
                             GingerRepositoryItem activityItem = new GingerRepositoryItem(eGingerRepoItemType.Activity);
                             activityItem.FilePath = filePath;
                             repoFilesList.Add(activityItem);
                         }
+                    }
+                }
             }
 
             //TODO: Get the Actions items if needed for Ginger-ATS integration
@@ -230,7 +243,11 @@ namespace GingerATS
                     repoItem.Name = xmlReader.GetAttribute(GingerRepositoryItem.GetRepoItemNameFieldLabel(repoItem.Type));
                     repoItem.GUID = xmlReader.GetAttribute(eGeneralGingerRepoAttributes.Guid.ToString());
                     repoItem.ExternalID = xmlReader.GetAttribute(eGeneralGingerRepoAttributes.ExternalID.ToString());
-                    if (repoItem.ExternalID == null) repoItem.ExternalID = "Null";
+                    if (repoItem.ExternalID == null)
+                    {
+                        repoItem.ExternalID = "Null";
+                    }
+
                     repoItem.LastUpdated = xmlReader.GetAttribute(eGeneralGingerRepoAttributes.LastUpdate.ToString());
 
                     repoItem.XmlFileDetails = GingerRepositoryItem.GetRepoItemTypeLabelInIndexer(repoItem.Type) + ";" +
@@ -249,7 +266,10 @@ namespace GingerATS
         {
             GingerRepositoryItem repoItem = null;
             if (indexerRecords == null)
+            {
                 indexerRecords = ReadRepositoryIndexerData();
+            }
+
             foreach (string indexerRecord in indexerRecords)
             {
                 string[] indexerRecordDetails = indexerRecord.Split(';');

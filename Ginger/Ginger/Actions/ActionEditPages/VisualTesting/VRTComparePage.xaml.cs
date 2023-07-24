@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Ginger.Actions._Common.ActUIElementLib;
-using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.GeneralLib;
@@ -29,7 +28,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -59,7 +57,7 @@ namespace Ginger.Actions.VisualTesting
             xImageNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.ImageName, mAct.Description));
 
             InitLayout();
-            
+
             DiffTollerancePercentUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTParamDiffTollerancePercent, "0.0"), true, false);
 
             string buildTestName = string.Empty;
@@ -77,7 +75,7 @@ namespace Ginger.Actions.VisualTesting
             }
             PlatformInfoBase mPlatform = PlatformInfoBase.GetPlatformImpl(mAct.Platform);
             List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
-            xElementLocateByComboBox.BindControl(mAct,Act.Fields.LocateBy, LocateByList);
+            xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy, LocateByList);
             xLocateValueVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(Act.Fields.LocateValue));
             mAct.PropertyChanged += mAct_PropertyChanged;
             SetLocateValueControls();
@@ -226,7 +224,7 @@ namespace Ginger.Actions.VisualTesting
                     xLocateValueVE.Visibility = System.Windows.Visibility.Collapsed;
                     xLocateValueEditFrame.Visibility = System.Windows.Visibility.Visible;
                     Page p = new LocateByPOMElementPage(Context.GetAsContext(mAct.Context), null, null, mAct, nameof(ActBrowserElement.LocateValue));
-                    xLocateValueEditFrame.Content = p;
+                    xLocateValueEditFrame.ClearAndSetContent(p);
                     break;
                 default:
                     xLocateValueVE.Visibility = System.Windows.Visibility.Visible;

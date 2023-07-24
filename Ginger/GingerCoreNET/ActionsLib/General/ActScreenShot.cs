@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,15 +16,13 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.Common;
-using System;
-using System.Drawing;
-using System.Collections.Generic;
-using GingerCore.Helpers;
-using System.IO;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 
 namespace GingerCore.Actions
 {
@@ -68,7 +66,7 @@ namespace GingerCore.Actions
             }
         }
 
-        
+
 
         public override String ActionType
         {
@@ -147,7 +145,7 @@ namespace GingerCore.Actions
                 Bitmap bmp = Ginger.Utils.BitmapManager.FileToBitmapImage(path);
                 Bitmp.Add(bmp);
             }
-            
+
             Dictionary<string, object> outFilePath = new Dictionary<string, object>();
 
             foreach (Bitmap Bitmap in Bitmp)
@@ -155,7 +153,7 @@ namespace GingerCore.Actions
                 using (Bitmap)
                 {
                     string filePath = "";
-                    string indexBitmp="";
+                    string indexBitmp = "";
                     if (Bitmp.IndexOf(Bitmap) == 0)
                     {
                         filePath += DirectoryPath + @"\" + FileName + ".jpg";
@@ -169,7 +167,7 @@ namespace GingerCore.Actions
                         Bitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
                     }
 
-                    outFilePath.Add("ScreenshotFilePath"+indexBitmp, filePath);
+                    outFilePath.Add("ScreenshotFilePath" + indexBitmp, filePath);
                 }
             }
 

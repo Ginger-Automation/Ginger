@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -52,7 +52,9 @@ namespace Ginger.Actions.WebServices
             InitializeComponent();
             mAct = Act;
             if (mAct.APImodelGUID != new Guid())
+            {
                 AAMB = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(mAct.APImodelGUID);
+            }
 
             bool mappedNew = false;
             if (AAMB == null)//API mapped for this action is missing, Map new API
@@ -82,7 +84,7 @@ namespace Ginger.Actions.WebServices
             view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Param), Header = "Parameter", WidthWeight = 20, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Description), Header = "Description", WidthWeight = 20, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnhancedActInputValue.Value), Header = "Selected Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(EnhancedActInputValue.OptionalValues), nameof(EnhancedActInputValue.Value), true), WidthWeight = 40 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5,  StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["ValueExpressionButton"] });
+            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.MainGrid.Resources["ValueExpressionButton"] });
             APIModelParamsValueUCGrid.SetTitleLightStyle = true;
             APIModelParamsValueUCGrid.SetAllColumnsDefaultView(view);
             APIModelParamsValueUCGrid.InitViewItems();
@@ -101,7 +103,9 @@ namespace Ginger.Actions.WebServices
 
                 List<EnhancedActInputValue> OldAPIModelParamsValue = new List<EnhancedActInputValue>();
                 foreach (EnhancedActInputValue value in mAct.APIModelParamsValue)
+                {
                     OldAPIModelParamsValue.Add(value);
+                }
 
                 mAct.APIModelParamsValue.Clear();
 
@@ -110,7 +114,7 @@ namespace Ginger.Actions.WebServices
                     if (AMDP.RequiredAsInput == true)
                     {
                         numOfAPIParams++;
-                        EnhancedActInputValue paramToUpdate = OldAPIModelParamsValue.Where(x => x.ParamGuid == AMDP.Guid).FirstOrDefault();
+                        EnhancedActInputValue paramToUpdate = OldAPIModelParamsValue.FirstOrDefault(x => x.ParamGuid == AMDP.Guid);
                         if (paramToUpdate != null) //Param already been in the action list, just update his values
                         {
                             string OVDefaultValue = string.Empty;
@@ -119,10 +123,14 @@ namespace Ginger.Actions.WebServices
                                 //check if need to clear current optional values
                                 paramToUpdate.OptionalValues.Add(OP.Value);
                                 if (OP.IsDefault)
+                                {
                                     OVDefaultValue = OP.Value;
+                                }
                             }
                             if (string.IsNullOrEmpty(paramToUpdate.Value))
+                            {
                                 paramToUpdate.Value = OVDefaultValue;
+                            }
                         }
                         else //Param is new add it to the list
                         {
@@ -133,22 +141,26 @@ namespace Ginger.Actions.WebServices
                             {
                                 paramToUpdate.OptionalValues.Add(OP.Value);
                                 if (OP.IsDefault)
+                                {
                                     paramToUpdate.Value = OP.Value;
+                                }
                             }
                         }
 
                         paramToUpdate.Param = AMDP.PlaceHolder;
                         paramToUpdate.Description = AMDP.Description;
                         //re-use selected value
-                        if (OldAPIModelParamsValue.Where(x => x.Param == paramToUpdate.Param).FirstOrDefault() != null)
+                        if (OldAPIModelParamsValue.FirstOrDefault(x => x.Param == paramToUpdate.Param) != null)
                         {
-                            paramToUpdate.Value = OldAPIModelParamsValue.Where(x => x.Param == paramToUpdate.Param).FirstOrDefault().Value;
+                            paramToUpdate.Value = OldAPIModelParamsValue.FirstOrDefault(x => x.Param == paramToUpdate.Param).Value;
                         }
                         mAct.APIModelParamsValue.Add(paramToUpdate);
                     }
                 }
                 if (currNumOfActParams != numOfAPIParams)
+                {
                     ShowNotification = true;
+                }
             }
             return ShowNotification;
         }
@@ -156,25 +168,31 @@ namespace Ginger.Actions.WebServices
         private void UpdateOptionalValues()
         {
             if (AAMB == null)
+            {
                 return;
+            }
 
             foreach (EnhancedActInputValue EIV in mAct.APIModelParamsValue)
             {
                 string value = EIV.Value;
                 EIV.OptionalValues.Clear();
-                AppModelParameter AMP = AAMB.AppModelParameters.Where(x => x.Guid == EIV.ParamGuid).FirstOrDefault();
+                AppModelParameter AMP = AAMB.AppModelParameters.FirstOrDefault(x => x.Guid == EIV.ParamGuid);
                 if (AMP != null)
                 {
                     foreach (OptionalValue OV in AMP.OptionalValuesList)
+                    {
                         EIV.OptionalValues.Add(OV.Value);
+                    }
                 }
                 else
                 {
-                    AppModelParameter AGMP = AAMB.GlobalAppModelParameters.Where(x => x.Guid == EIV.ParamGuid).FirstOrDefault();
+                    AppModelParameter AGMP = AAMB.GlobalAppModelParameters.FirstOrDefault(x => x.Guid == EIV.ParamGuid);
                     if (AGMP != null)
                     {
                         foreach (OptionalValue OV in AGMP.OptionalValuesList)
+                        {
                             EIV.OptionalValues.Add(OV.Value);
+                        }
                     }
                 }
 
@@ -197,23 +215,24 @@ namespace Ginger.Actions.WebServices
         private void ChangeButtonClicked(object sender, RoutedEventArgs e)
         {
             if (ChangeAPIMapping())
+            {
                 UpdateOptionalValuesAndParams();
+            }
         }
 
         private bool ChangeAPIMapping(bool showNewMappingMessage = false)
         {
-            ObservableList<ApplicationAPIModel> APIModelsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>();
-            if (APIModelsList.Count == 0)
+            if (!WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Any())
             {
                 Reporter.ToUser(eUserMsgKey.NoAPIExistToMappedTo);
                 return false;
             }
 
             if (showNewMappingMessage)
+            {
                 Reporter.ToUser(eUserMsgKey.APIMappedToActionIsMissing);
+            }
 
-            //if (apiModelPage == null)
-            //{
             RepositoryFolder<ApplicationAPIModel> APIModelsFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<ApplicationAPIModel>();
             AppApiModelsFolderTreeItem apiRoot = new AppApiModelsFolderTreeItem(APIModelsFolder);
             if (AAMB != null && AAMB.TargetApplicationKey != null)
@@ -225,7 +244,7 @@ namespace Ginger.Actions.WebServices
             {
                 apiModelPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true);
             }
-            //}
+
             List<object> selectedList = apiModelPage.ShowAsWindow();
 
             if (selectedList != null && selectedList.Count == 1)
@@ -242,7 +261,10 @@ namespace Ginger.Actions.WebServices
         {
             APIModelTextBox.Text = AAMB.FilePath.Substring(0, AAMB.FilePath.LastIndexOf("\\")).Substring(mAPIModelFolder.FolderFullPath.Length) + @"\" + AAMB.ItemName;
             if (UpdateParamsEnhancedLists(AAMB.MergedParamsList) && showParametersUpdatedMessage)
+            {
                 Reporter.ToUser(eUserMsgKey.APIParametersListUpdated);
+            }
+
             UpdateOptionalValues();
         }
 
@@ -251,7 +273,9 @@ namespace Ginger.Actions.WebServices
             try
             {
                 if (Reporter.ToUser(eUserMsgKey.ParamExportMessage) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                {
                     return;
+                }
 
                 DataSourceTablesListPage dataSourceTablesListPage = new DataSourceTablesListPage();
                 dataSourceTablesListPage.ShowAsWindow();
@@ -288,7 +312,7 @@ namespace Ginger.Actions.WebServices
             if (mAct is ActWebAPIModel ActWAPIM)
             {
                 //pull pointed API Model
-                ApplicationAPIModel AAMB1 = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationAPIModel>().Where(x => x.Guid == mAct.APImodelGUID).FirstOrDefault();
+                ApplicationAPIModel AAMB1 = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationAPIModel>(mAct.APImodelGUID);
                 if (AAMB1 != null)
                 {
                     //init matching real WebAPI Action

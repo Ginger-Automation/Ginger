@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,12 +16,10 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Application_Models;
-using Amdocs.Ginger.Repository;
+using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
 using GingerWPF.ApplicationModelsLib.APIModels;
-using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -52,8 +50,8 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             APIModelPage existingAPIPage = new APIModelPage(deltaAPIModel.matchingAPIModel, General.eRIPageViewMode.View);
             APIModelPage learnedAPIPage = new APIModelPage(deltaAPIModel.learnedAPI, General.eRIPageViewMode.View);
 
-            xExistingAPIFrame.Content = existingAPIPage;
-            xLearnedAPIFrame.Content = learnedAPIPage;
+            xExistingAPIFrame.ClearAndSetContent(existingAPIPage);
+            xLearnedAPIFrame.ClearAndSetContent(learnedAPIPage);
         }
 
         Window mOwnerWindow;
@@ -131,7 +129,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         void SetMergedrFrame()
         {
             mergedAPIPage = new APIModelPage(mDeltaAPIModel.MergedAPIModel, General.eRIPageViewMode.Add);
-            xMergedAPIFrame.Content = mergedAPIPage;
+            xMergedAPIFrame.ClearAndSetContent(mergedAPIPage);
         }
     }
 }

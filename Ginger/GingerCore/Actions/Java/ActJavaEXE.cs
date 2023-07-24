@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,21 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
-using Amdocs.Ginger.Common.Repository;
+using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using GingerCore.Helpers;
-using GingerCore.Platforms;
-using GingerCore.Properties;
-using GingerCore.Repository;
-using GingerCore.GeneralLib;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions.Java
 {
@@ -136,7 +131,10 @@ namespace GingerCore.Actions.Java
         public override void Execute()
         {
             //calculate the arguments
-            if (!CalculateArguments()) return;
+            if (!CalculateArguments())
+            {
+                return;
+            }
 
             string Params = GetCommandText();
             RunCommand(Params);
@@ -148,7 +146,9 @@ namespace GingerCore.Actions.Java
             foreach (var p in InputValues)
             {
                 if (!string.IsNullOrEmpty(p.ValueForDriver))
+                {
                     cmd += " " + p.ValueForDriver;
+                }
             }
             return cmd;
         }
@@ -168,9 +168,13 @@ namespace GingerCore.Actions.Java
 
             string JavaEXE = Path.Combine(mJavaWSEXEPath_Calc, @"bin\java.exe");
             if (File.Exists(JavaEXE))
+            {
                 process.StartInfo.FileName = JavaEXE;
+            }
             else
+            {
                 process.StartInfo.FileName = "java.exe";
+            }
 
             process.OutputDataReceived += (proc, outLine) => { AddData(outLine.Data + "\n"); };
             process.ErrorDataReceived += (proc, outLine) => { AddError(outLine.Data + "\n"); };
@@ -178,12 +182,19 @@ namespace GingerCore.Actions.Java
             if (string.IsNullOrEmpty(SolutionFolder))
             {
                 if (string.IsNullOrEmpty(ScriptPath))
+                {
                     process.StartInfo.WorkingDirectory = Path.GetDirectoryName(ScriptName);
+                }
                 else
+                {
                     process.StartInfo.WorkingDirectory = ScriptPath;
+                }
             }
             else
+            {
                 process.StartInfo.WorkingDirectory = System.IO.Path.Combine(SolutionFolder, @"Documents\Java\");
+            }
+
             try
             {
                 process.StartInfo.Arguments = "-jar " + ScriptName + " " + parms;
@@ -274,7 +285,9 @@ namespace GingerCore.Actions.Java
             {
                 mJavaWSEXEPath_Calc = ValueExpression.Calculate(mJavaWSEXEPath);
                 if (string.IsNullOrEmpty(mJavaWSEXEPath_Calc))
+                {
                     mJavaWSEXEPath_Calc = CommonLib.GetJavaHome();
+                }
 
                 return true;
             }

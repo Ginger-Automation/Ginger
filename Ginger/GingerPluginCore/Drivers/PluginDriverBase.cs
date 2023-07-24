@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ limitations under the License.
 //            }
 //            Console.WriteLine("------------------------------------------------");
 //        }
-        
+
 //        private void InitActions()
 //        {
 //            if (ActionHandlers != null) return;
@@ -109,7 +109,7 @@ limitations under the License.
 //        /// </summary>
 //        public abstract void StartDriver();
 //        public abstract void CloseDriver();
-        
+
 //        public virtual void BeforeRunAction(GingerAction GA)
 //        {
 //            // If the driver want to do something before the action run start then override

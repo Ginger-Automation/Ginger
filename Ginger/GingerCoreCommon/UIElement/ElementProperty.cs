@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ namespace Amdocs.Ginger.Common.UIElement
         public const string X = "X";
         public const string Y = "Y";
         public const string Value = "Value";
-        public const string OptionalValues="Optional Values";
+        public const string OptionalValues = "Optional Values";
         public const string BoundingRectangle = "Bounding Rectangle";
         public const string LocalizedControlType = "Localized Control Type";
         public const string Name = "Name";

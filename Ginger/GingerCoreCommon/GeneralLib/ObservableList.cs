@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -21,11 +21,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
-using System.Xml;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 
@@ -114,7 +112,7 @@ namespace Amdocs.Ginger.Common
         public bool MoveNext()
         {
 
-            int index = Items.Select((x, i) => object.Equals(x, mCurrentItem) ? i + 1 : -1).Where(x => x != -1).FirstOrDefault();
+            int index = Items.Select((x, i) => Equals(x, mCurrentItem) ? i + 1 : -1).FirstOrDefault(x => x != -1);
             if (index > 0 && index <= Count)
             {
                 // Make sure last item remains active, do NOT put code to return null or alike, as all visible list need to have item mark in grid or it doesn't look good.
@@ -132,7 +130,7 @@ namespace Amdocs.Ginger.Common
 
         public bool MoveNext(object Current)
         {
-            int index = Items.Select((x, i) => object.Equals(x, Current) ? i + 1 : -1).Where(x => x != -1).FirstOrDefault();
+            int index = Items.Select((x, i) => Equals(x, Current) ? i + 1 : -1).FirstOrDefault(x => x != -1);
             if (index > 0 && index <= Count)
             {
                 // Make sure last item remains active, do NOT put code to return null or alike, as all visible list need to have item mark in grid or it doesn't look good.
@@ -151,7 +149,7 @@ namespace Amdocs.Ginger.Common
         public bool MovePrev()
         {
 
-            int index = Items.Select((x, i) => object.Equals(x, mCurrentItem) ? i - 1 : -1).Where(x => x != -1).FirstOrDefault();
+            int index = Items.Select((x, i) => Equals(x, mCurrentItem) ? i - 1 : -1).FirstOrDefault(x => x != -1);
             if (index >= 0)
             {
                 CurrentItem = Items[index];
@@ -248,7 +246,7 @@ namespace Amdocs.Ginger.Common
 
         public void Append(ObservableList<T> ItemsToadd)
         {
-            foreach(T item  in ItemsToadd)
+            foreach (T item in ItemsToadd)
             {
                 this.Items.Add(item);
             }
@@ -259,10 +257,10 @@ namespace Amdocs.Ginger.Common
         {
             return Items.AsEnumerable<T>();
         }
-                
+
         string mFilterStringData = null;
-        
-       
+
+
 
         protected new IList<T> Items
         {
@@ -278,14 +276,14 @@ namespace Amdocs.Ginger.Common
 
         public LazyLoadListDetails LazyLoadDetails { get; set; }
 
-        bool IObservableList.LazyLoad 
-        { 
-            get { return LazyLoad; } 
+        bool IObservableList.LazyLoad
+        {
+            get { return LazyLoad; }
         }
-        public bool LazyLoad 
-        { 
-            get 
-            { 
+        public bool LazyLoad
+        {
+            get
+            {
                 if (LazyLoadDetails == null)
                 {
                     return false;
@@ -294,7 +292,7 @@ namespace Amdocs.Ginger.Common
                 {
                     return (!LazyLoadDetails.DataWasLoaded);
                 }
-            } 
+            }
         }
 
         bool mAvoidLazyLoad = false;
@@ -336,7 +334,7 @@ namespace Amdocs.Ginger.Common
                     NewRepositorySerializer.DeserializeObservableListFromText(this, LazyLoadDetails.DataAsString);
                 }
                 catch (Exception ex)
-                {                    
+                {
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to Deserialize the lazy load list '{0}' from file '{1}'", LazyLoadDetails.Config.ListName, LazyLoadDetails.XmlFilePath), ex);
                 }
 
@@ -390,7 +388,7 @@ namespace Amdocs.Ginger.Common
             }
         }
 
-        
+
 
         public ObservableList<NewType> ListItemsCast<NewType>()
         {
@@ -415,7 +413,7 @@ namespace Amdocs.Ginger.Common
         /// </summary>
         /// <param name="List">List with same data type</param>
         /// <param name="clearList">Set as 'True' in case the observablelist data should be cleared first</param>
-        public void FromList(List<T> List, bool clearList= false)
+        public void FromList(List<T> List, bool clearList = false)
         {
             if (clearList)
             {

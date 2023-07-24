@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.AddActionMenu;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Windows;
@@ -70,7 +70,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             InitializeComponent();
 
             mContext = context;
-            context.PropertyChanged += Context_PropertyChanged;
+
+            mContext.PropertyChanged -= Context_PropertyChanged;
+            mContext.PropertyChanged += Context_PropertyChanged;
 
             xNavigationBarPnl.Visibility = Visibility.Collapsed;
             xSelectedItemFrame.ContentRendered += NavPnlActionFrame_ContentRendered;
@@ -151,32 +153,41 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
         void ToggleRecordLiveSpyAndExplorer()
         {
-            this.Dispatcher.Invoke(() =>
+            if (mContext.Agent != null && ((AgentOperations)mContext.Agent.AgentOperations).Driver != null && ((AgentOperations)mContext.Agent.AgentOperations).Driver is IWindowExplorer)
             {
-                if (mContext.Agent != null && ((AgentOperations)mContext.Agent.AgentOperations).Driver != null)
-                {
-                    if (((AgentOperations)mContext.Agent.AgentOperations).Driver is IWindowExplorer)
-                    {
-                        xWindowExplorerItemBtn.xButton.IsEnabled = ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning();
-                        xLiveSpyItemBtn.xButton.IsEnabled = (((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer).IsLiveSpySupported() && ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning();
-                        xRecordItemBtn.xButton.IsEnabled = (((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer).IsRecordingSupported() && ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning();
+                bool driverIsRunning = false;
+                bool isLiveSpySupported = false;
+                bool isRecordingSupported = false;
 
-                        xWindowExplorerItemBtn.IsEnabled = ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning();
-                        xLiveSpyItemBtn.IsEnabled = (((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer).IsLiveSpySupported() && ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning();
-                        xRecordItemBtn.IsEnabled = (((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer).IsRecordingSupported() && ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning();
-                    }
-                }
-                else
+                try
                 {
-                    xWindowExplorerItemBtn.xButton.IsEnabled = false;
-                    xLiveSpyItemBtn.xButton.IsEnabled = false;
-                    xRecordItemBtn.xButton.IsEnabled = false;
-
-                    xWindowExplorerItemBtn.IsEnabled = false;
-                    xLiveSpyItemBtn.IsEnabled = false;
-                    xRecordItemBtn.IsEnabled = false;
+                    driverIsRunning = ((AgentOperations)mContext.Agent.AgentOperations).Driver.IsRunning();
+                    isLiveSpySupported = (((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer).IsLiveSpySupported();
+                    isRecordingSupported = (((AgentOperations)mContext.Agent.AgentOperations).Driver as IWindowExplorer).IsRecordingSupported();
                 }
-            });
+                catch
+                {
+
+                }
+                xWindowExplorerItemBtn.xButton.IsEnabled = driverIsRunning;
+                xLiveSpyItemBtn.xButton.IsEnabled = isLiveSpySupported && driverIsRunning;
+                xRecordItemBtn.xButton.IsEnabled = isRecordingSupported && driverIsRunning;
+
+                xWindowExplorerItemBtn.IsEnabled = driverIsRunning;
+                xLiveSpyItemBtn.IsEnabled = isLiveSpySupported && driverIsRunning;
+                xRecordItemBtn.IsEnabled = isRecordingSupported && driverIsRunning;
+
+            }
+            else
+            {
+                xWindowExplorerItemBtn.xButton.IsEnabled = false;
+                xLiveSpyItemBtn.xButton.IsEnabled = false;
+                xRecordItemBtn.xButton.IsEnabled = false;
+
+                xWindowExplorerItemBtn.IsEnabled = false;
+                xLiveSpyItemBtn.IsEnabled = false;
+                xRecordItemBtn.IsEnabled = false;
+            }
         }
 
         void ToggleApplicatoinModels()
@@ -327,7 +338,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
         {
             this.Dispatcher.Invoke(() =>
             {
-                xSelectedItemFrame.Content = navigationPage;
+                xSelectedItemFrame.ClearAndSetContent(navigationPage);
 
                 mNavPanelPage = navigationPage;
 

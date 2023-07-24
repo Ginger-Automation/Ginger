@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,17 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Ginger.Reports;
 using Ginger.UserControls;
-using GingerCore;
-using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Ginger.SolutionWindows.TreeViewItems;
-using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.Reports
 {
@@ -39,10 +34,10 @@ namespace Ginger.Reports
         public HTMLReportTemplatesListPage()
         {
             InitializeComponent();
-            
+
             SetGridView();
             SetGridData();
-            _selectedHTMLReportConfiguration =  WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            _selectedHTMLReportConfiguration = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
         }
 
         private void SetGridView()
@@ -58,9 +53,9 @@ namespace Ginger.Reports
             grdHTMLReportTemplatesList.SetAllColumnsDefaultView(view);
             grdHTMLReportTemplatesList.InitViewItems();
 
-          
+
             grdHTMLReportTemplatesList.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Check, "Set Selected HTML Reports Template as Default", new RoutedEventHandler(SetTemplateAsDefault));
-           
+
         }
 
         private void SetGridData()
@@ -72,14 +67,14 @@ namespace Ginger.Reports
 
 
         private void SetTemplateAsDefault(object sender, System.Windows.RoutedEventArgs e)
-        {            
-            if (grdHTMLReportTemplatesList.CurrentItem != null && ((HTMLReportConfiguration)grdHTMLReportTemplatesList.CurrentItem).IsDefault==false)
-            {               
+        {
+            if (grdHTMLReportTemplatesList.CurrentItem != null && ((HTMLReportConfiguration)grdHTMLReportTemplatesList.CurrentItem).IsDefault == false)
+            {
                 Ginger.Reports.GingerExecutionReport.ExtensionMethods.SetTemplateAsDefault((HTMLReportConfiguration)grdHTMLReportTemplatesList.CurrentItem);
             }
         }
 
-        
+
 
 
     }

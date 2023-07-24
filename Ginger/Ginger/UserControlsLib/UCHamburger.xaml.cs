@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ namespace Ginger.UserControlsLib
             {
                 CurrentColumnLength = mColumnDefinition.Width;
                 // We shrink, keep the original values
-                mColumnDefinition.Width = new GridLength(0);                
+                mColumnDefinition.Width = new GridLength(0);
                 this.SetValue(Grid.ColumnProperty, OriginalColumn + 1);  // TODO: if left add one else -1 - auto check if col 0 or cols count
                 this.HorizontalAlignment = HorizontalAlignment.Left;
             }

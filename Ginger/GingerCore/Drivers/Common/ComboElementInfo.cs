@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,19 +29,23 @@ namespace GingerCore.Drivers.Common
     {
         public static class Fields
         {
-            public static string ItemList = "ItemList";                      
+            public static string ItemList = "ItemList";
         }
         private List<String> mItemList = null;
         public List<String> ItemList
         {
             get
             {
-                if (mItemList == null) mItemList = GetItemList();
+                if (mItemList == null)
+                {
+                    mItemList = GetItemList();
+                }
+
                 return mItemList;
             }
             set { mItemList = value; }
         }
-       
+
         // Used for Lazy loading when possible
         public virtual List<String> GetItemList()
         {

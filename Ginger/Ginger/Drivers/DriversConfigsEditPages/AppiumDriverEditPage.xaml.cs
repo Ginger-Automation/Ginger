@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         public AppiumDriverEditPage(Agent appiumAgent)
         {
             InitializeComponent();
-            
+
             mAgent = appiumAgent;
             BindConfigurationsFields();
         }
@@ -62,15 +62,15 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.ToolTipProperty, mAppiumServer, nameof(DriverConfigParam.Description));
 
             BindingHandler.ObjFieldBinding(xLoadDeviceWindow, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.LoadDeviceWindow), "true"), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
-           
+
             DriverConfigParam proxy = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.Proxy));
             xProxyTextBox.Init(null, proxy, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xProxyTextBox, TextBox.ToolTipProperty, proxy, nameof(DriverConfigParam.Description));
             xUseProxyChkBox.IsChecked = !string.IsNullOrEmpty(proxy.Value);
 
             xLoadTimeoutTxtbox.Init(null, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Value));
-            BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));           
-           
+            BindingHandler.ObjFieldBinding(xLoadTimeoutTxtbox, TextBox.ToolTipProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.DriverLoadWaitingTime)), nameof(DriverConfigParam.Description));
+
             BindingHandler.ObjFieldBinding(xAutoUpdateCapabiltiies, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AutoSetCapabilities), "true"), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
             BindingHandler.ObjFieldBinding(xUFTMSupportSimulations, CheckBox.IsCheckedProperty, mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.UFTMSupportSimulationsCapabiliy)), nameof(DriverConfigParam.Value), bindingConvertor: new CheckboxConfigConverter());
 
@@ -159,7 +159,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
                 DeleteUFTMServerCapabilities();
                 DeleteUFTMSupportSimulationsCapabilities();
             }
-            else if (mDeviceSource.Value == eDeviceSource.MicroFoucsUFTMLab.ToString())
+            else if (mDeviceSource.Value == eDeviceSource.MicroFoucsUFTMLab.ToString() && !IsUFTCapabilityExist())
             {
                 DriverConfigParam uftClientId = new DriverConfigParam() { Parameter = "uftm:oauthClientId", Description = "UFT Execution key Client Id" };
                 DriverConfigParam uftClientSecret = new DriverConfigParam() { Parameter = "uftm:oauthClientSecret", Description = "UFT Execution key Client Password" };
@@ -177,18 +177,18 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         }
         private void SetUFTMSupportSimulationsCapabilities()
         {
-            DriverConfigParam installPackagedApp = new DriverConfigParam() { Parameter = "uftm:installPackagedApp",Value="true", Description = "Install app that supports UFT simulations" };
+            DriverConfigParam installPackagedApp = new DriverConfigParam() { Parameter = "uftm:installPackagedApp", Value = "true", Description = "Install app that supports UFT simulations" };
 
             AddOrUpdateCapability(installPackagedApp);
         }
 
-        private void SetApplicationCapabilities(bool init=false)
+        private void SetApplicationCapabilities(bool init = false)
         {
             DriverConfigParam appPackage = new DriverConfigParam() { Parameter = "appPackage", Description = "Java package of the Android application you want to run", Value = "com.android.settings" };
             DriverConfigParam appActivity = new DriverConfigParam() { Parameter = "appActivity", Description = "Activity name for the Android activity you want to launch from your package", Value = "com.android.settings.Settings" };
             DriverConfigParam bundleId = new DriverConfigParam() { Parameter = "bundleId", Description = "Bundle ID of the application under test", Value = "com.apple.Preferences" };
             DriverConfigParam browserName = new DriverConfigParam() { Parameter = "browserName", Description = "Name of mobile web browser to automate" };
-            DriverConfigParam defualtURL = new DriverConfigParam() { Parameter = "defaultURL", Description = "Ginger Capability | Default URL to load on browser connection", Value= "https://ginger.amdocs.com/" };
+            DriverConfigParam defualtURL = new DriverConfigParam() { Parameter = "defaultURL", Description = "Ginger Capability | Default URL to load on browser connection", Value = "https://ginger.amdocs.com/" };
             if (mAppType.Value == eAppType.NativeHybride.ToString())
             {
                 if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
@@ -235,7 +235,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void SetDeviceCapabilities(bool init = false)
         {
-            DriverConfigParam deviceName = new DriverConfigParam() { Parameter = "deviceName", Value = string.Empty};
+            DriverConfigParam deviceName = new DriverConfigParam() { Parameter = "deviceName", Value = string.Empty };
             DriverConfigParam udid = new DriverConfigParam() { Parameter = "udid", Description = "Unique device identifier of the connected physical device", Value = string.Empty };
             if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
             {
@@ -254,7 +254,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             AddOrUpdateCapability(udid);
         }
 
-        private void SetOtherCapabilities(bool init=false)
+        private void SetOtherCapabilities(bool init = false)
         {
             DriverConfigParam newCommandTimeout = new DriverConfigParam() { Parameter = "newCommandTimeout", Description = "How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session", Value = "300" };
             if (!init)
@@ -266,7 +266,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void AddOrUpdateCapability(DriverConfigParam capability)
         {
-            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.Where(x => x.Parameter == capability.Parameter).FirstOrDefault();
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.FirstOrDefault(x => x.Parameter == capability.Parameter);
             if (existingCap != null)
             {
                 existingCap.Value = capability.Value;
@@ -280,7 +280,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private bool IsUFTCapabilityExist()
         {
-            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.Where(x => x.Parameter == "uftm:oauthClientSecret").FirstOrDefault();
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues?.FirstOrDefault(x => x.Parameter == "uftm:oauthClientSecret");
             if (existingCap != null)
             {
                 return true;
@@ -293,7 +293,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void SetCurrentCapabilityValue(DriverConfigParam capability)
         {
-            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.Where(x => x.Parameter == capability.Parameter).FirstOrDefault();
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.FirstOrDefault(x => x.Parameter == capability.Parameter);
             if (existingCap != null && string.IsNullOrEmpty(existingCap.Value) == false)
             {
                 capability.Value = existingCap.Value;
@@ -302,7 +302,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void DeleteCapabilityIfExist(string capabilityName)
         {
-            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.Where(x => x.Parameter == capabilityName).FirstOrDefault();
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.FirstOrDefault(x => x.Parameter == capabilityName);
             if (existingCap != null)
             {
                 mAppiumCapabilities.MultiValues.Remove(existingCap);
@@ -314,14 +314,14 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             mAppiumCapabilities.MultiValues.Add(new DriverConfigParam());
         }
 
-        private void AutoSetCapabilities(bool init=false)
+        private void AutoSetCapabilities(bool init = false)
         {
             if (init)
             {
                 mAppiumCapabilities.MultiValues.Clear();
             }
             SetPlatformCapabilities();
-            SetDeviceCapabilities(init);            
+            SetDeviceCapabilities(init);
             SetApplicationCapabilities(init);
             SetOtherCapabilities(init);
         }

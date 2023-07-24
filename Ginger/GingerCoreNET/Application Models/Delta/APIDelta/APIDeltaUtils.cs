@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace GingerCoreNET.Application_Models
 {
@@ -45,9 +44,13 @@ namespace GingerCoreNET.Application_Models
                 if (existingAPIModels == null)
                 {
                     if (apiModelLearned.APIType == ApplicationAPIUtils.eWebApiType.SOAP)
+                    {
                         matchingAPIModels = existingAPIModelsList.Where(m => (m.EndpointURL != null && m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase)) && m.APIType == apiModelLearned.APIType && m.SOAPAction.Equals(apiModelLearned.SOAPAction)).ToList();
+                    }
                     else
+                    {
                         matchingAPIModels = existingAPIModelsList.Where(m => (m.EndpointURL != null && m.EndpointURL.Equals(apiModelLearned.EndpointURL, StringComparison.OrdinalIgnoreCase)) && m.APIType == apiModelLearned.APIType && m.RequestType == apiModelLearned.RequestType).ToList();
+                    }
                 }
                 else
                 {
@@ -108,9 +111,11 @@ namespace GingerCoreNET.Application_Models
                 ApplicationAPIModel apiMod = existingAPIs[i];
                 foreach (APIModelKeyValue headerPair in apiMod.HttpHeaders)
                 {
-                    APIModelKeyValue apiHeaderExistings = learnedModel.HttpHeaders.Where(h => h.Param == headerPair.Param && h.Value == headerPair.Value).FirstOrDefault();
+                    APIModelKeyValue apiHeaderExistings = learnedModel.HttpHeaders.FirstOrDefault(h => h.Param == headerPair.Param && h.Value == headerPair.Value);
                     if (apiHeaderExistings != null)
+                    {
                         continue;
+                    }
                     else
                     {
                         existingAPIs.RemoveAt(i);

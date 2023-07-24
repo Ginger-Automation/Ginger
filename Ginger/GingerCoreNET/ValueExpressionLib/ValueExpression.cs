@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -131,6 +131,21 @@ namespace GingerCore
 
 
         public bool DecryptFlag { get; set; } = false;
+
+        private string mEncryptedValue = null;
+
+
+        public string EncryptedValue
+        {
+            get
+            {
+                if (mEncryptedValue == null)
+                {
+                    return mValueCalculated;
+                }
+                return mEncryptedValue;
+            }
+        }
         private string mValueCalculated = null;
 
 
@@ -206,20 +221,21 @@ namespace GingerCore
                 return;
             }
             mValueCalculated = Value;
+            mEncryptedValue = null;
 
             //Do the operation based on order
             //First replace Vars - since they can appear in other func like VBS v1+v2 or VBS mid(v1,1,4);
-
-            ReplaceGlobalParameters();
-
-            //replace environment parameters which embedded into functions like VBS
-            ReplaceEnvVars();
-
-            CalculateComplexFormulas();
-            ReplaceDataSources();
-            ProcessGeneralFuncations();
-            EvaluateFlowDetails();
-            EvaluateCSharpFunctions();
+            if (mValueCalculated.Contains('{'))
+            {
+                ReplaceGlobalParameters();
+                //replace environment parameters which embedded into functions like VBS
+                ReplaceEnvVars();
+                CalculateComplexFormulas();
+                ReplaceDataSources();
+                ProcessGeneralFuncations();
+                EvaluateFlowDetails();
+                EvaluateCSharpFunctions();
+            }
             if (!string.IsNullOrEmpty(SolutionFolder))
             {
 
@@ -290,15 +306,15 @@ namespace GingerCore
             if (mContext.RunsetAction != null)
             {
                 RunSetActionSendDataToExternalSource runSetAction = (RunSetActionSendDataToExternalSource)mContext.RunsetAction;
-                defaultTemplate = HTMLReportConfigurations.Where(x => (x.ID == runSetAction.selectedHTMLReportTemplateID)).FirstOrDefault();
+                defaultTemplate = HTMLReportConfigurations.FirstOrDefault(x => (x.ID == runSetAction.selectedHTMLReportTemplateID));
                 if (defaultTemplate == null && runSetAction.selectedHTMLReportTemplateID == 100)
                 {
-                    defaultTemplate = HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault();
+                    defaultTemplate = HTMLReportConfigurations.FirstOrDefault(x => x.IsDefault);
                 }
             }
             else
             {
-                defaultTemplate = HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault();
+                defaultTemplate = HTMLReportConfigurations.FirstOrDefault(x => x.IsDefault);
             }
 
             //Get Last Execution details
@@ -373,7 +389,7 @@ namespace GingerCore
             }
             if (runset != null)
             {
-                runner = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.Executor.BusinessFlows.Contains(this.BF)).FirstOrDefault();
+                runner = WorkSpace.Instance.RunsetExecutor.Runners.FirstOrDefault(x => x.Executor.BusinessFlows.Contains(this.BF));
             }
 
             RepositoryItemBase objtoEval = null;
@@ -546,7 +562,7 @@ namespace GingerCore
 
             ObservableList<GlobalAppModelParameter> ModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
 
-            GlobalAppModelParameter Param = ModelsGlobalParamsList.Where(x => x.PlaceHolder == VarName).FirstOrDefault();
+            GlobalAppModelParameter Param = ModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == VarName);
 
             if (Param != null)
             {
@@ -612,7 +628,9 @@ namespace GingerCore
                     ReplaceDataSource(match.Value);
                     //Setting update back
                     if (bChange == true)
+                    {
                         bUpdate = true;
+                    }
                 }
                 matches = rxDSPattern.Matches(mValueCalculated);
                 iCount++;
@@ -635,8 +653,12 @@ namespace GingerCore
             }
 
             foreach (DataSourceBase ds in DSList)
+            {
                 if (ds.Name == DSName)
+                {
                     DataSource = ds;
+                }
+            }
 
             p = p.Substring(p.IndexOf(" DST=")).Trim();
             if (DataSource == null)
@@ -705,7 +727,9 @@ namespace GingerCore
                             p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
                         }
                         else
+                        {
                             p = p.Substring(p.TrimStart().IndexOf(" ")).Trim();
+                        }
                     }
                     if (p.IndexOf("EP=") != -1)
                     {
@@ -717,19 +741,27 @@ namespace GingerCore
                     {
                         string KeyName = p.Substring(p.IndexOf("KEY=") + 4, p.IndexOf("}") - 4);
                         if (sAct == "DR")
+                        {
                             updateQuery = "DELETE FROM " + DSTable + " WHERE GINGER_KEY_NAME = '" + KeyName + "'";
+                        }
                         else
                         {
                             if (bUpdate == true)
                             {
                                 DataTable dtTemp = DataSource.GetQueryOutput("Select count(*) from " + DSTable + " where GINGER_KEY_NAME= '" + KeyName + "'");
                                 if (dtTemp.Rows[0].ItemArray[0].ToString() != "0")
+                                {
                                     updateQuery = "UPDATE " + DSTable + " SET GINGER_KEY_VALUE = '" + updateValue.Replace("'", "''") + "',GINGER_LAST_UPDATED_BY='" + System.Environment.UserName + "',GINGER_LAST_UPDATE_DATETIME='" + DateTime.Now.ToString() + "' WHERE GINGER_KEY_NAME = '" + KeyName + "'";
+                                }
                                 else
+                                {
                                     updateQuery = "INSERT INTO " + DSTable + "(GINGER_KEY_NAME,GINGER_KEY_VALUE,GINGER_LAST_UPDATED_BY,GINGER_LAST_UPDATE_DATETIME) VALUES ('" + KeyName + "','" + updateValue.Replace("'", "''") + "','" + System.Environment.UserName + "','" + DateTime.Now.ToString() + "')";
+                                }
                             }
                             else
+                            {
                                 Query = "Select GINGER_KEY_VALUE FROM " + DSTable + " WHERE GINGER_KEY_NAME = '" + KeyName + "'";
+                            }
                         }
                     }
                     else if (p != "" && (sAct == "MASD" || sAct == "DR" || sAct == ""))
@@ -766,9 +798,14 @@ namespace GingerCore
                                 Query = "Select [GINGER_ID] from " + DSTable;
                             }
                             if (p.IndexOf(" ") > 0)
+                            {
                                 IRow = p.Substring(p.IndexOf("IROW=") + 5, p.IndexOf(" ") - 5);
+                            }
                             else
+                            {
                                 IRow = p.Substring(p.IndexOf("IROW=") + 5, p.IndexOf("}") - 5);
+                            }
+
                             if (IRow == "NxtAvail")
                             {
                                 Query = Query + " Where GINGER_USED <> 'True' or GINGER_USED is null";
@@ -796,9 +833,14 @@ namespace GingerCore
                                     string wOpr = "";
                                     string wRowVal = "";
                                     if (p.IndexOf("WROWVAL=") == -1)
+                                    {
                                         wOpr = p.Substring(p.IndexOf("WOPR=") + 5, p.IndexOf("}") - 5);
+                                    }
                                     else
+                                    {
                                         wOpr = p.Substring(p.IndexOf("WOPR=") + 5, p.IndexOf("WROWVAL=") - 6);
+                                    }
+
                                     if (wOpr != "Is Null" && wOpr != "Is Null")
                                     {
                                         p = p.Substring(p.TrimStart().IndexOf("WROWVAL="));
@@ -827,24 +869,42 @@ namespace GingerCore
                                         }
                                     }
                                     else if (wOpr == "Contains")
+                                    {
                                         Query = Query + wColVal + " LIKE " + "'%" + wRowVal + "%'";
+                                    }
                                     else if (wOpr == "Not Contains")
+                                    {
                                         Query = Query + wColVal + " NOT LIKE " + "'%" + wRowVal + "%'";
+                                    }
                                     else if (wOpr == "Starts With")
+                                    {
                                         Query = Query + wColVal + " LIKE '" + wRowVal + "%'";
+                                    }
                                     else if (wOpr == "Not Starts With")
+                                    {
                                         Query = Query + wColVal + " NOT LIKE '" + wRowVal + "%'";
+                                    }
                                     else if (wOpr == "Ends With")
+                                    {
                                         Query = Query + wColVal + " LIKE '%" + wRowVal + "'";
+                                    }
                                     else if (wOpr == "Not Ends With")
+                                    {
                                         Query = Query + wColVal + " NOT LIKE '%" + wRowVal + "'";
+                                    }
                                     else if (wOpr == "Is Null")
+                                    {
                                         Query = Query + wColVal + " IS NULL";
+                                    }
                                     else if (wOpr == "Is Not Null")
+                                    {
                                         Query = Query + wColVal + " IS NOT NULL";
+                                    }
                                 }
                                 else
+                                {
                                     return;
+                                }
                             }
                         }
                     }
@@ -866,18 +926,22 @@ namespace GingerCore
                         DataSource.RunQuery("INSERT INTO " + DSTable + "(GINGER_USED) VALUES ('False')");
                         dt = DataSource.GetQueryOutput(Query);
                     }
-                    if (dt.Rows.Count == 0)
+                    if (dt == null || dt.Rows.Count == 0)
                     {
                         mValueCalculated = "No Row Found";
                         return;
                     }
                     if (dt.Rows.Count > 0 && dt.Columns.Count > 0)
+                    {
                         if (rowNum.All(char.IsDigit))
                         {
                             mValueCalculated = mValueCalculated.Replace(pOrg, dt.Rows[Convert.ToInt32(rowNum)].ItemArray[0].ToString());
                         }
                         else
+                        {
                             mValueCalculated = "ERROR: Not Valid RowNum:" + rowNum;
+                        }
+                    }
 
                     string GingerIds = "";
                     if (dt.Columns.Contains("GINGER_ID"))
@@ -885,18 +949,26 @@ namespace GingerCore
                         if (bMultiRow == "Y")
                         {
                             foreach (DataRow row in dt.Rows)
+                            {
                                 GingerIds += row["GINGER_ID"].ToString() + ",";
+                            }
+
                             GingerIds = GingerIds.Substring(0, GingerIds.Length - 1);
                         }
                         else
+                        {
                             GingerIds = dt.Rows[Convert.ToInt32(rowNum)]["GINGER_ID"].ToString();
+                        }
                     }
                     if (bUpdate == true)
                     {
                         if (updateQuery == "")
                         {
                             if (iColVal == "")
+                            {
                                 iColVal = dt.Columns[0].ColumnName;
+                            }
+
                             if (updateValue == null)
                             {
                                 updateValue = string.Empty;
@@ -905,13 +977,20 @@ namespace GingerCore
                             foreach (DataColumn sCol in dt.Columns)
                             {
                                 if (!new List<string> { "GINGER_ID", "GINGER_LAST_UPDATED_BY", "GINGER_LAST_UPDATE_DATETIME", "GINGER_KEY_NAME" }.Contains(sCol.ColumnName))
+                                {
                                     updateQuery += "[" + sCol.ColumnName + "]='" + updateValue.Replace("'", "''") + "' ,";
+                                }
                             }
                             updateQuery = updateQuery.Substring(0, updateQuery.Length - 1);
                             if (mColList.Contains("GINGER_LAST_UPDATED_BY"))
+                            {
                                 updateQuery = updateQuery + ",GINGER_LAST_UPDATED_BY='" + System.Environment.UserName + "' ";
+                            }
+
                             if (mColList.Contains("GINGER_LAST_UPDATE_DATETIME"))
+                            {
                                 updateQuery = updateQuery + ",GINGER_LAST_UPDATE_DATETIME = '" + DateTime.Now.ToString() + "' ";
+                            }
 
                             updateQuery = updateQuery + "WHERE GINGER_ID IN (" + GingerIds + ")";
                         }
@@ -922,7 +1001,9 @@ namespace GingerCore
                         DataSource.RunQuery("UPDATE " + DSTable + " SET GINGER_USED ='True' WHERE GINGER_ID IN (" + GingerIds + ")");
                     }
                     else if (sAct == "DR" && bDone == true)
+                    {
                         DataSource.RunQuery("DELETE FROM " + DSTable + " WHERE GINGER_ID IN  (" + GingerIds + ")");
+                    }
                 }
                 else if (updateQuery != "" && bDone == true)
                 {
@@ -1143,11 +1224,15 @@ namespace GingerCore
         {
             MatchCollection envParamMatches = rxEnvParamPattern.Matches(mValueCalculated);
             foreach (Match match in envParamMatches)
+            {
                 ReplaceEnvParamWithValue(match.Value, null);
+            }
 
             MatchCollection envUrlMatches = rxEnvUrlPattern.Matches(mValueCalculated);
             foreach (Match match2 in envUrlMatches)
+            {
                 ReplaceEnvURLWithValue(match2.Value, null);
+            }
         }
 
         private void HandleComplexFormula(string p)
@@ -1292,9 +1377,16 @@ namespace GingerCore
 
                     if (DecryptFlag == true && GP.Encrypt == true)
                     {
-                        String strValuetoPass = EncryptionHandler.DecryptwithKey(GP.Value);
-                        if (!string.IsNullOrEmpty(strValuetoPass)) { mValueCalculated = mValueCalculated.Replace(p, strValuetoPass); }
-                        else mValueCalculated = mValueCalculated.Replace(p, ParamValue);
+                        string strValuetoPass = EncryptionHandler.DecryptwithKey(GP.Value);
+                        if (!string.IsNullOrEmpty(strValuetoPass))
+                        { 
+                            mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
+                            mEncryptedValue = GP.Value;
+                        }
+                        else
+                        {
+                            mValueCalculated = mValueCalculated.Replace(p, ParamValue);
+                        }
                     }
                     else
                     {
@@ -1392,14 +1484,18 @@ namespace GingerCore
             if (string.IsNullOrEmpty(P1) == false)
             {
                 if (P1.Contains("\""))
+                {
                     P1 = P1.Replace("\"", "");
+                }
             }
 
             string P2 = aa.Length <= 4 ? "" : aa[4].Trim();
             if (string.IsNullOrEmpty(P2) == false)
             {
                 if (P2.Contains("\""))
+                {
                     P2 = P2.Replace("\"", "");
+                }
             }
 
             switch (FunName.Trim().ToLower())
@@ -1419,22 +1515,32 @@ namespace GingerCore
                 case "9":
                     MatchCollection Ms = new Regex(Pattern).Matches(P1);
                     if (Ms.Count > 0)
+                    {
                         foreach (Match m in Ms)
                         {
                             mValueCalculated = mValueCalculated.Replace(p, m.Groups[Convert.ToInt32(FunName.Trim())].Value);
                             break;
                         }
+                    }
                     else
+                    {
                         mValueCalculated = "";
+                    }
+
                     break;
 
                 case "matchvalue":
                     Regex re = new Regex(Pattern);
                     Match match = re.Match(P1);
                     if (match.Success)
+                    {
                         mValueCalculated = mValueCalculated.Replace(p, match.Value);
+                    }
                     else
+                    {
                         mValueCalculated = mValueCalculated.Replace(p, string.Empty);
+                    }
+
                     break;
 
                 case "ismatch":
@@ -1481,8 +1587,12 @@ namespace GingerCore
                 {
                     if (vb is VariablePasswordString)
                     {
-                        string strValuetoPass;
-                        strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
+                        string strValuetoPass = String.Empty;
+                        if (DecryptFlag)
+                        {
+                            strValuetoPass = EncryptionHandler.DecryptwithKey(vb.Value);
+                            mEncryptedValue = vb.Value;
+                        }
                         if (!string.IsNullOrEmpty(strValuetoPass))
                         {
                             VarValue = strValuetoPass;

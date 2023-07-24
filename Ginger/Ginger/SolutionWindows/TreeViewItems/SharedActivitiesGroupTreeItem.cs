@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,26 +16,24 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Ginger.Activities;
 using Ginger.ALM;
 using Ginger.Repository;
-using GingerWPF.UserControlsLib.UCTreeView;
-using GingerCore;
 using GingerCore.Activities;
-using GingerCore.SourceControl;
+using GingerWPF.TreeViewItemsLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using GingerWPF.TreeViewItemsLib;
-using Amdocs.Ginger.Common.Enums;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     class SharedActivitiesGroupTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
         private readonly ActivitiesGroup mActivitiesGroup;
-        private ActivitiesGroupPage mActivitiesGroupPage;        
+        private ActivitiesGroupPage mActivitiesGroupPage;
         private SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode mShowMode;
 
         public SharedActivitiesGroupTreeItem(ActivitiesGroup activitiesGroup, SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode showMode = SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode.ReadWrite)
@@ -76,7 +74,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mActivitiesGroupPage == null)
             {
-                mActivitiesGroupPage = new ActivitiesGroupPage(mActivitiesGroup, null,  ActivitiesGroupPage.eEditMode.SharedRepository);
+                mActivitiesGroupPage = new ActivitiesGroupPage(mActivitiesGroup, null, ActivitiesGroupPage.eEditMode.SharedRepository);
             }
             return mActivitiesGroupPage;
         }
@@ -84,7 +82,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         ContextMenu ITreeViewItem.Menu()
         {
-            return mContextMenu;            
+            return mContextMenu;
         }
 
 
@@ -95,7 +93,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (mShowMode == SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode.ReadWrite)
             {
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
-               
+
                 TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
 
                 MenuItem exportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
@@ -106,7 +104,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             else
             {
                 TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
-            }                    
+            }
         }
 
         private void ShowUsage(object sender, RoutedEventArgs e)
@@ -119,7 +117,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (SharedRepositoryOperations.CheckIfSureDoingChange(mActivitiesGroup, "delete") == true)
             {
-                return (base.DeleteTreeItem(mActivitiesGroup, deleteWithoutAsking, refreshTreeAfterDelete));                
+                return (base.DeleteTreeItem(mActivitiesGroup, deleteWithoutAsking, refreshTreeAfterDelete));
             }
             return false;
         }

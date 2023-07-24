@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Ginger;
+using GingerCore.Actions;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore.Actions;
-using Ginger;
 
 namespace GingerCore.Drivers.ConsoleDriverLib
 {
@@ -32,11 +32,11 @@ namespace GingerCore.Drivers.ConsoleDriverLib
         private ConsoleDriverBase mConsoleDriverBase;
         private BusinessFlow mBF;
         ActConsoleCommand ACC = new ActConsoleCommand();
-      
+
         public ConsoleNewActionPage(ConsoleDriverBase CDB, BusinessFlow BF)
         {
             InitializeComponent();
-            mConsoleDriverBase=CDB;
+            mConsoleDriverBase = CDB;
             mBF = BF;
             ACC.AddOrUpdateInputParamValue("Param 1", "");
             ACC.AddOrUpdateInputParamValue("Param 2", "");
@@ -55,12 +55,12 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             Button AddActionBtn = new Button();
             AddActionBtn.Content = "Add to " + GingerDicser.GetTermResValue(eTermResKey.Activity);
             AddActionBtn.Click += new RoutedEventHandler(AddActionBtn_Click);
-            
+
             ObservableList<Button> Buttons = new ObservableList<Button>();
             Buttons.Add(runActionBtn);
             Buttons.Add(AddActionBtn);
-            
-            GenericWindow genWin=null;
+
+            GenericWindow genWin = null;
             GingerCore.General.LoadGenericWindow(ref genWin, owner, Ginger.eWindowShowStyle.Free, this.Title, this, Buttons);
         }
 
@@ -71,7 +71,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
                 mBF.AddAct(ACC);
             }
             else
-            {                
+            {
                 Reporter.ToUser(eUserMsgKey.AskToSelectBusinessflow);
             }
         }
@@ -81,7 +81,7 @@ namespace GingerCore.Drivers.ConsoleDriverLib
             ACC.ConsoleCommand = ActConsoleCommand.eConsoleCommand.ParametrizedCommand;
             ACC.Command = CommandTextBox.Text;
             ACC.Description = "Run Command " + ACC.Command;
-            ACC.Active = true;            
+            ACC.Active = true;
             mConsoleDriverBase.RunAction(ACC);
         }
     }

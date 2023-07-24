@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,16 +17,15 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.UIElement;
+using Ginger.UserControls;
+using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using GingerCore.Actions;
-using System.Collections.ObjectModel;
-using Ginger.UserControls;
-using GingerCore.Actions.Common;
-using Amdocs.Ginger.Common.UIElement;
 
 namespace Ginger.Actions
 {
@@ -47,13 +46,13 @@ namespace Ginger.Actions
             currentAct = Act;
 
             GingerCore.General.FillComboFromEnumObj(ActionNameComboBox, Act.ButtonAction);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "ButtonAction"); 
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ActionNameComboBox, ComboBox.TextProperty, Act, "ButtonAction");
 
             //TODO add dynamic parent windows population
-           // lstParentWindows = new ObservableCollection<string>();
-           // lstParentWindows.Add("Root");
-           // lstParentWindows.Add("Parent Window");
-           // ParentComboBox.ItemsSource = lstParentWindows;
+            // lstParentWindows = new ObservableCollection<string>();
+            // lstParentWindows.Add("Root");
+            // lstParentWindows.Add("Parent Window");
+            // ParentComboBox.ItemsSource = lstParentWindows;
         }
 
         public void SetGridView()

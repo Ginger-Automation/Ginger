@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -79,7 +79,7 @@ namespace GingerCore.Variables
 
         public override bool SetValue(string value)
         {
-            if (OptionalValuesList.Where(pv => pv.Value == value).FirstOrDefault() != null)
+            if (OptionalValuesList.FirstOrDefault(pv => pv.Value == value) != null)
             {
                 Value = value;
                 return true;
@@ -101,9 +101,9 @@ namespace GingerCore.Variables
             if (IsDynamicValueModificationEnabled)
             {
                 OptionalValue op;
-                if (OptionalValuesList.Where(pv => pv.Value == value).FirstOrDefault() != null)
+                if (OptionalValuesList.FirstOrDefault(pv => pv.Value == value) != null)
                 {
-                    op = OptionalValuesList.Where(pv => pv.Value == value).FirstOrDefault();
+                    op = OptionalValuesList.FirstOrDefault(pv => pv.Value == value);
                 }
                 else
                 {
@@ -180,7 +180,7 @@ namespace GingerCore.Variables
             }
         }
 
-        public override List<string> GetExtraParamsList() 
+        public override List<string> GetExtraParamsList()
         {
             List<string> extraParamsDescription = new List<string>();
             extraParamsDescription.Add("Index=1");
@@ -211,7 +211,7 @@ namespace GingerCore.Variables
                             }
                             else
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, "Error!! variable " + Name +": index is out of bounds");
+                                Reporter.ToLog(eLogLevel.ERROR, "Error!! variable " + Name + ": index is out of bounds");
                                 return "Error!! variable index is out of bounds";
                             }
                         }
@@ -228,7 +228,7 @@ namespace GingerCore.Variables
                         }
                     case "IsContains":
                         {
-                            if (OptionalValuesList.Where<OptionalValue>(x => x.Value == keyValuePair.Value).FirstOrDefault() != null)
+                            if (OptionalValuesList.FirstOrDefault(x => x.Value == keyValuePair.Value) != null)
                             {
                                 return bool.TrueString;
                             }
@@ -266,7 +266,7 @@ namespace GingerCore.Variables
             }
 
             //Finding the index of the current Optional Value
-            OptionalValue currentOptionalValue = OptionalValuesList.Where<OptionalValue>(op => op.Value == Value).FirstOrDefault();
+            OptionalValue currentOptionalValue = OptionalValuesList.FirstOrDefault(op => op.Value == Value);
             if (currentOptionalValue == null)
             {
                 errorMsg = "Failed to generate auto value because current value is not part of the list of values";

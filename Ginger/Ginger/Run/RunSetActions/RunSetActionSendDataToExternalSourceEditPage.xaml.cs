@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Repository;
+using Ginger.Reports;
+using Ginger.UserControls;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
-using Ginger.Actions;
-using Ginger.Reports;
-using Ginger.UserControls;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -43,11 +42,11 @@ namespace Ginger.Run.RunSetActions
             this.runSetActionSendData = RunSetActionSendData;
             mContext.RunsetAction = runSetActionSendData;
             mContext.Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment;
-            
+
             xEndPointURLTextBox.Init(mContext, runSetActionSendData, nameof(RunSetActionSendDataToExternalSource.EndPointUrl));
             xJsonBodyTextBox.Init(mContext, runSetActionSendData, nameof(RunSetActionSendDataToExternalSource.RequestBodyJson));
             xJsonBodyTextBox.AdjustHight(100);
-            CurrentTemplatePickerCbx_Binding(); 
+            CurrentTemplatePickerCbx_Binding();
 
             SetHeadersGridView();
             SetBodyGridView();
@@ -68,15 +67,15 @@ namespace Ginger.Run.RunSetActions
                 CurrentTemplatePickerCbx.SelectedValuePath = HTMLReportConfiguration.Fields.ID;
                 if ((runSetActionSendData.selectedHTMLReportTemplateID != 0))
                 {
-                    CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => (x.ID == runSetActionSendData.selectedHTMLReportTemplateID)).FirstOrDefault());
+                    CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.FirstOrDefault(x => (x.ID == runSetActionSendData.selectedHTMLReportTemplateID)));
                     if (CurrentTemplatePickerCbx.SelectedIndex == -1)
                     {
-                        CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault());
+                        CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.FirstOrDefault(x => x.IsDefault));
                     }
                 }
                 else
                 {
-                    CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault());
+                    CurrentTemplatePickerCbx.SelectedIndex = CurrentTemplatePickerCbx.Items.IndexOf(HTMLReportConfigurations.FirstOrDefault(x => x.IsDefault));
                 }
             }
         }
@@ -150,7 +149,7 @@ namespace Ginger.Run.RunSetActions
                     runSetActionSendData.RefreshBodyParamsPreview();
                 }));
             }
-            else if(tabJsonView.IsSelected)
+            else if (tabJsonView.IsSelected)
             {
                 runSetActionSendData.RefreshJsonPreview();
             }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -140,13 +140,13 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
         }
 
         private void AddQuery(object sender, RoutedEventArgs e)
-        {            
+        {
             WizardWindow.ShowWizard(new AddDBQueryWizard(Path));
         }
 
         private void AddDBModel(object sender, RoutedEventArgs e)
         {
-            WizardWindow.ShowWizard(new AddDBModelWizard(this.Path));            
+            WizardWindow.ShowWizard(new AddDBModelWizard(this.Path));
         }
     }
 }
