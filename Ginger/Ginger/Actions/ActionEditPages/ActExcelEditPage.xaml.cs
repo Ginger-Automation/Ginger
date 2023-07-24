@@ -103,26 +103,33 @@ namespace Ginger.Actions
             {
                 DisableSheetNameComboBox();
                 xLoader.Visibility = Visibility.Visible;
+                mExcelOperations.Dispose();
                 await Task.Run(() =>
                 {
-                    SheetsList = mExcelOperations.GetSheets(mAct.CalculatedFileName);
+                    try
+                    {
+                        SheetsList = mExcelOperations.GetSheets(mAct.CalculatedFileName);
 
-                    if (SheetsList == null || SheetsList.Count == 0)
+                        if (SheetsList == null || SheetsList.Count == 0)
+                        {
+                            ShowErrorResponse();
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowErrorResponse();
+                    }
+                    finally
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                            GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
+                            EnableSheetNameComboBox();
+                            xLoader.Visibility = Visibility.Collapsed;
                         });
-
-                        return;
                     }
 
-                    Dispatcher.Invoke(() =>
-                    {
-                        GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
-                        EnableSheetNameComboBox();
-                        xLoader.Visibility = Visibility.Collapsed;
-                    });
                 });
             }
         }
@@ -151,25 +158,14 @@ namespace Ginger.Actions
             {
                 ContextProcessInputValueForDriver();
 
-                await Task.Run(() =>
+                DataTable excelSheetData = GetExcelSheetData(true);
+                if (excelSheetData == null)
                 {
-                    DataTable excelSheetData = GetExcelSheetData(true);
-                    if (excelSheetData == null)
-                    {
-                        Dispatcher.Invoke(() =>
-                        {
-                            Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
-                        });
-                        return;
-                    }
-
-                    Dispatcher.Invoke(() =>
-                    {
-                        SetExcelDataGridItemsSource(excelSheetData);
-
-                    });
-                });
-
+                    Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+                    return;
+                }
+                
+                SetExcelDataGridItemsSource(excelSheetData);
             }
             catch (Exception ex)
             {
@@ -201,6 +197,14 @@ namespace Ginger.Actions
                         Binding = new Binding($"[{columnIndex}]")
                     });
             }
+        }
+
+        private void ShowErrorResponse()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+            });
         }
 
         private Task CopyExcelSheetRowsToExcelDataGridRows(DataRowCollection excelSheetRows, ObservableCollection<object?[]> excelDataGridRows)
