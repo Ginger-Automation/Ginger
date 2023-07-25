@@ -623,7 +623,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.MainApplication))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You must have at least one Target Application configured, please set it up.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"You must have at least one {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} configured, please set it up.");
                         return;
                     }
                     else
