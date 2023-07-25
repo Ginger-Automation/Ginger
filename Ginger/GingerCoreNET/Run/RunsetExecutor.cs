@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using AccountReport.Contracts.Helpers;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
@@ -288,10 +289,53 @@ namespace Ginger.Run
             //keep original description values
             VariableBase originalCopy = (VariableBase)originalVar.CreateCopy(false);
 
-            //ovveride original variable configurations with user customizations            
-            CreateMapper<VariableBase>().Map<VariableBase, VariableBase>(customizedVar, originalVar);
+            //ovveride original variable configurations with user customizations
+
+            if (customizedVar.GetType() == typeof(VariableString))
+            {
+                CreateMapper<VariableString>().Map<VariableString, VariableString>((VariableString)customizedVar, (VariableString)originalVar);
+            }
+            else if (customizedVar.GetType() == typeof(VariableDateTime))
+            {
+                CreateMapper<VariableDateTime>().Map<VariableDateTime, VariableDateTime>((VariableDateTime)customizedVar, (VariableDateTime)originalVar);
+            }
+            else if (customizedVar.GetType() == typeof(VariableDynamic))
+            {
+                CreateMapper<VariableDynamic>().Map<VariableDynamic, VariableDynamic>((VariableDynamic)customizedVar, (VariableDynamic)originalVar);
+            }           
+            else if (customizedVar.GetType() == typeof(VariableNumber))
+            {
+                CreateMapper<VariableNumber>().Map<VariableNumber, VariableNumber>((VariableNumber)customizedVar, (VariableNumber)originalVar);
+            }
+            else if (customizedVar.GetType() == typeof(VariablePasswordString))
+            {
+                CreateMapper<VariablePasswordString>().Map<VariablePasswordString, VariablePasswordString>((VariablePasswordString)customizedVar, (VariablePasswordString)originalVar);
+            }
+            else if (customizedVar.GetType() == typeof(VariableRandomNumber))
+            {
+                CreateMapper<VariableRandomNumber>().Map<VariableRandomNumber, VariableRandomNumber>((VariableRandomNumber)customizedVar, (VariableRandomNumber)originalVar);
+            }
+            else if (customizedVar.GetType() == typeof(VariableRandomString))
+            {
+                CreateMapper<VariableRandomString>().Map<VariableRandomString, VariableRandomString>((VariableRandomString)customizedVar, (VariableRandomString)originalVar);
+            }          
+            else if (customizedVar.GetType() == typeof(VariableSequence))
+            {
+                CreateMapper<VariableSequence>().Map<VariableSequence, VariableSequence>((VariableSequence)customizedVar, (VariableSequence)originalVar);
+            }
+            else if (customizedVar.GetType() == typeof(VariableTimer))
+            {
+                CreateMapper<VariableTimer>().Map<VariableTimer, VariableTimer>((VariableTimer)customizedVar, (VariableTimer)originalVar);
+            }
+            else
+            {
+                CreateMapper<VariableBase>().Map<VariableBase, VariableBase>(customizedVar, originalVar);
+            }            
+            
             originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
             originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
+
+
             //Fix for Empty variable are not being saved in Run Configuration (when variable has value in BusinessFlow but is changed to empty in RunSet)
             if (customizedVar.DiffrentFromOrigin && string.IsNullOrEmpty(customizedVar.MappedOutputVariable))
             {
