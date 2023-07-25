@@ -139,8 +139,8 @@ namespace GingerCore.ALM.RQM
                         {
                             if (projEnvironment != null)
                             {
-                                IValueExpression mVE = new GingerCore.ValueExpression(projEnvironment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
-                                activGroup.CalculateExternalId(mVE);
+                                IValueExpression mAGVE = new GingerCore.ValueExpression(projEnvironment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                                activGroup.CalculateExternalId(mAGVE);
                             }
                             if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
                                 || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
@@ -630,7 +630,7 @@ namespace GingerCore.ALM.RQM
             {
                 foreach (ActivityPlan plan in testPlanList)
                 {
-                    if (!string.IsNullOrEmpty(businessFlow.ExternalID))
+                    if (string.IsNullOrEmpty(businessFlow.ExternalID))
                     {
                         businessFlow.ExternalID = $"RQMID={plan.ExportedID.ToString()}";
                     }
@@ -667,7 +667,7 @@ namespace GingerCore.ALM.RQM
                         foreach (ACL_Data_Contract.Activity act in plan.Activities)
                         {
                             string ActivityGroupID = $"RQMID={act.ExportedID.ToString()}|RQMScriptID={act.ExportedTestScriptId.ToString()}|RQMRecordID={act.ExportedTcExecutionRecId.ToString()}|AtsID={act.EntityId.ToString()}";
-                            if(!string.IsNullOrEmpty(businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID))
+                            if(string.IsNullOrEmpty(businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID))
                             {
                                 businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID = ActivityGroupID;
                             }
