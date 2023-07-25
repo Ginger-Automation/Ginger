@@ -354,7 +354,9 @@ namespace Ginger.Run
             foreach(GingerRunner runner in Runners)
             {
                 if (runner.Executor != null)
+                {
                     runner.Executor.CloseAgents();
+                }
             }
         }
 
