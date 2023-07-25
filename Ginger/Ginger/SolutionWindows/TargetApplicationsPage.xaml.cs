@@ -165,7 +165,7 @@ namespace Ginger.SolutionWindows
                     }
                     if (NameAlreadyExists(currentApp.AppName))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Target Application with same name already exists");
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} with same name already exists");
                         return;
                     }
                     UpdateApplicationNameChangeInSolution(currentApp);
