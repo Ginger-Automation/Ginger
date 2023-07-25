@@ -43,7 +43,7 @@ namespace Ginger.BusinessFlowWindows
 
             InitializeComponent();
 
-            this.Title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Target Application(s)";
+            this.Title = $"Edit {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} { GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}";
 
             mBusinessFlow = BizFlow;
             IsNewBusinessflow = IsNewBF;
