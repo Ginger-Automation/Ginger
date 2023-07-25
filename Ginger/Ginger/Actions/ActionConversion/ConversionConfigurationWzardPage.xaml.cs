@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
 using Ginger.UserControls;
+using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
@@ -137,7 +138,7 @@ namespace Ginger.Actions.ActionConversion
                 StyleType = GridColView.eGridColStyleType.ComboBox,
                 CellValuesList = TargetAppList,
                 WidthWeight = 15,
-                Header = "Map to - Target Application"
+                Header = $"Map to - {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}"
             });
             xTargetApplication.SetAllColumnsDefaultView(view);
             xTargetApplication.InitViewItems();
