@@ -82,7 +82,7 @@ namespace Ginger.AnalyzerLib
                                 RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
                                 AGR.ItemParent = GR.Name;
                                 AGR.Description = "Same Agent was configured on more than one Runner";
-                                AGR.Details = string.Format("The '{0}' Runner '{1}' Target Application is mapped to the '{2}' Agent which is already configured on another Runner", GR.Name, AA.AppName, AA.AgentName);
+                                AGR.Details = $"The '{GR.Name}' Runner '{AA.AppName}' {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is mapped to the '{AA.AgentName}' Agent which is already configured on another Runner";
                                 AGR.HowToFix = "Map the Target Application to different Agent";
                                 AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                                 AGR.IssueType = eType.Error;

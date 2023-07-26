@@ -48,8 +48,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Source: "D:\BuildConfigs\ReleaseOutput\BuildOutput\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall:DetectAndInstallPrerequisites;
 Source: "D:\BuildConfigs\ReleaseOutput\BuildOutput\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;
 Source: "D:\BuildConfigs\DotnetDependencies\netcorecheck_x64.exe"; Flags: dontcopy deleteafterinstall noencryption
-Source: "D:\BuildConfigs\DotnetDependencies\windowsdesktop-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
-Source: "D:\BuildConfigs\DotnetDependencies\aspnetcore-runtime-6.0.6-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
+Source: "D:\BuildConfigs\DotnetDependencies\windowsdesktop-runtime-7.0.9-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
+Source: "D:\BuildConfigs\DotnetDependencies\aspnetcore-runtime-7.0.9-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
 Source: "D:\BuildConfigs\DotnetDependencies\AccessDatabaseEngine_X64.exe"; DestDir: "{tmp}"; Flags: dontcopy deleteafterinstall noencryption
 ;NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
@@ -109,29 +109,29 @@ begin
   WizardForm.StatusLabel.Caption := 'Detecting required .Net runtimes...';
   WizardForm.ProgressGauge.Style := npbstMarquee;
   try
-    If not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 6.0.6') then
+    If not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 7.0.9') then
     begin
-      WizardForm.StatusLabel.Caption := 'Installing Microsoft.WindowsDesktop.App Runtime 6.0.6...';
-      if not FileExists(ExpandConstant('{tmp}\windowsdesktop-runtime-6.0.6-win-x64.exe')) then begin
-        ExtractTemporaryFile('windowsdesktop-runtime-6.0.6-win-x64.exe');
+      WizardForm.StatusLabel.Caption := 'Installing Microsoft.WindowsDesktop.App Runtime 7.0.9...';
+      if not FileExists(ExpandConstant('{tmp}\windowsdesktop-runtime-7.0.9-win-x64.exe')) then begin
+        ExtractTemporaryFile('windowsdesktop-runtime-7.0.9-win-x64.exe');
       end;
-      if not Exec(ExpandConstant('{tmp}\windowsdesktop-runtime-6.0.6-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+      if not Exec(ExpandConstant('{tmp}\windowsdesktop-runtime-7.0.9-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
         begin
           { you can interact with the user that the installation failed }
-          MsgBox('.NET Desktop runtime 6.0.6 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
+          MsgBox('.NET Desktop runtime 7.0.9 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
             mbError, MB_OK);
       end;
     end;
-    If not Dependency_IsNetCoreInstalled('Microsoft.AspNetCore.App 6.0.6') then 
+    If not Dependency_IsNetCoreInstalled('Microsoft.AspNetCore.App 7.0.9') then 
     begin
-      WizardForm.StatusLabel.Caption := 'Installing Microsoft.AspNetCore.App Runtime 6.0.6...';
-      if not FileExists(ExpandConstant('{tmp}\aspnetcore-runtime-6.0.6-win-x64.exe')) then begin
-        ExtractTemporaryFile('aspnetcore-runtime-6.0.6-win-x64.exe');
+      WizardForm.StatusLabel.Caption := 'Installing Microsoft.AspNetCore.App Runtime 7.0.9...';
+      if not FileExists(ExpandConstant('{tmp}\aspnetcore-runtime-7.0.9-win-x64.exe')) then begin
+        ExtractTemporaryFile('aspnetcore-runtime-7.0.9-win-x64.exe');
       end;
-      if not Exec(ExpandConstant('{tmp}\aspnetcore-runtime-6.0.6-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+      if not Exec(ExpandConstant('{tmp}\aspnetcore-runtime-7.0.9-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
         begin
           { you can interact with the user that the installation failed }
-          MsgBox('.NET ASP Net Core 6.0.6 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
+          MsgBox('.NET ASP Net Core 7.0.9 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
             mbError, MB_OK);
       end;
     end;
