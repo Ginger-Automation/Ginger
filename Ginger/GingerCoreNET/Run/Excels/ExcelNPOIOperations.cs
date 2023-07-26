@@ -56,11 +56,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                  initialColNumber -> is used to locate the first column number of the first header column
                  */
                 int initialColNumber = -1;
-                SetHeaderColumns(headerRow , ref initialColNumber, dtExcelTable);
+                int blankColNumbers = 0;
+                SetHeaderColumns(headerRow , ref initialColNumber, dtExcelTable, ref blankColNumbers);
                 /*
                  intialColNumber is used to also locate where to start and end the reading of the row data. 
                  */
-                SetRowsForDataTable(sheet , dtExcelTable , initialColNumber, rowHeaderNumber, rowLimit);
+                SetRowsForDataTable(sheet , dtExcelTable , initialColNumber, rowHeaderNumber, rowLimit , blankColNumbers);
                 return dtExcelTable;
             }
             catch (Exception ex)
@@ -403,7 +404,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         }
 
 
-        private void SetHeaderColumns(IRow headerRow, ref int initialColNumber, DataTable dtExcelTable )
+        private void SetHeaderColumns(IRow headerRow, ref int initialColNumber, DataTable dtExcelTable, ref int blankColNumbers )
         {
             int colCount = headerRow.LastCellNum;
             for (var c = 0; c < colCount; c++)
@@ -417,8 +418,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     }
                     dtExcelTable.Columns.Add(GingerCoreNET.GeneralLib.General.RemoveSpecialCharactersInColumnHeader(cell.ToString()).Trim());
                 }
+                else
+                {
+                    blankColNumbers++;
+                }
             }
-
         }
         /// <summary>
         ///  Collects the row data (Apart from the Column Header)
@@ -429,20 +433,24 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         /// <param name="startRowNumber">Used to locate the first Row Number from where the row data begins</param>
         /// <param name="rowLimit">If the 'View Data / View Filtered Data' is selected on the Excel Action Page, the rowLimit is set , which means the user will only see AT MOST 'rowLimit' number of rows apart from the Column Header row </param>
 
-        private void SetRowsForDataTable(ISheet sheet, DataTable dtExcelTable, int initialColNumber, int startRowNumber, int rowLimit)
+        private void SetRowsForDataTable(ISheet sheet, DataTable dtExcelTable, int initialColNumber, int startRowNumber, int rowLimit, int blankColNumbers)
         {
             var currentRowNumber = startRowNumber;
             var currentRow = sheet.GetRow(currentRowNumber);
-
-            while ( hasDataTableReachedRowLimit(currentRow , rowLimit , startRowNumber, currentRowNumber))
+            while ( HasDataTableReachedRowLimit(currentRow , rowLimit , startRowNumber, currentRowNumber))
             {
                 var dr = dtExcelTable.NewRow();
-                for (var currentColNumber = initialColNumber; currentColNumber < initialColNumber + dr.ItemArray.Length; currentColNumber++)
+                int currentBlankRows = 0;
+                for (var currentColNumber = initialColNumber; currentColNumber < (initialColNumber + dr.ItemArray.Length + blankColNumbers); currentColNumber++)
                 {
                     var cell = currentRow.GetCell(currentColNumber);
                     if (cell != null)
                     {
-                        dr[currentColNumber - initialColNumber] = GetCellValue(cell, cell.CellType);
+                        dr[currentColNumber - initialColNumber - currentBlankRows] = GetCellValue(cell, cell.CellType);
+                    }
+                    else
+                    {
+                        currentBlankRows++;
                     }
                 }
                 dtExcelTable.Rows.Add(dr);
@@ -459,7 +467,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         /// <param name="rowLimit">If the 'View Data / View Filtered Data' is selected on the Excel Action Page, the rowLimit is set , which means the user will only see AT MOST 'rowLimit' number of rows apart from the Column Header row</param>
         /// <param name="startRowNumber">Start Row Number in the Excel Sheet </param>
         /// <param name="currentRowNumber">This variable denotes the current row , that is being read</param>
-        private bool hasDataTableReachedRowLimit(IRow currentRow , int rowLimit , int startRowNumber,int currentRowNumber)
+        private bool HasDataTableReachedRowLimit(IRow currentRow , int rowLimit , int startRowNumber,int currentRowNumber)
         {
             return  (rowLimit == -1) ? currentRow!=null  : currentRow != null && (startRowNumber+rowLimit - currentRowNumber) > 0;
         }
