@@ -52,7 +52,7 @@ namespace Ginger.ALM.Repository
 
                 if (almConnectType == eALMConnectType.SettingsPage || almConnectType == eALMConnectType.Manual)
                 {
-                    HandleSSO();
+                    HandleSSO(octaneCore.ALMType);
                 }
 
                 Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Octane server");
@@ -81,7 +81,7 @@ namespace Ginger.ALM.Repository
             }
         }
 
-        internal void HandleSSO()
+        internal void HandleSSO(eALMType aLMType)
         {
             var ssoConnectionInfo = ALMIntegration.Instance.GetConnectionInfo();
 
@@ -91,7 +91,7 @@ namespace Ginger.ALM.Repository
 
                 if (string.IsNullOrEmpty(ssoTokenInfo["Error"]))
                 {
-                    SSOPage ssoPage = new SSOPage(ssoTokenInfo["authentication_url"]);
+                    SSOPage ssoPage = new SSOPage(ssoTokenInfo["authentication_url"], aLMType);
                     ssoPage.ShowAsWindow();
 
                 }
