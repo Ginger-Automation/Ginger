@@ -41,11 +41,11 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 {
                     if (mFileVersionInfo.FilePrivatePart != 0)//Alpha
                     {
-                        mApplicationUIversion = string.Format("20{0}.{1}-Alpha{2}.{3}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart, mFileVersionInfo.FilePrivatePart);
+                        mApplicationUIversion = string.Format("20{0}.{1}-Alpha {2}.{3}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart, mFileVersionInfo.FilePrivatePart);
                     }
                     else if (mFileVersionInfo.FileBuildPart != 0)//Beta
                     {
-                        mApplicationUIversion = string.Format("20{0}.{1}-Beta{2}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart);
+                        mApplicationUIversion = string.Format("20{0}.{1}-Beta {2}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart);
                     }
                     else//Official Release
                     {
@@ -147,12 +147,11 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 }
                 if (iRevision != 0)//Alpha
                 {
-
-                    uiVersion = string.Format("{0}{1}.{2}-Alpha{3}.{4}", yearPrefix, iMajor, iMinor, iBuild, iRevision);
+                    uiVersion = string.Format("{0}{1}.{2}-Alpha {3}.{4}", yearPrefix, iMajor, iMinor, iBuild, iRevision);
                 }
                 else if (iBuild != 0)//Beta
                 {
-                    uiVersion = string.Format("{0}{1}.{2}-Beta{3}", yearPrefix, iMajor, iMinor, iBuild);
+                    uiVersion = string.Format("{0}{1}.{2}-Beta {3}", yearPrefix, iMajor, iMinor, iBuild);
                 }
                 else//Official Release
                 {

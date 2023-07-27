@@ -1351,40 +1351,31 @@ namespace Amdocs.Ginger.Repository
                 * <Header ... GingerVersion="2.6.0.0" Version="0" .../>*/
                 //int indx = xml.IndexOf("GingerVersion=");
                 int indx = xml.Trim().IndexOf(cHeaderGingerVersion) + 15;
-                string version = string.Empty;
+                StringBuilder version = new StringBuilder();
                 while (xml[indx].ToString() != string.Empty && xml[indx] != '"')
                 {
-                    version += xml[indx];
+                    version.Append(xml[indx]);
                     indx++;
                 }
                 
-
                 Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
-                Match match = regex.Match(version);
+                Match match = regex.Match(version.ToString());
                 if (match.Success)
                 {
-                    //int counter = 0;
-                    //string ver = string.Empty;
-                    //for (int index = 0; index < match.Value.Length; index++)
-                    //{
-                    //    if (match.Value[index] == '.')
-                    //        counter++;
-                    //    else
-                    //        ver += match.Value[index];
-                    //}
-                    //return ver;
-                    return version;
+                    return version.ToString();
                 }
                 else
                 {
+                    //failed to get the XML version   
                     Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the XML version of the file:'{0}'", xmlFilePath));
-                    return null;//failed to get the XML version                    
+                    return null;                 
                 }
             }
             catch (Exception ex)
             {
+                //failed to get te XML version 
                 Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the XML version of the file:'{0}'", xmlFilePath), ex);
-                return null;//failed to get te XML version                
+                return null;               
             }
         }
 
