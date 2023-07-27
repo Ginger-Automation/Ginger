@@ -588,14 +588,17 @@ namespace Ginger.Run
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
                 GingerRunner gr = (GingerRunner)e.NewItems[0];
-                if (gr.Executor == null)
+                Dispatcher.InvokeAsync(() =>
                 {
-                    gr.Executor = new GingerExecutionEngine(gr);
-                }
-                RunnerPage runnerPage = new();
-                runnerPages.Add(runnerPage);
-                InitRunnerFlowElement(runnerPage, (GingerExecutionEngine)gr.Executor, e.NewStartingIndex);
-                GingerRunnerHighlight(runnerPage);
+                    if (gr.Executor == null)
+                    {
+                        gr.Executor = new GingerExecutionEngine(gr);
+                    }
+                    RunnerPage runnerPage = new();
+                    runnerPages.Add(runnerPage);
+                    InitRunnerFlowElement(runnerPage, (GingerExecutionEngine)gr.Executor, e.NewStartingIndex);
+                    GingerRunnerHighlight(runnerPage);
+                });
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
