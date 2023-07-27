@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -326,6 +326,7 @@
     <Compile Include="GeneralLib\ComboGroupedEnumItem.cs" />
     <Compile Include="GeneralLib\ComboItem.cs" />
     <Compile Include="GeneralLib\CommonLib.cs" />
+    <Compile Include="GeneralLib\FrameControlExtensions.cs" />
     <Compile Include="GeneralLib\JSONHelper.cs" />
     <Compile Include="Extensions\Screenshot.cs" />
     <Compile Include="DataSource\AccessDataSource.cs" />
@@ -541,7 +542,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper">
-      <Version>9.0.0</Version>
+      <Version>12.0.1</Version>
     </PackageReference>
     <PackageReference Include="BouncyCastle.NetCore" Version="1.8.10" />
     <PackageReference Include="CassandraCSharpDriver">

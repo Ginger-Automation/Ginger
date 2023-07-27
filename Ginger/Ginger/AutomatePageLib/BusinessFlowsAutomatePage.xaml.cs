@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerWPF.BusinessFlowsLib;
 using GingerWPF.UserControlsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -61,7 +62,7 @@ namespace Ginger.BusinessFlowWindows
                     {
                         mNewAutomatePage = new NewAutomatePage((BusinessFlow)args.Object);
                     }
-                    xContentFrame.Content = mNewAutomatePage;
+                    xContentFrame.ClearAndSetContent(mNewAutomatePage);
                     await mNewAutomatePage.LoadBusinessFlowToAutomate((BusinessFlow)args.Object);
                 }
                 finally
@@ -98,7 +99,7 @@ namespace Ginger.BusinessFlowWindows
                 BusinessFlowsFolderTreeItem busFlowsRootFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
                 mBusFlowsPage = new SingleItemTreeViewExplorerPage(GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.BusinessFlows), eImageType.BusinessFlow, busFlowsRootFolder, busFlowsRootFolder.SaveAllTreeFolderItemsHandler, busFlowsRootFolder.AddItemHandler, treeItemDoubleClickHandler: BusinessFlowsTree_ItemDoubleClick, true);
             }
-            xContentFrame.Content = mBusFlowsPage;
+            xContentFrame.ClearAndSetContent(mBusFlowsPage);
         }
 
         private void BusinessFlowsTree_ItemDoubleClick(object sender, EventArgs e)

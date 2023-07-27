@@ -105,6 +105,10 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                 }
             }
+            else if (e.PropertyName == nameof(Activity.Active) || e.PropertyName == nameof(Activity.Mandatory))
+            {
+                mBusinessFlow.OnPropertyChanged(nameof(BusinessFlow.Activities));
+            }
         }
 
         private void mBusinessFlowActivities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -154,7 +158,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xAddTargetBtn.IsEnabled = true;
                 xPublishcheckbox.IsEnabled = true;
             }
-
+            xAddTargetApplication.Content= $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} :";
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
             xNameTxtBox.AddValidationRule(new BusinessFlowNameValidationRule());
             xShowIDUC.Init(mBusinessFlow);

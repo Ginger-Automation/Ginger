@@ -153,7 +153,7 @@
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Table:</Label>
                         <DockPanel Grid.Column="1" HorizontalAlignment="Left"  >
-                            <ComboBox x:Name="TablesComboBox" SelectionChanged="TablesComboBox_SelectionChanged" DropDownOpened="TablesComboBox_DropDownOpened" Style="{StaticResource $FlatInputComboBoxStyle}" Width="550"></ComboBox>
+                            <ComboBox x:Name="TablesComboBox" SelectionChanged="TablesComboBox_SelectionChanged" IsEditable="True" DropDownOpened="TablesComboBox_DropDownOpened" Style="{StaticResource $FlatInputComboBoxStyle}" Width="550"></ComboBox>
                             <Button x:Name="TablesVEButton" Content="..." Click="TablesVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"  Width="30" Height="24" RenderTransformOrigin="12.855,0.928" />
                         </DockPanel>
                     </Grid>
@@ -169,7 +169,7 @@
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" x:Name="lblColumn" Style="{StaticResource @LabelStyle}" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left">Column:</Label>
                         <DockPanel Grid.Column="1" HorizontalAlignment="Left"  >
-                            <ComboBox x:Name="ColumnComboBox" DropDownOpened="ColumnComboBox_DropDownOpened" Style="{StaticResource $FlatInputComboBoxStyle}" Width="550"></ComboBox>
+                            <ComboBox x:Name="ColumnComboBox" DropDownOpened="ColumnComboBox_DropDownOpened" Style="{StaticResource $FlatInputComboBoxStyle}" IsEditable="True" Width="550"></ComboBox>
                             <Button x:Name="ColumnsVEButton" Content="..." Click="ColumnsVEButton_Click" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}"  Width="30" Height="24" RenderTransformOrigin="12.855,0.928" />
                         </DockPanel>
                     </Grid>

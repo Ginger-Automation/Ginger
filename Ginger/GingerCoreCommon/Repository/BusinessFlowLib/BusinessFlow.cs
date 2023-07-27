@@ -1053,7 +1053,9 @@ namespace GingerCore
                 Parallel.For(0, this.Activities.Count, new ParallelOptions() { MaxDegreeOfParallelism = 5 }, i =>
                 {
                     if (!this.Activities[i].IsLinkedItem)
+                    {
                         return;
+                    }
                     Activity sharedActivity = GingerCoreCommonWorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(this.Activities[i].ParentGuid);
 
                     if (sharedActivity != null)
@@ -1062,8 +1064,12 @@ namespace GingerCore
                         copyItem.Guid = this.Activities[i].Guid;
                         copyItem.ActivitiesGroupID = this.Activities[i].ActivitiesGroupID;
                         copyItem.Type = this.Activities[i].Type;
-                        copyItem.Active = this.Activities[i].Active; 
+                        copyItem.Active = this.Activities[i].Active;
                         this.Activities[i] = copyItem;
+                    }
+                    else
+                    {
+                        this.Activities[i].Active = false;
                     }
                 });
             }
@@ -1293,7 +1299,7 @@ namespace GingerCore
             {
                 if (userSelection == eUserMsgSelection.None)
                 {
-                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activity's Target application to BF.");
+                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to selected BF. Ginger will map the Activity's Target application to BF.");
                 }
 
                 if (userSelection == eUserMsgSelection.OK)

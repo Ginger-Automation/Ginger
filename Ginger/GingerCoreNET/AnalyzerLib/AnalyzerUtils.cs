@@ -52,9 +52,8 @@ namespace Ginger.AnalyzerLib
 
             //foreach (BusinessFlow BF in BFs)
             Parallel.ForEach(BFs, new ParallelOptions { MaxDegreeOfParallelism = 5 }, BF =>
-            {
-                List<string> tempList = RunBusinessFlowAnalyzer(BF, issuesList);
-                MergeVariablesList(usedVariablesInSolution, tempList);
+            {                
+                MergeVariablesList(usedVariablesInSolution, RunBusinessFlowAnalyzer(BF, issuesList));                
             });
             ReportUnusedVariables(solution, usedVariablesInSolution, issuesList);
         }
@@ -144,14 +143,13 @@ namespace Ginger.AnalyzerLib
                         }
 
                     }
-
-                    List<string> tempList = AnalyzeAction.GetUsedVariableFromAction(action);
-                    MergeVariablesList(usedVariablesInActivity, tempList);
+                    
+                    MergeVariablesList(usedVariablesInActivity, AnalyzeAction.GetUsedVariableFromAction(action));                    
                 });
+                
 
-                List<string> activityVarList = AnalyzeActivity.GetUsedVariableFromActivity(activity);
-
-                MergeVariablesList(usedVariablesInActivity, activityVarList);
+                MergeVariablesList(usedVariablesInActivity, AnalyzeActivity.GetUsedVariableFromActivity(activity));
+                
                 ReportUnusedVariables(activity, usedVariablesInActivity, issuesList);
                 MergeVariablesList(usedVariablesInBF, usedVariablesInActivity);
 

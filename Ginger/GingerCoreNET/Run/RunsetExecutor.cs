@@ -170,6 +170,10 @@ namespace Ginger.Run
         {          
             //Configure Runner for execution
             runner.Status = eRunStatus.Pending;
+            if(runner.Executor != null && runner.Executor is GingerExecutionEngine previousExectionEngine)
+            {
+                previousExectionEngine.ClearBindings();
+            }
             runner.Executor = ExecutorEngine;
             ConfigureRunnerForExecution((GingerExecutionEngine)runner.Executor);
 

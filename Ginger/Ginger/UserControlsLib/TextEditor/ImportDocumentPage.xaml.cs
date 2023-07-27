@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
 using System;
 using System.IO;
 using System.Windows;
@@ -61,7 +62,7 @@ namespace Ginger.UserControlsLib.TextEditor
             }
             else
             {
-                EditorFrame.Content = new DocumentEditorPage(FileName.FilePathTextBox.Text, false, true, "Selected Content Viewer");
+                EditorFrame.ClearAndSetContent(new DocumentEditorPage(FileName.FilePathTextBox.Text, false, true, "Selected Content Viewer"));
             }
         }
 

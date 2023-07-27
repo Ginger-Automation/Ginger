@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Drivers.CommunicationProtocol;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
+using GingerCore.GeneralLib;
 using GingerCoreNET.RunLib;
 using System;
 using System.Collections.Generic;
@@ -155,7 +156,7 @@ namespace Ginger.GingerGridLib
                 GingerGridNodePage p = new GingerGridNodePage(GNA);
                 // Connect to LiveView Channel - this is not via Run act
                 Frame f = new Frame();
-                f.Content = p;
+                f.ClearAndSetContent(p);
                 xServicesGrid.Children.Add(f);
 
                 Grid.SetRow(f, row);

@@ -515,7 +515,7 @@ namespace GingerCore.Actions
                 RefreshActiveProcessesTitles();
                 if (!lstWindows.Any(m => m.Current.Name.Equals(ProcessNameForSikuliOperation)))
                 {
-                    Error = "Target Application is not running";
+                    Error = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not running";
                     return false;
                 }
             }

@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Ginger.UserControlsLib;
 using GingerCore.Environments;
+using GingerCore.GeneralLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -91,7 +92,7 @@ namespace Ginger.Environments
             {
                 if (ParamsFrame.Content == null)
                 {
-                    ParamsFrame.Content = new AppGeneralParamsPage(mEnvApplication);
+                    ParamsFrame.ClearAndSetContent(new AppGeneralParamsPage(mEnvApplication));
                 }
                 return;
             }
@@ -100,7 +101,7 @@ namespace Ginger.Environments
             {
                 if (DBsFrame.Content == null)
                 {
-                    DBsFrame.Content = new AppDataBasesPage(mEnvApplication, mContext);
+                    DBsFrame.ClearAndSetContent(new AppDataBasesPage(mEnvApplication, mContext));
                     return;
                 }
             }
@@ -109,7 +110,7 @@ namespace Ginger.Environments
             {
                 if (UsersFrame.Content == null)
                 {
-                    UsersFrame.Content = new AppLoginUsersPage(mEnvApplication);
+                    UsersFrame.ClearAndSetContent(new AppLoginUsersPage(mEnvApplication));
                     return;
                 }
             }
