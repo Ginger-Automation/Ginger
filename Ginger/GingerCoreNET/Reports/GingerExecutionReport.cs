@@ -814,7 +814,7 @@ namespace Ginger.Reports.GingerExecutionReport
                     else
                     {
                         ReportHTML = ReportHTML.Replace("<!--Section_PlaceHolder_ApplicationAgentsMapping-->",
-                                                     ConvertingDatatableToHTML((DataTable)gr.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(gr), "Target Application - Agents Mapping", "table table-striped table-bordered table-hover", selectedField.IsSectionCollapsed));
+                                                     ConvertingDatatableToHTML((DataTable)gr.GetType().GetProperty(selectedField.FieldKey.ToString()).GetValue(gr), $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} - Agents Mapping", "table table-striped table-bordered table-hover", selectedField.IsSectionCollapsed));
                     }
                 }
                 else if (selectedField.FieldKey == GingerReport.Fields.BusinessFlowsDetails)
