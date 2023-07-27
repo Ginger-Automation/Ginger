@@ -568,6 +568,7 @@ namespace GingerCore.Actions
                         }
                     }
                 }
+                this.AddOrUpdateReturnParamActualWithPath("SQL Raw Query", calcSQL, (recordcount + 1).ToString() + "");
 
             }
             catch (Exception e)

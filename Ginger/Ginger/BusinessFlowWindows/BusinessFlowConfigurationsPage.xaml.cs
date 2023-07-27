@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
@@ -167,7 +168,8 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xDescriptionTxt, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Description));
             xTagsViewer.Init(mBusinessFlow.Tags);
             xRunDescritpion.Init(mContext, mBusinessFlow, nameof(BusinessFlow.RunDescription));
-            if (!string.IsNullOrEmpty(mBusinessFlow.ExternalID))
+
+            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures && !string.IsNullOrEmpty(mBusinessFlow.ExternalID))
             {
                 xExternalId.Init(mContext, mBusinessFlow, nameof(BusinessFlow.ExternalID));
             }
