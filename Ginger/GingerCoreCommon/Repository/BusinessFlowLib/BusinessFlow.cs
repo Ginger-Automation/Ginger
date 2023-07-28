@@ -1839,7 +1839,7 @@ namespace GingerCore
             else
             {
                 ve.Value = ExternalID;
-                ExternalIdCalCulated = ve.ValueCalculated;
+                ExternalIdCalCulated = ExternalID;
             }
         }
 
