@@ -32,12 +32,18 @@
 
         <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,2,0">
             <StackPanel>
-                <Label Style="{StaticResource @InputFieldLabelStyle}">Sheet Name:</Label>
-                <DockPanel>
-                    <ComboBox x:Name="SheetNamComboBox" SelectionChanged="SheetNamComboBox_SelectionChanged"  Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" HorizontalAlignment="Stretch" DockPanel.Dock="Left" Width="250"></ComboBox>
-                    <Button x:Name="SheetNamVEButton" Content="..." Click="SheetNamVEButton_Click" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,5,0" Width="30" Height="24"/>
-                    <usercontrols:ImageMakerControl x:Name="xLoader" ImageType="Processing"  Width="20" Height="20" Visibility="Hidden"/>
-                </DockPanel>
+                <StackPanel>
+                    <Label Style="{StaticResource @InputFieldLabelStyle}">Sheet Name:</Label>
+                    <DockPanel>
+                        <ComboBox x:Name="SheetNamComboBox" SelectionChanged="SheetNamComboBox_SelectionChanged" DropDownOpened="SheetNamComboBox_DropDownOpened" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" HorizontalAlignment="Stretch" DockPanel.Dock="Left" Width="250"></ComboBox>
+                        <Button x:Name="SheetNamVEButton" Content="..." Click="SheetNamVEButton_Click" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,5,0" Width="30" Height="24"/>
+                        <usercontrols:ImageMakerControl x:Name="xLoader" ImageType="Processing"  Width="20" Height="20" Visibility="Hidden"/>
+                    </DockPanel>
+                </StackPanel>
+                <StackPanel>
+                    <Label Style="{StaticResource @InputFieldLabelStyle}">Table Header Row Number:</Label>
+                    <Actions:UCValueExpression HorizontalAlignment="Left" Width="250" x:Name="HeaderRowNumTextBox" ToolTip="Enter the Row Number at which the Table Headers Exists" PreviewTextInput="HeaderNumValidation"/>
+                </StackPanel>
             </StackPanel>
 
             <StackPanel>
@@ -72,7 +78,10 @@
                 <Button x:Name="xOpenExcelButton"  Style="{StaticResource @InputButtonStyle}" Click="xOpenExcelButton_Click" Content="Open Excel" DockPanel.Dock="Right" HorizontalAlignment="Right" Width="80" Padding="5,0,5,0" Margin="5,0,5,0" />
             </DockPanel>
 
-            <DataGrid x:Name="ExcelDataGrid" DockPanel.Dock="Top" AutoGenerateColumns="False">
+            <TextBlock DockPanel.Dock="Top" Margin="4" FontWeight="Bold" FontSize="10" Foreground="{StaticResource $Color_DarkBlue}"> 
+                <Run Typography.Variants="Superscript" >*</Run>
+                Viewing Excel Data (View Data / View Filtered Data) will display ATMOST 50 ROWS</TextBlock>
+            <DataGrid x:Name="ExcelDataGrid" DockPanel.Dock="Top" AutoGenerateColumns="False" ScrollViewer.CanContentScroll="True">
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="{x:Type DataGridColumnHeader}">
                         <Setter Property="Template">

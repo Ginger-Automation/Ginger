@@ -337,7 +337,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunSet.StartTimeStamp = runSetConfig.StartTimeStamp;
             accountReportRunSet.MachineName = System.Environment.MachineName.ToString();
             accountReportRunSet.ExecutedByUser = System.Environment.UserName.ToString();
-            accountReportRunSet.GingerVersion = ApplicationInfo.ApplicationVersion;
+            accountReportRunSet.GingerVersion = ApplicationInfo.ApplicationUIversion;
             accountReportRunSet.Account = WorkSpace.Instance.Solution.Account;
             accountReportRunSet.Product = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.Product));
             accountReportRunSet.Release = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.Release));

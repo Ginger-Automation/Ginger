@@ -1,0 +1,87 @@
+name: CD
+
+on:
+    workflow_dispatch: 
+        inputs:
+            major:
+                type: number 
+                required: true
+                default: '23'
+            minor:
+                type: number 
+                required: true
+                default: '1'
+            build:
+                type: number 
+                required: true
+                default: '0'
+            revision:
+                type: number 
+                required: true
+                default: '0'
+jobs:
+    Create-version-Number:
+        runs-on: ubuntu-latest
+        
+        outputs:
+          version_number: ${{ steps.version.outputs.number }}
+          version_tag: ${{ steps.version.outputs.tag }}
+
+        steps:           
+          - name: create version environment variable - alpha
+            if: ${{ github.event.inputs.revision != 0 }}
+            run: |
+                echo "gingertag=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Alpha$github.event.inputs.build.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
+                echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.$github.event.inputs.build.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
+          
+          - name: create version environment variable - BETA
+            if: ${{ (github.event.inputs.build != 0) && (github.event.inputs.revision == 0 )}} 
+            run: |
+              echo "gingertag=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Beta ${{ github.event.inputs.build}}" >> $GITHUB_ENV
+              echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
+
+          - name: create version environment variable - Release
+            if: ${{ (github.event.inputs.build == 0 ) && ( github.event.inputs.revision == 0) }} 
+            run: |
+              echo "gingertag=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Official" >> $GITHUB_ENV
+              echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
+
+          - name: create environment variable 
+            id: version
+            run: |
+              echo "number=${{ env.gingernumber}}" >> $GITHUB_OUTPUT
+              echo "tag=${{ env.gingertag}}" >> $GITHUB_OUTPUT
+
+          - name: create version variable text file
+            run: |
+              echo "NUMBER=${{env.gingernumber}}" > version.txt
+              echo "TAG=${{ env.gingertag}}" >> version.txt
+              cat version.txt
+          
+          - name: 'Upload static site content'
+            uses: actions/upload-artifact@v3
+            with:
+              name: ginger-version
+              path: ./version.txt
+               
+    CI:
+        name: CI
+        uses: Ginger-Automation/Ginger/.github/workflows/CI.yml@master
+        secrets: inherit
+     
+    Release:
+        name: Release
+        needs: CI
+        uses: Ginger-Automation/Ginger/.github/workflows/Release.yml@master
+        secrets: inherit
+     
+    Deploy:
+        name: Deploy
+        needs: Release
+        uses: Ginger-Automation/Ginger/.github/workflows/Deploy.yml@master
+
+    Docker:
+        name: Docker
+        needs: CI
+        uses: Ginger-Automation/Ginger/.github/workflows/Docker.yml@master
+        secrets: inherit
