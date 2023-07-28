@@ -23,12 +23,13 @@ using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.SourceControlLib;
 using static GingerCoreNET.SourceControl.SourceControlFileInfo;
 
 namespace GingerCoreNET.SourceControl
 {
     // Base class for Source Control types can be SVN, GIT, TFS, XtraC etc...
-    public enum eResolveConflictsSide { Local, Server }
+    public enum eResolveConflictsSide { Local, Server, Manual }
 
     public abstract class SourceControlBase : INotifyPropertyChanged, ISourceControl
     {
@@ -151,6 +152,29 @@ namespace GingerCoreNET.SourceControl
         public abstract bool Lock(string path, string lockComment, ref string error);
         //allowing other users to commit changes to this item
         public abstract bool UnLock(string path, ref string error);
+
+        /// <summary>
+        /// Get local version content from the conflicted content.
+        /// </summary>
+        /// <param name="conflictedFilePath">Path to conflicted file.</param>
+        /// <returns>Local version content.</returns>
+        public abstract string GetLocalContentFromConflicted(string conflictedFilePath);
+
+        /// <summary>
+        /// Get remote version content from the conflicted content.
+        /// </summary>
+        /// <param name="conflictedFilePath">Path to conflicted file.</param>
+        /// <returns>Remote version content.</returns>
+        public abstract string GetRemoteContentFromConflicted(string conflictedFilePath);
+
+        /// <summary>
+        /// Resolve merge conflict for the file at <paramref name="path"/> using the provided <paramref name="content"/>.
+        /// </summary>
+        /// <param name="path">Path of the file with conflict.</param>
+        /// <param name="content">Content using which conflict will be resolved.</param>
+        /// <param name="error">Error details if any.</param>
+        /// <returns><see langword="true"/> if the conflict was resolved successfully, <see langword="false"/> otherwise.</returns>
+        public abstract bool NewResolveConflict(string path, string content, ref string error);
 
         //resolve conflicts automatically when getting latest updates
         public abstract bool ResolveConflicts(string path, eResolveConflictsSide side, ref string error);

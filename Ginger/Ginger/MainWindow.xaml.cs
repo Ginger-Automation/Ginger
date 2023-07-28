@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.IO;
@@ -736,6 +737,11 @@ namespace Ginger
             ResolveSourceControlConflicts(eResolveConflictsSide.Server);
         }
 
+        private void ResolveConflictsManuallyMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ResolveSourceControlConflicts(eResolveConflictsSide.Manual);
+        }
+
         private void xHelpOptionsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             if (xHelpOptionsMenuItem.Tag == null)
@@ -1194,8 +1200,9 @@ namespace Ginger
                         }
                     }
             };
-
-            WizardWindow.ShowWizard(new ResolveMergeConflictWizard(bf1, bf2));
+            ICollection<Comparison> childComparisons = RepositoryItemBaseComparer.Compare("[0]", bf1, bf2);
+            Comparison.State state = childComparisons.All(c => c.StateType == Comparison.State.Unmodified) ? Comparison.State.Unmodified : Comparison.State.Modified;
+            WizardWindow.ShowWizard(new ResolveMergeConflictWizard(new Comparison("ROOT", state, childComparisons, dataType: bf1.GetType())));
         }
 
         //BusinessFlow bf1 = new()

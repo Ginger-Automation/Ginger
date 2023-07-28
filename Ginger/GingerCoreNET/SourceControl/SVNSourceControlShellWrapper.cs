@@ -222,5 +222,20 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         {
             return false;
         }
+
+        public override string GetLocalContentFromConflicted(string conflictedFilePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GetRemoteContentFromConflicted(string conflictedFilePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool NewResolveConflict(string path, string content, ref string error)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

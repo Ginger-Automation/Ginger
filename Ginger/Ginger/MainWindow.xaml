@@ -166,6 +166,8 @@
                                     </MenuItem>
                                     <MenuItem Header="Accept Server Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ResolveConflictsServerMenuItem_Click">
                                     </MenuItem>
+                                    <MenuItem Header="Cherry Pick Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ResolveConflictsManuallyMenuItem_Click">
+                                    </MenuItem>
                                 </MenuItem>
                             </MenuItem>
                             <MenuItem x:Name="xSolutionSourceControlInitMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Source Control Operations">

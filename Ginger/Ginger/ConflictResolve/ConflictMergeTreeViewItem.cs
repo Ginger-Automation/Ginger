@@ -1,8 +1,8 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
-using GingerCore.GeneralLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;

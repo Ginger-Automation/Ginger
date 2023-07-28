@@ -19,14 +19,17 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
+using Cassandra;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Ginger.SourceControl
@@ -173,6 +176,80 @@ namespace Ginger.SourceControl
         {
             string error = string.Empty;
             return SourceControl.GetLockOwner(path, ref error);
+        }
+
+        public static Comparison GetComparisonForConflicted(SourceControlBase sourceControl, string path)
+        {
+            if (path.Contains("@/"))
+            {
+                path = path.Replace("@/", "\\");
+            }
+
+            string localContent = sourceControl.GetLocalContentFromConflicted(path);
+            RepositoryItemBase localItem = NewRepositorySerializer.DeserializeFromText(localContent);
+            string remoteContent = sourceControl.GetRemoteContentFromConflicted(path);
+            RepositoryItemBase remoteItem = NewRepositorySerializer.DeserializeFromText(remoteContent);
+            ICollection<Comparison> childComparisons = RepositoryItemBaseComparer.Compare("[0]", localItem, remoteItem);
+            Comparison.State state = childComparisons.All(c => c.StateType == Comparison.State.Unmodified) ? Comparison.State.Unmodified : Comparison.State.Modified;
+            return new Comparison("ROOT", state, childComparisons: childComparisons, dataType: localItem.GetType());
+        }
+
+        public static Comparison PreviewManualConflictResolve(Comparison comparison)
+        {
+            RepositoryItemBase mergedRIB = RepositoryItemBaseMerger.Merge(comparison.DataType, comparison.ChildComparisons);
+            ICollection<Comparison> childComparisons = RepositoryItemBaseComparer.Compare("[0]", mergedRIB, remoteItem: null);
+            Comparison.State state = childComparisons.All(c => c.StateType == Comparison.State.Unmodified) ? Comparison.State.Unmodified : Comparison.State.Modified;
+            return new Comparison("ROOT", state, childComparisons: childComparisons, dataType: mergedRIB.GetType());
+        }
+
+        public static bool NewResolveConflict(SourceControlBase sourceControl, string path, eResolveConflictsSide side, Comparison comparison = null)
+        {
+            try
+            {
+                if (path == null)
+                {
+                    return false;
+                }
+                if (path.Contains("@/"))
+                {
+                    path = path.Replace("@/", "\\");
+                }
+
+                bool isConflictResolved = false;
+                string error = string.Empty;
+                switch (side)
+                {
+                    case eResolveConflictsSide.Local:
+                        string localContent = sourceControl.GetLocalContentFromConflicted(path);
+                        isConflictResolved = sourceControl.NewResolveConflict(path, localContent, ref error);
+                        break;
+                    case eResolveConflictsSide.Server:
+                        string remoteContent = sourceControl.GetRemoteContentFromConflicted(path);
+                        isConflictResolved = sourceControl.NewResolveConflict(path, remoteContent, ref error);
+                        break;
+                    case eResolveConflictsSide.Manual:
+                        if(comparison == null)
+                        {
+                            throw new ArgumentException($"{nameof(comparison)} argument must be non-null for side {nameof(eResolveConflictsSide.Manual)}.");
+                        }
+                        RepositoryItemBase mergedRIB = RepositoryItemBaseMerger.Merge(comparison.DataType, comparison.ChildComparisons);
+                        string mergedRIBAsString = new NewRepositorySerializer().SerializeToString(mergedRIB);
+                        isConflictResolved = sourceControl.NewResolveConflict(path, mergedRIBAsString, ref error);
+                        break;
+                }
+
+                if (!isConflictResolved)
+                {
+                    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                }
+
+                return isConflictResolved;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during resolving conflicts..", ex);
+                return false;
+            }
         }
 
         public static bool ResolveConflicts(SourceControlBase SourceControl, string path, eResolveConflictsSide side)

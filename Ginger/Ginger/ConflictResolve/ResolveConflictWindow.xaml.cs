@@ -32,6 +32,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using static Ginger.ConflictResolve.ConflictResolve;
 using GingerWPF.BusinessFlowsLib;
+using Amdocs.Ginger.Common.SourceControlLib;
+using GingerWPF.WizardLib;
 
 namespace Ginger.ConflictResolve
 {
@@ -114,7 +116,22 @@ namespace Ginger.ConflictResolve
         {
             genWin.Close();
         }
+
+
         private void xCompareAndMergeButton_Click(object sender, EventArgs e)
+        {
+            ConflictResolve conflict = (ConflictResolve)((FrameworkElement)sender).DataContext;
+            if (!conflict.IsMerge)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Compare Conflict is not yet supporter for this entity");
+                return;
+            }
+            Comparison comparison = SourceControlIntegration.GetComparisonForConflicted(WorkSpace.Instance.SourceControl, conflict.ConflictPath);
+            ResolveMergeConflictWizard wizard = new(comparison);
+            WizardWindow.ShowWizard(wizard);
+        }
+
+        private void xCompareAndMergeButton_Click_Old(object sender, EventArgs e)
         {
             ConflictResolve conflict = (ConflictResolve)((FrameworkElement)sender).DataContext;
             if (!conflict.IsMerge)

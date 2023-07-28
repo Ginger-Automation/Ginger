@@ -541,6 +541,273 @@ namespace GingerCore.SourceControl
             mConflictsPaths.Add(e.MergedFile);
         }
 
+        private const string ConflictStartMarker = "<<<<<<<";
+        private const string ConflictFirstPartitionMarker = "|||||||";
+        private const string ConflictSecondPartitionMarker = "=======";
+        private const string ConflictEndMarker = ">>>>>>>";
+        private const string CR_LF = "\r\n";
+
+        /// <summary>
+        /// Get only the local content from <paramref name="conflictedContent"/>.
+        /// </summary>
+        /// <param name="conflictedContent">Content with conflicting data.</param>
+        /// <returns>Local content from the <paramref name="conflictedContent"/>.</returns>
+        public override string GetLocalContentFromConflicted(string conflictedFilePath)
+        {
+            string localContent;
+            if (!GetLocalContentViaMineFile(conflictedFilePath, out localContent))
+            {
+                string conflictedContent = File.ReadAllText(conflictedFilePath);
+                localContent = GetLocalContentViaMarkers(conflictedContent);
+            }
+            return localContent;
+        }
+
+        private bool GetLocalContentViaMineFile(string conflictedFilePath, out string localContent)
+        {
+            string mineFilePath = conflictedFilePath + ".mine";
+            bool wasMineFileFound = File.Exists(mineFilePath);
+            localContent = string.Empty;
+            if(wasMineFileFound)
+            {
+                localContent = File.ReadAllText(mineFilePath);
+            }
+
+            return wasMineFileFound;
+        }
+
+        internal string GetLocalContentViaMarkers(string conflictedContent)
+        {
+            string leadingContent = GetLeadingContentFromConflicted(conflictedContent);
+            string mineContent = GetMineContentFromConflicted(conflictedContent);
+            string trailingContent = GetTrailingContentFromConflicted(conflictedContent);
+
+            string localContent = leadingContent + mineContent + trailingContent;
+
+            if (localContent.Contains(ConflictStartMarker))
+            {
+                localContent = GetLocalContentViaMarkers(localContent);
+            }
+
+            return localContent;
+        }
+
+        /// <summary>
+        /// Get only the remote content from <paramref name="conflictedContent"/>.
+        /// </summary>
+        /// <param name="conflictedContent">Content with conflicting data.</param>
+        /// <returns>Remote content from the <paramref name="conflictedContent"/>.</returns>
+        public override string GetRemoteContentFromConflicted(string conflictedFilePath)
+        {
+            string remoteContent;
+            if(!GetRemoteContentViaHead(conflictedFilePath, out remoteContent))
+            {
+                string conflictedContent = File.ReadAllText(conflictedFilePath);
+                remoteContent = GetRemoteContentViaMarkers(conflictedContent);
+            }
+
+            return remoteContent;
+        }
+
+        private bool GetRemoteContentViaHead(string conflictedFilePath, out string remoteContent)
+        {
+            try
+            {
+                if(client == null)
+                {
+                    Init();
+                }
+
+                using MemoryStream remoteContentStream = new();
+                client.Write(new SvnPathTarget(conflictedFilePath, SvnRevision.Head), remoteContentStream);
+                remoteContent = new StreamReader(remoteContentStream).ReadToEnd();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, ex.ToString());
+                remoteContent = string.Empty;
+                return false;
+            }
+        }
+
+        internal string GetRemoteContentViaMarkers(string conflictedContent)
+        {
+            string leadingContent = GetLeadingContentFromConflicted(conflictedContent);
+            string branchContent = GetHeadContentFromConflicted(conflictedContent);
+            string trailingContent = GetTrailingContentFromConflicted(conflictedContent);
+
+            string remoteContent = leadingContent + branchContent + trailingContent;
+
+            if (remoteContent.Contains(ConflictStartMarker))
+            {
+                remoteContent = GetRemoteContentViaMarkers(remoteContent);
+            }
+
+            return remoteContent;
+        }
+
+        /// <summary>
+        /// Get the content leading the first <see cref="ConflictStartMarker"/>. 
+        /// <example>
+        /// <code>
+        /// //For example, for below text,
+        /// 
+        /// If you have questions, please
+        /// &lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
+        /// open an issue
+        /// =======
+        /// ask your question in IRC
+        /// &gt;&gt;&gt;&gt;&gt;&gt;&gt; .branch-a
+        /// thank you.
+        /// 
+        /// //it will return,
+        /// 
+        /// If you have questions, please
+        /// </code>
+        /// </example>
+        /// </summary>
+        /// <param name="conflictedContent">Content with conflicting data.</param>
+        /// <returns>Content leading the first <see cref="ConflictStartMarker"/>.</returns>
+        internal string GetLeadingContentFromConflicted(string conflictedContent)
+        {
+            string leadingContent = string.Empty;
+            int startMarkerIndex = conflictedContent.IndexOf(ConflictStartMarker);
+            int leadingContentLength = startMarkerIndex;
+            if (leadingContentLength >= 0)
+            {
+                leadingContent = conflictedContent.Substring(0, leadingContentLength);
+            }
+
+            return leadingContent;
+        }
+
+        /// <summary>
+        /// Get the content between the first <see cref="ConflictStartMarker"/> and <see cref="ConflictSecondPartitionMarker"/>.
+        /// <example>
+        /// <code>
+        /// //For example, for below text,
+        /// 
+        /// If you have questions, please
+        /// &lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
+        /// open an issue
+        /// =======
+        /// ask your question in IRC
+        /// &gt;&gt;&gt;&gt;&gt;&gt;&gt; .branch-a
+        /// thank you.
+        /// 
+        /// //it will return,
+        /// 
+        /// open an issue
+        /// </code>
+        /// </example>
+        /// </summary>
+        /// <param name="conflictedContent">Content with conflicting data.</param>
+        /// <returns>Content between the first <see cref="ConflictStartMarker"/> and <see cref="ConflictSecondPartitionMarker"/>.</returns>
+        internal string GetMineContentFromConflicted(string conflictedContent)
+        {
+            int startMarkerIndex = conflictedContent.IndexOf(ConflictStartMarker);
+            int startMarkerCRLFIndex = conflictedContent.IndexOf(CR_LF, startMarkerIndex);
+            int partitionMarkerIndex = conflictedContent.IndexOf(ConflictFirstPartitionMarker);
+            if(partitionMarkerIndex == -1)
+            {
+                partitionMarkerIndex = conflictedContent.IndexOf(ConflictSecondPartitionMarker);
+            }
+            int mineContentLength = partitionMarkerIndex - (startMarkerCRLFIndex + CR_LF.Length);
+            int mineContentStartIndex = startMarkerCRLFIndex + CR_LF.Length;
+            string mineContent = conflictedContent.Substring(mineContentStartIndex, mineContentLength);
+            return mineContent;
+        }
+
+        /// <summary>
+        /// Get the content between the first <see cref="ConflictSecondPartitionMarker"/> and <see cref="ConflictEndMarker"/>.
+        /// <example>
+        /// <code>
+        /// //For example, for below text,
+        /// 
+        /// If you have questions, please
+        /// &lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
+        /// open an issue
+        /// =======
+        /// ask your question in IRC
+        /// &gt;&gt;&gt;&gt;&gt;&gt;&gt; branch-a
+        /// thank you.
+        /// 
+        /// //it will return,
+        /// 
+        /// ask your question in IRC
+        /// </code>
+        /// </example>
+        /// </summary>
+        /// <param name="conflictedContent">Content with conflicting data.</param>
+        /// <returns>Content between the first <see cref="ConflictSecondPartitionMarker"/> and <see cref="ConflictEndMarker"/>.</returns>
+        internal string GetHeadContentFromConflicted(string conflictedContent)
+        {
+            int secondPartitionMarkerIndex = conflictedContent.IndexOf(ConflictSecondPartitionMarker);
+            int endMarkerIndex = conflictedContent.IndexOf(ConflictEndMarker);
+            int headContentLength = endMarkerIndex - (secondPartitionMarkerIndex + ConflictSecondPartitionMarker.Length + CR_LF.Length);
+            int headContentStartIndex = secondPartitionMarkerIndex + ConflictSecondPartitionMarker.Length + CR_LF.Length;
+            string headContent = conflictedContent.Substring(headContentStartIndex, headContentLength);
+            return headContent;
+        }
+
+        /// <summary>
+        /// Get the content after the first <see cref="ConflictEndMarker"/>. 
+        /// <example>
+        /// <code>
+        /// //For example, for below text,
+        /// 
+        /// If you have questions, please
+        /// &lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine
+        /// open an issue
+        /// =======
+        /// ask your question in IRC
+        /// &gt;&gt;&gt;&gt;&gt;&gt;&gt; .branch-a
+        /// thank you.
+        /// 
+        /// //it will return,
+        /// 
+        /// thank you.
+        /// </code>
+        /// </example>
+        /// </summary>
+        /// <param name="conflictedContent">Content with conflicting data.</param>
+        /// <returns>Content after the first <see cref="ConflictEndMarker"/>.</returns>
+        internal string GetTrailingContentFromConflicted(string conflictedContent)
+        {
+            int endMarkerIndex = conflictedContent.IndexOf(ConflictEndMarker);
+            int endMarkerCRLFIndex = conflictedContent.IndexOf(CR_LF, endMarkerIndex);
+            int trailingContentStartIndex = endMarkerCRLFIndex + CR_LF.Length;
+            string trailingContent = conflictedContent.Substring(trailingContentStartIndex);
+            return trailingContent;
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public override bool NewResolveConflict(string path, string content, ref string error)
+        {
+            if(client == null)
+            {
+                Init();
+            }
+
+            try
+            {
+                error = string.Empty;
+
+                CleanUp(Path.GetDirectoryName(path));
+
+                File.WriteAllText(path, content);
+                client.Resolved(path);
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                error = ex.Message + Environment.NewLine + ex.InnerException;
+                return false;
+            }
+        }
+
         [MethodImpl(MethodImplOptions.Synchronized)]
         public override bool ResolveConflicts(string Path, eResolveConflictsSide side, ref string error)
         {

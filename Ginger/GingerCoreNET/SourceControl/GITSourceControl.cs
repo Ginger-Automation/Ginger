@@ -18,13 +18,19 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.SourceControlLib;
+using DocumentFormat.OpenXml.Math;
+using GingerCore.Drivers.Selenium.SeleniumBMP;
 using GingerCoreNET.SourceControl;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace GingerCore.SourceControl
@@ -544,6 +550,242 @@ namespace GingerCore.SourceControl
                 return false;
             }
             return true;
+        }
+
+        private const string ConflictStartMarker = "<<<<<<<";
+        private const string ConflictPartitionMarker = "=======";
+        private const string ConflictEndMarker = ">>>>>>>";
+        private const string CR_LF = "\r\n";
+
+        public override string GetLocalContentFromConflicted(string conflictedFilePath)
+        {
+            string conflictedContent = File.ReadAllText(conflictedFilePath);
+            string leadingContent = GetLeadingContentFromConflicted(conflictedContent);
+            string headContent = GetHeadContentFromConflicted(conflictedContent);
+            string trailingContent = GetTrailingContentFromConflicted(conflictedContent);
+
+            string localContent = leadingContent + headContent + trailingContent;
+
+            if (localContent.Contains(ConflictStartMarker))
+            {
+                localContent = GetLocalContentFromConflicted(localContent);
+            }
+
+            return localContent;
+        }
+
+        public override string GetRemoteContentFromConflicted(string conflictedFilePath)
+        {
+            string conflictedContent = File.ReadAllText(conflictedFilePath);
+            string leadingContent = GetLeadingContentFromConflicted(conflictedContent);
+            string branchContent = GetBranchContentFromConflicted(conflictedContent);
+            string trailingContent = GetTrailingContentFromConflicted(conflictedContent);
+
+            string remoteContent = leadingContent + branchContent + trailingContent;
+
+            if (remoteContent.Contains(ConflictStartMarker))
+            {
+                remoteContent = GetRemoteContentFromConflicted(remoteContent);
+            }
+
+            return remoteContent;
+        }
+
+        /// <summary>
+        /// Get the content leading the first <see cref="ConflictStartMarker"/>. 
+        /// <example>
+        /// <code>
+        /// //For example, for below text,
+        /// 
+        /// If you have questions, please
+        /// &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+        /// open an issue
+        /// =======
+        /// ask your question in IRC
+        /// &gt;&gt;&gt;&gt;&gt;&gt;&gt; branch-a
+        /// thank you.
+        /// 
+        /// //it will return,
+        /// 
+        /// If you have questions, please
+        /// </code>
+        /// </example>
+        /// </summary>
+        /// <param name="conflictedContent">Content with conflicting data.</param>
+        /// <returns>Content leading the first <see cref="ConflictStartMarker"/>.</returns>
+        internal string GetLeadingContentFromConflicted(string conflictedContent)
+        {
+            string leadingContent = string.Empty;
+            int startMarkerIndex = conflictedContent.IndexOf(ConflictStartMarker);
+            int leadingContentLength = startMarkerIndex;
+            if (leadingContentLength >= 0)
+            {
+                leadingContent = conflictedContent.Substring(0, leadingContentLength);
+            }
+
+            return leadingContent;
+        }
+
+        /// <summary>
+        /// Get the content between the first <see cref="ConflictStartMarker"/> and <see cref="ConflictPartitionMarker"/>.
+        /// <example>
+        /// <code>
+        /// //For example, for below text,
+        /// 
+        /// If you have questions, please
+        /// &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+        /// open an issue
+        /// =======
+        /// ask your question in IRC
+        /// &gt;&gt;&gt;&gt;&gt;&gt;&gt; branch-a
+        /// thank you.
+        /// 
+        /// //it will return,
+        /// 
+        /// open an issue
+        /// </code>
+        /// </example>
+        /// </summary>
+        /// <param name="conflictedContent">Content with conflicting data.</param>
+        /// <returns>Content between the first <see cref="ConflictStartMarker"/> and <see cref="ConflictPartitionMarker"/>.</returns>
+        internal string GetHeadContentFromConflicted(string conflictedContent)
+        {
+            int startMarkerIndex = conflictedContent.IndexOf(ConflictStartMarker);
+            int startMarkerCRLFIndex = conflictedContent.IndexOf(CR_LF, startMarkerIndex);
+            int partitionMarkerIndex = conflictedContent.IndexOf(ConflictPartitionMarker);
+            int headContentLength = partitionMarkerIndex - (startMarkerCRLFIndex + CR_LF.Length);
+            int headContentStartIndex = startMarkerCRLFIndex + CR_LF.Length;
+            string headContent = conflictedContent.Substring(headContentStartIndex, headContentLength);
+            return headContent;
+        }
+
+        /// <summary>
+        /// Get the content between the first <see cref="ConflictPartitionMarker"/> and <see cref="ConflictEndMarker"/>.
+        /// <example>
+        /// <code>
+        /// //For example, for below text,
+        /// 
+        /// If you have questions, please
+        /// &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+        /// open an issue
+        /// =======
+        /// ask your question in IRC
+        /// &gt;&gt;&gt;&gt;&gt;&gt;&gt; branch-a
+        /// thank you.
+        /// 
+        /// //it will return,
+        /// 
+        /// ask your question in IRC
+        /// </code>
+        /// </example>
+        /// </summary>
+        /// <param name="conflictedContent">Content with conflicting data.</param>
+        /// <returns>Content between the first <see cref="ConflictPartitionMarker"/> and <see cref="ConflictEndMarker"/>.</returns>
+        internal string GetBranchContentFromConflicted(string conflictedContent)
+        {
+            int partitionMarkerIndex = conflictedContent.IndexOf(ConflictPartitionMarker);
+            int endMarkerIndex = conflictedContent.IndexOf(ConflictEndMarker);
+            int branchContentLength = endMarkerIndex - (partitionMarkerIndex + ConflictPartitionMarker.Length + CR_LF.Length);
+            int branchContentStartIndex = partitionMarkerIndex + ConflictPartitionMarker.Length + CR_LF.Length;
+            string branchContent = conflictedContent.Substring(branchContentStartIndex, branchContentLength);
+            return branchContent;
+        }
+
+        /// <summary>
+        /// Get the content after the first <see cref="ConflictEndMarker"/>. 
+        /// <example>
+        /// <code>
+        /// //For example, for below text,
+        /// 
+        /// If you have questions, please
+        /// &lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+        /// open an issue
+        /// =======
+        /// ask your question in IRC
+        /// &gt;&gt;&gt;&gt;&gt;&gt;&gt; branch-a
+        /// thank you.
+        /// 
+        /// //it will return,
+        /// 
+        /// thank you.
+        /// </code>
+        /// </example>
+        /// </summary>
+        /// <param name="conflictedContent">Content with conflicting data.</param>
+        /// <returns>Content after the first <see cref="ConflictEndMarker"/>.</returns>
+        internal string GetTrailingContentFromConflicted(string conflictedContent)
+        {
+            int endMarkerIndex = conflictedContent.IndexOf(ConflictEndMarker);
+            int endMarkerCRLFIndex = conflictedContent.IndexOf(CR_LF, endMarkerIndex);
+            int trailingContentStartIndex = endMarkerCRLFIndex + CR_LF.Length;
+            string trailingContent = conflictedContent.Substring(trailingContentStartIndex);
+            return trailingContent;
+        }
+
+        public override bool NewResolveConflict(string path, string content, ref string error)
+        {
+            try
+            {
+                error = string.Empty;
+
+                if (NeedToCreateBackup(path))
+                {
+                    string backupPath = path.Replace(".xml", "conflictBackup");
+                    File.Copy(path, backupPath);
+                }
+                
+                File.WriteAllText(path, content);
+                Stage(path);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message + Environment.NewLine + ex.InnerException;
+                return false;
+            }
+        }
+
+        private bool NeedToCreateBackup(string path)
+        {
+            bool hasExtension = Path.GetExtension(path) != string.Empty;
+
+            string ignoreFilePath = path.Replace(".xml", ".ignore");
+            bool ignoreFileExists = File.Exists(ignoreFilePath);
+
+            string backupFilePath = path.Replace(".xml", ".conflictBackup");
+            bool backupFileExists = File.Exists(backupFilePath);
+
+            return hasExtension && !ignoreFileExists && !backupFileExists;
+        }
+
+        public bool ResolveConflictsForSolution(eResolveConflictsSide side, ref string error)
+        {
+            try
+            {
+                error = string.Empty;
+                string ConflictsPathsError = string.Empty;
+                string ResolveConflictError = string.Empty;
+                bool result = true;
+                
+                List<string> conflictPaths = GetConflictsPaths();
+                foreach (string conflictPath in conflictPaths)
+                {
+                    result = ResolveConflict(conflictPath, side, ref ResolveConflictError);
+                    if (!result)
+                    {
+                        error = error + ConflictsPathsError;
+                    }
+
+                    Stage(conflictPath);
+                }
+                
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message + Environment.NewLine + ex.InnerException;
+                return false;
+            }
         }
 
         public override bool ResolveConflicts(string path, eResolveConflictsSide side, ref string error)

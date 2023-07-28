@@ -1,4 +1,6 @@
-﻿using GingerCore;
+﻿using Amdocs.Ginger.Common.SourceControlLib;
+using Ginger.SourceControl;
+using GingerCore;
 using GingerWPF.WizardLib;
 using LibGit2Sharp;
 using System;
@@ -45,14 +47,10 @@ namespace Ginger.ConflictResolve
 
         private void OnWizardPageActive(ResolveMergeConflictWizard wizard)
         {
-            if (wizard.RootComparison == null)
-                throw new InvalidOperationException("Cannot preview merge result before creating comparison.");
-
             Task.Run(() =>
             {
                 ShowLoading();
-                BusinessFlow mergedBF = MergeBusinessFlowComparison(wizard.RootComparison);
-                Comparison dummyComparison = CompareAgainstNull(mergedBF);
+                Comparison dummyComparison = SourceControlIntegration.PreviewManualConflictResolve(wizard.Comparison);
                 SetTreeItems(dummyComparison);
                 HideLoading();
             });
@@ -84,27 +82,6 @@ namespace Ginger.ConflictResolve
             {
                 xTree.AddItem(new ConflictMergeTreeViewItem(comparison));
             });
-        }
-
-        private BusinessFlow MergeBusinessFlowComparison(Comparison comparison)
-        {
-            ConflictResolver conflictResolver = new();
-            BusinessFlow? mergedBF = conflictResolver.Merge<BusinessFlow>(comparison.ChildComparisons);
-            if (mergedBF == null)
-                throw new Exception("Merged business flow is null");
-            return mergedBF;
-        }
-
-        private Comparison CompareAgainstNull(BusinessFlow bf)
-        {
-            ConflictResolver conflictResolver = new();
-            ICollection<Comparison> businessFlowComparison = conflictResolver.Compare(bf, null, name: "[0]");
-            State state;
-            if (businessFlowComparison.All(c => c.State == State.Unmodified))
-                state = State.Unmodified;
-            else
-                state = State.Modified;
-            return new Comparison(name: "Business Flows", state, childComparisons: businessFlowComparison, dataType: null!);
         }
     }
 }

@@ -78,7 +78,7 @@
                     </Setter>
                 </Style>
             </TreeView.Resources>
-            <TreeViewItem>
+            <!--<TreeViewItem>
                 <TreeViewItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Item-1"/>
@@ -112,7 +112,7 @@
                         </TreeViewItem.Header>
                     </TreeViewItem>
                 </TreeViewItem>
-            </TreeViewItem>
+            </TreeViewItem>-->
         </TreeView>
     </Grid>
 </UserControl>

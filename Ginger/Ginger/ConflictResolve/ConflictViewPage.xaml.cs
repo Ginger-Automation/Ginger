@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Bibliography;
+﻿using Amdocs.Ginger.Common.SourceControlLib;
+using DocumentFormat.OpenXml.Bibliography;
 using GingerCore;
 using GingerTest.WizardLib;
 using GingerWPF.WizardLib;
@@ -55,8 +56,7 @@ namespace Ginger.ConflictResolve
             Task.Run(() =>
             {
                 ShowLoading();
-                wizard.RootComparison = CompareBusinessFlows(wizard.LocalBusinessFlow, wizard.RemoteBusinessFlow);
-                SetTreeItems(wizard.RootComparison);
+                SetTreeItems(wizard.Comparison);
                 HideLoading();
             });
         }
@@ -81,24 +81,12 @@ namespace Ginger.ConflictResolve
             });
         }
 
-        private Comparison CompareBusinessFlows(BusinessFlow localBF, BusinessFlow remoteBF)
-        {
-            ConflictResolver conflictResolver = new();
-            ICollection<Comparison> businessFlowComparison = conflictResolver.Compare(localBF, remoteBF, name: "[0]");
-            State state;
-            if (businessFlowComparison.All(c => c.State == State.Unmodified))
-                state = State.Unmodified;
-            else
-                state = State.Modified;
-            return new Comparison(name: "Business Flows", state, childComparisons: businessFlowComparison, dataType: null!);
-        }
-
         private void SetTreeItems(Comparison comparison)
         {
             Dispatcher.Invoke(() =>
             {
-                xLocalItemTree.AddItem(new ConflictComparisonTreeViewItem(comparison, new[] { State.Unmodified, State.Modified, State.Deleted }));
-                xRemoteItemTree.AddItem(new ConflictComparisonTreeViewItem(comparison, new[] { State.Unmodified, State.Modified, State.Added }));
+                xLocalItemTree.AddItem(new ConflictComparisonTreeViewItem(comparison, new[] { Comparison.State.Unmodified, Comparison.State.Modified, Comparison.State.Deleted }));
+                xRemoteItemTree.AddItem(new ConflictComparisonTreeViewItem(comparison, new[] { Comparison.State.Unmodified, Comparison.State.Modified, Comparison.State.Added }));
             });
         }
 
