@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
             Guid = guid;
             StartTime = Telemetry.Time;
             TimeZone = TimeZoneInfo.Local.DisplayName;
-            version = ApplicationInfo.ApplicationVersion;
+            version = ApplicationInfo.ApplicationUIversion;
 
 #if DEBUG
             Runtime = "Debug";
