@@ -27,7 +27,6 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Text.RegularExpressions;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -81,7 +80,7 @@ namespace Ginger.Actions
             // populate Sheet dropdown
             if (!string.IsNullOrEmpty(mAct.ExcelFileName))
             {
-                FillSheetCombo();
+                FillSheetCombo(true);
             }
         }
 
@@ -101,7 +100,7 @@ namespace Ginger.Actions
             }
         }
 
-        private async void FillSheetCombo()
+        private async void FillSheetCombo(bool initialLoad = false )
         {
             ContextProcessInputValueForDriver();
             if (SheetsList == null || !SheetsList.Any())
@@ -132,6 +131,10 @@ namespace Ginger.Actions
                             GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
                             EnableSheetNameComboBox();
                             xLoader.Visibility = Visibility.Collapsed;
+                            if(!initialLoad)
+                            {
+                                SheetNamComboBox.SelectedIndex = 0;
+                            }
                         });
                     }
 

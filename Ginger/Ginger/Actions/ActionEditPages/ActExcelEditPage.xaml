@@ -34,10 +34,10 @@
             <StackPanel>
                 <StackPanel>
                     <Label Style="{StaticResource @InputFieldLabelStyle}">Sheet Name:</Label>
-                    <DockPanel>
+                    <DockPanel >
                         <ComboBox x:Name="SheetNamComboBox" SelectionChanged="SheetNamComboBox_SelectionChanged" DropDownOpened="SheetNamComboBox_DropDownOpened" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" HorizontalAlignment="Stretch" DockPanel.Dock="Left" Width="250"></ComboBox>
                         <Button x:Name="SheetNamVEButton" Content="..." Click="SheetNamVEButton_Click" HorizontalAlignment="Left" DockPanel.Dock="Left" VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="1,0,5,0" Width="30" Height="24"/>
-                        <usercontrols:ImageMakerControl x:Name="xLoader" ImageType="Processing"  Width="20" Height="20" Visibility="Hidden"/>
+                        <usercontrols:ImageMakerControl x:Name="xLoader" ImageType="Processing" VerticalAlignment="Center" HorizontalAlignment="Left" DockPanel.Dock="Left" Width="20" Height="20"/>
                     </DockPanel>
                 </StackPanel>
                 <StackPanel>
