@@ -229,7 +229,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             runSetReport.Elapsed = runSetReport.EndTimeStamp.Subtract(runSetReport.StartTimeStamp).TotalSeconds;
             runSetReport.MachineName = Environment.MachineName;
             runSetReport.ExecutedbyUser = Environment.UserName;
-            runSetReport.GingerVersion = ApplicationInfo.ApplicationVersion;
+            runSetReport.GingerVersion = ApplicationInfo.ApplicationUIversion;
         }
         public abstract void RunSetUpdate(LiteDB.ObjectId runSetLiteDbId, LiteDB.ObjectId runnerLiteDbId, GingerExecutionEngine gingerRunner);
         public abstract void SetRunsetFolder(string execResultsFolder, long maxFolderSize, DateTime currentExecutionDateTime, bool offline);

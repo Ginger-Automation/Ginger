@@ -73,7 +73,7 @@ namespace GingerCore.Repository
                         xml.WriteStartDocument();
 
                         xml.WriteWhitespace("\n");
-                        xml.WriteComment("Ginger Repository Item created with version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion);
+                        xml.WriteComment("Ginger Repository Item created with version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion);
                         xml.WriteWhitespace("\n");
 
                         xmlwriteObject(xml, ri);

@@ -1350,38 +1350,32 @@ namespace Amdocs.Ginger.Repository
                 /* expecting  XML to look like this: 
                 * <Header ... GingerVersion="2.6.0.0" Version="0" .../>*/
                 //int indx = xml.IndexOf("GingerVersion=");
-                int indx = xml.Trim().IndexOf(cHeaderGingerVersion);
-                string version = xml.Trim().Substring(indx + 14, 9);
-
+                int indx = xml.Trim().IndexOf(cHeaderGingerVersion) + 15;
+                StringBuilder version = new StringBuilder();
+                while (xml[indx].ToString() != string.Empty && xml[indx] != '"')
+                {
+                    version.Append(xml[indx]);
+                    indx++;
+                }
+                
                 Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
-                Match match = regex.Match(version);
+                Match match = regex.Match(version.ToString());
                 if (match.Success)
                 {
-                    //return match.Value;
-                    //avoiding Beta + Alpha numbers because for now it is not supposed to be written to XML's, only official release numbers
-                    int counter = 0;
-                    string ver = string.Empty;
-                    for (int index = 0; index < match.Value.Length; index++)
-                    {
-                        if (match.Value[index] == '.')
-                            counter++;
-                        if (counter == 2)
-                            return ver + ".0.0";
-                        else
-                            ver += match.Value[index];
-                    }
-                    return ver;//something wrong
+                    return version.ToString();
                 }
                 else
                 {
-                    return null;//failed to get te XML version
-                    //TODO: write to log
+                    //failed to get the XML version   
+                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the XML version of the file:'{0}'", xmlFilePath));
+                    return null;                 
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;//failed to get te XML version
-                //TODO: write to log
+                //failed to get te XML version 
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the XML version of the file:'{0}'", xmlFilePath), ex);
+                return null;               
             }
         }
 
