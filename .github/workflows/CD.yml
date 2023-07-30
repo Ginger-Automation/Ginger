@@ -66,6 +66,7 @@ jobs:
                
     CI:
         name: CI
+        needs: Create-version-Number
         uses: Ginger-Automation/Ginger/.github/workflows/CI.yml@master
         secrets: inherit
      
