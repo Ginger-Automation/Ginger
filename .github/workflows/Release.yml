@@ -41,7 +41,7 @@ jobs:
                   name: ginger-artifact         
 
             -   name: 'delete Help\Library'
-                run: rmdir /s /q Ginger\Ginger\bin\Release\net6.0-windows\Help\Library
+                run: rmdir /s /q Ginger\Ginger\bin\Release\net7.0-windows\Help\Library
                 shell: cmd
                 
             -   name: 'add help Library'
