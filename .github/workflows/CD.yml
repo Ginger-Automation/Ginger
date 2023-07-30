@@ -31,8 +31,8 @@ jobs:
           - name: create version environment variable - alpha
             if: ${{ github.event.inputs.revision != 0 }}
             run: |
-                echo "gingertag=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Alpha$github.event.inputs.build.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
-                echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.$github.event.inputs.build.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
+                echo "gingertag=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Alpha${{github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
+                echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
           
           - name: create version environment variable - BETA
             if: ${{ (github.event.inputs.build != 0) && (github.event.inputs.revision == 0 )}} 
@@ -66,6 +66,7 @@ jobs:
                
     CI:
         name: CI
+        needs: Create-version-Number
         uses: Ginger-Automation/Ginger/.github/workflows/CI.yml@master
         secrets: inherit
      
@@ -80,8 +81,8 @@ jobs:
         needs: Release
         uses: Ginger-Automation/Ginger/.github/workflows/Deploy.yml@master
 
-    Docker:
-        name: Docker
-        needs: CI
-        uses: Ginger-Automation/Ginger/.github/workflows/Docker.yml@master
-        secrets: inherit
+#     Docker:
+#         name: Docker
+#         needs: CI
+#         uses: Ginger-Automation/Ginger/.github/workflows/Docker.yml@master
+#         secrets: inherit
