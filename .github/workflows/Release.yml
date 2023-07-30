@@ -19,7 +19,7 @@ jobs:
  
             -   uses: sibiraj-s/action-archiver@v1
                 with:
-                  path: './Ginger/GingerRuntime/bin/Release/net6.0/linux-x64'
+                  path: './Ginger/GingerRuntime/bin/Release/net7.0/linux-x64'
                   format: tar
                   gzip: true
                   output: GingerRuntime.tar.gz
@@ -47,7 +47,7 @@ jobs:
             -   name: 'add help Library'
                 shell: cmd
                 run: |
-                    cd Ginger\Ginger\bin\Release\net6.0-windows\Help
+                    cd Ginger\Ginger\bin\Release\net7.0-windows\Help
                     git clone https://github.com/Ginger-Automation/Ginger-Web-Help.git
                     move Ginger-Web-Help\docs .
                     rename docs Library
