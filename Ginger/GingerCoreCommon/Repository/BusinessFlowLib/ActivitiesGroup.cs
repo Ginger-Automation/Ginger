@@ -519,11 +519,6 @@ namespace GingerCore.Activities
                 ve.Value = ExternalID;
                 ExternalIdCalculated = ve.ValueCalculated;
             }
-            else
-            {
-                ve.Value = ExternalID;
-                ExternalIdCalculated = ExternalID;
-            }
         }
 
     }
