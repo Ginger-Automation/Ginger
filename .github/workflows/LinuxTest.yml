@@ -1,0 +1,92 @@
+name: Ginger Linux Test
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build:
+    name: Linux Test
+    runs-on: ubuntu-latest
+    
+    env:
+      BUILD_CONFIGURATION: Release
+    
+    steps:
+    
+# ------------------------------------------------------------------------------------------------------
+# Copy Ginger repo
+# ------------------------------------------------------------------------------------------------------
+      - name: Code Checkout 
+        if: ${{github.workflow == 'Ginger Linux Test'}} 
+        uses: actions/checkout@v3
+        
+        
+      - name: Download Airtifacts
+        if: ${{github.workflow != 'Ginger Linux Test'}} 
+        uses: actions/download-artifact@v3
+        with:
+          name: ginger-artifact
+      
+# ------------------------------------------------------------------------------------------------------
+# Install .Net core SDK 6.0.301
+# ------------------------------------------------------------------------------------------------------
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.x.x'
+      
+# ------------------------------------------------------------------------------------------------------
+# start Testing 
+# ------------------------------------------------------------------------------------------------------
+      - name: 'Testing GingerUtilsTest'
+        run: dotnet test  Ginger/GingerUtilsTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+      
+      - name: 'Testing GingerCoreCommonTest'
+        run: dotnet test  Ginger/GingerCoreCommonTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+
+        # for GingerCoreNET we use run setting to limit to have one worker thread due to workspace limitation
+      - name: 'Testing GingerCoreNETUnitTest'
+        run: dotnet test  Ginger/GingerCoreNETUnitTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+
+      - name: 'Testing GingerPluginCoreTest'
+        run: dotnet test  Ginger/GingerPluginCoreTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+
+      - name: 'Testing GingerConsoleTest'
+        run: dotnet test  Ginger/GingerConsoleTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+
+      - name: 'Testing GingerAutoPilotTest'
+        run: dotnet test  Ginger/GingerAutoPilotTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+         
+# ------------------------------------------------------------------------------------------------------
+# Publish GingerRuntime
+# ------------------------------------------------------------------------------------------------------
+      - name: 'Publish GingerRuntime'
+        if: ${{github.event_name == 'Ginger Linux Test' }}
+        run: dotnet publish  Ginger/GingerRuntime -c Release
+          
+# ------------------------------------------------------------------------------------------------------
+# Publish Test Results
+# ------------------------------------------------------------------------------------------------------   
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()        # run this step even if previous step failed
+        with:
+          name: Ginger Linux UnitTests    # Name of the check run which will be created
+          path: "**/*.trx"                # Path to test results
+          reporter: dotnet-trx            # Format of test results     
+          
+# ------------------------------------------------------------------------------------------------------
+# Run Standalone CLI Test
+# ------------------------------------------------------------------------------------------------------          
+      - name: Run Standalone CLI Test
+        if: success() || failure()        # run this step even if previous step failed
+        shell: bash
+        run: |
+          pwd 
+          ls -alt
+          chmod +x CLITestsGithub.sh
+          sudo apt install dos2unix
+          dos2unix -b CLITestsGithub.sh
+          ./CLITestsGithub.sh
+          
+          

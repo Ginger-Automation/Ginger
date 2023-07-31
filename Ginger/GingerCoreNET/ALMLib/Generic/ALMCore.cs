@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
+using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -89,7 +90,7 @@ namespace GingerCore.ALM
         public abstract bool DisconnectALMProjectStayLoggedIn();
         public abstract List<string> GetALMDomains();
         public abstract Dictionary<string, string> GetALMDomainProjects(string ALMDomainName);
-        public abstract bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null);
+        public abstract bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null);
         public abstract ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, AlmDataContractsStd.Enums.ResourceType resourceType = AlmDataContractsStd.Enums.ResourceType.ALL);
         public abstract Dictionary<Guid, string> CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, bool useREST = false);
 
@@ -206,18 +207,26 @@ namespace GingerCore.ALM
 
         public string name => throw new NotImplementedException();
 
-        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false)
+        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false,Context mContext = null)
         {
             SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
             bool isExportSucc = false;
             try
             {
+                
                 int sucesscount = 0;
                 foreach (BusinessFlow BizFlow in BusinessFlows) //Here going for each businessFlow
                 {
+                    ProjEnvironment projEnvironment = mContext != null ? mContext.Environment : WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment;
+                    if (projEnvironment != null)
+                    {
+                        IValueExpression mVE = new GingerCore.ValueExpression(projEnvironment, BizFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                        BizFlow.CalculateExternalId(mVE);
+                    }
+                    
                     try
                     {
-                        if (BizFlow.ExternalID != "0" && !String.IsNullOrEmpty(BizFlow.ExternalID))
+                        if (BizFlow.ExternalIdCalCulated != "0" && !String.IsNullOrEmpty(BizFlow.ExternalIdCalCulated))
                         {
                             Reporter.ToLog(eLogLevel.DEBUG, $"Executing RunSet Action Publish to ALM for { GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} {BizFlow.Name}");
                             Reporter.ToStatus(eStatusMsgKey.ExportExecutionDetails, null, BizFlow.Name, "ALM");
@@ -226,7 +235,7 @@ namespace GingerCore.ALM
                             {
                                 Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateActivitiesGroupReportsOfBusinessFlow(null, BizFlow);//need to find a way to specify the releveant environment 
                             }
-                            isExportSucc = ExportExecutionDetailsToALM(BizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig);
+                            isExportSucc = ExportExecutionDetailsToALM(BizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig,projEnvironment);
                             if (isExportSucc)
                             {
                                 BizFlow.PublishStatus = BusinessFlow.ePublishStatus.Published;

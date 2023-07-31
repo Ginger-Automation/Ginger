@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:Ginger="clr-namespace:Ginger"
       xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:Activities="clr-namespace:Ginger.Actions"
       mc:Ignorable="d" 
       xmlns:h="clr-namespace:Ginger.Help"
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" h:GingerHelpProvider.HelpString="Activities Group"
@@ -13,7 +14,7 @@
 
     <Grid Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="280"/>
+            <RowDefinition Height="300"/>
             <RowDefinition Height="200*" />
         </Grid.RowDefinitions>
 
@@ -43,6 +44,10 @@
                 <TextBox x:Name="txtAutoPrecentage" Width="70" Height="25"  Style="{StaticResource @TextBoxStyle}"></TextBox>
             </StackPanel>
             <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" HorizontalAlignment="Left" Margin="5,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
+            <StackPanel Orientation="Horizontal" x:Name="xPnlAGExternalId" Margin="5,10,0,0" DockPanel.Dock="Top" VerticalAlignment="Top"  HorizontalAlignment="Left" >
+                <Label Style="{StaticResource $LabelStyle}" Content="ALM ID (ExternalId):" Width="120" VerticalAlignment="Bottom"/>
+                <Activities:UCValueExpression x:Name="xAGExternalId" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Width="400" Margin="5,0,0,0"/>
+            </StackPanel>
         </StackPanel>
 
         <Ginger:ucGrid x:Name="grdGroupedActivities" Grid.Row="1" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" Margin="0,10,0,0" Grid.ColumnSpan="2">

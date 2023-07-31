@@ -151,6 +151,23 @@ namespace GingerCore
             }
         }
 
+        private string mExternalIdCalCulated;
+        public string ExternalIdCalCulated
+        {
+            get
+            {
+                return mExternalIdCalCulated;
+            }
+            set
+            {
+                if (mExternalIdCalCulated != value)
+                {
+                    mExternalIdCalCulated = value;
+                    OnPropertyChanged(nameof(ExternalIdCalCulated));
+                }
+            }
+        }
+
         double? mElapsed;
         public double? Elapsed
         {
@@ -1810,6 +1827,15 @@ namespace GingerCore
         public override string GetItemType()
         {
             return nameof(BusinessFlow);
+        }
+
+        public void CalculateExternalId(IValueExpression ve)
+        {
+            if ( ExternalID != null && ExternalID != string.Empty)
+            {
+                ve.Value = ExternalID;
+                ExternalIdCalCulated = ve.ValueCalculated;
+            }
         }
 
     }

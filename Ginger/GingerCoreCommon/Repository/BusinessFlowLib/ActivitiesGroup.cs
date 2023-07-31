@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -497,6 +497,28 @@ namespace GingerCore.Activities
         public override string GetItemType()
         {
             return nameof(ActivitiesGroup);
+        }
+
+        private string mExternalIdCalculated;
+        public string ExternalIdCalculated
+        {
+            get { return mExternalIdCalculated; }
+            set
+            {
+                if (mExternalIdCalculated != value)
+                {
+                    mExternalIdCalculated = value; OnPropertyChanged(nameof(mExternalIdCalculated));
+                }
+            }
+        }
+
+        public void CalculateExternalId(IValueExpression ve)
+        {
+            if (ExternalID != null && ExternalID != string.Empty)
+            {
+                ve.Value = ExternalID;
+                ExternalIdCalculated = ve.ValueCalculated;
+            }
         }
 
     }

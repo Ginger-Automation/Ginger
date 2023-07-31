@@ -3,6 +3,7 @@ echo "-                         Run CLI Tests                     -"
 echo "-------------------------------------------------------------"
 
 cd /home/runner/work/Ginger/Ginger/Ginger/GingerRuntime/bin/Release/net7.0/publish/
+
 pwd
 ls -alt
 
