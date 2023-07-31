@@ -100,7 +100,7 @@ namespace Ginger.Actions
             }
         }
 
-        private async void FillSheetCombo(bool initialLoad = false )
+        private async Task FillSheetCombo(bool initialLoad = false )
         {
             ContextProcessInputValueForDriver();
             if (SheetsList == null || !SheetsList.Any())
