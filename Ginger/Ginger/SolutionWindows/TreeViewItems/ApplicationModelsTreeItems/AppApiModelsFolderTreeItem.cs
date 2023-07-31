@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions.ApiActionsConversion;
+using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.ApplicationModelsLib.APIModels;
@@ -171,14 +172,14 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
 
         public void AddAPIModelFromDocument(object sender, RoutedEventArgs e)
         {
-            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(p => p.Platform == ePlatformType.WebServices).Any())
+            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Any(p => p.Platform == ePlatformType.WebServices))
             {
                 mTreeView.Tree.ExpandTreeItem((ITreeViewItem)this);
                 WizardWindow.ShowWizard(new AddAPIModelWizard(mAPIModelFolder), 1000);
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "Please Add at-least one Web Service platform based Target Application to continue adding API Models");
+                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, $"Please Add at-least one Web Service platform based {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} to continue adding API Models");
             }
         }
 

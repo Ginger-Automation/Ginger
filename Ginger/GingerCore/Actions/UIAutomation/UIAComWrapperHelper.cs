@@ -2569,8 +2569,69 @@ namespace GingerCore.Drivers
         public override void SmartSyncHandler(ActSmartSync act)
         {
             UIAuto.AutomationElement AE = null;
+            int? MaxTimeout = GetMaxTimeout(act);
+            mImplicitWait = -1;
+
             Stopwatch st = new Stopwatch();
-            int? MaxTimeout = 0;
+            st.Reset();
+            st.Start();
+
+            switch (act.SmartSyncAction)
+            {
+                case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
+                    do
+                    {
+                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
+                        {
+                            act.Error = "Smart Sync of WaitUntilDisplay is timeout";
+                            break;
+                        }
+
+                        Thread.Sleep(100);
+
+                        try
+                        {
+                            AE = (UIAuto.AutomationElement)GetActElement(act);
+                        }
+                        catch (Exception)
+                        {
+                        }
+
+                    } while (!(AE != null && (AE.Current.IsKeyboardFocusable || !AE.Current.IsOffscreen)));
+                    break;
+
+                case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
+                    do
+                    {
+                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
+                        {
+                            act.Error = "Smart Sync of WaitUntilDisapear is timeout";
+                            break;
+                        }
+
+                        Thread.Sleep(100);
+
+                        try
+                        {
+                            AE = (UIAuto.AutomationElement)GetActElement(act);
+                        }
+                        catch (Exception)
+                        {
+                        }
+
+                    } while (AE != null && (AE.Current.IsKeyboardFocusable || !AE.Current.IsOffscreen));
+                    break;
+            }
+
+            st.Stop();
+            //reset implicit wait time
+            mImplicitWait = mImplicitWaitCopy;
+            return;
+        }
+
+        private int? GetMaxTimeout(ActSmartSync act)
+        {
+            int? MaxTimeout;
             try
             {
                 if (act.WaitTime.HasValue == true)
@@ -2590,61 +2651,9 @@ namespace GingerCore.Drivers
             {
                 MaxTimeout = mLoadTimeOut;
             }
-            mImplicitWait = -1;
-            switch (act.SmartSyncAction)
-            {
-                case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
-                    st.Reset();
-                    st.Start();
 
-                    try { AE = (UIAuto.AutomationElement)GetActElement(act); }
-                    catch (Exception) { }
-                    Thread.Sleep(100);
-                    while (!(AE != null && (AE.Current.IsKeyboardFocusable || !AE.Current.IsOffscreen)))
-                    {
-                        try { AE = (UIAuto.AutomationElement)GetActElement(act); }
-                        catch (Exception) { }
-                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                        {
-                            act.Error = "Smart Sync of WaitUntilDisplay is timeout";
-                            break;
-                        }
-                        Thread.Sleep(100);
-                    }
-                    break;
-                case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
-                    st.Reset();
-                    try { AE = (UIAuto.AutomationElement)GetActElement(act); }
-                    catch (Exception) { }
-                    if (AE == null)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        st.Start();
-
-                        while ((AE != null && (AE.Current.IsKeyboardFocusable || !AE.Current.IsOffscreen)))
-                        {
-                            Thread.Sleep(100);
-                            try { AE = (UIAuto.AutomationElement)GetActElement(act); }
-                            catch (Exception) { }
-
-                            if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                            {
-                                act.Error = "Smart Sync of WaitUntilDisapear is timeout";
-                                break;
-                            }
-                        }
-
-                    }
-                    break;
-            }
-            //reset implicit wait time
-            mImplicitWait = mImplicitWaitCopy;
-            return;
+            return MaxTimeout;
         }
-
 
         public string ClickElementUsingInvokePattern(UIAuto.AutomationElement element, ref Boolean clickTriggeredFlag)
         {

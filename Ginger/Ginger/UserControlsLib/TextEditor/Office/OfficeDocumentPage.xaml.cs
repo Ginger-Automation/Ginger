@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using GingerCore.GeneralLib;
 using System;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -57,7 +58,7 @@ namespace Ginger.UserControlsLib.TextEditor.Office
 
             win.Content = null;
 
-            fraContainer.Content = new System.Windows.Controls.ContentControl() { Content = tmp };
+            fraContainer.ClearAndSetContent(new System.Windows.Controls.ContentControl() { Content = tmp });
         }
 
         IntPtr GetHWND()

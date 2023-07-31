@@ -150,7 +150,7 @@ namespace Amdocs.Ginger.Repository
         /// <param name="repositoryItem"></param>
         public void SaveRepositoryItem(RepositoryItemBase repositoryItem)
         {
-            if (String.IsNullOrEmpty(repositoryItem.ContainingFolder))
+            if (string.IsNullOrEmpty(repositoryItem.ContainingFolder))
             {
                 throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
             }
@@ -226,7 +226,7 @@ namespace Amdocs.Ginger.Repository
             {
                 repoItemList = repositoryFolderBase.GetFolderRepositoryItems();
             }
-            repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(filePath)).FirstOrDefault();
+            repoItem = repoItemList.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(filePath));
             return repoItem;
         }
 

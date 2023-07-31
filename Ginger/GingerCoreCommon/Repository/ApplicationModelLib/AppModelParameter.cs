@@ -187,7 +187,7 @@ namespace Amdocs.Ginger.Repository
 
         public string GetDefaultValue()
         {
-            OptionalValue defaultValue = OptionalValuesList.Where(x => x.IsDefault == true).FirstOrDefault();
+            OptionalValue defaultValue = OptionalValuesList.FirstOrDefault(x => x.IsDefault == true);
             if (defaultValue != null)
                 return defaultValue.Value;
             return string.Empty;

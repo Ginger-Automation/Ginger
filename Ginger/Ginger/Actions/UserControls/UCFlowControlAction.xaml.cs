@@ -351,7 +351,7 @@ namespace Ginger.Actions.UserControls
                                     {
                                         if (FC.GetNameFromValue(true) != null)
                                         {
-                                            activityLinkedToFC = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Where(x => x.ActivityName == FC.GetNameFromValue(true)).FirstOrDefault();
+                                            activityLinkedToFC = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().FirstOrDefault(x => x.ActivityName == FC.GetNameFromValue(true));
                                         }
                                     }
                                 }

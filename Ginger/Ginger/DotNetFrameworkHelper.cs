@@ -450,9 +450,9 @@ namespace Ginger
             return GingerCore.General.MergeVerticallyAndSaveBitmaps(bitmaps);
         }
 
-        public void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
+        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence)
         {
-            ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, eALMConnectType.Silence);
+           return ALMIntegration.Instance.ExportBusinessFlowsResultToALM(bfs, ref result, publishToALMConfig, eALMConnectType.Silence);
         }
 
         public ITextBoxFormatter CreateTextBoxFormatter(object Textblock)
@@ -462,7 +462,7 @@ namespace Ginger
 
         public string GetALMConfig()
         {
-            return WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault().AlmType.ToString();
+            return WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm).AlmType.ToString();
         }
 
         public void CreateNewALMDefects(Dictionary<Guid, Dictionary<string, string>> defectsForOpening, List<ExternalItemFieldBase> defectsFields, GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType almType)
@@ -511,7 +511,7 @@ namespace Ginger
                 ObservableList<HTMLReportConfiguration> HTMLReportConfigurations = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>();
                 reportsResultFolder = Reports.GingerExecutionReport.ExtensionMethods.CreateGingerExecutionReport(new ReportInfo(runSetFolder),
                                                                                                                         false,
-                                                                                                                        HTMLReportConfigurations.Where(x => (x.ID == rReport.SelectedHTMLReportTemplateID)).FirstOrDefault(),
+                                                                                                                        HTMLReportConfigurations.FirstOrDefault(x => (x.ID == rReport.SelectedHTMLReportTemplateID)),
                                                                                                                         extraInformationCalculated + "\\" + Path.GetFileName(runSetFolder), false, currentConf.HTMLReportConfigurationMaximalFolderSize);
             }
         }

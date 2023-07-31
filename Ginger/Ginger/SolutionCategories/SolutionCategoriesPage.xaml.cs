@@ -39,10 +39,13 @@ namespace Ginger.SolutionCategories
         ObservableList<SolutionCategoryDefinition> mCategoriesDefinitions;
         bool mReadOnly;
 
-        public SolutionCategoriesPage(eSolutionCategoriesPageMode mode, ObservableList<SolutionCategoryDefinition> categoriesDefinitions = null, bool readOnlyMode = false)
+        public SolutionCategoriesPage()
         {
             InitializeComponent();
+        }
 
+        public void Init(eSolutionCategoriesPageMode mode, ObservableList<SolutionCategoryDefinition> categoriesDefinitions = null, bool readOnlyMode = false)
+        {
             mPageMode = mode;
             mCategoriesDefinitions = categoriesDefinitions;
             if (WorkSpace.Instance.Solution != null)
@@ -100,12 +103,15 @@ namespace Ginger.SolutionCategories
         {
             foreach (SolutionCategoryDefinition cat in mCategoriesDefinitions)
             {
-                SolutionCategory solCat = mSolutionCategories.Where(x => x.Category == cat.Category).FirstOrDefault();
-                if (cat != null)
+                if (cat!=null)
                 {
-                    cat.CategoryName = solCat.CategoryName;
-                    cat.Description = solCat.Description;
-                    cat.CategoryOptionalValues = solCat.CategoryOptionalValues;
+                    SolutionCategory solCat = mSolutionCategories.FirstOrDefault(x => x.Category == cat.Category);
+                    if (solCat!=null)
+                    {
+                        cat.CategoryName = solCat.CategoryName;
+                        cat.Description = solCat.Description;
+                        cat.CategoryOptionalValues = solCat.CategoryOptionalValues;
+                    } 
                 }
             }
         }

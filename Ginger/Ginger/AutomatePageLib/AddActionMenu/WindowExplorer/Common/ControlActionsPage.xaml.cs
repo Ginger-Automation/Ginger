@@ -26,6 +26,7 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using System;
 using System.Linq;
@@ -77,7 +78,7 @@ namespace Ginger.WindowExplorer
                 DataFrameRow.Height = new GridLength(mLastDataGridRowHeight, GridUnitType.Star);
                 DataFrameSplitter.Visibility = System.Windows.Visibility.Visible;
                 DataFrameScrollViewer.Visibility = System.Windows.Visibility.Visible;
-                DataFrame.Content = mDataPage;
+                DataFrame.ClearAndSetContent(mDataPage);
             }
             else
             {
@@ -239,7 +240,7 @@ namespace Ginger.WindowExplorer
 
             SetActionDetails(act);
             mContext.Runner.PrepActionValueExpression(act);
-            ApplicationAgent ag = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.Where(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication).FirstOrDefault();
+            ApplicationAgent ag = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.FirstOrDefault(x => x.AppName == mContext.BusinessFlow.CurrentActivity.TargetApplication);
             if (ag != null)
             {
                 mContext.Runner.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;

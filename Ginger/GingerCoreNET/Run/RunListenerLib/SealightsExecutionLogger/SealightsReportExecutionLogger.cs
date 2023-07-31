@@ -94,7 +94,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             try
             {
-                Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB, "Sealights Session Creation");
+                Reporter.ToStatus(eStatusMsgKey.PublishingToCentralDB,null, "Creating Sealights Session...");
 
                 SealightsReportApiHandler.SendCreationTestSessionToSealightsAsync();
 

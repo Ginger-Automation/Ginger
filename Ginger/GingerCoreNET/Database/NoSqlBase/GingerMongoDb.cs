@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Clusters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -254,22 +255,12 @@ namespace GingerCore.NoSqlBase
                     return "{}";
                 }
 
-                int startIndex = queryParameterValue.IndexOf("{");
-                int endIndex = queryParameterValue.IndexOf("}");
-                queryParameterValue = queryParameterValue.Substring(startIndex, endIndex);
+                queryParameterValue = queryParameterValue.Trim();
             }
             if (param.Equals("project"))
             {
                 queryParameterValue = GetQueryParameterValue(inputSQL, "find");
-
-                string[] splitParameters = queryParameterValue.Split('{');
-
-                if (splitParameters.Count() < 3)
-                {
-                    return "{_id:0}";
-                }
-
-                return $"{{_id:0, {splitParameters[2]}";
+                return "{_id:0}";
             }
             if (param.Equals("sort") && string.IsNullOrEmpty(queryParameterValue))
             {
@@ -354,7 +345,7 @@ namespace GingerCore.NoSqlBase
                     case Actions.ActDBValidation.eDBValidationType.UpdateDB:
 
                         //do commit
-                        if (Act.CommitDB_Value == true)
+                        if (Act.CommitDB_Value && mMongoClient.Cluster.Description.Type != ClusterType.Standalone)
                         {
                             var session = mMongoClient.StartSession();
                             session.StartTransaction();

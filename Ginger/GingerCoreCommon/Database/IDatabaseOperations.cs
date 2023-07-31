@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GingerCore.Environments
 {
@@ -37,7 +38,7 @@ namespace GingerCore.Environments
         string GetCalculatedWithDecryptTrue(string value);
         string GetConnectionString();
         List<string> GetTablesColumns(string table);
-        List<string> GetTablesList(string Keyspace = null);
+        Task<List<string>> GetTablesListAsync(string Keyspace = null);
         string GetRecordCount(string SQL);
         bool MakeSureConnectionIsOpen();
         void SplitUserIdPassFromTNS();

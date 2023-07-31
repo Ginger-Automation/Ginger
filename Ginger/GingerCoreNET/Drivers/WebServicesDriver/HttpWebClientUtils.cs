@@ -928,7 +928,7 @@ namespace GingerCore.Actions.WebAPI
             RequestMessage.Headers.Add("SOAPAction", SoapAction);
 
             //WorkArownd for configuring SOAP content type deferent then text/xml
-            ActInputValue ContetnTypeHeader = mAct.HttpHeaders.Where(x => x.Param == "Content-Type").FirstOrDefault();
+            ActInputValue ContetnTypeHeader = mAct.HttpHeaders.FirstOrDefault(x => x.Param == "Content-Type");
 
             if (ContetnTypeHeader != null)
             {

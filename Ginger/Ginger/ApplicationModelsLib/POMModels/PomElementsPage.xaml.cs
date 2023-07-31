@@ -244,10 +244,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (ItemsToAddList != null && ItemsToAddList.Count > 0)
             {
                 //remove
-                for (int indx = 0; indx < ItemsToAddList.Count; indx++)
+                Dispatcher.InvokeAsync(() =>
                 {
-                    mPOM.UnMappedUIElements.Remove(ItemsToAddList[indx]);
-                }
+                    for (int indx = 0; indx < ItemsToAddList.Count; indx++)
+                    {
+                        mPOM.UnMappedUIElements.Remove(ItemsToAddList[indx]);
+                    }
+                });
                 //add
                 foreach (ElementInfo EI in ItemsToAddList)
                 {
@@ -266,10 +269,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (ItemsToRemoveList != null && ItemsToRemoveList.Count > 0)
             {
                 //remove
-                for (int indx = 0; indx < ItemsToRemoveList.Count; indx++)
+                Dispatcher.InvokeAsync(() =>
                 {
-                    mPOM.MappedUIElements.Remove(ItemsToRemoveList[indx]);
-                }
+                    for (int indx = 0; indx < ItemsToRemoveList.Count; indx++)
+                    {
+                        mPOM.MappedUIElements.Remove(ItemsToRemoveList[indx]);
+                    }
+                });
                 //add
                 foreach (ElementInfo EI in ItemsToRemoveList)
                 {
@@ -801,7 +807,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
                 mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
                 xElementDetails.xPropertiesGrid.DataSourceList = GingerCore.General.ConvertListToObservableList(mSelectedElement.Properties.Where(p => p.ShowOnUI).ToList());
-                if (!mSelectedElement.IsAutoLearned && mSelectedElement.Properties.Where(c => c.Name == "Parent IFrame").FirstOrDefault() == null)
+                if (!mSelectedElement.IsAutoLearned && mSelectedElement.Properties.FirstOrDefault(c => c.Name == "Parent IFrame") == null)
                 {
                     xElementDetails.xPropertiesGrid.ShowAdd = Visibility.Visible;
                 }
@@ -817,7 +823,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mSelectedElement.ScreenShotImage.ToString()));
                 }
-                xElementDetails.xElementScreenShotFrame.Content = new ScreenShotViewPage(mSelectedElement?.ElementName, source, false);
+                xElementDetails.xElementScreenShotFrame.ClearAndSetContent(new ScreenShotViewPage(mSelectedElement?.ElementName, source, false));
             }
             else
             {

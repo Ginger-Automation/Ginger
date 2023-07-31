@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common;
 using Ginger.Reports;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
+using GingerCore.ALM;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
 {
@@ -38,6 +39,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunSetActions
         public override void Execute(IReportInfo RI)
         {
             RunSetActionJSONSummaryOperations.Execute(RI);
+        }
+
+        public override PublishToALMConfig.eALMTestSetLevel GetAlMTestSetLevel()
+        {
+            throw new NotImplementedException();
         }
 
         public override string GetEditPage()

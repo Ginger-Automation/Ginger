@@ -104,7 +104,7 @@ namespace Ginger
                 {
                     if (mObjList != null)
                     {
-                        mObjList.PropertyChanged -= ObjListPropertyChanged;
+                        PropertyChangedEventManager.RemoveHandler(source: mObjList, handler: ObjListPropertyChanged, propertyName: string.Empty);
                     }
                     mObjList = value;
                     if (mObjList != null)
@@ -112,10 +112,7 @@ namespace Ginger
                         BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
                     }
 
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        mCollectionView = new CollectionViewSource() { Source = mObjList }.View;
-                    });
+                    mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
 
                     if (mCollectionView != null)
                     {
@@ -134,7 +131,7 @@ namespace Ginger
                     }
                     this.Dispatcher.Invoke(() =>
                     {
-                        grdMain.ItemsSource = mCollectionView;
+                        grdMain.ItemsSource = mObjList;
 
                         // Make the first row selected
                         if (value != null && value.Count > 0)
@@ -143,7 +140,7 @@ namespace Ginger
                             grdMain.CurrentItem = value[0];
                             // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
                             mObjList.CurrentItem = value[0];
-                        }
+                        }                        
                     });
                     UpdateFloatingButtons();
                 }
@@ -154,8 +151,8 @@ namespace Ginger
                 }
                 if (mObjList != null)
                 {
-                    mObjList.PropertyChanged += ObjListPropertyChanged;
-                    mObjList.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+                    PropertyChangedEventManager.AddHandler(source: mObjList, handler: ObjListPropertyChanged, propertyName: string.Empty);
+                    CollectionChangedEventManager.AddHandler(source: mObjList, handler: CollectionChangedMethod);
                 }
             }
             get
@@ -383,7 +380,7 @@ namespace Ginger
 
         #endregion ##### Control Objects
 
-        private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
+        private void CollectionChangedMethod(object? sender, NotifyCollectionChangedEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -1163,7 +1160,7 @@ namespace Ginger
         #endregion ##### External Methods
 
         #region ##### Internal Methods
-        private void ObjListPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ObjListPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             GingerCore.General.DoEvents();
             if (e.PropertyName == "CurrentItem")
@@ -2040,7 +2037,7 @@ namespace Ginger
             List<ComboEnumItem> itemsList = GingerCore.General.GetEnumValuesForCombo(enumType);
             if (defaultOptionText != null)
             {
-                ComboEnumItem existingDefaultItem = itemsList.Where(x => x.text == defaultOptionText).FirstOrDefault();
+                ComboEnumItem existingDefaultItem = itemsList.FirstOrDefault(x => x.text == defaultOptionText);
                 if (existingDefaultItem != null)
                 {
                     comboBox.ItemsSource = itemsList;

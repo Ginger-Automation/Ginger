@@ -105,7 +105,7 @@ namespace Ginger.Activities
 
         private bool ValidateErrorStringList()
         {
-            if (mErrorList.Where(x => x.ErrorString == string.Empty || x.ErrorString == null).Any())
+            if (mErrorList.Any(x => x.ErrorString == string.Empty || x.ErrorString == null))
             {
                 Reporter.ToUser(eUserMsgKey.MissingErrorString);
                 return false;

@@ -213,7 +213,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                             CompletionWindowSize = GT.Name.Length;
                         }
 
-                        ICompletionData TCD = list.Where(x => x.Text == GT.Name).FirstOrDefault();
+                        ICompletionData TCD = list.FirstOrDefault(x => x.Text == GT.Name);
                         if (TCD == null)
                         {
                             list.Add(GetTagName(GT));
@@ -231,7 +231,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
                             CompletionWindowSize = tag.Name.Length;
                         }
 
-                        ICompletionData TCD = list.Where(x => x.Text == tagname).FirstOrDefault();
+                        ICompletionData TCD = list.FirstOrDefault(x => x.Text == tagname);
                         if (TCD == null)
                         {
                             list.Add(GetTagName(tag));

@@ -56,10 +56,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             WorkSpace.Instance.RefreshGlobalAppModelParams(mApplicationAPIModel);
             page = new ModelParamsPage(mApplicationAPIModel, viewMode);
-            xDynamicParamsFrame.Content = page;
+            xDynamicParamsFrame.ClearAndSetContent(page);
 
             OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel, viewMode);
-            xOutputTemplateFrame.Content = outputTemplatePage;
+            xOutputTemplateFrame.ClearAndSetContent(outputTemplatePage);
 
             mApplicationAPIModel.AppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
             mApplicationAPIModel.GlobalAppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
@@ -809,7 +809,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                 }
                 else
                 {
-                    if (!page.ParamsList.Where(x => x.PlaceHolder.Equals(SoapSecurityContent.ElementAt(i))).Any())
+                    if (!page.ParamsList.Any(x => x.PlaceHolder.Equals(SoapSecurityContent.ElementAt(i))))
                     {
                         newAppModelParam.PlaceHolder = SoapSecurityContent.ElementAt(i);
                     }

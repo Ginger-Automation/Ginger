@@ -24,6 +24,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.QC;
 using GingerCore.ALM.ZephyrEnt.Bll;
+using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Newtonsoft.Json.Linq;
@@ -150,7 +151,7 @@ namespace GingerCore.ALM
             return;
         }
 
-        public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
+        public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
             bool IsExecute = zephyrEntExportManager.ExportExceutionDetailsToALM(bizFlow, ref result, null, exectutedFromAutomateTab, publishToALMConfig);
             if (!IsExecute)
@@ -191,7 +192,7 @@ namespace GingerCore.ALM
             {
                 return zephyrEntRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
             }).Result;
-            return domains.DataResult.Where(f => f.DomainName.Equals(ALMDomainName)).FirstOrDefault().Projects.ToDictionary(project => project.ProjectId.ToString(), project => project.ProjectName);
+            return domains.DataResult.FirstOrDefault(f => f.DomainName.Equals(ALMDomainName)).Projects.ToDictionary(project => project.ProjectId.ToString(), project => project.ProjectName);
         }
 
         public long GetCurrentUser()

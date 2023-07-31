@@ -75,7 +75,7 @@ namespace Ginger
         {
             InitializeComponent();
             mRestartApplication = false;
-            lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersion;
+            lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion;
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
 
             mHelpLayoutList.CollectionChanged += MHelpLayoutList_CollectionChanged;
@@ -132,7 +132,7 @@ namespace Ginger
                 ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
 
                 //Main Menu                            
-                xGingerIconImg.ToolTip = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationName + Environment.NewLine + "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
+                xGingerIconImg.ToolTip = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationName + Environment.NewLine + "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion;
                 SetSolutionDependedUIElements();
                 UpdateUserDetails();
                 if (((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.Count > 0)
@@ -147,7 +147,7 @@ namespace Ginger
                 xProcessMsgPnl.Visibility = Visibility.Collapsed;
                 WorkSpace.Instance.BetaFeatures.PropertyChanged += BetaFeatures_PropertyChanged;
                 SetBetaFlagIconVisibility();
-                lblVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
+                lblVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion;
 
                 //Solution                  
                 if (WorkSpace.Instance.UserProfile.AutoLoadLastSolution && !WorkSpace.Instance.RunningInExecutionMode && !WorkSpace.Instance.RunningFromUnitTest)
@@ -241,7 +241,7 @@ namespace Ginger
                 if (WorkSpace.Instance.LoadingSolution)
                 {
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
-                    xMainWindowFrame.Content = new LoadingPage("Loading Solution...");
+                    xMainWindowFrame.ClearAndSetContent(new LoadingPage("Loading Solution..."));
                     xMainWindowFrame.Visibility = Visibility.Visible;
                     xModifiedItemsCounter.Visibility = Visibility.Collapsed;
                     GingerCore.General.DoEvents();
@@ -260,7 +260,7 @@ namespace Ginger
                     if (WorkSpace.Instance.ReencryptingVariables)
                     {
                         xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
-                        xMainWindowFrame.Content = new LoadingPage("Re-Encrypting Password Variables...");
+                        xMainWindowFrame.ClearAndSetContent(new LoadingPage("Re-Encrypting Password Variables..."));
                         xMainWindowFrame.Visibility = Visibility.Visible;
                         GingerCore.General.DoEvents();
                     }
@@ -435,7 +435,11 @@ namespace Ginger
             eUserMsgSelection userSelection;
             if (mRestartApplication)
             {
-                if (WorkSpace.Instance.SolutionRepository != null && WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
+                if (mLaunchInAdminMode)
+                {
+                    userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestartInAdminMode);
+                }
+                else if (WorkSpace.Instance.SolutionRepository != null && WorkSpace.Instance.SolutionRepository.ModifiedFiles.Any())
                 {
                     userSelection = Reporter.ToUser(eUserMsgKey.AskIfSureWantToRestart);
                 }
@@ -547,7 +551,7 @@ namespace Ginger
                     SelectedSolutionTab = eSolutionTabType.Resources;
                 }
 
-                xMainWindowFrame.Content = selectedTopListItem.Tag;
+                xMainWindowFrame.ClearAndSetContent(selectedTopListItem.Tag);
                 xMainWindowFrame.Visibility = Visibility.Visible;
             }
         }

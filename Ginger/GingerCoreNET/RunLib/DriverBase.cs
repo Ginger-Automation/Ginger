@@ -36,7 +36,7 @@ namespace GingerCore.Drivers
     {
         //Basic configurations
         [UserConfigured]
-        [UserConfiguredDefault("5")]
+        [UserConfiguredDefault("30")]
         [UserConfiguredDescription("The amount of maximum time (in seconds) to wait for the driver to load/connect")]
         public int DriverLoadWaitingTime { get; set; }
 
@@ -374,6 +374,29 @@ namespace GingerCore.Drivers
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Error occured during POM learining while learning Custom Locators", ex);
                 return null;
+            }
+        }
+
+        protected static int GetMaxTimeout(ActSmartSync act)
+        {
+            try
+            {
+                if (act.WaitTime.HasValue)
+                {
+                    return act.WaitTime.GetValueOrDefault();
+                }
+                else if (string.IsNullOrEmpty(act.GetInputParamValue("Value")))
+                {
+                    return 5;
+                }
+                else
+                {
+                    return Convert.ToInt32(act.GetInputParamCalculatedValue("Value"));
+                }
+            }
+            catch (Exception)
+            {
+                return 5;
             }
         }
     }

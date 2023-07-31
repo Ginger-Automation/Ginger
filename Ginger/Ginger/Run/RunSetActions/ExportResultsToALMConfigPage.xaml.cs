@@ -46,6 +46,7 @@ namespace Ginger.Run
         PublishToALMConfig mPublishToALMConfig = new PublishToALMConfig();
         public bool IsProcessing = false;
         ValueExpression mVE = null;
+        Context mContext = null;
         public ExportResultsToALMConfigPage(RunSetActionPublishToQC runSetActionPublishToQC)
         {
             InitializeComponent();
@@ -101,10 +102,10 @@ namespace Ginger.Run
             }
         }
 
-        public bool Init(ObservableList<BusinessFlow> bfs, ValueExpression VE)
+        public bool Init(ObservableList<BusinessFlow> bfs, ValueExpression VE,Context Context=null)
         {
             this.Title = "Export Results To ALM";
-            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(x => x.DefaultAlm).FirstOrDefault();
+            GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
             if (AlmConfig != null)
             {
                 xALMTypeCbx.Init(AlmConfig.AlmType, nameof(RunSetActionPublishToQC.PublishALMType), Enum.GetValues(typeof(eALMType)).Cast<eALMType>().ToList(), ComboBox.SelectedValueProperty);
@@ -115,6 +116,7 @@ namespace Ginger.Run
                 xALMTypeCbx.IsEnabled = false;
                 mBfs = bfs;
                 mVE = VE;
+                mContext = Context;
                 return true;
             }
             else
@@ -143,7 +145,7 @@ namespace Ginger.Run
             mPublishToALMConfig.CalculateTCRunName(mVE);
             await Task.Run(() =>
             {
-                ALMIntegration.Instance.ExportBusinessFlowsResultToALM(mBfs, ref result, mPublishToALMConfig, eALMConnectType.Auto, true);
+                ALMIntegration.Instance.ExportBusinessFlowsResultToALM(mBfs, ref result, mPublishToALMConfig, eALMConnectType.Auto, true, mContext);
             });
             IsProcessing = false;
             xExportToALMLoadingIcon.Visibility = Visibility.Collapsed;
@@ -184,7 +186,7 @@ namespace Ginger.Run
             }
             else
             {
-                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.Where(alm => alm.AlmType.ToString().Equals(xALMTypeCbx.ComboBoxSelectedValue.ToString())).FirstOrDefault();
+                AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(alm => alm.AlmType.ToString().Equals(xALMTypeCbx.ComboBoxSelectedValue.ToString()));
             }
             if (AlmConfig is null)
             {

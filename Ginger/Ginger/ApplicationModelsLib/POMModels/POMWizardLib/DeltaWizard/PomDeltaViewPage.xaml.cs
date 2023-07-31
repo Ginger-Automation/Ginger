@@ -283,7 +283,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             defView.GridColsView = new ObservableList<GridColView>();
             defView.GridColsView.Add(new GridColView() { Field = nameof(DeltaElementLocator.Active), WidthWeight = 50, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox, ReadOnly = true, BindingMode = BindingMode.OneWay });
             List<ComboEnumItem> locateByList = GingerCore.General.GetEnumValuesForCombo(typeof(eLocateBy));
-            ComboEnumItem comboItem = locateByList.Where(x => ((eLocateBy)x.Value) == eLocateBy.POMElement).FirstOrDefault();
+            ComboEnumItem comboItem = locateByList.FirstOrDefault(x => ((eLocateBy)x.Value) == eLocateBy.POMElement);
             if (comboItem != null)
             {
                 locateByList.Remove(comboItem);
@@ -404,7 +404,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mSelectedElement.ElementInfo.ScreenShotImage.ToString()));
                 }
-                xElementScreenShotFrame.Content = new ScreenShotViewPage(mSelectedElement.ElementInfo?.ElementName, source, false);
+                xElementScreenShotFrame.ClearAndSetContent(new ScreenShotViewPage(mSelectedElement.ElementInfo?.ElementName, source, false));
 
             }
             else

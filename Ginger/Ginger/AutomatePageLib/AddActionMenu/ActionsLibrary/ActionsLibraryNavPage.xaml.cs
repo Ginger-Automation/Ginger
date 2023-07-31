@@ -254,7 +254,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     if (a.Platforms.Contains(AP.Platform))
                     {
                         //DO Act.GetSampleAct in base
-                        if ((Acts.Where(c => c.GetType() == a.GetType()).FirstOrDefault()) == null)
+                        if ((Acts.FirstOrDefault(c => c.GetType() == a.GetType())) == null)
                         {
                             a.Description = a.ActionDescription;
                             a.Active = true;

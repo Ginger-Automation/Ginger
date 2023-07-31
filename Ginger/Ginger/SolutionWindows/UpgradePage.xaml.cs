@@ -62,7 +62,7 @@ namespace Ginger.SolutionWindows
             switch (mViewMode)
             {
                 case SolutionUpgradePageViewMode.UpgradeSolution:
-                    ExplanationLable.Text = @"The Solution '" + mSolutionName + "' contains items which were created with older version/s of Ginger (see below), it is recommended to upgrade them to current version (" + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion + ") before continuing.";
+                    ExplanationLable.Text = @"The Solution '" + mSolutionName + "' contains items which were created with older version/s of Ginger (see below), it is recommended to upgrade them to current version (" + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion + ") before continuing.";
 
                     string BackupFolder = Path.Combine(mSolutionFolder, @"Backups\Backup_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm"));
                     BackupFolderTextBox.Text = BackupFolder;

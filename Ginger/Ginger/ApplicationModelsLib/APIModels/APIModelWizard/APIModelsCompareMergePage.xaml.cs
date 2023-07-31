@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.CoreNET.Application_Models;
+using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using System.Windows;
@@ -49,8 +50,8 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             APIModelPage existingAPIPage = new APIModelPage(deltaAPIModel.matchingAPIModel, General.eRIPageViewMode.View);
             APIModelPage learnedAPIPage = new APIModelPage(deltaAPIModel.learnedAPI, General.eRIPageViewMode.View);
 
-            xExistingAPIFrame.Content = existingAPIPage;
-            xLearnedAPIFrame.Content = learnedAPIPage;
+            xExistingAPIFrame.ClearAndSetContent(existingAPIPage);
+            xLearnedAPIFrame.ClearAndSetContent(learnedAPIPage);
         }
 
         Window mOwnerWindow;
@@ -128,7 +129,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
         void SetMergedrFrame()
         {
             mergedAPIPage = new APIModelPage(mDeltaAPIModel.MergedAPIModel, General.eRIPageViewMode.Add);
-            xMergedAPIFrame.Content = mergedAPIPage;
+            xMergedAPIFrame.ClearAndSetContent(mergedAPIPage);
         }
     }
 }

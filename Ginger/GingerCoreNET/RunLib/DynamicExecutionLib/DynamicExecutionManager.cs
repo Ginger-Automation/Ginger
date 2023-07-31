@@ -175,7 +175,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
                     }
 
-                    if (runsetMailReport.EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault() != null)
+                    if (runsetMailReport.EmailAttachments.FirstOrDefault(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report) != null)
                     {
                         dynamicMailReport.IncludeAttachmentReport = true;
                     }
@@ -587,7 +587,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runner.Exist = true;
                 if (gingerRunner.UseSpecificEnvironment == true && string.IsNullOrEmpty(gingerRunner.SpecificEnvironmentName) == false)
                 {
-                    ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == gingerRunner.SpecificEnvironmentName).FirstOrDefault();
+                    ProjEnvironment env = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault(x => x.Name == gingerRunner.SpecificEnvironmentName);
                     if (env != null)
                     {
                         runner.EnvironmentName = env.Name;
@@ -1130,16 +1130,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                     VariableBase customizedInputVar = null;
                                     if (dynamicRunsetConfigs.Exist && businessFlowRun.BusinessFlowCustomizedRunVariables.Count > 0)
                                     {
-                                        customizedInputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.ParentGuid == inputValueConfig.VariableParentID && v.Guid == inputValueConfig.VariableID).FirstOrDefault();
+                                        customizedInputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.FirstOrDefault(v => v.ParentGuid == inputValueConfig.VariableParentID && v.Guid == inputValueConfig.VariableID);
                                         if (customizedInputVar == null)
                                         {
-                                            customizedInputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.Guid == inputValueConfig.VariableID).FirstOrDefault();
+                                            customizedInputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.FirstOrDefault(v => v.Guid == inputValueConfig.VariableID);
                                             if (customizedInputVar == null)
                                             {
-                                                customizedInputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.ParentName == inputValueConfig.VariableParentName && v.Name == inputValueConfig.VariableName).FirstOrDefault();
+                                                customizedInputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.FirstOrDefault(v => v.ParentName == inputValueConfig.VariableParentName && v.Name == inputValueConfig.VariableName);
                                                 if (customizedInputVar == null)
                                                 {
-                                                    customizedInputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.Where(v => v.Name == inputValueConfig.VariableName).FirstOrDefault();
+                                                    customizedInputVar = businessFlowRun.BusinessFlowCustomizedRunVariables.FirstOrDefault(v => v.Name == inputValueConfig.VariableName);
                                                 }
                                             }
                                         }
@@ -1148,16 +1148,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                     if (customizedInputVar == null && allInputVars != null)
                                     {
                                         VariableBase inputVar = null;
-                                        inputVar = allInputVars.Where(v => v.ParentGuid == inputValueConfig.VariableParentID && v.Guid == inputValueConfig.VariableID).FirstOrDefault();
+                                        inputVar = allInputVars.FirstOrDefault(v => v.ParentGuid == inputValueConfig.VariableParentID && v.Guid == inputValueConfig.VariableID);
                                         if (inputVar == null)
                                         {
-                                            inputVar = allInputVars.Where(v => v.Guid == inputValueConfig.VariableID).FirstOrDefault();
+                                            inputVar = allInputVars.FirstOrDefault(v => v.Guid == inputValueConfig.VariableID);
                                             if (inputVar == null)
                                             {
-                                                inputVar = allInputVars.Where(v => v.ParentName == inputValueConfig.VariableParentName && v.Name == inputValueConfig.VariableName).FirstOrDefault();
+                                                inputVar = allInputVars.FirstOrDefault(v => v.ParentName == inputValueConfig.VariableParentName && v.Name == inputValueConfig.VariableName);
                                                 if (inputVar == null)
                                                 {
-                                                    inputVar = allInputVars.Where(v => v.Name == inputValueConfig.VariableName).FirstOrDefault();
+                                                    inputVar = allInputVars.FirstOrDefault(v => v.Name == inputValueConfig.VariableName);
                                                 }
                                             }
                                         }
@@ -1336,7 +1336,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
 
                         //report attachments
-                        EmailAttachment reportAttachment = mailOperation.EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report).FirstOrDefault();
+                        EmailAttachment reportAttachment = mailOperation.EmailAttachments.FirstOrDefault(x => x.AttachmentType == EmailAttachment.eAttachmentType.Report);
                         if (runsetOperationConfigMail.IncludeAttachmentReport != null)
                         {
                             if (runsetOperationConfigMail.IncludeAttachmentReport == true && reportAttachment == null)
@@ -1389,7 +1389,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         {
                             foreach (string attachmentPath in runsetOperationConfigMail.FilesPathToAttach)
                             {
-                                EmailAttachment exsitingAttachment = mailOperation.EmailAttachments.Where(x => x.AttachmentType == EmailAttachment.eAttachmentType.File && x.Name.Trim().ToLower() == attachmentPath.Trim().ToLower()).FirstOrDefault();
+                                EmailAttachment exsitingAttachment = mailOperation.EmailAttachments.FirstOrDefault(x => x.AttachmentType == EmailAttachment.eAttachmentType.File && x.Name.Trim().ToLower() == attachmentPath.Trim().ToLower());
                                 if (exsitingAttachment == null)
                                 {
                                     mailOperation.EmailAttachments.Add(new EmailAttachment() { AttachmentType = EmailAttachment.eAttachmentType.File, Name = attachmentPath });
@@ -1450,7 +1450,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
                         if (publishToALMOperationExecConfig.ALMType.ToLower() == "default")
                         {
-                            publishToQCRunSetOperation.PublishALMType = gingerExecConfig.AlmsDetails.Where(x => x.IsDefault != null && x.IsDefault.Value == true).FirstOrDefault().ALMType;
+                            publishToQCRunSetOperation.PublishALMType = gingerExecConfig.AlmsDetails.FirstOrDefault(x => x.IsDefault != null && x.IsDefault.Value == true).ALMType;
                         }
                         else
                         {
@@ -1571,11 +1571,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 {
                     if (typeof(T).GetProperty(id.Item1) != null)
                     {
-                        item = repoLibrary.Where(x => (Guid)(typeof(T).GetProperty(id.Item1).GetValue(x)) == id.Item2).FirstOrDefault();
+                        item = repoLibrary.FirstOrDefault(x => (Guid)(typeof(T).GetProperty(id.Item1).GetValue(x)) == id.Item2);
                     }
                     else if (typeof(T).GetField(id.Item1) != null)
                     {
-                        item = repoLibrary.Where(x => (Guid)(typeof(T).GetField(id.Item1).GetValue(x)) == id.Item2).FirstOrDefault();
+                        item = repoLibrary.FirstOrDefault(x => (Guid)(typeof(T).GetField(id.Item1).GetValue(x)) == id.Item2);
                     }
                 }
 
@@ -1583,11 +1583,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 {
                     if (typeof(T).GetProperty(name.Item1) != null)
                     {
-                        item = repoLibrary.Where(x => typeof(T).GetProperty(name.Item1).GetValue(x).ToString().ToLower() == name.Item2.ToLower()).FirstOrDefault();
+                        item = repoLibrary.FirstOrDefault(x => typeof(T).GetProperty(name.Item1).GetValue(x).ToString().ToLower() == name.Item2.ToLower());
                     }
                     else if (typeof(T).GetField(name.Item1) != null)
                     {
-                        item = repoLibrary.Where(x => typeof(T).GetField(name.Item1).GetValue(x).ToString().ToLower() == name.Item2.ToLower()).FirstOrDefault();
+                        item = repoLibrary.FirstOrDefault(x => typeof(T).GetField(name.Item1).GetValue(x).ToString().ToLower() == name.Item2.ToLower());
                     }
                 }
 

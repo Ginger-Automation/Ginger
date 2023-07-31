@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2023 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -927,8 +927,7 @@ namespace GingerCore.Drivers
             {
                 if (Driver != null)
                 {
-                    Driver.Quit();
-                    Driver = null;
+                    Driver.Close();
                 }
                 if (StartBMP)
                 {
@@ -943,6 +942,19 @@ namespace GingerCore.Drivers
             catch (Exception e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Selenium Driver", e);
+            }
+
+            try
+            {
+                if (Driver != null)
+                {
+                    Driver.Quit();
+                    Driver = null;
+                }
+            }
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error when try to quit Selenium Driver", e);
             }
         }
 
@@ -1745,85 +1757,60 @@ namespace GingerCore.Drivers
 
         public void SmartSyncHandler(ActSmartSync act)
         {
-            int MaxTimeout = SetMaxTimeout(act);
+            int MaxTimeout = GetMaxTimeout(act);
 
             try
             {
                 Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, MaxTimeout);
-                IWebElement e = LocateElement(act, true);
+                IWebElement e = null;
+
                 Stopwatch st = new Stopwatch();
+
+                st.Reset();
+                st.Start();
+
                 switch (act.SmartSyncAction)
                 {
                     case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
-                        st.Reset();
-                        st.Start();
-                        while (!(e != null && (e.Displayed || e.Enabled)))
+                        do
                         {
-                            Thread.Sleep(100);
-                            e = LocateElement(act, true);
                             if (st.ElapsedMilliseconds > MaxTimeout * 1000)
                             {
                                 act.Error = "Smart Sync of WaitUntilDisplay is timeout";
                                 break;
                             }
-                        }
-                        break;
-                    case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
-                        st.Reset();
-                        if (e == null)
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            st.Start();
 
-                            while (e != null && e.Displayed)
+                            Thread.Sleep(100);
+
+                            e = LocateElement(act, true);
+
+                        } while (!(e != null && (e.Displayed || e.Enabled)));
+                        break;
+
+                    case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
+                        do
+                        {
+                            if (st.ElapsedMilliseconds > MaxTimeout * 1000)
                             {
-                                Thread.Sleep(100);
-                                e = LocateElement(act, true);
-                                if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                                {
-                                    act.Error = "Smart Sync of WaitUntilDisapear is timeout";
-                                    break;
-                                }
+                                act.Error = "Smart Sync of WaitUntilDisapear is timeout";
+                                break;
                             }
 
-                        }
+                            Thread.Sleep(100);
+
+                            e = LocateElement(act, true);
+
+                        } while (e != null && e.Displayed);
                         break;
                 }
+
+                st.Stop();
             }
             finally
             {
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
             }
 
-        }
-
-        private int SetMaxTimeout(ActSmartSync act)
-        {
-            int MaxTimeout = 0;
-            try
-            {
-                if (act.WaitTime.HasValue == true)
-                {
-                    MaxTimeout = act.WaitTime.GetValueOrDefault();
-                }
-                else if (string.IsNullOrEmpty(act.GetInputParamValue("Value")))
-                {
-                    MaxTimeout = 5;
-                }
-                else
-                {
-                    MaxTimeout = Convert.ToInt32(act.GetInputParamCalculatedValue("Value"));
-                }
-            }
-            catch (Exception)
-            {
-                MaxTimeout = 5;
-            }
-
-            return MaxTimeout;
         }
 
         public void PWLElementHandler(ActPWL act)
@@ -4292,8 +4279,11 @@ namespace GingerCore.Drivers
                     {
                         try
                         {
+                        
+                            
                             Thread.Sleep(100);
-                            count = Driver.WindowHandles.ToList().Count;
+                            count = Driver.WindowHandles.Count;
+
                         }
                         catch (System.InvalidCastException ex)
                         {
@@ -4401,6 +4391,7 @@ namespace GingerCore.Drivers
                         exceptioncount++;
                         return (IsRunning());
                     }
+                    CloseDriver();
                     return false;
                 }
                 catch (Exception ex2)
@@ -4410,7 +4401,7 @@ namespace GingerCore.Drivers
                     {
                         return true;
                     }
-
+                    CloseDriver();
                     return false;
                 }
                 return true;
@@ -4885,7 +4876,7 @@ namespace GingerCore.Drivers
             else if (htmlNode != null)
             {
                 elementTagName = htmlNode.Name;
-                if (htmlNode.Attributes.Where(x => x.Name == "type").FirstOrDefault() != null)
+                if (htmlNode.Attributes.FirstOrDefault(x => x.Name == "type") != null)
                 {
                     elementTypeAtt = htmlNode.Attributes["type"].Value;
                 }
@@ -5867,7 +5858,7 @@ namespace GingerCore.Drivers
             HtmlAttributeCollection htmlAttributes = htmlElementObject.Attributes;
             foreach (HtmlAttribute htmlAttribute in htmlAttributes)
             {
-                ControlProperty existControlProperty = list.Where(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value).FirstOrDefault();
+                ControlProperty existControlProperty = list.FirstOrDefault(x => x.Name == htmlAttribute.Name && x.Value == htmlAttribute.Value);
                 if (existControlProperty == null)
                 {
                     ControlProperty controlProperty = new ControlProperty() { Name = htmlAttribute.Name, Value = htmlAttribute.Value };
@@ -5979,7 +5970,7 @@ namespace GingerCore.Drivers
                         string id = string.Empty;
                         if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null && !string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).ID))
                         {
-                            HtmlAttribute idAttribute = ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes.Where(x => x.Name == "id").FirstOrDefault();
+                            HtmlAttribute idAttribute = ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes.FirstOrDefault(x => x.Name == "id");
                             if (idAttribute != null)
                             {
                                 id = idAttribute.Value;
@@ -6006,7 +5997,7 @@ namespace GingerCore.Drivers
                         string name = string.Empty;
                         if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null && !string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).Name))
                         {
-                            HtmlAttribute nameAttribute = ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes.Where(x => x.Name == "name").FirstOrDefault();
+                            HtmlAttribute nameAttribute = ((HTMLElementInfo)ElementInfo).HTMLElementObject.Attributes.FirstOrDefault(x => x.Name == "name");
                             if (nameAttribute != null)
                             {
                                 name = nameAttribute.Value;
@@ -7467,7 +7458,15 @@ namespace GingerCore.Drivers
             switch (act.ControlAction)
             {
                 case ActBrowserElement.eControlAction.Maximize:
-                    Driver.Manage().Window.Maximize();
+                    try
+                    {
+                        Driver.Manage().Window.Maximize();
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                    }
+                    
                     break;
 
                 case ActBrowserElement.eControlAction.OpenURLNewTab:
@@ -7659,7 +7658,7 @@ namespace GingerCore.Drivers
                         {
                             if (dict.ContainsKey("name"))
                             {
-                                var urlArray = dict.Where(x => x.Key == "name").FirstOrDefault().Value.ToString().Split('/');
+                                var urlArray = dict.FirstOrDefault(x => x.Key == "name").Value.ToString().Split('/');
 
                                 var urlString = string.Empty;
                                 if (urlArray.Length > 0)
@@ -7776,7 +7775,7 @@ namespace GingerCore.Drivers
         }
 
         private void OpenNewTab()
-        {
+        {            
             IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
             javaScriptExecutor.ExecuteScript("window.open();");
             Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
@@ -8653,7 +8652,7 @@ namespace GingerCore.Drivers
                             SSPageDoc = new HtmlDocument();
                             SSPageDoc.LoadHtml(GetCurrentPageSourceString());
                         }
-                        elemNode = SSPageDoc.DocumentNode.Descendants().Where(x => x.Id.Equals(elemId)).FirstOrDefault();
+                        elemNode = SSPageDoc.DocumentNode.Descendants().FirstOrDefault(x => x.Id.Equals(elemId));
                     }
                     catch (Exception exc)
                     {
@@ -9430,7 +9429,7 @@ namespace GingerCore.Drivers
 
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
 
-                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Any())
+                if (activesElementLocators.Any(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed))
                 {
                     return true;
                 }
@@ -9509,13 +9508,13 @@ namespace GingerCore.Drivers
         public ElementInfo GetMatchingElement(ElementInfo element, ObservableList<ElementInfo> existingElemnts)
         {
             //try using online IWebElement Objects comparison
-            ElementInfo OriginalElementInfo = existingElemnts.Where(x => (x.ElementObject != null) && (element.ElementObject != null) && (x.ElementObject.ToString() == element.ElementObject.ToString())).FirstOrDefault();//comparing IWebElement ID's
+            ElementInfo OriginalElementInfo = existingElemnts.FirstOrDefault(x => (x.ElementObject != null) && (element.ElementObject != null) && (x.ElementObject.ToString() == element.ElementObject.ToString()));//comparing IWebElement ID's
 
 
             if (OriginalElementInfo == null)
             {
                 //try by type and Xpath comparison
-                OriginalElementInfo = existingElemnts.Where(x => (x.ElementTypeEnum == element.ElementTypeEnum)
+                OriginalElementInfo = existingElemnts.FirstOrDefault(x => (x.ElementTypeEnum == element.ElementTypeEnum)
                                                                     && (x.XPath == element.XPath)
                                                                     && (x.Path == element.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(element.Path)))
                                                                     && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null
@@ -9523,7 +9522,7 @@ namespace GingerCore.Drivers
                                                                             && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
                                                                             )
                                                                         )
-                                                                  ).FirstOrDefault();
+);
             }
 
             return OriginalElementInfo;
