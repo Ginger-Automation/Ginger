@@ -46,6 +46,8 @@ jobs:
           echo $save > .\Ginger\GingerInstallerScript.iss
           $save=(Get-Content .\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java) -replace 'public static final String GINGER_JAVA_AGENT_VERSION="*.*.*.*";','public static final String GINGER_JAVA_AGENT_VERSION="${{ env.gingernumber}}";'
           echo $save > .\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java
+          $save=(Get-Content .\Ginger\GingerInstallerScriptGithub.iss) -replace '#define MyAppVersion "*.*.*.*"','#define MyAppVersion "${{ env.gingernumber}}"'
+          echo $save > .\Ginger\GingerInstallerScriptGithub.iss
       
 # ------------------------------------------------------------------------------------------------------
 # Install .Net core SDK 6.0.301
