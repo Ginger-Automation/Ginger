@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.QCRestAPI;
+using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using QCRestClientStd;
@@ -92,7 +93,7 @@ namespace GingerCore.ALM
             return ExportToQCRestAPI.ExportBusinessFlowToQC(businessFlow, mappedTestSet, uploadPath, testSetFields, testInstanceFields, ref result);
         }
 
-        public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
+        public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
             ResourceType resource = (ResourceType)AlmDataContractsStd.Enums.ResourceType.TEST_RUN;
             ObservableList<ExternalItemFieldBase> runFields = GetALMItemFields(null, true, (AlmDataContractsStd.Enums.ResourceType)resource);
