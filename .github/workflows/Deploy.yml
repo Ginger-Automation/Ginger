@@ -90,6 +90,7 @@ jobs:
 # Upload Ginger Documents to Github Releases 
 # ------------------------------------------------------------------------------------------------------
           - name: Upload Assest to Github Releases - Ginger.Release.Notes.pdf
+            if: ( !(contains(env.gingertag , 'Beta' )) && !(contains(env.gingertag , 'Alpha' )) )
             uses: actions/upload-release-asset@v1
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -101,6 +102,7 @@ jobs:
 
 
           - name: Upload Assest to Github Releases -  Ginger.System.Requirements.pdf
+            if: ( !(contains(env.gingertag , 'Beta' )) && !(contains(env.gingertag , 'Alpha' )) )
             uses: actions/upload-release-asset@v1
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -112,6 +114,7 @@ jobs:
 
 
           - name: Upload Assest to Github Releases - GingerRuntime.System.Requirements.pdf
+            if: ( !(contains(env.gingertag , 'Beta' )) && !(contains(env.gingertag , 'Alpha' )) )
             uses: actions/upload-release-asset@v1
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
