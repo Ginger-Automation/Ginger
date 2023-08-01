@@ -56,8 +56,8 @@ jobs:
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
             with:
-              tag_name: V${{ env.gingertag}}
-              release_name: Release V${{ env.gingertag}}
+              tag_name: v${{ env.gingertag}}
+              release_name: Release v${{ env.gingertag}}
               draft: true
 
 # ------------------------------------------------------------------------------------------------------

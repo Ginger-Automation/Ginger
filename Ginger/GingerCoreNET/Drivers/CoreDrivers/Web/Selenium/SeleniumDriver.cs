@@ -7458,7 +7458,15 @@ namespace GingerCore.Drivers
             switch (act.ControlAction)
             {
                 case ActBrowserElement.eControlAction.Maximize:
-                    Driver.Manage().Window.Maximize();
+                    try
+                    {
+                        Driver.Manage().Window.Maximize();
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                    }
+                    
                     break;
 
                 case ActBrowserElement.eControlAction.OpenURLNewTab:
