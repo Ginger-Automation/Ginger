@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amazon.Util.Internal.PlatformServices;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
@@ -26,7 +27,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
+using Amdocs.Ginger.Common.GeneralLib;
 
 public enum SolutionUpgradePageViewMode
 {
@@ -52,132 +53,8 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
     {
         public static void ClearPreviousScans()
         {
-            solutionFilesWithVersion = new ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>>();
-        }
-
-        public static IEnumerable<RepositoryFile> GetAllToUpgrade(IEnumerable<RepositoryFile> RepositoryFiles)
-        {
-            // need ConcurrentBag - since it is thread safe when running in parallel then no need to use lock
-            ConcurrentBag<RepositoryFile> filesToUpgrade = new ConcurrentBag<RepositoryFile>();
-
-            Parallel.ForEach(RepositoryFiles, RF =>
-            {
-                string fileVer = string.Empty;
-
-                if (CompareRepoFileVersionToCurrent(RF.FilePath, ref fileVer) == -1)  // TODO: use enum !!!!!!!!!!!!!!!!!!
-                {
-                    filesToUpgrade.Add(RF);
-                }
-            });
-
-            return filesToUpgrade.ToArray();
-        }
-
-        /// <summary>
-        /// Checks the Ginger version in the file and compare it to current Ginger version.
-        /// returns 0 if file was created with the same version, -1 if created with lower version and 1 if created with newer version
-        /// </summary>
-        /// <param name="FileName"></param>
-        /// <returns></returns>
-        public static int CompareRepoFileVersionToCurrent(string FileName, ref string fileVersion)
-        {
-            //TODO: return code should be enum not int to make it easy read
-            string line1, line2;
-            using (StreamReader reader = new StreamReader(FileName))
-            {
-                line1 = reader.ReadLine();
-                line2 = reader.ReadLine();
-
-                long currentVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToLong(Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion);
-                fileVersion = GetXMLVersion(line2);
-                long fileXmlVersion = GetXMLVersionAsLong(line2);
-
-                if (currentVersion == fileXmlVersion)
-                {
-                    return 0; //same version
-                }
-                else if (currentVersion > fileXmlVersion)
-                {
-                    return -1; //File is from lower version
-                }
-                else if (currentVersion < fileXmlVersion)
-                {
-                    return 1; //File is from newer version
-                }
-                else
-                {
-                    return -2;//failed to identify and compare the version
-                }
-            }
-        }
-
-
-
-        public static long GetXMLVersionAsLong(string xml)
-        {
-            /* Expecting the 1st comment in file to contain build info and 
-            * expecting  comment to look this: */
-            int iMajor = 0, iMinor = 0, iBuild = 0, iRevision = 0;
-            int i1 = xml.IndexOf("<!--Ginger Repository Item created with version: ");
-            int i2 = xml.IndexOf("-->");
-
-            try
-            {
-                string BuildInfo = xml.Substring(i1, i2 - i1);
-                Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
-                Match match = regex.Match(BuildInfo);
-                if (match.Success)
-                {
-                    // TODO: add error messages for failures here
-                    // extract build info
-                    try { iMajor = Int32.Parse(match.Groups[1].Value); }
-                    catch (Exception) { }
-                    try { iMinor = Int32.Parse(match.Groups[2].Value); }
-                    catch (Exception) { }
-                    try { iBuild = Int32.Parse(match.Groups[3].Value); }
-                    catch (Exception) { }
-                    try { iRevision = Int32.Parse(match.Groups[4].Value); }
-                    catch (Exception) { }
-                }
-                else
-                {
-                    //TODO: handle when regex match fails completely
-                }
-                long version = iMajor * 1000000 + iMinor * 10000 + iBuild * 100 + iRevision;
-                return version;
-            }
-            catch (Exception)
-            {
-                return 10203;
-            }
-        }
-
-        public static string GetXMLVersion(string xml)
-        {
-            /* Expecting the 1st comment in file to contain build info and 
-            * expecting  comment to look this: */
-            int i1 = xml.IndexOf("<!--Ginger Repository Item created with version: ");
-            int i2 = xml.IndexOf("-->");
-            try
-            {
-                string BuildInfo = xml.Substring(i1, i2 - i1);
-                Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
-                Match match = regex.Match(BuildInfo);
-                if (match.Success)
-                {
-                    return match.Value;
-                }
-                else
-                {
-                    return "0.0.0.0";
-                }
-            }
-            catch (Exception)
-            {
-                return "0.0.0.0";
-            }
-        }
-
+            solutionFilesWithVersion = null;
+        }        
 
         static ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = new ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>>();
 
@@ -189,37 +66,37 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
         /// <returns></returns>
         public static ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> GetSolutionFilesWithVersion(IEnumerable<string> solutionFiles, bool addInfoExtention = true)
         {
-            // read all XMLs and check for version
-            Parallel.ForEach(solutionFiles, FileName =>
+            if (solutionFilesWithVersion == null)
             {
-                string fileVer = string.Empty;
-                eGingerVersionComparisonResult versionRes = CompareSolutionFileGingerVersionToCurrent(FileName, ref fileVer);
+                solutionFilesWithVersion = new ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>>();
 
-                if (addInfoExtention)
-                {
-                    solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName + "--> File Version: " + fileVer));
-                }
-                else
-                {
-                    solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName));
-                }
-            });
+                // read all XMLs and check for version
+                Parallel.ForEach(solutionFiles, FileName =>
+                    {
+                        string fileVer = string.Empty;
+                        eGingerVersionComparisonResult versionRes = CompareSolutionFileGingerVersionToCurrent(FileName, ref fileVer);
+
+                        if (addInfoExtention)
+                        {
+                            solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName + "--> File Version: " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertBackendApplicationVersionToUIVersion(fileVer)));
+                        }
+                        else
+                        {
+                            solutionFilesWithVersion.Add(Tuple.Create(versionRes, FileName));
+                        }
+                    });
+            }
 
             return solutionFilesWithVersion;
         }
+
         internal static bool IsGingerUpgradeNeeded(string solutionFolder, IEnumerable<string> solutionFiles)
         {
-            ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = null;
-
             //check if Ginger Upgrade is needed for loading this Solution
             try
             {
                 //Reporter.ToLog(eLogLevel.INFO, "Checking if Ginger upgrade is needed for loading the Solution");
-                if (solutionFilesWithVersion == null)
-                {
-                    solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
-                }
-                ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, eGingerVersionComparisonResult.HigherVersion);
+                ConcurrentBag<string> higherVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles), eGingerVersionComparisonResult.HigherVersion);
                 if (higherVersionFiles.Count > 0)
                 {
                     if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
@@ -243,11 +120,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             ConcurrentBag<Tuple<eGingerVersionComparisonResult, string>> solutionFilesWithVersion = null;
             try
             {
-                if (solutionFilesWithVersion == null)
-                {
-                    solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
-                }
-                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, eGingerVersionComparisonResult.LowerVersion);
+                ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles), eGingerVersionComparisonResult.LowerVersion);
                 if (lowerVersionFiles.Count > 0 && lowerVersionFiles.Any(x => x.Contains("Ginger.Solution.xml")))
                 {
                     if (WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
@@ -314,7 +187,7 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
             }
 
             long fileVersionAsLong = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToLong(fileGingerVersion);
-            long currentVersionAsLong = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToLong(Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion);
+            long currentVersionAsLong = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ConvertApplicationVersionToLong(Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationBackendVersion);
 
             if (fileVersionAsLong == 0)
             {
@@ -490,14 +363,10 @@ namespace GingerCoreNET.SolutionRepositoryLib.UpgradeLib
 
             try
             {
-                if (WorkSpace.Instance.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false)
+                if (WorkSpace.Instance.UserProfile.DoNotAskToUpgradeSolutions == false && WorkSpace.Instance.RunningInExecutionMode == false && WorkSpace.Instance.RunningFromUnitTest == false && Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.IsOfficialRelease)
                 {
                     Reporter.ToLog(eLogLevel.INFO, "Checking is Solution Items Upgrade is needed");
-                    if (solutionFilesWithVersion == null)
-                    {
-                        solutionFilesWithVersion = SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles);
-                    }
-                    ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(solutionFilesWithVersion, eGingerVersionComparisonResult.LowerVersion);
+                    ConcurrentBag<string> lowerVersionFiles = SolutionUpgrade.GetSolutionFilesCreatedWithRequiredGingerVersion(SolutionUpgrade.GetSolutionFilesWithVersion(solutionFiles), eGingerVersionComparisonResult.LowerVersion);
                     if (lowerVersionFiles != null && lowerVersionFiles.Count > 0)
                     {
                         WorkSpace.Instance.EventHandler.ShowUpgradeSolutionItems(SolutionUpgradePageViewMode.UpgradeSolution, solutionFolder, solutionName, lowerVersionFiles.ToList());

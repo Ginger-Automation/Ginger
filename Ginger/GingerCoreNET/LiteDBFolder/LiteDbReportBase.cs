@@ -249,7 +249,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             Elapsed = runSetReport.Elapsed;
             MachineName = System.Environment.MachineName.ToString();
             ExecutedbyUser = System.Environment.UserName.ToString();
-            GingerVersion = ApplicationInfo.ApplicationVersion;
+            GingerVersion = ApplicationInfo.ApplicationUIversion;
             RunStatus = (runSetReport.RunSetExecutionStatus == eRunStatus.Automated) ? eRunStatus.Automated.ToString() : SetStatus(RunnersColl);
         }
     }
