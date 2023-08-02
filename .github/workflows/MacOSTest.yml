@@ -1,0 +1,68 @@
+name: Ginger MacOS Test
+
+on:
+  workflow_call: 
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    name: MacOS Test
+    runs-on: macOS-latest
+    
+    env:
+      BUILD_CONFIGURATION: Release
+    
+    steps:   
+    
+# ------------------------------------------------------------------------------------------------------
+# Copy Ginger repo
+# ------------------------------------------------------------------------------------------------------
+      - name: Code Checkout 
+        if: ${{github.workflow == 'Ginger MacOS Test'}} 
+        uses: actions/checkout@v3
+         
+      - name: Download Airtifacts
+        if: ${{github.workflow != 'Ginger MacOS Test'}} 
+        uses: actions/download-artifact@v3
+        with:
+          name: ginger-artifact
+
+# ------------------------------------------------------------------------------------------------------
+# Install .Net core SDK 6.0.301
+# ------------------------------------------------------------------------------------------------------
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '7.x.x'
+    
+# ------------------------------------------------------------------------------------------------------
+# start Testing 
+# ------------------------------------------------------------------------------------------------------
+      - name: 'Testing GingerUtilsTest'
+        run: dotnet test  Ginger/GingerUtilsTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+      
+      - name: 'Testing GingerCoreCommonTest'
+        run: dotnet test  Ginger/GingerCoreCommonTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+
+      - name: 'Testing GingerCoreNETUnitTest'
+        run: dotnet test  Ginger/GingerCoreNETUnitTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+
+      - name: 'Testing GingerPluginCoreTest'
+        run: dotnet test  Ginger/GingerPluginCoreTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+
+      - name: 'Testing GingerConsoleTest'
+        run: dotnet test  Ginger/GingerConsoleTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+
+      - name: 'Testing GingerAutoPilotTest'
+        run: dotnet test  Ginger/GingerAutoPilotTest --configuration ${BUILD_CONFIGURATION} --logger trx --verbosity=normal
+             
+# ------------------------------------------------------------------------------------------------------
+# Publish Test Results
+# ------------------------------------------------------------------------------------------------------
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()        # run this step even if previous step failed
+        with:
+          name: Ginger MacOS UnitTests    # Name of the check run which will be created
+          path: "**/*.trx"                # Path to test results
+          reporter: dotnet-trx            # Format of test results        

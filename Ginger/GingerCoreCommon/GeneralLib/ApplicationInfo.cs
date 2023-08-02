@@ -32,68 +32,58 @@ namespace Amdocs.Ginger.Common.GeneralLib
 
         public static string ApplicationName = mFileVersionInfo.ProductName;//"Ginger by Amdocs"
 
-        private static string mApplicationVersion = String.Empty;
-        public static string ApplicationVersion
+        private static string mApplicationUIversion = String.Empty;
+        public static string ApplicationUIversion
         {
             get
             {
-                if (mApplicationVersion == string.Empty)
+                if (mApplicationUIversion == string.Empty)
                 {
                     if (mFileVersionInfo.FilePrivatePart != 0)//Alpha
                     {
-                        mApplicationVersion = string.Format("{0}.{1}.{2}.{3}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart, mFileVersionInfo.FilePrivatePart);
+                        mApplicationUIversion = string.Format("20{0}.{1}-Alpha {2}.{3}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart, mFileVersionInfo.FilePrivatePart);
                     }
                     else if (mFileVersionInfo.FileBuildPart != 0)//Beta
                     {
-                        mApplicationVersion = string.Format("{0}.{1}.{2}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart);
+                        mApplicationUIversion = string.Format("20{0}.{1}-Beta {2}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart);
                     }
                     else//Official Release
                     {
-                        mApplicationVersion = string.Format("{0}.{1}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart);
+                        mApplicationUIversion = string.Format("20{0}.{1}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart);
                     }
                 }
-                return mApplicationVersion;
+
+                return mApplicationUIversion;
             }
         }
 
-        private static string mApplicationMajorVersion = String.Empty;
-        public static string ApplicationMajorVersion
+        private static string mApplicationBackendVersion = String.Empty;
+        public static string ApplicationBackendVersion
         {
             get
             {
-                if (mApplicationMajorVersion == string.Empty)
+                if (mApplicationBackendVersion == string.Empty)
                 {
-                    mApplicationMajorVersion = string.Format("{0}.{1}.{2}.{3}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, 0, 0);
+                    mApplicationBackendVersion = string.Format("{0}.{1}.{2}.{3}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart, mFileVersionInfo.FilePrivatePart);
                 }
-                return mApplicationMajorVersion;
+                return mApplicationBackendVersion;
             }
         }
 
-        private static string mApplicationVersionWithInfo = String.Empty;
-        public static string ApplicationVersionWithInfo
+        public static bool IsOfficialRelease
         {
             get
             {
-                if (mApplicationVersionWithInfo == string.Empty)
+                if (mFileVersionInfo.FilePrivatePart == 0 && mFileVersionInfo.FileBuildPart == 0)
                 {
-                    if (mFileVersionInfo.FilePrivatePart != 0)//Alpha
-                    {
-                        mApplicationVersionWithInfo = string.Format("{0}.{1}-Alpha {2}.{3}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart, mFileVersionInfo.FilePrivatePart);
-                    }
-                    else if (mFileVersionInfo.FileBuildPart != 0)//Beta
-                    {
-                        mApplicationVersionWithInfo = string.Format("{0}.{1}-Beta {2}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart, mFileVersionInfo.FileBuildPart);
-                    }
-                    else//Official Release
-                    {
-                        mApplicationVersionWithInfo = string.Format("{0}.{1}", mFileVersionInfo.FileMajorPart, mFileVersionInfo.FileMinorPart);
-                    }
+                    return true;
                 }
-
-                return mApplicationVersionWithInfo;
+                else
+                {
+                    return false;
+                }
             }
         }
-
 
         private static bool mAppBuildTimeCalculated = false;
         private static DateTime mApplicationBuildTime;
@@ -110,6 +100,69 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 }
 
                 return mApplicationBuildTime;
+            }
+        }
+
+        public static string ConvertBackendApplicationVersionToUIVersion(string appVersion)
+        {
+            try
+            {
+                int iMajor = 0, iMinor = 0, iBuild = 0, iRevision = 0;
+                Regex regex = new Regex(@"(\d+)\.(\d+)\.(\d+)\.(\d+)");
+                Match match = regex.Match(appVersion);
+                if (match.Success)
+                {
+                    try { iMajor = Int32.Parse(match.Groups[1].Value); }
+                    catch (Exception) { }
+                    try { iMinor = Int32.Parse(match.Groups[2].Value); }
+                    catch (Exception) { }
+                    try { iBuild = Int32.Parse(match.Groups[3].Value); }
+                    catch (Exception) { }
+                    try { iRevision = Int32.Parse(match.Groups[4].Value); }
+                    catch (Exception) { }
+                }
+                else
+                {
+                    regex = new Regex(@"(\d+)\.(\d+)");
+                    match = regex.Match(appVersion);
+                    if (match.Success)
+                    {
+                        try { iMajor = Int32.Parse(match.Groups[1].Value); }
+                        catch (Exception) { }
+                        try { iMinor = Int32.Parse(match.Groups[2].Value); }
+                        catch (Exception) { }
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the '{0}' backend version as UI version", appVersion));
+                        return null;//failed to get the version as long
+                    }
+                }
+
+                string uiVersion = string.Empty;
+                string yearPrefix = string.Empty;
+                if (iMajor > 20)
+                {
+                    yearPrefix = "20";
+                }
+                if (iRevision != 0)//Alpha
+                {
+                    uiVersion = string.Format("{0}{1}.{2}-Alpha {3}.{4}", yearPrefix, iMajor, iMinor, iBuild, iRevision);
+                }
+                else if (iBuild != 0)//Beta
+                {
+                    uiVersion = string.Format("{0}{1}.{2}-Beta {3}", yearPrefix, iMajor, iMinor, iBuild);
+                }
+                else//Official Release
+                {
+                    uiVersion = string.Format("{0}{1}.{2}", yearPrefix, iMajor, iMinor);
+                }
+                return uiVersion;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the '{0}' backend version as UI version", appVersion), ex);
+                return null;//failed to get the version as long
             }
         }
 
@@ -144,32 +197,25 @@ namespace Amdocs.Ginger.Common.GeneralLib
                     }
                     else
                     {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the '{0}' version as Long", appVersion));
                         return 0;//failed to get the version as long
                     }
                 }
 
+                if (iBuild == 0 && iRevision == 0)//to make sure official release will be count as higher version
+                {
+                    iBuild = 99;
+                    iRevision = 99;
+                }
+
                 long version = iMajor * 1000000 + iMinor * 10000 + iBuild * 100 + iRevision;
-                return version;
+                return version;           
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to get the '{0}' version as Long", appVersion), ex);
                 return 0;//failed to get the version as long
             }
-        }
-
-
-        //public string FileName { get; set; }   // !!!!!!!!!!!!!!!!
-
-        //DateTime AssemblyCreationDate()
-        //{
-        //    // !!!!!!!!!!!!!!!!
-
-        //    // note: doesn't calculate daylight savings - low priority
-        //    // Assembly.GetExecutingAssembly().
-        //    Version version = Assembly.GetExecutingAssembly().GetName().Version;
-        //    DateTime assemblyCreationDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.MinorRevision * 2);
-        //    return assemblyCreationDate;
-        //}
-
+        }        
     }
 }

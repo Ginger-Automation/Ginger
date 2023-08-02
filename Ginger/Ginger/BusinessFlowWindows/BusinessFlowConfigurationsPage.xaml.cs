@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
@@ -105,6 +106,10 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                 }
             }
+            else if (e.PropertyName == nameof(Activity.Active) || e.PropertyName == nameof(Activity.Mandatory))
+            {
+                mBusinessFlow.OnPropertyChanged(nameof(BusinessFlow.Activities));
+            }
         }
 
         private void mBusinessFlowActivities_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -140,6 +145,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xAppsGrid.IsEnabled = false;
                 xAddTargetBtn.IsEnabled = false;
                 xPublishcheckbox.IsEnabled = false;
+                xExternalId.IsEnabled = false;
             }
             else
             {
@@ -153,14 +159,24 @@ namespace GingerWPF.BusinessFlowsLib
                 xAppsGrid.IsEnabled = true;
                 xAddTargetBtn.IsEnabled = true;
                 xPublishcheckbox.IsEnabled = true;
+                xExternalId.IsEnabled = true;
             }
-
+            xAddTargetApplication.Content= $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} :";
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
             xNameTxtBox.AddValidationRule(new BusinessFlowNameValidationRule());
             xShowIDUC.Init(mBusinessFlow);
             BindingHandler.ObjFieldBinding(xDescriptionTxt, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Description));
             xTagsViewer.Init(mBusinessFlow.Tags);
             xRunDescritpion.Init(mContext, mBusinessFlow, nameof(BusinessFlow.RunDescription));
+
+            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures && !string.IsNullOrEmpty(mBusinessFlow.ExternalID))
+            {
+                xExternalId.Init(mContext, mBusinessFlow, nameof(BusinessFlow.ExternalID));
+            }
+            else
+            {
+                xPnlExternalId.Visibility = Visibility.Collapsed;
+            }
             GingerCore.General.FillComboFromEnumObj(xStatusComboBox, mBusinessFlow.Status);
             BindingHandler.ObjFieldBinding(xStatusComboBox, ComboBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Status));
             BindingHandler.ObjFieldBinding(xCreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader, nameof(RepositoryItemHeader.CreatedBy));

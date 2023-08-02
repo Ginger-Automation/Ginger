@@ -38,6 +38,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.RQM;
+using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -93,9 +94,9 @@ namespace GingerCore.ALM
             return RQMConnect.Instance.GetRQMDomainProjects();
         }
 
-        public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
+        public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
-            return ExportToRQM.Instance.ExportExecutionDetailsToRQM(bizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig);
+            return ExportToRQM.Instance.ExportExecutionDetailsToRQM(bizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig,projEnvironment);
         }
         public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups, ref string result)
         {

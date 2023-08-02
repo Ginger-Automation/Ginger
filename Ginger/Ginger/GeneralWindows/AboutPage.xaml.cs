@@ -55,7 +55,7 @@ namespace Ginger.GeneralLib
             TBH.AddLineBreak();
             TBH.AddFormattedText(ApplicationInfo.ApplicationName, foregroundColor);
             TBH.AddLineBreak();
-            TBH.AddFormattedText("Version: " + ApplicationInfo.ApplicationVersionWithInfo, foregroundColor);
+            TBH.AddFormattedText("Version: " + ApplicationInfo.ApplicationUIversion, foregroundColor);
             TBH.AddLineBreak();
             TBH.AddLineBreak();
 

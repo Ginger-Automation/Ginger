@@ -131,9 +131,48 @@ namespace GingerCore
             return ActivityName;
         }
 
+        private bool mLinkedActive = true;
+        [IsSerializedForLocalRepository(true)]
+        public Boolean LinkedActive
+        {
+            get
+            {
+                return mLinkedActive;
+            }
+            set
+            {
+                if (mLinkedActive != value)
+                {
+                    mLinkedActive = value;
+                }
+            }
+        }
+
         private bool mActive;
         [IsSerializedForLocalRepository]
-        public Boolean Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
+        public Boolean Active
+        {
+            get
+            {
+                if (this.IsLinkedItem)
+                {
+                    return this.LinkedActive;
+                }
+                return mActive;
+            }
+            set
+            {
+                if (this.IsLinkedItem)
+                {
+                    this.mLinkedActive = value;
+                }
+                if (mActive != value)
+                {
+                    mActive = value; 
+                    OnPropertyChanged(nameof(Active));
+                }
+            }
+        }
 
         private string mActivityName;
         [IsSerializedForLocalRepository]
@@ -394,6 +433,10 @@ namespace GingerCore
                 if (mType != value)
                 {
                     mType = value;
+                    if (mType == eSharedItemType.Link)
+                    {
+                        this.Active = true;
+                    }
                     OnPropertyChanged(nameof(Type));
                 }
             }

@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
     <RootNamespace>Amdocs.Ginger.CoreNET</RootNamespace>
@@ -228,7 +228,7 @@
   
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
   
-    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
   
     <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
   
@@ -280,8 +280,8 @@
     <PackageReference Include="NUglify" Version="1.9.7" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="108.0.3" />
-    <PackageReference Include="Selenium.Support" Version="4.9.1" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.9.1" />
+    <PackageReference Include="Selenium.Support" Version="4.10.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.10.0" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="4.1.0" />
     <PackageReference Include="SharpAdbClient" Version="2.3.23" />
     <PackageReference Include="SSH.NET" Version="2020.0.1" />
@@ -900,10 +900,16 @@
     <None Update="Reports\Ginger-Web-Client\main-es2015.0f9f167139a9a9213c38.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main-es2015.4f5035e3f674fad257ae.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main-es2015.dc498bf7897879d127bf.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main-es5.0f9f167139a9a9213c38.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main-es5.4f5035e3f674fad257ae.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main-es5.dc498bf7897879d127bf.js">

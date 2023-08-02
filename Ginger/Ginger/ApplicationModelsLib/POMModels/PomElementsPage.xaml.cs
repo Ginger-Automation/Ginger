@@ -244,10 +244,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (ItemsToAddList != null && ItemsToAddList.Count > 0)
             {
                 //remove
-                for (int indx = 0; indx < ItemsToAddList.Count; indx++)
+                Dispatcher.InvokeAsync(() =>
                 {
-                    mPOM.UnMappedUIElements.Remove(ItemsToAddList[indx]);
-                }
+                    for (int indx = 0; indx < ItemsToAddList.Count; indx++)
+                    {
+                        mPOM.UnMappedUIElements.Remove(ItemsToAddList[indx]);
+                    }
+                });
                 //add
                 foreach (ElementInfo EI in ItemsToAddList)
                 {
@@ -266,10 +269,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (ItemsToRemoveList != null && ItemsToRemoveList.Count > 0)
             {
                 //remove
-                for (int indx = 0; indx < ItemsToRemoveList.Count; indx++)
+                Dispatcher.InvokeAsync(() =>
                 {
-                    mPOM.MappedUIElements.Remove(ItemsToRemoveList[indx]);
-                }
+                    for (int indx = 0; indx < ItemsToRemoveList.Count; indx++)
+                    {
+                        mPOM.MappedUIElements.Remove(ItemsToRemoveList[indx]);
+                    }
+                });
                 //add
                 foreach (ElementInfo EI in ItemsToRemoveList)
                 {

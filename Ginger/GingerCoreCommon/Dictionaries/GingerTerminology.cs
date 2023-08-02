@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -37,7 +37,8 @@ namespace GingerCore
             new KeyValuePair<string, string>("Variables", "Variables"),
             new KeyValuePair<string, string>("RunSet", "Run Set"),
             new KeyValuePair<string, string>("RunSets", "Run Sets"),
-            new KeyValuePair<string, string>("ALM", "ALM")
+            new KeyValuePair<string, string>("ALM", "ALM"),
+            new KeyValuePair<string, string>("TargetApplication", "TargetApplication")
         };
 
         static List<KeyValuePair<string, string>> gingerTermGherkinList = new List<KeyValuePair<string, string>>()
@@ -51,7 +52,8 @@ namespace GingerCore
             new KeyValuePair<string, string>("Variable", "Parameter"),
             new KeyValuePair<string, string>("Variables", "Parameters"),
             new KeyValuePair<string, string>("RunSet", "Run Set"),
-            new KeyValuePair<string, string>("RunSets", "Run Sets")
+            new KeyValuePair<string, string>("RunSets", "Run Sets"),
+            new KeyValuePair<string, string>("TargetApplication", "TargetApplication")
         };
 
 
@@ -66,7 +68,8 @@ namespace GingerCore
             new KeyValuePair<string, string>("Variable", "Parameter"),
             new KeyValuePair<string, string>("Variables", "Parameters"),
             new KeyValuePair<string, string>("RunSet", "Calendar"),
-            new KeyValuePair<string, string>("RunSets", "Calendars")
+            new KeyValuePair<string, string>("RunSets", "Calendars"),
+            new KeyValuePair<string, string>("TargetApplication", "TargetApplication")
         };
 
         static List<KeyValuePair<string, string>> gingerTermTDMList = new List<KeyValuePair<string, string>>()
@@ -80,7 +83,24 @@ namespace GingerCore
             new KeyValuePair<string, string>("Variable", "Parameter"),
             new KeyValuePair<string, string>("Variables", "Parameters"),
             new KeyValuePair<string, string>("RunSet", "Business Process"),
-            new KeyValuePair<string, string>("RunSets", "Business Processes")
+            new KeyValuePair<string, string>("RunSets", "Business Processes"),
+            new KeyValuePair<string, string>("TargetApplication", "TargetApplication")
+        };
+
+        static List<KeyValuePair<string, string>> gingerTermMBTList = new List<KeyValuePair<string, string>>()
+        {
+            new KeyValuePair<string, string>("BusinessFlow", "Business Flow"),
+            new KeyValuePair<string, string>("BusinessFlows", "Business Flows"),
+            new KeyValuePair<string, string>("ActivitiesGroup", "Sub process"),
+            new KeyValuePair<string, string>("ActivitiesGroups", "Sub processes"),
+            new KeyValuePair<string, string>("Activity", "Interface"),
+            new KeyValuePair<string, string>("Activities", "Interfaces"),
+            new KeyValuePair<string, string>("Variable", "Element"),
+            new KeyValuePair<string, string>("TargetApplication", "System"),
+            new KeyValuePair<string, string>("Variables", "Elements"),
+            new KeyValuePair<string, string>("RunSet", "Run Set"),
+            new KeyValuePair<string, string>("RunSets", "Run Sets"),
+            new KeyValuePair<string, string>("ALM", "ALM")
         };
 
         public static string GetTerminologyValue(eTermResKey key)
@@ -99,6 +119,9 @@ namespace GingerCore
                     break;
                 case eTerminologyType.TDM:
                     result = gingerTermTDMList.Find(kvp => kvp.Key == key.ToString());
+                    break;
+                case eTerminologyType.MBT:
+                    result = gingerTermMBTList.Find(kvp => kvp.Key == key.ToString());
                     break;
             }
             return result.Value;

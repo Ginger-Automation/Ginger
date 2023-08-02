@@ -236,6 +236,7 @@ namespace Ginger.Run
                 xOperationsPnl.Visibility = Visibility.Collapsed;
             }
 
+            mBusinessflowRunnerItems = null;
             mExecutorEngine = null;
             mContext = null;
             ViewMode1 = false;

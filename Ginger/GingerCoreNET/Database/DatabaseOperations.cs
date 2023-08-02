@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using GingerCore.NoSqlBase;
 using Microsoft.Win32;
 using MySql.Data.MySqlClient;
+using NJsonSchema.Infrastructure;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ using System.Data.SqlClient;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using static GingerCore.Environments.Database;
 
 namespace GingerCore.Environments
@@ -460,73 +462,66 @@ namespace GingerCore.Environments
             }
         }
 
-        public List<string> GetTablesList(string Keyspace = null)
+        public async Task<List<string>> GetTablesListAsync(string Keyspace = null)
         {
 
-            List<string> rc = new List<string>() { "" };
+            List<string> databaseTableNames = new List<string>() { "" };
             if (MakeSureConnectionIsOpen())
             {
                 try
                 {
+                    DataTable table = null;
                     //if (oConn == null || oConn.State == ConnectionState.Closed) Connect();
-                    if (Database.DBType == Database.eDBTypes.Cassandra)
+                    switch (Database.DBType) 
                     {
-                        NoSqlBase.NoSqlBase NoSqlDriver = null;
-                        NoSqlDriver = new GingerCassandra(Database);
-                        rc = NoSqlDriver.GetTableList(Keyspace);
-                    }
-                    else if (Database.DBType == Database.eDBTypes.Couchbase)
-                    {
-                        NoSqlBase.NoSqlBase NoSqlDriver = null;
-                        NoSqlDriver = new GingerCouchbase(Database);
-                        rc = NoSqlDriver.GetTableList(Keyspace);
-                    }
-                    else if (Database.DBType == Database.eDBTypes.MongoDb)
-                    {
-                        NoSqlBase.NoSqlBase NoSqlDriver = null;
-                        NoSqlDriver = new GingerMongoDb(Database);
-                        rc = NoSqlDriver.GetTableList(Keyspace);
-                    }
-                    else if (Database.DBType == eDBTypes.CosmosDb)
-                    {
-                        GingerCosmos objGingerCosmos = new GingerCosmos();
-                        Database.ConnectionString = GetConnectionString();
-                        objGingerCosmos.Db = Database;
-                        rc = objGingerCosmos.GetTableList(Keyspace);
-                    }
-                    else
-                    {
-                        DataTable table = oConn.GetSchema("Tables");
-                        string tableName = "";
-                        foreach (DataRow row in table.Rows)
-                        {
-                            switch (Database.DBType)
-                            {
-                                case eDBTypes.MSSQL:
-                                    tableName = (string)row[2];
-                                    break;
-                                case eDBTypes.Oracle:
-                                    tableName = (string)row[1];
-                                    break;
-                                case eDBTypes.MSAccess:
-                                    tableName = (string)row[2];
-                                    break;
-                                case eDBTypes.DB2:
-                                    tableName = (string)row[2];
-                                    break;
-                                case eDBTypes.MySQL:
-                                    tableName = (string)row[2];
-                                    break;
-                                case eDBTypes.PostgreSQL:
-                                    tableName = (string)row[2];
-                                    break;
-                                default:
-                                    //not implemented
-                                    break;
-                            }
+                        case eDBTypes.Cassandra:
+                            NoSqlBase.NoSqlBase NoSqlDriver = null;
+                            NoSqlDriver = new GingerCassandra(Database);
+                            databaseTableNames = NoSqlDriver.GetTableList(Keyspace);
+                        break;
 
-                            rc.Add(tableName);
-                        }
+                        case eDBTypes.Couchbase:
+                            NoSqlDriver = new GingerCouchbase(Database);
+                            databaseTableNames = NoSqlDriver.GetTableList(Keyspace);
+                        break;
+
+                        case eDBTypes.MongoDb:
+                            NoSqlDriver = new GingerMongoDb(Database);
+                            databaseTableNames = NoSqlDriver.GetTableList(Keyspace);
+                        break;
+
+                        case eDBTypes.CosmosDb:
+                            GingerCosmos objGingerCosmos = new GingerCosmos();
+                            Database.ConnectionString = GetConnectionString();
+                            objGingerCosmos.Db = Database;
+                            databaseTableNames = objGingerCosmos.GetTableList(Keyspace);
+                        break;
+
+                        case eDBTypes.Oracle:
+                            string[] restr = new string[1];
+                            restr[0] = GetConnectedUsername();
+                            table = await oConn.GetSchemaAsync("Tables", restr);
+                            foreach (DataRow row in table.Rows)
+                            {
+                                databaseTableNames.Add((string)row[1]);
+                            }
+                            break;
+
+                        case eDBTypes.MSSQL:
+                        case eDBTypes.MSAccess:
+                        case eDBTypes.MySQL:
+                        case eDBTypes.DB2:
+                        case eDBTypes.PostgreSQL:
+                           table = await oConn.GetSchemaAsync("Tables");
+                            foreach (DataRow row in table.Rows)
+                            {
+                                databaseTableNames.Add((string)row[2]);
+                            }
+                            break;
+
+                        default:
+                            //not implemented
+                            break;
                     }
                 }
                 catch (Exception e)
@@ -535,36 +530,46 @@ namespace GingerCore.Environments
                     throw (e);
                 }
             }
-            return rc;
+            return databaseTableNames;
         }
 
-
+        /// <summary>
+        /// This function is only for Oracle DB, Gets the username of the connected Oracle database.
+        /// </summary>
+        /// <returns>The connected database username.</returns>
+        public string GetConnectedUsername()
+        {   using (DbCommand command = oConn.CreateCommand())
+            { 
+                command.CommandText = "SELECT USER FROM DUAL"; 
+                return command.ExecuteScalar().ToString(); 
+            } 
+        }
         public List<string> GetTablesColumns(string table)
         {
             DbDataReader reader = null;
-            List<string> rc = new List<string>() { "" };
+            List<string> databaseColumnNames = new List<string>() { "" };
             if ((oConn == null || string.IsNullOrEmpty(table)) && (Database.DBType != Database.eDBTypes.Cassandra) && (Database.DBType != Database.eDBTypes.MongoDb)
                 && (Database.DBType != Database.eDBTypes.CosmosDb))
             {
-                return rc;
+                return databaseColumnNames;
             }
             if (Database.DBType == Database.eDBTypes.Cassandra)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCassandra(Database);
-                rc = NoSqlDriver.GetColumnList(table);
+                databaseColumnNames = NoSqlDriver.GetColumnList(table);
             }
             else if (Database.DBType == Database.eDBTypes.Couchbase)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCouchbase(Database);
-                rc = NoSqlDriver.GetColumnList(table);
+                databaseColumnNames = NoSqlDriver.GetColumnList(table);
             }
             else if (Database.DBType == Database.eDBTypes.MongoDb)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerMongoDb(Database);
-                rc = NoSqlDriver.GetColumnList(table);
+                databaseColumnNames = NoSqlDriver.GetColumnList(table);
             }
             else if (Database.DBType == Database.eDBTypes.CosmosDb)
             {
@@ -572,7 +577,7 @@ namespace GingerCore.Environments
                 NoSqlDriver = new GingerCosmos();
                 Database.ConnectionString = GetConnectionString();
                 NoSqlDriver.Db = Database;
-                rc = NoSqlDriver.GetColumnList(table);
+                databaseColumnNames = NoSqlDriver.GetColumnList(table);
             }
             else
             {
@@ -597,8 +602,7 @@ namespace GingerCore.Environments
                     DataTable schemaTable = reader.GetSchemaTable();
                     foreach (DataRow row in schemaTable.Rows)
                     {
-                        string ColName = (string)row[0];
-                        rc.Add(ColName);
+                        databaseColumnNames.Add((string)row[0]);
                     }
                 }
                 catch (Exception e)
@@ -613,7 +617,7 @@ namespace GingerCore.Environments
 
                 }
             }
-            return rc;
+            return databaseColumnNames;
         }
 
         public string fUpdateDB(string updateCmd, bool commit)
