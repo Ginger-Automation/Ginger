@@ -417,8 +417,8 @@
     </Style>
 
     <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_Execution">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{StaticResource $HighlightColor_LightBlue}" />
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_Black}" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="20" />
         <Setter Property="FontSize" Value="12" />
@@ -428,7 +428,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{StaticResource $HighlightColor_LightBlue}" BorderThickness="1" CornerRadius="15">
+                                BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="1" CornerRadius="15">
                         <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
                                 Margin="{TemplateBinding Padding}"
@@ -438,8 +438,39 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
-                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}" />
+                            <Setter Property="Foreground" Value="{StaticResource $HighlightColor_LightBlue}" />
+                            <Setter Property="Cursor" Value="Hand"></Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_SubExecution">
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Padding" Value="5,0,5,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="1" CornerRadius="15">
+                        <ContentPresenter 
+                                TextElement.Foreground="{TemplateBinding Foreground}" 
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Foreground" Value="{StaticResource $HighlightColor_LightBlue}" />
                             <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -449,7 +480,7 @@
     </Style>
 
     <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_ExecutionRunning">
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}" />
         <Setter Property="Foreground" Value="{StaticResource $HighlightColor_LightBlue}" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="20" />
@@ -470,8 +501,8 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Background" Value="{StaticResource $HighlightColor_LightBlue}" />
-                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}" />
+                            <Setter Property="Foreground" Value="{StaticResource $HighlightColor_LightBlue}" />
                             <Setter Property="Cursor" Value="Hand"></Setter>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -481,7 +512,7 @@
     </Style>
 
     <Style TargetType="Button" x:Key="$RoundTextAndImageButtonStyle_ExecutionStop">
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}" />
         <Setter Property="Foreground" Value="Red" />
         <Setter Property="FontFamily" Value="Open Sans" />
         <Setter Property="Height" Value="20" />
@@ -492,7 +523,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="Red" BorderThickness="1" CornerRadius="15">
+                                BorderBrush="{StaticResource $SelectionColor_Pink}" BorderThickness="1" CornerRadius="15">
                         <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
                                 Margin="{TemplateBinding Padding}"

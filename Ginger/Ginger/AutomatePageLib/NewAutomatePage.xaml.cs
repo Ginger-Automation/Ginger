@@ -778,7 +778,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xRunFlowBtn.ToolTip = "Analyzing in progress";
                 xRunFlowBtn.IsEnabled = false;
                 xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
-                xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+                xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
             });
         }
 

@@ -159,25 +159,22 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Empty:
                     // Do nothing and leave it empty             
                     break;
-                case eImageType.Ginger:
+                case eImageType.Ginger: //new
                     SetAsStaticImage("Ginger.png");
                     break;
-                case eImageType.GingerIconWhite:
+                case eImageType.GingerIconWhite: //new
                     SetAsStaticImage("GingerIconWhite.png");
                     break;
-                case eImageType.GingerIconGray:
-                    SetAsStaticImage("GingerIconInGrayNoBackground.png");
-                    break;
-                case eImageType.GingerLogo:
+                case eImageType.GingerLogo: //new
                     SetAsStaticImage("GingerByAmdocsLogo.png");
                     break;
-                case eImageType.GingerLogoGray:
+                case eImageType.GingerLogoGray: //new
                     SetAsStaticImage("GingerByAmdocsLogoGray.png");
                     break;
-                case eImageType.GingerLogoWhiteSmall:
+                case eImageType.GingerLogoWhite: //new
                     SetAsStaticImage("GingerByAmdocsLogoWhiteSmall.png");
                     break;
-                case eImageType.GingerSplash:
+                case eImageType.GingerSplash://new
                     SetAsStaticImage("GingerSplashImageNew.png");
                     break;
                 case eImageType.VRT:
