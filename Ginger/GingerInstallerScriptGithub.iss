@@ -43,12 +43,14 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 
+
 [Files]
 Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net7.0-windows\Ginger.exe"; DestDir: "{app}"; Flags: ignoreversion; BeforeInstall:DetectAndInstallPrerequisites;
 Source: "D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net7.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;
 Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\netcorecheck_x64.exe"; Flags: dontcopy deleteafterinstall noencryption
 Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\windowsdesktop-runtime-7.0.9-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
 Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\aspnetcore-runtime-7.0.9-win-x64.exe"; DestDir: {tmp}; Flags: dontcopy deleteafterinstall noencryption;
+Source: "D:\a\Ginger\Ginger\Extensions\DotnetDependencies\AccessDatabaseEngine_X64.exe"; DestDir: "{tmp}"; Flags: dontcopy deleteafterinstall noencryption
 ;NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 
@@ -59,6 +61,7 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent;
 [Code]
+
 //################################################### General Parameters #######################################
 var 
   _wizpSettingsTypeSelectionPage: TInputOptionWizardPage;
@@ -75,6 +78,7 @@ var
   XMLDocument: Variant; 
   XmlElement:  Variant; 
   strUserProfileXMLFilePath: String;
+
 //################################################### Functions & Procedures #######################################
 function Dependency_IsNetCoreInstalled(const Version: String): Boolean;
 var
@@ -86,6 +90,16 @@ begin
   end;
   Result := ShellExec('', ExpandConstant('{tmp}{\}') + 'netcorecheck_x64.exe', Version, '', SW_HIDE, ewWaitUntilTerminated, ResultCode) and (ResultCode = 0);
 end;
+
+function IsAccessEngineInstalled: Boolean;
+var
+  productCode: string;
+begin
+  productCode := '{90140000-2005-0000-0000-0000000FF1CE}';
+  Result := (RegValueExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\' + productCode + '_X64', 'DisplayName') or
+             RegValueExists(HKLM, 'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\' + productCode + '_X64', 'DisplayName'));
+end;
+
 procedure DetectAndInstallPrerequisites;
 var
   StatusText: string;
@@ -95,37 +109,50 @@ begin
   WizardForm.StatusLabel.Caption := 'Detecting required .Net runtimes...';
   WizardForm.ProgressGauge.Style := npbstMarquee;
   try
-    If not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 6.0.6') then
+    If not Dependency_IsNetCoreInstalled('Microsoft.WindowsDesktop.App 7.0.9') then
     begin
-      WizardForm.StatusLabel.Caption := 'Installing Microsoft.WindowsDesktop.App Runtime 6.0.6...';
-      if not FileExists(ExpandConstant('{tmp}\windowsdesktop-runtime-6.0.6-win-x64.exe')) then begin
-        ExtractTemporaryFile('windowsdesktop-runtime-6.0.6-win-x64.exe');
+      WizardForm.StatusLabel.Caption := 'Installing Microsoft.WindowsDesktop.App Runtime 7.0.9...';
+      if not FileExists(ExpandConstant('{tmp}\windowsdesktop-runtime-7.0.9-win-x64.exe')) then begin
+        ExtractTemporaryFile('windowsdesktop-runtime-7.0.9-win-x64.exe');
       end;
-      if not Exec(ExpandConstant('{tmp}\windowsdesktop-runtime-6.0.6-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+      if not Exec(ExpandConstant('{tmp}\windowsdesktop-runtime-7.0.9-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
         begin
           { you can interact with the user that the installation failed }
-          MsgBox('.NET Desktop runtime 6.0.6 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
+          MsgBox('.NET Desktop runtime 7.0.9 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
             mbError, MB_OK);
       end;
     end;
-    If not Dependency_IsNetCoreInstalled('Microsoft.AspNetCore.App 6.0.6') then 
+    If not Dependency_IsNetCoreInstalled('Microsoft.AspNetCore.App 7.0.9') then 
     begin
-      WizardForm.StatusLabel.Caption := 'Installing Microsoft.AspNetCore.App Runtime 6.0.6...';
-      if not FileExists(ExpandConstant('{tmp}\aspnetcore-runtime-6.0.6-win-x64.exe')) then begin
-        ExtractTemporaryFile('aspnetcore-runtime-6.0.6-win-x64.exe');
+      WizardForm.StatusLabel.Caption := 'Installing Microsoft.AspNetCore.App Runtime 7.0.9...';
+      if not FileExists(ExpandConstant('{tmp}\aspnetcore-runtime-7.0.9-win-x64.exe')) then begin
+        ExtractTemporaryFile('aspnetcore-runtime-7.0.9-win-x64.exe');
       end;
-      if not Exec(ExpandConstant('{tmp}\aspnetcore-runtime-6.0.6-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
+      if not Exec(ExpandConstant('{tmp}\aspnetcore-runtime-7.0.9-win-x64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
         begin
           { you can interact with the user that the installation failed }
-          MsgBox('.NET ASP Net Core 6.0.6 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
+          MsgBox('.NET ASP Net Core 7.0.9 installation failed with code: ' + IntToStr(ResultCode) + '. Please install it manually.',
             mbError, MB_OK);
       end;
     end;
+    if not IsAccessEngineInstalled then 
+    begin
+      WizardForm.StatusLabel.Caption := 'Installing Microsoft Access database engine 2010 (64-bit)...';  
+      if not FileExists(ExpandConstant('{tmp}\AccessDatabaseEngine_X64.exe')) then begin 
+        ExtractTemporaryFile('AccessDatabaseEngine_X64.exe');
+      end;
+      if not Exec(ExpandConstant('{tmp}\AccessDatabaseEngine_X64.exe'), '/q /norestart', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then 
+        begin
+        MsgBox('Error installing Microsoft Access database engine 2010 (64-bit).', mbError, MB_OK);        
+      end;
+    end;
+
   finally
     WizardForm.StatusLabel.Caption := StatusText;
     WizardForm.ProgressGauge.Style := npbstNormal;
   end;
 end;
+
 function CheckIfGingerInstalled: boolean;
 begin
 if ( not FileExists(ExpandConstant('C:\Program Files (x86)\Amdocs\Amdocs BEAT Ginger Automation\unins000.exe')))  then
@@ -157,6 +184,7 @@ begin
   end;
 end;
 end;
+
 function InitializeSetup: boolean;
 begin
   if  CheckIfGingerInstalled then
@@ -169,9 +197,12 @@ begin
       result:=true
     end;
 end;
+
+
 Procedure InitializeWizard();
 Var
   left, leftInc, top, topInc: Integer;
+
   StaticText: TNewStaticText;
 Begin
   _IsUserProfileExist := False;
@@ -198,9 +229,12 @@ Begin
         ChosenUserType := XMLNode.getAttribute('UserType');
     end;
     ChosenUserTerminology := XMLNode.getAttribute('TerminologyDictionaryType');
+
   Except
     MsgBox('An error occured while updating the User Profile XML file' + #13#10 + GetExceptionMessage, mbError, MB_OK);
   end;
+
+
   end
   Else
   Begin
@@ -208,6 +242,7 @@ Begin
     ChosenUserTerminology := 'Default';
     _IsCustomizeSettingSelected := True;
   end;
+
   if (ChosenUserType = 'Regular') Then
   Begin
     _strUserTypeLable:='Automation (Technical) user';
@@ -225,6 +260,7 @@ Begin
   end;
   _wizpSettingsTypeSelectionPage.Add('Customize Settings');
   _wizpSettingsTypeSelectionPage.Values[0] := True;   
+
    
   //User type selection Page Init 
   _strUserType:='Regular';
@@ -240,6 +276,7 @@ Begin
   begin
     _wizpUserTypeSelectionPage.Values[0] := True;
   end;
+
     //Terminology type selection Page Init 
   _strTerminologyType:='Default';
   _wizpTerminologyTypePage:= CreateInputOptionPage(_wizpUserTypeSelectionPage.ID, 'Ginger Default Terminology', '','Please select the preferred default terminology type to be used. '#13#10''#13#10'Available Terminologies: '#13#10'1. Default- Ginger default items names: Run Set/Business Flow/Activities Group/Activity/Variable '#13#10'2. Testing- Testing (ALM applications) related terms like: Calend;ar/Test Set/Test Case/Step/Parameter '#13#10'3. Gherkin- BDD related terms like: Business Flow Feature/Scenario/Step '#13#10' '#13#10'Note: the terminology type can be changed at any time from Ginger UI. '#13#10'Please Select: ', True, False);
@@ -247,6 +284,7 @@ Begin
   _wizpTerminologyTypePage.Add('Testing');
   _wizpTerminologyTypePage.Add('Gherkin');
  
+
   if(ChosenUserTerminology = 'Gherkin') then
   begin
     _wizpTerminologyTypePage.Values[2] := True;
@@ -260,6 +298,7 @@ Begin
     _wizpTerminologyTypePage.Values[0] := True;
   end;  
 end;
+
 Function ShouldSkipPage(PageID: Integer): Boolean;
 Begin
   Log('ShouldSkipPage(' + IntToStr(PageID) + ') called');
@@ -270,17 +309,22 @@ Begin
     
     wpSelectDir:
       Result := False;
+
     _wizpSettingsTypeSelectionPage.ID:
       Result := not _IsUserProfileExist;
+
     _wizpUserTypeSelectionPage.ID:
       Result := not _IsCustomizeSettingSelected;
          
     _wizpTerminologyTypePage.ID:
       Result := not _IsCustomizeSettingSelected;
+
     wpReady:
       Result := False;
   end;
 end;
+
+
 Function NextButtonClick(CurPageID: Integer): Boolean;
 Var
   resultCode: Integer;
@@ -288,6 +332,7 @@ Var
   strWizardDirValue: String;
 Begin
 Case CurPageID Of
+
   _wizpSettingsTypeSelectionPage.ID:
   Begin
   if (_IsUserProfileExist) Then
@@ -310,7 +355,10 @@ Case CurPageID Of
   Begin
     _strUserTypeLable:='Business user';
   end;
+
  end;
+
+
   _wizpUserTypeSelectionPage.ID:
     Begin
       If _wizpUserTypeSelectionPage.Values[0] = True Then
@@ -324,6 +372,7 @@ Case CurPageID Of
       end;
       Result := True;
     end;
+
       _wizpTerminologyTypePage.ID:
     Begin
       If _wizpTerminologyTypePage.Values[0] = True Then
@@ -341,12 +390,15 @@ Case CurPageID Of
  end;
  Result := True;
 end;
+
+
 Procedure CurStepChanged(CurStep: TSetupStep);
 var 
 strWizardDirValue: String;
  Begin
      If CurStep = ssPostInstall Then
      Begin
+
        strUserProfileXMLFilePath:=  ExpandConstant('{userappdata}') + '\amdocs\Ginger\Ginger.UserProfile.xml';  
          Log('Eliran  ' + strUserProfileXMLFilePath);
        XMLDocument := CreateOleObject('Msxml2.DOMDocument.6.0');
@@ -360,13 +412,16 @@ strWizardDirValue: String;
      end;
  end;
 end;
+
 Procedure CurPageChanged(CurPageID: Integer);
 Begin
     //Next button always available
     Wizardform.NextButton.Enabled := True;
+
     //Add summary page info
     If CurPageID=wpReady Then
       Begin
+
        //Summary info
        Wizardform.ReadyMemo.Lines.Add('');
        Wizardform.ReadyMemo.Lines.Add('User Type:'#13#10'      "' + _strUserTypeLable + '"');

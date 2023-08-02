@@ -547,7 +547,10 @@ namespace GingerCore.Actions
                 {
                     return;
                 }
-
+                if (!string.IsNullOrEmpty(calcSQL))
+                {
+                    this.AddOrUpdateReturnParamActualWithPath("SQL Query", calcSQL,"");
+                }
                 int recordcount = Records.Count;
                 for (int j = 0; j < Records.Count; j++)
 
@@ -568,11 +571,6 @@ namespace GingerCore.Actions
                         }
                     }
                 }
-                if(!string.IsNullOrEmpty(calcSQL))
-                {
-                    this.AddOrUpdateReturnParamActualWithPath("SQL Query", calcSQL, (recordcount + 1).ToString() + "");
-                }
-                
 
             }
             catch (Exception e)
