@@ -111,7 +111,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 GetExcelSheet(fileName, sheetName);
                 mExcelDataTable = ConvertSheetToDataTable(mSheet , int.Parse(string.IsNullOrEmpty(headerRowNumber) ? "1" : headerRowNumber));
                 mExcelDataTable.DefaultView.RowFilter = filter;
-                mFilteredDataTable = string.IsNullOrEmpty(filter) ? mExcelDataTable : GetFilteredDataTable(mExcelDataTable, selectedRows);
+                mFilteredDataTable = GetFilteredDataTable(mExcelDataTable, selectedRows);
                 return mFilteredDataTable;
             }
             catch (Exception ex)
