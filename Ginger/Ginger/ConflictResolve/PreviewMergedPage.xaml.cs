@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common.SourceControlLib;
+using Amdocs.Ginger.Repository;
 using Ginger.SourceControl;
 using GingerCore;
 using GingerWPF.WizardLib;
@@ -26,8 +27,6 @@ namespace Ginger.ConflictResolve
     /// </summary>
     public partial class PreviewMergedPage : Page, IWizardPage
     {
-        private Comparison? _dummyComparison;
-
         public PreviewMergedPage()
         {
             InitializeComponent();
@@ -50,8 +49,9 @@ namespace Ginger.ConflictResolve
             Task.Run(() =>
             {
                 ShowLoading();
-                Comparison dummyComparison = SourceControlIntegration.PreviewManualConflictResolve(wizard.Comparison);
-                SetTreeItems(dummyComparison);
+                RepositoryItemBase mergedItem = wizard.GetMergedItem();
+                Comparison mergedItemComparison = SourceControlIntegration.CompareConflictedItems(mergedItem, null);
+                SetTreeItems(mergedItemComparison);
                 HideLoading();
             });
         }
@@ -80,15 +80,9 @@ namespace Ginger.ConflictResolve
         {
             Dispatcher.Invoke(() =>
             {
+                xTree.ClearTreeItems();
                 xTree.AddItem(new ConflictMergeTreeViewItem(comparison));
             });
         }
     }
 }
-//case EventType.Active:
-//    ICollection<Comparison> comparison = RIBCompare.Compare("Business Flows", wizard.MergedBusinessFlow, null);
-//    State state = comparison.All(c => c.State == State.Unmodified) ? State.Unmodified : State.Modified;
-//    _dummyComparison = new Comparison("ROOT", state, childComparisons: comparison, dataType: null!);
-//    xTree.Items.Clear();
-//    xTree.Items.Add(_dummyComparison);
-//    break;

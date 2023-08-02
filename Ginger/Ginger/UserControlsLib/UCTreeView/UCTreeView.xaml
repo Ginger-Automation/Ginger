@@ -34,7 +34,7 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    <Grid Background="White">
+    <Grid>
         <TreeView x:Name="Tree" Background="Transparent">
             <TreeView.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"

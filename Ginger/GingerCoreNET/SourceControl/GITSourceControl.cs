@@ -302,9 +302,11 @@ namespace GingerCore.SourceControl
                                 Reporter.ToUser(eUserMsgKey.GitUpdateState, result.Status, repo.Head.Tip.Sha);
                             }
                         }
+                        return true;
                     }
                     else
                     {
+                        conflictsPaths = GetConflictsPaths();
                         if (supressMessage == true)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Failed to update the solution from source control. Error Details: 'The files are not connected to source control'");
@@ -313,6 +315,7 @@ namespace GingerCore.SourceControl
                         {
                             Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
                         }
+                        return false;
                     }
 
                 }
@@ -322,7 +325,6 @@ namespace GingerCore.SourceControl
                     error = ex.Message + Environment.NewLine + ex.InnerException;
                     return false;
                 }
-                return true;
             }
             else
             {
@@ -872,7 +874,8 @@ namespace GingerCore.SourceControl
                 {
                     if (SourceControlUser.Length != 0)
                     {
-                        IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL, GetSourceCredentialsHandler());
+                        CredentialsHandler credentialsHandler = GetSourceCredentialsHandler();
+                        IEnumerable<LibGit2Sharp.Reference> References = LibGit2Sharp.Repository.ListRemoteReferences(SourceControlURL, credentialsHandler);
                     }
                     else
                     {

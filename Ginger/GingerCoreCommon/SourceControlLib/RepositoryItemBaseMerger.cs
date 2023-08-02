@@ -40,7 +40,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             RepositoryItemBase? rib = null;
 
             Comparison? comparisonForMerge = ribComparisonResult
-                .FirstOrDefault(c => (c.StateType == Comparison.State.Unmodified) || ((c.StateType == Comparison.State.Added || c.StateType == Comparison.State.Deleted) && c.Selected));
+                .FirstOrDefault(c => (c.State == Comparison.StateType.Unmodified) || ((c.State == Comparison.StateType.Added || c.State == Comparison.StateType.Deleted) && c.Selected));
 
             if (comparisonForMerge != null)
             {
@@ -49,7 +49,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             else
             {
                 comparisonForMerge = ribComparisonResult
-                    .FirstOrDefault(childComparison => childComparison.StateType == Comparison.State.Modified);
+                    .FirstOrDefault(childComparison => childComparison.State == Comparison.StateType.Modified);
 
                 if (comparisonForMerge == null)
                     throw new InvalidOperationException($"No appropriate {nameof(Comparison)} found for merging type {type.FullName}.");
@@ -67,7 +67,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         .Where(c => string.Equals(c.Name, property.Name));
 
                     Comparison? propertyComparisonForMerge = propertyComparisons
-                        .FirstOrDefault(c => c.StateType == Comparison.State.Unmodified || ((c.StateType == Comparison.State.Added || c.StateType == Comparison.State.Deleted) && c.Selected));
+                        .FirstOrDefault(c => c.State == Comparison.StateType.Unmodified || ((c.State == Comparison.StateType.Added || c.State == Comparison.StateType.Deleted) && c.Selected));
 
                     if (propertyComparisonForMerge != null)
                     {
@@ -76,7 +76,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     else
                     {
                         propertyComparisonForMerge = propertyComparisons
-                            .FirstOrDefault(c => c.StateType == Comparison.State.Modified);
+                            .FirstOrDefault(c => c.State == Comparison.StateType.Modified);
 
                         if (propertyComparisonForMerge == null)
                             throw new InvalidOperationException($"No appropriate {nameof(Comparison)} found for merging property {property.Name}.");
@@ -96,7 +96,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         .Where(c => string.Equals(c.Name, field.Name));
 
                     Comparison? fieldComparisonForMerge = fieldComparisons
-                        .FirstOrDefault(c => c.StateType == Comparison.State.Unmodified || ((c.StateType == Comparison.State.Added || c.StateType == Comparison.State.Deleted) && c.Selected));
+                        .FirstOrDefault(c => c.State == Comparison.StateType.Unmodified || ((c.State == Comparison.StateType.Added || c.State == Comparison.StateType.Deleted) && c.Selected));
 
                     if (fieldComparisonForMerge != null)
                     {
@@ -105,7 +105,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     else
                     {
                         fieldComparisonForMerge = fieldComparisons
-                            .FirstOrDefault(c => c.StateType == Comparison.State.Modified);
+                            .FirstOrDefault(c => c.State == Comparison.StateType.Modified);
 
                         if (fieldComparisonForMerge == null)
                             throw new InvalidOperationException($"No appropriate {nameof(Comparison)} found for merging field {field.Name}.");
@@ -126,7 +126,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             System.Collections.ICollection? collection = null;
 
             Comparison? comparisonForMerge = collectionComparisonResult
-                .FirstOrDefault(c => (c.StateType == Comparison.State.Unmodified) || ((c.StateType == Comparison.State.Added || c.StateType == Comparison.State.Deleted) && c.Selected));
+                .FirstOrDefault(c => (c.State == Comparison.StateType.Unmodified) || ((c.State == Comparison.StateType.Added || c.State == Comparison.StateType.Deleted) && c.Selected));
 
             if (comparisonForMerge != null)
             {
@@ -135,7 +135,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             else
             {
                 comparisonForMerge = collectionComparisonResult
-                    .FirstOrDefault(childComparison => childComparison.StateType == Comparison.State.Modified);
+                    .FirstOrDefault(childComparison => childComparison.State == Comparison.StateType.Modified);
 
                 if (comparisonForMerge == null)
                     throw new InvalidOperationException($"No appropriate {nameof(Comparison)} found for merging type {type.FullName}.");
@@ -144,18 +144,18 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 
                 foreach (Comparison itemComparison in comparisonForMerge.ChildComparisons)
                 {
-                    if (itemComparison.StateType == Comparison.State.Unmodified)
+                    if (itemComparison.State == Comparison.StateType.Unmodified)
                     {
                         items.Add(itemComparison.Data);
                     }
-                    else if (itemComparison.StateType == Comparison.State.Added || itemComparison.StateType == Comparison.State.Deleted)
+                    else if (itemComparison.State == Comparison.StateType.Added || itemComparison.State == Comparison.StateType.Deleted)
                     {
                         if (itemComparison.Selected)
                         {
                             items.Add(itemComparison.Data);
                         }
                     }
-                    else if (itemComparison.StateType == Comparison.State.Modified)
+                    else if (itemComparison.State == Comparison.StateType.Modified)
                     {
                         //items.Add(Merge(GetCollectionItemType(type), new ComparisonResult[] { itemComparison }));
                         items.Add(MergeInternal(itemComparison.DataType!, new Comparison[] { itemComparison }));
@@ -245,7 +245,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             object? value = null;
 
             Comparison? comparisonForMerge = simpleValueComparisonResult
-                .FirstOrDefault(c => (c.StateType == Comparison.State.Unmodified) || ((c.StateType == Comparison.State.Added || c.StateType == Comparison.State.Deleted) && c.Selected));
+                .FirstOrDefault(c => (c.State == Comparison.StateType.Unmodified) || ((c.State == Comparison.StateType.Added || c.State == Comparison.StateType.Deleted) && c.Selected));
 
             if (comparisonForMerge == null)
                 throw new InvalidOperationException($"No appropriate {nameof(Comparison)} found for merging value of type {type.Name}.");

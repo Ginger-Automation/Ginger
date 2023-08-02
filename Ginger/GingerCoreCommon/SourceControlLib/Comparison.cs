@@ -10,7 +10,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 {
     public sealed class Comparison : INotifyPropertyChanged
     {
-        public enum State
+        public enum StateType
         {
             Unmodified,
             Modified,
@@ -19,7 +19,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
         }
 
         public string Name { get; }
-        public State StateType { get; }
+        public StateType State { get; }
 
         public bool HasChildComparisons { get; } = false;
         public ICollection<Comparison> ChildComparisons { get; }
@@ -40,7 +40,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             set
             {
                 _selected = value;
-                if ((StateType == State.Added || StateType == State.Deleted) && HasChildComparisons)
+                if ((State == StateType.Added || State == StateType.Deleted) && HasChildComparisons)
                 {
                     foreach (Comparison nestedChange in ChildComparisons)
                         nestedChange.Selected = _selected;
@@ -49,33 +49,66 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             }
         }
 
-        public Comparison(string name, State state, ICollection<Comparison> childComparisons, Type dataType)
+        public Comparison(string name, StateType state, ICollection<Comparison> childComparisons, Type dataType)
         {
             Name = name;
-            StateType = state;
+            State = state;
             ChildComparisons = childComparisons;
             HasChildComparisons = true;
             Data = null!;
             DataType = dataType;
         }
 
-        public Comparison(string name, State state, ICollection<Comparison> childComparisons, object? data)
+        public Comparison(string name, StateType state, ICollection<Comparison> childComparisons, object? data)
         {
             Name = name;
-            StateType = state;
+            State = state;
             ChildComparisons = childComparisons;
             HasChildComparisons = true;
             Data = data;
             HasData = true;
         }
 
-        public Comparison(string name, State state, object? data)
+        public Comparison(string name, StateType state, object? data)
         {
             Name = name;
-            StateType = state;
+            State = state;
             Data = data;
             HasData = true;
             ChildComparisons = null!;
+        }
+
+        public bool CanBeMerged()
+        {
+            if (State == StateType.Unmodified)
+            {
+                return true;
+            }
+            else if (State == StateType.Modified)
+            {
+                Dictionary<string, List<Comparison>> uniqueNameComparisons = new();
+                foreach(Comparison childComparison in ChildComparisons)
+                {
+                    if (uniqueNameComparisons.ContainsKey(childComparison.Name))
+                        uniqueNameComparisons[childComparison.Name].Add(childComparison);
+                    else
+                        uniqueNameComparisons.Add(childComparison.Name, new List<Comparison>() { childComparison });
+                }
+
+                foreach(KeyValuePair<string,List<Comparison>> nameComparison in uniqueNameComparisons)
+                {
+                    if(!nameComparison.Value.Any(c => c.CanBeMerged()))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            else
+            {
+                return Selected;
+            }
         }
     }
 }

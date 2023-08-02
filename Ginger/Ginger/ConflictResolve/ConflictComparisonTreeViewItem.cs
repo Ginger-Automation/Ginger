@@ -9,6 +9,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -17,9 +18,9 @@ namespace Ginger.ConflictResolve
     public sealed class ConflictComparisonTreeViewItem : NewTreeViewItemBase, ITreeViewItem
     {
         private readonly Comparison _comparison;
-        private readonly Comparison.State[] _childrenStateFilter;
+        private readonly Comparison.StateType[] _childrenStateFilter;
 
-        public ConflictComparisonTreeViewItem(Comparison comparison, Comparison.State[] childrenStateFilter)
+        public ConflictComparisonTreeViewItem(Comparison comparison, Comparison.StateType[] childrenStateFilter)
         {
             _comparison = comparison;
             _childrenStateFilter = childrenStateFilter;
@@ -30,7 +31,7 @@ namespace Ginger.ConflictResolve
             if (_comparison.HasChildComparisons)
             {
                 return _comparison.ChildComparisons
-                    .Where(childComparison => _childrenStateFilter.Contains(childComparison.StateType))
+                    .Where(childComparison => _childrenStateFilter.Contains(childComparison.State))
                     .Select(childComparison => (ITreeViewItem)new ConflictComparisonTreeViewItem(childComparison, _childrenStateFilter))
                     .ToList();
             }
@@ -65,15 +66,15 @@ namespace Ginger.ConflictResolve
 
         private SolidColorBrush GetItemColor()
         {
-            switch (_comparison.StateType)
+            switch (_comparison.State)
             {
-                case Comparison.State.Unmodified:
+                case Comparison.StateType.Unmodified:
                     return Brushes.Transparent;
-                case Comparison.State.Modified:
+                case Comparison.StateType.Modified:
                     return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FEFAD4"));
-                case Comparison.State.Added:
+                case Comparison.StateType.Added:
                     return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CAE9E6"));
-                case Comparison.State.Deleted:
+                case Comparison.StateType.Deleted:
                     return new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FCD8D6"));
                 default:
                     throw new NotImplementedException();
@@ -82,7 +83,7 @@ namespace Ginger.ConflictResolve
 
         private CheckBox? GetItemSelectCheckBox()
         {
-            if (_comparison.StateType == Comparison.State.Unmodified || _comparison.StateType == Comparison.State.Modified)
+            if (_comparison.State == Comparison.StateType.Unmodified || _comparison.State == Comparison.StateType.Modified)
                 return null;
 
             CheckBox itemSelectCheckbox = new();
@@ -92,7 +93,16 @@ namespace Ginger.ConflictResolve
                 dependencyProperty: CheckBox.IsCheckedProperty, 
                 obj: _comparison, 
                 property: nameof(Comparison.Selected));
+            itemSelectCheckbox.Tag = _comparison;
+            itemSelectCheckbox.Checked += CheckBox_CheckedUnchecked;
+            itemSelectCheckbox.Unchecked += CheckBox_CheckedUnchecked;
+
             return itemSelectCheckbox;
+        }
+
+        private void CheckBox_CheckedUnchecked(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private ImageMakerControl GetItemImage()
@@ -137,7 +147,7 @@ namespace Ginger.ConflictResolve
         {
             return 
                 _comparison.HasChildComparisons && 
-                _comparison.ChildComparisons.Any(childComparison => _childrenStateFilter.Contains(childComparison.StateType));
+                _comparison.ChildComparisons.Any(childComparison => _childrenStateFilter.Contains(childComparison.State));
         }
 
         public ContextMenu Menu()

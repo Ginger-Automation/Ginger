@@ -34,6 +34,7 @@ namespace Ginger.ConflictResolve
         public void WizardEvent(WizardEventArgs wizardEventArgs)
         {
             ResolveMergeConflictWizard? wizard = wizardEventArgs.Wizard as ResolveMergeConflictWizard;
+
             if (wizard == null)
                 throw new InvalidOperationException($"{nameof(ConflictViewPage)} must be used with {nameof(ResolveMergeConflictWizard)}.");
 
@@ -46,7 +47,7 @@ namespace Ginger.ConflictResolve
                     OnWizardPageActive(wizard);
                     break;
                 case EventType.LeavingForNextPage:
-                    OnWizardPageLeavingForNextPage(wizard);
+                    OnWizardPageLeavingForNextPage(wizard, wizardEventArgs);
                     break;
             }
         }
@@ -83,11 +84,11 @@ namespace Ginger.ConflictResolve
 
         private void SetTreeItems(Comparison comparison)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.Invoke((Action)(() =>
             {
-                xLocalItemTree.AddItem(new ConflictComparisonTreeViewItem(comparison, new[] { Comparison.State.Unmodified, Comparison.State.Modified, Comparison.State.Deleted }));
-                xRemoteItemTree.AddItem(new ConflictComparisonTreeViewItem(comparison, new[] { Comparison.State.Unmodified, Comparison.State.Modified, Comparison.State.Added }));
-            });
+                xLocalItemTree.AddItem(new ConflictComparisonTreeViewItem(comparison, (Comparison.StateType[])(new[] { Comparison.StateType.Unmodified, Comparison.StateType.Modified, Comparison.StateType.Deleted })));
+                xRemoteItemTree.AddItem(new ConflictComparisonTreeViewItem(comparison, (Comparison.StateType[])(new[] { Comparison.StateType.Unmodified, Comparison.StateType.Modified, Comparison.StateType.Added })));
+            }));
         }
 
         private void OnWizardPageActive(ResolveMergeConflictWizard wizard)
@@ -95,9 +96,12 @@ namespace Ginger.ConflictResolve
 
         }
 
-        private void OnWizardPageLeavingForNextPage(ResolveMergeConflictWizard wizard)
+        private void OnWizardPageLeavingForNextPage(ResolveMergeConflictWizard wizard, WizardEventArgs eventArgs)
         {
-
+            if (!wizard.Comparison.CanBeMerged())
+            {
+                eventArgs.CancelEvent = true;
+            }
         }
     }
 }

@@ -178,6 +178,39 @@ namespace Ginger.SourceControl
             return SourceControl.GetLockOwner(path, ref error);
         }
 
+        public static RepositoryItemBase GetLocalItemFromConflict(SourceControlBase sourceControl, string path)
+        {
+            if (path.Contains("@/"))
+            {
+                path = path.Replace("@/", "\\");
+            }
+
+            string localContent = sourceControl.GetLocalContentFromConflicted(path);
+            RepositoryItemBase localItem = NewRepositorySerializer.DeserializeFromText(localContent);
+
+            return localItem;
+        }
+
+        public static RepositoryItemBase GetRemoteItemFromConflict(SourceControlBase sourceControl, string path)
+        {
+            if (path.Contains("@/"))
+            {
+                path = path.Replace("@/", "\\");
+            }
+
+            string remoteContent = sourceControl.GetRemoteContentFromConflicted(path);
+            RepositoryItemBase remoteItem = NewRepositorySerializer.DeserializeFromText(remoteContent);
+
+            return remoteItem;
+        }
+
+        public static Comparison CompareConflictedItems(RepositoryItemBase localItem, RepositoryItemBase remoteItem)
+        {
+            ICollection<Comparison> childComparisons = RepositoryItemBaseComparer.Compare("[0]", localItem, remoteItem);
+            Comparison.StateType state = childComparisons.All(c => c.State == Comparison.StateType.Unmodified) ? Comparison.StateType.Unmodified : Comparison.StateType.Modified;
+            return new Comparison("ROOT", state, childComparisons: childComparisons, dataType: localItem.GetType());
+        }
+
         public static Comparison GetComparisonForConflicted(SourceControlBase sourceControl, string path)
         {
             if (path.Contains("@/"))
@@ -190,19 +223,17 @@ namespace Ginger.SourceControl
             string remoteContent = sourceControl.GetRemoteContentFromConflicted(path);
             RepositoryItemBase remoteItem = NewRepositorySerializer.DeserializeFromText(remoteContent);
             ICollection<Comparison> childComparisons = RepositoryItemBaseComparer.Compare("[0]", localItem, remoteItem);
-            Comparison.State state = childComparisons.All(c => c.StateType == Comparison.State.Unmodified) ? Comparison.State.Unmodified : Comparison.State.Modified;
+            Comparison.StateType state = childComparisons.All(c => c.State == Comparison.StateType.Unmodified) ? Comparison.StateType.Unmodified : Comparison.StateType.Modified;
             return new Comparison("ROOT", state, childComparisons: childComparisons, dataType: localItem.GetType());
         }
 
-        public static Comparison PreviewManualConflictResolve(Comparison comparison)
+        public static RepositoryItemBase CreateMergedItemFromComparison(Comparison comparison)
         {
             RepositoryItemBase mergedRIB = RepositoryItemBaseMerger.Merge(comparison.DataType, comparison.ChildComparisons);
-            ICollection<Comparison> childComparisons = RepositoryItemBaseComparer.Compare("[0]", mergedRIB, remoteItem: null);
-            Comparison.State state = childComparisons.All(c => c.StateType == Comparison.State.Unmodified) ? Comparison.State.Unmodified : Comparison.State.Modified;
-            return new Comparison("ROOT", state, childComparisons: childComparisons, dataType: mergedRIB.GetType());
+            return mergedRIB;
         }
 
-        public static bool NewResolveConflict(SourceControlBase sourceControl, string path, eResolveConflictsSide side, Comparison comparison = null)
+        public static bool NewResolveConflict(SourceControlBase sourceControl, string path, string content)
         {
             try
             {
@@ -215,28 +246,8 @@ namespace Ginger.SourceControl
                     path = path.Replace("@/", "\\");
                 }
 
-                bool isConflictResolved = false;
                 string error = string.Empty;
-                switch (side)
-                {
-                    case eResolveConflictsSide.Local:
-                        string localContent = sourceControl.GetLocalContentFromConflicted(path);
-                        isConflictResolved = sourceControl.NewResolveConflict(path, localContent, ref error);
-                        break;
-                    case eResolveConflictsSide.Server:
-                        string remoteContent = sourceControl.GetRemoteContentFromConflicted(path);
-                        isConflictResolved = sourceControl.NewResolveConflict(path, remoteContent, ref error);
-                        break;
-                    case eResolveConflictsSide.Manual:
-                        if(comparison == null)
-                        {
-                            throw new ArgumentException($"{nameof(comparison)} argument must be non-null for side {nameof(eResolveConflictsSide.Manual)}.");
-                        }
-                        RepositoryItemBase mergedRIB = RepositoryItemBaseMerger.Merge(comparison.DataType, comparison.ChildComparisons);
-                        string mergedRIBAsString = new NewRepositorySerializer().SerializeToString(mergedRIB);
-                        isConflictResolved = sourceControl.NewResolveConflict(path, mergedRIBAsString, ref error);
-                        break;
-                }
+                bool isConflictResolved = sourceControl.NewResolveConflict(path, content, ref error);
 
                 if (!isConflictResolved)
                 {

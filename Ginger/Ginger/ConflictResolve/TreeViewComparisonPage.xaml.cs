@@ -44,7 +44,7 @@ namespace Ginger.ConflictResolve
                 treeViewItem = new()
                 {
                     Header = comparisonResult.Name,
-                    Background = GetColorByState(comparisonResult.StateType),
+                    Background = GetColorByState(comparisonResult.State),
                 };
                 foreach (Comparison childComparisonResult in comparisonResult.ChildComparisons)
                     treeViewItem.Items.Add(CreateTreeViewItemForComparisonResult(childComparisonResult));
@@ -55,24 +55,24 @@ namespace Ginger.ConflictResolve
                 treeViewItem = new TreeViewItem()
                 {
                     Header = $"{comparisonResult.Name}: {comparisonResult.Data}",
-                    Background = GetColorByState(comparisonResult.StateType),
+                    Background = GetColorByState(comparisonResult.State),
                 };
             }
 
             return treeViewItem;
         }
 
-        public SolidColorBrush GetColorByState(Comparison.State state)
+        public SolidColorBrush GetColorByState(Comparison.StateType state)
         {
             switch(state)
             {
-                case Comparison.State.Unmodified:
+                case Comparison.StateType.Unmodified:
                     return Brushes.Transparent;
-                case Comparison.State.Modified:
+                case Comparison.StateType.Modified:
                     return Brushes.Yellow;
-                case Comparison.State.Added:
+                case Comparison.StateType.Added:
                     return Brushes.PaleGreen;
-                case Comparison.State.Deleted:
+                case Comparison.StateType.Deleted:
                     return Brushes.PaleVioletRed;
                 default:
                     throw new NotImplementedException();

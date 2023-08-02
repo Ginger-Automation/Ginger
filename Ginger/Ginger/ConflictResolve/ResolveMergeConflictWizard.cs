@@ -1,4 +1,7 @@
-﻿using Amdocs.Ginger.Common.SourceControlLib;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.SourceControlLib;
+using Amdocs.Ginger.Repository;
+using Ginger.SourceControl;
 using GingerCore;
 using GingerWPF.WizardLib;
 using System;
@@ -12,16 +15,20 @@ namespace Ginger.ConflictResolve
 {
     public class ResolveMergeConflictWizard : WizardBase
     {
+        private readonly Conflict _conflictResolve;
+
         public override string Title => "Resolve Merge Conflict";
 
-        public Comparison Comparison { get; }
+        public Comparison Comparison => _conflictResolve.Comparison;
 
-        public BusinessFlow? MergedBusinessFlow { get; set; }
-
-        public ResolveMergeConflictWizard(Comparison comparison)
+        public ResolveMergeConflictWizard(Conflict conflictResolve)
         {
-            Comparison = comparison;
+            _conflictResolve = conflictResolve;
+            AddPages();
+        }
 
+        private void AddPages()
+        {
             AddPage(
                 Name: "Name - Compare And Select",
                 Title: "Title - Compare and Select",
@@ -30,14 +37,19 @@ namespace Ginger.ConflictResolve
 
             AddPage(
                 Name: "Name - Preview Merged",
-                Title: "Title - Preview Merged", 
+                Title: "Title - Preview Merged",
                 SubTitle: "SubTitle - Preview Merged",
                 new PreviewMergedPage());
         }
 
+        public RepositoryItemBase GetMergedItem()
+        {
+            return _conflictResolve.GetMergedItem();
+        }
+
         public override void Finish()
         {
-            throw new NotImplementedException();
+
         }
     }
 }

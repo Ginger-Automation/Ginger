@@ -30,10 +30,12 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using static Ginger.ConflictResolve.ConflictResolve;
+using static Ginger.ConflictResolve.Conflict;
 using GingerWPF.BusinessFlowsLib;
 using Amdocs.Ginger.Common.SourceControlLib;
 using GingerWPF.WizardLib;
+using GingerCore.GeneralLib;
+using System.Globalization;
 
 namespace Ginger.ConflictResolve
 {
@@ -45,7 +47,7 @@ namespace Ginger.ConflictResolve
         GenericWindow genWin = null;
         List<string> mConflictPaths;
         public bool IsResolved { get; set; }
-        ObservableList<ConflictResolve> conflictResolves = new ObservableList<ConflictResolve>();
+        ObservableList<Conflict> conflictResolves = new ObservableList<Conflict>();
         Dictionary<string, string> filePathDct = new Dictionary<string, string>();
         private string BranchName;
         public ResolveConflictWindow(List<string> conflictPaths, string branchName)
@@ -60,7 +62,7 @@ namespace Ginger.ConflictResolve
         {
             Button resolveBtn = new Button();
             resolveBtn.Content = "Resolve";
-            resolveBtn.Click += new RoutedEventHandler(xCompareAndMergeButton_Click);
+            resolveBtn.Click += new RoutedEventHandler(resolve_Click);
 
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Source Control Conflicts", this, new ObservableList<Button> { resolveBtn }, true, "Do Not Resolve", CloseWindow);
         }
@@ -68,18 +70,19 @@ namespace Ginger.ConflictResolve
         {
             IsResolved = true;
             Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
-            foreach (ConflictResolve conflictResolve in conflictResolves)
+            foreach (Conflict conflict in conflictResolves)
             {
-                switch (conflictResolve.resolveOperations)
+                switch (conflict.Resolution)
                 {
-                    case eResolveOperations.AcceptServer:
-                        SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, conflictResolve.ConflictPath, eResolveConflictsSide.Server);
+                    case ResolutionType.AcceptServer:
+                        SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, conflict.Path, eResolveConflictsSide.Server);
                         break;
-                    case eResolveOperations.KeepLocal:
-                        SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, conflictResolve.ConflictPath, eResolveConflictsSide.Local);
+                    case ResolutionType.KeepLocal:
+                        SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, conflict.Path, eResolveConflictsSide.Local);
                         break;
-                    default:
-                        //do nothing
+                    case ResolutionType.CherryPick:
+                        string content = new NewRepositorySerializer().SerializeToString(conflict.GetMergedItem());
+                        SourceControlIntegration.NewResolveConflict(WorkSpace.Instance.Solution.SourceControl, conflict.Path, content);
                         break;
                 }
             }
@@ -89,24 +92,110 @@ namespace Ginger.ConflictResolve
 
         private void SetGridView()
         {
-            foreach (string conflictName in mConflictPaths)
+            foreach (string conflictPath in mConflictPaths)
             {
-                ConflictResolve newObjConflict = new ConflictResolve();
-                newObjConflict.ConflictPath = conflictName;
-                newObjConflict.resolveOperations = eResolveOperations.AcceptServer;
-                conflictResolves.Add(newObjConflict);
+                Conflict conflict = new(conflictPath)
+                {
+                    Resolution = ResolutionType.AcceptServer
+                };
+                conflictResolves.Add(conflict);
             }
-            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            ObservableList<GridColView> viewCols = new ObservableList<GridColView>();
-            view.GridColsView = viewCols;
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConflictResolve.RelativeConflictPath), Header = "Conflicted File", WidthWeight = 150, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ConflictResolve.resolveOperations), Header = "Operation", WidthWeight = 90, BindingMode = BindingMode.TwoWay, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(GingerCore.General.GetEnumValuesForCombo(typeof(eResolveOperations)), nameof(ConflictResolve.resolveOperations), false, true) });
-            view.GridColsView.Add(new GridColView() { Field = "Compare and Merge", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.ResolveConflictsGrid.Resources["xCompareAndMergeTemplate"] });
+
+            GridViewDef view = new(GridViewDef.DefaultViewName)
+            {
+                GridColsView = new()
+                {
+                    new GridColView()
+                    {
+                        Field = nameof(Conflict.RelativePath),
+                        Header = "Conflicted File",
+                        WidthWeight = 150,
+                        AllowSorting = true,
+                        BindingMode = BindingMode.OneWay,
+                        ReadOnly = true
+                    },
+                    new GridColView()
+                    {
+                        Field = nameof(Conflict.Resolution),
+                        Header = "Operation",
+                        WidthWeight = 90,
+                        BindingMode = BindingMode.TwoWay,
+                        StyleType = GridColView.eGridColStyleType.Template,
+                        CellTemplate = CreateDataTemplateForCherryPickChangesColumn()
+                    }
+                    //new GridColView() 
+                    //{ 
+                    //    Field = nameof(ConflictResolve.resolveOperations), 
+                    //    Header = "Operation", 
+                    //    WidthWeight = 90, 
+                    //    BindingMode = BindingMode.TwoWay, 
+                    //    StyleType = GridColView.eGridColStyleType.Template, 
+                    //    CellTemplate = ucGrid.GetGridComboBoxTemplate(
+                    //        valuesList: GingerCore.General.GetEnumValuesForCombo(typeof(eResolveOperations)), 
+                    //        selectedValueField: nameof(ConflictResolve.resolveOperations), 
+                    //        allowEdit: false, 
+                    //        selectedByDefault: true) 
+                    //},
+                    //new GridColView() 
+                    //{ 
+                    //    Field = "Compare and Merge", 
+                    //    WidthWeight = 20, 
+                    //    StyleType = GridColView.eGridColStyleType.Template, 
+                    //    CellTemplate = (DataTemplate)this.ResolveConflictsGrid.Resources["xCompareAndMergeTemplate"] 
+                    //}
+                }
+            };
+
             xConflictingItemsGrid.SetAllColumnsDefaultView(view);
             xConflictingItemsGrid.InitViewItems();
             xConflictingItemsGrid.SetTitleLightStyle = true;
             xConflictingItemsGrid.DataSourceList = this.conflictResolves;
         }
+
+        private DataTemplate CreateDataTemplateForCherryPickChangesColumn()
+        {
+            DataTemplate dataTemplate = new();
+            FrameworkElementFactory operationsComboBox = new(typeof(ComboBox));
+
+            operationsComboBox.SetValue(ComboBox.ItemsSourceProperty, GingerCore.General.GetEnumValuesForCombo(typeof(ResolutionType)));
+            operationsComboBox.SetValue(ComboBox.DisplayMemberPathProperty, nameof(ComboEnumItem.text));
+            operationsComboBox.SetValue(ComboBox.SelectedValuePathProperty, nameof(ComboEnumItem.Value));
+            operationsComboBox.SetValue(ComboBox.SelectedIndexProperty, 0);
+
+            Binding operationsComboBoxSelectedValueBinding = new(path: nameof(Conflict.Resolution))
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            
+            operationsComboBox.SetBinding(ComboBox.SelectedValueProperty, operationsComboBoxSelectedValueBinding);
+
+            FrameworkElementFactory viewChangesButton = new(typeof(Button));
+
+            viewChangesButton.SetValue(Button.ContentProperty, "View Changes");
+            viewChangesButton.SetValue(Button.StyleProperty, Application.Current.Resources["@InputImageGridCellButtonStyle"]);
+            viewChangesButton.AddHandler(Button.ClickEvent, new RoutedEventHandler(xCompareAndMergeButton_Click));
+
+            Binding viewChangesButtonVisibilityBinding = new(path: nameof(Conflict.Resolution))
+            {
+                Mode = BindingMode.OneWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                Converter = new ResolveOperationToButtonVisibilityConverter()
+            };
+
+            viewChangesButton.SetBinding(Button.VisibilityProperty, viewChangesButtonVisibilityBinding);
+
+            FrameworkElementFactory stackPanel = new(typeof(StackPanel));
+            stackPanel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
+
+            stackPanel.AppendChild(operationsComboBox);
+            stackPanel.AppendChild(viewChangesButton);
+
+            dataTemplate.VisualTree = stackPanel;
+
+            return dataTemplate;
+        }
+
         private void CloseWindow(object sender, EventArgs e)
         {
             IsResolved = false;
@@ -118,44 +207,12 @@ namespace Ginger.ConflictResolve
         }
 
 
-        private void xCompareAndMergeButton_Click(object sender, EventArgs e)
+        private void xCompareAndMergeButton_Click(object sender, RoutedEventArgs e)
         {
-            ConflictResolve conflict = (ConflictResolve)((FrameworkElement)sender).DataContext;
-            if (!conflict.IsMerge)
-            {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Compare Conflict is not yet supporter for this entity");
-                return;
-            }
-            Comparison comparison = SourceControlIntegration.GetComparisonForConflicted(WorkSpace.Instance.SourceControl, conflict.ConflictPath);
-            ResolveMergeConflictWizard wizard = new(comparison);
+            Conflict conflict = (Conflict)((FrameworkElement)sender).DataContext;
+            ResolveMergeConflictWizard wizard = new(conflict);
             WizardWindow.ShowWizard(wizard);
-        }
 
-        private void xCompareAndMergeButton_Click_Old(object sender, EventArgs e)
-        {
-            ConflictResolve conflict = (ConflictResolve)((FrameworkElement)sender).DataContext;
-            if (!conflict.IsMerge)
-            {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Compare Conflict is not yet supporter for this entity");
-                return;
-            }
-            string localPath = string.Empty;
-            string serverPath = string.Empty;
-            CreateSeparateLocalAndServerCopies(conflict.ConflictPath, ref localPath, ref serverPath);
-            string localXml = File.ReadAllText(localPath);
-            BusinessFlow? localFlow = NewRepositorySerializer.DeserializeFromText(localXml) as BusinessFlow;
-            string serverXml = File.ReadAllText(serverPath);
-            BusinessFlow? serverFlow = NewRepositorySerializer.DeserializeFromText(serverXml) as BusinessFlow;
-
-            List<string> objectCompare = ObjectCompare.CompareObjects(localFlow, serverFlow);
-            BusinessFlowViewPage localFlowView = new(localFlow, new Context(), General.eRIPageViewMode.View, true, objectCompare);
-            BusinessFlowViewPage serverFlowView = new(serverFlow, new Context(), General.eRIPageViewMode.View, true, objectCompare);
-            localFlowView.mParallelView = serverFlowView;
-            serverFlowView.mParallelView = localFlowView;
-            localFlowView.EvtSyncTabChanged += serverFlowView.EvtTabChanged;
-            serverFlowView.EvtSyncTabChanged += localFlowView.EvtTabChanged;
-            CompareAndMergeConflictedItem compareAndMerge = new CompareAndMergeConflictedItem(localFlowView, serverFlowView, objectCompare);
-            compareAndMerge.ShowAsWindow();
         }
 
         private void CreateSeparateLocalAndServerCopies(string filePath, ref string localXmlPath, ref string serverXmlPath)
@@ -235,6 +292,23 @@ namespace Ginger.ConflictResolve
                     string line = xmlContent[i];
                     sw.WriteLine(line);
                 }
+            }
+        }
+
+        private sealed class ResolveOperationToButtonVisibilityConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if(value is Conflict.ResolutionType resolveOperation && resolveOperation == Conflict.ResolutionType.CherryPick)
+                {
+                    return Visibility.Visible;
+                }
+                return Visibility.Collapsed;
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
             }
         }
     }
