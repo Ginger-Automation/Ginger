@@ -99,7 +99,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     break;
             }
             return cellVal;
-        }
+            }
 
 
         // Read the whole row and col data with/without filter
@@ -148,7 +148,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             lock (lockObj)
             {
                 Thread.Sleep(100);
-                mWorkbook = GetExcelWorkbook(fileName);
+                GetExcelWorkbook(fileName);
                 if (mWorkbook == null)
                 {
                     Reporter.ToLog(eLogLevel.WARN, "File name not Exists.");
@@ -173,15 +173,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         {
             try
             {
-                IWorkbook workbook = null;
-                
-                using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
+                if(mWorkbook == null)
                 {
-                    workbook = WorkbookFactory.Create(fs);
+                    using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
+                    {
+                        mWorkbook = WorkbookFactory.Create(fs);
+                    }
                 }
-
-                return workbook;
-
+                return mWorkbook;
             }
             catch (Exception ex)
             {
@@ -190,7 +189,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
         }
 
-        public bool UpdateExcelData(string fileName, string sheetName, string filter, List<Tuple<string, object>> updateCellValuesList, string primaryKey = null, string key = null)
+        public bool UpdateExcelData(string fileName, string sheetName, string filter, List<Tuple<string, object>> updateCellValuesList, string HeaderRowNum, string primaryKey = null, string key = null)
         {
             if (updateCellValuesList.Count > 0)
             {
@@ -206,7 +205,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 {
                     filter = primaryKey;
                 }
-                UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName);
+                UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName,HeaderRowNum);
             }
             return true;
         }
@@ -297,7 +296,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
         }
 
-        public bool WriteData(string fileName, string sheetName, string filter, string setDataUsed, List<Tuple<string, object>> updateCellValuesList, string primaryKey = null, string key = null)
+        public bool WriteData(string fileName, string sheetName, string filter, string setDataUsed, List<Tuple<string, object>> updateCellValuesList, string HeaderRowNum, string primaryKey = null, string key = null)
         {
             if (!String.IsNullOrWhiteSpace(primaryKey))
             {
@@ -310,10 +309,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     filter = $"({filter}) and ({primaryKey})";
                 }
             }
-            return UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName);
+            return UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName , HeaderRowNum);
         }
 
-        private bool UpdateCellsData(List<Tuple<string, object>> updateCellList, DataTable mExcelDataTable, string filter, string fileName)
+        private bool UpdateCellsData(List<Tuple<string, object>> updateCellList, DataTable mExcelDataTable, string filter, string fileName , string HeaderRowNum)
         {
             if (updateCellList.Count > 0)
             {
@@ -323,7 +322,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     List<DataRow> filteredList = mExcelDataTable.Select(filter).ToList();
                     foreach (DataRow objDataRow in filteredList)
                     {
-                        int rowIndex = mExcelDataTable.Rows.IndexOf(objDataRow) + 1;
+                        int rowIndex = mExcelDataTable.Rows.IndexOf(objDataRow) + int.Parse(HeaderRowNum);
                         if (mSheet.GetRow(rowIndex) != null)
                         {
                             ICell targetCell = mSheet.GetRow(rowIndex).GetCell(columnIndex);
@@ -355,14 +354,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 Thread.Sleep(100);
                 List<string> sheets = new List<string>();
                 mFileName = fileName;
-                var wb = GetExcelWorkbook(mFileName);
-                if (wb == null)
+                GetExcelWorkbook(mFileName);
+                if (mWorkbook == null)
                 {
                     return sheets;
                 }
-                for (int i = 0; i < wb.NumberOfSheets; i++)
+                for (int i = 0; i < mWorkbook.NumberOfSheets; i++)
                 {
-                    sheets.Add(wb.GetSheetAt(i).SheetName);
+                    sheets.Add(mWorkbook.GetSheetAt(i).SheetName);
                 }
                 return sheets.OrderBy(itm => itm).ToList(); 
             }
