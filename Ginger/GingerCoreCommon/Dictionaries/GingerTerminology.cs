@@ -38,7 +38,7 @@ namespace GingerCore
             new KeyValuePair<string, string>("RunSet", "Run Set"),
             new KeyValuePair<string, string>("RunSets", "Run Sets"),
             new KeyValuePair<string, string>("ALM", "ALM"),
-            new KeyValuePair<string, string>("TargetApplication", "TargetApplication")
+            new KeyValuePair<string, string>("TargetApplication", "Target Application")
         };
 
         static List<KeyValuePair<string, string>> gingerTermGherkinList = new List<KeyValuePair<string, string>>()
@@ -53,7 +53,7 @@ namespace GingerCore
             new KeyValuePair<string, string>("Variables", "Parameters"),
             new KeyValuePair<string, string>("RunSet", "Run Set"),
             new KeyValuePair<string, string>("RunSets", "Run Sets"),
-            new KeyValuePair<string, string>("TargetApplication", "TargetApplication")
+            new KeyValuePair<string, string>("TargetApplication", "Target Application")
         };
 
 
@@ -69,7 +69,7 @@ namespace GingerCore
             new KeyValuePair<string, string>("Variables", "Parameters"),
             new KeyValuePair<string, string>("RunSet", "Calendar"),
             new KeyValuePair<string, string>("RunSets", "Calendars"),
-            new KeyValuePair<string, string>("TargetApplication", "TargetApplication")
+            new KeyValuePair<string, string>("TargetApplication", "Target Application")
         };
 
         static List<KeyValuePair<string, string>> gingerTermTDMList = new List<KeyValuePair<string, string>>()
@@ -84,7 +84,7 @@ namespace GingerCore
             new KeyValuePair<string, string>("Variables", "Parameters"),
             new KeyValuePair<string, string>("RunSet", "Business Process"),
             new KeyValuePair<string, string>("RunSets", "Business Processes"),
-            new KeyValuePair<string, string>("TargetApplication", "TargetApplication")
+            new KeyValuePair<string, string>("TargetApplication", "Target Application")
         };
 
         static List<KeyValuePair<string, string>> gingerTermMBTList = new List<KeyValuePair<string, string>>()
