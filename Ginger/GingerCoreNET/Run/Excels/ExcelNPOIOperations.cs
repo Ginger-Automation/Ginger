@@ -99,7 +99,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     break;
             }
             return cellVal;
-        }
+            }
 
 
         // Read the whole row and col data with/without filter
@@ -148,7 +148,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             lock (lockObj)
             {
                 Thread.Sleep(100);
-                mWorkbook = GetExcelWorkbook(fileName);
+                GetExcelWorkbook(fileName);
                 if (mWorkbook == null)
                 {
                     Reporter.ToLog(eLogLevel.WARN, "File name not Exists.");
@@ -173,15 +173,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         {
             try
             {
-                IWorkbook workbook = null;
-                
-                using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
+                if(mWorkbook == null)
                 {
-                    workbook = WorkbookFactory.Create(fs);
+                    using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
+                    {
+                        mWorkbook = WorkbookFactory.Create(fs);
+                    }
                 }
-
-                return workbook;
-
+                return mWorkbook;
             }
             catch (Exception ex)
             {
@@ -355,14 +354,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 Thread.Sleep(100);
                 List<string> sheets = new List<string>();
                 mFileName = fileName;
-                var wb = GetExcelWorkbook(mFileName);
-                if (wb == null)
+                GetExcelWorkbook(mFileName);
+                if (mWorkbook == null)
                 {
                     return sheets;
                 }
-                for (int i = 0; i < wb.NumberOfSheets; i++)
+                for (int i = 0; i < mWorkbook.NumberOfSheets; i++)
                 {
-                    sheets.Add(wb.GetSheetAt(i).SheetName);
+                    sheets.Add(mWorkbook.GetSheetAt(i).SheetName);
                 }
                 return sheets.OrderBy(itm => itm).ToList(); 
             }
