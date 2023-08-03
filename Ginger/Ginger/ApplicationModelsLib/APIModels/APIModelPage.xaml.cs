@@ -136,6 +136,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtName, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDescription, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.Description));
 
+            xTAlabel.Content = $"{GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.TargetApplication)}:";
             FillTargetAppsComboBox();
             xTargetApplicationComboBox.Init(mApplicationAPIModel, nameof(ApplicationAPIModel.TargetApplicationKey));
             xTagsViewer.Init(mApplicationAPIModel.TagsKeys);
