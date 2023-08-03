@@ -504,5 +504,9 @@ namespace Amdocs.Ginger.Common.GeneralLib
                 return dictionary;
             }
         }
+
+        public class eRIPageViewMode
+        {
+        }
     }
 }
