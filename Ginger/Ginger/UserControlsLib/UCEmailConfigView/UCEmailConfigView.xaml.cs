@@ -113,7 +113,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
         {
             if (!string.IsNullOrEmpty(password) && !password.Contains("{Var Name"))
             {
-                return Encrypt(xUserPasswordTextBox.Text);
+                return Encrypt(password);
             }
             return password;
         }
