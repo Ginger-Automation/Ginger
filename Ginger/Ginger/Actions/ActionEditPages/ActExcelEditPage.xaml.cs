@@ -80,7 +80,7 @@ namespace Ginger.Actions
             // populate Sheet dropdown
             if (!string.IsNullOrEmpty(mAct.ExcelFileName))
             {
-                FillSheetCombo(true);
+                FillSheetCombo();
             }
         }
 
@@ -96,31 +96,36 @@ namespace Ginger.Actions
                 SheetsList = null;
                 // Empty the list in the UI before Creating a new list
                 GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
+                mAct.SheetName = "";
                 FillSheetCombo();
             }
         }
 
-        private async Task FillSheetCombo(bool initialLoad = false )
+        private async Task FillSheetCombo()
         {
             ContextProcessInputValueForDriver();
             if (SheetsList == null || !SheetsList.Any())
             {
                 DisableSheetNameComboBox();
-                xLoader.Visibility = Visibility.Visible;
+                MakeLoaderVisible();
                 mExcelOperations.Dispose();
                 await Task.Run(() =>
                 {
                     try
                     {
                         SheetsList = mExcelOperations.GetSheets(mAct.CalculatedFileName);
-
+                        Dispatcher.Invoke(() =>
+                        {
+                            GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
+                        });
                         if (SheetsList == null || SheetsList.Count == 0)
                         {
                             ShowErrorResponse();
                             return;
                         }
+
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         ShowErrorResponse();
                     }
@@ -128,16 +133,10 @@ namespace Ginger.Actions
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
                             EnableSheetNameComboBox();
-                            xLoader.Visibility = Visibility.Collapsed;
-                            if(!initialLoad)
-                            {
-                                SheetNamComboBox.SelectedIndex = 0;
-                            }
+                            HideLoader();
                         });
                     }
-
                 });
             }
         }
@@ -227,7 +226,16 @@ namespace Ginger.Actions
                 }
             });
         }
+        private void MakeLoaderVisible()
+        {
+            xLoader.Visibility = Visibility.Visible;
+        }
 
+        private void HideLoader()
+        {
+            xLoader.Visibility = Visibility.Hidden;
+
+        }
         private void ViewWhereButton_Click(object sender, RoutedEventArgs e)
         {
             try
