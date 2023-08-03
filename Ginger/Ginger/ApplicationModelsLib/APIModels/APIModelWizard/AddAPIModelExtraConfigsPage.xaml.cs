@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using GingerCore;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System.Linq;
@@ -66,6 +67,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 AddAPIModelWizard = ((AddAPIModelWizard)WizardEventArgs.Wizard);
 
+                xTAlabel.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
                 FillTargetAppsComboBox();
                 xTargetApplicationComboBox.Init(AddAPIModelWizard, nameof(AddAPIModelWizard.TargetApplicationKey));
                 xTargetApplicationComboBox.ComboBox.SelectedIndex = 0;
