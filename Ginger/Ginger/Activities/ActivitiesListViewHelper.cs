@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
+using Ginger.Activities;
 using Ginger.ALM;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
@@ -298,6 +299,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             pasteInList.OperationHandler = PasteInListHandler;
             extraOperationsList.Add(pasteInList);
 
+           
             return extraOperationsList;
         }
 
@@ -737,6 +739,16 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             addToSR.OperationHandler = AddGroupToSRHandler;
             groupOperationsList.Add(addToSR);
 
+            ListItemGroupOperation details = new ListItemGroupOperation();
+            details.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
+            details.AutomationID = "detailsGroup";
+            details.Header = string.Concat(GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), " Details");
+            details.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Config;
+            details.ToolTip = string.Concat(GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)," Details");
+            details.OperationHandler = DetailsGroupHandler;
+            groupOperationsList.Add(details);
+
+
             return groupOperationsList;
         }
 
@@ -1038,6 +1050,18 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             }
 
             WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(mContext, list));
+        }
+
+        private void DetailsGroupHandler(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroup activitiesGroup = mContext.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == ((MenuItem)sender).Tag.ToString());
+            BusinessFlow currentBF = null;
+            if (mContext != null)
+            {
+                currentBF = mContext.BusinessFlow;
+            }
+            ActivitiesGroupPage mActivitiesGroupPage = new ActivitiesGroupPage(activitiesGroup, currentBF, ActivitiesGroupPage.eEditMode.ExecutionFlow,mContext);
+            mActivitiesGroupPage.ShowAsWindow();
         }
 
         private void SetPublishGroupHandler(object sender, RoutedEventArgs e)

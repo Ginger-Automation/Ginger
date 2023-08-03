@@ -679,7 +679,15 @@ namespace GingerCore
                     {
                         Driver.Dispatcher.Invoke(() =>
                         {
-                            Driver.RunAction(act);
+                            try
+                            {
+                                Driver.RunAction(act);
+                            }
+                            catch(Exception ex) 
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                            }
+                            
                         });
                     }
                     else
