@@ -190,7 +190,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
         }
 
-        public bool UpdateExcelData(string fileName, string sheetName, string filter, List<Tuple<string, object>> updateCellValuesList, string primaryKey = null, string key = null)
+        public bool UpdateExcelData(string fileName, string sheetName, string filter, List<Tuple<string, object>> updateCellValuesList, string HeaderRowNum, string primaryKey = null, string key = null)
         {
             if (updateCellValuesList.Count > 0)
             {
@@ -206,7 +206,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 {
                     filter = primaryKey;
                 }
-                UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName);
+                UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName,HeaderRowNum);
             }
             return true;
         }
@@ -297,7 +297,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
             }
         }
 
-        public bool WriteData(string fileName, string sheetName, string filter, string setDataUsed, List<Tuple<string, object>> updateCellValuesList, string primaryKey = null, string key = null)
+        public bool WriteData(string fileName, string sheetName, string filter, string setDataUsed, List<Tuple<string, object>> updateCellValuesList, string HeaderRowNum, string primaryKey = null, string key = null)
         {
             if (!String.IsNullOrWhiteSpace(primaryKey))
             {
@@ -310,10 +310,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     filter = $"({filter}) and ({primaryKey})";
                 }
             }
-            return UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName);
+            return UpdateCellsData(updateCellValuesList, mExcelDataTable, filter, fileName , HeaderRowNum);
         }
 
-        private bool UpdateCellsData(List<Tuple<string, object>> updateCellList, DataTable mExcelDataTable, string filter, string fileName)
+        private bool UpdateCellsData(List<Tuple<string, object>> updateCellList, DataTable mExcelDataTable, string filter, string fileName , string HeaderRowNum)
         {
             if (updateCellList.Count > 0)
             {
@@ -323,7 +323,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                     List<DataRow> filteredList = mExcelDataTable.Select(filter).ToList();
                     foreach (DataRow objDataRow in filteredList)
                     {
-                        int rowIndex = mExcelDataTable.Rows.IndexOf(objDataRow) + 1;
+                        int rowIndex = mExcelDataTable.Rows.IndexOf(objDataRow) + int.Parse(HeaderRowNum);
                         if (mSheet.GetRow(rowIndex) != null)
                         {
                             ICell targetCell = mSheet.GetRow(rowIndex).GetCell(columnIndex);
