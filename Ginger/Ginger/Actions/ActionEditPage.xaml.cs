@@ -201,6 +201,8 @@ namespace Ginger.Actions
             xExecutionReportTab.Tag = false;
             xHelpTab.Tag = false;
 
+            xOutputValuesGrid.ClearToolBarItems();
+
             mAction = null!;
             mContext = null!;
 
