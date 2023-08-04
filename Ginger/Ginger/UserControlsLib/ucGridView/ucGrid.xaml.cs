@@ -1157,11 +1157,6 @@ namespace Ginger
             return b;
         }
 
-        public void ClearToolBarItems()
-        {
-            toolbar.Items.Clear();
-        }
-
         #endregion ##### External Methods
 
         #region ##### Internal Methods
