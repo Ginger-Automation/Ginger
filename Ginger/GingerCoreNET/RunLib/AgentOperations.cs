@@ -705,7 +705,7 @@ namespace GingerCore
 
 
 
-        public async void Close()
+        public async Task Close()
         {
             try
             {

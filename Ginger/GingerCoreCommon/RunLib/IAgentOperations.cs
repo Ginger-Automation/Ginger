@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System.Threading.Tasks;
 using GingerCore.Actions;
 
 namespace GingerCore
@@ -25,7 +26,7 @@ namespace GingerCore
         bool IsShowWindowExplorerOnStart { get; }
         bool IsWindowExplorerSupportReady { get; }
         Agent.eStatus Status { get; }
-        void Close();
+        Task Close();
         void HighLightElement(Act act);
         void InitDriverConfigs();
         void ResetAgentStatus(Agent.eStatus status);

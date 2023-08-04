@@ -638,11 +638,13 @@ namespace amdocs.ginger.GingerCoreNET
                 List<Agent> runningAgents = Agents.Where(x => ((AgentOperations)x.AgentOperations).Status != Agent.eStatus.NotStarted).ToList();
                 if (runningAgents != null && runningAgents.Count > 0)
                 {
+                    List<Task> closeAgentTasks = new(runningAgents.Count);
                     foreach (Agent agent in runningAgents)
                     {
                         try
                         {
-                            agent.AgentOperations.Close();
+                            Task closeAgentTask = agent.AgentOperations.Close();
+                            closeAgentTasks.Add(closeAgentTask);
                         }
                         catch (Exception ex)
                         {
@@ -657,6 +659,8 @@ namespace amdocs.ginger.GingerCoreNET
                         }
                         ((AgentOperations)agent.AgentOperations).IsFailedToStart = false;
                     }
+                    bool didAllTasksComplete = Task.WaitAll(closeAgentTasks.ToArray(), timeout: TimeSpan.FromSeconds(5));
+                    Reporter.ToLog(eLogLevel.INFO, "Did all CloseAgent tasks completed: " + didAllTasksComplete);
                 }
             }
         }
