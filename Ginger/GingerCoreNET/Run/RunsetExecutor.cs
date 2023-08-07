@@ -20,6 +20,7 @@ using AccountReport.Contracts.Helpers;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
@@ -294,8 +295,14 @@ namespace Ginger.Run
             VariableBase originalCopy = (VariableBase)originalVar.CreateCopy(false);
 
             //ovveride original variable configurations with user customizations
+            string varType = customizedVar.GetType().Name;
+            bool skipType = false;
+            if (varType == "VariableSelectionList")
+            {
+                skipType = true;
+            }
 
-            AutoMapVariableData(customizedVar, ref originalVar);
+            AutomapData.AutoMapVariableData(customizedVar, ref originalVar, skipType);
 
             originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
             originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
@@ -315,56 +322,6 @@ namespace Ginger.Run
             originalVar.SetAsOutputValue = originalCopy.SetAsOutputValue;
             originalVar.LinkedVariableName = originalCopy.LinkedVariableName;
             originalVar.Publish = originalCopy.Publish;
-        }
-
-        private void AutoMapVariableData(VariableBase customizedVar, ref VariableBase originalVar)
-        {
-            string varType = customizedVar.GetType().Name;
-            switch (varType)
-            {
-                case "VariableDateTime":
-                    CreateMapper<VariableDateTime>().Map<VariableDateTime, VariableDateTime>((VariableDateTime)customizedVar, (VariableDateTime)originalVar);
-                    break;
-                case "VariableDynamic":
-                    CreateMapper<VariableDynamic>().Map<VariableDynamic, VariableDynamic>((VariableDynamic)customizedVar, (VariableDynamic)originalVar);
-                    break;
-                case "VariableNumber":
-                    CreateMapper<VariableNumber>().Map<VariableNumber, VariableNumber>((VariableNumber)customizedVar, (VariableNumber)originalVar);
-                    break;
-                case "VariableString":
-                    CreateMapper<VariableString>().Map<VariableString, VariableString>((VariableString)customizedVar, (VariableString)originalVar);
-                    break;
-                default:
-                    CreateMapper<VariableBase>().Map<VariableBase, VariableBase>(customizedVar, originalVar);
-                    break;
-            }
-        }
-
-        private IMapper CreateMapper<T>()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<List<string>, List<string>>().ConvertUsing(new IgnoringNullValuesTypeConverter<List<string>>());
-                cfg.CreateMap<List<Guid>, List<Guid>>().ConvertUsing(new IgnoringNullValuesTypeConverter<List<Guid>>());                
-                cfg.CreateMap<T, T>()
-               .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-            });
-            return config.CreateMapper();
-        }
-
-        public class IgnoringNullValuesTypeConverter<T> : ITypeConverter<T, T> where T : class
-        {
-            public T Convert(T source, T destination, ResolutionContext context)
-            {
-                if (source is IList && ((IList)source).Count == 0)
-                {
-                    return destination;
-                }
-                else
-                {
-                    return source;
-                }
-            }
         }
 
         public ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false)
