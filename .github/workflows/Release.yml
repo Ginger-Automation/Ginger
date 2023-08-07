@@ -16,13 +16,29 @@ jobs:
               uses: actions/download-artifact@v3
               with:
                 name: ginger-artifact
+
+            - name: Create Directory for GingerRuntime
+              run: | 
+                  mkdir Runtime               
  
             -   uses: sibiraj-s/action-archiver@v1
                 with:
                   path: './Ginger/GingerRuntime/bin/Release/net7.0/linux-x64'
                   format: tar
                   gzip: true
-                  output: GingerRuntime.tar.gz
+                  output: ./Runtime/GingerRuntime.tar.gz
+
+            - name: Create Directory for GingerRuntime
+              run: | 
+                  mv ./Documents/ReadMe.txt  ./Runtime/ReadMe.txt
+                  mv ./Documents/gingerInstall.sh  ./Runtime/gingerInstall.sh
+
+            -   uses: sibiraj-s/action-archiver@v1
+                with:
+                  path: './Runtime'
+                  format: tar
+                  gzip: true
+                  output: /GingerRuntime.tar.gz
                   
             -   name: Upload GingerRuntime
                 uses: actions/upload-artifact@v3
