@@ -268,8 +268,8 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mActivity = activity;
                 SetListView();
-                ShowHideEditPage(null);
             }
+            ShowHideEditPage(null);
         }
 
         // Drag Drop handlers
