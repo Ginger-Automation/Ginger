@@ -194,12 +194,16 @@ namespace Ginger.Actions
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
             }
 
+            ClearPageBindings();
+
             xDetailsTab.Tag = false;
             xOperationSettingsTab.Tag = false;
             xFlowControlTab.Tag = false;
             xOutputValuesTab.Tag = false;
             xExecutionReportTab.Tag = false;
             xHelpTab.Tag = false;
+
+            xOutputValuesGrid.ClearToolBarItems();
 
             xActionsDetailsPnl.IsEnabled = true;
             xOperationSettingsPnl.IsEnabled = true;
@@ -212,6 +216,8 @@ namespace Ginger.Actions
             xDataSourceConfigGrid.EnableGridColumns();
             xOutputValuesGrid.ToolsTray.Visibility = Visibility.Visible;
             xOutputValuesGrid.EnableGridColumns();
+
+            
 
             mAction = null!;
             mContext = null!;
@@ -324,10 +330,11 @@ namespace Ginger.Actions
                 xLocateByCombo.BindControl(mAction, nameof(Act.LocateBy), locatorsTypeList);
                 xLocateValueVE.BindControl(mContext, mAction, nameof(Act.LocateValue));
                 BindingHandler.ObjFieldBinding(xLocateValueVE, TextBox.ToolTipProperty, mAction, nameof(Act.LocateValue));
+                xActionLocatorPnl.Visibility = Visibility.Visible;
             }
             else
             {
-                xActionLocatorPnl.Visibility = System.Windows.Visibility.Collapsed;
+                xActionLocatorPnl.Visibility = Visibility.Collapsed;
             }
 
             SwitchingInputValueBoxAndGrid(mAction);
@@ -599,6 +606,13 @@ namespace Ginger.Actions
                     xInputValuesEditControlsPnl.Visibility = System.Windows.Visibility.Collapsed;
                 });
                 return;
+            }
+            else
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    xInputValuesEditControlsPnl.Visibility = Visibility.Visible;
+                });
             }
 
             //TODO: Remove all if else and handle it dynamically based on if Input value grid is needed or not
