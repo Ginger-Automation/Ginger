@@ -362,6 +362,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
                 xImapHostGrid.Visibility = Visibility.Collapsed;
                 xImapPortGrid.Visibility = Visibility.Collapsed;
                 passwdLabel.Content = "User Password:";
+                xUserEmailVE.ToolTip = "Please enter the User Id, that is configured in Azure Portal";
             }
             else
             {
@@ -370,6 +371,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
                 xImapHostGrid.Visibility = Visibility.Visible;
                 xImapPortGrid.Visibility = Visibility.Visible;
                 passwdLabel.Content = "User App Password:";
+                xUserEmailVE.ToolTip = "Please enter your IMAP Email Id";
             }
         }
         private void TriggerReadEmailMethodChangedEvent()
