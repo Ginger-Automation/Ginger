@@ -205,6 +205,20 @@ namespace Ginger.Actions
 
             xOutputValuesGrid.ClearToolBarItems();
 
+            xActionsDetailsPnl.IsEnabled = true;
+            xOperationSettingsPnl.IsEnabled = true;
+            xWaitTimeoutPnl.IsEnabled = true;
+            xRetryMechanismPnl.IsEnabled = true;
+            xAddOutputToDataSourcePnl.IsEnabled = true;
+            xExecutionReportConfigPnl.IsEnabled = true;
+
+            xDataSourceConfigGrid.ToolsTray.Visibility = Visibility.Visible;
+            xDataSourceConfigGrid.EnableGridColumns();
+            xOutputValuesGrid.ToolsTray.Visibility = Visibility.Visible;
+            xOutputValuesGrid.EnableGridColumns();
+
+            
+
             mAction = null!;
             mContext = null!;
 

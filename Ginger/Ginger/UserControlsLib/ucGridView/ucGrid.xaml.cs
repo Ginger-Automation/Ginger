@@ -1350,6 +1350,35 @@ namespace Ginger
             }
         }
 
+        public void EnableGridColumns()
+        {
+            foreach (DataGridColumn gridCol in grdMain.Columns)
+            {
+                if (gridCol.GetType() == typeof(DataGridCheckBoxColumn))
+                {
+                    ((DataGridCheckBoxColumn)gridCol).IsReadOnly = false;
+                    ((DataGridCheckBoxColumn)gridCol).ElementStyle = FindResource("@CheckBoxGridCellElemntStyle") as Style;
+                }
+                else if (gridCol.GetType() == typeof(DataGridComboBoxColumn))
+                {
+                    ((DataGridComboBoxColumn)gridCol).IsReadOnly = false;
+                    ((DataGridComboBoxColumn)gridCol).ElementStyle = FindResource("@GridCellElementStyle") as Style;
+                }
+                else if (gridCol.GetType() == typeof(DataGridTemplateColumn))
+                {
+                    ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@GridCellElementStyle") as Style;
+                }
+                else if (gridCol.GetType() == typeof(DataGridTextColumn))
+                {
+                    ((DataGridTextColumn)gridCol).CellStyle = FindResource("@GridCellElementStyle") as Style;
+                }
+                else
+                {
+                    gridCol.IsReadOnly = false;
+                }
+            }
+        }
+
         public void DisableGridColoumns()
         {
             foreach (DataGridColumn gridCol in grdMain.Columns)
@@ -1362,15 +1391,15 @@ namespace Ginger
                 else if (gridCol.GetType() == typeof(DataGridComboBoxColumn))
                 {
                     ((DataGridComboBoxColumn)gridCol).IsReadOnly = true;
-                    ((DataGridComboBoxColumn)gridCol).ElementStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
+                    ((DataGridComboBoxColumn)gridCol).ElementStyle = FindResource("@ReadOnlyGridCellElementStyle") as Style;
                 }
                 else if (gridCol.GetType() == typeof(DataGridTemplateColumn))
                 {
-                    ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
+                    ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElementStyle") as Style;
                 }
                 else if (gridCol.GetType() == typeof(DataGridTextColumn))
                 {
-                    ((DataGridTextColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
+                    ((DataGridTextColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElementStyle") as Style;
                 }
                 else
                 {
@@ -1378,6 +1407,7 @@ namespace Ginger
                 }
             }
         }
+
         private void SetView(GridViewDef view)
         {
             try
