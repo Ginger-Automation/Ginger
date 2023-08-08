@@ -111,8 +111,11 @@ namespace Ginger
                     {
                         BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
                     }
-
-                    mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
+                    });
+                        
 
                     if (mCollectionView != null)
                     {
@@ -968,7 +971,7 @@ namespace Ginger
                     return txt != txtSearch.Text;
                 }
 
-                if (mCollectionView != null && !(await UserKeepsTyping()) && txtSearch.Text != mFilterSearchText)
+               if (mCollectionView != null && !(await UserKeepsTyping()) && txtSearch.Text != mFilterSearchText)
                 {
                     this.Dispatcher.Invoke(() =>
                     {
