@@ -38,13 +38,13 @@ jobs:
                   path: './Runtime'
                   format: tar
                   gzip: true
-                  output: /GingerRuntime.tar.gz
+                  output: GingerRuntime-root.tar.gz
                   
             -   name: Upload GingerRuntime
                 uses: actions/upload-artifact@v3
                 with:
                   name: GingerRuntime
-                  path: ./GingerRuntime.tar.gz
+                  path: ./GingerRuntime-root.tar.gz
                   
           
     Windows:
