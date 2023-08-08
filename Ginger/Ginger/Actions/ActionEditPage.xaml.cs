@@ -99,6 +99,10 @@ namespace Ginger.Actions
         ActionFlowControlPage mAFCP;
         Context mContext;
 
+        private bool outputValuesGridToolbarItemsAdded = false;
+        private CheckBox? addParameterAutomaticallyCheckbox;
+        private CheckBox? supportSimulationCheckbox;
+
         public int SelectedTabIndx
         {
             get
@@ -203,7 +207,16 @@ namespace Ginger.Actions
             xExecutionReportTab.Tag = false;
             xHelpTab.Tag = false;
 
-            xOutputValuesGrid.ClearToolBarItems();
+            xOutputValuesGrid.btnAdd.RemoveHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
+
+            if (addParameterAutomaticallyCheckbox != null)
+            {
+                BindingOperations.ClearBinding(addParameterAutomaticallyCheckbox, CheckBox.IsCheckedProperty);
+            }
+            if (supportSimulationCheckbox != null)
+            {
+                BindingOperations.ClearBinding(supportSimulationCheckbox, CheckBox.IsCheckedProperty);
+            }
 
             xActionsDetailsPnl.IsEnabled = true;
             xOperationSettingsPnl.IsEnabled = true;
@@ -876,14 +889,18 @@ namespace Ginger.Actions
 
             xOutputValuesGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshOutputValuesGridElements));
             xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
-            xOutputValuesGrid.AddSeparator();
 
-            xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Unused Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize: 14);
-            BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, nameof(Act.AddNewReturnParams));
-            BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, nameof(Act.SupportSimulation));
+            if(!outputValuesGridToolbarItemsAdded)
+            {
+                outputValuesGridToolbarItemsAdded = true;
+                xOutputValuesGrid.AddSeparator();
+                xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Unused Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize: 14);
+                addParameterAutomaticallyCheckbox = xOutputValuesGrid.AddCheckBox("Add Parameters Automatically", null);
+                supportSimulationCheckbox = xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns));
+            }
 
-
-
+            BindingHandler.ObjFieldBinding(addParameterAutomaticallyCheckbox!, CheckBox.IsCheckedProperty, mAction, nameof(Act.AddNewReturnParams));
+            BindingHandler.ObjFieldBinding(supportSimulationCheckbox!, CheckBox.IsCheckedProperty, mAction, nameof(Act.SupportSimulation));
 
             xOutputValuesGrid.ShowViewCombo = Visibility.Collapsed;
             xOutputValuesGrid.ShowEdit = Visibility.Collapsed;
