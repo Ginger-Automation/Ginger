@@ -97,9 +97,9 @@ namespace Ginger.BusinessFlowWindows
             }
             else
             {
-                if (!mApplicationsPlatforms.Any(x=>x.Selected))
+                if (!mApplicationsPlatforms.Any(x => x.Selected))
                 {
-                    Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication);
+                    Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication,GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
                     return;
                 }
                 SetTargetApplications();
@@ -117,7 +117,7 @@ namespace Ginger.BusinessFlowWindows
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication);
+                Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication,GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
             }
         }
 
