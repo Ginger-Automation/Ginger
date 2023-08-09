@@ -378,27 +378,51 @@ namespace Ginger.Run
         }
         public void UpdateBusinessFlowsRunList()
         {
-            GingerRunner.BusinessFlowsRunList.Clear();
+            List<BusinessFlowRun> oldBFRuns = new(GingerRunner.BusinessFlowsRunList);
+            List<BusinessFlowRun> newBFRuns = new();
+
             foreach (BusinessFlow bf in BusinessFlows)
             {
-                BusinessFlowRun BFR = new BusinessFlowRun();
-                BFR.BusinessFlowName = bf.Name;
-                BFR.BusinessFlowGuid = bf.Guid;
-                BFR.BusinessFlowIsActive = bf.Active;
-                BFR.BusinessFlowIsMandatory = bf.Mandatory;
-                BFR.BusinessFlowInstanceGuid = bf.InstanceGuid;
+                Guid newBFRunGuid = Guid.NewGuid();
+
+                //reuse the same Guid for BusinessFlowRun if the wrapped BF is the same
+                BusinessFlowRun oldBFRun = oldBFRuns.FirstOrDefault(bfr => bfr.BusinessFlowGuid == bf.Guid);
+                if (oldBFRun != null)
+                {
+                    newBFRunGuid = oldBFRun.Guid;
+                    oldBFRuns.Remove(oldBFRun);
+                }
+
+                BusinessFlowRun newBFRun = new()
+                {
+                    Guid = newBFRunGuid,
+                    BusinessFlowName = bf.Name,
+                    BusinessFlowGuid = bf.Guid,
+                    BusinessFlowIsActive = bf.Active,
+                    BusinessFlowIsMandatory = bf.Mandatory,
+                    BusinessFlowInstanceGuid = bf.InstanceGuid,
+                    BusinessFlowRunDescription = bf.RunDescription,
+                    BFFlowControls = bf.BFFlowControls
+                };
 
                 foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(true))
                 {
-                    if (var.DiffrentFromOrigin == true || string.IsNullOrEmpty(var.MappedOutputValue) == false)//save only variables which were modified in this run configurations
+                    //save only variables which were modified in this run configurations
+                    if (var.DiffrentFromOrigin == true || string.IsNullOrEmpty(var.MappedOutputValue) == false)
                     {
                         VariableBase varCopy = (VariableBase)var.CreateCopy(false);
-                        BFR.BusinessFlowCustomizedRunVariables.Add(varCopy);
+                        newBFRun.BusinessFlowCustomizedRunVariables.Add(varCopy);
                     }
                 }
-                BFR.BusinessFlowRunDescription = bf.RunDescription;
-                BFR.BFFlowControls = bf.BFFlowControls;
-                GingerRunner.BusinessFlowsRunList.Add(BFR);
+                
+                newBFRuns.Add(newBFRun);
+            }
+
+            GingerRunner.BusinessFlowsRunList.Clear();
+
+            foreach (BusinessFlowRun newBFRun in newBFRuns)
+            {
+                GingerRunner.BusinessFlowsRunList.Add(newBFRun);
             }
         }
 
@@ -4775,7 +4799,16 @@ namespace Ginger.Run
             //Remove the non relevant ApplicationAgents
             for (int indx = 0; indx < mGingerRunner.ApplicationAgents.Count;)
             {
-                if (bfsTargetApplications.FirstOrDefault(x => x.Name == mGingerRunner.ApplicationAgents[indx].AppName) == null || ((ApplicationAgent)mGingerRunner.ApplicationAgents[indx]).Agent == null)
+                ApplicationAgent applicationAgent = (ApplicationAgent)mGingerRunner.ApplicationAgents[indx];
+
+                bool appNotMappedInBF = bfsTargetApplications.All(x => x.Name != applicationAgent.AppName);
+
+                bool appHasPlatformButNoAgent =
+                    applicationAgent.Agent == null &&
+                    applicationAgent.AppPlatform != null &&
+                    applicationAgent.AppPlatform.Platform != ePlatformType.NA;
+
+                if (appNotMappedInBF || appHasPlatformButNoAgent)
                 {
                     bTargetAppListModified = true;
                     mGingerRunner.ApplicationAgents.RemoveAt(indx);
