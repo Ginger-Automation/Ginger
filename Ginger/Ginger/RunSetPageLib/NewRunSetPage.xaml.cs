@@ -798,11 +798,12 @@ namespace Ginger.Run
             else
             {
                 xRunSetUcLabel.xSourceControlIcon.Visibility = Visibility.Visible;
+                BindingOperations.ClearBinding(xRunSetUcLabel.xSourceControlIcon, ImageMakerControl.ImageTypeProperty);
+                BindingHandler.ObjFieldBinding(xRunSetUcLabel.xSourceControlIcon, ImageMakerControl.ImageTypeProperty, mRunSetConfig, nameof(RunSetConfig.SourceControlStatus), BindingMode.OneWay);
             }
-            BindingOperations.ClearBinding(xRunSetUcLabel.xSourceControlIcon, ImageMakerControl.ImageTypeProperty);
-            BindingHandler.ObjFieldBinding(xRunSetUcLabel.xSourceControlIcon, ImageMakerControl.ImageTypeProperty, mRunSetConfig, nameof(RunSetConfig.SourceControlStatus), BindingMode.OneWay);
             BindingOperations.ClearBinding(xRunSetUcLabel.xModifiedIcon, ImageMakerControl.ImageTypeProperty);
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xModifiedIcon, ImageMakerControl.ImageTypeProperty, mRunSetConfig, nameof(RunSetConfig.DirtyStatusImage), BindingMode.OneWay);
+
             UpdateDescription();
             xRunDescritpion.Init(mContext, mRunSetConfig, nameof(RunSetConfig.RunDescription));
             if (mSolutionCategoriesPage == null)
