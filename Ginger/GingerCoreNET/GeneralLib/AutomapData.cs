@@ -26,34 +26,34 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
             
             switch (varType)
             {
-                case "VariableDateTime":
+                case nameof(VariableDateTime):
                     CreateMapper<VariableDateTime>().Map<VariableDateTime, VariableDateTime>((VariableDateTime)customizedVar, (VariableDateTime)originalVar);
                     break;
-                case "VariableDynamic":
+                case nameof(VariableDynamic):
                     CreateMapper<VariableDynamic>().Map<VariableDynamic, VariableDynamic>((VariableDynamic)customizedVar, (VariableDynamic)originalVar);
                     break;
-                case "VariableNumber":
+                case nameof(VariableNumber):
                     CreateMapper<VariableNumber>().Map<VariableNumber, VariableNumber>((VariableNumber)customizedVar, (VariableNumber)originalVar);
                     break;
-                case "VariableString":
+                case nameof(VariableString):
                     CreateMapper<VariableString>().Map<VariableString, VariableString>((VariableString)customizedVar, (VariableString)originalVar);
                     break;
-                case "VariablePasswordString":
+                case nameof(VariablePasswordString):
                     CreateMapper<VariablePasswordString>().Map<VariablePasswordString, VariablePasswordString>((VariablePasswordString)customizedVar, (VariablePasswordString)originalVar);
                     break;
-                case "VariableRandomNumber":
+                case nameof(VariableRandomNumber):
                     CreateMapper<VariableRandomNumber>().Map<VariableRandomNumber, VariableRandomNumber>((VariableRandomNumber)customizedVar, (VariableRandomNumber)originalVar);
                     break;
-                case "VariableRandomString":
+                case nameof(VariableRandomString):
                     CreateMapper<VariableRandomString>().Map<VariableRandomString, VariableRandomString>((VariableRandomString)customizedVar, (VariableRandomString)originalVar);
                     break;
-                case "VariableSequence":
+                case nameof(VariableSequence):
                     CreateMapper<VariableSequence>().Map<VariableSequence, VariableSequence>((VariableSequence)customizedVar, (VariableSequence)originalVar);
                     break;
-                case "VariableTimer":
+                case nameof(VariableTimer):
                     CreateMapper<VariableTimer>().Map<VariableTimer, VariableTimer>((VariableTimer)customizedVar, (VariableTimer)originalVar);
                     break;                
-                case "VariableSelectionList":
+                case nameof(VariableSelectionList):
                     CreateMapper<VariableSelectionList>().Map<VariableSelectionList, VariableSelectionList>((VariableSelectionList)customizedVar, (VariableSelectionList)originalVar);
                     break;
                 default:
