@@ -226,7 +226,7 @@ namespace GingerCore
             //Do the operation based on order
             //First replace Vars - since they can appear in other func like VBS v1+v2 or VBS mid(v1,1,4);
             int expressionCounter = 0;
-            while (mValueCalculated.Contains('{') && expressionCounter < 10 && ContainsFormula(mValueCalculated) == true)
+            while (mValueCalculated.Contains('{') && expressionCounter < 10 && ContainsFormula(mValueCalculated))
             {
                 expressionCounter++;
                 ReplaceGlobalParameters();
