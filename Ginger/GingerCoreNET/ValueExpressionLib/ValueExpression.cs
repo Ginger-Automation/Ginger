@@ -225,8 +225,10 @@ namespace GingerCore
 
             //Do the operation based on order
             //First replace Vars - since they can appear in other func like VBS v1+v2 or VBS mid(v1,1,4);
-            if (mValueCalculated.Contains('{'))
+            int expressionCounter = 0;
+            while (mValueCalculated.Contains('{') && expressionCounter < 10 && ContainsFormula(mValueCalculated) == true)
             {
+                expressionCounter++;
                 ReplaceGlobalParameters();
                 //replace environment parameters which embedded into functions like VBS
                 ReplaceEnvVars();
@@ -1618,6 +1620,51 @@ namespace GingerCore
                 VarValue = "ERROR: The " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + a[1] + " was not found";
                 mValueCalculated = VarValue;
             }
+        }
+
+        private bool ContainsFormula(string mValueCalculated)
+        {
+            if (rxGlobalParamPattern.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rxEnvParamPattern.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rxEnvUrlPattern.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rxe.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (VBSRegex.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rNestedfunc.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rxDSPattern.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rxFDPattern.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rxExecutionJsonDataPattern.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (mValueCalculated.Contains(@"{CS"))
+            {
+                return true;
+            }
+            return false;
         }
 
 
