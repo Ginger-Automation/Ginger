@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -336,7 +336,7 @@ namespace Amdocs.Ginger.Repository
         {
             try
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && false)//not needed on other OS types
                 {
                     mFileWatcher = new FileSystemWatcher();
                     mFileWatcher.Path = base.FolderFullPath;
@@ -853,7 +853,10 @@ namespace Amdocs.Ginger.Repository
             OnPropertyChanged(nameof(FolderFullPath));
             OnPropertyChanged(nameof(DisplayName));
             OnPropertyChanged(nameof(FolderName));
-            mFileWatcher.Path = FolderFullPath;
+            if (mFileWatcher != null)
+            {
+                mFileWatcher.Path = FolderFullPath;
+            }
 
             //updating the folder items cache with correct File Path
             UpdateFolderItemsCacheFilePath();
