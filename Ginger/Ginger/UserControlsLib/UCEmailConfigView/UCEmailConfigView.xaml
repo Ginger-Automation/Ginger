@@ -263,24 +263,39 @@
                 </TabItem.Header>
                 <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
                     <Grid Margin="{StaticResource RowMargin}">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
-                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder:"/>
-                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                            <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderAllRadioButton" Content="All" Style="{StaticResource RadioButtonStyle}"/>
-                            <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderSpecificRadioButton" Content="Specific" Style="{StaticResource RadioButtonStyle}"/>
-                        </StackPanel>
-                    </Grid>
-                    <Grid Margin="{StaticResource RowMargin}">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ElementName=xFilterFolderSpecificRadioButton, Path=IsChecked}" Value="True">
+                                    <DataTrigger Binding="{Binding ElementName=xEmailReadMethodMSGraph, Path=IsSelected}" Value="True">
                                         <Setter Property="Visibility" Value="Visible"/>
                                     </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" x:Name="FolderNameLabel" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Folder:"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" x:Name="FoldersStackPanel">
+                            <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderAllRadioButton" Content="All" Style="{StaticResource RadioButtonStyle}" />
+                            <RadioButton GroupName="FilterFolderRadioButtonsGroup" x:Name="xFilterFolderSpecificRadioButton" Content="Specific" Style="{StaticResource RadioButtonStyle}"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Margin="{StaticResource RowMargin}" x:Name="FolderSpecificGrid">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition  Binding="{Binding ElementName=xFilterFolderSpecificRadioButton, Path=IsChecked}" Value="True"/>
+                                            <Condition Binding="{Binding ElementName=xEmailReadMethodMSGraph, Path=IsSelected}" Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </MultiDataTrigger>
+                            
                                 </Style.Triggers>
                             </Style>
                         </Grid.Style>
@@ -296,14 +311,48 @@
                         <Actions:UCValueExpression x:Name="xFilterFolderNameVE" Grid.Column="1" Grid.Row="0" ToolTip="Separate multiple folder names using semi-colon(;)"/>
                         <Label Grid.Column="1" Grid.Row="1" Style="{StaticResource $LabelStyle}" FontSize="10" Content="To specify multiple folder names separate them using semi-colon(;) (e.g. Inbox;Sent Items;Archives)"/>
                     </Grid>
-                    <Grid Margin="{StaticResource RowMargin}">
+
+
+                    <Grid Margin="{StaticResource RowMargin}" x:Name="xUnreadGrid">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                       
+
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" x:Name="IncludeNameLabel" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Include:"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="1" x:Name="IncludeStackPanel">
+                            <RadioButton  x:Name="xReadAllRadioButton" Content="All" Style="{StaticResource RadioButtonStyle}" />
+                            <RadioButton  x:Name="xReadUnreadRadioButton" Content="Unread" Style="{StaticResource RadioButtonStyle}" />                                                     
+                        </StackPanel>
+                        
+                    </Grid>
+
+                    <Grid Margin="{StaticResource RowMargin}" x:Name="xMakeReadGrid">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" x:Name="MakeReadLabel" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Mark As Read:"/>
+                        <StackPanel Orientation="Horizontal" Grid.Column="1" x:Name="MarkReadStackPanel">
+                            <RadioButton  x:Name="xMarkAsReadYes" Content="Yes" Style="{StaticResource RadioButtonStyle}" />
+                            <RadioButton  x:Name="xMarkAsReadNo"  Content="No"  Style="{StaticResource RadioButtonStyle}" />
+                        </StackPanel>
+
+                    </Grid>
+
+                    <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="From:"/>
                         <Actions:UCValueExpression x:Name="xFilterFromVE" Grid.Column="1"/>
-                    </Grid>
+                    </Grid>                  
+
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
@@ -452,7 +501,16 @@
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Attachment Download Path:"/>
                         <Actions:UCValueExpression x:Name="xAttachmentDownloadPathVE" Grid.Column="1"/>
+                    </Grid>                  
+                    <Grid Margin="{StaticResource RowMargin}" x:Name="xEmailReadLimitGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Limit Emails To:"/>
+                        <Actions:UCValueExpression x:Name="xEmailReadLimit" Grid.Column="1" ToolTip="Limit will be 50 if left blank."/>                        
                     </Grid>
+
                 </StackPanel>
             </TabItem>
             <TabItem Background="{StaticResource $BackgroundColor_LightGray}">
@@ -468,8 +526,26 @@
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Method:"/>
                         <ComboBox x:Name="xEmailReadMethod" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}">
                             <ComboBoxItem x:Name="xEmailReadMethodMSGraph" Content="MS Graph API" Tag="MSGraphAPI" IsSelected="True" />
+                            <ComboBoxItem x:Name="xEmailReadMethodIMAP" Content="IMAP" Tag="IMAP"  IsSelected="True"/>
                         </ComboBox>
+                    </Grid>                             
+                    <Grid Margin="{StaticResource RowMargin}" x:Name="xImapHostGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="IMAP Host:"/>
+                        <Actions:UCValueExpression x:Name="xImapHost" Grid.Column="1"/>
                     </Grid>
+                    <Grid Margin="{StaticResource RowMargin}" x:Name="xImapPortGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
+                            <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="IMAP Port:"/>
+                        <Actions:UCValueExpression x:Name="xImapPort" Grid.Column="1"/>
+                    </Grid>                    
+                    
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
@@ -483,7 +559,7 @@
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="User Password:"/>
+                        <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" x:Name="passwdLabel" HorizontalAlignment="Left" Content="User Password:"/>
                         <Grid Grid.Column="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1*" />
@@ -493,7 +569,7 @@
                             <Button x:Name="xUserPasswordVEEditorButton" Grid.Column="1" Click="xUserPasswordVEEditorButton_Click" Content="..." VerticalAlignment="Center" Style="{StaticResource @InputButtonStyle}" Margin="2,0,0,0" />
                         </Grid>
                     </Grid>
-                    <Grid Margin="{StaticResource RowMargin}">
+                    <Grid Margin="{StaticResource RowMargin}" x:Name="xClientIdGrid">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
@@ -501,7 +577,7 @@
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Client Id:"/>
                         <Actions:UCValueExpression x:Name="xClientIdVE" Grid.Column="1"/>
                     </Grid>
-                    <Grid Margin="{StaticResource RowMargin}">
+                    <Grid Margin="{StaticResource RowMargin}" x:Name="xTenantIdGrid">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>

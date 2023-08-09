@@ -29,6 +29,7 @@ using GingerCoreNET.SourceControl;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -346,7 +347,7 @@ namespace GingerWPF.TreeViewItemsLib
             throw new NotImplementedException();
         }
 
-        public void TreeFolderItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        public void TreeFolderItems_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (mTreeView == null || e == null)
             {
@@ -516,14 +517,14 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 Childrens.Add(GetTreeItem(subFolder));
             }
-            subFolders.CollectionChanged -= TreeFolderItems_CollectionChanged; // track sub folders
-            subFolders.CollectionChanged += TreeFolderItems_CollectionChanged; // track sub folders
+            CollectionChangedEventManager.RemoveHandler(source: subFolders, handler: TreeFolderItems_CollectionChanged); // track sub folders
+            CollectionChangedEventManager.AddHandler(source: subFolders, handler: TreeFolderItems_CollectionChanged); // track sub folders
 
             //Add direct children's        
             ObservableList<T> folderItems = RF.GetFolderItems();
             // why we need -? in case we did refresh and reloaded the item TODO: research, make children called once
-            folderItems.CollectionChanged -= TreeFolderItems_CollectionChanged;
-            folderItems.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
+            CollectionChangedEventManager.RemoveHandler(source: folderItems, handler: TreeFolderItems_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: folderItems, handler: TreeFolderItems_CollectionChanged);//adding event handler to add/remove tree items automatically based on folder items collection changes
 
             if (folderItems.Count > 0)
             {

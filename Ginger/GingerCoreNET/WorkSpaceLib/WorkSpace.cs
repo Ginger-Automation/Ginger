@@ -401,7 +401,7 @@ namespace amdocs.ginger.GingerCoreNET
             }
 
             // General Report Configurations
-            HTMLReportsConfiguration mHTMLReportConfiguration = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration mHTMLReportConfiguration = Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             if (!string.IsNullOrEmpty(mHTMLReportConfiguration?.CentralizedReportDataServiceURL))
             {
                 WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
@@ -635,7 +635,7 @@ namespace amdocs.ginger.GingerCoreNET
                         agent.AgentOperations = new AgentOperations(agent);
                     }
                 }
-                List<Agent> runningAgents = Agents.Where(x => ((AgentOperations)x.AgentOperations).Status == Agent.eStatus.Running).ToList();
+                List<Agent> runningAgents = Agents.Where(x => ((AgentOperations)x.AgentOperations).Status != Agent.eStatus.NotStarted).ToList();
                 if (runningAgents != null && runningAgents.Count > 0)
                 {
                     foreach (Agent agent in runningAgents)
@@ -809,7 +809,7 @@ namespace amdocs.ginger.GingerCoreNET
             for (int i = 0; i < AppModel.GlobalAppModelParameters.Count; i++)
             {
                 GlobalAppModelParameter apiGlobalParamInstance = AppModel.GlobalAppModelParameters[i];
-                GlobalAppModelParameter globalParamInstance = allGlobalParams.Where(x => x.Guid == apiGlobalParamInstance.Guid).FirstOrDefault();
+                GlobalAppModelParameter globalParamInstance = allGlobalParams.FirstOrDefault(x => x.Guid == apiGlobalParamInstance.Guid);
                 //If the param still exist in the global list
                 if (globalParamInstance != null)
                 {
@@ -828,7 +828,7 @@ namespace amdocs.ginger.GingerCoreNET
                         //Save current default
                         if (apiGlobalParamInstance.OptionalValuesList.Count > 0)
                         {
-                            currentDefaultOVGuid = apiGlobalParamInstance.OptionalValuesList.Where(x => x.IsDefault == true).FirstOrDefault().Guid;
+                            currentDefaultOVGuid = apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.IsDefault == true).Guid;
                             recoverSavedOV = true;
                         }
 
@@ -849,19 +849,19 @@ namespace amdocs.ginger.GingerCoreNET
 
                         if (recoverSavedOV)
                         {
-                            OptionalValue savedOV = apiGlobalParamInstance.OptionalValuesList.Where(x => x.Guid == currentDefaultOVGuid).FirstOrDefault();
+                            OptionalValue savedOV = apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.Guid == currentDefaultOVGuid);
                             if (savedOV != null)
                             {
                                 savedOV.IsDefault = true;
                             }
                             else
                             {
-                                apiGlobalParamInstance.OptionalValuesList.Where(x => x.Guid.ToString() == newDefaultOV).FirstOrDefault().IsDefault = true;
+                                apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.Guid.ToString() == newDefaultOV).IsDefault = true;
                             }
                         }
                         else
                         {
-                            apiGlobalParamInstance.OptionalValuesList.Where(x => x.Guid.ToString() == newDefaultOV).FirstOrDefault().IsDefault = true;
+                            apiGlobalParamInstance.OptionalValuesList.FirstOrDefault(x => x.Guid.ToString() == newDefaultOV).IsDefault = true;
                         }
 
                         apiGlobalParamInstance.OnPropertyChanged(nameof(AppModelParameter.OptionalValuesString));

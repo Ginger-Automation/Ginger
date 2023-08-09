@@ -27,6 +27,7 @@ using Ginger.Run;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -137,7 +138,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                             xPOMElementsGrid.DataSourceList = GenerateElementsDataSourseList();
 
                             Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                            ElementInfo selectedPOMElement = (ElementInfo)SelectedPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                            ElementInfo selectedPOMElement = (ElementInfo)SelectedPOM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
                             if (selectedPOMElement == null)
                             {
                                 Reporter.ToUser(eUserMsgKey.POMElementSearchByGUIDFailed);
@@ -312,7 +313,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (selectedElement.ScreenShotImage != null)
             {
                 source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(selectedElement.ScreenShotImage.ToString()));
-                xElementScreenShotFrame.Content = new ScreenShotViewPage(selectedElement?.ElementName, source, false);
+                xElementScreenShotFrame.ClearAndSetContent(new ScreenShotViewPage(selectedElement?.ElementName, source, false));
                 xElementScreenShotFrame.Visibility = Visibility.Visible;
             }
         }
@@ -333,7 +334,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void HighlightElementClicked(object sender, RoutedEventArgs e)
         {
-            ApplicationAgent currentAgent = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.Where(z => z.AppName == mTargetApplication).FirstOrDefault();
+            ApplicationAgent currentAgent = (ApplicationAgent)((GingerExecutionEngine)mContext.Runner).GingerRunner.ApplicationAgents.FirstOrDefault(z => z.AppName == mTargetApplication);
             if ((currentAgent == null) || !(((AgentOperations)((Agent)currentAgent.Agent).AgentOperations).Driver is IWindowExplorer) || (((AgentOperations)((Agent)currentAgent.Agent).AgentOperations).Status != Agent.eStatus.Running))
             {
                 Reporter.ToUser(eUserMsgKey.NoRelevantAgentInRunningStatus);

@@ -39,7 +39,7 @@ namespace Ginger
             InitializeComponent();
 
             //TODO: load from external - so easier to update
-            lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
+            lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(autoLoadLastSolCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
             SetRecentSolutions();
@@ -79,7 +79,7 @@ namespace Ginger
             try
             {
                 string selectedSolFolder = ((Hyperlink)sender).ToolTip.ToString().ToUpper();
-                Solution selectedSol = ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.Where(x => x.Folder.ToUpper() == selectedSolFolder).FirstOrDefault();
+                Solution selectedSol = ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.FirstOrDefault(x => x.Folder.ToUpper() == selectedSolFolder);
 
                 if (selectedSol != null)
                 {

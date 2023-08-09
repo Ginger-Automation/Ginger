@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
 using Ginger.SolutionWindows.TreeViewItems;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System.IO;
@@ -68,7 +69,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
                     mTargetFolderSelectionPage.OnSelect += MTargetFolderSelectionPage_OnSelectItem;
 
-                    TargetPath.Content = mTargetFolderSelectionPage;
+                    TargetPath.ClearAndSetContent(mTargetFolderSelectionPage);
                     break;
                 case EventType.LeavingForNextPage:
                     if (mContext == eImportGherkinFileContext.BusinessFlowFolder)

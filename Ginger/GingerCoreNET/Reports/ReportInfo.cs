@@ -260,7 +260,7 @@ namespace Ginger.Reports
             get
             {
                 string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed.ToString();
-                int count = AllActivitiesForReport.Where(activity => activity.Status == sStatus).Count();
+                int count = AllActivitiesForReport.Count(activity => activity.Status == sStatus);
                 return count;
 
             }
@@ -270,7 +270,7 @@ namespace Ginger.Reports
             get
             {
                 string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed.ToString();
-                int count = AllActivitiesForReport.Where(activity => activity.Status == sStatus).Count();
+                int count = AllActivitiesForReport.Count(activity => activity.Status == sStatus);
                 return count;
 
             }
@@ -280,7 +280,7 @@ namespace Ginger.Reports
             get
             {
                 string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked.ToString();
-                int count = AllActivitiesForReport.Where(activity => activity.Status == sStatus).Count();
+                int count = AllActivitiesForReport.Count(activity => activity.Status == sStatus);
                 return count;
 
             }
@@ -290,7 +290,7 @@ namespace Ginger.Reports
             get
             {
                 string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped.ToString();
-                int count = AllActivitiesForReport.Where(activity => activity.Status == sStatus).Count();
+                int count = AllActivitiesForReport.Count(activity => activity.Status == sStatus);
                 return count;
 
             }
@@ -302,7 +302,7 @@ namespace Ginger.Reports
             get
             {
                 string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed.ToString();
-                int count = AllActionsForReport.Where(act => act.Status == sStatus).Count();
+                int count = AllActionsForReport.Count(act => act.Status == sStatus);
                 return count;
 
             }
@@ -312,7 +312,7 @@ namespace Ginger.Reports
             get
             {
                 string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed.ToString();
-                int count = AllActionsForReport.Where(act => act.Status == sStatus).Count();
+                int count = AllActionsForReport.Count(act => act.Status == sStatus);
                 return count;
 
             }
@@ -322,7 +322,7 @@ namespace Ginger.Reports
             get
             {
                 string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked.ToString();
-                int count = AllActionsForReport.Where(act => act.Status == sStatus).Count();
+                int count = AllActionsForReport.Count(act => act.Status == sStatus);
                 return count;
 
             }
@@ -332,7 +332,7 @@ namespace Ginger.Reports
             get
             {
                 string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped.ToString();
-                int count = AllActionsForReport.Where(act => act.Status == sStatus).Count();
+                int count = AllActionsForReport.Count(act => act.Status == sStatus);
                 return count;
 
             }
@@ -411,7 +411,7 @@ namespace Ginger.Reports
         {
             //TODO: fix me to use the same enum on activity add GetActivity on ActivityReport
             string sStatus = RunStatus.ToString();
-            int count = AllActivitiesForReport.Where(activity => activity.Status == sStatus).Count();
+            int count = AllActivitiesForReport.Count(activity => activity.Status == sStatus);
             return count;
         }
 
@@ -425,7 +425,7 @@ namespace Ginger.Reports
         {
             //TODO: fix me to use the same enum on Act add GetAct on ActivityReport
             string sStatus = Status.ToString();
-            int count = AllActionsForReport.Where(act => act.Status == sStatus).Count();
+            int count = AllActionsForReport.Count(act => act.Status == sStatus);
             return count;
         }
 
@@ -439,7 +439,7 @@ namespace Ginger.Reports
         {
             //TODO: fix me to use the same enum on Act add GetAct on ActivityReport
             string sStatus = Status.ToString();
-            int count = AllValidationsForReport.Where(arv => arv.Status == sStatus).Count();
+            int count = AllValidationsForReport.Count(arv => arv.Status == sStatus);
             return count;
         }
 

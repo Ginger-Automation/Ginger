@@ -472,7 +472,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             {
                 foreach (OptionalValue paramOV in apiModelParam.OptionalValuesList)
                 {
-                    if (mergedOptionalValuesList.Where(x => x.Value == paramOV.Value).FirstOrDefault() == null)
+                    if (mergedOptionalValuesList.FirstOrDefault(x => x.Value == paramOV.Value) == null)
                     {
                         OptionalValue ov = new OptionalValue();
                         ov.Value = paramOV.Value;
@@ -484,8 +484,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             if (mergedOptionalValuesList.Count > 0)
             {
                 //Set Default optional value to be as the default from the first optional values list
-                OptionalValue defaultOV = ((AppModelParameter)ModelParametersGrid.Grid.SelectedItems[0]).OptionalValuesList.Where(x => x.IsDefault == true).FirstOrDefault();
-                OptionalValue ovToSetAsDefault = mergedOptionalValuesList.Where(x => x.Value == defaultOV.Value).FirstOrDefault();
+                OptionalValue defaultOV = ((AppModelParameter)ModelParametersGrid.Grid.SelectedItems[0]).OptionalValuesList.FirstOrDefault(x => x.IsDefault == true);
+                OptionalValue ovToSetAsDefault = mergedOptionalValuesList.FirstOrDefault(x => x.Value == defaultOV.Value);
                 ovToSetAsDefault.IsDefault = true;
             }
 
@@ -579,7 +579,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             newAppModelParam.PlaceHolder = "{NewPlaceHolder}";
 
-            if (ParamsList.Where(x => x.PlaceHolder == newAppModelParam.PlaceHolder).FirstOrDefault() == null)
+            if (ParamsList.FirstOrDefault(x => x.PlaceHolder == newAppModelParam.PlaceHolder) == null)
             {
                 return;
             }
@@ -592,7 +592,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             //Set unique name
             int counter = 2;
-            while ((ParamsList.Where(x => x.PlaceHolder == "{NewPlaceHolder_" + counter.ToString() + "}").FirstOrDefault()) != null)
+            while ((ParamsList.FirstOrDefault(x => x.PlaceHolder == "{NewPlaceHolder_" + counter.ToString() + "}")) != null)
             {
                 counter++;
             }

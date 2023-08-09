@@ -589,13 +589,13 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             if (IsPOMWidgetElement(currentPOMElementInfo))
             {
-                var path = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.ParentBrowserPath)).FirstOrDefault();
+                var path = currentPOMElementInfo.Properties.FirstOrDefault(x => x.Name.Equals(ElementProperty.ParentBrowserPath));
                 if (path != null && !string.IsNullOrEmpty(path.Value))
                 {
                     InitializeBrowser(new JavaElementInfo() { XPath = path.Value });
 
                     //check iframe and switch
-                    var iframePath = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.ParentIFrame)).FirstOrDefault();
+                    var iframePath = currentPOMElementInfo.Properties.FirstOrDefault(x => x.Name.Equals(ElementProperty.ParentIFrame));
 
                     if (iframePath != null && !string.IsNullOrEmpty(iframePath.Value))
                     {
@@ -798,74 +798,54 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private PayLoad SmartSyncHandler(ActSmartSync act)
         {
-            PayLoad PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
-            String sResponse = PL.GetValueString();
+            int MaxTimeout = GetMaxTimeout(act);
+            PayLoad PL = null;
+            string sResponse;
+
             Stopwatch st = new Stopwatch();
-            int MaxTimeout = 0;
-            try
-            {
-                if (act.WaitTime.HasValue == true)
-                {
-                    MaxTimeout = act.WaitTime.GetValueOrDefault();
-                }
-                else if (string.IsNullOrEmpty(act.GetInputParamValue("Value")))
-                {
-                    MaxTimeout = 5;
-                }
-                else
-                {
-                    MaxTimeout = Convert.ToInt32(act.GetInputParamCalculatedValue("Value"));
-                }
-            }
-            catch (Exception)
-            {
-                MaxTimeout = 5;
-            }
+            st.Reset();
+            st.Start();
+
             switch (act.SmartSyncAction)
             {
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
-                    st.Reset();
-                    st.Start();
-                    while (!(sResponse.Contains("True")))
+                    do
                     {
-                        Thread.Sleep(200);
-                        PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
-                        sResponse = PL.GetValueString();
-
                         if (st.ElapsedMilliseconds > MaxTimeout * 1000)
                         {
                             act.Error = "Smart Sync of WaitUntilDisplay is timeout";
                             break;
                         }
-                    }
+
+                        Thread.Sleep(200);
+
+                        PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
+                        sResponse = PL.GetValueString();
+
+                    } while (sResponse == null || !sResponse.Contains("True"));
                     break;
 
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
-                    st.Reset();
-                    if (sResponse == null)
+                    do
                     {
-                        return PL;
-                    }
-                    else
-                    {
-                        st.Start();
-                        while (!(sResponse.Contains("False")))
+                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
                         {
-                            Thread.Sleep(200);
-                            PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
-                            sResponse = PL.GetValueString();
-                            if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                            {
-                                act.Error = "Smart Sync of WaitUntilDisapear is timeout";
-                                break;
-                            }
+                            act.Error = "Smart Sync of WaitUntilDisapear is timeout";
+                            break;
                         }
-                    }
+
+                        Thread.Sleep(200);
+
+                        PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
+                        sResponse = PL.GetValueString();
+
+                    } while (sResponse != null && !sResponse.Contains("False"));
                     break;
             }
+
+            st.Stop();
             return PL;
         }
-
 
         private PayLoad HandleJavaBrowserElementAction(ActBrowserElement actJavaBrowserElement)
         {
@@ -3801,7 +3781,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     }
                 }
 
-                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Any())
+                if (activesElementLocators.Any(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed))
                 {
                     return true;
                 }
@@ -3950,7 +3930,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         public ElementInfo GetMatchingElement(ElementInfo element, ObservableList<ElementInfo> originalElements)
         {
             //try by type and Xpath comparison
-            ElementInfo OriginalElementInfo = originalElements.Where(x => (x.ElementTypeEnum == element.ElementTypeEnum)
+            ElementInfo OriginalElementInfo = originalElements.FirstOrDefault(x => (x.ElementTypeEnum == element.ElementTypeEnum)
                                                                 && (x.XPath == element.XPath)
                                                                 && (x.Path == element.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(element.Path)))
                                                                 && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null
@@ -3958,7 +3938,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                                                                         && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
                                                                         )
                                                                     )
-                                                                ).FirstOrDefault();
+);
             return OriginalElementInfo;
         }
 
@@ -4156,8 +4136,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             Size size = new Size();
             int Height = 0;
             int Width = 0;
-            int.TryParse(EI.Properties.Where(item => item.Name == "Height").FirstOrDefault().Value, out Height);
-            int.TryParse(EI.Properties.Where(item => item.Name == "Width").FirstOrDefault().Value, out Width);
+            int.TryParse(EI.Properties.FirstOrDefault(item => item.Name == "Height").Value, out Height);
+            int.TryParse(EI.Properties.FirstOrDefault(item => item.Name == "Width").Value, out Width);
 
             size.Height = Height;
             size.Width = Width;

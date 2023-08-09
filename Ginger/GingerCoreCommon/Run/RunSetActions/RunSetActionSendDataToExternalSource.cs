@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
+using GingerCore.ALM;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -117,6 +118,11 @@ namespace Ginger.Run.RunSetActions
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to convert JSON to List View Params", ex);
                 }
             }
+        }
+
+        public override PublishToALMConfig.eALMTestSetLevel GetAlMTestSetLevel()
+        {
+            throw new NotImplementedException();
         }
     }
 }

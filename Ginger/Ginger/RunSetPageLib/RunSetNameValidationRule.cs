@@ -39,7 +39,7 @@ namespace Ginger.Run
         }
         private bool IsRunSetNameExist(string value)
         {
-            return (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>() where x.Name == value select x).SingleOrDefault() != null;
+            return WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>().Any(x=> x.Name == value);
         }
     }
 }

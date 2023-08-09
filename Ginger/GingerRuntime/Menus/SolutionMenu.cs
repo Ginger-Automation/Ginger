@@ -67,7 +67,7 @@ namespace Amdocs.Ginger.GingerRuntime
         {
             Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.RunSet) + " Name?");
             string runSetName = Console.ReadLine();
-            RunSetConfig runSetConfig = (from x in SR.GetAllRepositoryItems<RunSetConfig>() where x.Name == runSetName select x).SingleOrDefault();
+            RunSetConfig runSetConfig = SR.GetAllRepositoryItems<RunSetConfig>().FirstOrDefault(x=>x.Name == runSetName);
             if (runSetConfig == null)
             {
                 Console.WriteLine("RunSetConfig not found");
@@ -87,7 +87,7 @@ namespace Amdocs.Ginger.GingerRuntime
         {
             Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "Name?");
             string BizFlowName = Console.ReadLine();
-            BusinessFlow businessFlow = (from x in SR.GetAllRepositoryItems<BusinessFlow>() where x.Name == BizFlowName select x).SingleOrDefault();
+            BusinessFlow businessFlow = SR.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x=> x.Name == BizFlowName);
             if (businessFlow == null)
             {
                 Console.WriteLine(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " not found");

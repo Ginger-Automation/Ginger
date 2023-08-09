@@ -719,7 +719,11 @@ namespace GingerCore.Actions
         {
             bool isActive = true;
             // check if param already exist then update as it can be saved and loaded + keep other values
-            ActOutDataSourceConfig ADCS = (from arc in DSOutputConfigParams where arc.DSName == DSName && arc.DSTable == DSTable && arc.OutputType == OutputType select arc).FirstOrDefault();
+            ActOutDataSourceConfig ADCS = DSOutputConfigParams
+                .FirstOrDefault(param => 
+                    string.Equals(param.DSName, DSName) && 
+                    string.Equals(param.DSTable, DSTable) && 
+                    string.Equals(param.OutputType, OutputType));
 
             if (ADCS == null)
             {
@@ -748,6 +752,8 @@ namespace GingerCore.Actions
             ADCS.DSName = DSName;
             ADCS.DSTable = DSTable;
             ADCS.PossibleValues.Add(ColName);
+            ADCS.StartDirtyTracking();
+            ADCS.OnDirtyStatusChanged += this.RaiseDirtyChanged;
             DSOutputConfigParams.Add(ADCS);
             ADCS.OutputType = OutputType;
             ADCS.OutParamMap = OutDSParamType;
@@ -1214,7 +1220,7 @@ namespace GingerCore.Actions
                 case eFilterBy.Tags:
                     foreach (Guid tagGuid in Tags)
                     {
-                        Guid guid = ((List<Guid>)obj).Where(x => tagGuid.Equals(x)).FirstOrDefault();
+                        Guid guid = ((List<Guid>)obj).FirstOrDefault(x => tagGuid.Equals(x));
                         if (!guid.Equals(Guid.Empty))
                         {
                             return true;
@@ -1490,11 +1496,11 @@ namespace GingerCore.Actions
                                 VariableDependency varDep = null;
                                 if (this.VariablesDependencies != null)
                                 {
-                                    varDep = this.VariablesDependencies.Where(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                    varDep = VariablesDependencies.FirstOrDefault(avd => avd.VariableName == listVar.Name && avd.VariableGuid == listVar.Guid);
                                 }
                                 if (varDep == null)
                                 {
-                                    varDep = this.VariablesDependencies.Where(avd => avd.VariableGuid == listVar.Guid).FirstOrDefault();
+                                    varDep = VariablesDependencies.FirstOrDefault(avd => avd.VariableGuid == listVar.Guid);
                                 }
                                 if (varDep != null)
                                 {

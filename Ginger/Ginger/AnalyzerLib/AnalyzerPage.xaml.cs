@@ -49,6 +49,10 @@ namespace Ginger.AnalyzerLib
 
         AnalyzerUtils mAnalyzerUtils = new AnalyzerUtils();
 
+        Brush _brush = new SolidColorBrush(Colors.Red);
+
+        Brush _brushDefault = (SolidColorBrush)new BrushConverter().ConvertFromString("#152B37");
+
         private AnalyzedObject mAnalyzedObject;
 
         GenericWindow _pageGenericWin = null;
@@ -69,11 +73,12 @@ namespace Ginger.AnalyzerLib
             get { return mAnalyzerCompleted; }
         }
 
-        public int TotalHighAndCriticalIssues
-        {
-            get { return (mIssues.Where(x => (x.Severity.ToString() == "High")).Count() + mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count()); }
-        }
+        public int TotalIssues { get; set; }    
 
+        public int TotalHighAndCriticalIssues { get; set; }
+        
+        public int AutoFixIssues { get; set; }
+       
         private bool mAnalyzeDoneOnce = false;
         private bool mAnalyzeWithUI = true;
 
@@ -84,34 +89,42 @@ namespace Ginger.AnalyzerLib
             SetAnalyzerItemsGridView();
 
             AnalyzerItemsGrid.DataSourceList = mIssues;
-
+            IssuesCounterLabel.Content = "Total Issues: ";
+            CriticalAndHighIssuesLabel.Content = "Total High & Critical Issues: ";
+            CanAutoFixLable.Content = "Can be Auto Fixed: ";
+            mIssues.CollectionChanged -= MIssues_CollectionChanged;
             mIssues.CollectionChanged += MIssues_CollectionChanged;
         }
 
         private void MIssues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Dispatcher.Invoke(() =>
-        {
-            IssuesCounterLabel.Content = "Total Issues: ";
-            IssuesCountLabel.Content = mIssues.Count();
-            if (mIssues.Where(x => x.Severity.ToString() == "High").Any()|| mIssues.Where(x => x.Severity.ToString() == "Critical").Any())
-            {
-                CriticalAndHighIssuesLabel.Content = "Total High & Critical Issues: ";
-                CriticalAndHighIssuesLabelCounter.Content = (mIssues.Where(x => (x.Severity.ToString() == "High")).Count() + mIssues.Where(x => (x.Severity.ToString() == "Critical")).Count());
-                CriticalAndHighIssuesLabelCounter.Foreground = new SolidColorBrush(Colors.Red);
-                CriticalAndHighIssuesLabel.Visibility = Visibility.Visible;
-            }
-            if (mIssues.Where(x => x.CanAutoFix.ToString() == "Yes").Any())
-            {
-                CanAutoFixLable.Content = "Can be Auto Fixed: ";
-                CanAutoFixLableCounter.Content = mIssues.Where(x => x.CanAutoFix.ToString() == "Yes").Count();
-                CanAutoFixLable.Visibility = Visibility.Visible;
-            }
-
-        });
-
+            {               
+                if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.NewItems != null)
+                {                   
+                    foreach (AnalyzerItemBase item in e.NewItems)
+                    {
+                        TotalIssues++;
+                        IssuesCountLabel.Content = TotalIssues;
+                        if (item.Severity == AnalyzerItemBase.eSeverity.High || item.Severity == AnalyzerItemBase.eSeverity.Critical)
+                        {
+                            TotalHighAndCriticalIssues++;
+                            CriticalAndHighIssuesLabelCounter.Content = TotalHighAndCriticalIssues;
+                            if (TotalHighAndCriticalIssues == 1)
+                            {
+                                CriticalAndHighIssuesLabelCounter.Foreground = _brush;                                
+                            }
+                        }
+                        else if(item.CanAutoFix == AnalyzerItemBase.eCanFix.Yes)
+                        {
+                            AutoFixIssues++;
+                            CanAutoFixLableCounter.Content = AutoFixIssues;                            
+                        }
+                    }                                   
+                }
+            });            
         }
-
+        
         public void Init(Solution Solution)
         {
             mAnalyzedObject = AnalyzedObject.Solution;
@@ -159,7 +172,7 @@ namespace Ginger.AnalyzerLib
             mIssues.CollectionChanged -= MIssues_CollectionChanged;
             mIssues.CollectionChanged += MIssues_CollectionChanged;
             CriticalAndHighIssuesLabelCounter.Content = "0";
-            CriticalAndHighIssuesLabelCounter.Foreground = (SolidColorBrush)new BrushConverter().ConvertFromString("#152B37");   //"#20334f";
+            CriticalAndHighIssuesLabelCounter.Foreground = _brushDefault;   //"#20334f";
             CanAutoFixLableCounter.Content = "0";
             await Analyze();
         }
@@ -174,6 +187,9 @@ namespace Ginger.AnalyzerLib
         {
             // Each analyzer will set to true once completed, this is prep for multi run in threads for speed
             mIssues.Clear();
+            TotalIssues = 0;
+            TotalHighAndCriticalIssues = 0;
+            AutoFixIssues = 0;
             BusyInProcess = true;
             mAnalyzerCompleted = false;
             mAnalyzeDoneOnce = true;
@@ -267,7 +283,7 @@ namespace Ginger.AnalyzerLib
 
                         mIssues = SortedList;
                         AnalyzerItemsGrid.DataSourceList = mIssues;
-                        AnalyzerItemsGrid.Grid.SelectedItem = mIssues[0];
+                        AnalyzerItemsGrid.Grid.SelectedItem = mIssues[0];                       
                     });
                 }
             }

@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.Common
         Bitmap GetTaskbarScreenshot();
         string MergeVerticallyAndSaveBitmaps(params Bitmap[] bitmaps);
 
-        void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
+        bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
 
         // string GenerateReportForREportTemplate(string ReportTemplateName, object RI, object RT);
 

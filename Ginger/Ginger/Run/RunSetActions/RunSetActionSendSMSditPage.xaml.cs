@@ -39,7 +39,7 @@ namespace Ginger.Run.RunSetActions
                 runSetActionSendSMS.SMSEmail = new Email();
             }
 
-            RunsetActionDeliveryMethodConfigPageFrame.Content = new RunSetActionDeliveryMethodConfigPage(runSetActionSendSMS.SMSEmail);
+            RunsetActionDeliveryMethodConfigPageFrame.ClearAndSetContent(new RunSetActionDeliveryMethodConfigPage(runSetActionSendSMS.SMSEmail));
             Context context = new Context() { Environment = WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment };
             MailFromTextBox.Init(context, runSetActionSendSMS.SMSEmail, nameof(Email.MailFrom));
             MailToTextBox.Init(context, runSetActionSendSMS.SMSEmail, nameof(Email.MailTo));

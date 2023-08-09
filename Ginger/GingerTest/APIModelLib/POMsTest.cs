@@ -123,8 +123,8 @@ namespace GingerTest.APIModelLib
         public void ValidateLearnedItems()
         {
             //Act
-            ElementInfo EI1 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "input radio country Mexico" && x.ElementTypeEnum == eElementType.RadioButton).FirstOrDefault();
-            ElementInfo EI2 = mLearnedPOM.MappedUIElements.Where(x => x.ElementName == "input text id123" && x.ElementTypeEnum == eElementType.TextBox).FirstOrDefault();
+            ElementInfo EI1 = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementName == "input radio country Mexico" && x.ElementTypeEnum == eElementType.RadioButton);
+            ElementInfo EI2 = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementName == "input text id123" && x.ElementTypeEnum == eElementType.TextBox);
 
             //Assert  
             Assert.AreEqual(mLearnedPOM.MappedUIElements.Count, 25, "POM.MappedUIElements.Count check");
@@ -138,8 +138,8 @@ namespace GingerTest.APIModelLib
         public void ValidateElementsProperties()
         {
             //Act  
-            ElementInfo ButtonEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.Button).FirstOrDefault();
-            ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.ComboBox).FirstOrDefault();
+            ElementInfo ButtonEI = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementTypeEnum == eElementType.Button);
+            ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementTypeEnum == eElementType.ComboBox);
 
             //Assert  
             Assert.AreEqual(ButtonEI.Properties.Count, 14, "POM.properties check");
@@ -175,7 +175,7 @@ namespace GingerTest.APIModelLib
 
         private bool IsPropertyExist(ObservableList<ControlProperty> Properties, string PropName, string PropValue)
         {
-            ControlProperty property = Properties.Where(x => x.Name == PropName && x.Value == PropValue).FirstOrDefault();
+            ControlProperty property = Properties.FirstOrDefault(x => x.Name == PropName && x.Value == PropValue);
 
             if (property != null)
             {
@@ -190,7 +190,7 @@ namespace GingerTest.APIModelLib
 
         private bool IsLocatorExist(ObservableList<ElementLocator> locators, eLocateBy locateBy, string locateValue)
         {
-            ElementLocator locator = locators.Where(x => x.LocateBy == locateBy && x.LocateValue == locateValue).FirstOrDefault();
+            ElementLocator locator = locators.FirstOrDefault(x => x.LocateBy == locateBy && x.LocateValue == locateValue);
 
             if (locator != null)
             {
@@ -204,7 +204,7 @@ namespace GingerTest.APIModelLib
 
         private bool CheckLocatorPriority(ObservableList<ElementLocator> locators, eLocateBy locateBy, string locateValue, bool isActive, int priorityIndexValue)
         {
-            ElementLocator locator = locators.Where(x => x.LocateBy == locateBy && x.LocateValue == locateValue).FirstOrDefault();
+            ElementLocator locator = locators.FirstOrDefault(x => x.LocateBy == locateBy && x.LocateValue == locateValue);
 
             if (locator != null && locator.Active == isActive && locators.IndexOf(locator) == priorityIndexValue)
             {
@@ -221,8 +221,8 @@ namespace GingerTest.APIModelLib
         public void ValidateElementsLocators()
         {
             //Act
-            ElementInfo ButtonEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.Button).FirstOrDefault();
-            ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.ComboBox).FirstOrDefault();
+            ElementInfo ButtonEI = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementTypeEnum == eElementType.Button);
+            ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementTypeEnum == eElementType.ComboBox);
 
             //Assert
             Assert.AreEqual(ButtonEI.Locators.Count, 4, "POM.Locators check");
@@ -243,8 +243,8 @@ namespace GingerTest.APIModelLib
         public void ValidateLocatorsPriority()
         {
             //Act
-            ElementInfo ButtonEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.Button).FirstOrDefault();
-            ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.Where(x => x.ElementTypeEnum == eElementType.ComboBox).FirstOrDefault();
+            ElementInfo ButtonEI = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementTypeEnum == eElementType.Button);
+            ElementInfo ComboBoxEI = mLearnedPOM.MappedUIElements.FirstOrDefault(x => x.ElementTypeEnum == eElementType.ComboBox);
 
             #region Assert #1 Element : ButtonEI | POM.LocatorsPriority Check
             Assert.AreEqual(ButtonEI.Locators.Count, 4, "POM.LocatorsPriority check");

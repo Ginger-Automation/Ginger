@@ -308,15 +308,15 @@ namespace GingerCore
             if (mContext.RunsetAction != null)
             {
                 RunSetActionSendDataToExternalSource runSetAction = (RunSetActionSendDataToExternalSource)mContext.RunsetAction;
-                defaultTemplate = HTMLReportConfigurations.Where(x => (x.ID == runSetAction.selectedHTMLReportTemplateID)).FirstOrDefault();
+                defaultTemplate = HTMLReportConfigurations.FirstOrDefault(x => (x.ID == runSetAction.selectedHTMLReportTemplateID));
                 if (defaultTemplate == null && runSetAction.selectedHTMLReportTemplateID == 100)
                 {
-                    defaultTemplate = HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault();
+                    defaultTemplate = HTMLReportConfigurations.FirstOrDefault(x => x.IsDefault);
                 }
             }
             else
             {
-                defaultTemplate = HTMLReportConfigurations.Where(x => x.IsDefault).FirstOrDefault();
+                defaultTemplate = HTMLReportConfigurations.FirstOrDefault(x => x.IsDefault);
             }
 
             //Get Last Execution details
@@ -391,7 +391,7 @@ namespace GingerCore
             }
             if (runset != null)
             {
-                runner = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.Executor.BusinessFlows.Contains(this.BF)).FirstOrDefault();
+                runner = WorkSpace.Instance.RunsetExecutor.Runners.FirstOrDefault(x => x.Executor.BusinessFlows.Contains(this.BF));
             }
 
             RepositoryItemBase objtoEval = null;
@@ -564,7 +564,7 @@ namespace GingerCore
 
             ObservableList<GlobalAppModelParameter> ModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
 
-            GlobalAppModelParameter Param = ModelsGlobalParamsList.Where(x => x.PlaceHolder == VarName).FirstOrDefault();
+            GlobalAppModelParameter Param = ModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == VarName);
 
             if (Param != null)
             {

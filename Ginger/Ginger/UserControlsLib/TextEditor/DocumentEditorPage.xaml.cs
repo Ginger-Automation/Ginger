@@ -24,6 +24,7 @@ using Ginger.PlugInsWindows;
 using Ginger.UserControlsLib.TextEditor.Common;
 using Ginger.UserControlsLib.TextEditor.Office;
 using Ginger.UserControlsLib.TextEditor.VBS;
+using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,7 +52,7 @@ namespace Ginger.UserControlsLib.TextEditor
                 if (p != null)
                 {
                     // text editor can return customized editor
-                    EditorFrame.Content = p;
+                    EditorFrame.ClearAndSetContent(p);
                     p.Load(FileName);
                 }
                 else
@@ -68,7 +69,7 @@ namespace Ginger.UserControlsLib.TextEditor
                         UCTE.SetContentEditorTitleLabel(TE.Title());
                     }
 
-                    EditorFrame.Content = UCTE;
+                    EditorFrame.ClearAndSetContent(UCTE);
                 }
             }
             else
@@ -86,14 +87,14 @@ namespace Ginger.UserControlsLib.TextEditor
                         UCTE.SetContentEditorTitleLabel(UCTextEditorTitle);
                     }
 
-                    EditorFrame.Content = UCTE;
+                    EditorFrame.ClearAndSetContent(UCTE);
                 }
                 else
                 {
                     // Just put a general shell doc                     
                     ITextEditorPage p = new OfficeDocumentPage();
                     p.Load(FileName);
-                    EditorFrame.Content = p;
+                    EditorFrame.ClearAndSetContent(p);
                 }
             }
         }

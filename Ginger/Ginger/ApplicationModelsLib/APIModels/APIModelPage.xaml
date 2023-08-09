@@ -33,7 +33,7 @@
                 </StackPanel>
 
                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="0,5,0,0" >
-                    <Label Style="{StaticResource @LabelStyle}" Content="Target Application:" VerticalAlignment="Center"/>
+                    <Label x:Name="xTAlabel" Style="{StaticResource @LabelStyle}" Content="" VerticalAlignment="Center"/>
                     <UserControlsLib:UCComboBox x:Name="xTargetApplicationComboBox" Width="250" VerticalAlignment="Center"></UserControlsLib:UCComboBox>
                 </StackPanel>
             </StackPanel>

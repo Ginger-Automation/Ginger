@@ -104,18 +104,18 @@ namespace Ginger
                 {
                     if (mObjList != null)
                     {
-                        mObjList.PropertyChanged -= ObjListPropertyChanged;
+                        PropertyChangedEventManager.RemoveHandler(source: mObjList, handler: ObjListPropertyChanged, propertyName: string.Empty);
                     }
                     mObjList = value;
                     if (mObjList != null)
                     {
                         BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
                     }
-
                     this.Dispatcher.Invoke(() =>
                     {
-                        mCollectionView = new CollectionViewSource() { Source = mObjList }.View;
+                        mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
                     });
+                        
 
                     if (mCollectionView != null)
                     {
@@ -134,7 +134,7 @@ namespace Ginger
                     }
                     this.Dispatcher.Invoke(() =>
                     {
-                        grdMain.ItemsSource = mCollectionView;
+                        grdMain.ItemsSource = mObjList;
 
                         // Make the first row selected
                         if (value != null && value.Count > 0)
@@ -143,7 +143,7 @@ namespace Ginger
                             grdMain.CurrentItem = value[0];
                             // Make sure that in case we have only one item it will be the current - otherwise gives err when one record
                             mObjList.CurrentItem = value[0];
-                        }
+                        }                        
                     });
                     UpdateFloatingButtons();
                 }
@@ -154,8 +154,8 @@ namespace Ginger
                 }
                 if (mObjList != null)
                 {
-                    mObjList.PropertyChanged += ObjListPropertyChanged;
-                    mObjList.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(CollectionChangedMethod);
+                    PropertyChangedEventManager.AddHandler(source: mObjList, handler: ObjListPropertyChanged, propertyName: string.Empty);
+                    CollectionChangedEventManager.AddHandler(source: mObjList, handler: CollectionChangedMethod);
                 }
             }
             get
@@ -383,7 +383,7 @@ namespace Ginger
 
         #endregion ##### Control Objects
 
-        private void CollectionChangedMethod(object sender, NotifyCollectionChangedEventArgs e)
+        private void CollectionChangedMethod(object? sender, NotifyCollectionChangedEventArgs e)
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -971,7 +971,7 @@ namespace Ginger
                     return txt != txtSearch.Text;
                 }
 
-                if (mCollectionView != null && !(await UserKeepsTyping()) && txtSearch.Text != mFilterSearchText)
+               if (mCollectionView != null && !(await UserKeepsTyping()) && txtSearch.Text != mFilterSearchText)
                 {
                     this.Dispatcher.Invoke(() =>
                     {
@@ -1135,7 +1135,7 @@ namespace Ginger
             return cmb;
         }
 
-        public CheckBox AddCheckBox(string txt, RoutedEventHandler handler)
+        public CheckBox AddCheckBox(string txt, RoutedEventHandler? handler)
         {
             DockPanel pnl = new DockPanel();
             pnl.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
@@ -1163,7 +1163,7 @@ namespace Ginger
         #endregion ##### External Methods
 
         #region ##### Internal Methods
-        private void ObjListPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ObjListPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             GingerCore.General.DoEvents();
             if (e.PropertyName == "CurrentItem")
@@ -1348,6 +1348,35 @@ namespace Ginger
             }
         }
 
+        public void EnableGridColumns()
+        {
+            foreach (DataGridColumn gridCol in grdMain.Columns)
+            {
+                if (gridCol.GetType() == typeof(DataGridCheckBoxColumn))
+                {
+                    ((DataGridCheckBoxColumn)gridCol).IsReadOnly = false;
+                    ((DataGridCheckBoxColumn)gridCol).ElementStyle = FindResource("@CheckBoxGridCellElemntStyle") as Style;
+                }
+                else if (gridCol.GetType() == typeof(DataGridComboBoxColumn))
+                {
+                    ((DataGridComboBoxColumn)gridCol).IsReadOnly = false;
+                    ((DataGridComboBoxColumn)gridCol).ElementStyle = FindResource("@GridCellElementStyle") as Style;
+                }
+                else if (gridCol.GetType() == typeof(DataGridTemplateColumn))
+                {
+                    ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@GridCellElementStyle") as Style;
+                }
+                else if (gridCol.GetType() == typeof(DataGridTextColumn))
+                {
+                    ((DataGridTextColumn)gridCol).CellStyle = FindResource("@GridCellElementStyle") as Style;
+                }
+                else
+                {
+                    gridCol.IsReadOnly = false;
+                }
+            }
+        }
+
         public void DisableGridColoumns()
         {
             foreach (DataGridColumn gridCol in grdMain.Columns)
@@ -1360,15 +1389,15 @@ namespace Ginger
                 else if (gridCol.GetType() == typeof(DataGridComboBoxColumn))
                 {
                     ((DataGridComboBoxColumn)gridCol).IsReadOnly = true;
-                    ((DataGridComboBoxColumn)gridCol).ElementStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
+                    ((DataGridComboBoxColumn)gridCol).ElementStyle = FindResource("@ReadOnlyGridCellElementStyle") as Style;
                 }
                 else if (gridCol.GetType() == typeof(DataGridTemplateColumn))
                 {
-                    ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
+                    ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElementStyle") as Style;
                 }
                 else if (gridCol.GetType() == typeof(DataGridTextColumn))
                 {
-                    ((DataGridTextColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
+                    ((DataGridTextColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElementStyle") as Style;
                 }
                 else
                 {
@@ -1376,6 +1405,7 @@ namespace Ginger
                 }
             }
         }
+
         private void SetView(GridViewDef view)
         {
             try
@@ -2040,7 +2070,7 @@ namespace Ginger
             List<ComboEnumItem> itemsList = GingerCore.General.GetEnumValuesForCombo(enumType);
             if (defaultOptionText != null)
             {
-                ComboEnumItem existingDefaultItem = itemsList.Where(x => x.text == defaultOptionText).FirstOrDefault();
+                ComboEnumItem existingDefaultItem = itemsList.FirstOrDefault(x => x.text == defaultOptionText);
                 if (existingDefaultItem != null)
                 {
                     comboBox.ItemsSource = itemsList;

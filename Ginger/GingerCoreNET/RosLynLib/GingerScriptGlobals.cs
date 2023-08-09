@@ -100,8 +100,8 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
             WorkSpace.Instance.RunsetExecutor.CreateGingerExecutionReportAutomaticly();
 
 
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
-            HTMLReportConfiguration htmlRep = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
+            HTMLReportConfiguration htmlRep = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().FirstOrDefault(x => (x.IsSelected == true));
             //if (grdExecutionsHistory.CurrentItem == null)
             //{
             //    Reporter.ToUser(eUserMsgKey.NoItemWasSelected);
@@ -136,7 +136,7 @@ namespace Amdocs.Ginger.CoreNET.RosLynLib
 
         public void RunBusinessFlow(string name)
         {
-            BusinessFlow BF = (from x in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>() where x.Name == name select x).SingleOrDefault();
+            BusinessFlow BF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().FirstOrDefault(x=> x.Name == name);
             if (BF == null)
             {
                 // !!! Err

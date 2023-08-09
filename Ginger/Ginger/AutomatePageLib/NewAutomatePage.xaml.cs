@@ -311,7 +311,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     mAddActionMainPage = new MainAddActionsNavigationPage(mContext);
                 }
-                xAddActionMenuFrame.Content = mAddActionMainPage;
+                xAddActionMenuFrame.ClearAndSetContent(mAddActionMainPage);
 
                 ExpandAddActionsPnl();
                 Ginger.General.DoEvents();
@@ -368,7 +368,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 if (!string.IsNullOrEmpty(mExecutionEngine.GingerRunner.SpecificEnvironmentName))
                 {
-                    xEnvironmentComboBox.SelectedItem = (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => x.Name == mExecutionEngine.GingerRunner.SpecificEnvironmentName).First());
+                    xEnvironmentComboBox.SelectedItem = (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().First(x => x.Name == mExecutionEngine.GingerRunner.SpecificEnvironmentName));
                     if (RaiseEnvComboBoxChanged != null)
                     {
                         RaiseEnvComboBoxChanged(null, null);
@@ -448,7 +448,7 @@ namespace GingerWPF.BusinessFlowsLib
                         if (mConfigurationsPage == null)
                         {
                             mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
-                            xBfConfigurationsTabFrame.Content = mConfigurationsPage;
+                            xBfConfigurationsTabFrame.ClearAndSetContent(mConfigurationsPage);
                         }
                         else
                         {
@@ -458,7 +458,7 @@ namespace GingerWPF.BusinessFlowsLib
                         if (mVariabelsPage == null)
                         {
                             mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
-                            xBfVariablesTabFrame.Content = mVariabelsPage;
+                            xBfVariablesTabFrame.ClearAndSetContent(mVariabelsPage);
                         }
                         else
                         {
@@ -470,7 +470,7 @@ namespace GingerWPF.BusinessFlowsLib
                             mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
                             mActivitiesPage.ListView.List.SelectionChanged -= ActivitiesList_SelectionChanged;
                             mActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
-                            xActivitiesListFrame.Content = mActivitiesPage;
+                            xActivitiesListFrame.ClearAndSetContent(mActivitiesPage);
                         }
                         else
                         {
@@ -623,7 +623,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.MainApplication))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You must have at least one Target Application configured, please set it up.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"You must have at least one {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} configured, please set it up.");
                         return;
                     }
                     else
@@ -790,7 +790,6 @@ namespace GingerWPF.BusinessFlowsLib
                 xStopRunBtn.ButtonText = "Stopping...";
                 xStopRunBtn.ToolTip = "Stopping execution";
                 xStopRunBtn.IsEnabled = false;
-                xStopRunBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionStop");
             });
         }
 
@@ -1538,7 +1537,7 @@ namespace GingerWPF.BusinessFlowsLib
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             //create the execution logger files            
             string exec_folder = mExecutionEngine.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(Path.Combine(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder, Ginger.Run.ExecutionLoggerManager.defaultAutomationTabOfflineLogName));
 
@@ -1706,7 +1705,7 @@ namespace GingerWPF.BusinessFlowsLib
                 Reporter.ToUser(eUserMsgKey.ExecutionsResultsProdIsNotOn);
                 return;
             }
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             //get logger files
             string exec_folder = mExecutionEngine.ExecutionLoggerManager.executionLoggerHelper.GetLoggerDirectory(Path.Combine(_selectedExecutionLoggerConfiguration.CalculatedLoggerFolder, Ginger.Run.ExecutionLoggerManager.defaultAutomationTabLogName));
             //create the report
@@ -1736,7 +1735,7 @@ namespace GingerWPF.BusinessFlowsLib
                 return;
             }
 
-            GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)(from x in mExecutionEngine.RunListeners where x.GetType() == typeof(GingerRunnerTimeLine) select x).SingleOrDefault();
+            GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)mExecutionEngine.RunListeners.FirstOrDefault(x=>x.GetType() == typeof(GingerRunnerTimeLine));
             TimeLinePage timeLinePage = new TimeLinePage(gingerRunnerTimeLine.timeLineEvents);
             timeLinePage.ShowAsWindow();
         }
