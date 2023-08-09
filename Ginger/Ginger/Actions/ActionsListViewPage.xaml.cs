@@ -268,8 +268,8 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mActivity = activity;
                 SetListView();
-                ShowHideEditPage(null);
             }
+            ShowHideEditPage(null);
         }
 
         // Drag Drop handlers
@@ -456,7 +456,9 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mActionEditPage.Width = xMainFrame.ActualWidth;
                 mActionEditPage.HorizontalAlignment = HorizontalAlignment.Stretch;
-                xMainFrame.Refresh();
+                //commenting below line for #25193 bug-fix, this line is preventing mActionsListView from showing up when user clicks on
+                //edit button for a linked-instance activity
+                //xMainFrame.Refresh();
             }
         }
     }

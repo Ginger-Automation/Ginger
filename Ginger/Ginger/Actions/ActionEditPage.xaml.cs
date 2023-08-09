@@ -99,6 +99,10 @@ namespace Ginger.Actions
         ActionFlowControlPage mAFCP;
         Context mContext;
 
+        private bool outputValuesGridToolbarItemsAdded = false;
+        private CheckBox? addParameterAutomaticallyCheckbox;
+        private CheckBox? supportSimulationCheckbox;
+
         public int SelectedTabIndx
         {
             get
@@ -194,12 +198,39 @@ namespace Ginger.Actions
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
             }
 
+            ClearPageBindings();
+
             xDetailsTab.Tag = false;
             xOperationSettingsTab.Tag = false;
             xFlowControlTab.Tag = false;
             xOutputValuesTab.Tag = false;
             xExecutionReportTab.Tag = false;
             xHelpTab.Tag = false;
+
+            xOutputValuesGrid.btnAdd.RemoveHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
+
+            if (addParameterAutomaticallyCheckbox != null)
+            {
+                BindingOperations.ClearBinding(addParameterAutomaticallyCheckbox, CheckBox.IsCheckedProperty);
+            }
+            if (supportSimulationCheckbox != null)
+            {
+                BindingOperations.ClearBinding(supportSimulationCheckbox, CheckBox.IsCheckedProperty);
+            }
+
+            xActionsDetailsPnl.IsEnabled = true;
+            xOperationSettingsPnl.IsEnabled = true;
+            xWaitTimeoutPnl.IsEnabled = true;
+            xRetryMechanismPnl.IsEnabled = true;
+            xAddOutputToDataSourcePnl.IsEnabled = true;
+            xExecutionReportConfigPnl.IsEnabled = true;
+
+            xDataSourceConfigGrid.ToolsTray.Visibility = Visibility.Visible;
+            xDataSourceConfigGrid.EnableGridColumns();
+            xOutputValuesGrid.ToolsTray.Visibility = Visibility.Visible;
+            xOutputValuesGrid.EnableGridColumns();
+
+            
 
             mAction = null!;
             mContext = null!;
@@ -312,10 +343,11 @@ namespace Ginger.Actions
                 xLocateByCombo.BindControl(mAction, nameof(Act.LocateBy), locatorsTypeList);
                 xLocateValueVE.BindControl(mContext, mAction, nameof(Act.LocateValue));
                 BindingHandler.ObjFieldBinding(xLocateValueVE, TextBox.ToolTipProperty, mAction, nameof(Act.LocateValue));
+                xActionLocatorPnl.Visibility = Visibility.Visible;
             }
             else
             {
-                xActionLocatorPnl.Visibility = System.Windows.Visibility.Collapsed;
+                xActionLocatorPnl.Visibility = Visibility.Collapsed;
             }
 
             SwitchingInputValueBoxAndGrid(mAction);
@@ -588,6 +620,13 @@ namespace Ginger.Actions
                 });
                 return;
             }
+            else
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    xInputValuesEditControlsPnl.Visibility = Visibility.Visible;
+                });
+            }
 
             //TODO: Remove all if else and handle it dynamically based on if Input value grid is needed or not
             int minimumInputValuesToHideGrid = 1;
@@ -850,14 +889,18 @@ namespace Ginger.Actions
 
             xOutputValuesGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshOutputValuesGridElements));
             xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
-            xOutputValuesGrid.AddSeparator();
 
-            xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Unused Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize: 14);
-            BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Add Parameters Automatically", null), CheckBox.IsCheckedProperty, mAction, nameof(Act.AddNewReturnParams));
-            BindingHandler.ObjFieldBinding(xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns)), CheckBox.IsCheckedProperty, mAction, nameof(Act.SupportSimulation));
+            if(!outputValuesGridToolbarItemsAdded)
+            {
+                outputValuesGridToolbarItemsAdded = true;
+                xOutputValuesGrid.AddSeparator();
+                xOutputValuesGrid.AddToolbarTool(eImageType.Reset, "Clear Unused Parameters", new RoutedEventHandler(ClearUnusedParameter), imageSize: 14);
+                addParameterAutomaticallyCheckbox = xOutputValuesGrid.AddCheckBox("Add Parameters Automatically", null);
+                supportSimulationCheckbox = xOutputValuesGrid.AddCheckBox("Support Simulation", new RoutedEventHandler(RefreshOutputColumns));
+            }
 
-
-
+            BindingHandler.ObjFieldBinding(addParameterAutomaticallyCheckbox!, CheckBox.IsCheckedProperty, mAction, nameof(Act.AddNewReturnParams));
+            BindingHandler.ObjFieldBinding(supportSimulationCheckbox!, CheckBox.IsCheckedProperty, mAction, nameof(Act.SupportSimulation));
 
             xOutputValuesGrid.ShowViewCombo = Visibility.Collapsed;
             xOutputValuesGrid.ShowEdit = Visibility.Collapsed;
