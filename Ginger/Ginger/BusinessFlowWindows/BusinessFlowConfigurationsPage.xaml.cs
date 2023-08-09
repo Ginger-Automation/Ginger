@@ -161,7 +161,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xPublishcheckbox.IsEnabled = true;
                 xExternalId.IsEnabled = true;
             }
-            xAddTargetApplication.Content= $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} :";
+            xAddTargetApplication.Content= $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}s:";
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
             xNameTxtBox.AddValidationRule(new BusinessFlowNameValidationRule());
             xShowIDUC.Init(mBusinessFlow);
