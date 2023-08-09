@@ -1135,7 +1135,7 @@ namespace Ginger
             return cmb;
         }
 
-        public CheckBox AddCheckBox(string txt, RoutedEventHandler handler)
+        public CheckBox AddCheckBox(string txt, RoutedEventHandler? handler)
         {
             DockPanel pnl = new DockPanel();
             pnl.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
@@ -1158,11 +1158,6 @@ namespace Ginger
             pnl.Children.Add(b); //using dock panel for getting regular check box design
             toolbar.Items.Add(pnl);
             return b;
-        }
-
-        public void ClearToolBarItems()
-        {
-            toolbar.Items.Clear();
         }
 
         #endregion ##### External Methods
