@@ -5,11 +5,11 @@ on:
 
 jobs:
   windows:
-    uses: Ginger-Automation/Ginger/.github/workflows/WindowsTest.yml@master
+    uses: ./.github/workflows/WindowsTest.yml
     secrets: inherit
     
   Linux:
-    uses: Ginger-Automation/Ginger/.github/workflows/LinuxTest.yml@master
+    uses: ./.github/workflows/LinuxTest.yml
     
 #   MacOS:
-#     uses: Ginger-Automation/Ginger/.github/workflows/MacOSTest.yml@master
+#     uses: ./.github/workflows/MacOSTest.yml
