@@ -25,6 +25,7 @@ using GingerCore.ALM;
 using GingerCore.Environments;
 using GingerCore.GeneralFunctions;
 using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System;
@@ -156,7 +157,11 @@ namespace GingerCore
                     ComboEnumItem CEI = new ComboEnumItem();
                     CEI.text = GetEnumValueDescription(Etype, item);
                     CEI.Value = item;
-                    comboBox.Items.Add(CEI);
+                    if(CEI.text != "NA" && CEI.text != "VB Script" && CEI.text != "Ginger Service" && CEI.text != "ASCF")
+                    {
+                        comboBox.Items.Add(CEI);
+                    }
+                    
                 }
             }
             else
