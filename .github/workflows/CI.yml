@@ -21,7 +21,7 @@ jobs:
     Build:
         name: Build Stage
  #       needs: Codacy   
-        uses: Ginger-Automation/Ginger/.github/workflows/GingerBuild.yml@master
+        uses: ./.github/workflows/GingerBuild.yml
         
 #     Test:
 #         name: Test Stage
