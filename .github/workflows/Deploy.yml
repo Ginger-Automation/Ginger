@@ -63,6 +63,10 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Upload GingerRuntime.tar.gz to Github Releases 
 # ------------------------------------------------------------------------------------------------------
+          - name: print 
+            run: |
+                ls -altr
+
           - name: Upload Assest to Github Releases - GingerRuntime.tar.gz
             uses: actions/upload-release-asset@v1
             env:
