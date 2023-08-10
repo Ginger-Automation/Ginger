@@ -70,15 +70,15 @@ jobs:
         uses: Ginger-Automation/Ginger/.github/workflows/CI.yml@master
         secrets: inherit
      
-    Release:
-        name: Release
-        needs: CI
-        uses: Ginger-Automation/Ginger/.github/workflows/Release.yml@master
-        secrets: inherit
+#     Release:
+#         name: Release
+#         needs: CI
+#         uses: Ginger-Automation/Ginger/.github/workflows/Release.yml@master
+#         secrets: inherit
      
     Deploy:
         name: Deploy
-        needs: Release
+        needs: CI
         uses: Ginger-Automation/Ginger/.github/workflows/Deploy.yml@master
 
 #     Docker:
