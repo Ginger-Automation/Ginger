@@ -67,7 +67,7 @@ jobs:
     CI:
         name: CI
         needs: Create-version-Number
-        uses: Ginger-Automation/Ginger/.github/workflows/CI.yml@master
+        uses: ./.github/workflows/CI.yml
         secrets: inherit
      
 #     Release:
@@ -79,7 +79,7 @@ jobs:
     Deploy:
         name: Deploy
         needs: CI
-        uses: Ginger-Automation/Ginger/.github/workflows/Deploy.yml@master
+        uses: ./.github/workflows/Deploy.yml
 
 #     Docker:
 #         name: Docker
