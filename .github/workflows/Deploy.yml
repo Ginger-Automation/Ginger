@@ -42,10 +42,10 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 #  Download Windows Installer Artifact
 # ------------------------------------------------------------------------------------------------------      
-          - name: Download Windows Installer Artifact
-            uses: actions/download-artifact@v3
-            with:
-                name: WindowsInstaller
+#           - name: Download Windows Installer Artifact
+#             uses: actions/download-artifact@v3
+#             with:
+#                 name: WindowsInstaller
                 
 # ------------------------------------------------------------------------------------------------------
 # Create new Release for ginger
@@ -76,15 +76,15 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
 # Upload Ginger.exe to Github Releases 
 # ------------------------------------------------------------------------------------------------------
-          - name: Upload Assest to Github Releases - Ginger.exe
-            uses: actions/upload-release-asset@v1
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            with:
-              upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-              asset_path: ./Ginger.exe
-              asset_name: Ginger.${{ env.gingertag}}.exe
-              asset_content_type: application/exe 
+#           - name: Upload Assest to Github Releases - Ginger.exe
+#             uses: actions/upload-release-asset@v1
+#             env:
+#               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#             with:
+#               upload_url: ${{ steps.create-new-release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+#               asset_path: ./Ginger.exe
+#               asset_name: Ginger.${{ env.gingertag}}.exe
+#               asset_content_type: application/exe 
 
 # ------------------------------------------------------------------------------------------------------
 # Upload Ginger Documents to Github Releases 
