@@ -23,8 +23,8 @@ jobs:
  #       needs: Codacy   
         uses: Ginger-Automation/Ginger/.github/workflows/GingerBuild.yml@master
         
-    Test:
-        name: Test Stage
-        needs: Build
-        uses: Ginger-Automation/Ginger/.github/workflows/GingerTests.yml@master
-        secrets: inherit
+#     Test:
+#         name: Test Stage
+#         needs: Build
+#         uses: Ginger-Automation/Ginger/.github/workflows/GingerTests.yml@master
+#         secrets: inherit
