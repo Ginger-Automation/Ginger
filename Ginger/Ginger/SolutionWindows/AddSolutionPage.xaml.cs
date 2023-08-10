@@ -25,6 +25,7 @@ using GingerCore;
 using GingerCore.DataSource;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -50,7 +51,13 @@ namespace Ginger.SolutionWindows
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
             UCEncryptionKey.mSolution = mSolution;
             UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
-            GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform);
+            //Removing ASCF,NA,VB,GINGER SERVICE from MainApplication combobox                    
+            List<dynamic> platformesToExclude = new List<dynamic>();
+            platformesToExclude.Add(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF);
+            platformesToExclude.Add(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.NA);
+            platformesToExclude.Add(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.VBScript);
+            platformesToExclude.Add(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Service);
+            GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform, excludeList: platformesToExclude);
         }
 
         public bool IsUploadSolutionToSourceControl { get; set; }
