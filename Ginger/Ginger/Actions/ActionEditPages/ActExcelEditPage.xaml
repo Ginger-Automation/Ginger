@@ -87,14 +87,15 @@
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="DataGridColumnHeader">
-                                    
-                                    <ContentPresenter RecognizesAccessKey="False"></ContentPresenter>                                
+
+                                    <ContentPresenter RecognizesAccessKey="False"></ContentPresenter>
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
             </DataGrid>
+            <usercontrols:ImageMakerControl x:Name="xViewDataLoader" ImageType="Processing"   Visibility="Collapsed"  Width="20" Height="20"/>
         </DockPanel>
     </Grid>   
 </Page>

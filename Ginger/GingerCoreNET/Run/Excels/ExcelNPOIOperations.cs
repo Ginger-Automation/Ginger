@@ -173,13 +173,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         {
             try
             {
-                if(mWorkbook == null)
-                {
                     using (var fs = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read))
                     {
                         mWorkbook = WorkbookFactory.Create(fs);
                     }
-                }
                 return mWorkbook;
             }
             catch (Exception ex)
