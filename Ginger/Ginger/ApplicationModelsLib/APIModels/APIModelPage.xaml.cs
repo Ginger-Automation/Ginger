@@ -207,12 +207,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
+                        Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + $" {GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.TargetApplication)} was not found, please select new {GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.TargetApplication)}");
                     }
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
+                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + $" {GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.TargetApplication)} was not found, please select new {GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.TargetApplication)}");
                 }
             }
             xTargetApplicationComboBox.ComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.WebServices).ToList();
