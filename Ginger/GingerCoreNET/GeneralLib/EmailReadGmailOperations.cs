@@ -47,7 +47,9 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 CancellationToken cancellationToken = default(CancellationToken);
 
                 var queryToImap = new SearchQuery();
-               
+                DateTimeOffset receivedStartDateTimeToOffset = new DateTimeOffset();
+                DateTimeOffset receivedEndDateTimeToOffset = new DateTimeOffset();
+
                 if (!string.IsNullOrEmpty(filters.From))
                 {
                     queryToImap = queryToImap.And(SearchQuery.FromContains(filters.From));
@@ -69,17 +71,16 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 if (!string.IsNullOrEmpty(filters.Subject))
                 {
                     queryToImap = queryToImap.And(SearchQuery.SubjectContains(filters.Subject));
-                }
-                DateTimeOffset receivedStartDateTimeToOffset = new DateTimeOffset(filters.ReceivedStartDate);
-                DateTimeOffset receivedEndDateTimeToOffset = new DateTimeOffset(filters.ReceivedEndDate);
-
+                }               
 
                 if (!filters.ReceivedStartDate.Date.Equals(DateTime.MinValue.Date))
                 {
+                    receivedStartDateTimeToOffset = new DateTimeOffset(filters.ReceivedStartDate);
                     queryToImap = queryToImap.And(SearchQuery.DeliveredAfter(filters.ReceivedStartDate));
                 }
                 if (!(filters.ReceivedEndDate.Equals(DateTime.Today)))
                 {
+                    receivedEndDateTimeToOffset = new DateTimeOffset(filters.ReceivedEndDate);
                     queryToImap = queryToImap.And(SearchQuery.DeliveredBefore(filters.ReceivedEndDate.AddDays(1)));
                 }
                 if(filters.ReadUnread)
@@ -118,15 +119,18 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                     if (filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Either ||
                         ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No) && !message.Attachments.Any()) ||
                         ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes) && DoesSatisfyAttachmentFilter(message, expectedContentTypes)))
-                    {                        
-                        if((string.IsNullOrEmpty(filters.Body)) || (message.TextBody.Contains(filters.Body, StringComparison.OrdinalIgnoreCase)) && ((message.Date >= receivedStartDateTimeToOffset && message.Date <= receivedEndDateTimeToOffset) ||(receivedStartDateTimeToOffset == receivedEndDateTimeToOffset)  ) )
-                        {
-                            emailProcessor(ConvertMessageToReadEmail(message, expectedContentTypes));
-                                if(filters.MarkRead.Equals(true))
+                    {
+                        if ((string.IsNullOrEmpty(filters.Body)) || (message.TextBody.Contains(filters.Body, StringComparison.OrdinalIgnoreCase)))
+                        {                            
+                            if ((!filters.ReceivedStartDate.Date.Equals(DateTime.MinValue.Date)) || (!(filters.ReceivedEndDate.Equals(DateTime.Today))) && ((message.Date >= receivedStartDateTimeToOffset && message.Date <= receivedEndDateTimeToOffset) || (receivedStartDateTimeToOffset == receivedEndDateTimeToOffset)))                        
+                            {
+                                emailProcessor(ConvertMessageToReadEmail(message, expectedContentTypes));
+                                if (filters.MarkRead.Equals(true))
                                 {
                                     inbox.AddFlags(item, MessageFlags.Seen, true);
                                 }
                                 count++;
+                            }
                         }
 
                     }
