@@ -52,10 +52,9 @@ namespace Ginger.SolutionWindows
             UCEncryptionKey.mSolution = mSolution;
             UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
 
-            //for removing NA,ASCF,VB,GS from the dropdown list of MainApplication while creating new solution
+            //for removing ASCF,VB,GS from the dropdown list of MainApplication while creating new solution
             List<dynamic> platformesToExclude = new List<dynamic>();
             platformesToExclude.Add(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.ASCF);
-            platformesToExclude.Add(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.NA);
             platformesToExclude.Add(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.VBScript);
             platformesToExclude.Add(GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib.ePlatformType.Service);
             GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform, excludeList: platformesToExclude);
