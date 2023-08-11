@@ -714,23 +714,30 @@ namespace GingerCore.Drivers.MainFrame
             {
                 List<ElementInfo> Eil = new System.Collections.Generic.List<ElementInfo>();
 
-                foreach (XMLScreenField xf in MFE.GetScreenAsXML().Fields)
+                try
                 {
-                    ElementInfo EI = new ElementInfo();
+                    foreach (XMLScreenField xf in MFE.GetScreenAsXML().Fields)
+                    {
+                        ElementInfo EI = new ElementInfo();
 
-                    EI.ElementTitle = xf.Text;
-                    if (xf.Attributes.FieldType == "Hidden")
-                    {
-                        EI.ElementType = "Password";
-                    }
-                    if (xf.Attributes.Protected)
-                    {
-                        if (xf.Attributes.FieldType == "High")
+                        EI.ElementTitle = xf.Text;
+                        if (xf.Attributes.FieldType == "Hidden")
                         {
-                            EI.ElementType = "High";
+                            EI.ElementType = "Password";
                         }
+                        if (xf.Attributes.Protected)
+                        {
+                            if (xf.Attributes.FieldType == "High")
+                            {
+                                EI.ElementType = "High";
+                            }
+                        }
+                        Eil.Add(EI);
                     }
-                    Eil.Add(EI);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Controls", ex);
                 }
 
                 return Eil;

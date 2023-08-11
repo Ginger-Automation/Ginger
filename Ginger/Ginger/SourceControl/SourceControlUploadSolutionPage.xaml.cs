@@ -210,28 +210,35 @@ namespace Ginger.SourceControl
 
         private void UploadSolutionToSourceControl(object sender, RoutedEventArgs e)
         {
-            if (!ValidateBranchNameIsNotEmpty())
+            try
             {
-                Reporter.ToUser(eUserMsgKey.SourceControlBranchNameEmpty);
-                return;
-            }
-            if (mSourceControl.InitializeRepository(mSourceControl.SourceControlURL))
-            {
-                Reporter.ToUser(eUserMsgKey.UploadSolutionInfo, "Solution was successfully uploaded into: '" + mSourceControl.SourceControlURL + "'");
-                UpdateSourceControlDetails();
-                if (WorkSpace.Instance.Solution.SourceControl == null)
+                if (!ValidateBranchNameIsNotEmpty())
                 {
-                    WorkSpace.Instance.Solution.SourceControl = mSourceControl;
+                    Reporter.ToUser(eUserMsgKey.SourceControlBranchNameEmpty);
+                    return;
                 }
-                SourceControlIntegration.BusyInProcessWhileDownloading = false;
-                App.MainWindow.Dispatcher.Invoke(() =>
+                if (mSourceControl.InitializeRepository(mSourceControl.SourceControlURL))
                 {
-                    Close_Click(sender, e);
-                });
+                    Reporter.ToUser(eUserMsgKey.UploadSolutionInfo, "Solution was successfully uploaded into: '" + mSourceControl.SourceControlURL + "'");
+                    UpdateSourceControlDetails();
+                    if (WorkSpace.Instance.Solution.SourceControl == null)
+                    {
+                        WorkSpace.Instance.Solution.SourceControl = mSourceControl;
+                    }
+                    SourceControlIntegration.BusyInProcessWhileDownloading = false;
+                    App.MainWindow.Dispatcher.Invoke(() =>
+                    {
+                        Close_Click(sender, e);
+                    });
+                }
+                else
+                {
+                    CleanSourceControlFolderUponFailure();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                CleanSourceControlFolderUponFailure();
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Upload Solution to Source Control", ex);
             }
         }
         private void UpdateSourceControlDetails()
