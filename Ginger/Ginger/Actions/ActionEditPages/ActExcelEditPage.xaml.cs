@@ -161,23 +161,42 @@ namespace Ginger.Actions
 
         private async void ViewDataButton_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                ContextProcessInputValueForDriver();
+            xViewDataLoader.Visibility = Visibility.Visible;
+            ExcelDataGrid.Visibility = Visibility.Collapsed;
 
-                DataTable excelSheetData = GetExcelSheetData(true);
-                if (excelSheetData == null)
-                {
-                    return;
-                }
-                
-                SetExcelDataGridItemsSource(excelSheetData);
-            }
-            catch (Exception ex)
+            await Task.Run(() =>
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
-            }
+                try
+                {
+                    ContextProcessInputValueForDriver();
+                    DataTable excelSheetData = GetExcelSheetData(true);
+                    if (excelSheetData == null)
+                    {
+                        return;
+                    }
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        ExcelDataGrid.Visibility = Visibility.Visible;
+
+                        SetExcelDataGridItemsSource(excelSheetData);
+
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
+                    });
+                }
+                finally
+                {
+                    Dispatcher.Invoke(() => xViewDataLoader.Visibility = Visibility.Collapsed);
+                }
+            });
         }
+
 
         private void SetExcelDataGridItemsSource(DataTable excelSheetData)
         {
@@ -236,35 +255,55 @@ namespace Ginger.Actions
             xLoader.Visibility = Visibility.Hidden;
 
         }
-        private void ViewWhereButton_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                ContextProcessInputValueForDriver();
 
-                if (!mAct.CheckMandatoryFieldsExists(new List<string>() {
-                nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName),  nameof(mAct.SelectRowsWhere)}))
-                {
-                    return;
-                }
-                DataTable excelSheetData = GetExcelSheetData(false);
-                if (excelSheetData == null)
-                {
-                    return;
-                }
-                SetExcelDataGridItemsSource(excelSheetData);
-            }
-            catch (Exception ex)
+        private async void ViewWhereButton_Click(object sender, RoutedEventArgs e)
+        {
+            xViewDataLoader.Visibility = Visibility.Visible;
+            ExcelDataGrid.Visibility = Visibility.Collapsed;
+
+            await Task.Run(() =>
             {
-                string errorMessage = ex.Message;
-                if(!string.IsNullOrEmpty(ex.Message)  && ex.Message.StartsWith("Cannot find column"))
+                try
                 {
-                    errorMessage = errorMessage + " " + $"at Row Number {mAct.HeaderRowNum}";
+                    ContextProcessInputValueForDriver();
+
+                    if (!mAct.CheckMandatoryFieldsExists(new List<string>() {
+                nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName),  nameof(mAct.SelectRowsWhere)}))
+                    {
+                        return;
+                    }
+                    DataTable excelSheetData = GetExcelSheetData(false);
+                    if (excelSheetData == null)
+                    {
+                        return;
+                    }
+                    Dispatcher.Invoke(() =>
+                    {
+                        ExcelDataGrid.Visibility = Visibility.Visible;
+                        SetExcelDataGridItemsSource(excelSheetData);
+                    });
                 }
-                
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, errorMessage);
-            }
+                catch (Exception ex)
+                {
+                    string errorMessage = ex.Message;
+                    if (!string.IsNullOrEmpty(ex.Message) && ex.Message.StartsWith("Cannot find column"))
+                    {
+                        errorMessage = errorMessage + " " + $"at Row Number {mAct.HeaderRowNum}";
+                    }
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, errorMessage);
+                    });
+                }
+                finally
+                {
+                    Dispatcher.Invoke(() => xViewDataLoader.Visibility = Visibility.Collapsed);
+                }
+
+            });
         }
+
         DataTable GetExcelSheetData(bool isViewAllData)
         {
             try
