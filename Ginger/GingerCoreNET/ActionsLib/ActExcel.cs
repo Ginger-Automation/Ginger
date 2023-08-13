@@ -438,7 +438,7 @@ namespace GingerCore.Actions
             }
             catch (Exception ex)
             {
-                this.Error = "Error when trying to update the excel, Please check write data content";
+                this.Error = $"Error when trying to update the excel, {ex.Message}";
             }
         }
         private List<Tuple<string, object>> FieldsValueToTupleList(string updatedFieldsValue)
@@ -460,6 +460,9 @@ namespace GingerCore.Actions
                 if (setData.Length == 2)
                 {
                     string rowToSet = setData[0].Replace("[", "").Replace("]", "");
+                    
+                    //Check if string is in inverted commas and if a number is not in inverted commas
+                    ValidateDataToWrite(setData[1]);
                     string valueToSet = setData[1].Replace("~^GINGER-EXCEL-COMMA-REPLACE^~", ",").Replace("~^GINGER-EXCEL-EQUAL-REPLACE^~", "=")
                                         .TrimStart('\'').TrimEnd('\'');
                     string fieldValue = valueToSet;
@@ -507,5 +510,26 @@ namespace GingerCore.Actions
             string pk = GetInputParamCalculatedValue(nameof(PrimaryKeyColumn)).Replace("`", "");
             return dataRow[pk].GetType() == typeof(int) ? pk + "=" + dataRow[pk].ToString() : pk + "=" + "'" + dataRow[pk].ToString() + "'";
         }
+
+        private static void ValidateDataToWrite(string CellWriteValue)
+        {
+            if (string.IsNullOrEmpty(CellWriteValue)) throw new ArgumentException("Data To Write Value Error: Please Enter a value to be written in the cell");
+
+            if (CellWriteValue.StartsWith("'"))
+            {
+                int index = CellWriteValue.LastIndexOf("'");
+                if (index <= 0) throw new ArgumentException("Data To Write Value Error: Please Enter appropriate value to be written in the cell");
+                bool isNumber = CellWriteValue.Substring(1, index - 1).All(char.IsDigit);
+                if (isNumber) throw new ArgumentException("Data To Write Value Error: A Number should not be inside inverted commas");
+            }
+
+            else
+            {
+                bool isNumber = CellWriteValue.All(char.IsDigit);
+                if (!isNumber) throw new ArgumentException("Data To Write Value Error: String should be inside inverted commas");
+            }
+
+        }
+
     }
 }
