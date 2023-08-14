@@ -1594,7 +1594,7 @@ namespace Ginger.Run
                         act.OutDataSourceTableName = act.DSOutputConfigParams[0].DSTable;
                     }
 
-                    var mUniqueRVs = act.ReturnValues.Where(arc => arc.Path == "" || arc.Path == "1");
+                    var mUniqueRVs = act.ReturnValues.Where(arc => string.IsNullOrEmpty(arc.Path) || arc.Path == "1");
                     // if in output values there is only 1 record with Path = null
                     if (!mUniqueRVs.Any() && act.ReturnValues != null)
                     {
@@ -1655,7 +1655,7 @@ namespace Ginger.Run
                     }
 
                     int iPathCount = 0;
-                    var mOutRVs = act.ReturnValues.Where(arc => arc.Path == "");
+                    var mOutRVs = act.ReturnValues.Where(arc => string.IsNullOrEmpty(arc.Path));
                     if (!mOutRVs.Any())
                     {
                         iPathCount++;
