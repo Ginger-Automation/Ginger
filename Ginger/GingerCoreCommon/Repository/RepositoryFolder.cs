@@ -853,7 +853,10 @@ namespace Amdocs.Ginger.Repository
             OnPropertyChanged(nameof(FolderFullPath));
             OnPropertyChanged(nameof(DisplayName));
             OnPropertyChanged(nameof(FolderName));
-            mFileWatcher.Path = FolderFullPath;
+            if (mFileWatcher != null)
+            {
+                mFileWatcher.Path = FolderFullPath;
+            }
 
             //updating the folder items cache with correct File Path
             UpdateFolderItemsCacheFilePath();
