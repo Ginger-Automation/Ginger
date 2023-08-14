@@ -296,7 +296,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         public bool WriteData(string fileName, string sheetName, string filter, string setDataUsed, List<Tuple<string, object>> updateCellValuesList, string HeaderRowNum, string primaryKey = null, string key = null)
         {
 
-            if (updateCellValuesList == null || !updateCellValuesList.Any()) throw new ArgumentException("Data To Write Value Error: Please set a value for a particular cell");
+            if (updateCellValuesList == null || !updateCellValuesList.Any()) 
+            {
+                throw new ArgumentException("Data To Write Value Error: Please set a value for a particular cell");
+            }
             
             if (!String.IsNullOrWhiteSpace(primaryKey))
             {
