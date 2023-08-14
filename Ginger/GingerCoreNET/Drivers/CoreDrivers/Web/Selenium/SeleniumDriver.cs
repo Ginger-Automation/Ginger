@@ -7510,6 +7510,7 @@ namespace GingerCore.Drivers
                         try
                         {
                             OpenNewTab();
+                            GotoURL(act, url);
                         }
                         catch (Exception ex)
                         {
@@ -7517,7 +7518,7 @@ namespace GingerCore.Drivers
                             act.Error += ex.Message;
                             Reporter.ToLog(eLogLevel.DEBUG, $"OpenNewTab {ex.Message} ", ex.InnerException);
                         }
-                        GotoURL(act, url);
+                        
                         break;
 
                     case ActBrowserElement.eControlAction.GotoURL:
