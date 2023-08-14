@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -336,7 +336,7 @@ namespace Amdocs.Ginger.Repository
         {
             try
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
+                if (false && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
                 {
                     mFileWatcher = new FileSystemWatcher();
                     mFileWatcher.Path = base.FolderFullPath;
