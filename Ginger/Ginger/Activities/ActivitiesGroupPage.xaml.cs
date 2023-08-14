@@ -62,7 +62,7 @@ namespace Ginger.Activities
 
             xShowIDUC.Init(mActivitiesGroup);
             xAGExternalId.Init(mContext, mActivitiesGroup, nameof(ActivitiesGroup.ExternalID));
-            if (!string.IsNullOrEmpty(mActivitiesGroup.ExternalID))
+            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
             {
                 xAGExternalId.Init(mContext, mActivitiesGroup, nameof(ActivitiesGroup.ExternalID));
             }
