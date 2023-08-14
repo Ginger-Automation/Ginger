@@ -506,6 +506,24 @@ namespace GingerCore
             }
         }
 
+        public ObservableList<Guid> mConsumer = new();
+        [IsSerializedForLocalRepository]
+        public ObservableList<Guid> Consumer
+        {
+            get
+            {
+                return mConsumer;
+            }
+            set
+            {
+                if (mConsumer != null)
+                {
+                    mConsumer = value;
+                    OnPropertyChanged(nameof(Consumer));
+                }       
+             }
+        }
+
         [IsSerializedForLocalRepository]
         public ObservableList<Guid> Tags = new ObservableList<Guid>();
 
