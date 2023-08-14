@@ -193,6 +193,8 @@ namespace Ginger.Actions
             if(mAction != null)
             {
                 string allProperties = string.Empty;
+
+                xDataSourceExpander.IsExpanded = false;
                 PropertyChangedEventManager.RemoveHandler(source: mAction, handler: ActionPropertyChanged, propertyName: allProperties);
                 CollectionChangedEventManager.RemoveHandler(source: mAction.InputValues, handler: InputValues_CollectionChanged);
                 CollectionChangedEventManager.RemoveHandler(source: mAction.FlowControls, handler: FlowControls_CollectionChanged);
@@ -248,8 +250,9 @@ namespace Ginger.Actions
             mColNames = null!;
             aOutDSConfigParam = new ObservableList<ActOutDataSourceConfig>();
             xOutputValuesGrid.DataSourceList = new ObservableList<ActReturnValue>();
+            xDataSourceConfigGrid.DataSourceList = new ObservableList<ActReturnValue>();
             mStoreToVarsList.Clear();
-
+            
             mActParentBusinessFlow = null!;
             mActParentActivity = null!;
             mSimulateRunBtn = new Button();
@@ -839,7 +842,7 @@ namespace Ginger.Actions
         {
             GenerateStoreToVarsList();
 
-            if (!outputValuesGridViewSet)
+//if (!outputValuesGridViewSet)
             {
                 outputValuesGridViewSet = true;
 
@@ -1756,7 +1759,10 @@ namespace Ginger.Actions
             xDataSourceConfigGrid.Visibility = Visibility.Visible;
 
             SetActDataSourceConfigGrid();
-            mAction.DSOutputConfigParams = aOutDSConfigParam;
+            if (aOutDSConfigParam.Count > 0)
+            {
+                mAction.DSOutputConfigParams = aOutDSConfigParam;
+            }
             xDataSourceConfigGrid.DataSourceList = mAction.DSOutputConfigParams;
         }
 
