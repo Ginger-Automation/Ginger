@@ -513,20 +513,30 @@ namespace GingerCore.Actions
 
         private static void ValidateDataToWrite(string CellWriteValue)
         {
-            if (string.IsNullOrEmpty(CellWriteValue)) throw new ArgumentException("Data To Write Value Error: Please Enter a value to be written in the cell");
-
+            if (string.IsNullOrEmpty(CellWriteValue))
+            {
+                throw new ArgumentException("Data To Write Value Error: Please Enter a value to be written in the cell");
+            }
             if (CellWriteValue.StartsWith("'"))
             {
                 int index = CellWriteValue.LastIndexOf("'");
-                if (index <= 0) throw new ArgumentException("Data To Write Value Error: Please Enter appropriate value to be written in the cell");
+                if (index <= 0)
+                {
+                    throw new ArgumentException("Data To Write Value Error: Please Enter appropriate value to be written in the cell");
+                }
                 bool isNumber = CellWriteValue.Substring(1, index - 1).All(char.IsDigit);
-                if (isNumber) throw new ArgumentException("Data To Write Value Error: A Number should not be inside inverted commas");
+                if (isNumber)
+                {
+                    throw new ArgumentException("Data To Write Value Error: A Number should not be inside inverted commas");
+                }
             }
-
             else
             {
                 bool isNumber = CellWriteValue.All(char.IsDigit);
-                if (!isNumber) throw new ArgumentException("Data To Write Value Error: String should be inside inverted commas");
+                if (!isNumber) 
+                {
+                    throw new ArgumentException("Data To Write Value Error: String should be inside inverted commas");
+                }
             }
 
         }
