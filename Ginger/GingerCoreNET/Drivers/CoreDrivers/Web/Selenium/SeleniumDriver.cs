@@ -924,26 +924,26 @@ namespace GingerCore.Drivers
 
         public override void CloseDriver()
         {
-            try
-            {
-                if (Driver != null)
-                {
-                    Driver.Close();
-                }
-                if (StartBMP)
-                {
-                    BMPClient.Close();
-                    BMPServer.Stop();
-                }
-            }
-            catch (System.InvalidOperationException ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Got System.InvalidOperationException when trying to close Selenium Driver", ex);
-            }
-            catch (Exception e)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Selenium Driver", e);
-            }
+            //try
+            //{
+            //    if (Driver != null)
+            //    {
+            //        Driver.Close();
+            //    }
+            //    if (StartBMP)
+            //    {
+            //        BMPClient.Close();
+            //        BMPServer.Stop();
+            //    }
+            //}
+            //catch (System.InvalidOperationException ex)
+            //{
+            //    Reporter.ToLog(eLogLevel.ERROR, "Got System.InvalidOperationException when trying to close Selenium Driver", ex);
+            //}
+            //catch (Exception e)
+            //{
+            //    Reporter.ToLog(eLogLevel.ERROR, "Error when try to close Selenium Driver", e);
+            //}
 
             try
             {
@@ -955,7 +955,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error when try to quit Selenium Driver", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured during Selenium Driver Quit", e);
             }
         }
 
