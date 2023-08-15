@@ -86,8 +86,8 @@ jobs:
         needs: Release
         uses: ./.github/workflows/Deploy-2.yml
 
-#     Docker:
-#         name: Docker
-#         needs: CI
-#         uses: ./.github/workflows/Docker.yml
-#         secrets: inherit
+    Docker:
+        name: Docker
+        needs: CI
+        uses: ./.github/workflows/Docker.yml
+        secrets: inherit
