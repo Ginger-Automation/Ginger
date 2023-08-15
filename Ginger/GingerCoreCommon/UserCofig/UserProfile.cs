@@ -129,7 +129,7 @@ namespace Ginger
         }
 
         private bool mWatchFileChanges = true;
-        [IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository(true)]
         public bool WatchFileChanges
         {
             get => mWatchFileChanges;
