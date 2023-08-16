@@ -85,7 +85,6 @@ namespace Ginger.Actions
         private DataSourceTable mDSTable;
         private string mDataSourceName;
         List<String> mColNames = null!;
-        ObservableList<ActOutDataSourceConfig> aOutDSConfigParam = new ObservableList<ActOutDataSourceConfig>();
         ObservableList<String> mStoreToVarsList = new ObservableList<string>();
 
         private BusinessFlow mActParentBusinessFlow = null!;
@@ -128,7 +127,7 @@ namespace Ginger.Actions
         public void Init(Act act, General.eRIPageViewMode editMode = General.eRIPageViewMode.Automation, BusinessFlow? actParentBusinessFlow = null, Activity? actParentActivity = null)
         {
             Clear();
-            
+
 
             //ActionEditNum++;
             //LiveActionEditCounter++;
@@ -193,16 +192,12 @@ namespace Ginger.Actions
             if(mAction != null)
             {
                 string allProperties = string.Empty;
-
-                xDataSourceExpander.IsExpanded = false;
                 PropertyChangedEventManager.RemoveHandler(source: mAction, handler: ActionPropertyChanged, propertyName: allProperties);
                 CollectionChangedEventManager.RemoveHandler(source: mAction.InputValues, handler: InputValues_CollectionChanged);
                 CollectionChangedEventManager.RemoveHandler(source: mAction.FlowControls, handler: FlowControls_CollectionChanged);
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ReturnValues, handler: ReturnValues_CollectionChanged);
                 CollectionChangedEventManager.RemoveHandler(source: mAction.ScreenShots, handler: ScreenShots_CollectionChanged);
             }
-
-            ClearPageBindings();
 
             xDetailsTab.Tag = false;
             xOperationSettingsTab.Tag = false;
@@ -235,7 +230,12 @@ namespace Ginger.Actions
             xOutputValuesGrid.ToolsTray.Visibility = Visibility.Visible;
             xOutputValuesGrid.EnableGridColumns();
 
-            
+
+            xdsOutputParamMapType.SelectionChanged -= OutDSParamType_SelectionChanged;
+            xDataSourceNameCombo.SelectionChanged -= cmbDataSourceName_SelectionChanged;
+            xDataSourceTableNameCombo.SelectionChanged -= cmbDataSourceTableName_SelectionChanged;
+            xAddOutToDSCheckbox.Checked -= AddOutDS_Checked;
+            xAddOutToDSCheckbox.Unchecked -= AddOutDS_Unchecked;
 
             mAction = null!;
             mContext = null!;
@@ -248,9 +248,7 @@ namespace Ginger.Actions
             mDSTableList = new ObservableList<DataSourceTable>();
             mDSNames = new List<string>();
             mColNames = null!;
-            aOutDSConfigParam = new ObservableList<ActOutDataSourceConfig>();
             xOutputValuesGrid.DataSourceList = new ObservableList<ActReturnValue>();
-            xDataSourceConfigGrid.DataSourceList = new ObservableList<ActReturnValue>();
             mStoreToVarsList.Clear();
             
             mActParentBusinessFlow = null!;
@@ -259,6 +257,8 @@ namespace Ginger.Actions
             mRunActionBtn = new Button();
             mStopRunBtn = new Button();
             saveWasDone = false;
+
+            ClearPageBindings();
         }
 
         private void InitView()
@@ -420,19 +420,6 @@ namespace Ginger.Actions
                 xDataSourceConfigGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All", new RoutedEventHandler(CheckUnCheckGridRow));
             }
 
-            BindingHandler.ObjFieldBinding(xAddOutToDSCheckbox, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutputDS));
-            BindingHandler.ObjFieldBinding(xDataSourceNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceName));
-            BindingHandler.ObjFieldBinding(xDataSourceTableNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceTableName));
-            BindingHandler.ObjFieldBinding(xdsOutputParamMapType, ComboBox.TextProperty, mAction, nameof(Act.OutDSParamMapType));
-            BindingHandler.ObjFieldBinding(xRawResponseValuesBtn, Button.VisibilityProperty, mAction, nameof(Act.RawResponseValues), bindingConvertor: new StringVisibilityConverter(), BindingMode: BindingMode.OneWay);
-
-
-            BindingHandler.ObjFieldBinding(xdsOutputParamAutoCheck, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutDSParamAutoCheck));
-
-            if (mAction.ConfigOutDSParamAutoCheck)
-            {
-                xDataSourceConfigGrid.Visibility = Visibility.Collapsed;
-            }
             if (mAction.ConfigOutputDS == true && mAction.DSOutputConfigParams.Count > 0)
             {
                 xDataSourceExpander.IsExpanded = true;
@@ -447,6 +434,44 @@ namespace Ginger.Actions
                     mAction.OutDSParamMapType = mAction.DSOutputConfigParams[0].OutParamMap;
                 }
             }
+            else
+            {
+                xDataSourceExpander.IsExpanded = false;
+            }
+
+            BindingHandler.ObjFieldBinding(xAddOutToDSCheckbox, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutputDS));
+
+            PopulateDataSourceNames();
+            PopulateParamMapTypes();
+
+            if (mAction.ConfigOutputDS)
+            {
+                SetSelectedDataSource(mAction.OutDataSourceName);
+            }
+
+            BindingHandler.ObjFieldBinding(xDataSourceNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceName));
+            BindingHandler.ObjFieldBinding(xDataSourceTableNameCombo, ComboBox.TextProperty, mAction, nameof(Act.OutDataSourceTableName));
+            BindingHandler.ObjFieldBinding(xdsOutputParamMapType, ComboBox.TextProperty, mAction, nameof(Act.OutDSParamMapType));
+            BindingHandler.ObjFieldBinding(xRawResponseValuesBtn, Button.VisibilityProperty, mAction, nameof(Act.RawResponseValues), bindingConvertor: new StringVisibilityConverter(), BindingMode: BindingMode.OneWay);
+            BindingHandler.ObjFieldBinding(xdsOutputParamAutoCheck, CheckBox.IsCheckedProperty, mAction, nameof(Act.ConfigOutDSParamAutoCheck));
+
+            if (mAction.ConfigOutputDS)
+            {
+                updateDSOutGrid();
+            }
+
+            xAddOutToDSCheckbox.Checked += AddOutDS_Checked;
+            xAddOutToDSCheckbox.Unchecked += AddOutDS_Unchecked;
+            xDataSourceNameCombo.SelectionChanged += cmbDataSourceName_SelectionChanged;
+            xDataSourceTableNameCombo.SelectionChanged += cmbDataSourceTableName_SelectionChanged;
+            xdsOutputParamMapType.SelectionChanged += OutDSParamType_SelectionChanged;
+
+
+            if (mAction.ConfigOutDSParamAutoCheck)
+            {
+                xDataSourceConfigGrid.Visibility = Visibility.Collapsed;
+            }
+            
             mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
             {
@@ -842,7 +867,7 @@ namespace Ginger.Actions
         {
             GenerateStoreToVarsList();
 
-//if (!outputValuesGridViewSet)
+            if (!outputValuesGridViewSet)
             {
                 outputValuesGridViewSet = true;
 
@@ -1622,19 +1647,8 @@ namespace Ginger.Actions
 
         private void AddOutDS_Checked(object sender, RoutedEventArgs e)
         {
-            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            if (mDSList.Count == 0)
-            {
-                return;
-            }
+            PopulateDataSourceNames();
 
-            mDSNames.Clear();
-            foreach (DataSourceBase ds in mDSList)
-            {
-                mDSNames.Add(ds.Name);
-            }
-
-            GingerCore.General.FillComboFromList(xDataSourceNameCombo, mDSNames);
             // Added Check to get already saved ActOutDataSourceConfig params
             if (mAction.DSOutputConfigParams.Count > 0)
             {
@@ -1659,7 +1673,7 @@ namespace Ginger.Actions
                 mDataSourceName = mDSNames[0];
             }
 
-            xdsOutputParamMapType.ItemsSource = Enum.GetValues(typeof(Act.eOutputDSParamMapType)).Cast<Act.eOutputDSParamMapType>();
+            PopulateParamMapTypes();
             if (mAction.OutDSParamMapType == null || mAction.OutDSParamMapType == "")
             {
                 xdsOutputParamMapType.SelectedValue = Act.eOutputDSParamMapType.ParamToRow;
@@ -1674,6 +1688,28 @@ namespace Ginger.Actions
             SetDataSourceConfigTabView();
 
             UpdateOutputValuesTabHeader();
+        }
+
+        private void PopulateDataSourceNames()
+        {
+            mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+            if (!mDSList.Any())
+            {
+                return;
+            }
+
+            mDSNames.Clear();
+            foreach (DataSourceBase ds in mDSList)
+            {
+                mDSNames.Add(ds.Name);
+            }
+
+            GingerCore.General.FillComboFromList(xDataSourceNameCombo, mDSNames);
+        }
+
+        private void PopulateParamMapTypes()
+        {
+            xdsOutputParamMapType.ItemsSource = Enum.GetValues(typeof(Act.eOutputDSParamMapType)).Cast<Act.eOutputDSParamMapType>();
         }
 
         private void AddOutDS_Unchecked(object sender, RoutedEventArgs e)
@@ -1748,7 +1784,7 @@ namespace Ginger.Actions
             }
 
             DSConfigParam = mAction.DSOutputConfigParams.Where(x => x.DSName == mDataSourceName && x.DSTable == mDSTable.Name && x.OutParamMap == mAction.OutDSParamMapType).ToList();
-            aOutDSConfigParam.Clear();
+            List<ActOutDataSourceConfig> aOutDSConfigParam = new();
 
             foreach (ActOutDataSourceConfig aOutDSConfig in DSConfigParam)
             {
@@ -1759,9 +1795,11 @@ namespace Ginger.Actions
             xDataSourceConfigGrid.Visibility = Visibility.Visible;
 
             SetActDataSourceConfigGrid();
+            //mAction.DSOutputConfigParams = aOutDSConfigParam;
             if (aOutDSConfigParam.Count > 0)
             {
-                mAction.DSOutputConfigParams = aOutDSConfigParam;
+                mAction.DSOutputConfigParams.Clear();
+                aOutDSConfigParam.ForEach(param => mAction.DSOutputConfigParams.Add(param));
             }
             xDataSourceConfigGrid.DataSourceList = mAction.DSOutputConfigParams;
         }
@@ -1821,49 +1859,59 @@ namespace Ginger.Actions
 
         private void cmbDataSourceName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (xDataSourceNameCombo == null || xDataSourceNameCombo.Items.Count == 0 || xDataSourceNameCombo.SelectedValue == null)
+            if (xDataSourceNameCombo.Items.IsEmpty || xDataSourceNameCombo.SelectedValue == null)
             {
                 return;
             }
 
-            foreach (DataSourceBase ds in mDSList)
+            string dataSourceName = xDataSourceNameCombo.SelectedValue.ToString()!;
+
+            SetSelectedDataSource(dataSourceName);
+            SetSelectedDataSourceTableByIndex(index: 0);
+        }
+
+        private void SetSelectedDataSource(string dataSourceName)
+        {
+            DataSourceBase? dataSource = mDSList.FirstOrDefault(ds => string.Equals(ds.Name, dataSourceName));
+            if (dataSource == null)
             {
-                if (ds.Name == xDataSourceNameCombo.SelectedValue.ToString())
+                return;
+            }
+
+            mDataSourceName = dataSourceName;
+            dataSource.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(dataSource.FilePath);
+
+            PopulateDataSourceTableNames(dataSource.GetTablesList());
+        }
+
+        private void PopulateDataSourceTableNames(IEnumerable<DataSourceTable> tables)
+        {
+            mDSTableList.Clear();
+            List<string> dsTableNames = new();
+            foreach (DataSourceTable table in tables)
+            {
+                mDSTableList.Add(table);
+                dsTableNames.Add(table.Name);
+                //if (string.Equals(xDataSourceTableNameCombo.SelectedValue?.ToString(), table.Name))
+                if (string.Equals(mAction.OutDataSourceTableName, table.Name))
                 {
-                    mDataSourceName = xDataSourceNameCombo.SelectedValue.ToString();
-                    //if (ds.FilePath.StartsWith("~"))
-                    //{
-                    //    ds.FileFullPath = ds.FilePath.Replace(@"~\", "").Replace("~", "");
-                    //    ds.FileFullPath = System.IO.Path.Combine( WorkSpace.Instance.Solution.Folder, ds.FileFullPath);
-                    //}
-                    ds.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(ds.FilePath);
-
-                    List<string> dsTableNames = new List<string>();
-                    mDSTableList.Clear();
-                    mDSTableList = ds.GetTablesList();
-                    foreach (DataSourceTable dst in mDSTableList)
-                    {
-                        dsTableNames.Add(dst.Name);
-                        if (xDataSourceTableNameCombo.SelectedValue != null && xDataSourceTableNameCombo.SelectedValue.ToString() == dst.Name)
-                        {
-                            mDSTable = dst;
-                        }
-                    }
-
-                    if (mDSTableList.Count == 0)
-                    {
-                        return;
-                    }
-
-                    GingerCore.General.FillComboFromList(xDataSourceTableNameCombo, dsTableNames);
-                    if (xDataSourceTableNameCombo.SelectedValue == null)
-                    {
-                        mDSTable = mDSTableList[0];
-                        xDataSourceTableNameCombo.SelectedIndex = 0;
-                    }
-                    break;
+                    mDSTable = table;
+                    mColNames = table.DSC.GetColumnList(table.Name);
                 }
             }
+
+            if (mDSTableList.Count == 0)
+            {
+                return;
+            }
+
+            GingerCore.General.FillComboFromList(xDataSourceTableNameCombo, dsTableNames);
+        }
+
+        private void SetSelectedDataSourceTableByIndex(int index)
+        {
+            mDSTable = mDSTableList[index];
+            xDataSourceTableNameCombo.SelectedIndex = index;
         }
 
         //private void ShowHideRunSimulation()
