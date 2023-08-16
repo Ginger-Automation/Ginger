@@ -161,6 +161,7 @@ namespace GingerCore.Actions
                 string sourceFileName = ScreenShots[i];
                 string destFileName = ConstructFilePath(directoryPath, fileName, fileExtension, i == 0 ? null : i);
 
+                // Copy files from existing screenshot directory to path provided by user 
                 File.Copy(sourceFileName, destFileName, overwrite: true);
 
                 string key = i == 0 ? "ScreenshotFilePath" : $"ScreenshotFilePath{i}";
