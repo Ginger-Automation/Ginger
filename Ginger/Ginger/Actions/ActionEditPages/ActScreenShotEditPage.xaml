@@ -13,7 +13,7 @@
             <RowDefinition Height="68*"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.RowSpan="2">
-            <Label Style="{StaticResource @InputFieldLabelStyle}">Save to File Path (e.g: C:\temp\example.jpg)</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}">Save to File Path (e.g: C:\temp\example.jpeg)</Label>
         </StackPanel>
 
         <Grid Grid.RowSpan="2">
