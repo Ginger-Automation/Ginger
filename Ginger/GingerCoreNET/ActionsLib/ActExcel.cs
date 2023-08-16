@@ -363,7 +363,7 @@ namespace GingerCore.Actions
                     {
                         if (!String.IsNullOrWhiteSpace(SetDataUsed))
                         {
-                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, FieldsValueToTupleList(CalculatedSetDataUsed));
+                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, FieldsValueToTupleList(CalculatedSetDataUsed),CalculatedHeaderRowNum);
                         }
                     }
                     else
@@ -375,7 +375,7 @@ namespace GingerCore.Actions
                                 Error += "Missing or Invalid Primary Key";
                                 return;
                             }
-                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, FieldsValueToTupleList(CalculatedSetDataUsed), CalculatedPrimaryKeyFilter(excelDataTable.Rows[0]));
+                            isUpdated = excelOperator.UpdateExcelData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, FieldsValueToTupleList(CalculatedSetDataUsed), CalculatedHeaderRowNum,CalculatedPrimaryKeyFilter(excelDataTable.Rows[0]));
                         }
                     }
                     if (!isUpdated)
@@ -408,7 +408,7 @@ namespace GingerCore.Actions
                 List<Tuple<string, object>> cellValuesToUpdateList = new List<Tuple<string, object>>();
                 cellValuesToUpdateList.AddRange(FieldsValueToTupleList(CalculatedSetDataUsed));
                 cellValuesToUpdateList.AddRange(FieldsValueToTupleList(CalculatedColMappingRules));
-                DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows , HeaderRowNum);
+                DataTable excelDataTable = excelOperator.ReadData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows , CalculatedHeaderRowNum);
                 if (excelDataTable == null)
                 {
                     Error = "Table return no Rows with given filter";
@@ -421,13 +421,13 @@ namespace GingerCore.Actions
                     this.ExInfo = "Write action done";
                     if (cellValuesToUpdateList.Count > 0)
                     {
-                        bool isUpdated = string.IsNullOrEmpty(CalculatedPrimaryKeyFilter(r)) ? excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList) :
-                            excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList, CalculatedPrimaryKeyFilter(r));
+                        bool isUpdated = string.IsNullOrEmpty(CalculatedPrimaryKeyFilter(r)) ? excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList,CalculatedHeaderRowNum) :
+                            excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList, CalculatedHeaderRowNum, CalculatedPrimaryKeyFilter(r));
                     }
                 }
                 else if (excelDataTable.Rows.Count > 0 && SelectAllRows)
                 {
-                    bool isUpdated = excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList);
+                    bool isUpdated = excelOperator.WriteData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, "", cellValuesToUpdateList, CalculatedHeaderRowNum);
 
                     this.ExInfo += "write action done";
                 }

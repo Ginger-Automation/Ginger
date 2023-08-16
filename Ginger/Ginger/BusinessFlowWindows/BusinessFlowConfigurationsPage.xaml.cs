@@ -161,7 +161,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xPublishcheckbox.IsEnabled = true;
                 xExternalId.IsEnabled = true;
             }
-            xAddTargetApplication.Content= $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} :";
+            xAddTargetApplication.Content= $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}s:";
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
             xNameTxtBox.AddValidationRule(new BusinessFlowNameValidationRule());
             xShowIDUC.Init(mBusinessFlow);
@@ -169,7 +169,7 @@ namespace GingerWPF.BusinessFlowsLib
             xTagsViewer.Init(mBusinessFlow.Tags);
             xRunDescritpion.Init(mContext, mBusinessFlow, nameof(BusinessFlow.RunDescription));
 
-            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures && !string.IsNullOrEmpty(mBusinessFlow.ExternalID))
+            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
             {
                 xExternalId.Init(mContext, mBusinessFlow, nameof(BusinessFlow.ExternalID));
             }
