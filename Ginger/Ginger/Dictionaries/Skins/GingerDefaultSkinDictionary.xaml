@@ -3188,7 +3188,11 @@
         <Setter Property="Focusable" Value="False"/>
     </Style>
 
-    <Style  TargetType="FrameworkElement" x:Key="@ReadOnlyGridCellElemntStyle">
+    <Style TargetType="FrameworkElement" x:Key="@GridCellElementStyle">
+        <Setter Property="IsHitTestVisible" Value="True"/>
+    </Style>
+    
+    <Style  TargetType="FrameworkElement" x:Key="@ReadOnlyGridCellElementStyle">
         <Setter Property="IsHitTestVisible" Value="False"/>
 
     </Style>

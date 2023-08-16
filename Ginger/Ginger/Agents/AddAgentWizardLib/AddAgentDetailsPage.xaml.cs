@@ -87,12 +87,12 @@ namespace Ginger.Agents.AddAgentWizardLib
                         xDriverTypeComboBox.SelectedItem = xDriverTypeComboBox.Items[0];
                     }
 
+                    UpdateDriverTypeCombobox();
+                    UpdateDriverSubtypeCombobox();
 
                     xDriverTypeComboBox.AddValidationRule(eValidationRule.CannotBeEmpty);
 
                     xDriverTypeComboBox.Visibility = Visibility.Visible;
-
-
 
                     break;
             }
@@ -101,6 +101,11 @@ namespace Ginger.Agents.AddAgentWizardLib
 
 
         private void xPlatformTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateDriverTypeCombobox();
+        }
+
+        private void UpdateDriverTypeCombobox()
         {
             xDriverTypeComboBox.SelectedItem = null;
             xDriverTypeComboBox.Items.Clear();
@@ -120,6 +125,12 @@ namespace Ginger.Agents.AddAgentWizardLib
         }
 
         private void xDriverTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateDriverSubtypeCombobox();
+
+        }
+
+        private void UpdateDriverSubtypeCombobox()
         {
             xDriverSubTypeComboBox.SelectionChanged -= XDriverSubTypeComboBox_SelectionChanged;
             xDriverSubTypeComboBox.Items.Clear();
@@ -157,7 +168,6 @@ namespace Ginger.Agents.AddAgentWizardLib
                     }
                 }
             }
-
         }
 
         private void XDriverSubTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

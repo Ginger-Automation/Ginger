@@ -780,7 +780,10 @@ namespace GingerCore
                     {
                         try
                         {
-                            Driver.CloseDriver();
+                            if (Driver != null)
+                            {
+                                Driver.CloseDriver();
+                            }
                         }
                         catch (Exception ex)
                         {
