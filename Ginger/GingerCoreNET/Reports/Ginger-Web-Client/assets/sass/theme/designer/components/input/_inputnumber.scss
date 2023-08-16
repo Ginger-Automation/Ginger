@@ -1,0 +1,3 @@
+p-inputnumber.ng-dirty.ng-invalid > .p-inputnumber > .p-inputtext {
+    @include invalid-input();
+}
