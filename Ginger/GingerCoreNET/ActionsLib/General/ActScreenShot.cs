@@ -20,7 +20,6 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 
@@ -92,16 +91,9 @@ namespace GingerCore.Actions
             }
         }
 
-        public static readonly string DEFAULT_IMAGE_EXTENSION = ".jpeg";
+        private const string DEFAULT_IMAGE_EXTENSION = ".jpeg";
 
         private const string TILDE_PATH_PREFIX = @"\";
-
-        public static readonly Dictionary<string, ImageFormat> AllowedImageExtensions = new()
-        {
-            {".jpeg", ImageFormat.Jpeg},
-            {".jpg", ImageFormat.Jpeg},
-            {".png", ImageFormat.Png}
-        };
 
         private string ConstructFilePath(string directory, string fileName, string extension, int? index = null)
         {
@@ -117,9 +109,9 @@ namespace GingerCore.Actions
             }
 
             string fileExtension = Path.GetExtension(SaveToFileName);
-            if (!string.IsNullOrEmpty(fileExtension) && !AllowedImageExtensions.ContainsKey(fileExtension))
+            if (!string.IsNullOrEmpty(fileExtension) && fileExtension != DEFAULT_IMAGE_EXTENSION)
             {
-                throw new InvalidOperationException($"Unsupported file extension '{fileExtension}'. Only .jpeg, .jpg and .png are allowed.");
+                throw new InvalidOperationException($"Unsupported file extension '{fileExtension}'. Only {DEFAULT_IMAGE_EXTENSION} is allowed.");
             }
 
             if (!ScreenShots.Any())
