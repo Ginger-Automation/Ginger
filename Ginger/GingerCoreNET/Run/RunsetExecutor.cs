@@ -657,9 +657,15 @@ namespace Ginger.Run
                 ALMResultsPublishTaskPool.Clear();
                 ALMResultsPublishTaskPool = null;
                 var runsetAction = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(f => f is RunSetActionPublishToQC && f.RunAt.Equals(RunSetActionBase.eRunAt.DuringExecution));
-                if (runsetAction.Status != RunSetActionBase.eRunSetActionStatus.Failed)
+                if (runsetAction != null)
                 {
-                    runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Completed;
+
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.Any(f => f is RunSetActionPublishToQC && f.RunAt.Equals(RunSetActionBase.eRunAt.DuringExecution) && !string.IsNullOrEmpty(f.Errors)))
+                    {
+                        runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Failed;
+                    }
+                    else { runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Completed; }
+
                 }
             }
         }
