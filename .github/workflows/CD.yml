@@ -4,18 +4,22 @@ on:
     workflow_dispatch: 
         inputs:
             major:
+                description: Year
                 type: number 
                 required: true
                 default: '23'
             minor:
+                description: Release
                 type: number 
                 required: true
                 default: '1'
             build:
+                description: Beta
                 type: number 
                 required: true
                 default: '0'
             revision:
+                description: Alpha
                 type: number 
                 required: true
                 default: '0'
@@ -43,7 +47,7 @@ jobs:
           - name: create version environment variable - Release
             if: ${{ (github.event.inputs.build == 0 ) && ( github.event.inputs.revision == 0) }} 
             run: |
-              echo "gingertag=20${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}" >> $GITHUB_ENV
+              echo "gingertag=20${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}-Official" >> $GITHUB_ENV
               echo "gingernumber=${{ github.event.inputs.major}}.${{ github.event.inputs.minor}}.${{ github.event.inputs.build}}.${{ github.event.inputs.revision}}" >> $GITHUB_ENV
 
           - name: create environment variable 
@@ -58,31 +62,36 @@ jobs:
               echo "TAG=${{ env.gingertag}}" >> version.txt
               cat version.txt
           
-          - name: 'Upload static site content'
-            uses: actions/upload-artifact@v3
+          - name: Cache Version text file
+            id: cache
+            uses: actions/cache@v3.2.6
             with:
-              name: ginger-version
-              path: ./version.txt
+              path: 
+                ./version.txt
+              key: 
+                cache-version-${{ github.run_number }}
+              enableCrossOsArchive:
+                true
                
     CI:
         name: CI
         needs: Create-version-Number
-        uses: ./.github/workflows/CI.yml
+        uses: ./.github/workflows/CI-2.yml
         secrets: inherit
      
     Release:
         name: Release
         needs: CI
-        uses: ./.github/workflows/Release.yml
+        uses: ./.github/workflows/Release-2.yml
         secrets: inherit
      
     Deploy:
         name: Deploy
         needs: Release
-        uses: ./.github/workflows/Deploy.yml
+        uses: ./.github/workflows/Deploy-2.yml
 
-#     Docker:
-#         name: Docker
-#         needs: CI
-#         uses: ./.github/workflows/Docker.yml
-#         secrets: inherit
+    Docker:
+        name: Docker
+        needs: CI
+        uses: ./.github/workflows/Docker.yml
+        secrets: inherit
