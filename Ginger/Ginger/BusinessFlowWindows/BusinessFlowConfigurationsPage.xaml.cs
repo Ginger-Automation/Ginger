@@ -169,7 +169,7 @@ namespace GingerWPF.BusinessFlowsLib
             xTagsViewer.Init(mBusinessFlow.Tags);
             xRunDescritpion.Init(mContext, mBusinessFlow, nameof(BusinessFlow.RunDescription));
 
-            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures && !string.IsNullOrEmpty(mBusinessFlow.ExternalID))
+            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
             {
                 xExternalId.Init(mContext, mBusinessFlow, nameof(BusinessFlow.ExternalID));
             }

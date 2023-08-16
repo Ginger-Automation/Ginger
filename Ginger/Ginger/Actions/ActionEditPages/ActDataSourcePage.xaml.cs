@@ -26,6 +26,7 @@ using GingerCore.Actions.Java;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
+using NPOI.OpenXmlFormats.Dml;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -1939,6 +1940,11 @@ namespace Ginger.Actions
 
         private void cmbDataSourceName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if(cmbDataSourceName.SelectedValue == null)
+            {
+                return;
+            }
+
             foreach (DataSourceBase ds in mDSList)
             {
                 if (ds.Name == cmbDataSourceName.SelectedValue.ToString())
@@ -1977,7 +1983,7 @@ namespace Ginger.Actions
 
         private void cmbDataSourceTableName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cmbDataSourceTableName == null || cmbDataSourceTableName.Items.Count == 0)
+            if (cmbDataSourceTableName == null || cmbDataSourceTableName.Items.Count == 0 || cmbDataSourceTableName.SelectedValue == null)
             {
                 return;
             }

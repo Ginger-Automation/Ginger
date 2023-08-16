@@ -210,16 +210,16 @@
                                     </Expander.Header>
                                     <Expander.Content>
                                         <StackPanel x:Name="xAddOutputToDataSourcePnl" Margin="5" Background="{StaticResource $BackgroundColor_LightGray}">
-                                            <CheckBox Name="xAddOutToDSCheckbox" Content="Add Output Value/s to Data Source" Checked="AddOutDS_Checked"  Unchecked="AddOutDS_Unchecked" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" FontWeight="Bold"/>
+                                            <CheckBox Name="xAddOutToDSCheckbox" Content="Add Output Value/s to Data Source" HorizontalAlignment="Left" Style="{StaticResource $CeckBoxStyle}" FontWeight="Bold"/>
                                             <DockPanel x:Name="xAddOutputToDataSourceConfigPnl" >
                                                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,5,0,5">
                                                     <Label HorizontalAlignment="Left"  VerticalAlignment="Center" Style="{StaticResource $LabelStyle}">Data Source:</Label>
-                                                    <ComboBox Name="xDataSourceNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}"  Width="200" SelectionChanged="cmbDataSourceName_SelectionChanged"/>
+                                                    <ComboBox Name="xDataSourceNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}"  Width="200"/>
                                                     <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Style="{StaticResource $LabelStyle}">Data Source Table:</Label>
-                                                    <ComboBox Name="xDataSourceTableNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" Width="200" SelectionChanged="cmbDataSourceTableName_SelectionChanged"></ComboBox>
+                                                    <ComboBox Name="xDataSourceTableNameCombo" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" Width="200"></ComboBox>
 
                                                     <Label HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Style="{StaticResource $LabelStyle}">Out Parameter Mapping:</Label>
-                                                    <ComboBox Name="xdsOutputParamMapType" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" Width="200" SelectionChanged="OutDSParamType_SelectionChanged"></ComboBox>
+                                                    <ComboBox Name="xdsOutputParamMapType" HorizontalAlignment="Left" IsReadOnly="True" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" Width="200"></ComboBox>
                                                     <CheckBox x:Name="xdsOutputParamAutoCheck" Content="Auto Map Parameters" Click="xdsOutputParamAutoCheck_Click" Style="{StaticResource @CheckBoxStyle}" Margin="5,5,0,0"/>
                                                 </StackPanel>
                                                 <Ginger:ucGrid x:Name="xDataSourceConfigGrid" Title="Output Value/s Parameters - Data Source Table Columns Mapping Configurations " ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" Margin="0,0,0,10" />

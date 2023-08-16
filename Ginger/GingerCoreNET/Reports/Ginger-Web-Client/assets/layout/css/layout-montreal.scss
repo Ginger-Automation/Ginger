@@ -1,0 +1,71 @@
+$bodyBgColor:#f2f5fa;
+$topbarLeftBgColor:#8f3b4f;
+$topbarRightBgColor:#8f3b4f;
+$topbarIconHoverBgColor:rgba(255,255,255,.1);
+$topbarTextColor:#ffffff;
+$sidebarBorderColor:#d6d7d9;
+$footerBgColor:#231e20;
+$statsTopBorderColor:#8f3b4f;
+$teamContentHoverBorderColor:#8f3b4f;
+
+$sidebarBgColor:#ffffff;
+$sidebarMenuitemTextColor:#212121;
+$sidebarMenuitemDividerColor:rgba(0,0,0,.075);
+$sidebarMenuitemIconColor:#5b616a;
+$sidebarMenuitemHoverBgColor:rgba(33,33,33,.3);
+$sidebarMenuitemActiveBorderLeftColor:#3f94a6;
+$sidebarMenuitemActiveTextColor:#3f94a6;
+$sidebarMenuitemActiveIconColor:#3f94a6;
+$menuBgImage:'montreal-light.png';
+$horizontalMenuBgImageLight: 'montreal-horizontal-light.png';
+$horizontalMenuBgColor: #ebf0f0;
+
+$darkSidebarBgColor:#231e20;
+$darkSidebarMenuitemTextColor:#ffffff;
+$darkSidebarMenuitemDividerColor:rgba(255,255,255,.075);
+$darkSidebarMenuitemIconColor:#ffffff;
+$darkSidebarMenuitemHoverBgColor:rgba(255,255,255,.1);
+$darkSidebarMenuItemHoverTextColor:#3f94a6;
+$darkSidebarMenuitemActiveBorderLeftColor:#3f94a6;
+$darkSidebarMenuitemActiveTextColor:#3f94a6;
+$darkSidebarMenuitemActiveIconColor:#3f94a6;
+$darkMenuBgImage:'montreal-dark.png';
+$horizontalMenuBgImageDark: 'montreal-horizontal-dark.png';
+$horizontalDarkMenuBgColor: #100d0e;
+
+$gradientSidebarTopBgColor:#8f3b4f;
+$gradientSidebarBottomBgColor:#231e20;
+$gradientSidebarMenuitemTextColor:#ffffff;
+$gradientSidebarMenuitemDividerColor:rgba(255,255,255,.075);
+$gradientSidebarMenuitemIconColor:#ffffff;
+$gradientSidebarMenuitemHoverBgColor:rgba(255,255,255,.1);
+$gradientSidebarMenuItemHoverTextColor:#49b2c9;
+$gradientSidebarMenuitemActiveBorderLeftColor:#49b2c9;
+$gradientSidebarMenuitemActiveTextColor:#49b2c9;
+$gradientSidebarMenuitemActiveIconColor:#49b2c9;
+$gradientMenuBgImage:'montreal-gradient.png';
+$horizontalMenuBgImageGradient: 'montreal-horizontal-gradient.png';
+$horizontalGradientMenuBgColor: #4e5155;
+
+$megamenuButtonTextColor:#ffffff;
+$megamenuBgColor:#ffffff;
+$megamenuBorderColor:#d6d7d9;
+$megamenuTextColor:#5b616a;
+$megamenuHeaderColor:#8f3b4f;
+$megamenuIconColor:#5b616a;
+$megamenuHoverBgColor:#f1f1f1;
+$megamenuActiveTextColor:#3f94a6;
+$megamenuMobileBgColor:#772d3f;
+$megamenuMobileHoverBgColor:#5a2330;
+
+$darkMegamenuBgColor:#8f3b4f;
+$darkMegamenuTextColor:#ffffff;
+$darkMegamenuHeaderShadowColor:#000000;
+$darkMegamenuIconColor:#ffffff;
+$darkMegamenuHoverBgColor:rgba(255,255,255,.1);
+$darkMegamenuHoverTextColor:#49b2c9;
+
+$gradientMegamenuTopBgColor:#8f3b4f;
+$gradientMegamenuBottomBgColor:#231e20;
+
+@import '../../sass/layout/_layout';
