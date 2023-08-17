@@ -791,18 +791,19 @@ namespace Ginger.Run
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
             BindingOperations.ClearBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ToolTipProperty);
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ToolTipProperty, mRunSetConfig, nameof(RunSetConfig.Name));
-            if (WorkSpace.Instance.SourceControl == null)
+            if (WorkSpace.Instance.SourceControl == null || !WorkSpace.Instance.UserProfile.ShowSourceControlStatusIcon)
             {
                 xRunSetUcLabel.xSourceControlIcon.Visibility = Visibility.Collapsed;
             }
             else
             {
                 xRunSetUcLabel.xSourceControlIcon.Visibility = Visibility.Visible;
+                BindingOperations.ClearBinding(xRunSetUcLabel.xSourceControlIcon, ImageMakerControl.ImageTypeProperty);
+                BindingHandler.ObjFieldBinding(xRunSetUcLabel.xSourceControlIcon, ImageMakerControl.ImageTypeProperty, mRunSetConfig, nameof(RunSetConfig.SourceControlStatus), BindingMode.OneWay);
             }
-            BindingOperations.ClearBinding(xRunSetUcLabel.xSourceControlIcon, ImageMakerControl.ImageTypeProperty);
-            BindingHandler.ObjFieldBinding(xRunSetUcLabel.xSourceControlIcon, ImageMakerControl.ImageTypeProperty, mRunSetConfig, nameof(RunSetConfig.SourceControlStatus), BindingMode.OneWay);
             BindingOperations.ClearBinding(xRunSetUcLabel.xModifiedIcon, ImageMakerControl.ImageTypeProperty);
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xModifiedIcon, ImageMakerControl.ImageTypeProperty, mRunSetConfig, nameof(RunSetConfig.DirtyStatusImage), BindingMode.OneWay);
+
             UpdateDescription();
             xRunDescritpion.Init(mContext, mRunSetConfig, nameof(RunSetConfig.RunDescription));
             if (mSolutionCategoriesPage == null)

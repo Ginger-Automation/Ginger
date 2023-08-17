@@ -1528,7 +1528,7 @@ namespace Ginger
                                 ((DataGridTemplateColumn)gridCol).CellTemplate = colView.CellTemplate;
                                 if (colView.ReadOnly == true)
                                 {
-                                    ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
+                                    ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElementStyle") as Style;
                                 }
 
                                 break;

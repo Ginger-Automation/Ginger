@@ -128,6 +128,21 @@ namespace Ginger
             }
         }
 
+        private bool mWatchFileChanges = true;
+        [IsSerializedForLocalRepository(true)]
+        public bool WatchFileChanges
+        {
+            get => mWatchFileChanges;
+            set
+            {
+                if(mWatchFileChanges != value)
+                {
+                    mWatchFileChanges = value;
+                    OnPropertyChanged(nameof(mWatchFileChanges));
+                }
+            }
+        }
+
         public bool IsSharedUserProfile { get { return UserProfileOperations.IsSharedUserProfile; } }
 
         [IsSerializedForLocalRepository]
