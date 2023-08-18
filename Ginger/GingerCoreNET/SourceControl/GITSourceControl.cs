@@ -281,54 +281,51 @@ namespace GingerCore.SourceControl
 
         public override bool GetLatest(string path, ref string error, ref List<string> conflictsPaths)
         {
-            Console.WriteLine("GITHub - GetLatest");
-            if (TestConnection(ref error))
+            if (!TestConnection(ref error))
             {
-                try
-                {
-                    MergeResult result;
-                    result = Pull();
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unable to connect to repository.");
+                return false;
+            }
 
-                    if (result.Status != MergeStatus.Conflicts)
+            try
+            {
+                MergeResult result;
+                result = Pull();
+
+                if (result.Status != MergeStatus.Conflicts)
+                {
+                    using var repo = new Repository(RepositoryRootFolder);
+                    if (supressMessage == true)
                     {
-                        using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
-                        {
-                            if (supressMessage == true)
-                            {
-                                Reporter.ToLog(eLogLevel.INFO, "The solution was updated successfully, Update status: " + result.Status + ", to Revision :" + repo.Head.Tip.Sha);
-                            }
-                            else
-                            {
-                                Reporter.ToUser(eUserMsgKey.GitUpdateState, result.Status, repo.Head.Tip.Sha);
-                            }
-                        }
-                        return true;
+                        Reporter.ToLog(eLogLevel.INFO, $"The solution was updated successfully, Update status: {result.Status}, to Revision :{repo.Head.Tip.Sha}");
                     }
                     else
                     {
-                        conflictsPaths = GetConflictsPaths();
-                        if (supressMessage == true)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to update the solution from source control. Error Details: 'The files are not connected to source control'");
-                        }
-                        else
-                        {
-                            Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "The files are not connected to source control");
-                        }
-                        return false;
+                        Reporter.ToUser(eUserMsgKey.GitUpdateState, result.Status, repo.Head.Tip.Sha);
                     }
-
+                    return true;
                 }
-                catch (Exception ex)
+                else
                 {
-                    conflictsPaths = GetConflictsPathsforGetLatestConflict(path);
-                    error = ex.Message + Environment.NewLine + ex.InnerException;
+                    conflictsPaths = GetConflictsPaths();
+
+                    if (supressMessage == true)
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, "Merge Conflict occurred while getting latest changes.");
+                    }
+                    else
+                    {
+                        Reporter.ToUser(eUserMsgKey.SourceControlUpdateFailed, "Merge Conflict occurred while getting latest changes.");
+                    }
                     return false;
                 }
+
             }
-            else
+            catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Unable to connect to repository");
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting latest changes.", ex);
+                conflictsPaths = GetConflictsPathsforGetLatestConflict(path);
+                error = ex.Message + Environment.NewLine + ex.InnerException;
                 return false;
             }
         }
@@ -891,7 +888,7 @@ namespace GingerCore.SourceControl
 
         public override bool TestConnection(ref string error)
         {
-            Console.WriteLine("GITHub - TestConnection");
+            bool wasConnectedSuccessfully = true;
             try
             {
                 if (IsRepositoryPublic())
@@ -908,16 +905,18 @@ namespace GingerCore.SourceControl
                     else
                     {
                         error = "Username cannot be empty";
-                        return false;
+                        wasConnectedSuccessfully = false;
                     }
                 }
             }
             catch (Exception ex)
             {
                 error = ex.Message;
-                return false;
+                wasConnectedSuccessfully = false;
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while testing connection.", ex);
             }
-            return true;
+
+            return wasConnectedSuccessfully;
         }
 
         public override bool InitializeRepository(string remoteURL)
