@@ -20,9 +20,17 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Ginger.Activities;
+using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.BusinessFlowsLib;
+using Microsoft.Graph;
+using OpenQA.Selenium;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -37,6 +45,7 @@ namespace Ginger.BusinessFlowPages
         Activity mActivity;
         Context mContext;
         General.eRIPageViewMode mPageViewMode;
+        private Dictionary<Guid, string> _ConsumerList;
 
         public ActivityDetailsPage(Activity activity, Context context, General.eRIPageViewMode pageViewMode)
         {
@@ -45,7 +54,7 @@ namespace Ginger.BusinessFlowPages
             mActivity = activity;
             mContext = context;
             mPageViewMode = pageViewMode;
-
+            xTargetApplicationComboBox.SelectionChanged += xTargetApplicationComboBox_SelectionChanged;
             SetUI();
             BindControls();
         }
@@ -100,6 +109,15 @@ namespace Ginger.BusinessFlowPages
                 xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                 xSharedRepoInstanceUCCol.Width = new GridLength(0);
             }
+
+            //logic for Consumer ComboBox for Otoma
+            _ConsumerList = new Dictionary<Guid, string>();
+            foreach (TargetApplication _list in mContext.BusinessFlow.TargetApplications)
+            {
+                _ConsumerList.Add(_list.Guid, _list.AppName);
+            }
+
+            xConsumerCB.ConsumerSource = _ConsumerList;
         }
         public void UpdateActivity(Activity activity)
         {
@@ -159,7 +177,12 @@ namespace Ginger.BusinessFlowPages
             xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
             BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
-            
+
+            //Binding for the consumer ComboBox & EnterPrise flag check for consumer combobox
+            BindingHandler.ObjFieldBinding(xConsumerCB, ConsumerComboBox.SelectedConsumerProperty, mActivity, nameof(Activity.Consumer));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xConsumerStack, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
+
+
             if (mActivity.GetType() == typeof(ErrorHandler))
             {
                 xHandlerTypeStack.Visibility = Visibility.Visible;
@@ -185,6 +208,8 @@ namespace Ginger.BusinessFlowPages
                 xHandlerTriggerOnStackPanel.Visibility = Visibility.Collapsed;
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Collapsed;
             }
+
+            
         }
 
         private void xErrorHandlerMappingCmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -225,5 +250,27 @@ namespace Ginger.BusinessFlowPages
                 xTriggerOnSpecificErrorBtn.Visibility = Visibility.Collapsed;
             }
         }
+
+        private void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (xTargetApplicationComboBox.SelectedItem != null && GingerTerminology.TERMINOLOGY_TYPE == eTerminologyType.MBT)
+            {
+                string selectedItem = xTargetApplicationComboBox.SelectedItem.ToString();
+                if (selectedItem == "MyWebServicesApp")
+                {
+                    xConsumerStack.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xConsumerStack.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                xConsumerStack.Visibility = Visibility.Collapsed;
+            }
+        }
+
+
     }
 }
