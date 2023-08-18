@@ -724,37 +724,65 @@ namespace GingerCore.SourceControl
             return trailingContent;
         }
 
-        public override bool NewResolveConflict(string path, string content, ref string error)
+        public override bool NewResolveConflict(string path, string resolvedContent, ref string error)
         {
+            bool wasConflictResolved;
+            bool wasBackupCreated = false;
             try
             {
                 error = string.Empty;
 
                 if (NeedToCreateBackup(path))
                 {
-                    string backupPath = path.Replace(".xml", "conflictBackup");
-                    File.Copy(path, backupPath);
+                    wasBackupCreated = true;
+                    CreateBackup(path);
                 }
-                
-                File.WriteAllText(path, content);
+                File.WriteAllText(path, resolvedContent);
                 Stage(path);
-                return true;
+                wasConflictResolved = true;
             }
             catch (Exception ex)
             {
-                error = ex.Message + Environment.NewLine + ex.InnerException;
-                return false;
+                error = ex.ToString();
+                wasConflictResolved = false;
             }
+            if (wasConflictResolved && wasBackupCreated)
+            {
+                RemoveBackup(path);
+            }
+            return wasConflictResolved;
+        }
+
+        private string GetBackupFilePath(string path)
+        {
+            return path.Replace(".xml", ".conflictBackup");
+        }
+
+        private string GetIgnoreFilePath(string path)
+        {
+            return path.Replace(".xml", ".ignore");
+        }
+
+        private void CreateBackup(string path)
+        {
+            string backupPath = GetBackupFilePath(path);
+            File.Copy(path, backupPath);
+        }
+
+        private void RemoveBackup(string path)
+        {
+            string backupPath = GetBackupFilePath(path);
+            File.Delete(backupPath);
         }
 
         private bool NeedToCreateBackup(string path)
         {
             bool hasExtension = Path.GetExtension(path) != string.Empty;
 
-            string ignoreFilePath = path.Replace(".xml", ".ignore");
+            string ignoreFilePath = GetIgnoreFilePath(path);
             bool ignoreFileExists = File.Exists(ignoreFilePath);
 
-            string backupFilePath = path.Replace(".xml", ".conflictBackup");
+            string backupFilePath = GetBackupFilePath(path);
             bool backupFileExists = File.Exists(backupFilePath);
 
             return hasExtension && !ignoreFileExists && !backupFileExists;
