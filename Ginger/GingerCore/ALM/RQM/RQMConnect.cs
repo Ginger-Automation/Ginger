@@ -200,23 +200,27 @@ namespace GingerCore.ALM.RQM
         }
 
         RQMProjectListConfiguration RQMProjectListConfig;
+        private readonly object fileLock = new object();
         XmlReader reader;
         private void GetRQMProjectListConfiguration()
         {
             try
             {
-                if (RQMProjectListConfig != null)
-                { return; }
-                string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
-                if (File.Exists(importConfigTemplate))
-
+                lock (fileLock)
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(RQMProjectListConfiguration));
+                    if (RQMProjectListConfig != null)
+                    { return; }
+                    string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
+                    if (File.Exists(importConfigTemplate))
 
-                    FileStream fs = new FileStream(importConfigTemplate, FileMode.Open);
-                    reader = XmlReader.Create(fs);
-                    RQMProjectListConfig = (RQMProjectListConfiguration)serializer.Deserialize(reader);
-                    fs.Close();
+                    {
+                        XmlSerializer serializer = new XmlSerializer(typeof(RQMProjectListConfiguration));
+
+                        FileStream fs = new FileStream(importConfigTemplate, FileMode.Open);
+                        reader = XmlReader.Create(fs);
+                        RQMProjectListConfig = (RQMProjectListConfiguration)serializer.Deserialize(reader);
+                        fs.Close();
+                    } 
                 }
             }
             catch (Exception ex)

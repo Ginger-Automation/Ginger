@@ -64,40 +64,39 @@ namespace GingerCore.ALM.RQM
 
         RQMProjectListConfiguration RQMProjectListConfig;
         XmlReader reader;
-        private static readonly object _Locker = new object();
+        private static readonly object importFileLock = new object();
         static List<string> valuelist = new List<string>();
         private void GetRQMProjectListConfiguration()
         {
             try
             {
-                if (RQMProjectListConfig != null)
-                { return; }
-                string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
-                if (File.Exists(importConfigTemplate))
+                lock (importFileLock)
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(RQMProjectListConfiguration));
-                    
-                    lock (_Locker)
-                    {
-                           FileStream fs = new FileStream(importConfigTemplate, FileMode.Open);
-                            try
-                            {
-                                reader = XmlReader.Create(fs);
-                                RQMProjectListConfig = (RQMProjectListConfiguration)serializer.Deserialize(reader);
-                            }
-                            catch (Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.DEBUG, "Failed To Load RQM_ImportConfigs_Template.xml", ex);
-                            }
-                            finally
-                            {
-                                fs.Close();
-                                fs.Dispose();
-                            }
-                        
-                        
+                    Thread.Sleep(500);
+                    if (RQMProjectListConfig != null)
+                    { 
+                        return; 
                     }
-                    
+                    string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
+                    if (File.Exists(importConfigTemplate))
+                    {
+                        XmlSerializer serializer = new XmlSerializer(typeof(RQMProjectListConfiguration));
+                        FileStream fs = new FileStream(importConfigTemplate, FileMode.Open, FileAccess.Read, FileShare.Read);
+                        try
+                        {
+                            reader = XmlReader.Create(fs);
+                            RQMProjectListConfig = (RQMProjectListConfiguration)serializer.Deserialize(reader);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, "Failed To Load RQM_ImportConfigs_Template.xml", ex);
+                        }
+                        finally
+                        {
+                            fs.Close();
+                            fs.Dispose();
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -186,8 +185,8 @@ namespace GingerCore.ALM.RQM
                         //// Updating of Execution Record Results (test plan level)
                         try
                         {
-                            
-                            while(valuelist.Contains(exeResultList.FirstOrDefault().TestCaseExportID))
+
+                            while (valuelist.Contains(exeResultList.FirstOrDefault().TestCaseExportID))
                             {
                                 Thread.Sleep(1000);
                             }
@@ -669,7 +668,7 @@ namespace GingerCore.ALM.RQM
                     {
                         businessFlow.ExternalIdCalCulated = $"RQMID={plan.ExportedID.ToString()}";
                     }
-                    
+
                     int ActivityGroupCounter = 0;
                     int activityStepCounter = 0;
                     int activityStepOrderID = 1;
@@ -698,7 +697,7 @@ namespace GingerCore.ALM.RQM
                         foreach (ACL_Data_Contract.Activity act in plan.Activities)
                         {
                             string ActivityGroupID = $"RQMID={act.ExportedID.ToString()}|RQMScriptID={act.ExportedTestScriptId.ToString()}|RQMRecordID={act.ExportedTcExecutionRecId.ToString()}|AtsID={act.EntityId.ToString()}";
-                            if(string.IsNullOrEmpty(businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID))
+                            if (string.IsNullOrEmpty(businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID))
                             {
                                 businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID = ActivityGroupID;
                             }
