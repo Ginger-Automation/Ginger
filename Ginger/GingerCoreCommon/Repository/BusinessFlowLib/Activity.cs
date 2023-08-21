@@ -433,10 +433,6 @@ namespace GingerCore
                 if (mType != value)
                 {
                     mType = value;
-                    if (mType == eSharedItemType.Link)
-                    {
-                        this.Active = true;
-                    }
                     OnPropertyChanged(nameof(Type));
                 }
             }

@@ -47,7 +47,9 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 CancellationToken cancellationToken = default(CancellationToken);
 
                 var queryToImap = new SearchQuery();
-               
+                DateTimeOffset receivedStartDateTimeToOffset = new DateTimeOffset();
+                DateTimeOffset receivedEndDateTimeToOffset = new DateTimeOffset();
+
                 if (!string.IsNullOrEmpty(filters.From))
                 {
                     queryToImap = queryToImap.And(SearchQuery.FromContains(filters.From));
@@ -69,23 +71,17 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                 if (!string.IsNullOrEmpty(filters.Subject))
                 {
                     queryToImap = queryToImap.And(SearchQuery.SubjectContains(filters.Subject));
-                }
-                if (!string.IsNullOrEmpty(filters.Body))
-                {
-                    queryToImap = queryToImap.And(new TextSearchQuery(SearchTerm.BodyContains,filters.Body));
-                }              
+                }               
 
-                DateTimeOffset receivedStartDateTimeToOffset = (DateTimeOffset)filters.ReceivedStartDate.ToUniversalTime();
-                DateTimeOffset receivedEndDateTimeToOffset = (DateTimeOffset)filters.ReceivedEndDate.ToUniversalTime();
-
-                if (!filters.ReceivedStartDate.Equals(DateTime.MinValue))
+                if (!filters.ReceivedStartDate.Date.Equals(DateTime.MinValue.Date))
                 {
+                    receivedStartDateTimeToOffset = new DateTimeOffset(filters.ReceivedStartDate);
                     queryToImap = queryToImap.And(SearchQuery.DeliveredAfter(filters.ReceivedStartDate));
                 }
                 if (!(filters.ReceivedEndDate.Equals(DateTime.Today)))
                 {
+                    receivedEndDateTimeToOffset = new DateTimeOffset(filters.ReceivedEndDate);
                     queryToImap = queryToImap.And(SearchQuery.DeliveredBefore(filters.ReceivedEndDate.AddDays(1)));
-
                 }
                 if(filters.ReadUnread)
                 {
@@ -124,14 +120,17 @@ namespace Amdocs.Ginger.CoreNET.GeneralLib
                         ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.No) && !message.Attachments.Any()) ||
                         ((filters.HasAttachments == EmailReadFilters.eHasAttachmentsFilter.Yes) && DoesSatisfyAttachmentFilter(message, expectedContentTypes)))
                     {
-                        if ((string.IsNullOrEmpty(filters.Body) || message.TextBody.Contains(filters.Body)) && (message.Date >= receivedStartDateTimeToOffset && message.Date <= receivedEndDateTimeToOffset))
-                        {
-                            emailProcessor(ConvertMessageToReadEmail(message, expectedContentTypes));
-                            if(filters.MarkRead.Equals(true))
+                        if ((string.IsNullOrEmpty(filters.Body)) || (message.TextBody.Contains(filters.Body, StringComparison.OrdinalIgnoreCase)))
+                        {                            
+                            if ((!filters.ReceivedStartDate.Date.Equals(DateTime.MinValue.Date)) || (!(filters.ReceivedEndDate.Equals(DateTime.Today))) && ((message.Date >= receivedStartDateTimeToOffset && message.Date <= receivedEndDateTimeToOffset) || (receivedStartDateTimeToOffset == receivedEndDateTimeToOffset)))                        
+                            {
+                                emailProcessor(ConvertMessageToReadEmail(message, expectedContentTypes));
+                                if (filters.MarkRead.Equals(true))
                                 {
-                                   inbox.AddFlags(item, MessageFlags.Seen, true);   
+                                    inbox.AddFlags(item, MessageFlags.Seen, true);
                                 }
-                            count++;
+                                count++;
+                            }
                         }
 
                     }

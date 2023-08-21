@@ -663,10 +663,10 @@
     <PackageReference Include="NSwag.Core.Yaml" Version="12.0.9" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />
     <PackageReference Include="RoyWpf.System.Windows.Interactivity" Version="0.1.2" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="115.0.5790.10200" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="116.0.5845.9600" />
     <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.33.0" />
-    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.10.0" />
-    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="114.0.1823.58" />
+    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.11.0" />
+    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="115.0.1901.200" />
     <PackageReference Include="sharpadbclient" Version="2.3.23" />
     <PackageReference Include="Syncfusion.Shared.WPF" Version="20.1.0.55" />
     <PackageReference Include="System.Data.OleDb" Version="6.0.0" />
