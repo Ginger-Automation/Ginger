@@ -105,18 +105,21 @@ namespace GingerCore.Actions
         {
             if (string.IsNullOrEmpty(SaveToFileName))
             {
-                throw new InvalidOperationException("File pathname for saving the screenshot was not provided.");
+                Error = "File pathname for saving the screenshot was not provided.";
+                return;
             }
 
             string fileExtension = Path.GetExtension(SaveToFileName);
             if (!string.IsNullOrEmpty(fileExtension) && fileExtension != DEFAULT_IMAGE_EXTENSION)
             {
-                throw new InvalidOperationException($"Unsupported file extension '{fileExtension}'. Only {DEFAULT_IMAGE_EXTENSION} is allowed.");
+                Error = $"Unsupported file extension '{fileExtension}'. Only {DEFAULT_IMAGE_EXTENSION} is allowed.";
+                return;
             }
 
             if (!ScreenShots.Any())
             {
-                throw new InvalidOperationException("No screenshots were captured for saving.");
+                Error = "No screenshots were captured for saving.";
+                return;
             }
         }
 
@@ -138,7 +141,8 @@ namespace GingerCore.Actions
                 catch
                 {
                     Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                    throw new InvalidOperationException($"The provided folder path is invalid: {directoryPath}");
+                    Error = $"The provided folder path is invalid: {directoryPath}";
+                    throw;
                 }
             }
 
