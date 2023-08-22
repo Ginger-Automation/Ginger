@@ -96,8 +96,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             return await Task.Run(() =>
              {
-                 DoOptionsHanlder.Run(opts);
-                 return 0;
+                 try
+                 {
+                     DoOptionsHanlder.Run(opts);
+                     return 0;
+                 }
+                 catch (Exception ex)
+                 {
+                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Run", ex);
+                     return -1;
+                 }
              });
 
         }

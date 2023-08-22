@@ -3963,67 +3963,75 @@ namespace Ginger.Run
 
         public bool ContinueRun(eContinueLevel continueLevel, eContinueFrom continueFrom, BusinessFlow specificBusinessFlow = null, Activity specificActivity = null, IAct specificAction = null)
         {
-            switch (continueFrom)
+            try
             {
-                case eContinueFrom.LastStoppedAction:
-                    if (mExecutedBusinessFlowWhenStopped != null && BusinessFlows.Contains(mExecutedBusinessFlowWhenStopped))
-                    {
-                        CurrentBusinessFlow = mExecutedBusinessFlowWhenStopped;
-                    }
-                    else
-                    {
-                        return false;//can't do continue
-                    }
+                switch (continueFrom)
+                {
+                    case eContinueFrom.LastStoppedAction:
+                        if (mExecutedBusinessFlowWhenStopped != null && BusinessFlows.Contains(mExecutedBusinessFlowWhenStopped))
+                        {
+                            CurrentBusinessFlow = mExecutedBusinessFlowWhenStopped;
+                        }
+                        else
+                        {
+                            return false;//can't do continue
+                        }
 
-                    if (mExecutedActivityWhenStopped != null && mExecutedBusinessFlowWhenStopped.Activities.Contains(mExecutedActivityWhenStopped))
-                    {
-                        CurrentBusinessFlow.CurrentActivity = mExecutedActivityWhenStopped;
-                        CurrentBusinessFlow.ExecutionLogActivityCounter--;
-                    }
-                    else
-                    {
-                        return false;//can't do continue
-                    }
+                        if (mExecutedActivityWhenStopped != null && mExecutedBusinessFlowWhenStopped.Activities.Contains(mExecutedActivityWhenStopped))
+                        {
+                            CurrentBusinessFlow.CurrentActivity = mExecutedActivityWhenStopped;
+                            CurrentBusinessFlow.ExecutionLogActivityCounter--;
+                        }
+                        else
+                        {
+                            return false;//can't do continue
+                        }
 
-                    if (mExecutedActionWhenStopped != null && mExecutedActivityWhenStopped.Acts.Contains(mExecutedActionWhenStopped))
-                    {
-                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = mExecutedActionWhenStopped;
-                    }
-                    else
-                    {
-                        return false;//can't do continue
-                    }
+                        if (mExecutedActionWhenStopped != null && mExecutedActivityWhenStopped.Acts.Contains(mExecutedActionWhenStopped))
+                        {
+                            CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = mExecutedActionWhenStopped;
+                        }
+                        else
+                        {
+                            return false;//can't do continue
+                        }
 
-                    break;
+                        break;
 
-                case eContinueFrom.SpecificBusinessFlow:
-                    CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
-                    CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.FirstOrDefault();
-                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.FirstOrDefault();
-                    break;
+                    case eContinueFrom.SpecificBusinessFlow:
+                        CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
+                        CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.FirstOrDefault();
+                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.FirstOrDefault();
+                        break;
 
-                case eContinueFrom.SpecificActivity:
-                    CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
-                    CurrentBusinessFlow.CurrentActivity = specificActivity;
-                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificActivity.Acts.FirstOrDefault();
-                    break;
+                    case eContinueFrom.SpecificActivity:
+                        CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
+                        CurrentBusinessFlow.CurrentActivity = specificActivity;
+                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificActivity.Acts.FirstOrDefault();
+                        break;
 
-                case eContinueFrom.SpecificAction:
-                    CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
-                    CurrentBusinessFlow.CurrentActivity = specificActivity;
-                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificAction;
-                    break;
+                    case eContinueFrom.SpecificAction:
+                        CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
+                        CurrentBusinessFlow.CurrentActivity = specificActivity;
+                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificAction;
+                        break;
+                }
+
+                if (continueLevel == eContinueLevel.Runner)
+                {
+                    RunRunner(true);
+                }
+                else
+                {
+                    RunBusinessFlow(null, true, true);
+                }
+                return true;
             }
-
-            if (continueLevel == eContinueLevel.Runner)
+            catch (Exception ex)
             {
-                RunRunner(true);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Continue run", ex);
+                return false;
             }
-            else
-            {
-                RunBusinessFlow(null, true, true);
-            }
-            return true;
         }
 
         public async Task<int> RunBusinessFlowAsync(BusinessFlow businessFlow, bool standaloneBfExecution = false, bool doContinueRun = false)
