@@ -217,7 +217,7 @@ namespace Ginger.Actions
             {
                 BindingOperations.ClearBinding(supportSimulationCheckbox, CheckBox.IsCheckedProperty);
             }
-
+            
             xActionsDetailsPnl.IsEnabled = true;
             xOperationSettingsPnl.IsEnabled = true;
             xWaitTimeoutPnl.IsEnabled = true;
@@ -2025,6 +2025,8 @@ namespace Ginger.Actions
             BindingOperations.ClearAllBindings(xdsOutputParamMapType);
             BindingOperations.ClearAllBindings(xEnableActionLogConfigCheckBox);
             BindingOperations.ClearAllBindings(xLocateValueVE);
+            xValueVE.ClearControlsBindings();
+            BindingOperations.ClearAllBindings(xValueVE);
 
             BindingOperations.ClearAllBindings(xRawResponseValuesBtn);
             xTagsViewer.ClearBinding();
