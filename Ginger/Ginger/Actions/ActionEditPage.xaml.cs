@@ -217,7 +217,7 @@ namespace Ginger.Actions
             {
                 BindingOperations.ClearBinding(supportSimulationCheckbox, CheckBox.IsCheckedProperty);
             }
-            
+
             xActionsDetailsPnl.IsEnabled = true;
             xOperationSettingsPnl.IsEnabled = true;
             xWaitTimeoutPnl.IsEnabled = true;
@@ -798,18 +798,17 @@ namespace Ginger.Actions
             {
                 xInputValuesGrid.Visibility = Visibility.Collapsed;
                 xValueBoxPnl.Visibility = Visibility.Visible;
-                ActInputValue inputValue = a.InputValues.FirstOrDefault(x => x.Param == "Value");
+                if (!a.InputValues.Any(x => x.Param == "Value"))
+                {
+                    a.AddOrUpdateInputParamValue("Value", "");
+                }
+                ActInputValue inputValue = a.InputValues.FirstOrDefault(x => x.Param == "Value");               
+                xValueVE.Init(mContext, inputValue, nameof(ActInputValue.Value));
                 if (inputValue != null)
                 {
                     xValueVE.ValueTextBox.Text = inputValue.Value;
                     xValueLbl.Content = inputValue.Param;
-                }
-                else
-                {
-                    a.AddOrUpdateInputParamValue("Value", "");
-                }
-                xValueVE.Init(mContext, inputValue, nameof(ActInputValue.Value));
-
+                }        
             }
         }
 
