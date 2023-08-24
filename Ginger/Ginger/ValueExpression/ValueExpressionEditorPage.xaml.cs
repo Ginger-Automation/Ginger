@@ -944,6 +944,7 @@ namespace Ginger
             {
                 if (mContext.Environment == null && mEnvs != null && mEnvs.Count > 0 && WorkSpace.Instance.UserProfile.RecentEnvironment != Guid.Empty)
                 {
+                    // selects the current environment in use. this environment is then used to get the values of the environment variables
                     mContext.Environment = GetCurrentEnvironment();
                 }
                 mVE = new ValueExpression(mContext.Environment, mContext, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
@@ -952,7 +953,10 @@ namespace Ginger
             mVE.Value = this.xExpressionUCTextEditor.textEditor.Text;
             xCalculatedTextBox.Text = mVE.ValueCalculated;
         }
-
+        /// <summary>
+        /// Finds the selected environment from the total list of environments
+        /// </summary>
+        /// <returns>Returns the current environment</returns>
         private ProjEnvironment? GetCurrentEnvironment()
         {
             return mEnvs.FirstOrDefault((mEnv) => mEnv.Guid == WorkSpace.Instance.UserProfile.RecentEnvironment);
