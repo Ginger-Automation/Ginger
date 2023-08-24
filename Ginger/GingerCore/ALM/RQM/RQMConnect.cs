@@ -121,7 +121,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"RQM connection Failed{ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"RQM connection Failed {ex.Message}" , ex);
             }
             return isUserAuthen;
         }
@@ -175,7 +175,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Project not found{ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Project not found{ex.Message}",ex);
             }
             return RQMProjects.ToDictionary(x => x, x => x);
         }
@@ -225,7 +225,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to import RQM test plans, RQM_ImportConfigs_Template.xml wasn't found {ex.Message} ");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to import RQM test plans, RQM_ImportConfigs_Template.xml wasn't found {ex.Message} ",ex);
             }
         }
 
@@ -292,7 +292,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Plan list not found {ex.Message} ");
+                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Plan list not found {ex.Message} ",ex);
             }
             return RQMTestPlanList;
         }
@@ -394,7 +394,7 @@ namespace GingerCore.ALM.RQM
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"RQMConnect GetRQMTestPlanByIdByProject :{JsonConvert.SerializeObject(ex)}");
-                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Plan by Id not found {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Plan by Id not found {ex.Message}", ex);
             }
 
             return testPlanRes;
@@ -480,7 +480,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Test Plan full data not found {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Test Plan full data not found {ex.Message}", ex);
             }
             return testPlan;
         }
@@ -606,7 +606,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Test Case list not found {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Test Case list not found {ex.Message}", ex);
             }
             return RQMTestCaseList;
         }
@@ -659,7 +659,7 @@ namespace GingerCore.ALM.RQM
                         catch (Exception ex)
                         {
                             responseDataVersionedTS = new RqmResponseData();
-                            Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Script by test plan not found {ex.Message}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Script by test plan not found {ex.Message}", ex);
                         }
                         XmlDocument docVersionedTS = new XmlDocument();
                         docVersionedTS.LoadXml(!string.IsNullOrEmpty(responseDataVersionedTS.responseText) ? responseDataVersionedTS.responseText : string.Empty);
@@ -676,13 +676,13 @@ namespace GingerCore.ALM.RQM
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Case by test plan not found { ex.Message}");
+                        Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Case by test plan not found { ex.Message}", ex);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Execution Records by test plan not found {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Execution Records by test plan not found {ex.Message}", ex);
             }
             return RQMExecutionRecords;
         }
@@ -849,7 +849,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Test Suite result not found {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Test Suite result not found {ex.Message}", ex);
             }
             return RQMExecutionRecords;
         }
@@ -885,7 +885,7 @@ namespace GingerCore.ALM.RQM
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"RQMConnect GetRQMTestPlanByIdByProject :{JsonConvert.SerializeObject(ex)}");
-                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Case by Id not found {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Case by Id not found {ex.Message}", ex);
             }
             return "";
         }

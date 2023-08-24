@@ -513,8 +513,8 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                result = $"Unexpected error occurred- {ex.Message}";
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to RQM/ALM", ex.InnerException);
+                result = $"Unexpected error occurred- {ex}";
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to export execution details to RQM/ALM {ex.InnerException}" , ex);
                 return null;
             }
         }
