@@ -40,6 +40,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -941,9 +942,9 @@ namespace Ginger
         {
             if (mVE == null)
             {
-                if (mContext.Environment == null && mEnvs != null && mEnvs.Count > 0)
+                if (mContext.Environment == null && mEnvs != null && mEnvs.Count > 0 && WorkSpace.Instance.UserProfile.RecentEnvironment != Guid.Empty)
                 {
-                    mContext.Environment = mEnvs[0];
+                    mContext.Environment = GetCurrentEnvironment();
                 }
                 mVE = new ValueExpression(mContext.Environment, mContext, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
 
@@ -951,6 +952,12 @@ namespace Ginger
             mVE.Value = this.xExpressionUCTextEditor.textEditor.Text;
             xCalculatedTextBox.Text = mVE.ValueCalculated;
         }
+
+        private ProjEnvironment? GetCurrentEnvironment()
+        {
+            return mEnvs.FirstOrDefault((mEnv) => mEnv.Guid == WorkSpace.Instance.UserProfile.RecentEnvironment);
+        }
+
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
