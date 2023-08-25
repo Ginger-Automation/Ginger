@@ -189,7 +189,7 @@ namespace Ginger.Actions
 
         public void Clear()
         {
-            if(mAction != null)
+            if (mAction != null)
             {
                 string allProperties = string.Empty;
                 PropertyChangedEventManager.RemoveHandler(source: mAction, handler: ActionPropertyChanged, propertyName: allProperties);
@@ -250,7 +250,7 @@ namespace Ginger.Actions
             mColNames = null!;
             xOutputValuesGrid.DataSourceList = new ObservableList<ActReturnValue>();
             mStoreToVarsList.Clear();
-            
+
             mActParentBusinessFlow = null!;
             mActParentActivity = null!;
             mSimulateRunBtn = new Button();
@@ -471,7 +471,7 @@ namespace Ginger.Actions
             {
                 xDataSourceConfigGrid.Visibility = Visibility.Collapsed;
             }
-            
+
             mDSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             if (mDSList.Count == 0)
             {
@@ -764,6 +764,11 @@ namespace Ginger.Actions
                     xValueVE.ValueTextBox.Text = a.InputValues.FirstOrDefault().Value;
                     xValueLbl.Content = a.InputValues.FirstOrDefault().Param;
                 }
+                else
+                {
+                    xInputValuesGrid.Visibility = Visibility.Collapsed;
+                    xValueBoxPnl.Visibility = Visibility.Collapsed;                    
+                }
             }
             else if (a.GetType() == typeof(ActConsoleCommand))//TODO: Fix Action implementation to not base on the Action edit page Input values controls- to have it own controls
             {
@@ -786,7 +791,7 @@ namespace Ginger.Actions
                     xValueBoxPnl.Visibility = Visibility.Collapsed;
                 }
             }
-            else if(a.GetType() == typeof(ActCompareImgs))
+            else if (a.GetType() == typeof(ActCompareImgs))
             {
                 xInputValuesGrid.Visibility = Visibility.Collapsed;
                 xValueBoxPnl.Visibility = Visibility.Collapsed;
@@ -802,13 +807,13 @@ namespace Ginger.Actions
                 {
                     a.AddOrUpdateInputParamValue("Value", "");
                 }
-                ActInputValue inputValue = a.InputValues.FirstOrDefault(x => x.Param == "Value");               
+                ActInputValue inputValue = a.InputValues.FirstOrDefault(x => x.Param == "Value");
                 xValueVE.Init(mContext, inputValue, nameof(ActInputValue.Value));
                 if (inputValue != null)
                 {
                     xValueVE.ValueTextBox.Text = inputValue.Value;
                     xValueLbl.Content = inputValue.Param;
-                }        
+                }
             }
         }
 
@@ -930,7 +935,7 @@ namespace Ginger.Actions
             xOutputValuesGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshOutputValuesGridElements));
             xOutputValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddReturnValue));
 
-            if(!outputValuesGridToolbarItemsAdded)
+            if (!outputValuesGridToolbarItemsAdded)
             {
                 outputValuesGridToolbarItemsAdded = true;
                 xOutputValuesGrid.AddSeparator();
@@ -1586,7 +1591,7 @@ namespace Ginger.Actions
             public object Convert(object value, Type targetType, object parameter,
                     System.Globalization.CultureInfo culture)
             {
-                string status = value == null ? "": value.ToString();
+                string status = value == null ? "" : value.ToString();
                 if (status.Equals(ActReturnValue.eStatus.Passed.ToString()))
                 {
                     return System.Windows.Media.Brushes.Green;//System.Drawing.Brushes.Green;
@@ -1975,13 +1980,16 @@ namespace Ginger.Actions
 
         private void EnableActionLogConfigCheckBox_UnChecked(object sender, RoutedEventArgs e)
         {
-            mAction.EnableActionLogConfig = false;
+            if (mAction != null)
+            {
+                mAction.EnableActionLogConfig = false;
+            }
             ResetActionLog();
         }
 
         private void ResetActionLog()
         {
-            if (mAction.EnableActionLogConfig)
+            if (mAction != null && mAction.EnableActionLogConfig)
             {
                 ShowActionLogConfig();
             }
