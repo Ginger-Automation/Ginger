@@ -174,6 +174,7 @@ namespace Ginger.ALM.MapToALMWizard
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Failed get ALM Tree, {System.Reflection.MethodBase.GetCurrentMethod().Name}: {ex.Message}");
+                Reporter.ToLog(eLogLevel.DEBUG, $"Failed get ALM Tree, {System.Reflection.MethodBase.GetCurrentMethod().Name}: {ex}");
             }
             return win;
         }
