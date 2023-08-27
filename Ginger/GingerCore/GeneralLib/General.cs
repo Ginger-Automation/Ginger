@@ -312,6 +312,16 @@ namespace GingerCore
             }
         }
 
+        public static void FillComboFromDynamicList(ComboBox comboBox, dynamic list)
+        {
+            comboBox.Items.Clear();
+            if (list == null)
+            {
+                return;
+            }
+            comboBox.ItemsSource = list;
+        }
+
         public static bool CheckComboItems(ComboBox comboBox, List<string> ls)
         {
             if (comboBox.Items.Count != ls.Count())

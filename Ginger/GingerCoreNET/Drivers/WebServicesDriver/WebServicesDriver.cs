@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -34,12 +35,18 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Xml;
 
 namespace GingerCore.Drivers.WebServicesDriverLib
 {
     public class WebServicesDriver : DriverBase, IVirtualDriver
     {
+        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        {
+            return "WebServicesDriverEditPage";
+        }
+
         [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Show Driver Window On Launch")]
@@ -121,6 +128,21 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         [UserConfiguredDescription("Use Proxy Server Settings | Set to true in order to use local Proxy Server settings, if set to true configured Agent 'Proxy Settings' will be avoided. ")]
         public bool UseServerProxySettings { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Configure Tcp client endpoint")]
+        public bool UseTcp { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Tcp client hostname")]
+        public string TcpHostname { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Tcp client port")]
+        public string TcpPort { get; set; }
+
         private bool mIsDriverWindowLaunched
         {
             get
@@ -142,6 +164,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public string mRawResponse;
         public string mRawRequest;
         private HttpWebClientUtils mWebAPI;
+        private TcpClient mTcpClient;
 
         public override bool IsSTAThread()
         {
@@ -181,6 +204,26 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 CreateSTA(ShowDriverWindow);
             }
 
+            if (UseTcp)
+            {
+                if (String.IsNullOrEmpty(TcpHostname) || String.IsNullOrEmpty(TcpPort))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Tcp configuration error - Tcp hostname or port cannot be empty while driver is configured to use Tcp");
+                }
+                else
+                {
+                    try
+                    {
+                        mTcpClient = new TcpClient(TcpHostname, Convert.ToInt32(TcpPort));
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error when try to start Web Services Driver - " + ex.Message);
+                        ErrorMessageFromDriver = "Failed to connect via TCP, please check configurations";
+                        return;
+                    }
+                }
+            }
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
@@ -207,6 +250,11 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 {
                     mDriverWindow.Close();
                     mDriverWindow = null;
+                }
+                if (mTcpClient != null)
+                {
+                    mTcpClient.Close();
+                    mTcpClient = null;
                 }
             }
             catch (Exception ex)
@@ -346,6 +394,10 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             else if (act is ActScreenShot)
             {
+            }
+            else if (act is ActDiameter)
+            {
+
             }
             else
             {
@@ -504,7 +556,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     propertiesQouteFixed = propertiesQouteFixed.Replace("\0", "");
                     act.AddOrUpdateReturnParamActual(kpr.Value[0] + "-Properties", kpr.Value[5]);
                 }
-                if(mWebAPI is not null)
+                if (mWebAPI is not null)
                 {
                     act.RawResponseValues = mWebAPI.ResponseFileContent;
                     act.AddOrUpdateReturnParamActual("Raw Request: ", mWebAPI.RequestFileContent);

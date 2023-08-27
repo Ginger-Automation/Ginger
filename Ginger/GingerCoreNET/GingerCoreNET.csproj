@@ -395,6 +395,10 @@
 
   <ItemGroup>
 
+    <None Update="DiameterLib\AVPDictionary.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
     <None Update="Images\%40amdocs_logo.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

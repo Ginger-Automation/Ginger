@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<DiameterAvps>
+	<Avp name="Origin-Host" code="264" type="DiamIdent" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Origin-Realm" code="296" type="DiamIdent" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Host-IP-Address" code="257" type="Address" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Vendor-Id" code="266" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Product-Name" code="269" type="UTF8String" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Origin-State-Id" code="278" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+</DiameterAvps>
