@@ -26,7 +26,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions.Communication;
-
+using Microsoft.Azure.Cosmos.Linq;
 
 namespace GingerCore.GeneralLib
 {
@@ -110,8 +110,9 @@ namespace GingerCore.GeneralLib
                             count++;
                             return true;
                         });
-
-                    await messageIterator.IterateAsync();
+                    
+                        await messageIterator.IterateAsync();
+                                       
                 }
             }
             catch (Exception ex)
@@ -159,8 +160,8 @@ namespace GingerCore.GeneralLib
             {
                 return true;
             }
-            IEnumerable<string> actualRecipients = message.ToRecipients.Select(recipient => recipient.EmailAddress.Address);
-            if ((actualRecipients == null) || (actualRecipients.Count() == 0))
+            IEnumerable<string> actualRecipients = message.ToRecipients.Where(r => r.EmailAddress != null && !string.IsNullOrEmpty(r.EmailAddress.Address)).Select(recipient => recipient.EmailAddress.Address);
+            if ((actualRecipients == null) || (actualRecipients.Count() == 0) )
             {
                 return false;
             }
@@ -278,14 +279,23 @@ namespace GingerCore.GeneralLib
 
         private bool HasAllExpectedRecipient(IEnumerable<string> expectedRecipients, IEnumerable<string> actualRecipients)
         {
-            foreach (string expectedRecipient in expectedRecipients)
+
+            try
             {
-                bool hasExpectedRecipient = actualRecipients.Any(actualRecipient =>
-                    actualRecipient.Equals(expectedRecipient, StringComparison.OrdinalIgnoreCase));
-                if (!hasExpectedRecipient)
+                foreach (string expectedRecipient in expectedRecipients)
                 {
-                    return false;
+                    bool hasExpectedRecipient = actualRecipients.Any(actualRecipient =>
+                        actualRecipient.Equals(expectedRecipient, StringComparison.OrdinalIgnoreCase));
+                    if (!hasExpectedRecipient)
+                    {
+                        return false;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+
+                //throw;
             }
             return true;
         }
