@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.CoreNET.BPMN;
 using Ginger.Activities;
 using Ginger.ALM;
 using Ginger.Repository;
@@ -25,6 +27,8 @@ using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -105,12 +109,35 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
             }
+
+            TreeViewUtils.AddMenuItem(mContextMenu, "Export BPMN", ExportBPMN, imageType: eImageType.ShareExternal);
         }
 
         private void ShowUsage(object sender, RoutedEventArgs e)
         {
             RepositoryItemUsagePage usagePage = new RepositoryItemUsagePage(mActivitiesGroup);
             usagePage.ShowAsWindow();
+        }
+
+        private void ExportBPMN(object sender, RoutedEventArgs e)
+        {
+            ActivitiesGroupToBPMNConverter activitiesGroupToBPMNConverter = new();
+            Collaboration collaboration = activitiesGroupToBPMNConverter.Convert(mActivitiesGroup);
+            BPMNXMLSerializer serializer = new();
+            string xml = serializer.Serialize(collaboration);
+
+            string directoryPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(@"~\\Documents\BPMN");
+            if(!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+            string filePath = Path.Combine(directoryPath, $"{mActivitiesGroup.Name}.bpmn");
+            if (!File.Exists(filePath))
+            {
+                File.Create(filePath);
+            }
+
+            File.WriteAllText(filePath, xml);
         }
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)
