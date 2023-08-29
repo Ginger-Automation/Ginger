@@ -356,7 +356,7 @@ namespace Ginger.SourceControl
                 {
                     App.MainWindow.Dispatcher.Invoke(() =>
                     {
-                        ResolveConflictWindow resConfPage = new ResolveConflictWindow(conflictsPaths, SourceControl.GetCurrentBranchForSolution());
+                        ResolveConflictWindow resConfPage = new ResolveConflictWindow(conflictsPaths);
                         if (WorkSpace.Instance.RunningInExecutionMode == true)
                         {
                             conflictsPaths.ForEach(cPath => SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, cPath, eResolveConflictsSide.Server));
