@@ -26,7 +26,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions.Communication;
-using Microsoft.Azure.Cosmos.Linq;
 
 namespace GingerCore.GeneralLib
 {
@@ -111,8 +110,7 @@ namespace GingerCore.GeneralLib
                             return true;
                         });
                     
-                        await messageIterator.IterateAsync();
-                                       
+                        await messageIterator.IterateAsync();                                       
                 }
             }
             catch (Exception ex)
