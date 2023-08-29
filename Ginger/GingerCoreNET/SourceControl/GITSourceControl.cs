@@ -721,7 +721,7 @@ namespace GingerCore.SourceControl
             return trailingContent;
         }
 
-        public override bool NewResolveConflict(string path, string resolvedContent, ref string error)
+        public override bool ResolveConflictWithContent(string path, string resolvedContent, ref string error)
         {
             bool wasConflictResolved;
             bool wasBackupCreated = false;

@@ -783,7 +783,7 @@ namespace GingerCore.SourceControl
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override bool NewResolveConflict(string path, string content, ref string error)
+        public override bool ResolveConflictWithContent(string path, string content, ref string error)
         {
             if(client == null)
             {

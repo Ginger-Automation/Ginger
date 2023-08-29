@@ -233,7 +233,14 @@ namespace Ginger.SourceControl
             return mergedRIB;
         }
 
-        public static bool NewResolveConflict(SourceControlBase sourceControl, string path, string content)
+        /// <summary>
+        /// Resolve merge conflict with content that contains the resolved data of the file.
+        /// </summary>
+        /// <param name="sourceControl">Source control implementation to use</param>
+        /// <param name="path">Path of the conflicted file</param>
+        /// <param name="content">Content containing the resolved data.</param>
+        /// <returns><see langword="true"/> if the conflict was resolved successfully, <see langword="false"/> otherwise.</returns>
+        public static bool ResolveConflictWithContent(SourceControlBase sourceControl, string path, string content)
         {
             try
             {
@@ -247,7 +254,7 @@ namespace Ginger.SourceControl
                 }
 
                 string error = string.Empty;
-                bool isConflictResolved = sourceControl.NewResolveConflict(path, content, ref error);
+                bool isConflictResolved = sourceControl.ResolveConflictWithContent(path, content, ref error);
 
                 if (!isConflictResolved)
                 {

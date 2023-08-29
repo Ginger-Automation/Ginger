@@ -36,6 +36,7 @@ using Amdocs.Ginger.Common.SourceControlLib;
 using GingerWPF.WizardLib;
 using GingerCore.GeneralLib;
 using System.Globalization;
+using System.Linq;
 
 namespace Ginger.ConflictResolve
 {
@@ -48,14 +49,11 @@ namespace Ginger.ConflictResolve
         List<string> mConflictPaths;
         public bool IsResolved { get; set; }
         ObservableList<Conflict> conflictResolves = new ObservableList<Conflict>();
-        Dictionary<string, string> filePathDct = new Dictionary<string, string>();
-        private string BranchName;
-        public ResolveConflictWindow(List<string> conflictPaths, string branchName)
+        public ResolveConflictWindow(List<string> conflictPaths)
         {
             IsResolved = false;
             InitializeComponent();
             mConflictPaths = conflictPaths;
-            BranchName = branchName;
             SetGridView();
         }
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
@@ -81,8 +79,9 @@ namespace Ginger.ConflictResolve
                         SourceControlIntegration.ResolveConflicts(WorkSpace.Instance.Solution.SourceControl, conflict.Path, eResolveConflictsSide.Local);
                         break;
                     case ResolutionType.CherryPick:
-                        string content = new NewRepositorySerializer().SerializeToString(conflict.GetMergedItem());
-                        SourceControlIntegration.NewResolveConflict(WorkSpace.Instance.Solution.SourceControl, conflict.Path, content);
+                        NewRepositorySerializer serializer = new();
+                        string content = serializer.SerializeToString(conflict.GetMergedItem());
+                        SourceControlIntegration.ResolveConflictWithContent(WorkSpace.Instance.Solution.SourceControl, conflict.Path, content);
                         break;
                 }
             }
@@ -123,26 +122,6 @@ namespace Ginger.ConflictResolve
                         StyleType = GridColView.eGridColStyleType.Template,
                         CellTemplate = CreateDataTemplateForCherryPickChangesColumn()
                     }
-                    //new GridColView() 
-                    //{ 
-                    //    Field = nameof(ConflictResolve.resolveOperations), 
-                    //    Header = "Operation", 
-                    //    WidthWeight = 90, 
-                    //    BindingMode = BindingMode.TwoWay, 
-                    //    StyleType = GridColView.eGridColStyleType.Template, 
-                    //    CellTemplate = ucGrid.GetGridComboBoxTemplate(
-                    //        valuesList: GingerCore.General.GetEnumValuesForCombo(typeof(eResolveOperations)), 
-                    //        selectedValueField: nameof(ConflictResolve.resolveOperations), 
-                    //        allowEdit: false, 
-                    //        selectedByDefault: true) 
-                    //},
-                    //new GridColView() 
-                    //{ 
-                    //    Field = "Compare and Merge", 
-                    //    WidthWeight = 20, 
-                    //    StyleType = GridColView.eGridColStyleType.Template, 
-                    //    CellTemplate = (DataTemplate)this.ResolveConflictsGrid.Resources["xCompareAndMergeTemplate"] 
-                    //}
                 }
             };
 
@@ -157,7 +136,14 @@ namespace Ginger.ConflictResolve
             DataTemplate dataTemplate = new();
             FrameworkElementFactory operationsComboBox = new(typeof(ComboBox));
 
-            operationsComboBox.SetValue(ComboBox.ItemsSourceProperty, GingerCore.General.GetEnumValuesForCombo(typeof(ResolutionType)));
+            List<ComboEnumItem> operationOptions = GingerCore.General.GetEnumValuesForCombo(typeof(ResolutionType));
+            if(!WorkSpace.Instance.BetaFeatures.AllowMergeConflict)
+            {
+                ComboEnumItem cherryPickOption = operationOptions.First(option => (ResolutionType)option.Value == ResolutionType.CherryPick);
+                operationOptions.Remove(cherryPickOption);
+            }
+
+            operationsComboBox.SetValue(ComboBox.ItemsSourceProperty, operationOptions);
             operationsComboBox.SetValue(ComboBox.DisplayMemberPathProperty, nameof(ComboEnumItem.text));
             operationsComboBox.SetValue(ComboBox.SelectedValuePathProperty, nameof(ComboEnumItem.Value));
             operationsComboBox.SetValue(ComboBox.SelectedIndexProperty, 0);
@@ -213,86 +199,6 @@ namespace Ginger.ConflictResolve
             ResolveMergeConflictWizard wizard = new(conflict);
             WizardWindow.ShowWizard(wizard);
 
-        }
-
-        private void CreateSeparateLocalAndServerCopies(string filePath, ref string localXmlPath, ref string serverXmlPath)
-        {
-            try
-            {
-                string headText = "<<<<<<< HEAD";
-                string equalText = "=======";
-                //filePath = Path.Combine(RepositoryRootFolder, filePath);
-                string[] fileOneLines = File.ReadAllLines(filePath);
-                int headIndex = 0, equalIndex = 0, branchIndex = 0;
-                List<string> lstLocalText = new List<string>();
-                List<string> lstServerText = new List<string>();
-                bool headIndexEncountered = false;
-                string directoryName = Path.GetDirectoryName(filePath);
-                string fileName = Path.GetFileNameWithoutExtension(filePath);
-                string extension = Path.GetExtension(filePath);
-                for (int i = 0; i < fileOneLines.Length; i++)
-                {
-                    if (fileOneLines[i].Contains(headText))
-                    {
-                        headIndexEncountered = true;
-                        headIndex = i;
-                        continue;
-                    }
-                    if (fileOneLines[i].Contains(equalText))
-                    {
-                        equalIndex = i;
-                        string localText = string.Empty;
-                        for (int j = headIndex + 1; j < equalIndex; j++)
-                        {
-                            lstLocalText.Add(fileOneLines[j].Trim());
-                        }
-                        //lstLocalText.Add(localText);
-                        //i = equalIndex + equalIndex - headIndex - 1;
-                        continue;
-                    }
-                    if (fileOneLines[i].Contains(BranchName))
-                    {
-                        branchIndex = i;
-                        string branchText = string.Empty;
-                        for (int j = equalIndex + 1; j < branchIndex; j++)
-                        {
-                            lstServerText.Add(fileOneLines[j].Trim());
-                        }
-                        i = branchIndex;
-                        headIndexEncountered = false;
-                        continue;
-                    }
-                    if (!headIndexEncountered)
-                    {
-                        lstServerText.Add(fileOneLines[i].Trim());
-                        lstLocalText.Add(fileOneLines[i].Trim());
-                    }
-                }
-                localXmlPath = Path.Combine(directoryName, fileName + "_localChanges" + extension);
-                CreateFile(localXmlPath, lstLocalText);
-                serverXmlPath = Path.Combine(directoryName, fileName + "_serverChanges" + extension);
-                CreateFile(serverXmlPath, lstServerText);
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Issue in creating local and server files", ex);
-            }
-        }
-
-        private void CreateFile(string fileName, List<string> xmlContent)
-        {
-            if (File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
-            using (StreamWriter sw = new StreamWriter(fileName, true))
-            {
-                for (int i = 0; i < xmlContent.Count; i++)
-                {
-                    string line = xmlContent[i];
-                    sw.WriteLine(line);
-                }
-            }
         }
 
         private sealed class ResolveOperationToButtonVisibilityConverter : IValueConverter

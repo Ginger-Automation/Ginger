@@ -168,13 +168,13 @@ namespace GingerCoreNET.SourceControl
         public abstract string GetRemoteContentFromConflicted(string conflictedFilePath);
 
         /// <summary>
-        /// Resolve merge conflict for the file at <paramref name="path"/> using the provided <paramref name="content"/>.
+        /// Resolve merge conflict with content that contains the resolved data of the file.
         /// </summary>
-        /// <param name="path">Path of the file with conflict.</param>
-        /// <param name="content">Content using which conflict will be resolved.</param>
+        /// <param name="path">Path of the conflicted file</param>
+        /// <param name="content">Content containing the resolved data.</param>
         /// <param name="error">Error details if any.</param>
         /// <returns><see langword="true"/> if the conflict was resolved successfully, <see langword="false"/> otherwise.</returns>
-        public abstract bool NewResolveConflict(string path, string content, ref string error);
+        public abstract bool ResolveConflictWithContent(string path, string content, ref string error);
 
         //resolve conflicts automatically when getting latest updates
         public abstract bool ResolveConflicts(string path, eResolveConflictsSide side, ref string error);

@@ -233,7 +233,7 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             throw new NotImplementedException();
         }
 
-        public override bool NewResolveConflict(string path, string content, ref string error)
+        public override bool ResolveConflictWithContent(string path, string content, ref string error)
         {
             throw new NotImplementedException();
         }

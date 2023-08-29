@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SourceControl;
+using NPOI.OpenXmlFormats.Dml.Chart;
 using System.Threading.Tasks;
 
 namespace Ginger.ConflictResolve
@@ -78,6 +79,16 @@ namespace Ginger.ConflictResolve
             _localItem = SourceControlIntegration.GetLocalItemFromConflict(WorkSpace.Instance.SourceControl, Path);
             _remoteItem = SourceControlIntegration.GetRemoteItemFromConflict(WorkSpace.Instance.SourceControl, Path);
             _comparison = SourceControlIntegration.CompareConflictedItems(_localItem, _remoteItem);
+        }
+
+        public RepositoryItemBase GetLocalItem()
+        {
+            return _localItem;
+        }
+
+        public RepositoryItemBase GetRemoteItem()
+        {
+            return _remoteItem;
         }
 
         public RepositoryItemBase GetMergedItem()
