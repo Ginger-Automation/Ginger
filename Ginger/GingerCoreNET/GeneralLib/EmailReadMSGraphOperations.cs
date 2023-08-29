@@ -294,8 +294,8 @@ namespace GingerCore.GeneralLib
             }
             catch (Exception ex)
             {
-
-                //throw;
+                Reporter.ToLog(eLogLevel.ERROR, "Error in checking recipient criteria.", ex);               
+                return false;          
             }
             return true;
         }
