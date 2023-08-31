@@ -36,5 +36,22 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             source.OutgoingFlows.Add(flow);
             target.IncomingFlows.Add(flow);
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || obj is not Flow)
+                return false;
+
+            Flow flow = (Flow)obj;
+
+            return string.Equals(Id, flow.Id);
+        }
+
+        public override int GetHashCode()
+        {
+            HashCode hashCode = new();
+            hashCode.Add(Id);
+            return hashCode.ToHashCode();
+        }
     }
 }

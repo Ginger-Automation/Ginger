@@ -132,11 +132,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 Directory.CreateDirectory(directoryPath);
             }
             string filePath = Path.Combine(directoryPath, $"{mActivitiesGroup.Name}.bpmn");
-            if (!File.Exists(filePath))
-            {
-                File.Create(filePath);
-            }
-
             File.WriteAllText(filePath, xml);
         }
 

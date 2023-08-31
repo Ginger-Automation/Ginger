@@ -42,17 +42,18 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         private string XmlDocumentToString(XmlDocument xmlDocument)
         {
-            using StringWriter stringWriter = new();
             XmlWriterSettings xmlWriterSettings = new()
             {
                 Indent = true,
                 IndentChars = "  ",
                 NewLineChars = "\r\n"
             };
-            using XmlWriter xmlTextWriter = XmlWriter.Create(stringWriter, xmlWriterSettings);
+            using MemoryStream memoryStream = new(1024);
+            using StreamWriter streamWriter = new(memoryStream);
+            using XmlWriter xmlTextWriter = XmlWriter.Create(streamWriter, xmlWriterSettings);
             xmlDocument.WriteTo(xmlTextWriter);
             xmlTextWriter.Flush();
-            return stringWriter.GetStringBuilder().ToString();
+            return Encoding.UTF8.GetString(memoryStream.ToArray());
         }
 
         private XmlElement CreateDefinitionsElement(XmlDocument xmlDocument)
@@ -60,6 +61,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             XmlElement definitionsElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "definitions", BPMN_XML_URI);
             definitionsElement.SetAttribute($"xmlns:{BPMN_XML_PREFIX}", BPMN_XML_URI);
             definitionsElement.SetAttribute($"xmlns:{IG_XML_PREFIX}", IG_XML_URI);
+            definitionsElement.SetAttribute("targetNamespace", "http://bpmn.io/schema/bpmn");
 
             return definitionsElement;
         }
@@ -99,6 +101,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         private XmlElement CreateExtensionElements(XmlDocument xmlDocument, Collaboration collaboration)
         {
             XmlElement extensionElements = xmlDocument.CreateElement(BPMN_XML_PREFIX, "extensionElements", BPMN_XML_URI);
+            extensionElements.SetAttribute("xmlns", BPMN_XML_URI);
 
             XmlElement bpmnMetadataElement = CreateBPMNMetadataElement(xmlDocument, collaboration);
             extensionElements.AppendChild(bpmnMetadataElement);
@@ -108,6 +111,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         private XmlElement CreateBPMNMetadataElement(XmlDocument xmlDocument, Collaboration collaboration)
         {
+            //TODO: MetadataElement details shouldn't be comming from Collaboration, since Collaboration.Guid is not necessarily the Metadata.uuid. Rethink this
             XmlElement bpmnMetaDataElement = xmlDocument.CreateElement(IG_XML_PREFIX, "bpmnMetadata", IG_XML_URI);
 
             XmlElement uuidElement = xmlDocument.CreateElement(IG_XML_PREFIX, "uuid", IG_XML_URI);
@@ -124,6 +128,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             XmlText descriptionTextNode = xmlDocument.CreateTextNode(collaboration.Description);
             descriptionElement.AppendChild(descriptionTextNode);
             bpmnMetaDataElement.AppendChild(descriptionElement);
+
+            //TODO: BPMN - Create definitions->collaboration->extensionElements->bpmnMetadata->systemRef
 
             XmlElement domainRefElement = xmlDocument.CreateElement(IG_XML_PREFIX, "domainRef", IG_XML_URI);
             XmlText domainRefTextNode = xmlDocument.CreateTextNode("32"); //static value
@@ -143,7 +149,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             XmlElement participantElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "participant", BPMN_XML_URI);
 
             participantElement.SetAttribute("id", participant.Id);
-            //TODO: BPMN - Create definitions->collaboration->participant@ig:systemRef attribute
+            //TODO: BPMN - Create definitions->collaboration->participant@systemRef attribute
             participantElement.SetAttribute("name", participant.Name);
             participantElement.SetAttribute("processRef", participant.Process.Id);
             participantElement.AppendChild(CreateDocumentationElement(xmlDocument));
@@ -156,7 +162,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             XmlElement messageFlowElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "messageFlow", BPMN_XML_URI);
 
             messageFlowElement.SetAttribute("id", messageFlow.Id);
-            //TODO: BPMN - Create definitions->collaboration->messageFlow@ig:messageRef attribute
+            //TODO: BPMN - Create definitions->collaboration->messageFlow@messageRef attribute
             messageFlowElement.SetAttribute("name", messageFlow.Name);
             messageFlowElement.SetAttribute("sourceRef", messageFlow.Source.Id);
             messageFlowElement.SetAttribute("targetRef", messageFlow.Target.Id);

@@ -55,7 +55,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         {
             IEnumerable<SequenceFlow> sequenceFlows = GetFlows()
                 .Where(flow => flow is SequenceFlow)
-                .Select(flow => (SequenceFlow)flow);
+                .Select(flow => (SequenceFlow)flow)
+                .Distinct();
 
             return sequenceFlows;
         }

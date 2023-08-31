@@ -50,7 +50,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             IEnumerable<MessageFlow> messageFlows = Participants
                 .SelectMany(participant => participant.Process.GetFlows())
                 .Where(flow => flow is MessageFlow)
-                .Select(flow => (MessageFlow)flow);
+                .Select(flow => (MessageFlow)flow)
+                .Distinct();
 
             return messageFlows;
         }
