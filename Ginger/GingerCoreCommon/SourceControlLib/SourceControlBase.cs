@@ -139,6 +139,8 @@ namespace GingerCoreNET.SourceControl
 
         public abstract string GetCurrentBranchForSolution();
 
+        public abstract List<string> GetConflictPaths();
+
         public abstract void Disconnect();
 
         public abstract bool CommitChanges(string Comments, ref string error);

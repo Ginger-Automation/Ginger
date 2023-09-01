@@ -90,6 +90,11 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             ;
         }
 
+        public override List<string> GetConflictPaths()
+        {
+            throw new NotImplementedException();
+        }
+
         public override List<string> GetBranches()
         {
             throw new NotImplementedException();

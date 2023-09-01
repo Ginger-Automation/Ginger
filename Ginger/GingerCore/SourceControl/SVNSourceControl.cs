@@ -541,6 +541,11 @@ namespace GingerCore.SourceControl
             mConflictsPaths.Add(e.MergedFile);
         }
 
+        public override List<string> GetConflictPaths()
+        {
+            return mConflictsPaths;
+        }
+
         private const string ConflictStartMarker = "<<<<<<<";
         private const string ConflictFirstPartitionMarker = "|||||||";
         private const string ConflictSecondPartitionMarker = "=======";

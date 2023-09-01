@@ -98,6 +98,11 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             return "master";
         }
 
+        public override List<string> GetConflictPaths()
+        {
+            throw new NotImplementedException();
+        }
+
         public override SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems, ref string error)
         {
             throw new NotImplementedException();

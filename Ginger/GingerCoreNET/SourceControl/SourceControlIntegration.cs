@@ -270,6 +270,11 @@ namespace Ginger.SourceControl
             }
         }
 
+        public static List<string> GetConflictPaths(SourceControlBase sourceControl)
+        {
+            return sourceControl.GetConflictPaths();
+        }
+
         public static bool ResolveConflicts(SourceControlBase SourceControl, string path, eResolveConflictsSide side)
         {
             string error = string.Empty;

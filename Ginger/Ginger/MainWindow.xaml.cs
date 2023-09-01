@@ -161,6 +161,15 @@ namespace Ginger
                     WorkSpace.Instance.UserProfile.NewHelpLibraryMessgeShown = true;
                 }
 
+                if(WorkSpace.Instance.BetaFeatures.AllowMergeConflict)
+                {
+                    xResolveConflictManualMenuItem.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xResolveConflictManualMenuItem.Visibility = Visibility.Collapsed;
+                }
+
 
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
 
@@ -739,7 +748,8 @@ namespace Ginger
 
         private void ResolveConflictsManuallyMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ResolveSourceControlConflicts(eResolveConflictsSide.Manual);
+            ResolveConflictWindow resolveConflictWindow = new(SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl));
+            resolveConflictWindow.ShowAsWindow();
         }
 
         private void xHelpOptionsMenuItem_Click(object sender, RoutedEventArgs e)

@@ -119,7 +119,7 @@ namespace GingerCore.SourceControl
                         }
                         catch { }
 
-                        conflictsPaths = GetConflictsPaths();
+                        conflictsPaths = GetConflictPaths();
                         result = false;
                     }
                 }
@@ -157,7 +157,7 @@ namespace GingerCore.SourceControl
             {
                 try
                 {
-                    conflictPaths = GetConflictsPaths();
+                    conflictPaths = GetConflictPaths();
                 }
                 catch (Exception ex)
                 {
@@ -307,7 +307,7 @@ namespace GingerCore.SourceControl
                 }
                 else
                 {
-                    conflictsPaths = GetConflictsPaths();
+                    conflictsPaths = GetConflictPaths();
 
                     if (supressMessage == true)
                     {
@@ -794,7 +794,7 @@ namespace GingerCore.SourceControl
                 string ResolveConflictError = string.Empty;
                 bool result = true;
                 
-                List<string> conflictPaths = GetConflictsPaths();
+                List<string> conflictPaths = GetConflictPaths();
                 foreach (string conflictPath in conflictPaths)
                 {
                     result = ResolveConflict(conflictPath, side, ref ResolveConflictError);
@@ -824,7 +824,7 @@ namespace GingerCore.SourceControl
                 bool result = true;
                 if (path == SolutionFolder)
                 {
-                    List<string> conflictPaths = GetConflictsPaths();
+                    List<string> conflictPaths = GetConflictPaths();
                     foreach (string cp in conflictPaths)
                     {
                         result = ResolveConflict(cp, side, ref ResolveConflictError);
@@ -1176,7 +1176,7 @@ namespace GingerCore.SourceControl
             throw new Exception("Error Occurred in push" + pushStatusErrors.Message);
         }
 
-        private List<string> GetConflictsPaths()
+        public override List<string> GetConflictPaths()
         {
             List<string> ConflictPaths = new List<string>();
 
