@@ -22,6 +22,7 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.UserControls;
+using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -157,25 +158,31 @@ namespace Ginger.SolutionWindows
             try
             {
                 loaderElement.Visibility = Visibility.Visible;
-                List<ModifiedRepositoryFileInfo> selectedFiles = mModifiedFilesInfo.Where(x => x.Selected).ToList();
-                if (selectedFiles == null || selectedFiles.Count == 0)
+                var selectedFiles = mModifiedFilesInfo.Where(x => x.Selected);
+                if (selectedFiles == null || !selectedFiles.Any())
                 {
                     Reporter.ToUser(eUserMsgKey.AskToSelectItem);
                     return;
                 }
-                if (Reporter.ToUser(eUserMsgKey.SaveAllModifiedItems, $"Are you sure you want to save {selectedFiles.Count} Item(s)") == eUserMsgSelection.Yes)
-                {
-                    await Task.Run(() =>
+
+                await Task.Run(() =>
+               {
+                   try
                    {
                        Parallel.ForEach(selectedFiles.GroupBy(g => g.FileType), fileToSave =>
-                       {
-                           foreach (var file in fileToSave)
-                           {
-                               SaveHandler.Save(file.item);
-                           }
-                       });
-                   });
-                }
+                                  {
+                                      foreach (var file in fileToSave)
+                                      {
+                                          SaveHandler.Save(file.item);
+                                      }
+                                  });
+                   }
+                   catch (Exception ex)
+                   {
+                       Reporter.ToLog(eLogLevel.ERROR, "Failed to Save Files", ex);
+                   }
+               });
+
             }
             catch (Exception ex)
             {

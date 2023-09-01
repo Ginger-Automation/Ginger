@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCoreNET.RosLynLib;
@@ -72,7 +73,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             await Task.Run(() =>
             {
-                var rc = CodeProcessor.ExecuteNew(mScriptFile);
+                try
+                {
+                    var rc = CodeProcessor.ExecuteNew(mScriptFile);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Execute Script", ex);
+                }
             });
         }
     }

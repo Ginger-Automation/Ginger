@@ -121,7 +121,7 @@ namespace Ginger.Variables
             //make sure the selected value is valid
             if (mVar.OptionalValuesList != null && mVar.OptionalValuesList.Count > 0)
             {
-                if (mVar.SelectedValue == string.Empty || mVar.OptionalValuesList.Where(v => v.Value == mVar.SelectedValue).SingleOrDefault() == null)
+                if (mVar.SelectedValue == string.Empty || mVar.OptionalValuesList.FirstOrDefault(v => v.Value == mVar.SelectedValue) == null)
                 {
                     mVar.SelectedValue = mVar.OptionalValuesList[0].Value;
                 }

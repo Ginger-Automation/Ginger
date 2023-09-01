@@ -110,7 +110,7 @@ namespace GingerCore.Actions.WebAPI
 
         private void SetAutoDecompression()
         {
-            if (mAct.HttpHeaders.Count() > 0)
+            if (mAct.HttpHeaders.Any())
             {
                 var encodType = mAct.HttpHeaders.FirstOrDefault(x => (x != null && x.Param != null && x.Param.ToUpper() == "ACCEPT-ENCODING" && x.ValueForDriver.ToUpper() == "GZIP,DEFLATE"));
                 if (encodType != null)
@@ -123,7 +123,7 @@ namespace GingerCore.Actions.WebAPI
         private void AddHeadersToClient()
         {
             //Add request headers
-            if (mAct.HttpHeaders.Count() > 0)
+            if (mAct.HttpHeaders.Any())
             {
                 for (int i = 0; i < mAct.HttpHeaders.Count(); i++)
                 {
@@ -454,19 +454,17 @@ namespace GingerCore.Actions.WebAPI
                 {
                     RequestFileContent = CreateRawRequestAndResponse("request");
                 }
-                else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "XwwwFormUrlEncoded"))
+                else if ((mAct.RequestKeyValues.Any()) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "XwwwFormUrlEncoded"))
                 {
-                    HttpContent UrlEncoded = new FormUrlEncodedContent(ConstructURLEncoded((ActWebAPIRest)mAct));
                     RequestFileContent = CreateRawRequestAndResponse("request");
+
                     StringBuilder str = new StringBuilder();
                     foreach (KeyValuePair<string, string> keyValue in ConstructURLEncoded((ActWebAPIRest)mAct))
-                    {
-                        str.Append(keyValue.Key + "=" + keyValue.Value);
-                    }
-                    RequestFileContent += str;
-
+                        str.Append(keyValue.Key + "=" + keyValue.Value + "&");
+                    
+                    RequestFileContent += str.ToString().Trim('&');
                 }
-                else if ((mAct.RequestKeyValues.Count() > 0) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "FormData"))
+                else if ((mAct.RequestKeyValues.Any()) && (mAct.GetInputParamValue(ActWebAPIRest.Fields.ContentType) == "FormData"))
                 {
                     MultipartFormDataContent FormDataContent = new MultipartFormDataContent();
 
@@ -749,7 +747,7 @@ namespace GingerCore.Actions.WebAPI
                 if (eContentType == ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded)
                 {
                     string GetRequest = "?";
-                    if (mAct.RequestKeyValues.Count() > 0)
+                    if (mAct.RequestKeyValues.Any())
                     {
                         for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
                         {
@@ -783,14 +781,14 @@ namespace GingerCore.Actions.WebAPI
                 switch (eContentType)
                 {
                     case ApplicationAPIUtils.eContentType.XwwwFormUrlEncoded:
-                        if (mAct.RequestKeyValues.Count() > 0)
+                        if (mAct.RequestKeyValues.Any())
                         {
                             KeyValues = ConstructURLEncoded((ActWebAPIRest)mAct);
                             RequestMessage.Content = new FormUrlEncodedContent(KeyValues);
                         }
                         break;
                     case ApplicationAPIUtils.eContentType.FormData:
-                        if (mAct.RequestKeyValues.Count() > 0)
+                        if (mAct.RequestKeyValues.Any())
                         {
                             MultipartFormDataContent requestContent = new MultipartFormDataContent();
                             List<KeyValuePair<string, string>> FormDataKeyValues = new List<KeyValuePair<string, string>>();
@@ -913,16 +911,9 @@ namespace GingerCore.Actions.WebAPI
         {
             List<KeyValuePair<string, string>> KeyValues = new List<KeyValuePair<string, string>>();
 
-            for (int i = 0; i < mAct.RequestKeyValues.Count(); i++)
+            for (int i = 0; i < act.RequestKeyValues.Count(); i++)
             {
-                if (i == mAct.RequestKeyValues.Count() - 1)
-                {
-                    KeyValues.Add(new KeyValuePair<string, string>(Uri.EscapeDataString(mAct.RequestKeyValues[i].ItemName.ToString()), Uri.EscapeDataString(mAct.RequestKeyValues[i].ValueForDriver)));
-                }
-                else
-                {
-                    KeyValues.Add(new KeyValuePair<string, string>(Uri.EscapeDataString(mAct.RequestKeyValues[i].ItemName.ToString()), Uri.EscapeDataString(mAct.RequestKeyValues[i].ValueForDriver) + "&"));
-                }
+                KeyValues.Add(new KeyValuePair<string, string>(act.RequestKeyValues[i].ItemName.ToString(), act.RequestKeyValues[i].ValueForDriver));
             }
 
             return KeyValues;
@@ -937,7 +928,7 @@ namespace GingerCore.Actions.WebAPI
             RequestMessage.Headers.Add("SOAPAction", SoapAction);
 
             //WorkArownd for configuring SOAP content type deferent then text/xml
-            ActInputValue ContetnTypeHeader = mAct.HttpHeaders.Where(x => x.Param == "Content-Type").FirstOrDefault();
+            ActInputValue ContetnTypeHeader = mAct.HttpHeaders.FirstOrDefault(x => x.Param == "Content-Type");
 
             if (ContetnTypeHeader != null)
             {

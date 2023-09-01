@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
-
+using GingerCore.ALM;
 
 namespace Ginger.Run.RunSetActions
 {
@@ -79,6 +79,12 @@ namespace Ginger.Run.RunSetActions
             //return new RunSetActionAutomatedALMDefectsEditPage(this);
             return "RunSetActionAutomatedALMDefectsEditPage";
         }
+
+        public override PublishToALMConfig.eALMTestSetLevel GetAlMTestSetLevel()
+        {
+            throw new NotImplementedException();
+        }
+
         public override string Type { get { return "Open ALM Defects"; } }
     }
 }

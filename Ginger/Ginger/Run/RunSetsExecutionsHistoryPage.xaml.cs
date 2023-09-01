@@ -136,13 +136,14 @@ namespace Ginger.Run
             mExecutionsHistoryList.Clear();
             await Task.Run(() =>
             {
-                if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
+                try
                 {
-                    mRunSetExecsRootFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
-                    //pull all RunSets JSON files from it
-                    string[] runSetsfiles = Directory.GetFiles(mRunSetExecsRootFolder, "RunSet.txt", SearchOption.AllDirectories);
-                    try
+                    if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
                     {
+                        mRunSetExecsRootFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+                        //pull all RunSets JSON files from it
+                        string[] runSetsfiles = Directory.GetFiles(mRunSetExecsRootFolder, "RunSet.txt", SearchOption.AllDirectories);
+
                         foreach (string runSetFile in runSetsfiles)
                         {
                             RunSetReport runSetReport = (RunSetReport)JsonLib.LoadObjFromJSonFile(runSetFile, typeof(RunSetReport));
@@ -188,20 +189,22 @@ namespace Ginger.Run
                         }
                         AddRemoteExucationRunsetData();
                     }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error Occured during LoadExecutionHistory.", ex);
-                    }
                 }
-
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error Occured during LoadExecutionHistory.", ex);
+                }
             });
 
             ObservableList<RunSetReport> executionsHistoryListSortedByDate = new ObservableList<RunSetReport>();
-            foreach (RunSetReport runSetReport in mExecutionsHistoryList.OrderByDescending(item => item.StartTimeStamp))
+            if (mExecutionsHistoryList != null && mExecutionsHistoryList.Count > 0)
             {
-                runSetReport.StartTimeStamp = runSetReport.StartTimeStamp.ToLocalTime();
-                runSetReport.EndTimeStamp = runSetReport.EndTimeStamp.ToLocalTime();
-                executionsHistoryListSortedByDate.Add(runSetReport);
+                foreach (RunSetReport runSetReport in mExecutionsHistoryList.OrderByDescending(item => item.StartTimeStamp))
+                {
+                    runSetReport.StartTimeStamp = runSetReport.StartTimeStamp.ToLocalTime();
+                    runSetReport.EndTimeStamp = runSetReport.EndTimeStamp.ToLocalTime();
+                    executionsHistoryListSortedByDate.Add(runSetReport);
+                }
             }
 
             grdExecutionsHistory.DataSourceList = executionsHistoryListSortedByDate;
@@ -307,7 +310,7 @@ namespace Ginger.Run
         {
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
-                Process.Start(new ProcessStartInfo() { FileName = WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, UseShellExecute = true });
+                Process.Start(new ProcessStartInfo() { FileName = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder), UseShellExecute = true });
             }
             else
             {
@@ -350,7 +353,7 @@ namespace Ginger.Run
 
         private void ReportBtnClicked(object sender, RoutedEventArgs e)
         {
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             if (grdExecutionsHistory.CurrentItem == null)
             {
                 Reporter.ToUser(eUserMsgKey.NoItemWasSelected);

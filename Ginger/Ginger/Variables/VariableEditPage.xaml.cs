@@ -22,6 +22,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.ConflictResolve;
 using Ginger.Reports.ValidationRules;
 using Ginger.Repository;
+using Ginger.Run;
 using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib;
 using GingerCore;
@@ -477,19 +478,26 @@ namespace Ginger.Variables
                 Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Updating new {0} name '{1}' on all usage instances...", GingerDicser.GetTermResValue(eTermResKey.Variable), mVariable.Name));
                 if (mParent is Solution)
                 {
-                    ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                    Parallel.ForEach(allBF, bfl =>
+                    if (editMode is eEditMode.Global)
                     {
-                        bfl.SetUniqueVariableName(mVariable);
-                        Parallel.ForEach(bfl.Activities, activity =>
+                        ((Solution)mParent).SetUniqueVariableName(mVariable);
+                    }
+                    else
+                    {
+                        ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                        Parallel.ForEach(allBF, bfl =>
                         {
-                            Parallel.ForEach(activity.Acts, action =>
+                            bfl.SetUniqueVariableName(mVariable);
+                            Parallel.ForEach(bfl.Activities, activity =>
                             {
-                                bool changedwasDone = false;
-                                VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                                Parallel.ForEach(activity.Acts, action =>
+                                {
+                                    bool changedwasDone = false;
+                                    VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                                });
                             });
                         });
-                    });
+                    }
                 }
                 else if (mParent is BusinessFlow)
                 {
@@ -514,11 +522,45 @@ namespace Ginger.Variables
                         VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
                     });
                 }
+                if (mVariable.SetAsOutputValue || mParent is Solution)
+                {
+                    UpdateVariableNameInRunsets();
+                }
                 mVariable.NameBeforeEdit = mVariable.Name;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Name Change", ex);
             }
             finally
             {
                 Reporter.HideStatusMessage();
+            }
+        }
+
+        private void UpdateVariableNameInRunsets()
+        {
+            string variableOldName = mVariable.NameBeforeEdit;
+            string variableNewName = mVariable.Name;
+
+            foreach (RunSetConfig runset in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>())
+            {
+                foreach (GingerRunner runner in runset.GingerRunners)
+                {
+                    foreach (BusinessFlowRun bfRun in runner.BusinessFlowsRunList)
+                    {
+                        IEnumerable<VariableBase> variablesMappedToOldName = bfRun.BusinessFlowCustomizedRunVariables
+                            .Where(variable =>
+                            {
+                                return string.Equals(variable.MappedOutputValue, variableOldName);
+                            });
+
+                        foreach (VariableBase variable in variablesMappedToOldName)
+                        {
+                            variable.MappedOutputValue = variableNewName;
+                        }
+                    }
+                }
             }
         }
 

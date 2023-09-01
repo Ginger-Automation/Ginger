@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -150,38 +150,45 @@ namespace Amdocs.Ginger.Repository
         /// <param name="repositoryItem"></param>
         public void SaveRepositoryItem(RepositoryItemBase repositoryItem)
         {
-            if (String.IsNullOrEmpty(repositoryItem.ContainingFolder))
+            try
             {
-                throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
+                if (string.IsNullOrEmpty(repositoryItem.ContainingFolder))
+                {
+                    throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
+                }
+                if (repositoryItem.PreSaveHandler())
+                {
+                    return;
+                }
+
+                repositoryItem.UpdateBeforeSave();
+
+                string txt = RepositorySerializer.SerializeToString(repositoryItem);
+
+                string filePath = CreateRepositoryItemFileName(repositoryItem);
+                RepositoryFolderBase rf = GetItemRepositoryFolder(repositoryItem);
+                rf.SaveRepositoryItem(filePath, txt);
+                repositoryItem.FileName = filePath;
+                repositoryItem.FilePath = filePath;
+                repositoryItem.RefreshSourceControlStatus();
+                RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(repositoryItem.FilePath));
+
+                if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
+                {
+                    repositoryItem.SetDirtyStatusToNoChange();
+                }
+
+                repositoryItem.CreateBackup();
+                if (ModifiedFiles.Contains(repositoryItem))
+                {
+                    ModifiedFiles.Remove(repositoryItem);
+                }
+                repositoryItem.PostSaveHandler();
             }
-            if (repositoryItem.PreSaveHandler())
+            catch (Exception ex)
             {
-                return;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Save Repository Item", ex);
             }
-
-            repositoryItem.UpdateBeforeSave();
-
-            string txt = RepositorySerializer.SerializeToString(repositoryItem);
-
-            string filePath = CreateRepositoryItemFileName(repositoryItem);
-            RepositoryFolderBase rf = GetItemRepositoryFolder(repositoryItem);
-            rf.SaveRepositoryItem(filePath, txt);
-            repositoryItem.FileName = filePath;
-            repositoryItem.FilePath = filePath;
-            repositoryItem.RefreshSourceControlStatus();
-            RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(repositoryItem.FilePath));
-
-            if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
-            {
-                repositoryItem.SetDirtyStatusToNoChange();
-            }
-
-            repositoryItem.CreateBackup();
-            if (ModifiedFiles.Contains(repositoryItem))
-            {
-                ModifiedFiles.Remove(repositoryItem);
-            }
-            repositoryItem.PostSaveHandler();
         }
 
         public void Close()
@@ -226,7 +233,7 @@ namespace Amdocs.Ginger.Repository
             {
                 repoItemList = repositoryFolderBase.GetFolderRepositoryItems();
             }
-            repoItem = repoItemList.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(filePath)).FirstOrDefault();
+            repoItem = repoItemList.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(filePath));
             return repoItem;
         }
 
@@ -322,8 +329,7 @@ namespace Amdocs.Ginger.Repository
         public T GetRepositoryItemByGuid<T>(Guid repositoryItemGuid)
         {
             SolutionRepositoryItemInfo<T> SRII = GetSolutionRepositoryItemInfo<T>();
-            T RI = SRII.GetItemByGuid(repositoryItemGuid);
-            return RI;
+            return SRII.GetItemByGuid(repositoryItemGuid);
         }
 
         /// <summary>
@@ -356,7 +362,7 @@ namespace Amdocs.Ginger.Repository
         public dynamic GetFirstRepositoryItem<T>()
         {
             SolutionRepositoryItemInfo<T> SRII = GetSolutionRepositoryItemInfo<T>();
-            if (SRII.GetAllItemsCache().Count > 0)
+            if (SRII.GetAllItemsCache().Any())
             {
                 return (SRII.GetAllItemsCache()[0]);
             }

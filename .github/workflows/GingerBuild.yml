@@ -1,0 +1,94 @@
+name: Ginger_Builder
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    env:
+      BUILD_CONFIGURATION: Release
+      
+    steps:
+# ------------------------------------------------------------------------------------------------------
+# Createin version Tag & Number variables - only for CD Job
+# ------------------------------------------------------------------------------------------------------
+      - name: Download Version Artifacts
+        if: ${{github.workflow == 'CD'}} 
+        uses: actions/download-artifact@v3
+        with:
+          name: ginger-version     
+        
+      - name: Create variables from Artifacts file
+        if: ${{github.workflow == 'CD'}} 
+        shell: bash
+        run: |
+          source version.txt
+          echo $TAG
+          echo "gingernumber=$NUMBER" >> $GITHUB_ENV
+          echo "gingertag=$TAG" >> $GITHUB_ENV
+          
+# ------------------------------------------------------------------------------------------------------
+# Copy Ginger repo
+# ------------------------------------------------------------------------------------------------------
+      - uses: actions/checkout@v3
+
+# ------------------------------------------------------------------------------------------------------
+# Update Ginger Version 
+# ------------------------------------------------------------------------------------------------------
+      - name: 'Update Assembly'
+        if: ${{github.workflow == 'CD'}} 
+        run: |
+          $save=((Get-Content .\Ginger\GingerCoreCommon/GingerCoreCommon.csproj) -replace '<AssemblyVersion>*.*.*.*</AssemblyVersion>','<AssemblyVersion>${{ env.gingernumber}}</AssemblyVersion>')  -replace '<FileVersion>*.*.*.*</FileVersion>','<FileVersion>${{ env.gingernumber}}</FileVersion>'
+          echo $save > .\Ginger\GingerCoreCommon/GingerCoreCommon.csproj
+          $save=(Get-Content .\Ginger\GingerInstallerScript.iss) -replace '#define MyAppVersion "*.*.*.*"','#define MyAppVersion "${{ env.gingernumber}}"'
+          echo $save > .\Ginger\GingerInstallerScript.iss
+          $save=(Get-Content .\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java) -replace 'public static final String GINGER_JAVA_AGENT_VERSION="*.*.*.*";','public static final String GINGER_JAVA_AGENT_VERSION="${{ env.gingernumber}}";'
+          echo $save > .\Ginger\GingerCore\Drivers\JavaDriverLib\GingerJavaAgent\agent\com\amdocs\ginger\GingerAgent.java
+          $save=(Get-Content .\Ginger\GingerInstallerScriptGithub.iss) -replace '#define MyAppVersion "*.*.*.*"','#define MyAppVersion "${{ env.gingernumber}}"'
+          echo $save > .\Ginger\GingerInstallerScriptGithub.iss
+      
+# ------------------------------------------------------------------------------------------------------
+# Install .Net core SDK 6.0.301
+# ------------------------------------------------------------------------------------------------------
+      - name: 'Install .NET Core'
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 7.x.x
+          
+# ------------------------------------------------------------------------------------------------------
+# Install Nuget tool v1.0.5
+# ------------------------------------------------------------------------------------------------------
+      - name: 'Setup Nuget'
+        uses: Nuget/setup-nuget@v1.0.5
+
+# ------------------------------------------------------------------------------------------------------
+# Restore Ginger solution NuGet packages
+# ------------------------------------------------------------------------------------------------------
+      - name: 'Restore nuget packages'
+        run: nuget restore ./Ginger/Ginger.sln
+        
+# ------------------------------------------------------------------------------------------------------
+# Install msbild && Build Ginger Solution
+# ------------------------------------------------------------------------------------------------------
+      - name: 'Add msbuild to PATH'
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: 'Build Ginger Solution'
+        run: msbuild ./Ginger/Ginger.sln /p:DebugSymbols=true /p:DebugType=full /p:Configuration=$env:BUILD_CONFIGURATION
+  
+# ------------------------------------------------------------------------------------------------------
+# Publish GingerRuntime
+# ------------------------------------------------------------------------------------------------------
+      - name: 'Publish GingerRuntime'
+        run: dotnet publish ./Ginger/GingerRuntime/GingerRuntime.csproj --runtime linux-x64 --self-contained  true -c Release
+  
+# ------------------------------------------------------------------------------------------------------
+# Upload Artifacts 
+# ------------------------------------------------------------------------------------------------------    
+      - name: 'Upload static site content'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ginger-artifact
+          path: ./

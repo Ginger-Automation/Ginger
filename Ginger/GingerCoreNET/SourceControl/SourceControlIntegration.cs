@@ -128,7 +128,15 @@ namespace Ginger.SourceControl
 
         public static ObservableList<SolutionInfo> GetProjectsList(SourceControlBase SourceControl)
         {
-            return SourceControl.GetProjectsList();
+            try
+            {
+                return SourceControl.GetProjectsList();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Project List", ex);
+                return new ObservableList<SolutionInfo>();
+            }
         }
 
         public static bool CreateConfigFile(SourceControlBase SourceControl)
@@ -144,13 +152,21 @@ namespace Ginger.SourceControl
 
         public static bool GetProject(SourceControlBase SourceControl, string Path, string URI)
         {
-            string error = string.Empty;
-            if (!SourceControl.GetProject(Path, URI, ref error))
+            try
             {
-                Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                string error = string.Empty;
+                if (!SourceControl.GetProject(Path, URI, ref error))
+                {
+                    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Project", ex);
                 return false;
             }
-            return true;
         }
 
 

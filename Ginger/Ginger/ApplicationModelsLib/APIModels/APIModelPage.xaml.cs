@@ -56,10 +56,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
 
             WorkSpace.Instance.RefreshGlobalAppModelParams(mApplicationAPIModel);
             page = new ModelParamsPage(mApplicationAPIModel, viewMode);
-            xDynamicParamsFrame.Content = page;
+            xDynamicParamsFrame.ClearAndSetContent(page);
 
             OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel, viewMode);
-            xOutputTemplateFrame.Content = outputTemplatePage;
+            xOutputTemplateFrame.ClearAndSetContent(outputTemplatePage);
 
             mApplicationAPIModel.AppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
             mApplicationAPIModel.GlobalAppModelParameters.CollectionChanged += AppModelParameters_CollectionChanged;
@@ -136,6 +136,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtName, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDescription, TextBox.TextProperty, mApplicationAPIModel, nameof(mApplicationAPIModel.Description));
 
+            xTAlabel.Content = $"{GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.TargetApplication)}:";
             FillTargetAppsComboBox();
             xTargetApplicationComboBox.Init(mApplicationAPIModel, nameof(ApplicationAPIModel.TargetApplicationKey));
             xTagsViewer.Init(mApplicationAPIModel.TagsKeys);
@@ -206,12 +207,12 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
+                        Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + $" {GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.TargetApplication)} was not found, please select new {GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.TargetApplication)}");
                     }
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + " Target Application was not found, please select new Target Application");
+                    Reporter.ToUser(eUserMsgKey.MissingTargetApplication, "The mapped " + mApplicationAPIModel.Key.ItemName + $" {GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.TargetApplication)} was not found, please select new {GingerCore.GingerDicser.GetTermResValue(GingerCore.eTermResKey.TargetApplication)}");
                 }
             }
             xTargetApplicationComboBox.ComboBox.ItemsSource = WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.Platform == ePlatformType.WebServices).ToList();
@@ -803,13 +804,13 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             for (int i = 1; i < SoapSecurityContent.Count; i++)
             {
                 AppModelParameter newAppModelParam = new AppModelParameter();
-                if (page.ParamsList.Count == 0)
+                if (!page.ParamsList.Any())
                 {
                     newAppModelParam.PlaceHolder = SoapSecurityContent.ElementAt(i);
                 }
                 else
                 {
-                    if (page.ParamsList.Where(x => x.PlaceHolder.Equals(SoapSecurityContent.ElementAt(i))).Count() == 0)
+                    if (!page.ParamsList.Any(x => x.PlaceHolder.Equals(SoapSecurityContent.ElementAt(i))))
                     {
                         newAppModelParam.PlaceHolder = SoapSecurityContent.ElementAt(i);
                     }

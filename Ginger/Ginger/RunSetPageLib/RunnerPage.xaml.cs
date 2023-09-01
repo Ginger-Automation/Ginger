@@ -161,15 +161,20 @@ namespace Ginger.Run
         }
         public string totalCount { get; set; }
         bool mGiveUserFeedback { get; set; }
-        HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+        HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
         ChartType SelectedChartType { get; set; }
         public bool ViewMode1 = false;
 
         Context mContext = null;
 
-        public RunnerPage(GingerExecutionEngine runner, Context context, bool Viewmode = false)
+        public RunnerPage()
         {
             InitializeComponent();
+        }
+
+        public void Init(GingerExecutionEngine runner, Context context, bool Viewmode = false)
+        {
+            Clear();
             mExecutorEngine = runner;
             mContext = context;
             ViewMode1 = Viewmode;
@@ -198,6 +203,43 @@ namespace Ginger.Run
                 xExecutionOperationsPnl.Visibility = Visibility.Collapsed;
                 xOperationsPnl.Visibility = Visibility.Collapsed;
             }
+        }
+
+        public void Clear()
+        {
+            BindingOperations.ClearBinding(xBusinessflowsTotalCount, Label.ContentProperty);
+            BindingOperations.ClearBinding(xStatus, StatusItem.StatusProperty);
+            BindingOperations.ClearBinding(xStatusLabel, ImageMakerControl.ImageTypeProperty);
+            BindingOperations.ClearBinding(xRunnerActive, ucButton.ButtonImageTypeProperty);
+            if (ViewMode1)
+            {
+                pageGrid.IsEnabled = false;
+            }
+
+            if (mDispatcherTimer != null)
+            {
+                mDispatcherTimer.Stop();
+                mDispatcherTimer.Tick -= dispatcherTimerElapsedTick;
+                mDispatcherTimer = null;
+            }
+
+            if (mRunnerPageListener != null)
+            {
+                mExecutorEngine.RunListeners.Remove(mRunnerPageListener);
+                mRunnerPageListener.UpdateStat = null;
+                mRunnerPageListener = null;
+            }
+
+            if (WorkSpace.Instance.RunningInExecutionMode)
+            {
+                xExecutionOperationsPnl.Visibility = Visibility.Collapsed;
+                xOperationsPnl.Visibility = Visibility.Collapsed;
+            }
+
+            mBusinessflowRunnerItems = null;
+            mExecutorEngine = null;
+            mContext = null;
+            ViewMode1 = false;
         }
 
         private void HandleUpdateStat(object sender, EventArgs e)
@@ -338,7 +380,7 @@ namespace Ginger.Run
             }
 
             ExecutionLoggerConfiguration _selectedExecutionLoggerConfiguration = WorkSpace.Instance.Solution.LoggerConfigurations;
-            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Where(x => (x.IsSelected == true)).FirstOrDefault();
+            HTMLReportsConfiguration currentConf = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder != null)
             {
                 string reportpath = ((BusinessFlow)((RunnerItemPage)sender).ItemObject).ExecutionFullLogFolder;
@@ -447,9 +489,10 @@ namespace Ginger.Run
         private void Businessflow_ClickAutomate(object sender, RoutedEventArgs e)
         {
             BusinessFlow bf = (BusinessFlow)((RunnerItemPage)sender).ItemObject;
-            BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().Where(x => x.Guid == bf.Guid).FirstOrDefault();
+            BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(bf.Guid);
             if (actualBf != null)
             {
+                actualBf.StartDirtyTracking();
                 App.OnAutomateBusinessFlowEvent(BusinessFlowWindows.AutomateEventArgs.eEventType.Automate, actualBf);
             }
         }
@@ -710,7 +753,7 @@ namespace Ginger.Run
             bool appAgentsMappingExist = false;
             foreach (ApplicationAgent appAgent in mExecutorEngine.GingerRunner.ApplicationAgents)
             {
-                if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == appAgent.AppName && x.Platform == ePlatformType.NA).FirstOrDefault() != null)
+                if (WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == appAgent.AppName && x.Platform == ePlatformType.NA) != null)
                 {
                     continue;
                 }

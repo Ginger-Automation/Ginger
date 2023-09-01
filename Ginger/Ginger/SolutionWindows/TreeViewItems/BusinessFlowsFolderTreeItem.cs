@@ -260,7 +260,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     importedBF.Guid = Guid.NewGuid();
                     for (int i = 0; i < importedBF.TargetApplications.Count; i++)
                     {
-                        if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => x.AppName == importedBF.TargetApplications[i].Name).FirstOrDefault() == null)
+                        if (WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == importedBF.TargetApplications[i].Name) == null)
                         {
                             importedBF.TargetApplications.RemoveAt(i);//No such Application so Delete it
                             i--;
@@ -296,7 +296,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 {
                     EditBusinessFlowAppsPage EBFP = new EditBusinessFlowAppsPage(BizFlow, true);
                     EBFP.ResetPlatformSelection();
-                    EBFP.Title = "Configure " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Target Application(s)";
+                    EBFP.Title = $"Configure {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}";
                     EBFP.ShowAsWindow(eWindowShowStyle.Dialog, false);
                 }
                 else
@@ -330,6 +330,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 if (bfToExport.Count == 1)
                 {
+                    _ = bfToExport[0].Activities;//Loading Activity for Export to ALM
                     ALMIntegration.Instance.ExportBusinessFlowToALM(bfToExport[0], true);
                 }
                 else

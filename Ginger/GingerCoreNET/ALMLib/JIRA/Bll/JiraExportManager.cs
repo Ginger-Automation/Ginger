@@ -405,7 +405,7 @@ namespace GingerCore.ALM.JIRA.Bll
                         foreach (var actGroup in bizFlow.ActivitiesGroups)
                         {
                             List<Activity> activities = (bizFlow.Activities.Where(x => x.ActivitiesGroupID == actGroup.Name)).Select(a => a).ToList();
-                            JiraZephyrExecution currentActivitiesGroupExecution = executionList.Where(z => z.IssueId.ToString() == actGroup.ExternalID).FirstOrDefault();
+                            JiraZephyrExecution currentActivitiesGroupExecution = executionList.FirstOrDefault(z => z.IssueId.ToString() == actGroup.ExternalID);
                             if (currentActivitiesGroupExecution != null)
                             {
                                 List<JiraZephyrStepResult> stepResults = jmz.GetZephyrStepResultsList(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
@@ -413,7 +413,7 @@ namespace GingerCore.ALM.JIRA.Bll
                                 foreach (var act in activities)
                                 {
                                     zephyrStepStatus = ConvertGingerStatusToZephyr(act.Status.HasValue ? act.Status.Value : eRunStatus.NA);
-                                    JiraZephyrStepResult currentStepResult = stepResults.Where(z => z.StepId.ToString() == act.ExternalID).FirstOrDefault();
+                                    JiraZephyrStepResult currentStepResult = stepResults.FirstOrDefault(z => z.StepId.ToString() == act.ExternalID);
                                     if (currentStepResult != null)
                                     {
                                         currentStepResult = jmz.UpdateZephyrStepResult(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword,
@@ -483,8 +483,8 @@ namespace GingerCore.ALM.JIRA.Bll
 
                     foreach (KeyValuePair<Guid, string> defectOpeningResult in defectsOpeningResults)
                     {
-                        KeyValuePair<Guid, Dictionary<string, string>> currentDefect = defectsForOpening.Where(z => z.Key == defectOpeningResult.Key).FirstOrDefault();
-                        JiraZephyrExecution currentActivitiesGroupExecution = executionList.Where(z => z.IssueId.ToString() == currentDefect.Value["ActivityGroupExternalID"]).FirstOrDefault();
+                        KeyValuePair<Guid, Dictionary<string, string>> currentDefect = defectsForOpening.FirstOrDefault(z => z.Key == defectOpeningResult.Key);
+                        JiraZephyrExecution currentActivitiesGroupExecution = executionList.FirstOrDefault(z => z.IssueId.ToString() == currentDefect.Value["ActivityGroupExternalID"]);
                         if (currentDefect.Key != null)
                         {
                             JiraZephyrResponse jiraZephyrResponse = jmz.UpdateExecutionWithDefects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL,
@@ -738,7 +738,7 @@ namespace GingerCore.ALM.JIRA.Bll
             {
                 System.Threading.Thread.Sleep(1000);
                 List<JiraZephyrCycleFolder> foldersList = GetCycleFoldersList(businessFlow, Convert.ToInt32(versionId), Convert.ToInt32(cycleId));
-                JiraZephyrCycleFolder currentFolder = foldersList.Where(z => z.FolderName == businessFlow.Name).FirstOrDefault();
+                JiraZephyrCycleFolder currentFolder = foldersList.FirstOrDefault(z => z.FolderName == businessFlow.Name);
                 if (currentFolder == null)
                 {
                     folderId = 0;
@@ -898,7 +898,7 @@ namespace GingerCore.ALM.JIRA.Bll
                                                                                                                                                         activity.IdentifiedActivity.Expected)).DataResult;
                 if ((steps != null) && (steps.stepBeanCollection.Count > 0))
                 {
-                    bf.Activities.Where(z => z.Guid == activity.ActivityGuid).FirstOrDefault().ExternalID = steps.stepBeanCollection[0].id.ToString();
+                    bf.Activities.FirstOrDefault(z => z.Guid == activity.ActivityGuid).ExternalID = steps.stepBeanCollection[0].id.ToString();
                 }
             }
         }

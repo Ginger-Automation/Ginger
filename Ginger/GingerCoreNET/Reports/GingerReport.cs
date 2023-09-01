@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.CoreNET.Utility;
 using Ginger.Run;
+using GingerCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -178,11 +179,11 @@ namespace Ginger.Reports
                     {
                         return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     }
-                    else if ((from x in BusinessFlowReports where x.IsBlocked == true select x).Count() > 0)
+                    else if ((from x in BusinessFlowReports where x.IsBlocked == true select x).Any())
                     {
                         return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
                     }
-                    else if ((from x in BusinessFlowReports where x.IsStopped == true select x).Count() > 0)
+                    else if ((from x in BusinessFlowReports where x.IsStopped == true select x).Any())
                     {
                         return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                     }
@@ -271,7 +272,7 @@ namespace Ginger.Reports
             {
                 DataTable dt = new DataTable();
                 dt.Columns.Add("TargetApplication");
-                dt.Columns["TargetApplication"].Caption = "Target Application";
+                dt.Columns["TargetApplication"].Caption = GingerDicser.GetTermResValue(eTermResKey.TargetApplication);
                 dt.Columns.Add("Agents");
                 dt.Columns["Agents"].Caption = "Agents Mapping";
 

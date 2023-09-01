@@ -2569,8 +2569,69 @@ namespace GingerCore.Drivers
         public override void SmartSyncHandler(ActSmartSync act)
         {
             UIAuto.AutomationElement AE = null;
+            int? MaxTimeout = GetMaxTimeout(act);
+            mImplicitWait = -1;
+
             Stopwatch st = new Stopwatch();
-            int? MaxTimeout = 0;
+            st.Reset();
+            st.Start();
+
+            switch (act.SmartSyncAction)
+            {
+                case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
+                    do
+                    {
+                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
+                        {
+                            act.Error = "Smart Sync of WaitUntilDisplay is timeout";
+                            break;
+                        }
+
+                        Thread.Sleep(100);
+
+                        try
+                        {
+                            AE = (UIAuto.AutomationElement)GetActElement(act);
+                        }
+                        catch (Exception)
+                        {
+                        }
+
+                    } while (!(AE != null && (AE.Current.IsKeyboardFocusable || !AE.Current.IsOffscreen)));
+                    break;
+
+                case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
+                    do
+                    {
+                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
+                        {
+                            act.Error = "Smart Sync of WaitUntilDisapear is timeout";
+                            break;
+                        }
+
+                        Thread.Sleep(100);
+
+                        try
+                        {
+                            AE = (UIAuto.AutomationElement)GetActElement(act);
+                        }
+                        catch (Exception)
+                        {
+                        }
+
+                    } while (AE != null && (AE.Current.IsKeyboardFocusable || !AE.Current.IsOffscreen));
+                    break;
+            }
+
+            st.Stop();
+            //reset implicit wait time
+            mImplicitWait = mImplicitWaitCopy;
+            return;
+        }
+
+        private int? GetMaxTimeout(ActSmartSync act)
+        {
+            int? MaxTimeout;
             try
             {
                 if (act.WaitTime.HasValue == true)
@@ -2590,61 +2651,9 @@ namespace GingerCore.Drivers
             {
                 MaxTimeout = mLoadTimeOut;
             }
-            mImplicitWait = -1;
-            switch (act.SmartSyncAction)
-            {
-                case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
-                    st.Reset();
-                    st.Start();
 
-                    try { AE = (UIAuto.AutomationElement)GetActElement(act); }
-                    catch (Exception) { }
-                    Thread.Sleep(100);
-                    while (!(AE != null && (AE.Current.IsKeyboardFocusable || !AE.Current.IsOffscreen)))
-                    {
-                        try { AE = (UIAuto.AutomationElement)GetActElement(act); }
-                        catch (Exception) { }
-                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                        {
-                            act.Error = "Smart Sync of WaitUntilDisplay is timeout";
-                            break;
-                        }
-                        Thread.Sleep(100);
-                    }
-                    break;
-                case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
-                    st.Reset();
-                    try { AE = (UIAuto.AutomationElement)GetActElement(act); }
-                    catch (Exception) { }
-                    if (AE == null)
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        st.Start();
-
-                        while ((AE != null && (AE.Current.IsKeyboardFocusable || !AE.Current.IsOffscreen)))
-                        {
-                            Thread.Sleep(100);
-                            try { AE = (UIAuto.AutomationElement)GetActElement(act); }
-                            catch (Exception) { }
-
-                            if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                            {
-                                act.Error = "Smart Sync of WaitUntilDisapear is timeout";
-                                break;
-                            }
-                        }
-
-                    }
-                    break;
-            }
-            //reset implicit wait time
-            mImplicitWait = mImplicitWaitCopy;
-            return;
+            return MaxTimeout;
         }
-
 
         public string ClickElementUsingInvokePattern(UIAuto.AutomationElement element, ref Boolean clickTriggeredFlag)
         {
@@ -5019,49 +5028,56 @@ namespace GingerCore.Drivers
                  List<ElementInfo> HTMLlist;
 
                  //TODO: find a better property - since if the window is off screen controls will not show            
-                 UIAuto.Condition cond = new UIAuto.PropertyCondition(UIAuto.AutomationElement.IsOffscreenProperty, false);
-                 UIAuto.AutomationElementCollection AEC = CurrentWindow.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, cond);
-                 string IEElementXpath = "";
-
-                 foreach (UIAuto.AutomationElement AE in AEC)
+                 try
                  {
-                     if (StopProcess)
-                     {
-                         break;
-                     }
+                     UIAuto.Condition cond = new UIAuto.PropertyCondition(UIAuto.AutomationElement.IsOffscreenProperty, false);
+                     UIAuto.AutomationElementCollection AEC = CurrentWindow.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, cond);
+                     string IEElementXpath = "";
 
-                     UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
-                     if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
+                     foreach (UIAuto.AutomationElement AE in AEC)
                      {
-                         ei = (UIAElementInfo)GetElementInfoFor(AE);
-                         IEElementXpath = ei.XPath;
-                         InitializeBrowser(AE);
-                         HTMLlist = await HTMLhelperObj.GetVisibleElement();
-                         list.Add(ei);
-                         if (HTMLlist != null && HTMLlist.Count > 0)
+                         if (StopProcess)
                          {
-                             list.AddRange(HTMLlist);
+                             break;
                          }
-                         //foreach(ElementInfo e1 in HTMLlist)
-                         //{
-                         //    list.Add(e1);
-                         //}
-                     }
+
+                         UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
+                         if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
+                         {
+                             ei = (UIAElementInfo)GetElementInfoFor(AE);
+                             IEElementXpath = ei.XPath;
+                             InitializeBrowser(AE);
+                             HTMLlist = await HTMLhelperObj.GetVisibleElement();
+                             list.Add(ei);
+                             if (HTMLlist != null && HTMLlist.Count > 0)
+                             {
+                                 list.AddRange(HTMLlist);
+                             }
+                             //foreach(ElementInfo e1 in HTMLlist)
+                             //{
+                             //    list.Add(e1);
+                             //}
+                         }
 
 
-                     if (String.IsNullOrEmpty(IEElementXpath))
-                     {
-                         list.Add(ei);
-                     }
-                     else if (!ei.XPath.Contains(IEElementXpath))
-                     {
-                         //TODO: Here we check if automation element is child of IE browser element 
-                         // If yes then we skip it because we already have HTML element for this
-                         // Checking it by XPath makes it slow , because xpath is calculated for this element at runtime
-                         // Need to find a better way to speed up
-                         list.Add(ei);
-                     }
+                         if (String.IsNullOrEmpty(IEElementXpath))
+                         {
+                             list.Add(ei);
+                         }
+                         else if (!ei.XPath.Contains(IEElementXpath))
+                         {
+                             //TODO: Here we check if automation element is child of IE browser element 
+                             // If yes then we skip it because we already have HTML element for this
+                             // Checking it by XPath makes it slow , because xpath is calculated for this element at runtime
+                             // Need to find a better way to speed up
+                             list.Add(ei);
+                         }
 
+                     }
+                 }
+                 catch (Exception ex)
+                 {
+                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Controls", ex);
                  }
 
                  return list;

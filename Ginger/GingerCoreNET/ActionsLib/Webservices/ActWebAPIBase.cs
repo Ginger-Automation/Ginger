@@ -395,7 +395,7 @@ namespace GingerCore.Actions.WebServices
         public void ParseOutput()
         {
 
-            string ResponseMessage = ReturnValues.Where(x => x.Param == "Response:").FirstOrDefault().Actual;
+            string ResponseMessage = ReturnValues.FirstOrDefault(x => x.Param == "Response:").Actual;
             ParseNodesToReturnParams(this, ResponseMessage);
         }
 

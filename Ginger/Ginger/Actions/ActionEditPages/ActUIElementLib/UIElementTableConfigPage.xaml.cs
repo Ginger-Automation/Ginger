@@ -538,12 +538,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
             Page setControlActionValuePage = GetControlActionValue();
             if (setControlActionValuePage == null)
             {
-                ControlActionFrame.Content = null;
+                ControlActionFrame.ClearAndSetContent(null);
                 ControlActionFrame.Visibility = System.Windows.Visibility.Collapsed;
             }
             else
             {
-                ControlActionFrame.Content = setControlActionValuePage;
+                ControlActionFrame.ClearAndSetContent(setControlActionValuePage);
                 ControlActionFrame.Visibility = System.Windows.Visibility.Visible;
             }
         }

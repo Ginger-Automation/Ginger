@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -107,7 +107,7 @@ namespace Ginger.SolutionGeneral
         {
             get
             {
-                if (ApplicationPlatforms != null && ApplicationPlatforms.Count() > 0)
+                if (ApplicationPlatforms != null && ApplicationPlatforms.Any())
                 {
                     return ApplicationPlatforms[0].Platform;
                 }
@@ -190,7 +190,7 @@ namespace Ginger.SolutionGeneral
 
         public void SetUniqueApplicationName(ApplicationPlatform app)
         {
-            if (this.ApplicationPlatforms.Where(obj => obj.AppName == app.AppName).FirstOrDefault() == null) return; //no name like it in the group
+            if (ApplicationPlatforms.FirstOrDefault(obj => obj.AppName == app.AppName) == null) return; //no name like it in the group
 
             List<ApplicationPlatform> sameNameObjList =
                 this.ApplicationPlatforms.Where(obj => obj.AppName == app.AppName).ToList<ApplicationPlatform>();
@@ -198,7 +198,7 @@ namespace Ginger.SolutionGeneral
 
             //Set unique name
             int counter = 2;
-            while ((this.ApplicationPlatforms.Where(obj => obj.AppName == app.AppName + counter).FirstOrDefault()) != null)
+            while ((ApplicationPlatforms.FirstOrDefault(obj => obj.AppName == app.AppName + counter)) != null)
                 counter++;
             app.AppName += counter.ToString();
         }
@@ -236,10 +236,10 @@ namespace Ginger.SolutionGeneral
         static void AddFolderFiles(ConcurrentBag<string> CB, string folder)
         {
             //need to look for all .xmls and not only *Ginger.*.xml" for covering old xml's as well
-            IEnumerable<string> files = Directory.EnumerateFiles(folder, "*.xml", SearchOption.AllDirectories).AsParallel().AsOrdered();
+            IEnumerable<string> files = Directory.EnumerateFiles(folder, "*.xml", SearchOption.AllDirectories).Where(x=> !x.Contains("RQMServerConfigurationsPackage")).AsParallel().AsOrdered();
             Parallel.ForEach(files, file =>
             {
-                CB.Add(file);
+                    CB.Add(file);
             });
         }
 
@@ -324,7 +324,7 @@ namespace Ginger.SolutionGeneral
         public void SetUniqueVariableName(VariableBase var)
         {
             if (string.IsNullOrEmpty(var.Name)) var.Name = "Variable";
-            if (this.Variables.Where(x => x.Name == var.Name).FirstOrDefault() == null) return; //no name like it
+            if (Variables.FirstOrDefault(x => x.Name == var.Name) == null) return; //no name like it
 
             List<VariableBase> sameNameObjList =
                 this.Variables.Where(x => x.Name == var.Name).ToList<VariableBase>();
@@ -332,7 +332,7 @@ namespace Ginger.SolutionGeneral
 
             //Set unique name
             int counter = 2;
-            while ((this.Variables.Where(x => x.Name == var.Name + "_" + counter.ToString()).FirstOrDefault()) != null)
+            while ((Variables.FirstOrDefault(x => x.Name == var.Name + "_" + counter.ToString())) != null)
                 counter++;
             var.Name = var.Name + "_" + counter.ToString();
         }

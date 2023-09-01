@@ -52,7 +52,7 @@ namespace Ginger.Activities
 
         public eEditMode mEditMode;
 
-        public ActivitiesGroupPage(ActivitiesGroup activitiesGroup, BusinessFlow parentBusinessFlow = null, eEditMode mode = eEditMode.ExecutionFlow)
+        public ActivitiesGroupPage(ActivitiesGroup activitiesGroup, BusinessFlow parentBusinessFlow = null, eEditMode mode = eEditMode.ExecutionFlow,Context mContext = null)
         {
             InitializeComponent();
             mEditMode = mode;
@@ -61,11 +61,19 @@ namespace Ginger.Activities
             mBusinessFlow = parentBusinessFlow;
 
             xShowIDUC.Init(mActivitiesGroup);
+            xAGExternalId.Init(mContext, mActivitiesGroup, nameof(ActivitiesGroup.ExternalID));
+            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+            {
+                xAGExternalId.Init(mContext, mActivitiesGroup, nameof(ActivitiesGroup.ExternalID));
+            }
+            else
+            {
+                xPnlAGExternalId.Visibility = Visibility.Collapsed;
+            }
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupName, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.Name));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtGroupDescription, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.Description));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtAutoPrecentage, TextBox.TextProperty, mActivitiesGroup, nameof(ActivitiesGroup.AutomationPrecentage), BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mActivitiesGroup, nameof(RepositoryItemBase.Publish));
-
             SetGroupedActivitiesGridView();
             grdGroupedActivities.DataSourceList = mActivitiesGroup.ActivitiesIdentifiers;
             grdGroupedActivities.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshGroupedActivities));
@@ -160,15 +168,15 @@ namespace Ginger.Activities
 
             foreach (ActivityIdentifiers actIdent in mActivitiesGroup.ActivitiesIdentifiers)
             {
-                Activity repoAct = (Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                Activity repoAct = (Activity)activitiesRepository.FirstOrDefault(x => x.ActivityName == actIdent.ActivityName && x.Guid == actIdent.ActivityGuid);
                 if (repoAct == null)
                 {
-                    repoAct = (Activity)activitiesRepository.Where(x => x.Guid == actIdent.ActivityGuid).FirstOrDefault();
+                    repoAct = (Activity)activitiesRepository.FirstOrDefault(x => x.Guid == actIdent.ActivityGuid);
                 }
 
                 if (repoAct == null)
                 {
-                    repoAct = (Activity)activitiesRepository.Where(x => x.ActivityName == actIdent.ActivityName).FirstOrDefault();
+                    repoAct = (Activity)activitiesRepository.FirstOrDefault(x => x.ActivityName == actIdent.ActivityName);
                 }
 
                 if (repoAct != null)

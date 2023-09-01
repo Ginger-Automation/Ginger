@@ -101,7 +101,6 @@ namespace Ginger.BusinessFlowPages
                 xSharedRepoInstanceUCCol.Width = new GridLength(0);
             }
         }
-
         public void UpdateActivity(Activity activity)
         {
             if (mActivity != activity)
@@ -156,10 +155,11 @@ namespace Ginger.BusinessFlowPages
             {
                 xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
             }
+            xTargetApplicationlbl.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
             xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
             BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
-
+            
             if (mActivity.GetType() == typeof(ErrorHandler))
             {
                 xHandlerTypeStack.Visibility = Visibility.Visible;

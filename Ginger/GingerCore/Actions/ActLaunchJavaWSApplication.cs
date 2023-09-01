@@ -26,6 +26,7 @@ using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -95,6 +96,8 @@ namespace GingerCore.Actions
             public static string BlockingJavaWindow = "BlockingJavaWindow"; //search for blocking java window that popup before the application(Security, Update...) 
             public static string PortConfigParam = "PortConfigParam";
             public static string DynamicPortPlaceHolder = "DynamicPortPlaceHolder";
+            public static string IsCustomApplicationProcessName = "IsCustomApplicationProcessName";
+            public static string ApplicationProcessName = "ApplicationProcessName";
 
         }
 
@@ -140,7 +143,7 @@ namespace GingerCore.Actions
             {
                 if (mURL == string.Empty)//backward support
                 {
-                    if (InputValues.Where(x => x.Param == "URL" && x.Value != string.Empty).FirstOrDefault() != null)
+                    if (InputValues.FirstOrDefault(x => x.Param == "URL" && x.Value != string.Empty) != null)
                     {
                         mURL = GetInputParamValue("URL");
                     }
@@ -208,7 +211,7 @@ namespace GingerCore.Actions
             {
                 if (mPort == string.Empty)//backward support
                 {
-                    if (InputValues.Where(x => x.Param == "Port" && x.Value != string.Empty).FirstOrDefault() != null)
+                    if (InputValues.FirstOrDefault(x => x.Param == "Port" && x.Value != string.Empty) != null)
                     {
                         mPort = GetInputParamValue("Port");
                     }
@@ -308,6 +311,36 @@ namespace GingerCore.Actions
             }
         }
 
+        //------------------- application process name to attach
+        string mApplicationProcessName = string.Empty;
+        string mJApplicationProcessName_calc = string.Empty;
+        [IsSerializedForLocalRepository]
+        public string ApplicationProcessName
+        {
+            get
+            {
+                return mApplicationProcessName;
+            }
+            set
+            {
+                mApplicationProcessName = value;
+                OnPropertyChanged(Fields.ApplicationProcessName);
+            }
+        }
+        private bool mIsCustomApplicationProcessName = false;
+        [IsSerializedForLocalRepository]
+        public bool IsCustomApplicationProcessName
+        {
+            get
+            {
+                return mIsCustomApplicationProcessName;
+            }
+            set
+            {
+                mIsCustomApplicationProcessName = value;
+                OnPropertyChanged(Fields.IsCustomApplicationProcessName);
+            }
+        }
         // ValueExpression mVE = null;
 
         enum URLExtensionType
@@ -336,8 +369,14 @@ namespace GingerCore.Actions
 
         private CancellationTokenSource mAttachAgentCancellationToken = null;
         private Task mAttachAgentTask = null;
+        private bool mWaitForWindowTimeOut = false;
+        private readonly List<string> processNames = new();
         public override void Execute()
         {
+            processNames.Clear();
+            processNames.Add("java");
+            processNames.Add("jp2");
+
             mJavaApplicationProcessID = -1;
 
             //calculate the arguments
@@ -405,7 +444,7 @@ namespace GingerCore.Actions
                     //Wait Max 30 secs for Attach agent to attach the jar or process to exit
                     Stopwatch st = new Stopwatch();
                     st.Start();
-                    while (st.ElapsedMilliseconds < 30 * 1000)
+                    while (st.ElapsedMilliseconds < 30 * 1000 && !mWaitForWindowTimeOut)
                     {
                         if (IsInstrumentationModuleLoaded(mProcessIDForAttach))
                         {
@@ -495,6 +534,7 @@ namespace GingerCore.Actions
                 mWaitForWindowTitle_Calc = CalculateValue(mWaitForWindowTitle);
                 mWaitForWindowTitleMaxTime_Calc = CalculateValue(mWaitForWindowTitleMaxTime);
                 mAttachAgentProcessSyncTime_Calc = CalculateValue(mAttachAgentProcessSyncTime);
+                mJApplicationProcessName_calc = CalculateValue(mApplicationProcessName);
                 return true;
             }
             catch (Exception ex)
@@ -789,6 +829,10 @@ namespace GingerCore.Actions
             bool bFound = false;
             try
             {
+                if (IsCustomApplicationProcessName && !string.IsNullOrEmpty(mJApplicationProcessName_calc))
+                {
+                    processNames.Add(mJApplicationProcessName_calc.Trim().ToLower());
+                }
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
                 while (!bFound)
@@ -805,7 +849,10 @@ namespace GingerCore.Actions
                     // If Application is not launched from Ginger then we go over the process to find the target Process ID
                     else
                     {
-                        Process[] processlist = Process.GetProcesses();
+
+                        var processlist = Process.GetProcesses()
+                            .Where(process => processNames.Any(name => process.ProcessName.Contains(name, StringComparison.OrdinalIgnoreCase)));
+
                         List<Process> matchingProcessList = new List<Process>();
 
                         foreach (Process process in processlist)
@@ -867,6 +914,7 @@ namespace GingerCore.Actions
                     // Go out after max seconds
                     if (sw.ElapsedMilliseconds > mWaitForWindowTitleMaxTime_Calc_int * 1000)
                     {
+                        mWaitForWindowTimeOut = true;
                         break;
                     }
 
@@ -1047,13 +1095,18 @@ namespace GingerCore.Actions
 
         private bool ProcessExists(int processId)
         {
-            Process p = Process.GetProcesses().FirstOrDefault(x => x.Id == processId);
-
-            if (p != null && !p.HasExited)
+            try
             {
-                return true;
+                Process p = Process.GetProcessById(processId);
+                if (p != null && !p.HasExited)
+                {
+                    return true;
+                }
             }
-
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG,"Error occured while fectching process by id.", ex);
+            }
             return false;
         }
         private static string handleExePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "StaticDrivers", "handle.exe");

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
+using GingerCore;
 using System.Linq;
 using System.Windows.Controls;
 
@@ -28,14 +29,14 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 
         public override ValidationResult Validate(object value, System.Globalization.CultureInfo cultureInfo)
         {
-            if (WorkSpace.Instance.Solution.ApplicationPlatforms.Where(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)).ToList().Count() == 0)
+            if (!WorkSpace.Instance.Solution.ApplicationPlatforms.Any(x => ApplicationPOMModel.PomSupportedPlatforms.Contains(x.Platform)))
             {
-                return new ValidationResult(false, "POM supported Target Application platform is required");
+                return new ValidationResult(false, $"POM supported {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} platform is required");
             }
 
             if (value == null || string.IsNullOrEmpty(value.ToString()))
             {
-                return new ValidationResult(false, "Target Application can not be empty");
+                return new ValidationResult(false, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} can not be empty");
             }
 
             return new ValidationResult(true, null);

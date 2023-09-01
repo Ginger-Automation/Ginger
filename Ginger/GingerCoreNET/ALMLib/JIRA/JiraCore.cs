@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.JIRA;
+using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using JiraRepositoryStd.BLL;
@@ -104,7 +105,7 @@ namespace GingerCore.ALM
             jiraConnectObj.DisconnectJiraServer();
         }
 
-        public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
+        public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
             switch (ALMCore.DefaultAlmConfig.JiraTestingALM)
             {

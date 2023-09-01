@@ -151,6 +151,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         }
         public override void StartDriver()
         {
+
             if (JavaAgentHost == null || JavaAgentHost.Length == 0)
             {
                 Reporter.ToLog(eLogLevel.WARN, "Missing JavaAgentHost config value- Please verify Agent config parameter JavaAgentHost is not empty");
@@ -252,6 +253,8 @@ namespace GingerCore.Drivers.JavaDriverLib
                         Thread.Sleep(500);
                     }
                 }
+                //if the agent loading was cancelled for some reason, we need to reset the flag so that next time the loading can continue normally
+                cancelAgentLoading = false;
                 //Connect Failed after x retry...   
                 IsTryingToConnect = false;
             });
@@ -460,11 +463,16 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             while (!response.IsOK())
             {
+                if (act.Status != Amdocs.Ginger.CoreNET.Execution.eRunStatus.Running)
+                {
+                    break;
+                }
                 response = Send(Request);
                 if (St.ElapsedMilliseconds > waitTime * 1000)
                 {
                     break;
                 }
+                Thread.Sleep(500);
             }
             St.Stop();
             return response;
@@ -581,13 +589,13 @@ namespace GingerCore.Drivers.JavaDriverLib
         {
             if (IsPOMWidgetElement(currentPOMElementInfo))
             {
-                var path = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.ParentBrowserPath)).FirstOrDefault();
+                var path = currentPOMElementInfo.Properties.FirstOrDefault(x => x.Name.Equals(ElementProperty.ParentBrowserPath));
                 if (path != null && !string.IsNullOrEmpty(path.Value))
                 {
                     InitializeBrowser(new JavaElementInfo() { XPath = path.Value });
 
                     //check iframe and switch
-                    var iframePath = currentPOMElementInfo.Properties.Where(x => x.Name.Equals(ElementProperty.ParentIFrame)).FirstOrDefault();
+                    var iframePath = currentPOMElementInfo.Properties.FirstOrDefault(x => x.Name.Equals(ElementProperty.ParentIFrame));
 
                     if (iframePath != null && !string.IsNullOrEmpty(iframePath.Value))
                     {
@@ -790,74 +798,54 @@ namespace GingerCore.Drivers.JavaDriverLib
 
         private PayLoad SmartSyncHandler(ActSmartSync act)
         {
-            PayLoad PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
-            String sResponse = PL.GetValueString();
+            int MaxTimeout = GetMaxTimeout(act);
+            PayLoad PL = null;
+            string sResponse;
+
             Stopwatch st = new Stopwatch();
-            int MaxTimeout = 0;
-            try
-            {
-                if (act.WaitTime.HasValue == true)
-                {
-                    MaxTimeout = act.WaitTime.GetValueOrDefault();
-                }
-                else if (string.IsNullOrEmpty(act.GetInputParamValue("Value")))
-                {
-                    MaxTimeout = 5;
-                }
-                else
-                {
-                    MaxTimeout = Convert.ToInt32(act.GetInputParamCalculatedValue("Value"));
-                }
-            }
-            catch (Exception)
-            {
-                MaxTimeout = 5;
-            }
+            st.Reset();
+            st.Start();
+
             switch (act.SmartSyncAction)
             {
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisplay:
-                    st.Reset();
-                    st.Start();
-                    while (!(sResponse.Contains("True")))
+                    do
                     {
-                        Thread.Sleep(100);
-                        PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
-                        sResponse = PL.GetValueString();
-
                         if (st.ElapsedMilliseconds > MaxTimeout * 1000)
                         {
                             act.Error = "Smart Sync of WaitUntilDisplay is timeout";
                             break;
                         }
-                    }
+
+                        Thread.Sleep(200);
+
+                        PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
+                        sResponse = PL.GetValueString();
+
+                    } while (sResponse == null || !sResponse.Contains("True"));
                     break;
 
                 case ActSmartSync.eSmartSyncAction.WaitUntilDisapear:
-                    st.Reset();
-                    if (sResponse == null)
+                    do
                     {
-                        return PL;
-                    }
-                    else
-                    {
-                        st.Start();
-                        while (!(sResponse.Contains("False")))
+                        if (st.ElapsedMilliseconds > MaxTimeout * 1000)
                         {
-                            Thread.Sleep(100);
-                            PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
-                            sResponse = PL.GetValueString();
-                            if (st.ElapsedMilliseconds > MaxTimeout * 1000)
-                            {
-                                act.Error = "Smart Sync of WaitUntilDisapear is timeout";
-                                break;
-                            }
+                            act.Error = "Smart Sync of WaitUntilDisapear is timeout";
+                            break;
                         }
-                    }
+
+                        Thread.Sleep(200);
+
+                        PL = IsElementDisplayed(act.LocateBy.ToString(), act.LocateValueCalculated);
+                        sResponse = PL.GetValueString();
+
+                    } while (sResponse != null && !sResponse.Contains("False"));
                     break;
             }
+
+            st.Stop();
             return PL;
         }
-
 
         private PayLoad HandleJavaBrowserElementAction(ActBrowserElement actJavaBrowserElement)
         {
@@ -2117,77 +2105,90 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                 PayLoad Request;
                 PayLoad Response;
-                //Get Current window, Specific Frame controls
-                if (!string.IsNullOrEmpty(pomSetting.SpecificFramePath))
+                try
                 {
-                    Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
-                    Request.AddEnumValue(WindowExplorerOperationType.GetFrameControls);
-                    Request.AddValue(pomSetting.SpecificFramePath);
-                    Request.ClosePackage();
-                }
-                //Get Current window all Controls
-                else
-                {
-                    Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
-                    Request.AddEnumValue(WindowExplorerOperationType.GetCurrentWindowVisibleControls);
-                    Request.ClosePackage();
-                }
-                Response = Send(Request);
-
-                if (Response.IsErrorPayLoad())
-                {
-                    string ErrMsg = Response.GetErrorValue();
-                    throw new Exception(ErrMsg);
-                }
-                else
-                {
-                    List<PayLoad> ControlsPL = Response.GetListPayLoad();
-                    foreach (var pl in ControlsPL)
+                    //Get Current window, Specific Frame controls
+                    if (!string.IsNullOrEmpty(pomSetting.SpecificFramePath))
                     {
-                        if (StopProcess)
-                        {
-                            break;
-                        }
-                        JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
+                        Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+                        Request.AddEnumValue(WindowExplorerOperationType.GetFrameControls);
+                        Request.AddValue(pomSetting.SpecificFramePath);
+                        Request.ClosePackage();
+                    }
+                    //Get Current window all Controls
+                    else
+                    {
+                        Request = new PayLoad(CommandType.WindowExplorerOperation.ToString());
+                        Request.AddEnumValue(WindowExplorerOperationType.GetCurrentWindowVisibleControls);
+                        Request.ClosePackage();
+                    }
+                    Response = Send(Request);
 
-                        if (pomSetting.isPOMLearn)
+                    if (Response.IsErrorPayLoad())
+                    {
+                        string ErrMsg = Response.GetErrorValue();
+                        throw new Exception(ErrMsg);
+                    }
+                    else
+                    {
+                        List<PayLoad> ControlsPL = Response.GetListPayLoad();
+                        foreach (var pl in ControlsPL)
                         {
-                            if (ci.ElementType.Contains("browser") && ci.ElementTypeEnum.Equals(eElementType.Browser))
+                            if (StopProcess)
                             {
-                                GetWidgetsElementList(pomSetting.filteredElementType, foundElementsList, ci.XPath);
+                                break;
+                            }
+                            JavaElementInfo ci = (JavaElementInfo)GetControlInfoFromPayLoad(pl);
+
+                            if (pomSetting.isPOMLearn)
+                            {
+                                if (ci.ElementType.Contains("browser") && ci.ElementTypeEnum.Equals(eElementType.Browser))
+                                {
+                                    GetWidgetsElementList(pomSetting.filteredElementType, foundElementsList, ci.XPath);
+                                }
+                                else
+                                {
+                                    ((IWindowExplorer)this).LearnElementInfoDetails(ci);
+                                    // set the Flag in case you wish to learn the element or not
+                                    bool learnElement = true;
+                                    if (pomSetting.filteredElementType != null)
+                                    {
+                                        if (!pomSetting.filteredElementType.Contains(ci.ElementTypeEnum))
+                                        {
+                                            learnElement = false;
+                                        }
+                                    }
+                                    if (learnElement)
+                                    {
+                                        ci.IsAutoLearned = true;
+                                        foundElementsList.Add(ci);
+                                    }
+                                }
                             }
                             else
                             {
-                                ((IWindowExplorer)this).LearnElementInfoDetails(ci);
-                                // set the Flag in case you wish to learn the element or not
-                                bool learnElement = true;
-                                if (pomSetting.filteredElementType != null)
+                                list.Add(ci);
+                                List<ElementInfo> HTMLControlsPL = new List<ElementInfo>();
+                                if (ci.ElementTypeEnum == eElementType.Browser)
                                 {
-                                    if (!pomSetting.filteredElementType.Contains(ci.ElementTypeEnum))
+                                    PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
+                                    String flag = PL.GetValueString();
+
+                                    if (flag.Contains("True"))
                                     {
-                                        learnElement = false;
+                                        InitializeBrowser(ci);
+
+                                        HTMLControlsPL = GetBrowserVisibleControls();
+                                        if (HTMLControlsPL != null)
+                                        {
+                                            list.AddRange(HTMLControlsPL);
+                                        }
                                     }
                                 }
-                                if (learnElement)
+                                //TODO: J.G. use elementTypeEnum instead of contains
+                                else if (ci.ElementType != null && ci.ElementType.Contains("JEditor"))
                                 {
-                                    ci.IsAutoLearned = true;
-                                    foundElementsList.Add(ci);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            list.Add(ci);
-                            List<ElementInfo> HTMLControlsPL = new List<ElementInfo>();
-                            if (ci.ElementTypeEnum == eElementType.Browser)
-                            {
-                                PayLoad PL = IsElementDisplayed(eLocateBy.ByXPath.ToString(), ci.XPath);
-                                String flag = PL.GetValueString();
-
-                                if (flag.Contains("True"))
-                                {
-                                    InitializeBrowser(ci);
-
+                                    InitializeJEditorPane(ci);
                                     HTMLControlsPL = GetBrowserVisibleControls();
                                     if (HTMLControlsPL != null)
                                     {
@@ -2195,24 +2196,18 @@ namespace GingerCore.Drivers.JavaDriverLib
                                     }
                                 }
                             }
-                            //TODO: J.G. use elementTypeEnum instead of contains
-                            else if (ci.ElementType != null && ci.ElementType.Contains("JEditor"))
-                            {
-                                InitializeJEditorPane(ci);
-                                HTMLControlsPL = GetBrowserVisibleControls();
-                                if (HTMLControlsPL != null)
-                                {
-                                    list.AddRange(HTMLControlsPL);
-                                }
-                            }
-                        }
 
+                        }
+                    }
+
+                    if (pomSetting.isPOMLearn)
+                    {
+                        list = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
                     }
                 }
-
-                if (pomSetting.isPOMLearn)
+                catch (Exception ex)
                 {
-                    list = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Visible Controls", ex);
                 }
                 return list;
 
@@ -3793,7 +3788,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                     }
                 }
 
-                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+                if (activesElementLocators.Any(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed))
                 {
                     return true;
                 }
@@ -3942,7 +3937,7 @@ namespace GingerCore.Drivers.JavaDriverLib
         public ElementInfo GetMatchingElement(ElementInfo element, ObservableList<ElementInfo> originalElements)
         {
             //try by type and Xpath comparison
-            ElementInfo OriginalElementInfo = originalElements.Where(x => (x.ElementTypeEnum == element.ElementTypeEnum)
+            ElementInfo OriginalElementInfo = originalElements.FirstOrDefault(x => (x.ElementTypeEnum == element.ElementTypeEnum)
                                                                 && (x.XPath == element.XPath)
                                                                 && (x.Path == element.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(element.Path)))
                                                                 && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null
@@ -3950,7 +3945,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                                                                         && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == element.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
                                                                         )
                                                                     )
-                                                                ).FirstOrDefault();
+);
             return OriginalElementInfo;
         }
 
@@ -4148,8 +4143,8 @@ namespace GingerCore.Drivers.JavaDriverLib
             Size size = new Size();
             int Height = 0;
             int Width = 0;
-            int.TryParse(EI.Properties.Where(item => item.Name == "Height").FirstOrDefault().Value, out Height);
-            int.TryParse(EI.Properties.Where(item => item.Name == "Width").FirstOrDefault().Value, out Width);
+            int.TryParse(EI.Properties.FirstOrDefault(item => item.Name == "Height").Value, out Height);
+            int.TryParse(EI.Properties.FirstOrDefault(item => item.Name == "Width").Value, out Width);
 
             size.Height = Height;
             size.Width = Width;

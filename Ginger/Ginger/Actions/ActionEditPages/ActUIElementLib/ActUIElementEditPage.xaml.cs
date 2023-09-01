@@ -131,14 +131,14 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
         private void SetLocateValueFrame()
         {
-            LocateValueEditFrame.Content = null;
+            LocateValueEditFrame.ClearAndSetContent(null);
             if (ElementLocateByComboBox.SelectedItem == null)
             {
                 return;
             }
             eLocateBy SelectedLocType = (eLocateBy)((ComboEnumItem)ElementLocateByComboBox.SelectedItem).Value;
             Page p = GetLocateValueEditPage(SelectedLocType);
-            LocateValueEditFrame.Content = p;
+            LocateValueEditFrame.ClearAndSetContent(p);
             UpdateActionInfo(mAction.ElementAction);
             //if (SelectedLocType != eLocateBy.POMElement)
             //{
@@ -219,12 +219,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
             Page platformEditPage = GetPlatformEditPage();
             if (platformEditPage == null)
             {
-                PlatformSpecificFrame.Content = null;
+                PlatformSpecificFrame.ClearAndSetContent(null);
                 PlatformSpecificFrame.Visibility = System.Windows.Visibility.Collapsed;
             }
             else
             {
-                PlatformSpecificFrame.Content = platformEditPage;
+                PlatformSpecificFrame.ClearAndSetContent(platformEditPage);
                 PlatformSpecificFrame.Visibility = System.Windows.Visibility.Visible;
             }
         }
@@ -235,7 +235,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             if (pageContent != null)
             {
-                UIElementActionEditPageFrame.Content = pageContent;
+                UIElementActionEditPageFrame.ClearAndSetContent(pageContent);
                 UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
             }
         }
@@ -310,12 +310,12 @@ namespace Ginger.Actions._Common.ActUIElementLib
 
             if (elementEditPage == null)
             {
-                UIElementActionEditPageFrame.Content = null;
+                UIElementActionEditPageFrame.ClearAndSetContent(null);
                 UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Collapsed;
             }
             else
             {
-                UIElementActionEditPageFrame.Content = elementEditPage;
+                UIElementActionEditPageFrame.ClearAndSetContent(elementEditPage);
                 UIElementActionEditPageFrame.Visibility = System.Windows.Visibility.Visible;
             }
             return elementEditPage;
@@ -708,7 +708,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 if (currentPOM != null)
                 {
                     Guid selectedPOMElementGUID = new Guid(pOMandElementGUIDs[1]);
-                    selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.Where(z => z.Guid == selectedPOMElementGUID).FirstOrDefault();
+                    selectedPOMElement = (ElementInfo)currentPOM.MappedUIElements.FirstOrDefault(z => z.Guid == selectedPOMElementGUID);
                 }
             }
             return selectedPOMElement;
@@ -742,7 +742,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ElementInfo selectedPOMElement = GetElementInfoFromCurerentPOMSelected();
             if (selectedPOMElement != null && selectedPOMElement.OptionalValuesObjectsList.Count > 0)        //For new implementation
             {
-                OptionalValue defValue = selectedPOMElement.OptionalValuesObjectsList.Where(s => s.IsDefault == true).FirstOrDefault();
+                OptionalValue defValue = selectedPOMElement.OptionalValuesObjectsList.FirstOrDefault(s => s.IsDefault == true);
                 if (defValue != null)
                 {
                     if (valuesType == ePomElementValuesType.Values)

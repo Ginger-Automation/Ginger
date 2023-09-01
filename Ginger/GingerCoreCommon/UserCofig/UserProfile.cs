@@ -113,6 +113,36 @@ namespace Ginger
             }
         }
 
+        private bool mShowSourceControlStatusIcon;
+        [IsSerializedForLocalRepository]
+        public bool ShowSourceControlStatusIcon
+        {
+            get => mShowSourceControlStatusIcon;
+            set
+            {
+                if (mShowSourceControlStatusIcon != value)
+                {
+                    mShowSourceControlStatusIcon = value;
+                    OnPropertyChanged(nameof(ShowSourceControlStatusIcon));
+                }
+            }
+        }
+
+        private bool mWatchFileChanges = true;
+        [IsSerializedForLocalRepository(true)]
+        public bool WatchFileChanges
+        {
+            get => mWatchFileChanges;
+            set
+            {
+                if(mWatchFileChanges != value)
+                {
+                    mWatchFileChanges = value;
+                    OnPropertyChanged(nameof(mWatchFileChanges));
+                }
+            }
+        }
+
         public bool IsSharedUserProfile { get { return UserProfileOperations.IsSharedUserProfile; } }
 
         [IsSerializedForLocalRepository]

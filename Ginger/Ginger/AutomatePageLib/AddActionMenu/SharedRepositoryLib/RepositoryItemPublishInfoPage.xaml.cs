@@ -159,114 +159,129 @@ namespace Ginger.Repository
 
         private async void PublishErrorHandlerButton_Click(object sender, RoutedEventArgs e)
         {
-            await Task.Run(() =>
+            if (mRepoItemUsages.CurrentItem != null)
             {
-                StartProcessingIcon();
-                var errorOccured = false;
-                foreach (var repositoryItem in mRepoItemUsages)
+                await Task.Run(() =>
                 {
                     try
                     {
-                        if (repositoryItem.Selected && repositoryItem.PublishStatus != RepositoryItemUsage.ePublishStatus.Published)
+                        StartProcessingIcon();
+                        var errorOccured = false;
+                        foreach (var repositoryItem in mRepoItemUsages)
                         {
-                            Activity activityCopy = (Activity)mRepoItem.CreateInstance(true);
-                            activityCopy.Active = true;
+                            try
+                            {
+                                if (repositoryItem.Selected && repositoryItem.PublishStatus != RepositoryItemUsage.ePublishStatus.Published)
+                                {
+                                    Activity activityCopy = (Activity)mRepoItem.CreateInstance(true);
+                                    activityCopy.Active = true;
 
-                            if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd)
-                            {
-                                repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.Last());
-                            }
-                            else if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.Beginning)
-                            {
-                                repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(), insertIndex: 0);
-                            }
-                            else if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AfterSpecificActivity)
-                            {
-                                if (repositoryItem.IndexActivityName == null)
-                                {
-                                    errorOccured = true;
-                                }
-                                else
-                                {
-                                    var indexToAdd = Convert.ToInt32(repositoryItem.IndexActivityName[0].ToString());
-                                    repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(), insertIndex: indexToAdd + 1);
-                                }
-                            }
-                            if (!errorOccured)
-                            {
-                                if (repositoryItem.RepositoryItemPublishType == RepositoryItemUsage.eRepositoryItemPublishType.LinkInstance)
-                                {
-                                    repositoryItem.HostBusinessFlow.MarkActivityAsLink(activityCopy.Guid, activityCopy.ParentGuid);
-                                }
-                                repositoryItem.PublishStatus = RepositoryItemUsage.ePublishStatus.Published;
-                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(repositoryItem.HostBusinessFlow);
-                            }
+                                    if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd)
+                                    {
+                                        repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.Last());
+                                    }
+                                    else if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.Beginning)
+                                    {
+                                        repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(), insertIndex: 0);
+                                    }
+                                    else if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AfterSpecificActivity)
+                                    {
+                                        if (repositoryItem.IndexActivityName == null)
+                                        {
+                                            errorOccured = true;
+                                        }
+                                        else
+                                        {
+                                            var indexToAdd = Convert.ToInt32(repositoryItem.IndexActivityName[0].ToString());
+                                            repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(), insertIndex: indexToAdd + 1);
+                                        }
+                                    }
+                                    if (!errorOccured)
+                                    {
+                                        if (repositoryItem.RepositoryItemPublishType == RepositoryItemUsage.eRepositoryItemPublishType.LinkInstance)
+                                        {
+                                            repositoryItem.HostBusinessFlow.MarkActivityAsLink(activityCopy.Guid, activityCopy.ParentGuid);
+                                        }
+                                        repositoryItem.PublishStatus = RepositoryItemUsage.ePublishStatus.Published;
+                                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(repositoryItem.HostBusinessFlow);
+                                    }
 
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                errorOccured = true;
+                                repositoryItem.PublishStatus = RepositoryItemUsage.ePublishStatus.FailedToPublish;
+                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {System.Reflection.MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                            }
+                        }
+                        StopProcessingIcon();
+                        if (errorOccured)
+                        {
+                            Reporter.ToUser(eUserMsgKey.FailedToPublishRepositoryInfo);
+                        }
+                        else
+                        {
+                            Reporter.ToUser(eUserMsgKey.PublishRepositoryInfo);
                         }
                     }
                     catch (Exception ex)
                     {
-                        errorOccured = true;
-                        repositoryItem.PublishStatus = RepositoryItemUsage.ePublishStatus.FailedToPublish;
-                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {System.Reflection.MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                        Reporter.ToUser(eUserMsgKey.FailedToPublishRepositoryInfo);
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed Publish Error Handler", ex);
                     }
-                }
-                StopProcessingIcon();
-                if (errorOccured)
-                {
-                    Reporter.ToUser(eUserMsgKey.FailedToPublishRepositoryInfo);
-                }
-                else
-                {
-                    Reporter.ToUser(eUserMsgKey.PublishRepositoryInfo);
-                }
+                });
             }
-             );
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.NoPublishRepositoryInfo);
+            }
+
         }
 
         private async Task GetBusinessFlowPublishedInfo()
         {
-            try
+            await Task.Run(() =>
             {
-                await Task.Run(() =>
+                try
                 {
                     StartProcessingIcon();
                     ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
                     Parallel.ForEach(businessFlows, BF =>
-                    {
-                        RepositoryItemUsage itemUsage;
-                        string businessFlowName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(BF.Name);
-                        RepositoryItemUsage.eUsageTypes usageType = RepositoryItemUsage.eUsageTypes.None;
-                        bool isPublishedInBF = false;
-
-                        if (mRepoItem is Activity)
                         {
-                            foreach (Activity errorHandler in BF.Activities)
+                            RepositoryItemUsage itemUsage;
+                            string businessFlowName = Amdocs.Ginger.Common.GeneralLib.General.RemoveInvalidFileNameChars(BF.Name);
+                            RepositoryItemUsage.eUsageTypes usageType = RepositoryItemUsage.eUsageTypes.None;
+                            bool isPublishedInBF = false;
+
+                            if (mRepoItem is Activity)
                             {
-                                if (errorHandler.ParentGuid == mRepoItem.Guid || errorHandler.Guid == mRepoItem.Guid ||
-                                            (mRepoItem.ExternalID != null && mRepoItem.ExternalID != string.Empty && mRepoItem.ExternalID != "0" && errorHandler.ExternalID == mRepoItem.ExternalID))
+                                foreach (Activity errorHandler in BF.Activities)
                                 {
-                                    isPublishedInBF = true;
+                                    if (errorHandler.ParentGuid == mRepoItem.Guid || errorHandler.Guid == mRepoItem.Guid ||
+                                                (mRepoItem.ExternalID != null && mRepoItem.ExternalID != string.Empty && mRepoItem.ExternalID != "0" && errorHandler.ExternalID == mRepoItem.ExternalID))
+                                    {
+                                        isPublishedInBF = true;
+                                    }
+                                }
+                                if (!isPublishedInBF)
+                                {
+                                    itemUsage = new() { HostBusinessFlow = BF, HostBizFlowPath = System.IO.Path.Combine(BF.ContainingFolder, businessFlowName), UsageItemName = businessFlowName, UsageItemType = usageType, Selected = false, RepositoryItemPublishType = RepositoryItemUsage.eRepositoryItemPublishType.LinkInstance, InsertRepositoryInsatncePosition = RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd };
+                                    AddBFUsageInList(itemUsage);
                                 }
                             }
-                            if (!isPublishedInBF)
-                            {
-                                itemUsage = new() { HostBusinessFlow = BF, HostBizFlowPath = System.IO.Path.Combine(BF.ContainingFolder, businessFlowName), UsageItemName = businessFlowName, UsageItemType = usageType, Selected = false, RepositoryItemPublishType = RepositoryItemUsage.eRepositoryItemPublishType.LinkInstance, InsertRepositoryInsatncePosition = RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd };
-                                AddBFUsageInList(itemUsage);
-                            }
-                        }
 
 
-                    });
+                        });
                     StopProcessingIcon();
-                });
-            }
-            catch (Exception ex)
-            {
-                StopProcessingIcon();
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetBusinessFlowPublishedInfo", ex);
-            }
+                }
+                catch (Exception ex)
+                {
+                    StopProcessingIcon();
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetBusinessFlowPublishedInfo", ex);
+                }
+            });
         }
 
         private void AddBFUsageInList(RepositoryItemUsage itemUsage)

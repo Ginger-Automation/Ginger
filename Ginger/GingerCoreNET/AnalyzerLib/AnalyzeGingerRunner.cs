@@ -36,7 +36,7 @@ namespace Ginger.AnalyzerLib
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
 
             // check that we have BFs
-            if (GR.Executor.BusinessFlows.Count() == 0)
+            if (!GR.Executor.BusinessFlows.Any())
             {
                 AnalyzeGingerRunner AGR = CreateNewIssue(IssuesList, GR);
                 AGR.Description = "Runner is missing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
@@ -54,16 +54,16 @@ namespace Ginger.AnalyzerLib
             {
                 if (string.IsNullOrEmpty(AA.AgentName))
                 {
-                    if (GR.Executor.SolutionApplications.Where(x => (x.AppName == AA.AppName && x.Platform == ePlatformType.NA)).FirstOrDefault() != null)
+                    if (GR.Executor.SolutionApplications.FirstOrDefault(x => (x.AppName == AA.AppName && x.Platform == ePlatformType.NA)) != null)
                     {
                         continue;
                     }
                     //create error
                     AnalyzeGingerRunner AGR = CreateNewIssue(IssuesList, GR);
                     AGR.ItemParent = GR.Name;
-                    AGR.Description = "Target Application is not mapped to an Agent";
-                    AGR.Details = string.Format("The '{0}' Runner '{1}' Target Application is not mapped to any Agent", GR.Name, AA.AppName);
-                    AGR.HowToFix = "Map the Target Application to an Agent";
+                    AGR.Description = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to an Agent";
+                    AGR.Details = $"The '{GR.Name}' Runner '{AA.AppName}' {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to any Agent";
+                    AGR.HowToFix = $"Map the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} to an Agent";
                     AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;
                     AGR.IssueType = eType.Error;
                     AGR.Impact = "Execution will fail.";

@@ -141,8 +141,11 @@ namespace GingerCore.Drivers.WindowsLib
 
         public override void CloseDriver()
         {
-            mUIAutomationHelper.StopRecording();
-            mUIAutomationHelper = null;
+            if(mUIAutomationHelper!=null)
+            {
+                mUIAutomationHelper.StopRecording();
+                mUIAutomationHelper = null;
+            }            
         }
 
         public override Act GetCurrentElement()
@@ -311,7 +314,7 @@ namespace GingerCore.Drivers.WindowsLib
                     if (!result.Equals(""))
                     {
                         actWBE.AddOrUpdateReturnParamActual("Actual", result);
-                        actWBE.ExInfo = result;
+                        actWBE.ExInfo = "Page source added to Output values.";
                     }
                     else
                     {
@@ -1124,38 +1127,46 @@ namespace GingerCore.Drivers.WindowsLib
         {
             return await Task.Run(async () =>
             {
-                if (foundElementsList == null)
+                try
                 {
-                    foundElementsList = new ObservableList<ElementInfo>();
-                }
-                List<ElementInfo> elementInfoList = await mUIAutomationHelper.GetVisibleControls();
-
-                foreach (UIAElementInfo foundElemntInfo in elementInfoList)
-                {
-                    if (StopProcess)
+                    if (foundElementsList == null)
                     {
-                        break;
+                        foundElementsList = new ObservableList<ElementInfo>();
                     }
+                    List<ElementInfo> elementInfoList = await mUIAutomationHelper.GetVisibleControls();
 
-                    ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo, pomSetting);
-
-                    bool learnElement = true;
-                    if (pomSetting.filteredElementType != null)
+                    foreach (UIAElementInfo foundElemntInfo in elementInfoList)
                     {
-                        if (!pomSetting.filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                        if (StopProcess)
                         {
-                            learnElement = false;
+                            break;
+                        }
+
+                        ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo, pomSetting);
+
+                        bool learnElement = true;
+                        if (pomSetting.filteredElementType != null)
+                        {
+                            if (!pomSetting.filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                            {
+                                learnElement = false;
+                            }
+                        }
+                        if (learnElement)
+                        {
+                            foundElemntInfo.IsAutoLearned = true;
+                            foundElementsList.Add(foundElemntInfo);
                         }
                     }
-                    if (learnElement)
-                    {
-                        foundElemntInfo.IsAutoLearned = true;
-                        foundElementsList.Add(foundElemntInfo);
-                    }
-                }
 
-                elementInfoList = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
-                return elementInfoList;
+                    elementInfoList = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
+                    return elementInfoList;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Controls", ex);
+                    return new List<ElementInfo>();
+                }
             });
         }
 
@@ -1617,7 +1628,7 @@ namespace GingerCore.Drivers.WindowsLib
 
                 LocateElementByLocators(EI.Locators, GetOutAfterFoundElement);
 
-                if (activesElementLocators.Where(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed).Count() > 0)
+                if (activesElementLocators.Any(x => x.LocateStatus == ElementLocator.eLocateStatus.Passed))
                 {
                     return true;
                 }
@@ -1761,7 +1772,7 @@ namespace GingerCore.Drivers.WindowsLib
         public ElementInfo GetMatchingElement(ElementInfo latestElement, ObservableList<ElementInfo> originalElements)
         {
             //try by type and Xpath comparison
-            ElementInfo OriginalElementInfo = originalElements.Where(x => (x.ElementTypeEnum == latestElement.ElementTypeEnum)
+            ElementInfo OriginalElementInfo = originalElements.FirstOrDefault(x => (x.ElementTypeEnum == latestElement.ElementTypeEnum)
                                                                 && (x.XPath == latestElement.XPath)
                                                                 && (x.Path == latestElement.Path || (string.IsNullOrEmpty(x.Path) && string.IsNullOrEmpty(latestElement.Path)))
                                                                 && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath) == null
@@ -1769,7 +1780,7 @@ namespace GingerCore.Drivers.WindowsLib
                                                                         && (x.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue == latestElement.Locators.FirstOrDefault(l => l.LocateBy == eLocateBy.ByRelXPath).LocateValue)
                                                                         )
                                                                     )
-                                                                ).FirstOrDefault();
+);
             return OriginalElementInfo;
         }
 

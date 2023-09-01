@@ -89,14 +89,48 @@ namespace GingerCore.Actions
         [IsSerializedForLocalRepository]
         public string Keyspace { set; get; }
 
+        public string mTable;
         [IsSerializedForLocalRepository]
-        public string Table { set; get; }
+        public string Table 
+        { 
+            get
+            {
+                return mTable;
+            }
+            set 
+            { 
+                mTable = value; 
+                OnPropertyChanged(Fields.Table); 
+            }
+        }
 
+        public string mColumn;
         [IsSerializedForLocalRepository]
-        public string Column { set; get; }
+        public string Column 
+        { 
+            get 
+            { 
+                return mColumn; 
+            } 
+            set 
+            { mColumn = value;
+              OnPropertyChanged(Fields.Column); 
+            } 
+        }
 
+        public string mWhere;
         [IsSerializedForLocalRepository]
-        public string Where { set; get; }
+        public string Where 
+        { 
+            get 
+            { 
+                return mWhere;
+            } 
+            set 
+            { mWhere = value; 
+              OnPropertyChanged(Fields.Where); 
+            } 
+        }
 
         public string PrimaryKey
         {
@@ -220,8 +254,23 @@ namespace GingerCore.Actions
             }
         }
 
+        private eDBValidationType mDBValidationType;
         [IsSerializedForLocalRepository]
-        public eDBValidationType DBValidationType { get; set; }
+        public eDBValidationType DBValidationType
+        {
+            get
+            {
+                return mDBValidationType;
+            }
+            set
+            {
+                if(mDBValidationType != value)
+                {
+                    mDBValidationType = value;
+                    OnPropertyChanged(nameof(DBValidationType));
+                }
+            }
+        }
 
         private string mInsertJson = string.Empty;
 
@@ -374,7 +423,7 @@ namespace GingerCore.Actions
             }
 
             string AppNameCalculated = ValueExpression.Calculate(this.AppName);
-            EnvApplication App = (from a in RunOnEnvironment.Applications where a.Name == AppNameCalculated select a).FirstOrDefault();
+            EnvApplication App = RunOnEnvironment.Applications.FirstOrDefault(app => string.Equals(app.Name, AppNameCalculated));
             if (App == null)
             {
                 Error = "The mapped Environment Application '" + AppNameCalculated + "' was not found in the '" + RunOnEnvironment.Name + "' Environment which was selected for execution.";
@@ -382,7 +431,7 @@ namespace GingerCore.Actions
             }
 
             string DBNameCalculated = ValueExpression.Calculate(DBName);
-            DB = (Database)(from d in App.Dbs where d.Name == DBNameCalculated select d).FirstOrDefault();
+            DB = (Database)App.Dbs.FirstOrDefault(db => string.Equals(db.Name, DBNameCalculated));
             if (DB == null)
             {
                 Error = "The mapped DB '" + DBNameCalculated + "' was not found in the '" + AppNameCalculated + "' Environment Application.";
@@ -392,8 +441,10 @@ namespace GingerCore.Actions
             DB.ProjEnvironment = RunOnEnvironment;
             DB.BusinessFlow = RunOnBusinessFlow;
 
-            DatabaseOperations databaseOperations = new DatabaseOperations(DB);
-            DB.DatabaseOperations = databaseOperations;
+            if (DB.DatabaseOperations == null)
+            {
+                DB.DatabaseOperations = new DatabaseOperations(DB);
+            }
 
             return true;
         }
@@ -496,7 +547,10 @@ namespace GingerCore.Actions
                 {
                     return;
                 }
-
+                if (!string.IsNullOrEmpty(calcSQL))
+                {
+                    this.AddOrUpdateReturnParamActualWithPath("SQL Query", calcSQL,"");
+                }
                 int recordcount = Records.Count;
                 for (int j = 0; j < Records.Count; j++)
 

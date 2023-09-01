@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.Common
         Bitmap GetTaskbarScreenshot();
         string MergeVerticallyAndSaveBitmaps(params Bitmap[] bitmaps);
 
-        void ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
+        bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> bfs, ref string result, PublishToALMConfig publishToALMConfig, object silence);
 
         // string GenerateReportForREportTemplate(string ReportTemplateName, object RI, object RT);
 
@@ -85,7 +85,7 @@ namespace Amdocs.Ginger.Common
 
         bool Revert(string path, SourceControlBase SourceControl);
 
-        void ShowRecoveryItemPage(ObservableList<RecoveredItem> recovredItems);
+        void ShowRecoveryItemPage();
 
         SourceControlBase GetNewSVnRepo();
         void WaitForAutoRunWindowClose();

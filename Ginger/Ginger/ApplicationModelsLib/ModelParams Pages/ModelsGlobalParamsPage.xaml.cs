@@ -297,7 +297,14 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                         {
                             await Task.Run(() =>
                             {
-                                UpdateModelGlobalParamVeWithNameChange(PlaceholderBeforeEdit, NameAfterEdit);
+                                try
+                                {
+                                    UpdateModelGlobalParamVeWithNameChange(PlaceholderBeforeEdit, NameAfterEdit);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Model Global Param", ex);
+                                }
                             });
                         });
 
@@ -493,7 +500,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 newModelGlobalParam.PlaceHolder = "{NewGlobalParameter}";
             }
 
-            if (mModelsGlobalParamsList.Where(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder).FirstOrDefault() == null)
+            if (mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder) == null)
             {
                 return;
             }
@@ -507,10 +514,10 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             //Set unique name
             if (isCopy)
             {
-                if ((mModelsGlobalParamsList.Where(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder).FirstOrDefault()) != null)
+                if ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder)) != null)
                 {
                     int counter = 2;
-                    while ((mModelsGlobalParamsList.Where(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder + counter).FirstOrDefault()) != null)
+                    while ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder + counter)) != null)
                     {
                         counter++;
                     }
@@ -521,7 +528,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             else
             {
                 int counter = 2;
-                while ((mModelsGlobalParamsList.Where(x => x.PlaceHolder == "{NewGlobalParameter_" + counter.ToString() + "}").FirstOrDefault()) != null)
+                while ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == "{NewGlobalParameter_" + counter.ToString() + "}")) != null)
                 {
                     counter++;
                 }

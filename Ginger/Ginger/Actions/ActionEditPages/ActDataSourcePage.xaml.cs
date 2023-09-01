@@ -26,6 +26,7 @@ using GingerCore.Actions.Java;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
+using NPOI.OpenXmlFormats.Dml;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -511,14 +512,15 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbDataSourceTableName, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.DSTableName);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(cmbColumnValue, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.LocateColTitle);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(RowSelectorValue, ComboBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.LocateRowValue);
-
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ByQuery, RadioButton.IsCheckedProperty, mActDSTblElem, ActDSTableElement.Fields.ByQuery);
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(QueryVal, TextBox.TextProperty, mActDSTblElem, ActDSTableElement.Fields.QueryValue);
 
             if (mActDSTblElem == null || (mActDSTblElem.DSName == null && mActDSTblElem.DSTableName == null) || (mActDSTblElem.DSName == "" && mActDSTblElem.DSTableName == ""))
             {
                 cmbDataSourceName.SelectedIndex = 0;
                 mDataSourceName = mDSNames[0];
             }
-
+            
             if (mActDSTblElem.ValueExp != null && mActDSTblElem.ValueExp != "")
             {
                 SetDataSourceVEParams(mActDSTblElem.ValueExp);
@@ -554,7 +556,7 @@ namespace Ginger.Actions
                 mActDSTblElem.DSTableName = mDSTable.Name;
                 mActDSTblElem.DSName = mDSTable.DSC.Name;
                 Page pageContent = new Ginger.DataSource.DataSourceExportToExcel(mActDSTblElem);
-                ExcelSpecificFrame.Content = pageContent;
+                ExcelSpecificFrame.ClearAndSetContent(pageContent);
                 ExcelSpecificFrame.Visibility = Visibility.Visible;
             }
             else
@@ -1938,6 +1940,11 @@ namespace Ginger.Actions
 
         private void cmbDataSourceName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if(cmbDataSourceName.SelectedValue == null)
+            {
+                return;
+            }
+
             foreach (DataSourceBase ds in mDSList)
             {
                 if (ds.Name == cmbDataSourceName.SelectedValue.ToString())
@@ -1976,7 +1983,7 @@ namespace Ginger.Actions
 
         private void cmbDataSourceTableName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cmbDataSourceTableName == null || cmbDataSourceTableName.Items.Count == 0)
+            if (cmbDataSourceTableName == null || cmbDataSourceTableName.Items.Count == 0 || cmbDataSourceTableName.SelectedValue == null)
             {
                 return;
             }

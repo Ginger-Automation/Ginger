@@ -80,7 +80,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 
 
                     bool supportBody = true;
-                    if (Operation.RequestBody == null && Operation.ActualConsumes.Count() == 0)
+                    if (Operation.RequestBody == null && !Operation.ActualConsumes.Any())
                     {
 
                         ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key);
@@ -89,7 +89,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
                     }
 
 
-                    else if (Operation.ActualConsumes.Count() == 0 && Operation.RequestBody.Content.Count() != 0)
+                    else if (!Operation.ActualConsumes.Any() && Operation.RequestBody.Content.Any())
                     {
 
                         foreach (var body in Operation.RequestBody.Content)
@@ -209,7 +209,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 
         private void GenerateResponse(SwaggerOperation operation, ApplicationAPIModel basicModal)
         {
-            if (operation.Responses.Count > 0 && operation.Responses.Keys.Where(x => x.StartsWith("2")).Count() > 0)
+            if (operation.Responses.Count > 0 && operation.Responses.Keys.Any(x => x.StartsWith("2")))
             {
                 //handling only the first sucess response code need to be improved
                 //as discussed, for now handling response for only success

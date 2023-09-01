@@ -56,8 +56,7 @@ namespace Ginger.SolutionGeneral
 
         public void SaveSolution(bool showWarning = true, Solution.eSolutionItemToSave solutionItemToSave = Solution.eSolutionItemToSave.GeneralDetails)
         {
-            bool doSave = false;
-
+            bool doSave;
             if (!showWarning)
             {
                 doSave = true;
@@ -137,7 +136,7 @@ namespace Ginger.SolutionGeneral
                 {
                     if (Solution.ApplicationPlatforms.Count != lastSavedSolution.ApplicationPlatforms.Count)
                     {
-                        bldExtraChangedItems.Append("Target Applications, ");
+                        bldExtraChangedItems.Append($"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}, ");
                     }
                     else
                     {
@@ -145,7 +144,7 @@ namespace Ginger.SolutionGeneral
                         {
                             if (app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
-                                bldExtraChangedItems.Append("Target Applications, ");
+                                bldExtraChangedItems.Append($"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}, ");
                                 break;
                             }
                         }
@@ -170,19 +169,12 @@ namespace Ginger.SolutionGeneral
                     }
                 }
                 extraChangedItems = bldExtraChangedItems.ToString();
-                if (string.IsNullOrEmpty(extraChangedItems))
-                {
-                    doSave = true;
-                }
-                else
+                if (!string.IsNullOrEmpty(extraChangedItems))
                 {
                     extraChangedItems = extraChangedItems.TrimEnd();
-                    extraChangedItems = extraChangedItems.TrimEnd(new char[] { ',' });
-                    if (Reporter.ToUser(eUserMsgKey.SolutionSaveWarning, extraChangedItems) == eUserMsgSelection.Yes)
-                    {
-                        doSave = true;
-                    }
+                    extraChangedItems = extraChangedItems.TrimEnd(new char[] { ',' });                   
                 }
+                doSave = true;
             }
 
             if (doSave)

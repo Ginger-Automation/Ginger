@@ -30,7 +30,6 @@ namespace GingerCore.DataSource
     public class AccessDataSource : DataSourceBase
     {
         private static readonly Object thisObj = new object();
-
         private string GetConnectionString(string sMode = "Write")
         {
             string strAccessConn = "";
@@ -49,31 +48,39 @@ namespace GingerCore.DataSource
 
         public override ObservableList<DataSourceTable> GetTablesList()
         {
-            ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
+
             try
             {
-                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Read")))
+                lock (thisObj)
                 {
-                    if (connObj.State != System.Data.ConnectionState.Open)
+                    ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
+                    using (OleDbConnection connObj = new(GetConnectionString("Read")))
                     {
-                        connObj.Open();
-                    }
-                    DataTable dataTable = connObj.GetSchema("Tables");
-                    foreach (DataRow row in dataTable.Rows)
-                    {
-                        string tablename = (string)row[2];
-                        if (row["TABLE_TYPE"].ToString() == "TABLE")
+                        if (connObj.State != System.Data.ConnectionState.Open)
                         {
-                            string strAccessSelect = "SELECT  * FROM " + tablename;
-                            OleDbDataAdapter myDataAdapter = new OleDbDataAdapter(strAccessSelect, connObj);
-                            DataTable dtTable = new DataTable();
-                            myDataAdapter.Fill(dtTable);
-                            dtTable.TableName = tablename;
-                            mDataSourceTableDetails.Add(CheckDSTableDesign(dtTable));
+                            connObj.Open();
+                        }
+                        using (DataTable dataTable = connObj.GetSchema("Tables"))
+                        {
+                            foreach (DataRow row in dataTable.Rows)
+                            {
+                                string tablename = (string)row[2];
+                                if (row["TABLE_TYPE"].ToString() == "TABLE")
+                                {
+                                    string strAccessSelect = "SELECT  * FROM " + tablename;
+                                    using (OleDbDataAdapter myDataAdapter = new(strAccessSelect, connObj))
+                                    {
+                                        DataTable dtTable = new DataTable();
+                                        myDataAdapter.Fill(dtTable);
+                                        dtTable.TableName = tablename;
+                                        mDataSourceTableDetails.Add(CheckDSTableDesign(dtTable));
+                                    }
+                                }
+                            }
                         }
                     }
+                    return mDataSourceTableDetails;
                 }
-                return mDataSourceTableDetails;
             }
             catch (Exception ex)
             {
@@ -116,7 +123,6 @@ namespace GingerCore.DataSource
                 sTableDetail.DSTableType = DataSourceTable.eDSTableType.Customized;
             }
 
-            OleDbCommand myCommand = new OleDbCommand();
             if (iIdCount == 0)
             {
                 var query = "ALTER TABLE " + tablename + " ADD COLUMN [GINGER_ID] AUTOINCREMENT";
@@ -161,74 +167,89 @@ namespace GingerCore.DataSource
 
         public override List<string> GetColumnList(string tableName)
         {
-            List<string> mColumnNames = new List<string>();
             try
             {
-                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Read")))
+                lock (thisObj)
                 {
-                    if (connObj.State != System.Data.ConnectionState.Open)
+                    List<string> mColumnNames = new List<string>();
+                    using (OleDbConnection connObj = new(GetConnectionString("Read")))
                     {
-                        connObj.Open();
-                    }
-                    string strAccessSelect = "SELECT * FROM " + tableName;
-                    OleDbDataAdapter myDataAdapter = new OleDbDataAdapter(strAccessSelect, connObj);
-                    DataSet myDataSet = new DataSet();
-                    myDataAdapter.Fill(myDataSet, tableName);
+                        if (connObj.State != System.Data.ConnectionState.Open)
+                        {
+                            connObj.Open();
+                        }
+                        string strAccessSelect = "SELECT * FROM " + tableName;
+                        using (OleDbDataAdapter myDataAdapter = new(strAccessSelect, connObj))
+                        {
+                            DataSet myDataSet = new DataSet();
+                            myDataAdapter.Fill(myDataSet, tableName);
 
-                    foreach (DataColumn column in myDataSet.Tables[0].Columns)
-                    {
-                        mColumnNames.Add(column.ToString());
+                            foreach (DataColumn column in myDataSet.Tables[0].Columns)
+                            {
+                                mColumnNames.Add(column.ToString());
+                            }
+                        }
                     }
+                    return mColumnNames;
                 }
-                return mColumnNames;
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to retrieve the required columns data from the DataBase", ex);
                 return null;
             }
+
         }
 
         public override DataTable GetQueryOutput(string query)
         {
             try
             {
-                DataTable dataTable = new DataTable();
-                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Read")))
+                lock (thisObj)
                 {
-                    if (connObj.State != System.Data.ConnectionState.Open)
+                    DataTable dataTable = new DataTable();
+                    using (OleDbConnection connObj = new(GetConnectionString("Read")))
                     {
-                        connObj.Open();
+                        if (connObj.State != System.Data.ConnectionState.Open)
+                        {
+                            connObj.Open();
+                        }
+                        using (OleDbDataAdapter myDataAdapterTest = new(query, connObj))
+                        {
+                            myDataAdapterTest.AcceptChangesDuringUpdate = true;
+                            myDataAdapterTest.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+                            myDataAdapterTest.Fill(dataTable);
+                        }
                     }
-                    OleDbDataAdapter myDataAdapterTest = new OleDbDataAdapter(query, connObj);
-                    myDataAdapterTest.AcceptChangesDuringUpdate = true;
-                    myDataAdapterTest.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-                    myDataAdapterTest.Fill(dataTable);
+                    return dataTable;
                 }
-                return dataTable;
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to retrieve the required data from the DataBase", ex);
                 return null;
             }
-
         }
 
         public override bool RunQuery(string query)
         {
             try
             {
-                using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Write")))
+                lock (thisObj)
                 {
-                    if (connObj.State != System.Data.ConnectionState.Open)
+                    using (OleDbConnection connObj = new(GetConnectionString("Write")))
                     {
-                        connObj.Open();
+                        if (connObj.State != System.Data.ConnectionState.Open)
+                        {
+                            connObj.Open();
+                        }
+                        using (OleDbCommand myCommand = new())
+                        {
+                            myCommand.Connection = connObj;
+                            myCommand.CommandText = query;
+                            myCommand.ExecuteNonQuery();
+                        }
                     }
-                    OleDbCommand myCommand = new OleDbCommand();
-                    myCommand.Connection = connObj;
-                    myCommand.CommandText = query;
-                    myCommand.ExecuteNonQuery();
                 }
             }
             catch (Exception ex)
@@ -242,8 +263,7 @@ namespace GingerCore.DataSource
 
         public override void AddTable(string TableName, string columnlist = "")
         {
-            var query = "CREATE TABLE " + TableName + "(" + columnlist + ")";
-            RunQuery(query);
+            RunQuery($"CREATE TABLE {TableName} ({columnlist})");
         }
 
         public override bool ExporttoExcel(string TableName, string sExcelPath, string sSheetName, string sTableQueryValue = "")
@@ -264,21 +284,29 @@ namespace GingerCore.DataSource
 
         public override bool IsTableExist(string TableName)
         {
-            using (OleDbConnection connObj = new OleDbConnection(GetConnectionString("Write")))
+            try
             {
-                if (connObj.State == ConnectionState.Closed)
+                lock (thisObj)
                 {
-                    connObj.Open();
-                }
-                DataTable dt = connObj.GetSchema("Tables");
-                foreach (DataRow row in dt.Rows)
-                {
-                    if (TableName == (string)row[2])
+                    using (OleDbConnection connObj = new(GetConnectionString("Write")))
                     {
-                        return true;
+                        if (connObj.State == ConnectionState.Closed)
+                        {
+                            connObj.Open();
+                        }
+                        DataTable dt = connObj.GetSchema("Tables");
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            if (TableName == (string)row[2])
+                            {
+                                return true;
+                            }
+                        }
                     }
                 }
             }
+            catch
+            { }
             return false;
         }
         public override string CopyTable(string tableName)
@@ -292,8 +320,7 @@ namespace GingerCore.DataSource
 
             if (CopyTableName != tableName)
             {
-                var query = "SELECT * INTO " + CopyTableName + " FROM " + tableName;
-                RunQuery(query);
+                RunQuery($"SELECT * INTO {CopyTableName} FROM {tableName}");
             }
             return CopyTableName;
         }
@@ -301,18 +328,17 @@ namespace GingerCore.DataSource
         {
             if (!TableName.Equals(NewTableName, StringComparison.OrdinalIgnoreCase))
             {
-                var query = "SELECT * INTO " + NewTableName + " FROM " + TableName;
-                if (RunQuery(query))
+                if (RunQuery($"SELECT * INTO { NewTableName } FROM { TableName}"))
                 {
-                    DeleteTable(TableName);     // AccessDB does not support renaming table using alter query so we copy data to new table and delete old
+                    // AccessDB does not support renaming table using alter query so we copy data to new table and delete old
+                    DeleteTable(TableName);     
                 }
             }
         }
 
         public override void DeleteTable(string TableName)
         {
-            var query = "DROP TABLE " + TableName;
-            RunQuery(query);
+            RunQuery($"DROP TABLE {TableName}");
         }
 
         public override void SaveTable(DataTable dataTable)

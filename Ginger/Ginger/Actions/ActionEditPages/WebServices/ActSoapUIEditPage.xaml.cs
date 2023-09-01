@@ -106,7 +106,7 @@ namespace Ginger.Actions.WebServices
             {
                 foreach (var innerProperty in mAct.ProjectInnerProperties)
                 {
-                    var item = mAct.ProjectProperties.Where(l => l.Param == innerProperty.Param).FirstOrDefault();
+                    var item = mAct.ProjectProperties.FirstOrDefault(l => l.Param == innerProperty.Param);
                     if (item == null)
                     {
                         mAct.ProjectProperties.Add(innerProperty);
@@ -663,7 +663,7 @@ namespace Ginger.Actions.WebServices
 
                 if (mAct.TempProperties.Count > 0)
                 {
-                    var savedProperty = mAct.TempProperties.Where(x => x.Param == testProperty.Param && x.Type == testProperty.Type.ToString()).FirstOrDefault();
+                    var savedProperty = mAct.TempProperties.FirstOrDefault(x => x.Param == testProperty.Param && x.Type == testProperty.Type.ToString());
                     if (savedProperty != null)
                     {
                         var savedPropertyValue = savedProperty.Value;
@@ -684,12 +684,12 @@ namespace Ginger.Actions.WebServices
             {
                 foreach (var item in mAct.AllProperties)
                 {
-                    if (mAct.TempProperties.Count() > 0)
+                    if (mAct.TempProperties.Any())
                     {
-                        var result = mAct.TempProperties.Where(x => x.Type.ToString() == item.Type.ToString() && x.Param == item.Param && x.Value == item.Value).FirstOrDefault();
+                        var result = mAct.TempProperties.FirstOrDefault(x => x.Type.ToString() == item.Type.ToString() && x.Param == item.Param && x.Value == item.Value);
                         if (result == null)
                         {
-                            var clearItem = mAct.TempProperties.Where(x => x.Type.ToString() == item.Type.ToString() && x.Param == item.Param).FirstOrDefault();
+                            var clearItem = mAct.TempProperties.FirstOrDefault(x => x.Type.ToString() == item.Type.ToString() && x.Param == item.Param);
                             mAct.TempProperties.Remove(clearItem);
                             mAct.TempProperties.Add(item);
                         }

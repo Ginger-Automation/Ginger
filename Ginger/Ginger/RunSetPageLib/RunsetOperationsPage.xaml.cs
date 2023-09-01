@@ -87,11 +87,11 @@ namespace Ginger.Run
             RunSetActionsGrid.DataSourceList = mRunSetConfig.RunSetActions;
             RunSetActionsGrid.RowChangedEvent += RunSetActionsGrid_RowChangedEvent;
 
-            RunSetActionEditFrame.Content = null;
+            RunSetActionEditFrame.ClearAndSetContent(null);
             if (RunSetActionsGrid.CurrentItem != null)
             {
                 RunSetActionEditPage RSAEP = new RunSetActionEditPage((RunSetActionBase)RunSetActionsGrid.CurrentItem);
-                RunSetActionEditFrame.Content = RSAEP;
+                RunSetActionEditFrame.ClearAndSetContent(RSAEP);
             }
         }
 
@@ -104,7 +104,7 @@ namespace Ginger.Run
         RunSetActionEditPage runSetActionEditPage;
         private void RunSetActionsGrid_RowChangedEvent(object sender, EventArgs e)
         {
-            RunSetActionEditFrame.Content = null;
+            RunSetActionEditFrame.ClearAndSetContent(null);
             if (RunSetActionsGrid.CurrentItem != null)
             {
                 RunSetActionEditPage RSAEP = null;
@@ -124,7 +124,7 @@ namespace Ginger.Run
                 {
                     RSAEP = new RunSetActionEditPage((RunSetActionBase)RunSetActionsGrid.CurrentItem);
                 }
-                RunSetActionEditFrame.Content = RSAEP;
+                RunSetActionEditFrame.ClearAndSetContent(RSAEP);
             }
         }
 
@@ -166,9 +166,12 @@ namespace Ginger.Run
         }
         private void RunSelected(object sender, RoutedEventArgs e)
         {
+            if (RunSetActionsGrid.CurrentItem == null)
+            {
+                return;
+            }
             if ((WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB || WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
-                && ((RunSetActionBase)RunSetActionsGrid.CurrentItem).GetType() == typeof(RunSetActionHTMLReportSendEmail)
-                && WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetExecutionStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
+ && WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetExecutionStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
             {
                 Reporter.ToUser(eUserMsgKey.RunSetNotExecuted);
                 return;
@@ -177,6 +180,18 @@ namespace Ginger.Run
         }
         private void RunAll(object sender, RoutedEventArgs e)
         {
+
+            if (RunSetActionsGrid.CurrentItem == null)
+            {
+                return;
+            }
+            if ((WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB || WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == Reports.ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
+                && WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetExecutionStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending)
+            {
+                Reporter.ToUser(eUserMsgKey.RunSetNotExecuted);
+                return;
+            }
+
             foreach (RunSetActionBase a in mRunSetConfig.RunSetActions)
             {
                 mRunSetConfig.RunSetActions.CurrentItem = a;

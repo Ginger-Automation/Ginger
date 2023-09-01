@@ -216,25 +216,36 @@ namespace GingerCore
                         }
                     }
                 }
+                catch (Exception e)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error Occured! While Trying to Communicate with the {Agent.AgentType} Agent {Agent.Name}. Please try checking your Agent Configurations!", e);
+                }
                 finally
                 {
-                    if (Agent.AgentType == Agent.eAgentType.Service)
+                    try
                     {
-                        Agent.mIsStarting = false;
-                    }
-                    else
-                    {
-                        if (Driver != null)
+                        if (Agent.AgentType == Agent.eAgentType.Service)
                         {
-                            // Give the driver time to start            
-                            Thread.Sleep(500);
-                            Driver.IsDriverRunning = true;
-                            Driver.DriverMessageEvent += driverMessageEventHandler;
+                            Agent.mIsStarting = false;
                         }
+                        else
+                        {
+                            if (Driver != null)
+                            {
+                                // Give the driver time to start            
+                                Thread.Sleep(1000);
+                                Driver.IsDriverRunning = true;
+                                Driver.DriverMessageEvent += driverMessageEventHandler;
+                            }
 
-                        Agent.mIsStarting = false;
-                        Agent.OnPropertyChanged(nameof(Agent.Status));
-                        Agent.OnPropertyChanged(nameof(IsWindowExplorerSupportReady));
+                            Agent.mIsStarting = false;
+                            Agent.OnPropertyChanged(nameof(Agent.Status));
+                            Agent.OnPropertyChanged(nameof(IsWindowExplorerSupportReady));
+                        }
+                    }
+                    catch ( Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error Occured! While Staring Driver ", ex);
                     }
                 }
             }
@@ -429,7 +440,10 @@ namespace GingerCore
                                 }
                                 break;
                             case "Int32":
-                                Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, int.Parse(value));
+                                if (!string.IsNullOrEmpty(value))
+                                {
+                                    Driver.GetType().GetProperty(DCP.Parameter).SetValue(Driver, int.Parse(value));
+                                }
                                 break;
                             default:
                                 Reporter.ToUser(eUserMsgKey.SetDriverConfigTypeNotHandled, DCP.GetType().ToString());
@@ -486,17 +500,17 @@ namespace GingerCore
                 pluginPackage.PluginPackageOperations = new PluginPackageOperations(pluginPackage);
             }
             IEnumerable<PluginServiceInfo> Services = Plugins.SelectMany(x => ((PluginPackageOperations)x.PluginPackageOperations).Services);
-            PluginServiceInfo PSI = Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
+            PluginServiceInfo PSI = Services.FirstOrDefault(x => x.ServiceId == Agent.ServiceId);
 
-            PluginPackage PP = Plugins.Where(x => ((PluginPackageOperations)x.PluginPackageOperations).Services.Contains(PSI)).First();
+            PluginPackage PP = Plugins.First(x => ((PluginPackageOperations)x.PluginPackageOperations).Services.Contains(PSI));
             PP.PluginPackageOperations = new PluginPackageOperations(PP);
 
             PP.PluginPackageOperations.LoadServicesFromJSON();
-            PSI = ((PluginPackageOperations)PP.PluginPackageOperations).Services.Where(x => x.ServiceId == Agent.ServiceId).FirstOrDefault();
+            PSI = ((PluginPackageOperations)PP.PluginPackageOperations).Services.FirstOrDefault(x => x.ServiceId == Agent.ServiceId);
 
             foreach (var config in PSI.Configs)
             {
-                if (Agent.DriverConfiguration.Where(x => x.Parameter == config.Name).Count() == 0)
+                if (!Agent.DriverConfiguration.Any(x => x.Parameter == config.Name))
                 {
                     DriverConfigParam DI = new DriverConfigParam();
                     DI.Parameter = config.Name;
@@ -517,7 +531,7 @@ namespace GingerCore
         /// <param name="PSI"></param>
         private void SetPlatformParameters(PluginServiceInfo PSI)
         {
-            if (PSI.Interfaces.Where(x => x == "IWebPlatform").Count() > 0)
+            if (PSI.Interfaces.Any(x => x == "IWebPlatform"))
             {
                 DriverConfigParam DI = new DriverConfigParam();
                 DI.Parameter = "Max Agent Load Time";
@@ -540,7 +554,7 @@ namespace GingerCore
 
 
             }
-            else if (PSI.Interfaces.Where(x => x == "IWebServicePlatform").Count() > 0)
+            else if (PSI.Interfaces.Any(x => x == "IWebServicePlatform"))
             {
                 DriverConfigParam DI = new DriverConfigParam();
                 DI.Parameter = "Save Request";
@@ -616,7 +630,7 @@ namespace GingerCore
 
                 DriverConfigParam configParam = GetDriverConfigParam(mi);
 
-                if (Agent.DriverConfiguration.Where(x => x.Parameter == configParam.Parameter).FirstOrDefault() == null)
+                if (Agent.DriverConfiguration.FirstOrDefault(x => x.Parameter == configParam.Parameter) == null)
                 {
                     Agent.DriverConfiguration.Add(configParam);
                 }
@@ -665,7 +679,15 @@ namespace GingerCore
                     {
                         Driver.Dispatcher.Invoke(() =>
                         {
-                            Driver.RunAction(act);
+                            try
+                            {
+                                Driver.RunAction(act);
+                            }
+                            catch(Exception ex) 
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                            }
+                            
                         });
                     }
                     else
@@ -741,15 +763,32 @@ namespace GingerCore
                 {
                     Driver.Dispatcher.Invoke(() =>
                    {
-                       Driver.CloseDriver();
-                       Thread.Sleep(1000);
+                       try
+                       {
+                           Driver.CloseDriver();
+                           Thread.Sleep(1000);
+                       }
+                       catch (Exception ex)
+                       {
+                           Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
+                       }
                    });
                 }
                 else
                 {
                     await Task.Run(() =>
                     {
-                        Driver.CloseDriver();
+                        try
+                        {
+                            if (Driver != null)
+                            {
+                                Driver.CloseDriver();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
+                        }
                     });
                 }
                 if (MSTATask != null)
@@ -761,6 +800,10 @@ namespace GingerCore
                 }
 
                 Driver = null;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
             }
             finally
             {

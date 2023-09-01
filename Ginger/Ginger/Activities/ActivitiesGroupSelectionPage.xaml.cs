@@ -78,7 +78,7 @@ namespace Ginger.BusinessFlowPages
             {
                 if (!string.IsNullOrEmpty(groupName))
                 {
-                    if (mBusinessFlow.ActivitiesGroups.Where(x => x.Name.Trim() == groupName.Trim()).FirstOrDefault() == null)
+                    if (mBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name.Trim() == groupName.Trim()) == null)
                     {
                         ActivitiesGroup activitiesGroup = new ActivitiesGroup() { Name = groupName.Trim() };
                         mBusinessFlow.AddActivitiesGroup(activitiesGroup);

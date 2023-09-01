@@ -246,13 +246,21 @@ namespace Amdocs.Ginger.Repository
 
         public bool SaveBackup()
         {
-            if (DirtyStatus != eDirtyStatus.NoChange)
+            try
             {
-                return CreateBackup();
+                if (DirtyStatus != eDirtyStatus.NoChange)
+                {
+                    return CreateBackup();
+                }
+                else
+                {
+                    return CreateBackup(true);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return CreateBackup(true);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Save backup", ex);
+                return false;
             }
         }
 
@@ -542,7 +550,7 @@ namespace Amdocs.Ginger.Repository
             // make sure we cleared all bak items = full restore
             if (isLocalBackup)
             {
-                if (mLocalBackupDic.Count() != 0)
+                if (mLocalBackupDic.Any())
                 {
                     // TODO: err handler
                     return false;
@@ -550,7 +558,7 @@ namespace Amdocs.Ginger.Repository
             }
             else
             {
-                if (mBackupDic.Count() != 0)
+                if (mBackupDic.Any())
                 {
                     // TODO: err handler 
                     return false;
@@ -679,7 +687,7 @@ namespace Amdocs.Ginger.Repository
             {
                 Created = GetUTCDateTime(),
                 CreatedBy = Environment.UserName,
-                GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion,
+                GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationBackendVersion,
                 Version = 1,
                 LastUpdateBy = Environment.UserName,
                 LastUpdate = GetUTCDateTime()
@@ -691,7 +699,7 @@ namespace Amdocs.Ginger.Repository
         public void UpdateHeader()
         {
             RepositoryItemHeader.Version++;
-            RepositoryItemHeader.GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion;
+            RepositoryItemHeader.GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationBackendVersion;
             RepositoryItemHeader.LastUpdateBy = Environment.UserName;
             RepositoryItemHeader.LastUpdate = DateTime.UtcNow;
         }
@@ -704,7 +712,7 @@ namespace Amdocs.Ginger.Repository
             return dt2;
         }
 
-        private RepositoryItemBase CopyRIObject(RepositoryItemBase repoItemToCopy, List<GuidMapper> guidMappingList, bool setNewGUID)
+        private RepositoryItemBase CopyRIObject(RepositoryItemBase repoItemToCopy, List<GuidMapper> guidMappingList, bool setNewGUID, bool deepCopy = false)
         {
             Type objType = repoItemToCopy.GetType();
             var targetObj = Activator.CreateInstance(objType) as RepositoryItemBase;
@@ -713,7 +721,7 @@ namespace Amdocs.Ginger.Repository
 
             repoItemToCopy.PrepareItemToBeCopied();
             //targetObj.PreDeserialization();
-            Parallel.ForEach(objMembers, mi =>
+            Parallel.ForEach(objMembers, new ParallelOptions() { MaxDegreeOfParallelism = 5 }, mi =>
             {
                 try
                 {
@@ -742,12 +750,19 @@ namespace Amdocs.Ginger.Repository
                                     copiedList = (IObservableList)Activator.CreateInstance(listOfType);
                                 }
 
-                                CopyRIList((IObservableList)memberValue, copiedList, guidMappingList, setNewGUID);
+                                CopyRIList((IObservableList)memberValue, copiedList, guidMappingList, setNewGUID, deepCopy);
                                 propInfo.SetValue(targetObj, copiedList);
                             }
                             else
                             {
-                                propInfo.SetValue(targetObj, memberValue);
+                                if (deepCopy && memberValue is RepositoryItemBase rib)
+                                {
+                                    propInfo.SetValue(targetObj, rib.CreateCopy(setNewGUID, deepCopy));
+                                }
+                                else
+                                {
+                                    propInfo.SetValue(targetObj, memberValue);
+                                }
                             }
                         }
                     }
@@ -755,7 +770,14 @@ namespace Amdocs.Ginger.Repository
                     {
                         FieldInfo fieldInfo = repoItemToCopy.GetType().GetField(mi.Name);
                         memberValue = fieldInfo.GetValue(repoItemToCopy);
-                        fieldInfo.SetValue(targetObj, memberValue);
+                        if (deepCopy && memberValue is RepositoryItemBase rib)
+                        {
+                            fieldInfo.SetValue(targetObj, rib.CreateCopy(setNewGUID, deepCopy));
+                        }
+                        else
+                        {
+                            fieldInfo.SetValue(targetObj, memberValue);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -769,7 +791,7 @@ namespace Amdocs.Ginger.Repository
             return targetObj;
         }
 
-        private void CopyRIList(IObservableList sourceList, IObservableList targetList, List<GuidMapper> guidMappingList, bool setNewGUID)
+        private void CopyRIList(IObservableList sourceList, IObservableList targetList, List<GuidMapper> guidMappingList, bool setNewGUID, bool deepCopy = false)
         {
             for (int i = 0; i < sourceList.Count; i++)
             {
@@ -777,7 +799,7 @@ namespace Amdocs.Ginger.Repository
                 if (item is RepositoryItemBase)
                 {
 
-                    RepositoryItemBase RI = CopyRIObject(item as RepositoryItemBase, guidMappingList, setNewGUID);
+                    RepositoryItemBase RI = CopyRIObject(item as RepositoryItemBase, guidMappingList, setNewGUID, deepCopy);
                     if (setNewGUID)
                     {
                         GuidMapper mapping = new GuidMapper();
@@ -802,14 +824,14 @@ namespace Amdocs.Ginger.Repository
         }
 
         protected bool ItemCopyIsInProgress = false;
-        public RepositoryItemBase CreateCopy(bool setNewGUID = true)
+        public RepositoryItemBase CreateCopy(bool setNewGUID = true, bool deepCopy = false)
         {
             try
             {
                 ItemCopyIsInProgress = true;
 
                 List<GuidMapper> guidMappingList = new List<GuidMapper>();
-                var duplicatedItem = CopyRIObject(this, guidMappingList, setNewGUID);
+                var duplicatedItem = CopyRIObject(this, guidMappingList, setNewGUID, deepCopy);
                 //change the GUID of duplicated item
                 if (duplicatedItem != null)
                 {

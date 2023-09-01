@@ -287,7 +287,6 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                 {
                     return;
                 }
-                List<Act> list = new List<Act>();
                 foreach (Act selectedItem in mListView.List.SelectedItems)
                 {
                     ActionsFactory.AddActionsHandler(selectedItem, mContext);

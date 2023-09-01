@@ -346,12 +346,12 @@ namespace Ginger.Actions.UserControls
                                 Activity activityLinkedToFC = null;
                                 if (FC.GetGuidFromValue(true) != null && FC.GetGuidFromValue(true) != Guid.Empty)
                                 {
-                                    activityLinkedToFC = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Where(x => x.Guid == FC.GetGuidFromValue(true)).FirstOrDefault();
+                                    activityLinkedToFC = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(FC.GetGuidFromValue(true));
                                     if (activityLinkedToFC == null)
                                     {
                                         if (FC.GetNameFromValue(true) != null)
                                         {
-                                            activityLinkedToFC = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().Where(x => x.ActivityName == FC.GetNameFromValue(true)).FirstOrDefault();
+                                            activityLinkedToFC = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>().FirstOrDefault(x => x.ActivityName == FC.GetNameFromValue(true));
                                         }
                                     }
                                 }

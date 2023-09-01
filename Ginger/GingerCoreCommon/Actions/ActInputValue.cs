@@ -70,6 +70,22 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public string mDisplayValue;
+        public string DisplayValue
+        {
+            get
+            {
+                if (mDisplayValue != null)
+                {
+                    return mDisplayValue;
+                }
+                return "";
+            }
+            set
+            {
+                mDisplayValue = value;
+            }
+        }
 
         public bool BoolValue
         {

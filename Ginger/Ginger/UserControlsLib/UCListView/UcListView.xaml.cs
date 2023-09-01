@@ -53,14 +53,14 @@ namespace Ginger.UserControlsLib.UCListView
 
         CollectionView mGroupView;
 
-        public delegate void UcListViewEventHandler(UcListViewEventArgs EventArgs);
+        public delegate void UcListViewEventHandler(object? sender, UcListViewEventArgs EventArgs);
         public event UcListViewEventHandler UcListViewEvent;
         public void OnUcListViewEvent(UcListViewEventArgs.eEventType eventType, Object eventObject = null)
         {
             UcListViewEventHandler handler = UcListViewEvent;
             if (handler != null)
             {
-                handler(new UcListViewEventArgs(eventType, eventObject));
+                handler(this, new UcListViewEventArgs(eventType, eventObject));
             }
         }
 
@@ -183,7 +183,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                     mObjList = value;
 
-                    filteredView = new CollectionViewSource() { Source = mObjList }.View;
+                    filteredView = CollectionViewSource.GetDefaultView(mObjList);
 
                     if (filteredView != null)
                     {
@@ -192,7 +192,7 @@ namespace Ginger.UserControlsLib.UCListView
                         filteredView.Filter = LVItemFilter;
                     }
 
-                    xListView.ItemsSource = filteredView;
+                    xListView.ItemsSource = mObjList;
 
                     this.Dispatcher.BeginInvoke((Action)(() =>
                     {
@@ -214,6 +214,7 @@ namespace Ginger.UserControlsLib.UCListView
                         mListViewHelper.ExpandItemOnLoad = false;
                         xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
                     }));
+
                 }
                 catch (Exception ex)
                 {
@@ -238,29 +239,34 @@ namespace Ginger.UserControlsLib.UCListView
         List<Guid> mFilterSelectedTags = null;
         private void CollectFilterData()
         {
-            //collect search values           
-            this.Dispatcher.Invoke(() =>
+            //collect search values
+            if (mObjList != null)
             {
-                mObjList.FilterStringData = xSearchTextBox.Text;
-                mFilterSelectedTags = xTagsFilter.GetSelectedTagsList();
-            });
+                this.Dispatcher.Invoke(() =>
+                {
+                    mObjList.FilterStringData = xSearchTextBox.Text;
+                    mFilterSelectedTags = xTagsFilter.GetSelectedTagsList();
+
+                });
+            }
         }
+
 
         bool LVItemFilter(object item)
         {
-            if (string.IsNullOrWhiteSpace(mObjList.FilterStringData) && (mFilterSelectedTags == null || mFilterSelectedTags.Count == 0))
+            if (string.IsNullOrWhiteSpace(mObjList.FilterStringData) && (mFilterSelectedTags == null || !mFilterSelectedTags.Any()))
             {
                 return true;
             }
 
             //Filter by search text            
-            if (!string.IsNullOrEmpty(mObjList.FilterStringData))
+            if (!string.IsNullOrEmpty(mObjList.FilterStringData) && item is RepositoryItemBase repoItem && !string.IsNullOrEmpty(repoItem.ItemName))
             {
-                return ((item as RepositoryItemBase).ItemName.IndexOf(mObjList.FilterStringData, StringComparison.OrdinalIgnoreCase) >= 0);
+                return repoItem.ItemName.Contains(mObjList.FilterStringData, StringComparison.OrdinalIgnoreCase);
             }
 
             //Filter by Tags            
-            if (mFilterSelectedTags != null && mFilterSelectedTags.Count > 0)
+            if (mFilterSelectedTags != null && mFilterSelectedTags.Any())
             {
                 return TagsFilter(item, mFilterSelectedTags);
             }
@@ -433,7 +439,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         public void ScrollToViewCurrentItem()
         {
-            if (mObjList.CurrentItem != null)
+            if (mObjList != null && mObjList.CurrentItem != null)
             {
                 this.Dispatcher.Invoke(() =>
                 {
@@ -530,12 +536,12 @@ namespace Ginger.UserControlsLib.UCListView
         public void SetListOperations()
         {
             List<ListItemOperation> listOperations = mListViewHelper.GetListOperations();
-            if (listOperations != null && listOperations.Count > 0)
+            if (listOperations != null && listOperations.Any())
             {
                 xListOperationsPnl.Children.Clear();
                 xListOperationsPnl.Visibility = Visibility.Visible;
 
-                foreach (ListItemOperation operation in listOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
+                foreach (ListItemOperation operation in listOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)))
                 {
                     ucButton operationBtn = new ucButton();
                     operationBtn.ButtonType = Amdocs.Ginger.Core.eButtonType.CircleImageButton;
@@ -583,11 +589,11 @@ namespace Ginger.UserControlsLib.UCListView
         private void SetListExtraOperations()
         {
             List<ListItemOperation> extraOperations = mListViewHelper.GetListExtraOperations();
-            if (extraOperations != null && extraOperations.Count > 0)
+            if (extraOperations != null && extraOperations.Any())
             {
                 ((MenuItem)(xListExtraOperationsMenu.Items[0])).Items.Clear();
                 xListExtraOperationsMenu.Visibility = Visibility.Visible;
-                foreach (ListItemOperation operation in extraOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
+                foreach (ListItemOperation operation in extraOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)))
                 {
                     MenuItem menuitem = new MenuItem();
                     menuitem.Style = (Style)FindResource("$MenuItemStyle");
@@ -828,7 +834,7 @@ namespace Ginger.UserControlsLib.UCListView
                 if (panel.Tag != null)
                 {
                     List<ListItemNotification> notifications = mListViewHelper.GetItemGroupNotificationsList(panel.Tag.ToString());
-                    if (notifications != null && notifications.Count > 0)
+                    if (notifications != null && notifications.Any())
                     {
                         panel.Visibility = Visibility.Visible;
                         foreach (ListItemNotification notification in notifications)
@@ -874,9 +880,9 @@ namespace Ginger.UserControlsLib.UCListView
         private void SetGroupOperations(Menu menu)
         {
             List<ListItemGroupOperation> groupOperations = mListViewHelper.GetItemGroupOperationsList();
-            if (groupOperations != null && groupOperations.Count > 0)
+            if (groupOperations != null && groupOperations.Any())
             {
-                foreach (ListItemGroupOperation operation in groupOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)).ToList())
+                foreach (ListItemGroupOperation operation in groupOperations.Where(x => x.SupportedViews.Contains(mListViewHelper.PageViewMode)))
                 {
                     MenuItem menuitem = new MenuItem();
                     menuitem.Style = (Style)FindResource("$MenuItemStyle");
@@ -1068,7 +1074,7 @@ namespace Ginger.UserControlsLib.UCListView
         }
     }
 
-    public class UcListViewEventArgs
+    public class UcListViewEventArgs : System.EventArgs
     {
         public enum eEventType
         {

@@ -176,7 +176,7 @@ namespace Ginger.ALM.MapToALMWizard
                         if (mappedTestStep.almTestStep != null)
                         {
                             mappedTestStep.activity.ActivityExternalID = mappedTestStep.almTestStep.StepID;
-                            tempAct = mapBusinessFlow.Activities.Where(bAct => bAct.ActivityName == mappedTestStep.activity.ActivityName && bAct.Guid == mappedTestStep.activity.ActivityGuid).FirstOrDefault();
+                            tempAct = mapBusinessFlow.Activities.FirstOrDefault(bAct => bAct.ActivityName == mappedTestStep.activity.ActivityName && bAct.Guid == mappedTestStep.activity.ActivityGuid);
                             {
                                 tempAct.ExternalID = mappedTestStep.activity.ActivityExternalID;
                             }
@@ -197,7 +197,7 @@ namespace Ginger.ALM.MapToALMWizard
                 foreach (ActivityIdentifiers act in ag.ActivitiesIdentifiers)
                 {
                     act.ActivityExternalID = null;
-                    tempAct = mapBusinessFlow.Activities.Where(bAct => bAct.ActivityName == act.ActivityName && bAct.Guid == act.ActivityGuid).FirstOrDefault();
+                    tempAct = mapBusinessFlow.Activities.FirstOrDefault(bAct => bAct.ActivityName == act.ActivityName && bAct.Guid == act.ActivityGuid);
                     {
                         tempAct.ExternalID = null;
                     }
@@ -335,9 +335,17 @@ namespace Ginger.ALM.MapToALMWizard
                 }
                 AlmTestSetData = await Task.Run(() =>
                 {
-                    return ALMIntegration.Instance.GetALMTestCases(AlmTestSetData);
+                    try
+                    {
+                        return ALMIntegration.Instance.GetALMTestCases(AlmTestSetData);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed Get ALM Test cases ", ex);
+                        return null;
+                    }
                 });
-                foreach (ALMTSTest testCase in AlmTestSetData.Tests)
+                foreach (ALMTSTest testCase in AlmTestSetData?.Tests)
                 {
                     testCasesUnMappedList.Add(testCase);
                 }

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
@@ -140,12 +141,16 @@ namespace GingerWPF.BusinessFlowsLib
                 Activity changedActivity = (Activity)sender;
                 if (string.IsNullOrEmpty(changedActivity.ActivitiesGroupID) == false)
                 {
-                    ActivitiesGroup actGroup = mBusinessFlow.ActivitiesGroups.Where(x => x.Name == changedActivity.ActivitiesGroupID).FirstOrDefault();
+                    ActivitiesGroup actGroup = mBusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == changedActivity.ActivitiesGroupID);
                     if (actGroup != null)
                     {
                         actGroup.OnPropertyChanged(nameof(ActivitiesGroup.AutomationPrecentage));
                     }
                 }
+            }
+            else if (e.PropertyName == nameof(Activity.Active) || e.PropertyName == nameof(Activity.Mandatory))
+            {
+                mBusinessFlow.OnPropertyChanged(nameof(BusinessFlow.Activities));
             }
         }
 
@@ -182,6 +187,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xAppsGrid.IsEnabled = false;
                 xAddTargetBtn.IsEnabled = false;
                 xPublishcheckbox.IsEnabled = false;
+                xExternalId.IsEnabled = false;
             }
             else
             {
@@ -195,14 +201,24 @@ namespace GingerWPF.BusinessFlowsLib
                 xAppsGrid.IsEnabled = true;
                 xAddTargetBtn.IsEnabled = true;
                 xPublishcheckbox.IsEnabled = true;
+                xExternalId.IsEnabled = true;
             }
-
+            xAddTargetApplication.Content= $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}s:";
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
             xNameTxtBox.AddValidationRule(new BusinessFlowNameValidationRule());
             xShowIDUC.Init(mBusinessFlow);
             BindingHandler.ObjFieldBinding(xDescriptionTxt, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Description));
             xTagsViewer.Init(mBusinessFlow.Tags);
             xRunDescritpion.Init(mContext, mBusinessFlow, nameof(BusinessFlow.RunDescription));
+
+            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+            {
+                xExternalId.Init(mContext, mBusinessFlow, nameof(BusinessFlow.ExternalID));
+            }
+            else
+            {
+                xPnlExternalId.Visibility = Visibility.Collapsed;
+            }
             GingerCore.General.FillComboFromEnumObj(xStatusComboBox, mBusinessFlow.Status);
             BindingHandler.ObjFieldBinding(xStatusComboBox, ComboBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Status));
             BindingHandler.ObjFieldBinding(xCreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader, nameof(RepositoryItemHeader.CreatedBy));
@@ -257,7 +273,7 @@ namespace GingerWPF.BusinessFlowsLib
             //make sure all Activities mapped to Application after change
             foreach (Activity activity in mBusinessFlow.Activities)
             {
-                if (mBusinessFlow.TargetApplications.Where(x => x.Name == activity.TargetApplication).FirstOrDefault() == null)
+                if (mBusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == activity.TargetApplication) == null)
                 {
                     activity.TargetApplication = mBusinessFlow.TargetApplications[0].Name;
                 }

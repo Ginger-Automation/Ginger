@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 using Amdocs.Ginger.Common;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Linq;
@@ -68,7 +69,7 @@ namespace Ginger.ALM.MapToALMWizard
         /// </summary>
         private void BindTestSet()
         {
-            load_frame.Content = GetALMTree();
+            load_frame.ClearAndSetContent(GetALMTree());
         }
         #endregion
         #region Functions
@@ -86,11 +87,21 @@ namespace Ginger.ALM.MapToALMWizard
                 if (!String.IsNullOrEmpty(mWizard.mapBusinessFlow.ExternalID) && String.IsNullOrEmpty(mWizard.AlmTestSetData.TestSetID))
                 {
                     mWizard.AddActivitiesGroupsInitialMapping();
-                    await Task.Run(() => mWizard.SetMappedALMTestSetData()).ConfigureAwait(true);
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            mWizard.SetMappedALMTestSetData();
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed Set Mapped ALM Test Set data",ex);
+                        }
+                    }).ConfigureAwait(true);
                     ChangeTestSetPageVisibility();
                     mWizard.UpdateMappedTestCasesCollections();
                     mWizard.RemapTestCasesLists();
-                    WizardPage nextPage = mWizard.Pages.Where(p => p.Page is TestCasesMappingPage).FirstOrDefault();
+                    WizardPage nextPage = mWizard.Pages.FirstOrDefault(p => p.Page is TestCasesMappingPage);
                     (nextPage.Page as TestCasesMappingPage).xUnMapTestCaseGrid.Title = $"ALM '{mWizard.AlmTestSetData.TestSetName}' Test Cases";
                 }
             }

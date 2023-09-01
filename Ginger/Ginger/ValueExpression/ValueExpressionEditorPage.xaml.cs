@@ -1105,16 +1105,23 @@ namespace Ginger
             string VEText = xExpressionUCTextEditor.Text;
             await Task.Run(() =>
             {
-                foreach (Match m in VBSReg.Matches(VEText))
+                try
                 {
-                    if (string.IsNullOrEmpty(warningExpression))
+                    foreach (Match m in VBSReg.Matches(VEText))
                     {
-                        warningExpression = m.Value;
+                        if (string.IsNullOrEmpty(warningExpression))
+                        {
+                            warningExpression = m.Value;
+                        }
+                        else
+                        {
+                            warningExpression += System.Environment.NewLine + m.Value;
+                        }
                     }
-                    else
-                    {
-                        warningExpression += System.Environment.NewLine + m.Value;
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Find Match", ex);
                 }
             });
 

@@ -24,6 +24,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using static GingerCore.ActOcr;
+using System.Windows.Input;
 
 namespace Ginger.Actions
 {
@@ -41,6 +42,10 @@ namespace Ginger.Actions
             this.mAct = act;
             GingerCore.General.FillComboFromEnumObj(xOcrFileTypeCombo, mAct.SelectedOcrFileType);
             BindingHandler.ObjFieldBinding(xOcrFileTypeCombo, ComboBox.SelectedValueProperty, mAct, nameof(ActOcr.SelectedOcrFileType), BindingMode.TwoWay);
+
+            GingerCore.General.FillComboFromEnumObj(xDPIComboBox, mAct.SelectedOcrDPIOperation);
+            BindingHandler.ObjFieldBinding(xDPIComboBox, ComboBox.SelectedValueProperty, mAct, nameof(ActOcr.SelectedOcrDPIOperation), BindingMode.TwoWay);
+
 
             xFilePathTextBox.Init(Context.GetAsContext(act.Context), act.GetOrCreateInputParam(nameof(act.OcrFilePath), string.Empty),
                                true, false);
@@ -225,5 +230,19 @@ namespace Ginger.Actions
             xColumnWhereValue.IsEnabled = !rb.IsChecked.Value;
             xOperationCombo.IsEnabled = !rb.IsChecked.Value;
         }
+
+        private void PdfPassword_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            UCValueExpression uv = (UCValueExpression)sender;
+            if ( !string.IsNullOrEmpty(uv.ValueTextBox.Text) && !uv.ValueTextBox.Text.Contains("{Var Name"))
+            {
+                if (!EncryptionHandler.IsStringEncrypted(uv.ValueTextBox.Text))
+                {
+                    uv.ValueTextBox.Text = EncryptionHandler.EncryptwithKey(uv.ValueTextBox.Text);
+                }
+            }
+
+        }
+
     }
 }

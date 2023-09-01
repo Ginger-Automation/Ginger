@@ -95,7 +95,7 @@ namespace GingerCore.Drivers
             }
 
             WBP = new WebBrowserPage();
-            frmBrowser.Content = WBP;
+            frmBrowser.ClearAndSetContent(WBP);
             browser = WBP.GetBrowser();
 
             browser.Navigated += browser_Navigated;

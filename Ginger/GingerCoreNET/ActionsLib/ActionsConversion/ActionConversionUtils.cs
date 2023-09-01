@@ -277,9 +277,9 @@ namespace Amdocs.Ginger.CoreNET
                         ePlatformType activityPlatform = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == currentActivity.TargetApplication select x.Platform).FirstOrDefault();
                         if (act.Active && act is IObsoleteAction
                                        && (((IObsoleteAction)act).IsObsoleteForPlatform(activityPlatform))
-                                       && actionsToBeConverted.Where(a => a.SourceActionType == act.GetType() &&
+                                       && actionsToBeConverted.FirstOrDefault(a => a.SourceActionType == act.GetType() &&
                                                                           a.Selected &&
-                                                                          a.TargetActionType == ((IObsoleteAction)act).TargetAction()).FirstOrDefault() != null)
+                                                                          a.TargetActionType == ((IObsoleteAction)act).TargetAction()) != null)
                         {
                             // get the index of the action that is being converted 
                             int selectedActIndex = currentActivity.Acts.IndexOf(act);
@@ -371,7 +371,7 @@ namespace Amdocs.Ginger.CoreNET
                 if (pomModelObject != default(Guid))
                 {
                     ObservableList<ApplicationPOMModel> pomLst = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>();
-                    ApplicationPOMModel selectedPOM = pomLst.Where(x => x.Guid == pomModelObject).SingleOrDefault();
+                    ApplicationPOMModel selectedPOM = pomLst.FirstOrDefault(x => x.Guid == pomModelObject);
 
                     ElementInfo elementInfo = null;
                     string locateValue = Convert.ToString(newActUIElement.GetType().GetProperty(ActUIElementLocateValueField).GetValue(newActUIElement, null));
@@ -446,7 +446,7 @@ namespace Amdocs.Ginger.CoreNET
                             if ((act is IObsoleteAction) && (((IObsoleteAction)act).IsObsoleteForPlatform(act.Platform)) &&
                                                     (act.Active) && ((IObsoleteAction)act).TargetActionTypeName() != null)
                             {
-                                ConvertableActionDetails existingConvertibleActionType = lst.Where(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName()).FirstOrDefault();
+                                ConvertableActionDetails existingConvertibleActionType = lst.FirstOrDefault(x => x.SourceActionType == act.GetType() && x.TargetActionTypeName == ((IObsoleteAction)act).TargetActionTypeName());
                                 if (existingConvertibleActionType == null)
                                 {
                                     ConvertableActionDetails newConvertibleActionType = new ConvertableActionDetails();

@@ -273,62 +273,69 @@ namespace Ginger.SourceControl
                 // performing on the another thread 
                 await Task.Run(() =>
                 {
-                    App.MainWindow.Dispatcher.Invoke(() =>
+                    try
                     {
-                        SaveAllDirtyFiles(SelectedFiles);
-                    });
-                    //performing cleanup for the solution folder to clean old locks left by faild check ins
-                    SourceControlIntegration.CleanUp(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Folder);
-                    List<string> pathsToCommit = new List<string>();
-                    foreach (SourceControlFileInfo fi in SelectedFiles)
-                    {
-
-                        switch (fi.Status)
+                        App.MainWindow.Dispatcher.Invoke(() =>
+                                  {
+                                      SaveAllDirtyFiles(SelectedFiles);
+                                  });
+                        //performing cleanup for the solution folder to clean old locks left by faild check ins
+                        SourceControlIntegration.CleanUp(WorkSpace.Instance.Solution.SourceControl, WorkSpace.Instance.Solution.Folder);
+                        List<string> pathsToCommit = new List<string>();
+                        foreach (SourceControlFileInfo fi in SelectedFiles)
                         {
-                            case SourceControlFileInfo.eRepositoryItemStatus.New:
-                                SourceControlIntegration.AddFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
-                                pathsToCommit.Add(fi.Path);
-                                break;
-                            case SourceControlFileInfo.eRepositoryItemStatus.Modified:
-                                if (fi.Locked && fi.LockedOwner != WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                                {
-                                    SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
+
+                            switch (fi.Status)
+                            {
+                                case SourceControlFileInfo.eRepositoryItemStatus.New:
+                                    SourceControlIntegration.AddFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
-                                }
-                                else if (fi.Locked && fi.LockedOwner == WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                                {
-                                    SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                                    break;
+                                case SourceControlFileInfo.eRepositoryItemStatus.Modified:
+                                    if (fi.Locked && fi.LockedOwner != WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByAnotherUser, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                                    {
+                                        SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                                        pathsToCommit.Add(fi.Path);
+                                    }
+                                    else if (fi.Locked && fi.LockedOwner == WorkSpace.Instance.Solution.SourceControl.SourceControlUser && Reporter.ToUser(eUserMsgKey.SourceControlCheckInLockedByMe, fi.Path, fi.LockedOwner, fi.LockComment) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
+                                    {
+                                        SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                                        pathsToCommit.Add(fi.Path);
+                                    }
+                                    else if (!fi.Locked)
+                                    {
+                                        SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                                        pathsToCommit.Add(fi.Path);
+                                    }
+                                    break;
+                                case SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved:
                                     pathsToCommit.Add(fi.Path);
-                                }
-                                else if (!fi.Locked)
-                                {
                                     SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
+                                    break;
+                                case SourceControlFileInfo.eRepositoryItemStatus.Deleted:
+                                    SourceControlIntegration.DeleteFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
                                     pathsToCommit.Add(fi.Path);
-                                }
-                                break;
-                            case SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved:
-                                pathsToCommit.Add(fi.Path);
-                                SourceControlIntegration.UpdateFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
-                                break;
-                            case SourceControlFileInfo.eRepositoryItemStatus.Deleted:
-                                SourceControlIntegration.DeleteFile(WorkSpace.Instance.Solution.SourceControl, fi.Path);
-                                pathsToCommit.Add(fi.Path);
-                                break;
-                            default:
-                                throw new Exception("Unknown file status to check-in - " + fi.Name);
+                                    break;
+                                default:
+                                    throw new Exception("Unknown file status to check-in - " + fi.Name);
+                            }
+                        }
+
+                        bool conflictHandled = false;
+                        bool CommitSuccess = false;
+                        CommitSuccess = CommitChanges(WorkSpace.Instance.Solution.SourceControl, pathsToCommit, Comments, WorkSpace.Instance.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
+
+
+                        AfterCommitProcess(CommitSuccess, conflictHandled);
+
+                        if (CommitSuccess && conflictHandled)
+                        {
+                            TriggerSourceControlIconChanged(SelectedFiles);
                         }
                     }
-
-                    bool conflictHandled = false;
-                    bool CommitSuccess = false;
-                    CommitSuccess = CommitChanges(WorkSpace.Instance.Solution.SourceControl, pathsToCommit, Comments, WorkSpace.Instance.Solution.ShowIndicationkForLockedItems, ref conflictHandled);
-
-
-                    AfterCommitProcess(CommitSuccess, conflictHandled);
-
-                    if (CommitSuccess && conflictHandled)
+                    catch (Exception ex)
                     {
-                        TriggerSourceControlIconChanged(SelectedFiles);
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Check in", ex);
                     }
                 });
                 xProcessingIcon.Visibility = Visibility.Collapsed;
@@ -455,7 +462,7 @@ namespace Ginger.SourceControl
             if (!parentFolders.Contains(standardPath))
             {
                 //check if not already covered with exsting folder path(
-                if (parentFolders.Where(x => x.Contains(standardPath)).FirstOrDefault() == null)
+                if (parentFolders.FirstOrDefault(x => x.Contains(standardPath)) == null)
                 {
                     parentFolders.Add(standardPath);
                 }
@@ -501,16 +508,16 @@ namespace Ginger.SourceControl
 
                 if (SCFI.FileType == "Agent")
                 {
-                    obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Business Flow")
                 {
                     ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                    obj = businessFlows.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = businessFlows.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Environment")
                 {
-                    obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Execution Result")
                 {
@@ -520,27 +527,27 @@ namespace Ginger.SourceControl
                 else if (SCFI.FileType == "Run Set")
                 {
                     ObservableList<RunSetConfig> RunSets = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>();
-                    obj = RunSets.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = RunSets.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Action")
                 {
                     ObservableList<Act> SharedActions = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Act>();
-                    obj = SharedActions.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = SharedActions.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Activities Group")
                 {
                     ObservableList<ActivitiesGroup> activitiesGroup = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-                    obj = activitiesGroup.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = activitiesGroup.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Activity")
                 {
                     ObservableList<Activity> activities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-                    obj = activities.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = activities.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
                 else if (SCFI.FileType == "Variable")
                 {
                     ObservableList<VariableBase> variables = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
-                    obj = variables.Where(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path)).FirstOrDefault();
+                    obj = variables.FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
                 }
 
                 if (obj != null && ((RepositoryItemBase)obj).DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)

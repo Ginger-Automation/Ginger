@@ -41,8 +41,9 @@ namespace GingerCoreTest.Misc
         [TestMethod]
         public void ReadTextBetweenLabelsImage()
         {
+            string err = string.Empty;
             string txtOutput = GingerOcrOperations.ReadTextFromImageBetweenStrings(OcrImageFilePath,
-                                                                                   "Version", "Steps");
+                                                                                   "Version", "Steps" , ref err);
             string txtExpectedOutput = ": 4.1\n\n";
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }
@@ -58,7 +59,7 @@ namespace GingerCoreTest.Misc
         [TestMethod]
         public void ReadAllTextPdf()
         {
-            string txtOutput = GingerOcrOperations.ReadTextFromPdfSinglePage(OcrPdfAllTextFilePath, "1");
+            string txtOutput = GingerOcrOperations.ReadTextFromPdfSinglePage(OcrPdfAllTextFilePath, "1" , 300);
             string txtExpectedOutput = "Hi, try reading this text\n" + Environment.NewLine;
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }
@@ -66,7 +67,7 @@ namespace GingerCoreTest.Misc
         [TestMethod]
         public void ReadTextAfterLabelsPdf()
         {
-            string txtOutput = GingerOcrOperations.ReadTextAfterLabelPdf(OcrPdfFilePath, "Processed By");
+            string txtOutput = GingerOcrOperations.ReadTextAfterLabelPdf(OcrPdfFilePath, "Processed By", 300);
             string txtExpectedOutput = " : 107W0000\n";
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }
@@ -74,7 +75,8 @@ namespace GingerCoreTest.Misc
         [TestMethod]
         public void ReadTextBetweenLabelsPdf()
         {
-            string txtOutput = GingerOcrOperations.ReadTextBetweenLabelsPdf(OcrPdfFilePath, "Installer", "Stock Issue Form No", string.Empty);
+            string err = string.Empty;
+            string txtOutput = GingerOcrOperations.ReadTextBetweenLabelsPdf(OcrPdfFilePath, "Installer", "Stock Issue Form No", string.Empty,300 , ref err);
             string txtExpectedOutput = " : MOHD AZHARI BIN MAD ATARI (70020776) ";
             Assert.AreEqual(txtExpectedOutput, txtOutput);
         }

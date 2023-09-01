@@ -234,7 +234,7 @@ namespace Ginger.WindowExplorer
 
                 xActEditPageFrame.Visibility = Visibility.Visible;
 
-                xActEditPageFrame.Content = actEditPage;
+                xActEditPageFrame.ClearAndSetContent(actEditPage);
 
                 xOperationsScrollView.Visibility = Visibility.Collapsed;
             }
@@ -262,7 +262,7 @@ namespace Ginger.WindowExplorer
                 xDataFrameRow.Height = new GridLength(mLastDataGridRowHeight, GridUnitType.Star);
                 xDataFrameSplitter.Visibility = System.Windows.Visibility.Visible;
                 xDataFrameExpander.Visibility = System.Windows.Visibility.Visible;
-                DataFrame.Content = mDataPage;
+                DataFrame.ClearAndSetContent(mDataPage);
             }
             else
             {
@@ -537,7 +537,7 @@ namespace Ginger.WindowExplorer
 
         private void xDDLocateBy_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mLocators.CurrentItem = mLocators.Where(l => l.LocateBy == (eLocateBy)xDDLocateBy.SelectedItem).FirstOrDefault();
+            mLocators.CurrentItem = mLocators.FirstOrDefault(l => l.LocateBy == (eLocateBy)xDDLocateBy.SelectedItem);
             mElementInfo.Locators.CurrentItem = mLocators.CurrentItem;
 
             xLocateValueTxtBlock.Text = (mElementInfo.Locators.CurrentItem as ElementLocator).LocateValue;

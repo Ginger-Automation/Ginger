@@ -18,6 +18,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
 using System.Linq;
 using System.Windows;
@@ -52,7 +53,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             mPomDeltaViewPage.xMainElementsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
 
             mPomDeltaViewPage.xMainElementsGrid.txtSearch.Text = searchText;
-            xNewPomElementsPageFrame.Content = mPomDeltaViewPage;
+            xNewPomElementsPageFrame.ClearAndSetContent(mPomDeltaViewPage);
 
 
             // set LiveSpy Agent
@@ -72,7 +73,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
                 {
                     xLiveSpy.SetLableStatusText("Element found in new added list");
                     xLiveSpy.mWinExplorer.LearnElementInfoDetails(elementInfo);
-                    var deltaElement = mDeltaElements.Where(x => x.ElementInfo.XPath.Equals(elementInfo.XPath)).FirstOrDefault();
+                    var deltaElement = mDeltaElements.FirstOrDefault(x => x.ElementInfo.XPath.Equals(elementInfo.XPath));
                     if (deltaElement != null)
                     {
                         mDeltaElements.CurrentItem = deltaElement;

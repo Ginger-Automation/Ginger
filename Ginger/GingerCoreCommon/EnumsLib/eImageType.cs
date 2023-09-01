@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -44,6 +44,8 @@ namespace Amdocs.Ginger.Common.Enums
         VRT,
         Applitools,
         Sealights,
+        NormalUser,
+        AdminUser,
         #endregion
 
 
@@ -232,6 +234,7 @@ namespace Amdocs.Ginger.Common.Enums
         Wrench,
         Settings,
         Eraser,
+        Broom,
         Power,
         ArrowDown,
         ArrowRight,

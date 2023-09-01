@@ -54,7 +54,7 @@
                             </StackPanel>
                             <TextBox x:Name="xDescriptionTextBox" Margin="10,0,0,0" TextWrapping="WrapWithOverflow" Height="35" Style="{StaticResource $MultiRowsTextBoxStyle}" Grid.Column="0" Grid.Row="3"/>
 
-                            <Label Style="{StaticResource $LabelStyle}" Content="Target Application:" Margin="15,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="0"/>
+                            <Label Style="{StaticResource $LabelStyle}" x:Name="xTAlabel" Content="" Margin="15,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Grid.Row="0"/>
                             <ComboBox x:Name="xTargetApplicationComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="20,0,0,0" SelectionChanged="xTargetApplicationComboBox_SelectionChanged" Width="250" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"></ComboBox>
 
                             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2" Margin="20,0,0,0">

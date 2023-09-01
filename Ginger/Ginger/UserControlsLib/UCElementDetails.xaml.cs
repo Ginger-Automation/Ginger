@@ -791,7 +791,7 @@ namespace Ginger
 
         public void CustomElementLocatorsCheck(ElementInfo matchingOriginalElement, ElementInfo selectedElement)
         {
-            if (matchingOriginalElement.Locators.Count != selectedElement.Locators.Count && matchingOriginalElement.Locators.Where(l => l.Help.Contains("Custom Locator")).Count() > 0)
+            if (matchingOriginalElement.Locators.Count != selectedElement.Locators.Count && matchingOriginalElement.Locators.Any(l => l.Help.Contains("Custom Locator")))
             {
                 foreach (ElementLocator customLocator in matchingOriginalElement.Locators.Where(l => l.Help.Contains("Custom Locator")))
                 {
@@ -832,7 +832,7 @@ namespace Ginger
             ControlActionsPage_New CAP = null;
             if (xActUIPageFrame.HasContent)
             {
-                xActUIPageFrame.Content = null;
+                xActUIPageFrame.ClearAndSetContent(null);
             }
 
             if (SelectedElement.Locators.CurrentItem == null && SelectedElement.Locators.Count > 0)
@@ -845,7 +845,7 @@ namespace Ginger
             string elementVal = string.Empty;
             if (SelectedElement.OptionalValuesObjectsList.Count > 0)
             {
-                elementVal = Convert.ToString(SelectedElement.OptionalValuesObjectsList.Where(v => v.IsDefault).FirstOrDefault().Value);
+                elementVal = Convert.ToString(SelectedElement.OptionalValuesObjectsList.FirstOrDefault(v => v.IsDefault).Value);
             }
 
             ElementActionCongifuration actConfigurations;
@@ -901,7 +901,7 @@ namespace Ginger
                 //xRunActBtn.Click += CAP.RunActionClicked;
                 //xAddActBtn.Click += CAP.AddActionClicked;
 
-                xActUIPageFrame.Content = CAP;
+                xActUIPageFrame.ClearAndSetContent(CAP);
                 xAddActionTab.Visibility = Visibility.Visible;
                 xActUIPageFrame.Visibility = Visibility.Visible;
                 xAddRunOperationPanel.Visibility = Visibility.Visible;
@@ -973,7 +973,7 @@ namespace Ginger
                 locateByPOMElementPage.POMChangedPageEvent += LocateByPOMElementPage_POMChangedPageEvent;
 
                 SelectedPOM = locateByPOMElementPage.SelectedPOM;
-                xPOMSelectionFrame.Content = locateByPOMElementPage;
+                xPOMSelectionFrame.ClearAndSetContent(locateByPOMElementPage);
 
                 POMSelectionPending = false;
             }

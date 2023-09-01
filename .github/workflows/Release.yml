@@ -1,0 +1,89 @@
+name: Release
+
+on:
+    workflow_dispatch: 
+    
+    workflow_call:
+
+jobs:
+                    
+
+    Linux:
+        name: Create GingerRuntime
+        runs-on: ubuntu-latest
+        steps:
+            - name: Download Artifacts
+              uses: actions/download-artifact@v3
+              with:
+                name: ginger-artifact
+
+            - name: Create Directory for GingerRuntime
+              run: | 
+                  mkdir Runtime               
+ 
+            -   uses: sibiraj-s/action-archiver@v1
+                with:
+                  path: './Ginger/GingerRuntime/bin/Release/net7.0/linux-x64'
+                  format: tar
+                  gzip: true
+                  output: ./Runtime/GingerRuntime.tar.gz
+
+            - name: Create Directory for GingerRuntime
+              run: | 
+                  mv ./Documents/ReadMe.txt  ./Runtime/ReadMe.txt
+                  mv ./Documents/gingerInstall.sh  ./Runtime/gingerInstall.sh
+
+            -   uses: sibiraj-s/action-archiver@v1
+                with:
+                  path: './Runtime'
+                  format: tar
+                  gzip: true
+                  output: GingerRuntime-root.tar.gz
+                  
+            -   name: Upload GingerRuntime
+                uses: actions/upload-artifact@v3
+                with:
+                  name: GingerRuntime
+                  path: ./GingerRuntime-root.tar.gz
+                  
+          
+    Windows:
+        name: Windows Installer
+        runs-on: windows-latest     
+        steps:
+            -   name: Download Artifacts
+                uses: actions/download-artifact@v3
+                with:
+                  name: ginger-artifact         
+
+            -   name: 'delete Help\Library'
+                run: rmdir /s /q Ginger\Ginger\bin\Release\net7.0-windows\Help\Library
+                shell: cmd
+                
+            -   name: 'add help Library'
+                shell: cmd
+                run: |
+                    cd Ginger\Ginger\bin\Release\net7.0-windows\Help
+                    git clone https://github.com/Ginger-Automation/Ginger-Web-Help.git
+                    move Ginger-Web-Help\docs .
+                    rename docs Library
+                    rmdir /s /q Ginger-Web-Help       
+
+            -   uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
+                with: 
+                    filepath: './Ginger/GingerInstallerScriptGithub.iss'
+                    
+            -   uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
+                with: 
+                  filepath: 'D:\a\Installers\Ginger.exe'   
+                  certificate: ${{ secrets.PEM }}
+                  cert-password: ${{ secrets.PEM_PASS }}
+                    
+            -   name: Upload Windows Installer
+                uses: actions/upload-artifact@v3
+                with:
+                  name: WindowsInstaller
+                  path: D:/a/Installers
+                  
+
+
