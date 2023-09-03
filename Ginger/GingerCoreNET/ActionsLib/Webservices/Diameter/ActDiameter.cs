@@ -7,6 +7,8 @@ using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http.Headers;
 using static Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums;
 
 namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
@@ -44,56 +46,68 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
         {
             get
             {
-                return GetOrCreateInputParam(nameof(DiameterMessageType), eDiameterMessageType.CapabilitiesExchange);
+                return GetOrCreateInputParam(nameof(DiameterMessageType), eDiameterMessageType.None);
             }
             set
             {
                 AddOrUpdateInputParamValue(nameof(DiameterMessageType), value.ToString());
-                //OnPropertyChanged(nameof(DiameterMessageType));
+                OnPropertyChanged(nameof(DiameterMessageType));
             }
         }
         public int CommandCode
         {
             get
             {
-                return GetOrCreateInputParam(nameof(CommandCode), 0);
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(CommandCode), 0.ToString()).Value, out value);
+                return value;
             }
             set
             {
                 AddOrUpdateInputParamValue(nameof(CommandCode), value.ToString());
+                OnPropertyChanged(nameof(CommandCode));
             }
         }
         public int ApplicationId
         {
             get
             {
-                return GetOrCreateInputParam(nameof(ApplicationId), 0);
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(ApplicationId), 0.ToString()).Value, out value);
+                return value;
             }
             set
             {
                 AddOrUpdateInputParamValue(nameof(ApplicationId), value.ToString());
+                OnPropertyChanged(nameof(ApplicationId));
             }
         }
         public int HopByHopIdentifier
         {
             get
             {
-                return GetOrCreateInputParam(nameof(HopByHopIdentifier), 1);
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(HopByHopIdentifier), 1.ToString()).Value, out value);
+                return value;
             }
             set
             {
                 AddOrUpdateInputParamValue(nameof(HopByHopIdentifier), value.ToString());
+                OnPropertyChanged(nameof(HopByHopIdentifier));
             }
         }
         public int EndToEndIdentifier
         {
             get
             {
-                return GetOrCreateInputParam(nameof(EndToEndIdentifier), 1);
+                int value;
+                int.TryParse(GetOrCreateInputParam(nameof(EndToEndIdentifier), 1.ToString()).Value, out value);
+                return value;
             }
             set
             {
                 AddOrUpdateInputParamValue(nameof(EndToEndIdentifier), value.ToString());
+                OnPropertyChanged(nameof(EndToEndIdentifier));
             }
         }
 
@@ -101,11 +115,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
         {
             get
             {
-                return bool.Parse(GetOrCreateInputParam(nameof(SetProxiableBit), false.ToString()).Value);
+                bool value;
+                bool.TryParse(GetOrCreateInputParam(nameof(SetProxiableBit), false.ToString()).Value, out value);
+                return value;
             }
             set
             {
                 AddOrUpdateInputParamValue(nameof(SetProxiableBit), value.ToString());
+                OnPropertyChanged(nameof(SetProxiableBit));
             }
         }
 
@@ -113,37 +130,47 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
         {
             get
             {
-                return bool.Parse(GetOrCreateInputParam(nameof(SetRequestBit), false.ToString()).Value);
+                bool value;
+                bool.TryParse(GetOrCreateInputParam(nameof(SetRequestBit), false.ToString()).Value, out value);
+                return value;
             }
             set
             {
                 AddOrUpdateInputParamValue(nameof(SetRequestBit), value.ToString());
+                OnPropertyChanged(nameof(SetRequestBit));
             }
         }
         public bool SetErrorBit
         {
             get
             {
-                return bool.Parse(GetOrCreateInputParam(nameof(SetErrorBit), false.ToString()).Value);
+                bool value;
+                bool.TryParse(GetOrCreateInputParam(nameof(SetErrorBit), false.ToString()).Value, out value);
+                return value;
             }
             set
             {
                 AddOrUpdateInputParamValue(nameof(SetErrorBit), value.ToString());
+                OnPropertyChanged(nameof(SetErrorBit));
             }
         }
         public bool SetRetransmitBit
         {
             get
             {
-                return bool.Parse(GetOrCreateInputParam(nameof(SetRetransmitBit), false.ToString()).Value);
+                bool value;
+                bool.TryParse(GetOrCreateInputParam(nameof(SetRetransmitBit), false.ToString()).Value, out value);
+                return value;
             }
             set
             {
                 AddOrUpdateInputParamValue(nameof(SetRetransmitBit), value.ToString());
+                OnPropertyChanged(nameof(SetRetransmitBit));
             }
         }
-        private ObservableList<DiameterAVP> mRequestAvpList;
-        public ObservableList<DiameterAVP> RequestAvpList
+        private ObservableList<ActDiameterAvp> mRequestAvpList = new ObservableList<ActDiameterAvp>();
+        [IsSerializedForLocalRepository]
+        public ObservableList<ActDiameterAvp> RequestAvpList
         {
             get
             {
@@ -157,6 +184,22 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
                     OnPropertyChanged(nameof(mRequestAvpList));
                 }
             }
+        }
+        public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
+        {
+            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
+            list.Add(FormDataToAIVConverter());
+
+            return list;
+        }
+        private ObservableList<ActInputValue> FormDataToAIVConverter()
+        {
+            ObservableList<ActInputValue> fa = new ObservableList<ActInputValue>();
+            foreach (ActDiameterAvp reqAvp in RequestAvpList)
+            {
+                fa.Add((ActInputValue)reqAvp);
+            }
+            return fa;
         }
     }
 }

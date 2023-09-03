@@ -4,6 +4,14 @@
 	<Avp name="Origin-Realm" code="296" type="DiamIdent" isMandatory="true" isVendorSpecific="false"/>
 	<Avp name="Host-IP-Address" code="257" type="Address" isMandatory="true" isVendorSpecific="false"/>
 	<Avp name="Vendor-Id" code="266" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
-	<Avp name="Product-Name" code="269" type="UTF8String" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Product-Name" code="269" type="UTF8String" isMandatory="false" isVendorSpecific="false"/>
 	<Avp name="Origin-State-Id" code="278" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Supported-Vendor-Id" code="265" type="Unsigned32" isMandatory="false" isVendorSpecific="false"/>
+	<Avp name="Auth-Application-Id" code="258" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Acct-Application-Id" code="259" type="Unsigned32" isMandatory="false" isVendorSpecific="false"/>
+	<Avp name="Inband-Security-Id" code="299" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Acct-Application-Id" code="259" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Vendor-Specific-Application-Id" code="260" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Firmware-Revision" code="267" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Error-Message" code="281" type="UTF8String" isMandatory="false" isVendorSpecific="false"/>
 </DiameterAvps>

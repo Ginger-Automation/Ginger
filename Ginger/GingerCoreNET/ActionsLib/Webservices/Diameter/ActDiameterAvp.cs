@@ -1,5 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
+using Amdocs.Ginger.CoreNET.DiameterLib;
 using Amdocs.Ginger.Repository;
 using System;
 using System.Collections.Generic;
@@ -8,13 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using static Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums;
 
-namespace Amdocs.Ginger.CoreNET.DiameterLib
+namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
 {
-    public class DiameterAVP
+    public class ActDiameterAvp : ActInputValue
     {
-        public int Length { get; set; }
         private int mCode;
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public int Code
         {
             get
@@ -26,12 +25,12 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 if (mCode != value)
                 {
                     mCode = value;
-                    //OnPropertyChanged(nameof(Code));
+                    OnPropertyChanged(nameof(Code));
                 }
             }
         }
         private string mName;
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public string Name
         {
             get { return mName; }
@@ -40,27 +39,12 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 if (mName != value)
                 {
                     mName = value;
-                    //OnPropertyChanged(nameof(Name));
-                }
-            }
-        }
-        private object mValue;
-        public object Value
-        {
-            get
-            {
-                return mValue;
-            }
-            set
-            {
-                if (mValue != value)
-                {
-                    mValue = value;
+                    OnPropertyChanged(nameof(Name));
                 }
             }
         }
         private int mVendorId;
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public int VendorId
         {
             get
@@ -72,12 +56,12 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 if (mVendorId != value)
                 {
                     mVendorId = value;
-                    //OnPropertyChanged(nameof(VendorId));
+                    OnPropertyChanged(nameof(VendorId));
                 }
             }
         }
         private bool mIsGrouped;
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public bool IsGrouped
         {
             get
@@ -89,12 +73,12 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 if (mIsGrouped != value)
                 {
                     mIsGrouped = value;
-                    //OnPropertyChanged(nameof(IsGrouped));
+                    OnPropertyChanged(nameof(IsGrouped));
                 }
             }
         }
         private bool mIsMandatory;
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public bool IsMandatory
         {
             get
@@ -106,12 +90,12 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 if (mIsMandatory != value)
                 {
                     mIsMandatory = value;
-                    //OnPropertyChanged(nameof(IsMandatory));
+                    OnPropertyChanged(nameof(IsMandatory));
                 }
             }
         }
         private bool mIsVendorSpecific;
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public bool IsVendorSpecific
         {
             get
@@ -123,12 +107,12 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 if (mIsVendorSpecific != value)
                 {
                     mIsVendorSpecific = value;
-                    //OnPropertyChanged(nameof(IsVendorSpecific));
+                    OnPropertyChanged(nameof(IsVendorSpecific));
                 }
             }
         }
         private eDiameterAvpDataType mDataType;
-        //[IsSerializedForLocalRepository]
+        [IsSerializedForLocalRepository]
         public eDiameterAvpDataType DataType
         {
             get
@@ -140,55 +124,39 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 if (mDataType != value)
                 {
                     mDataType = value;
-                    //OnPropertyChanged(nameof(DataType));
+                    OnPropertyChanged(nameof(DataType));
                 }
             }
         }
 
-        private ObservableList<DiameterAVP> mNestedAvps = new ObservableList<DiameterAVP>();
-        public ObservableList<DiameterAVP> NestedAvps
+        private ObservableList<string> mAvpNamesList;
+        public ObservableList<string> AvpNamesList
         {
             get
             {
-                return mNestedAvps;
+                if (mAvpNamesList == null || !mAvpNamesList.Any())
+                {
+                    mAvpNamesList = DiameterUtils.GetAvpNamesFromDictionary();
+                }
+                return mAvpNamesList;
             }
             set
             {
-                if (value != mNestedAvps)
-                {
-                    mNestedAvps = value;
-                }
+                mAvpNamesList = value;
+                OnPropertyChanged(nameof(AvpNamesList));
             }
         }
+        public ActDiameterAvp() { }
 
-        //private string mItemName;
-        //public override string ItemName
-        //{
-        //    get
-        //    {
-        //        return $"Avp Name: {this.Name}, Avp Code: {this.Code}";
-        //    }
-        //    set
-        //    {
-        //        mItemName = value;
-        //    }
-        //}
-
-        public DiameterAVP() { }
-
-        public DiameterAVP(ActDiameterAvp diameterAvp)
+        public ActDiameterAvp(DiameterAVP diameterAVP)
         {
-            if (diameterAvp != null)
-            {
-                Code = diameterAvp.Code;
-                Name = diameterAvp.Name;
-                DataType = diameterAvp.DataType;
-                IsMandatory = diameterAvp.IsMandatory;
-                IsVendorSpecific = diameterAvp.IsVendorSpecific;
-                IsGrouped = diameterAvp.IsGrouped;
-                VendorId = diameterAvp.VendorId;
-                Value = diameterAvp.Value;
-            }
+            this.mName = diameterAVP.Name;
+            this.mCode = diameterAVP.Code;
+            this.mDataType = diameterAVP.DataType;
+            this.mIsGrouped = diameterAVP.IsGrouped;
+            this.mIsMandatory = diameterAVP.IsMandatory;
+            this.mIsVendorSpecific = diameterAVP.IsVendorSpecific;
+            this.mVendorId = diameterAVP.VendorId;
         }
     }
 }

@@ -27,7 +27,7 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <Label Content="Message Type:" Style="{StaticResource $InputLabelStyle_NoFill}" Grid.Column="0" Grid.Row="0" Height="30"/>
-                <UserControlsLib:UCComboBox x:Name="xMessageTypeComboBox" Width="150" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"/>
+                <UserControlsLib:UCComboBox x:Name="xMessageTypeComboBox" Width="200" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"/>
                 <Label Content="Command Code:" Style="{StaticResource $InputLabelStyle_NoFill}" Margin="0,10,0,0" Grid.Column="0" Grid.Row="1"/>
                 <Actions:UCValueExpression x:Name="xCommandCodeTextBox" Width="100" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"/>
                 <Label Content="Application ID:" Style="{StaticResource $InputLabelStyle_NoFill}" Margin="0,10,0,0" Grid.Column="0" Grid.Row="2"/>
@@ -65,7 +65,7 @@
                         <Button x:Name="GridVEButton" Content="..." Click="GridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
                     </DataTemplate>
                 </StackPanel.Resources>
-                <Ginger:ucGrid x:Name="xRequestAvpListGrid" Title="Request AVPS" ShowUpDown="Collapsed" MinHeight="350"/>
+                <Ginger:ucGrid x:Name="xRequestAvpListGrid" Title="Request AVPS" ShowUpDown="Collapsed" MinHeight="350" SelectionMode="Single"/>
             </StackPanel>
         </StackPanel>
     </Grid>

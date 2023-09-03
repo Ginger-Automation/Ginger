@@ -11,10 +11,12 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
     {
         public enum eDiameterMessageType
         {
-            [EnumValueDescription("Capabilities Exchange")]
-            CapabilitiesExchange,
-            [EnumValueDescription("Credit Control")]
-            CreditControl
+            [EnumValueDescription("Custom Message")]
+            None,
+            [EnumValueDescription("Capabilities Exchange Request")]
+            CapabilitiesExchangeRequest,
+            [EnumValueDescription("Credit Control Request")]
+            CreditControlRequest
         }
 
         public enum eDiameterAvpDataType

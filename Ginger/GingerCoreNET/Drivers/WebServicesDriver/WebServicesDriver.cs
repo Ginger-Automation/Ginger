@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
+using Amdocs.Ginger.CoreNET.DiameterLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -165,6 +166,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public string mRawRequest;
         private HttpWebClientUtils mWebAPI;
         private TcpClient mTcpClient;
+        private ActDiameter mActDiameter;
 
         public override bool IsSTAThread()
         {
@@ -206,22 +208,9 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
             if (UseTcp)
             {
-                if (String.IsNullOrEmpty(TcpHostname) || String.IsNullOrEmpty(TcpPort))
+                if (!InitializeTCPClient())
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Tcp configuration error - Tcp hostname or port cannot be empty while driver is configured to use Tcp");
-                }
-                else
-                {
-                    try
-                    {
-                        mTcpClient = new TcpClient(TcpHostname, Convert.ToInt32(TcpPort));
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error when try to start Web Services Driver - " + ex.Message);
-                        ErrorMessageFromDriver = "Failed to connect via TCP, please check configurations";
-                        return;
-                    }
+                    return;
                 }
             }
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
@@ -397,13 +386,89 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             else if (act is ActDiameter)
             {
-
+                if (IsRunning())
+                {
+                    mActDiameter = act as ActDiameter;
+                    HandleDiameterRequest(mActDiameter);
+                }
             }
             else
             {
                 throw new Exception("The Action from type '" + act.GetType().ToString() + "' is unknown/Not Implemented by the Driver - " + this.GetType().ToString());
             }
 
+        }
+
+        private void HandleDiameterRequest(ActDiameter mActDiameter)
+        {
+            DiameterMessage message = new DiameterMessage();
+            if (mActDiameter != null)
+            {
+                try
+                {
+                    ConstructDiameterRequest(mActDiameter, ref message);
+                }
+                catch (Exception e)
+                {
+
+                }
+                int commandCode = int.Parse(mActDiameter.GetInputParamCalculatedValue(nameof(ActDiameter.CommandCode)));
+            }
+        }
+
+        private bool ConstructDiameterRequest(ActDiameter mActDiameter, ref DiameterMessage message)
+        {
+            bool successfullyConstructedMessage = true;
+            if (mActDiameter != null)
+            {
+                try
+                {
+                    int commandCode;
+                    int applicationId;
+                    int hopByHopIdentifier;
+                    int endToEndIdentifer;
+                    ObservableList<DiameterAVP> avps = new ObservableList<DiameterAVP>();
+                    if (int.TryParse(mActDiameter.GetInputParamCalculatedValue(nameof(ActDiameter.CommandCode)), out commandCode))
+                    {
+                        message.CommandCode = commandCode;
+                    }
+                    else
+                    {
+                        successfullyConstructedMessage = false;
+                    }
+                    if (int.TryParse(mActDiameter.GetInputParamCalculatedValue(nameof(ActDiameter.ApplicationId)), out applicationId))
+                    {
+                        message.ApplicationId = applicationId;
+                    }
+                    else
+                    {
+                        successfullyConstructedMessage = false;
+                    }
+                    if (int.TryParse(mActDiameter.GetInputParamCalculatedValue(nameof(ActDiameter.HopByHopIdentifier)), out hopByHopIdentifier))
+                    {
+                        message.HopByHopIdentifier = hopByHopIdentifier;
+                    }
+                    if (int.TryParse(mActDiameter.GetInputParamCalculatedValue(nameof(ActDiameter.EndToEndIdentifier)), out endToEndIdentifer))
+                    {
+                        message.EndToEndIdentifier = endToEndIdentifer;
+                    }
+                    if (mActDiameter.RequestAvpList != null && mActDiameter.RequestAvpList.Any())
+                    {
+                        foreach (ActDiameterAvp actDiameterAvp in mActDiameter.RequestAvpList)
+                        {
+                            if (actDiameterAvp != null)
+                            {
+                                DiameterUtils.AddAvpToMessage(actDiameterAvp, ref message);
+                            }
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    successfullyConstructedMessage = false;
+                }
+            }
+            return successfullyConstructedMessage;
         }
 
         private string ReplacePlaceHolderParameneterWithActual(string ValueBeforeReplacing, ObservableList<EnhancedActInputValue> APIModelDynamicParamsValue)
@@ -797,6 +862,21 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         public override bool IsRunning()
         {
+            if (UseTcp)
+            {
+                if (mTcpClient != null)
+                {
+                    if (mTcpClient.Connected)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                return false;
+            }
             if (mIsDriverWindowLaunched)
             {
                 if (mDriverWindow != null)
@@ -825,6 +905,30 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             errorMessage = string.Empty;
             return true;
+        }
+
+        private bool InitializeTCPClient()
+        {
+            bool isInitializeSuccess = true;
+            if (String.IsNullOrEmpty(TcpHostname) || String.IsNullOrEmpty(TcpPort))
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Tcp configuration error - Tcp hostname or port cannot be empty while driver is configured to use Tcp");
+                isInitializeSuccess = false;
+            }
+            else
+            {
+                try
+                {
+                    mTcpClient = new TcpClient(TcpHostname, Convert.ToInt32(TcpPort));
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error when try to start Web Services Driver - " + ex.Message);
+                    ErrorMessageFromDriver = "Failed to connect the TCP client, please check configurations";
+                    isInitializeSuccess = false;
+                }
+            }
+            return isInitializeSuccess;
         }
     }
 }
