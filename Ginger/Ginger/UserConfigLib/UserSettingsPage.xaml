@@ -34,6 +34,7 @@
                             <CheckBox x:Name="xShowEnterpriseFeatures" Style="{StaticResource $CeckBoxStyle}" Content="Show enterprise features"  Margin="0,5,0,5"/>
                             <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
                         </StackPanel>
+                        <CheckBox x:Name="xWatchFileChangesCheckBox" Style="{StaticResource $CeckBoxStyle}" Content="Auto update on file/folder changes"  Margin="0,5,0,5"/>
                     </StackPanel>
                 </Expander.Content>
             </Expander>

@@ -1316,7 +1316,7 @@ namespace GingerCore
             {
                 if (userSelection == eUserMsgSelection.None)
                 {
-                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to selected BF. Ginger will map the Activity's Target application to BF.");
+                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to selected BF. Ginger will map the {GingerDicser.GetTermResValue(eTermResKey.Activity)}'s {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} to BF.");
                 }
 
                 if (userSelection == eUserMsgSelection.OK)

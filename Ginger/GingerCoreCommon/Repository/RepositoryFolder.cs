@@ -27,7 +27,10 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.IO;
+using Ginger;
+using Microsoft.CodeAnalysis;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -336,6 +339,12 @@ namespace Amdocs.Ginger.Repository
         {
             try
             {
+                UserProfile userProfile = GingerCoreCommonWorkSpace.Instance.UserProfile;
+                if (userProfile != null && !userProfile.WatchFileChanges)
+                {
+                    return;
+                }
+
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))//not needed on other OS types
                 {
                     mFileWatcher = new FileSystemWatcher();
@@ -853,7 +862,10 @@ namespace Amdocs.Ginger.Repository
             OnPropertyChanged(nameof(FolderFullPath));
             OnPropertyChanged(nameof(DisplayName));
             OnPropertyChanged(nameof(FolderName));
-            mFileWatcher.Path = FolderFullPath;
+            if (mFileWatcher != null)
+            {
+                mFileWatcher.Path = FolderFullPath;
+            }
 
             //updating the folder items cache with correct File Path
             UpdateFolderItemsCacheFilePath();

@@ -111,8 +111,11 @@ namespace Ginger
                     {
                         BindingOperations.EnableCollectionSynchronization(mObjList, mObjList);//added to allow collection changes from other threads
                     }
-
-                    mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        mCollectionView = CollectionViewSource.GetDefaultView(mObjList);
+                    });
+                        
 
                     if (mCollectionView != null)
                     {
@@ -968,7 +971,7 @@ namespace Ginger
                     return txt != txtSearch.Text;
                 }
 
-                if (mCollectionView != null && !(await UserKeepsTyping()) && txtSearch.Text != mFilterSearchText)
+               if (mCollectionView != null && !(await UserKeepsTyping()) && txtSearch.Text != mFilterSearchText)
                 {
                     this.Dispatcher.Invoke(() =>
                     {
@@ -1132,7 +1135,7 @@ namespace Ginger
             return cmb;
         }
 
-        public CheckBox AddCheckBox(string txt, RoutedEventHandler handler)
+        public CheckBox AddCheckBox(string txt, RoutedEventHandler? handler)
         {
             DockPanel pnl = new DockPanel();
             pnl.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
@@ -1345,6 +1348,35 @@ namespace Ginger
             }
         }
 
+        public void EnableGridColumns()
+        {
+            foreach (DataGridColumn gridCol in grdMain.Columns)
+            {
+                if (gridCol.GetType() == typeof(DataGridCheckBoxColumn))
+                {
+                    ((DataGridCheckBoxColumn)gridCol).IsReadOnly = false;
+                    ((DataGridCheckBoxColumn)gridCol).ElementStyle = FindResource("@CheckBoxGridCellElemntStyle") as Style;
+                }
+                else if (gridCol.GetType() == typeof(DataGridComboBoxColumn))
+                {
+                    ((DataGridComboBoxColumn)gridCol).IsReadOnly = false;
+                    ((DataGridComboBoxColumn)gridCol).ElementStyle = FindResource("@GridCellElementStyle") as Style;
+                }
+                else if (gridCol.GetType() == typeof(DataGridTemplateColumn))
+                {
+                    ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@GridCellElementStyle") as Style;
+                }
+                else if (gridCol.GetType() == typeof(DataGridTextColumn))
+                {
+                    ((DataGridTextColumn)gridCol).CellStyle = FindResource("@GridCellElementStyle") as Style;
+                }
+                else
+                {
+                    gridCol.IsReadOnly = false;
+                }
+            }
+        }
+
         public void DisableGridColoumns()
         {
             foreach (DataGridColumn gridCol in grdMain.Columns)
@@ -1357,15 +1389,15 @@ namespace Ginger
                 else if (gridCol.GetType() == typeof(DataGridComboBoxColumn))
                 {
                     ((DataGridComboBoxColumn)gridCol).IsReadOnly = true;
-                    ((DataGridComboBoxColumn)gridCol).ElementStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
+                    ((DataGridComboBoxColumn)gridCol).ElementStyle = FindResource("@ReadOnlyGridCellElementStyle") as Style;
                 }
                 else if (gridCol.GetType() == typeof(DataGridTemplateColumn))
                 {
-                    ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
+                    ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElementStyle") as Style;
                 }
                 else if (gridCol.GetType() == typeof(DataGridTextColumn))
                 {
-                    ((DataGridTextColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
+                    ((DataGridTextColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElementStyle") as Style;
                 }
                 else
                 {
@@ -1373,6 +1405,7 @@ namespace Ginger
                 }
             }
         }
+
         private void SetView(GridViewDef view)
         {
             try
@@ -1495,7 +1528,7 @@ namespace Ginger
                                 ((DataGridTemplateColumn)gridCol).CellTemplate = colView.CellTemplate;
                                 if (colView.ReadOnly == true)
                                 {
-                                    ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElemntStyle") as Style;
+                                    ((DataGridTemplateColumn)gridCol).CellStyle = FindResource("@ReadOnlyGridCellElementStyle") as Style;
                                 }
 
                                 break;

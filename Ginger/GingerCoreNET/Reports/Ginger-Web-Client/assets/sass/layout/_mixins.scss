@@ -1,0 +1,214 @@
+@mixin border-radius($val) {
+    -moz-border-radius: $val;
+    -webkit-border-radius: $val;
+    border-radius: $val;
+}
+
+@mixin border-radius-right($val) {
+    -moz-border-radius-topright: $val;
+    -webkit-border-top-right-radius: $val;
+    border-top-right-radius: $val;
+    -moz-border-radius-bottomright: $val;
+    -webkit-border-bottom-right-radius: $val;
+    border-bottom-right-radius: $val;
+}
+
+@mixin border-radius-left($val) {
+    -moz-border-radius-topleft: $val;
+    -webkit-border-top-left-radius: $val;
+    border-top-left-radius: $val;
+    -moz-border-radius-bottomleft: $val;
+    -webkit-border-bottom-left-radius: $val;
+    border-bottom-left-radius: $val;
+}
+
+@mixin border-radius-top($val) {
+    -moz-border-radius-topleft: $val;
+    -webkit-border-top-left-radius: $val;
+    border-top-left-radius: $val;
+    -moz-border-radius-topright: $val;
+    -webkit-border-top-right-radius: $val;
+    border-top-right-radius: $val;
+}
+
+@mixin border-radius-bottom($val) {
+    -moz-border-radius-bottomleft: $val;
+    -webkit-border-bottom-left-radius: $val;
+    border-bottom-left-radius: $val;
+    -moz-border-radius-bottomright: $val;
+    -webkit-border-bottom-right-radius: $val;
+    border-bottom-right-radius: $val;
+}
+
+@mixin transition($transition...) {
+    -moz-transition:    $transition;
+    -o-transition:      $transition;
+    -webkit-transition: $transition;
+    transition:         $transition;
+}
+
+@mixin focused-input() {
+    outline: 0;
+    border-color: $focusOutlineColor;
+    background-color: white;
+    @include shadow(0 0 5px rgba(0,112,210,.35));
+}
+
+@mixin rotate($deg) {
+    -webkit-transform: rotate($deg);
+    -moz-transform: rotate($deg);
+    -o-transform: rotate($deg);
+    -ms-transform: rotate($deg);
+    transform: rotate($deg);
+}
+
+@mixin scale($deg) {
+    -webkit-transform: scale($deg);
+    -moz-transform: scale($deg);
+    -o-transform: scale($deg);
+    -ms-transform: scale($deg);
+    transform: scale($deg);
+}
+
+@mixin opacity($opacity) {
+  opacity: $opacity;
+  $opacity-ie: $opacity * 100;
+  filter: alpha(opacity=$opacity-ie);
+}
+
+
+
+@mixin no-shadow() {
+    box-shadow: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+}
+
+
+@mixin shadow($value) {
+    box-shadow: $value;
+    -webkit-box-shadow: $value;
+    -moz-box-shadow: $value;
+}
+
+@mixin border-box() {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+@mixin list-item-hover {
+    background-color: $listItemHoverBgColor;
+    color: $listItemHoverTextColor;
+}
+
+@mixin background-gradient-top2bottom($start-colour, $end-colour) {
+    background-color: $start-colour;
+    background-image: -webkit-gradient(linear, left top, left bottom, from($start-colour), to($end-colour));
+    background-image: -webkit-linear-gradient(to bottom, $start-colour, $end-colour);
+    background-image:    -moz-linear-gradient(to bottom, $start-colour, $end-colour);
+    background-image:     -ms-linear-gradient(to bottom, $start-colour, $end-colour);
+    background-image:      -o-linear-gradient(to bottom, $start-colour, $end-colour);
+    background-image:         linear-gradient(to bottom, $start-colour, $end-colour);
+    filter:            progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$start-colour}', endColorStr='#{$end-colour}');
+}
+
+@mixin background-gradient-diagonal($start-color, $end-color) {
+    background: $start-color; /* Old browsers */
+    background: -moz-linear-gradient(-206deg, $start-color 5%, $end-color 100%);
+    background: -webkit-linear-gradient(-206deg, $start-color 5%,$end-color 100%);
+    background: linear-gradient(-206deg, $start-color 5%,$end-color 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$start-color}', endColorstr='#{$end-color}',GradientType=1 );
+}
+
+@mixin background-gradient-with-degree($degree, $start-color, $end-color) {
+    background: $start-color; /* Old browsers */
+    background: -moz-linear-gradient($degree, $start-color 0%, $end-color 100%);
+    background: -webkit-linear-gradient($degree, $start-color 0%,$end-color 100%);
+    background: linear-gradient($degree, $start-color 0%,$end-color 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#{$start-color}', endColorstr='#{$end-color}',GradientType=1 );
+}
+
+@mixin border-shadow() {
+    -webkit-box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+@mixin overlay-shadow {
+    -webkit-box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.15);
+}
+
+@mixin placeholder {
+    &::-webkit-input-placeholder {@content}
+    &:-moz-placeholder           {@content}
+    &::-moz-placeholder          {@content}
+    &:-ms-input-placeholder      {@content}
+}
+
+
+@mixin clearfix() {
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+
+@mixin flex() {
+    display: -ms-flexbox;
+    display: flex;
+}
+
+@mixin flex-wrap($value) {
+    -ms-flex-wrap: $value;
+    flex-wrap: $value;
+}
+
+@mixin flex-direction-row() {
+    -ms-flex-direction: row;
+    flex-direction: row;
+}
+
+@mixin flex-direction-column() {
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+
+@mixin flex-justify-center() {
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+@mixin flex-justify-between() {
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+}
+
+@mixin flex-align-center() {
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+@mixin flex-align-start() {
+    -ms-flex-align: start;
+    align-items: flex-start;
+}
+
+@mixin flex-align-end() {
+    -ms-flex-align: end;
+    align-items: flex-end;
+}
+
+@mixin flex-justify-start() {
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+}
+
+@mixin flex-justify-end() {
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+}
+

@@ -45,6 +45,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
         public POMLearnConfigWizardPage()
         {
             InitializeComponent();
+            xTAlabel.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)

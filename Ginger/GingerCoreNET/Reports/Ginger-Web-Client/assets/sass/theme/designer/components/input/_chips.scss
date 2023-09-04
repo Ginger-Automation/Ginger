@@ -1,0 +1,41 @@
+.p-chips {
+    .p-chips-multiple-container {
+        padding: nth($inputPadding, 1)/2 nth($inputPadding, 2);
+
+        &:not(.p-disabled):hover {
+            border-color: $inputHoverBorderColor;
+        }
+
+        &:not(.p-disabled).p-focus {
+            @include focused-input();
+        }
+
+        .p-chips-token {
+            padding: nth($inputPadding, 1)/2 nth($inputPadding, 2);
+            margin-right: $inlineSpacing;
+            background: $highlightBg;
+            color: $highlightTextColor;
+            border-radius: $borderRadius;
+
+            .p-chips-token-icon {
+                margin-left: $inlineSpacing;
+            }
+        }
+
+        .p-chips-input-token {
+            padding: nth($inputPadding, 1)/2 0;
+                
+            input {
+                font-family: $fontFamily;
+                font-size: $fontSize;
+                color: $textColor;
+                padding: 0;
+                margin: 0;
+            }
+        }
+    }
+}
+
+p-chips.ng-dirty.ng-invalid > .p-chips > .p-inputtext {
+    @include invalid-input();
+}

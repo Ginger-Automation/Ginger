@@ -1,0 +1,3 @@
+p-inputmask.ng-dirty.ng-invalid > .p-inputtext {
+    @include invalid-input();
+}

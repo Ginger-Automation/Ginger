@@ -83,34 +83,41 @@ namespace Ginger.ApplicationsModels.ModelsUsages
                 ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
                 await Task.Run(() =>
                 {
-                    foreach (BusinessFlow BF in BizFlows)
+                    try
                     {
-                        if (mModelItem is ApplicationAPIModel)
+                        foreach (BusinessFlow BF in BizFlows)
                         {
-                            foreach (Activity activity in BF.Activities)
+                            if (mModelItem is ApplicationAPIModel)
                             {
-                                foreach (Act act in activity.Acts)
+                                foreach (Activity activity in BF.Activities)
                                 {
-                                    if (act is ActWebAPIModel && ((ActWebAPIModel)act).APImodelGUID == mModelItem.Guid)
+                                    foreach (Act act in activity.Acts)
                                     {
-                                        ModelItemUsage itemUsage = new ModelItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, BF.Name), HostActivityName = activity.ActivityName, HostActivity = activity, Action = act, UsageItem = act, UsageItemName = act.Description, Selected = true/*, UsageExtraDetails = "Number of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": " + act.ActivitiesIdentifiers.Count().ToString()*/, Status = ModelItemUsage.eStatus.NotUpdated };
-                                        if (mUsageUpdateType == ApplicationModelBase.eModelUsageUpdateType.SinglePart)
+                                        if (act is ActWebAPIModel && ((ActWebAPIModel)act).APImodelGUID == mModelItem.Guid)
                                         {
-                                            if (mModelPart == ApplicationModelBase.eModelParts.ReturnValues)
+                                            ModelItemUsage itemUsage = new ModelItemUsage() { HostBusinessFlow = BF, HostBizFlowPath = Path.Combine(BF.ContainingFolder, BF.Name), HostActivityName = activity.ActivityName, HostActivity = activity, Action = act, UsageItem = act, UsageItemName = act.Description, Selected = true/*, UsageExtraDetails = "Number of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": " + act.ActivitiesIdentifiers.Count().ToString()*/, Status = ModelItemUsage.eStatus.NotUpdated };
+                                            if (mUsageUpdateType == ApplicationModelBase.eModelUsageUpdateType.SinglePart)
                                             {
-                                                itemUsage.SetItemPartesFromEnum(typeof(ActReturnValue.eItemParts));
+                                                if (mModelPart == ApplicationModelBase.eModelParts.ReturnValues)
+                                                {
+                                                    itemUsage.SetItemPartesFromEnum(typeof(ActReturnValue.eItemParts));
+                                                }
                                             }
-                                        }
-                                        else if (mUsageUpdateType == ApplicationModelBase.eModelUsageUpdateType.MultiParts)
-                                        {
-                                            itemUsage.SetItemPartesFromEnum(typeof(ApplicationModelBase.eModelParts));
-                                        }
+                                            else if (mUsageUpdateType == ApplicationModelBase.eModelUsageUpdateType.MultiParts)
+                                            {
+                                                itemUsage.SetItemPartesFromEnum(typeof(ApplicationModelBase.eModelParts));
+                                            }
 
-                                        ModelItemUsages.Add(itemUsage);
+                                            ModelItemUsages.Add(itemUsage);
+                                        }
                                     }
                                 }
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to find Usage", ex);
                     }
                 });
             }
@@ -178,30 +185,38 @@ namespace Ginger.ApplicationsModels.ModelsUsages
 
                 await Task.Run(() =>
                 {
-                    foreach (ModelItemUsage usage in ModelItemUsages)
+                    try
                     {
-                        if (usage.Selected && usage.Status == ModelItemUsage.eStatus.NotUpdated || usage.Status == ModelItemUsage.eStatus.UpdateFailed)
+                        foreach (ModelItemUsage usage in ModelItemUsages)
                         {
-                            usage.Status = ModelItemUsage.eStatus.Pending;
-                        }
-                    }
-
-                    //do the update
-                    foreach (ModelItemUsage usage in ModelItemUsages)
-                    {
-                        try
-                        {
-                            if (usage.Status == ModelItemUsage.eStatus.Pending)
+                            if (usage.Selected && usage.Status == ModelItemUsage.eStatus.NotUpdated || usage.Status == ModelItemUsage.eStatus.UpdateFailed)
                             {
-                                UpdateAllReturnValuesInAction(usage.Action, mModelItem, usage);
-                                DeleteOldReturnValuesInAction(usage.Action, mModelItem);
+                                usage.Status = ModelItemUsage.eStatus.Pending;
                             }
                         }
-                        catch (Exception ex)
+
+                        //do the update
+                        foreach (ModelItemUsage usage in ModelItemUsages)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to update the model item usage", ex);
-                            usage.Status = ModelItemUsage.eStatus.UpdateFailed;
+                            try
+                            {
+                                if (usage.Status == ModelItemUsage.eStatus.Pending)
+                                {
+                                    UpdateAllReturnValuesInAction(usage.Action, mModelItem, usage);
+                                    DeleteOldReturnValuesInAction(usage.Action, mModelItem);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to update the model item usage", ex);
+                                usage.Status = ModelItemUsage.eStatus.UpdateFailed;
+                            }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Update", ex);
                     }
                 });
             }
@@ -306,25 +321,31 @@ namespace Ginger.ApplicationsModels.ModelsUsages
             {
                 await Task.Run(() =>
                 {
-
-                    foreach (ModelItemUsage usage in ModelItemUsages)
+                    try
                     {
-                        if (usage.Status == ModelItemUsage.eStatus.Updated || usage.Status == ModelItemUsage.eStatus.SaveFailed)
+                        foreach (ModelItemUsage usage in ModelItemUsages)
                         {
-                            try
+                            if (usage.Status == ModelItemUsage.eStatus.Updated || usage.Status == ModelItemUsage.eStatus.SaveFailed)
                             {
-                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(usage.HostBusinessFlow);
-                                usage.Status = ModelItemUsage.eStatus.UpdatedAndSaved;
-                            }
-                            catch (Exception ex)
-                            {
-                                usage.Status = ModelItemUsage.eStatus.SaveFailed;
-                                Reporter.HideStatusMessage();
-                                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                try
+                                {
+                                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(usage.HostBusinessFlow);
+                                    usage.Status = ModelItemUsage.eStatus.UpdatedAndSaved;
+                                }
+                                catch (Exception ex)
+                                {
+                                    usage.Status = ModelItemUsage.eStatus.SaveFailed;
+                                    Reporter.HideStatusMessage();
+                                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
+                                }
                             }
                         }
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mModelItem);
                     }
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(mModelItem);
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed Save All Businessflows", ex);
+                    }
                 });
             }
             finally

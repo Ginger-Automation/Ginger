@@ -191,7 +191,7 @@ namespace GingerCore
 
             //if ((values == null) && (valuesCollView != null))
             //{
-            comboBox.SelectedItem = EnumObj;
+            comboBox.SelectedValue = EnumObj;
             //}
             //else
             //{

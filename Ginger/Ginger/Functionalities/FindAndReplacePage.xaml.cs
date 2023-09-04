@@ -395,17 +395,24 @@ namespace Ginger.Functionalities
 
         private void ReplaceItems(List<FoundItem> FIList, string newValue)
         {
-            foreach (FoundItem foundItem in FIList)
+            try
             {
-                if (mFindAndReplaceUtils.ReplaceItem(mSearchConfig, mFindWhat, foundItem, newValue))
+                foreach (FoundItem foundItem in FIList)
                 {
-                    foundItem.Status = FoundItem.eStatus.Replaced;
-                }
-                else
-                {
-                    foundItem.Status = FoundItem.eStatus.ReplaceFailed;
-                }
+                    if (mFindAndReplaceUtils.ReplaceItem(mSearchConfig, mFindWhat, foundItem, newValue))
+                    {
+                        foundItem.Status = FoundItem.eStatus.Replaced;
+                    }
+                    else
+                    {
+                        foundItem.Status = FoundItem.eStatus.ReplaceFailed;
+                    }
 
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Faile to Replace Items", ex);
             }
         }
 
@@ -463,17 +470,24 @@ namespace Ginger.Functionalities
 
         private void FindItems()
         {
-            mItemsToSearchIn.Clear();
-            mMainItemType.GetItemsToSearchIn();
-
-            foreach (ItemToSearchIn searchItem in mItemsToSearchIn)
+            try
             {
-                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
-                {
-                    return;
-                }
+                mItemsToSearchIn.Clear();
+                mMainItemType.GetItemsToSearchIn();
 
-                mFindAndReplaceUtils.FindItemsByReflection(searchItem.OriginItemObject, searchItem.Item, mFoundItemsList, mFindWhat, mSearchConfig, searchItem.ParentItemToSave, searchItem.ItemParent, searchItem.FoundField);
+                foreach (ItemToSearchIn searchItem in mItemsToSearchIn)
+                {
+                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                    {
+                        return;
+                    }
+
+                    mFindAndReplaceUtils.FindItemsByReflection(searchItem.OriginItemObject, searchItem.Item, mFoundItemsList, mFindWhat, mSearchConfig, searchItem.ParentItemToSave, searchItem.ItemParent, searchItem.FoundField);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Faile to Find Items", ex);
             }
         }
 
@@ -1195,23 +1209,30 @@ namespace Ginger.Functionalities
 
         private void Save(List<FoundItem> FIList)
         {
-            foreach (FoundItem foundItem in FIList)
+            try
             {
-                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                foreach (FoundItem foundItem in FIList)
                 {
-                    return;
-                }
+                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                    {
+                        return;
+                    }
 
-                try
-                {
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(foundItem.ParentItemToSave);
-                    foundItem.Status = FoundItem.eStatus.Saved;
-                }
-                catch
-                {
-                    foundItem.Status = FoundItem.eStatus.SavedFailed;
-                }
+                    try
+                    {
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(foundItem.ParentItemToSave);
+                        foundItem.Status = FoundItem.eStatus.Saved;
+                    }
+                    catch
+                    {
+                        foundItem.Status = FoundItem.eStatus.SavedFailed;
+                    }
 
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR,"Faile to Save",ex);
             }
         }
 

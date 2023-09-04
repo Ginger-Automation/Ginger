@@ -191,7 +191,14 @@ namespace Ginger.Agents
             {
                 await Task.Run(() =>
                 {
-                    mAgent.AgentOperations.Test();
+                    try
+                    {
+                        mAgent.AgentOperations.Test();
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR,"Failed to test the agent", ex);
+                    }
                 });
             }
             finally
