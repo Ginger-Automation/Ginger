@@ -12,17 +12,20 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         public string Id { get; }
         
-        public string Name { get; }
+        public string Name { get; set; }
+
+        public string SystemRef { get; set; }
         
         public Process Process { get; }
 
-        public Participant(Guid guid, string name) : this(guid.ToString(), name) { }
+        public Participant(Guid guid) : this(guid.ToString()) { }
 
-        public Participant(string guid, string name)
+        public Participant(string guid)
         {
             Guid = guid;
             Id = $"participant_{Guid}";
-            Name = name;
+            Name = string.Empty;
+            SystemRef = string.Empty;
             Process = new Process(Id);
         }
     }

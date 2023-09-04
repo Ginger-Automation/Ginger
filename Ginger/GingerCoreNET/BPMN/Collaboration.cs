@@ -12,30 +12,27 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         public string Id { get; }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
-        public string Description { get; }
+        public string SystemRef { get; set; }
+
+        public string Description { get; set; }
 
         public CollaborationType CollaborationType { get; }
 
         private readonly ICollection<Participant> _participants;
         public IEnumerable<Participant> Participants => _participants;
 
-        public Collaboration(Guid guid, CollaborationType collaborationType, string name) :
-            this(guid, collaborationType, name, description: string.Empty) { }
+        public Collaboration(Guid guid, CollaborationType collaborationType) :
+            this(guid.ToString(), collaborationType) { }
 
-        public Collaboration(Guid guid, CollaborationType collaborationType, string name, string description) :
-            this(guid.ToString(), collaborationType, name, description) { }
-
-        public Collaboration(string guid, CollaborationType collaborationType, string name) :
-            this(guid, collaborationType, name, description: string.Empty) { }
-
-        public Collaboration(string guid, CollaborationType collaborationType, string name, string description)
+        public Collaboration(string guid, CollaborationType collaborationType)
         {
             Guid = guid;
             Id = $"Collaboration_{Guid}";
-            Name = name;
-            Description = description;
+            Name = string.Empty;
+            SystemRef = string.Empty;
+            Description = string.Empty;
             CollaborationType = collaborationType;
             _participants = new List<Participant>();
         }

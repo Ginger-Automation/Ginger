@@ -8,10 +8,15 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 {
     public sealed class UserTask : Task
     {
+        public string MessageRef { get; set; }
+
         public UserTask(string processId, Guid guid, string name) : 
             this(processId, guid.ToString(), name) { }
     
         public UserTask(string processId, string guid, string name) : 
-            base(processId, guid, name) { }
+            base(processId, guid, name) 
+        {
+            MessageRef = string.Empty;
+        }
     }
 }

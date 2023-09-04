@@ -9,32 +9,53 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 {
     public abstract class Flow
     {
+        public string Guid { get; }
+
         public string Id { get; }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
         public IFlowSource Source { get; }
 
         public IFlowTarget Target { get; }
 
-        protected Flow(string name, IFlowSource source, IFlowTarget target)
+        protected Flow(string name, IFlowSource source, IFlowTarget target) :
+            this(System.Guid.NewGuid(), name, source, target) { }
+
+        protected Flow(Guid guid, string name, IFlowSource source, IFlowTarget target) :
+            this(guid.ToString(), name, source, target) { }
+
+        protected Flow(string guid, string name, IFlowSource source, IFlowTarget target)
         {
-            Id = $"flow_{Guid.NewGuid()}";
+            Guid = guid;
+            Id = $"flow_{Guid}";
             Name = name;
             Source = source;
             Target = target;
         }
 
-        public static void Create(string name, IFlowSource source, IFlowTarget target)
+        public static Flow Create(string name, IFlowSource source, IFlowTarget target)
+        {
+            return Create(System.Guid.NewGuid(), name, source, target);
+        }
+
+        public static Flow Create(Guid guid, string name, IFlowSource source, IFlowTarget target)
+        {
+            return Create(guid.ToString(), name, source, target);
+        }
+
+        public static Flow Create(string guid, string name, IFlowSource source, IFlowTarget target)
         {
             Flow flow;
             if (string.Equals(source.ProcessId, target.ProcessId))
-                flow = new SequenceFlow(name, source, target);
+                flow = new SequenceFlow(guid, name, source, target);
             else
-                flow = new MessageFlow(name, source, target);
+                flow = new MessageFlow(guid, name, source, target);
 
             source.OutgoingFlows.Add(flow);
             target.IncomingFlows.Add(flow);
+
+            return flow;
         }
 
         public override bool Equals(object obj)
@@ -44,13 +65,14 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
             Flow flow = (Flow)obj;
 
-            return string.Equals(Id, flow.Id);
+            return string.Equals(Id, flow.Id) && string.Equals(Name, flow.Name);
         }
 
         public override int GetHashCode()
         {
             HashCode hashCode = new();
             hashCode.Add(Id);
+            hashCode.Add(Name);
             return hashCode.ToHashCode();
         }
     }

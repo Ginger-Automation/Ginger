@@ -47,7 +47,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         public EndEvent AddEndEvent(string name)
         {
-            EndEvent = new(name, processId: Id);
+            return AddEndEvent(name, EndEventType.Default);
+        }
+
+        public EndEvent AddEndEvent(string name, EndEventType endEventType)
+        {
+            EndEvent = new(name, endEventType, processId: Id);
             return EndEvent;
         }
 
@@ -87,6 +92,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             public string Guid { get; }
 
             public string Name { get; }
+
+            public AddTaskArguments(string name) : this(System.Guid.NewGuid(), name) { }
 
             public AddTaskArguments(Guid guid, string name) : this(guid.ToString(), name) { }
 

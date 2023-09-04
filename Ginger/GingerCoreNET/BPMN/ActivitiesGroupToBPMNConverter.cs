@@ -5,6 +5,7 @@ using GingerCore;
 using GingerCore.Activities;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Graph;
 using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
@@ -20,21 +21,123 @@ namespace Amdocs.Ginger.CoreNET.BPMN
     {
         public Collaboration Convert(ActivitiesGroup activityGroup)
         {
-            Collaboration collaboration = new(
-                guid: activityGroup.Guid,
-                CollaborationType.SubProcess,
-                name: activityGroup.Name,
-                description: activityGroup.Description);
-
             IEnumerable<TargetBase> targetApps = GetTargetAppsInActivityGroup(activityGroup);
+
+            Collaboration collaboration = new(activityGroup.Guid, CollaborationType.SubProcess)
+            {
+                Name = activityGroup.Name,
+                SystemRef = targetApps.First().Guid.ToString(),
+                Description = activityGroup.Description
+            };
+
             foreach (TargetBase targetApp in targetApps)
             {
-                Participant participant = new(targetApp.Guid, targetApp.Name);
+                Participant participant = new(targetApp.Guid)
+                {
+                    Name = targetApp.Name,
+                    SystemRef = targetApp.Guid.ToString()
+                };
                 collaboration.AddParticipant(participant);
             }
 
             IEnumerable<Activity> activitiesInActivityGroup = GetActivitiesFromActivityGroup(activityGroup);
 
+            IFlowSource previousFlowSource;
+
+            Activity firstActivity = activitiesInActivityGroup.First();
+            Participant firstActivityParticipant = GetParticipantForTargetAppName(collaboration, firstActivity.TargetApplication);
+            StartEvent startEvent = firstActivityParticipant.Process.AddStartEvent(name: string.Empty);
+            previousFlowSource = startEvent;
+
+            Activity? previousActivity = null;
+            foreach (Activity activity in activitiesInActivityGroup)
+            {
+                Participant activityParticipant = GetParticipantForTargetAppName(collaboration, activity.TargetApplication);
+                if(IsWebServicesActivity(activity))
+                {
+                    if (previousActivity == null)
+                        throw new InvalidOperationException("Cannot have WebServices activity without having any previous activity");
+                    Participant previousActivityParticipant = GetParticipantForTargetAppName(collaboration, previousActivity.TargetApplication);
+                    Task requestSourceTask = previousActivityParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_RequestSource"));
+                    Task requestTargetTask = activityParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_RequestTarget"));
+                    Task responseSourceTask = activityParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_ResponseSource"));
+                    Task responseTargetTask = previousActivityParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_ResponseTarget"));
+                    Flow.Create(name: string.Empty, previousFlowSource, requestSourceTask);
+                    Flow requestFlow = Flow.Create(name: $"{activity.ActivityName}_IN", requestSourceTask, requestTargetTask);
+                    if(requestFlow is MessageFlow requestMessageFlow)
+                    {
+                        requestMessageFlow.MessageRef = activity.Guid.ToString();
+                    }
+                    Flow.Create(name: string.Empty, requestTargetTask, responseSourceTask);
+                    Flow responseFlow = Flow.Create(name: $"{activity.ActivityName}_OUT", responseSourceTask, responseTargetTask);
+                    if(responseFlow is MessageFlow responseMessageFlow)
+                    {
+                        responseMessageFlow.MessageRef = activity.Guid.ToString();
+                    }
+                    previousFlowSource = responseTargetTask;
+                }
+                else
+                {
+                    UserTask userTask = activityParticipant.Process.AddUserTask(new Process.AddTaskArguments(activity.Guid, activity.ActivityName));
+                    userTask.MessageRef = activity.Guid.ToString();
+                    Flow.Create(name: string.Empty, previousFlowSource, userTask);
+                    previousFlowSource = userTask;
+                }
+
+                previousActivity = activity;
+            }
+
+            Participant lastTaskParticipant = GetParticipantForProcessId(collaboration, previousFlowSource.ProcessId);
+            EndEvent endEvent = lastTaskParticipant.Process.AddEndEvent(name: string.Empty, EndEventType.Termination);
+            Flow.Create(name: string.Empty, previousFlowSource, endEvent);
+
+            return collaboration;
+        }
+
+        private IEnumerable<TargetBase> GetTargetAppsInActivityGroup(ActivitiesGroup activityGroup)
+        {
+            IEnumerable<string> targetAppNames = activityGroup
+                .ActivitiesIdentifiers
+                .Select(identifier => identifier.IdentifiedActivity.TargetApplication)
+                .Distinct();
+
+            IEnumerable<TargetBase> targetApps = WorkSpace.Instance.Solution
+                .GetSolutionTargetApplications()
+                .Where(targetApp => targetAppNames.Contains(targetApp.Name.ToString()));
+
+            return targetApps;
+        }
+
+        private IEnumerable<Activity> GetActivitiesFromActivityGroup(ActivitiesGroup activityGroup)
+        {
+            return 
+                activityGroup
+                    .ActivitiesIdentifiers
+                    .Select(identifier => identifier.IdentifiedActivity);
+        }
+
+        private Participant GetParticipantForTargetAppName(Collaboration collaboration, string targetAppName)
+        {
+            return collaboration.Participants.First(participant => string.Equals(participant.Name, targetAppName));
+        }
+
+        private Participant GetParticipantForProcessId(Collaboration collaboration, string processId)
+        {
+            return collaboration.Participants.First(participant => string.Equals(participant.Process.Id, processId));
+        }
+
+        private bool IsWebServicesActivity(Activity activity)
+        {
+            ApplicationPlatform activityAppPlatform = WorkSpace.Instance.Solution
+                .ApplicationPlatforms
+                .First(platform => string.Equals(platform.AppName, activity.TargetApplication));
+
+            return activityAppPlatform.Platform == ePlatformType.WebServices;
+        }
+    }
+}
+
+/*
             IFlowSource? previousFlowSource = null;
 
             Activity? firstActivity = activitiesInActivityGroup.FirstOrDefault();
@@ -77,44 +180,5 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                     Flow.Create(name: string.Empty, previousFlowSource, endEvent);
                 }
             }
-
-            return collaboration;
-        }
-
-        private IEnumerable<TargetBase> GetTargetAppsInActivityGroup(ActivitiesGroup activityGroup)
-        {
-            IEnumerable<string> targetAppNames = activityGroup
-                .ActivitiesIdentifiers
-                .Select(identifier => identifier.IdentifiedActivity.TargetApplication)
-                .Distinct();
-
-            IEnumerable<TargetBase> targetApps = WorkSpace.Instance.Solution
-                .GetSolutionTargetApplications()
-                .Where(targetApp => targetAppNames.Contains(targetApp.Name.ToString()));
-
-            return targetApps;
-        }
-
-        private IEnumerable<Activity> GetActivitiesFromActivityGroup(ActivitiesGroup activityGroup)
-        {
-            return 
-                activityGroup
-                    .ActivitiesIdentifiers
-                    .Select(identifier => identifier.IdentifiedActivity);
-        }
-
-        private Participant GetParticipantForTargetAppName(Collaboration collaboration, string targetAppName)
-        {
-            return collaboration.Participants.First(participant => string.Equals(participant.Name, targetAppName));
-        }
-
-        private bool IsWebActivity(Activity activity)
-        {
-            ApplicationPlatform activityAppPlatform = WorkSpace.Instance.Solution
-                .ApplicationPlatforms
-                .First(platform => string.Equals(platform.AppName, activity.TargetApplication));
-
-            return activityAppPlatform.Platform == ePlatformType.Web;
-        }
-    }
-}
+ 
+ */

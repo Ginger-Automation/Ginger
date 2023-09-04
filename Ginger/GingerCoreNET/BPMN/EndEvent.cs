@@ -10,15 +10,18 @@ namespace Amdocs.Ginger.CoreNET.BPMN
     {
         public string Id { get; }
 
+        public EndEventType EndEventType { get; }
+
         public string Name { get; }
 
         public string ProcessId { get; }
 
         public FlowCollection IncomingFlows { get; }
 
-        public EndEvent(string name, string processId)
+        public EndEvent(string name, EndEventType endEventType, string processId)
         {
             Id = $"event_{Guid.NewGuid()}";
+            EndEventType = endEventType;
             Name = name;
             ProcessId = processId;
             IncomingFlows = new();

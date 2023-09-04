@@ -129,7 +129,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             descriptionElement.AppendChild(descriptionTextNode);
             bpmnMetaDataElement.AppendChild(descriptionElement);
 
-            //TODO: BPMN - Create definitions->collaboration->extensionElements->bpmnMetadata->systemRef
+            //TODO: BPMN - Validate definitions->collaboration->extensionElements->bpmnMetadata->systemRef
+            XmlElement systemRefElement = xmlDocument.CreateElement(IG_XML_PREFIX, "systemRef", IG_XML_URI);
+            XmlText systemRefTextNode = xmlDocument.CreateTextNode(collaboration.SystemRef);
+            systemRefElement.AppendChild(systemRefTextNode);
+            bpmnMetaDataElement.AppendChild(systemRefElement);
 
             XmlElement domainRefElement = xmlDocument.CreateElement(IG_XML_PREFIX, "domainRef", IG_XML_URI);
             XmlText domainRefTextNode = xmlDocument.CreateTextNode("32"); //static value
@@ -149,7 +153,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             XmlElement participantElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "participant", BPMN_XML_URI);
 
             participantElement.SetAttribute("id", participant.Id);
-            //TODO: BPMN - Create definitions->collaboration->participant@systemRef attribute
+            //TODO: BPMN - Validate definitions->collaboration->participant@systemRef attribute
+            participantElement.SetAttribute("systemRef", IG_XML_URI, participant.SystemRef);
             participantElement.SetAttribute("name", participant.Name);
             participantElement.SetAttribute("processRef", participant.Process.Id);
             participantElement.AppendChild(CreateDocumentationElement(xmlDocument));
@@ -162,7 +167,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             XmlElement messageFlowElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "messageFlow", BPMN_XML_URI);
 
             messageFlowElement.SetAttribute("id", messageFlow.Id);
-            //TODO: BPMN - Create definitions->collaboration->messageFlow@messageRef attribute
+            //TODO: BPMN - Validate definitions->collaboration->messageFlow@messageRef attribute
+            messageFlowElement.SetAttribute("messageRef", IG_XML_URI, messageFlow.MessageRef);
             messageFlowElement.SetAttribute("name", messageFlow.Name);
             messageFlowElement.SetAttribute("sourceRef", messageFlow.Source.Id);
             messageFlowElement.SetAttribute("targetRef", messageFlow.Target.Id);
@@ -182,9 +188,9 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             foreach(Task task in process.Tasks)
             {
                 XmlElement taskElement;
-                if(task is UserTask)
+                if(task is UserTask userTask)
                 {
-                    taskElement = CreateUserTaskElement(xmlDocument, (UserTask)task);
+                    taskElement = CreateUserTaskElement(xmlDocument, userTask);
                 }
                 else
                 {
@@ -221,6 +227,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
             userTaskElement.SetAttribute("completionQuantity", "1"); //static value
             userTaskElement.SetAttribute("id", userTask.Id);
+            userTaskElement.SetAttribute("messageRef", IG_XML_URI, userTask.MessageRef);
+            userTaskElement.SetAttribute("implementation", "##unspecified"); //static value
             userTaskElement.SetAttribute("isForCompensation", "false"); //static value
             userTaskElement.SetAttribute("name", userTask.Name);
             userTaskElement.SetAttribute("startQuantity", "1"); //static value
@@ -314,10 +322,26 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             endEventElement.SetAttribute("name", endEvent.Name);
             endEventElement.AppendChild(CreateDocumentationElement(xmlDocument));
 
-            foreach(Flow incomingFlow in endEvent.IncomingFlows)
+            foreach (Flow incomingFlow in endEvent.IncomingFlows)
             {
                 XmlElement incomingFlowElement = CreateIncomingFlowElement(xmlDocument, incomingFlow);
                 endEventElement.AppendChild(incomingFlowElement);
+            }
+
+            if (endEvent.EndEventType == EndEventType.Error)
+            {
+                XmlElement errorEventDefinitionElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "errorEventDefinition", BPMN_XML_URI);
+                endEventElement.AppendChild(errorEventDefinitionElement);
+            }
+            else if(endEvent.EndEventType == EndEventType.MessageSend)
+            {
+                XmlElement messageEventDefinitionElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "messageEventDefinition", BPMN_XML_URI);
+                endEventElement.AppendChild(messageEventDefinitionElement);
+            }
+            else if(endEvent.EndEventType == EndEventType.Termination)
+            {
+                XmlElement terminateEventDefinitionElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "terminateEventDefinition", BPMN_XML_URI);
+                endEventElement.AppendChild(terminateEventDefinitionElement);
             }
 
             return endEventElement;
