@@ -401,12 +401,15 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         private void HandleDiameterRequest(ActDiameter mActDiameter)
         {
-            DiameterMessage message = new DiameterMessage();
+            DiameterUtils diameterUtils = new DiameterUtils(new DiameterMessage());
             if (mActDiameter != null)
             {
                 try
                 {
-                    ConstructDiameterRequest(mActDiameter, ref message);
+                    if (diameterUtils.ConstructDiameterRequest(mActDiameter, ref mTcpClient))
+                    {
+
+                    }
                 }
                 catch (Exception e)
                 {
@@ -415,62 +418,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 int commandCode = int.Parse(mActDiameter.GetInputParamCalculatedValue(nameof(ActDiameter.CommandCode)));
             }
         }
-
-        private bool ConstructDiameterRequest(ActDiameter mActDiameter, ref DiameterMessage message)
-        {
-            bool successfullyConstructedMessage = true;
-            if (mActDiameter != null)
-            {
-                try
-                {
-                    int commandCode;
-                    int applicationId;
-                    int hopByHopIdentifier;
-                    int endToEndIdentifer;
-                    ObservableList<DiameterAVP> avps = new ObservableList<DiameterAVP>();
-                    if (int.TryParse(mActDiameter.GetInputParamCalculatedValue(nameof(ActDiameter.CommandCode)), out commandCode))
-                    {
-                        message.CommandCode = commandCode;
-                    }
-                    else
-                    {
-                        successfullyConstructedMessage = false;
-                    }
-                    if (int.TryParse(mActDiameter.GetInputParamCalculatedValue(nameof(ActDiameter.ApplicationId)), out applicationId))
-                    {
-                        message.ApplicationId = applicationId;
-                    }
-                    else
-                    {
-                        successfullyConstructedMessage = false;
-                    }
-                    if (int.TryParse(mActDiameter.GetInputParamCalculatedValue(nameof(ActDiameter.HopByHopIdentifier)), out hopByHopIdentifier))
-                    {
-                        message.HopByHopIdentifier = hopByHopIdentifier;
-                    }
-                    if (int.TryParse(mActDiameter.GetInputParamCalculatedValue(nameof(ActDiameter.EndToEndIdentifier)), out endToEndIdentifer))
-                    {
-                        message.EndToEndIdentifier = endToEndIdentifer;
-                    }
-                    if (mActDiameter.RequestAvpList != null && mActDiameter.RequestAvpList.Any())
-                    {
-                        foreach (ActDiameterAvp actDiameterAvp in mActDiameter.RequestAvpList)
-                        {
-                            if (actDiameterAvp != null)
-                            {
-                                DiameterUtils.AddAvpToMessage(actDiameterAvp, ref message);
-                            }
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    successfullyConstructedMessage = false;
-                }
-            }
-            return successfullyConstructedMessage;
-        }
-
         private string ReplacePlaceHolderParameneterWithActual(string ValueBeforeReplacing, ObservableList<EnhancedActInputValue> APIModelDynamicParamsValue)
         {
             if (string.IsNullOrEmpty(ValueBeforeReplacing))
@@ -875,7 +822,10 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                         return false;
                     }
                 }
-                return false;
+                else
+                {
+                    return InitializeTCPClient() ? true : false;
+                }
             }
             if (mIsDriverWindowLaunched)
             {

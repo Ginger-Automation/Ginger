@@ -65,6 +65,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 }
             }
         }
+        private int mEndToEndIdentifier;
         public int EndToEndIdentifier
         {
             get
@@ -79,7 +80,37 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 }
             }
         }
-        private int mEndToEndIdentifier;
+
+        private bool mIsRequest;
+        public bool IsRequest
+        {
+            get
+            {
+                return mIsRequest;
+            }
+            set
+            {
+                if (mIsRequest != value)
+                {
+                    mIsRequest = value;
+                }
+            }
+        }
+        private bool mIsProxiable;
+        public bool IsProxiable
+        {
+            get
+            {
+                return mIsProxiable;
+            }
+            set
+            {
+                if (mIsProxiable != value)
+                {
+                    mIsProxiable = value;
+                }
+            }
+        }
 
         private ObservableList<DiameterAVP> mAvpList = new ObservableList<DiameterAVP>();
         public ObservableList<DiameterAVP> AvpList

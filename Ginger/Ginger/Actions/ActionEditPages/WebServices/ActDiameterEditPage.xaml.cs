@@ -5,18 +5,9 @@ using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore.GeneralLib;
-using static Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter.ActDiameter;
 using System.Windows;
-using System;
 using Ginger.UserControls;
-using GingerCore.DataSource;
-using System.Data;
-using System.Reflection;
-using System.IO;
-using Amdocs.Ginger.CoreNET.DiameterLib;
-using System.Linq;
 using Ginger.UserControlsLib.TextEditor;
-using GingerCore.Actions.WebAPI;
 
 namespace Ginger.Actions.WebServices
 {
@@ -35,7 +26,7 @@ namespace Ginger.Actions.WebServices
             SetRequestAvpsGrid();
         }
 
-        private ObservableList<ActDiameterAvp> LoadAvpForMessage(DiameterEnums.eDiameterMessageType diameterMessageType)
+        private ObservableList<DiameterAVP> LoadAvpForMessage(DiameterEnums.eDiameterMessageType diameterMessageType)
         {
             return DiameterUtils.GetMandatoryAVPForMessage(diameterMessageType);
         }
@@ -58,20 +49,39 @@ namespace Ginger.Actions.WebServices
         private void SetRequestAvpsGrid()
         {
             xRequestAvpListGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddAvpToGrid));
-            xRequestAvpListGrid.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteAvpToGrid));
             xRequestAvpListGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(RefreshRequestAvpGrid));
             xRequestAvpListGrid.SetTitleLightStyle = true;
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
             List<ComboEnumItem> avpDataTypeList = GingerCore.General.GetEnumValuesForCombo(typeof(DiameterEnums.eDiameterAvpDataType));
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActDiameterAvp.Name), Header = "Avp Name", WidthWeight = 35, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = ucGrid.GetGridComboBoxTemplate(nameof(ActDiameterAvp.AvpNamesList), nameof(ActDiameterAvp.Name), allowEdit: true, comboSelectionChangedHandler: xAvpNameComboBox_SelectionChanged) });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActDiameterAvp.Code), Header = "Code", WidthWeight = 10 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActDiameterAvp.DataType), Header = "Data Type", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = avpDataTypeList });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActDiameterAvp.IsMandatory), Header = "Mandatory", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActDiameterAvp.IsVendorSpecific), Header = "Vendor Specific", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ActDiameterAvp.Value), Header = "Value", WidthWeight = 15 });
-            view.GridColsView.Add(new GridColView() { Field = "...", WidthWeight = 5, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.xRequestAVPPanel.Resources["ValueExpressionButton"] });
+            view.GridColsView.Add(new GridColView()
+            {
+                Field = nameof(DiameterAVP.Name),
+                Header = "Avp Name",
+                WidthWeight = 35,
+                StyleType = GridColView.eGridColStyleType.Template,
+                CellTemplate = ucGrid.GetGridComboBoxTemplate<DiameterAVP>(
+                    comboValuesList: DiameterUtils.AvpDictionaryList,
+                    displayMemberPath: nameof(DiameterAVP.Name),
+                    selectedValuePath: nameof(DiameterAVP.Name),
+                    selectedValueField: nameof(DiameterAVP.Name),
+                    allowEdit: true,
+                    comboSelectionChangedHandler: xAvpNameComboBox_SelectionChanged)
+            });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DiameterAVP.Code), Header = "Code", WidthWeight = 10 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DiameterAVP.DataType), Header = "Data Type", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = avpDataTypeList });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DiameterAVP.IsMandatory), Header = "Mandatory", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(DiameterAVP.IsVendorSpecific), Header = "Vendor Specific", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView()
+            {
+                Field = nameof(DiameterAVP.Value),
+                Header = "Value",
+                WidthWeight = 15,
+                StyleType = GridColView.eGridColStyleType.Template,
+                CellTemplate = ucGrid.getDataColValueExpressionTemplate(nameof(DiameterAVP.ValueVE), (Context)mAct.Context)
+            });
+
             xRequestAvpListGrid.SetAllColumnsDefaultView(view);
             xRequestAvpListGrid.InitViewItems();
             xRequestAvpListGrid.DataSourceList = mAct.RequestAvpList;
@@ -87,48 +97,37 @@ namespace Ginger.Actions.WebServices
             ComboBox? avpNameCB = sender as ComboBox;
             if (avpNameCB != null && avpNameCB.IsDropDownOpen)
             {
-                DiameterAVP? avp = DiameterUtils.AvpDictionaryList.Select(avp => avp).FirstOrDefault(avp => avp.Name == avpNameCB.SelectedItem.ToString());
-                if (avp != null)
+                int selectedItemIndex = xRequestAvpListGrid.grdMain.SelectedIndex;
+                if (selectedItemIndex != -1)
                 {
-                    ActDiameterAvp? selectedAvp = (ActDiameterAvp)xRequestAvpListGrid.grdMain.SelectedItem;
-                    if (selectedAvp != null)
-                    {
-                        selectedAvp = new ActDiameterAvp(avp);
-                        int selectedItemIndex = xRequestAvpListGrid.grdMain.SelectedIndex;
-                        mAct.RequestAvpList[selectedItemIndex] = selectedAvp;
-                        UpdateRequestAvpsGridDataSource();
-                    }
+                    mAct.RequestAvpList[selectedItemIndex] = (DiameterAVP)avpNameCB.SelectedItem;
+                    UpdateRequestAvpsGridDataSource();
                 }
             }
-        }
-
-        private void DeleteAvpToGrid(object sender, RoutedEventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         private void AddAvpToGrid(object sender, RoutedEventArgs e)
         {
-            mAct.RequestAvpList.Add(new ActDiameterAvp());
-            UpdateRequestAvpsGridDataSource();
+            mAct.RequestAvpList.Add(new DiameterAVP());
         }
 
+        // TODO: display the raw request(diameter)
         private void xViewRawRequestBtn_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            string requestContent = DiameterUtils.GetRawRequestContentPreview(mAct);
-            if (requestContent != string.Empty)
-            {
-                string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(requestContent);
-                if (System.IO.File.Exists(tempFilePath))
-                {
-                    DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
-                    docPage.Width = 800;
-                    docPage.Height = 800;
-                    docPage.ShowAsWindow("Raw Request Preview");
-                    System.IO.File.Delete(tempFilePath);
-                    return;
-                }
-            }
+            //string requestContent = DiameterUtils.GetRawRequestContentPreview(mAct);
+            //if (requestContent != string.Empty)
+            //{
+            //    string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(requestContent);
+            //    if (System.IO.File.Exists(tempFilePath))
+            //    {
+            //        DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
+            //        docPage.Width = 800;
+            //        docPage.Height = 800;
+            //        docPage.ShowAsWindow("Raw Request Preview");
+            //        System.IO.File.Delete(tempFilePath);
+            //        return;
+            //    }
+            //}
             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw request preview, see log for details.");
 
         }
@@ -165,8 +164,8 @@ namespace Ginger.Actions.WebServices
 
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
         {
-            ActDiameterAvp diameterAVP = (ActDiameterAvp)xRequestAvpListGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(diameterAVP, nameof(ActDiameterAvp.Value), Context.GetAsContext(mAct.Context));
+            DiameterAVP diameterAVP = (DiameterAVP)xRequestAvpListGrid.CurrentItem;
+            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(diameterAVP, nameof(DiameterAVP.Value), Context.GetAsContext(mAct.Context));
             VEEW.ShowAsWindow();
         }
 

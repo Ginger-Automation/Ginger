@@ -8,10 +8,12 @@ using System.Linq;
 using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
 using System.Text;
 using GingerCoreNET.GeneralLib;
+using Microsoft.Azure.Cosmos.Core.Collections;
+using System.Net.Sockets;
 
 namespace Amdocs.Ginger.CoreNET.DiameterLib
 {
-    public static class DiameterUtils
+    public class DiameterUtils
     {
         private const string DIAMETER_AVP_DICTIONARY_FILENAME = "AVPDictionary.xml";
 
@@ -28,18 +30,35 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                         if (mAvpDictionaryList == null || !mAvpDictionaryList.Any())
                         {
                             mAvpDictionaryList = LoadDictionary();
-                            //return mAvpDictionaryList;
                         }
                     }
                 }
                 return mAvpDictionaryList;
             }
         }
+        private DiameterMessage mDiameterMessage = null;
+        public DiameterMessage DiameterMessage {
+            get 
+            { 
+                return mDiameterMessage; 
+            }
+            set
+            {
+                if (mDiameterMessage != value)
+                {
+                    mDiameterMessage = value;
+                }
+            }
+        }
+        public DiameterUtils(DiameterMessage message)
+        {
+            mDiameterMessage = message ?? new DiameterMessage();
+        }
 
         public static ObservableList<DiameterAVP> LoadDictionary()
         {
             ObservableList<DiameterAVP> diameterAVPs = new ObservableList<DiameterAVP>();
-            string resourcePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "DiameterLib", DIAMETER_AVP_DICTIONARY_FILENAME);
+            string resourcePath = Path.Combine(Path.GetDirectoryName(typeof(DiameterUtils).Assembly.Location), "DiameterLib", DIAMETER_AVP_DICTIONARY_FILENAME);
             if (!String.IsNullOrEmpty(resourcePath))
             {
                 try
@@ -74,55 +93,46 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             return diameterAVPs;
         }
 
-        public static ObservableList<ActDiameterAvp> GetMandatoryAVPForMessage(DiameterEnums.eDiameterMessageType messageType)
+        public static ObservableList<DiameterAVP> GetMandatoryAVPForMessage(DiameterEnums.eDiameterMessageType messageType)
         {
-            ObservableList<ActDiameterAvp> avpList = null;
+            ObservableList<DiameterAVP> avpList = null;
             if (messageType == eDiameterMessageType.CapabilitiesExchangeRequest)
             {
                 string[] avpsNamesCER = { "Origin-Host", "Origin-Realm", "Host-IP-Address", "Vendor-Id", "Product-Name", "Origin-State-Id" };
                 System.Collections.Generic.List<DiameterAVP> avps = AvpDictionaryList.Where(avp => avpsNamesCER.Contains(avp.Name)).ToList();
                 if (avps.Any())
                 {
-                    avpList = new ObservableList<ActDiameterAvp>();
-                    foreach (DiameterAVP avp in avps)
-                    {
-                        avpList.Add(new ActDiameterAvp(avp));
-                    }
+                    avpList = new ObservableList<DiameterAVP>(avps);
                 }
             }
 
             return avpList;
         }
 
-        public static ObservableList<string> GetAvpNamesFromDictionary()
-        {
-            var avpNames = AvpDictionaryList.Select(avp => avp.Name).ToList();
-            return new ObservableList<string>(avpNames);
-        }
-
+        // TODO: create message raw response(diameter)
         public static string CreateMessageRawResponse(ActDiameter act)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("Diameter Message ::= <" + General.GetEnumValueDescription(typeof(eDiameterMessageType), act.DiameterMessageType) 
-                + $", code=\"{act.CommandCode}\"" 
-                + $", request=\"{act.SetRequestBit}\"" 
-                + $", proxiable=\"{act.SetProxiableBit}\"" 
-                + $", error=\"{act.SetErrorBit}\"" 
-                + $", retransmit=\"{act.SetRetransmitBit}\"" 
-                + $", hopbyhop=\"{act.HopByHopIdentifier}\"" 
-                + $", endtoend=\"{act.EndToEndIdentifier}\"" 
-                + ">\r\n");
-            foreach(ActDiameterAvp avp in act.RequestAvpList)
-            {
-                if (avp.IsGrouped)
-                {
+            //stringBuilder.Append("Diameter Message ::= <" + General.GetEnumValueDescription(typeof(eDiameterMessageType), act.DiameterMessageType)
+            //    + $", code=\"{act.CommandCode}\""
+            //    + $", request=\"{act.SetRequestBit}\""
+            //    + $", proxiable=\"{act.SetProxiableBit}\""
+            //    + $", error=\"{act.SetErrorBit}\""
+            //    + $", retransmit=\"{act.SetRetransmitBit}\""
+            //    + $", hopbyhop=\"{act.HopByHopIdentifier}\""
+            //    + $", endtoend=\"{act.EndToEndIdentifier}\""
+            //    + ">\r\n");
+            //foreach (DiameterAVP avp in act.RequestAvpList)
+            //{
+            //    if (avp.IsGrouped)
+            //    {
 
-                }
-                else
-                {
-                    stringBuilder.Append($"\t<avp name={avp.Name} mandatory={avp.IsMandatory} value={avp.Value} />\r\n");
-                }
-            }
+            //    }
+            //    else
+            //    {
+            //        stringBuilder.Append($"\t<avp name={avp.Name} mandatory={avp.IsMandatory} value={avp.Value} />\r\n");
+            //    }
+            //}
 
             return stringBuilder.ToString();
         }
@@ -154,16 +164,37 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             int commandCode = int.Parse(act.GetInputParamCalculatedValue(nameof(ActDiameter.CommandCode)));
         }
 
-        public static void AddAvpToMessage(ActDiameterAvp actDiameterAvp, ref DiameterMessage message)
+        public static void AddAvpToMessage(DiameterAVP diameterAvp, ref DiameterMessage message)
         {
-            if (actDiameterAvp != null)
+            if (diameterAvp != null)
             {
-                DiameterAVP avp = new DiameterAVP(actDiameterAvp);
-                if (avp != null)
-                {
-                    message.AvpList.Add(avp);
-                }
+                message.AvpList.Add(diameterAvp);
             }
+        }
+
+        public bool ConstructDiameterRequest(ActDiameter act, ref TcpClient tcpClient)
+        {
+            bool isSuccessfullyConstructed = true;
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            return isSuccessfullyConstructed;
+        }
+
+        private bool SetMessageCommandCode(ActDiameter act)
+        {
+            int commandCode = 0;
+            return int.TryParse(act.GetInputParamCalculatedValue(nameof(ActDiameter.CommandCode)), out commandCode);
+        }
+        private static bool SetMessageApplicationId(ActDiameter act)
+        {
+            int applicationId = 0;
+            return int.TryParse(act.GetInputParamCalculatedValue(nameof(ActDiameter.ApplicationId)), out applicationId);
         }
     }
 }

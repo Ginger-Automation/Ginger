@@ -168,9 +168,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
                 OnPropertyChanged(nameof(SetRetransmitBit));
             }
         }
-        private ObservableList<ActDiameterAvp> mRequestAvpList = new ObservableList<ActDiameterAvp>();
+        private ObservableList<DiameterAVP> mRequestAvpList = new ObservableList<DiameterAVP>();
         [IsSerializedForLocalRepository]
-        public ObservableList<ActDiameterAvp> RequestAvpList
+        public ObservableList<DiameterAVP> RequestAvpList
         {
             get
             {
@@ -187,15 +187,17 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
         }
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
-            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>();
-            list.Add(FormDataToAIVConverter());
+            List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>
+            {
+                FormDataToAIVConverter()
+            };
 
             return list;
         }
         private ObservableList<ActInputValue> FormDataToAIVConverter()
         {
             ObservableList<ActInputValue> fa = new ObservableList<ActInputValue>();
-            foreach (ActDiameterAvp reqAvp in RequestAvpList)
+            foreach (DiameterAVP reqAvp in RequestAvpList)
             {
                 fa.Add((ActInputValue)reqAvp);
             }
