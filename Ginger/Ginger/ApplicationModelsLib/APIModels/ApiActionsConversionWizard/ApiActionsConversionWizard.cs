@@ -181,7 +181,17 @@ namespace Ginger.Actions.ApiActionsConversion
 
                 if (flowsToConvert.Count > 0)
                 {
-                    await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(flowsToConvert, ParameterizeRequestBody, PullValidations, mAPIModelFolder)).ConfigureAwait(true);
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            mConversionUtils.ConvertToApiActionsFromBusinessFlows(flowsToConvert, ParameterizeRequestBody, PullValidations, mAPIModelFolder);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Conver To API Actions From Business Flows", ex);
+                        }
+                    }).ConfigureAwait(true);
                 }
                 mReportPage.SetButtonsVisibility(true);
             }
@@ -205,7 +215,17 @@ namespace Ginger.Actions.ApiActionsConversion
             {
                 ProcessStarted();
 
-                await Task.Run(() => mConversionUtils.ConvertToApiActionsFromBusinessFlows(lst, ParameterizeRequestBody, PullValidations, mAPIModelFolder)).ConfigureAwait(true);
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        mConversionUtils.ConvertToApiActionsFromBusinessFlows(lst, ParameterizeRequestBody, PullValidations, mAPIModelFolder);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Convert to API Actions from Business flow", ex);
+                    }
+                }).ConfigureAwait(true);
 
                 mReportPage.SetButtonsVisibility(true);
 

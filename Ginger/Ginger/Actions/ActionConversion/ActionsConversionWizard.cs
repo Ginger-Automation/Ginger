@@ -216,7 +216,11 @@ namespace Ginger.Actions.ActionConversion
                 mConversionUtils.ActUIElementClassName = nameof(ActUIElement);
                 mConversionUtils.ListOfBusinessFlowsToConvert = lst;
 
-                await Task.Run(() => mConversionUtils.ConvertActionsOfMultipleBusinessFlows(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs)).ConfigureAwait(true);
+                await Task.Run(() =>
+
+                mConversionUtils.ConvertActionsOfMultipleBusinessFlows(ActionToBeConverted, NewActivityChecked, ConvertableTargetApplications, ConvertToPOMAction, SelectedPOMs)
+
+                ).ConfigureAwait(true);
 
                 if (ConversionType == eActionConversionType.MultipleBusinessFlow)
                 {

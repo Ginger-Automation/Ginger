@@ -145,7 +145,14 @@ namespace Ginger.Run
             mPublishToALMConfig.CalculateTCRunName(mVE);
             await Task.Run(() =>
             {
-                ALMIntegration.Instance.ExportBusinessFlowsResultToALM(mBfs, ref result, mPublishToALMConfig, eALMConnectType.Auto, true, mContext);
+                try
+                {
+                    ALMIntegration.Instance.ExportBusinessFlowsResultToALM(mBfs, ref result, mPublishToALMConfig, eALMConnectType.Auto, true, mContext);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to Export BusinessFlow to ALM", ex);
+                }
             });
             IsProcessing = false;
             xExportToALMLoadingIcon.Visibility = Visibility.Collapsed;
