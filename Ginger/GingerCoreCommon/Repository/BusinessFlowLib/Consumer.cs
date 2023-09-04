@@ -23,7 +23,6 @@ namespace GingerCore.Activities
 {
     public class Consumer : RepositoryItemBase
     {
-        public Consumer() { }
 
         public Guid ConsumerGuid
         {

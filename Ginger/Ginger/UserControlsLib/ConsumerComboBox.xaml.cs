@@ -68,7 +68,7 @@ namespace Ginger.UserControlsLib
         public static readonly DependencyProperty DefaultTextProperty =
             DependencyProperty.Register("DefaultText", typeof(string), typeof(ConsumerComboBox), new UIPropertyMetadata(string.Empty));
 
-        public static DependencyProperty OperationSelectedConsumerProperty =
+        public static readonly DependencyProperty OperationSelectedConsumerProperty =
         DependencyProperty.Register("OperationSelectedConsumer", typeof(ObservableList<Consumer>), typeof(ConsumerComboBox), new PropertyMetadata(OnOperationSelectedConsumerPropertyChanged));
 
         public ObservableList<Consumer> ConsumerSource
@@ -187,19 +187,13 @@ namespace Ginger.UserControlsLib
         private void SetSelectedConsumer()
         {
             ObservableList<Consumer> temp = new ObservableList<Consumer>();
-            //if (SelectedConsumer == null)
-            //    SelectedConsumer = new ObservableList<Guid>();
-           // SelectedConsumer.Clear();
             foreach (Node node in _nodeList)
             {
                
                     if (node.IsSelected)
                     {
-                        //SelectedConsumer.Add(node.Guidstr);
                        temp.Add(node.Consumer);
                     }
-                       // SelectedItems.Add(new OperationValues() { Value = node.Title, Guid = Guid.Parse(this.ItemsSource[node.Title].ToString()) });
-                   // temp.Add(new OperationValues() { Value = node.Title, Guid = Guid.Parse(this.ItemsSource[node.Title].ToString()) });
                 
             }
             OperationSelectedConsumer = new ObservableList<Consumer>(temp);
@@ -224,13 +218,13 @@ namespace Ginger.UserControlsLib
                 StringBuilder displayText = new StringBuilder();
                 foreach (Node s in _nodeList)
                 {
-                     if (s.IsSelected == true )
+                     if (s.IsSelected)
                     {
                         displayText.Append(s.Title);
                         displayText.Append(',');
                     }
                 }
-                this.Text = displayText.ToString().TrimEnd(new char[] { ',' });
+                this.Text = displayText.ToString().TrimEnd(',');
             }
             // set DefaultText if nothing else selected
             if (string.IsNullOrEmpty(this.Text))
@@ -295,7 +289,7 @@ namespace Ginger.UserControlsLib
                 _consumer = consumer;
             }
 
-            public event PropertyChangedEventHandler? PropertyChanged;
+            public event PropertyChangedEventHandler PropertyChanged;
             protected void NotifyPropertyChanged(string propertyName)
             {
                 if (PropertyChanged != null)
