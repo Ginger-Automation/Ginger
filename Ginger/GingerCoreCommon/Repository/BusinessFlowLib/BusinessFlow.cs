@@ -151,6 +151,23 @@ namespace GingerCore
             }
         }
 
+        private string mExternalIdCalCulated;
+        public string ExternalIdCalCulated
+        {
+            get
+            {
+                return mExternalIdCalCulated;
+            }
+            set
+            {
+                if (mExternalIdCalCulated != value)
+                {
+                    mExternalIdCalCulated = value;
+                    OnPropertyChanged(nameof(ExternalIdCalCulated));
+                }
+            }
+        }
+
         double? mElapsed;
         public double? Elapsed
         {
@@ -1299,7 +1316,7 @@ namespace GingerCore
             {
                 if (userSelection == eUserMsgSelection.None)
                 {
-                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "Target Application is not mapped to selected BF. Ginger will map the Activity's Target application to BF.");
+                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to selected BF. Ginger will map the {GingerDicser.GetTermResValue(eTermResKey.Activity)}'s {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} to BF.");
                 }
 
                 if (userSelection == eUserMsgSelection.OK)
@@ -1810,6 +1827,15 @@ namespace GingerCore
         public override string GetItemType()
         {
             return nameof(BusinessFlow);
+        }
+
+        public void CalculateExternalId(IValueExpression ve)
+        {
+            if ( ExternalID != null && ExternalID != string.Empty)
+            {
+                ve.Value = ExternalID;
+                ExternalIdCalCulated = ve.ValueCalculated;
+            }
         }
 
     }

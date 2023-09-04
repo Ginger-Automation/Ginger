@@ -25,6 +25,7 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.Octane;
 using GingerCore.ALM.QC;
+using GingerCore.Environments;
 using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -467,7 +468,7 @@ namespace GingerCore.ALM
             }).Result;
         }
 
-        public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null)
+        public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
             result = string.Empty;
             ObservableList<ExternalItemFieldBase> runFields;
@@ -1589,7 +1590,14 @@ namespace GingerCore.ALM
             CrossQueryPhrase qd = new CrossQueryPhrase("test_suite", new LogicalQueryPhrase("id", testSuiteId, ComparisonOperator.Equal));
             await Task.Run(() =>
             {
-                this.octaneRepository.DeleteEntity<TestSuiteLinkToTests>(GetLoginDTO(), new List<IQueryPhrase>() { qd });
+                try
+                {
+                    this.octaneRepository.DeleteEntity<TestSuiteLinkToTests>(GetLoginDTO(), new List<IQueryPhrase>() { qd });
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Delete Entity", ex);
+                }
             });
             LinkTestCasesToTestSuite(testSuiteId, businessFlow.ActivitiesGroups.Select(f => int.Parse(f.ExternalID)).ToList());
         }

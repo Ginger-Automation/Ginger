@@ -46,6 +46,7 @@ namespace Ginger.Run
         PublishToALMConfig mPublishToALMConfig = new PublishToALMConfig();
         public bool IsProcessing = false;
         ValueExpression mVE = null;
+        Context mContext = null;
         public ExportResultsToALMConfigPage(RunSetActionPublishToQC runSetActionPublishToQC)
         {
             InitializeComponent();
@@ -101,7 +102,7 @@ namespace Ginger.Run
             }
         }
 
-        public bool Init(ObservableList<BusinessFlow> bfs, ValueExpression VE)
+        public bool Init(ObservableList<BusinessFlow> bfs, ValueExpression VE,Context Context=null)
         {
             this.Title = "Export Results To ALM";
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
@@ -115,6 +116,7 @@ namespace Ginger.Run
                 xALMTypeCbx.IsEnabled = false;
                 mBfs = bfs;
                 mVE = VE;
+                mContext = Context;
                 return true;
             }
             else
@@ -143,7 +145,14 @@ namespace Ginger.Run
             mPublishToALMConfig.CalculateTCRunName(mVE);
             await Task.Run(() =>
             {
-                ALMIntegration.Instance.ExportBusinessFlowsResultToALM(mBfs, ref result, mPublishToALMConfig, eALMConnectType.Auto, true);
+                try
+                {
+                    ALMIntegration.Instance.ExportBusinessFlowsResultToALM(mBfs, ref result, mPublishToALMConfig, eALMConnectType.Auto, true, mContext);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to Export BusinessFlow to ALM", ex);
+                }
             });
             IsProcessing = false;
             xExportToALMLoadingIcon.Visibility = Visibility.Collapsed;

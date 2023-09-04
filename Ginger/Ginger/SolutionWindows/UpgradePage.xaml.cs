@@ -62,7 +62,7 @@ namespace Ginger.SolutionWindows
             switch (mViewMode)
             {
                 case SolutionUpgradePageViewMode.UpgradeSolution:
-                    ExplanationLable.Text = @"The Solution '" + mSolutionName + "' contains items which were created with older version/s of Ginger (see below), it is recommended to upgrade them to current version (" + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion + ") before continuing.";
+                    ExplanationLable.Text = @"The Solution '" + mSolutionName + "' contains items which were created with older version/s of Ginger (see below), it is recommended to upgrade them to current version (" + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion + ") before continuing.";
 
                     string BackupFolder = Path.Combine(mSolutionFolder, @"Backups\Backup_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm"));
                     BackupFolderTextBox.Text = BackupFolder;
@@ -162,48 +162,55 @@ namespace Ginger.SolutionWindows
 
         private void DoUpgrade(string backupFolder)
         {
-            NewRepositorySerializer newSerilizer = new NewRepositorySerializer();
-            mFailedFiles = new List<string>();
-
-            // now do the upgrade file by file
-            foreach (string filePathToConvert in mFilesToShow)
+            try
             {
-                string filePath = filePathToConvert;
-                //remove info extension
-                if (filePath.Contains("-->"))
-                {
-                    filePath = filePath.Remove(filePath.IndexOf("-->"));
-                }
+                NewRepositorySerializer newSerilizer = new NewRepositorySerializer();
+                mFailedFiles = new List<string>();
 
-                //do upgrade
-                try
+                // now do the upgrade file by file
+                foreach (string filePathToConvert in mFilesToShow)
                 {
-                    //first copy to backup folder
-                    string BakFile = filePath.Replace(mSolutionFolder, backupFolder);
-                    MakeSurePathExistforBakFile(BakFile);
-                    System.IO.File.Copy(filePath, BakFile, true);
-
-                    //make sure backup was created
-                    if (File.Exists(BakFile) == true)
+                    string filePath = filePathToConvert;
+                    //remove info extension
+                    if (filePath.Contains("-->"))
                     {
-                        //Do Upgrade by unserialize and serialize the item using new serializer
-                        //unserialize
-                        string itemXML = File.ReadAllText(filePath);
-                        RepositoryItemBase itemObject = (RepositoryItemBase)NewRepositorySerializer.DeserializeFromText(itemXML);
-                        itemObject.FilePath = filePath;
-                        //serialize
-                        newSerilizer.SaveToFile(itemObject, filePath);
+                        filePath = filePath.Remove(filePath.IndexOf("-->"));
                     }
-                    else
+
+                    //do upgrade
+                    try
                     {
+                        //first copy to backup folder
+                        string BakFile = filePath.Replace(mSolutionFolder, backupFolder);
+                        MakeSurePathExistforBakFile(BakFile);
+                        System.IO.File.Copy(filePath, BakFile, true);
+
+                        //make sure backup was created
+                        if (File.Exists(BakFile) == true)
+                        {
+                            //Do Upgrade by unserialize and serialize the item using new serializer
+                            //unserialize
+                            string itemXML = File.ReadAllText(filePath);
+                            RepositoryItemBase itemObject = (RepositoryItemBase)NewRepositorySerializer.DeserializeFromText(itemXML);
+                            itemObject.FilePath = filePath;
+                            //serialize
+                            newSerilizer.SaveToFile(itemObject, filePath);
+                        }
+                        else
+                        {
+                            mFailedFiles.Add(filePathToConvert);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
                         mFailedFiles.Add(filePathToConvert);
                     }
                 }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to upgrade the solution file '{0}'", filePath), ex);
-                    mFailedFiles.Add(filePathToConvert);
-                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Upgrade", ex);
             }
         }
 

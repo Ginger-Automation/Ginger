@@ -16,9 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using AccountReport.Contracts.Helpers;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
@@ -292,10 +294,20 @@ namespace Ginger.Run
             //keep original description values
             VariableBase originalCopy = (VariableBase)originalVar.CreateCopy(false);
 
-            //ovveride original variable configurations with user customizations            
-            CreateMapper<VariableBase>().Map<VariableBase, VariableBase>(customizedVar, originalVar);
+            //ovveride original variable configurations with user customizations
+            string varType = customizedVar.GetType().Name;
+            bool skipType = false;
+            if (varType == "VariableSelectionList")
+            {
+                skipType = true;
+            }
+
+            AutomapData.AutoMapVariableData(customizedVar, ref originalVar, skipType);
+
             originalVar.DiffrentFromOrigin = customizedVar.DiffrentFromOrigin;
             originalVar.MappedOutputVariable = customizedVar.MappedOutputVariable;
+
+
             //Fix for Empty variable are not being saved in Run Configuration (when variable has value in BusinessFlow but is changed to empty in RunSet)
             if (customizedVar.DiffrentFromOrigin && string.IsNullOrEmpty(customizedVar.MappedOutputVariable))
             {
@@ -312,33 +324,6 @@ namespace Ginger.Run
             originalVar.Publish = originalCopy.Publish;
         }
 
-        private IMapper CreateMapper<T>()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<List<string>, List<string>>().ConvertUsing(new IgnoringNullValuesTypeConverter<List<string>>());
-                cfg.CreateMap<List<Guid>, List<Guid>>().ConvertUsing(new IgnoringNullValuesTypeConverter<List<Guid>>());                
-                cfg.CreateMap<T, T>()
-               .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-            });
-            return config.CreateMapper();
-        }
-
-        public class IgnoringNullValuesTypeConverter<T> : ITypeConverter<T, T> where T : class
-        {
-            public T Convert(T source, T destination, ResolutionContext context)
-            {
-                if (source is IList && ((IList)source).Count == 0)
-                {
-                    return destination;
-                }
-                else
-                {
-                    return source;
-                }
-            }
-        }
-
         public ObservableList<BusinessFlowExecutionSummary> GetAllBusinessFlowsExecutionSummary(bool GetSummaryOnlyForExecutedFlow = false)
         {
             ObservableList<BusinessFlowExecutionSummary> BFESs = new ObservableList<BusinessFlowExecutionSummary>();
@@ -347,6 +332,17 @@ namespace Ginger.Run
                 BFESs.Append(ARC.Executor.GetAllBusinessFlowsExecutionSummary(GetSummaryOnlyForExecutedFlow, ARC.Name));
             }
             return BFESs;
+        }
+
+        private void CloseAllAgents()
+        {
+            foreach(GingerRunner runner in Runners)
+            {
+                if (runner.Executor != null)
+                {
+                    runner.Executor.CloseAgents();
+                }
+            }
         }
 
         internal void CloseAllEnvironments()
@@ -636,6 +632,7 @@ namespace Ginger.Run
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## Creating {0} Execution Report", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 CreateGingerExecutionReportAutomaticly();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("######## Doing {0} Execution Cleanup", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
+                //CloseAllAgents();
                 CloseAllEnvironments();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
 
@@ -660,9 +657,15 @@ namespace Ginger.Run
                 ALMResultsPublishTaskPool.Clear();
                 ALMResultsPublishTaskPool = null;
                 var runsetAction = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(f => f is RunSetActionPublishToQC && f.RunAt.Equals(RunSetActionBase.eRunAt.DuringExecution));
-                if (runsetAction.Status != RunSetActionBase.eRunSetActionStatus.Failed)
+                if (runsetAction != null)
                 {
-                    runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Completed;
+
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.Any(f => f is RunSetActionPublishToQC && f.RunAt.Equals(RunSetActionBase.eRunAt.DuringExecution) && !string.IsNullOrEmpty(f.Errors)))
+                    {
+                        runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Failed;
+                    }
+                    else { runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Completed; }
+
                 }
             }
         }

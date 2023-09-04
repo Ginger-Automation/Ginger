@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
 using Amdocs.Ginger.Repository;
+using DocumentFormat.OpenXml.Drawing;
 using Ginger.UserControls;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
@@ -98,85 +99,86 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             }
             else if (WizardEventArgs.EventType == EventType.LeavingForNextPage)
             {
-
-                if (APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString())
+                switch (APITypeComboBox.SelectedValue)
                 {
-                    AddAPIModelWizard.APIType = eAPIType.WSDL;
-                    WizardEventArgs.CancelEvent = true;
-                    if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
-                    {
-                        if (ValidateFile(xURLTextBox.Text))
+                    case eAPIType.WSDL:
+                        AddAPIModelWizard.APIType = eAPIType.WSDL;
+                        WizardEventArgs.CancelEvent = true;
+                        if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
                         {
-                            WizardEventArgs.CancelEvent = false;
-                            AddAPIModelWizard.mWSDLParser = mWSDLParser;
+                            if (ValidateFile(xURLTextBox.Text))
+                            {
+                                WizardEventArgs.CancelEvent = false;
+                                AddAPIModelWizard.mWSDLParser = mWSDLParser;
+                            }
                         }
-                    }
-                }
-                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString())
-                {
-                    AddAPIModelWizard.APIType = eAPIType.XMLTemplates;
-                    WizardEventArgs.CancelEvent = true;
-                    if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
-                    {
-                        if (ValidateFile(xURLTextBox.Text))
+                        break;
+                    case eAPIType.XMLTemplates:
+                        AddAPIModelWizard.APIType = eAPIType.XMLTemplates;
+                        WizardEventArgs.CancelEvent = true;
+                        if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
                         {
-                            WizardEventArgs.CancelEvent = false;
-                        }
-                    }
-                    else if (XMLTemplatesGrid.DataSourceList != null && XMLTemplatesGrid.DataSourceList.Count > 0)
-                    {
-                        for (int i = 0; i < XMLTemplatesGrid.DataSourceList.Count; i++)
-                        {
-                            if (ValidateFile(((TemplateFile)XMLTemplatesGrid.DataSourceList[i]).FilePath))
+                            if (ValidateFile(xURLTextBox.Text))
                             {
                                 WizardEventArgs.CancelEvent = false;
                             }
-                            else
+                        }
+                        else if (XMLTemplatesGrid.DataSourceList != null && XMLTemplatesGrid.DataSourceList.Count > 0)
+                        {
+                            for (int i = 0; i < XMLTemplatesGrid.DataSourceList.Count; i++)
                             {
-                                WizardEventArgs.CancelEvent = true;
-                                break;
+                                if (ValidateFile(((TemplateFile)XMLTemplatesGrid.DataSourceList[i]!).FilePath))
+                                {
+                                    WizardEventArgs.CancelEvent = false;
+                                }
+                                else
+                                {
+                                    WizardEventArgs.CancelEvent = true;
+                                    break;
+                                }
                             }
                         }
-                    }
-                }
-                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.JsonTemplate.ToString())
-                {
-                    AddAPIModelWizard.APIType = eAPIType.JsonTemplate;
-                    WizardEventArgs.CancelEvent = true;
-                    if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
-                    {
-                        if (ValidateFile(xURLTextBox.Text))
+                        break;
+                    case eAPIType.JsonTemplate:
+                        AddAPIModelWizard.APIType = eAPIType.JsonTemplate;
+                        WizardEventArgs.CancelEvent = true;
+                        if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
                         {
-                            WizardEventArgs.CancelEvent = false;
-                        }
-                    }
-                    else if (XMLTemplatesGrid.DataSourceList != null && XMLTemplatesGrid.DataSourceList.Count > 0)
-                    {
-                        for (int i = 0; i < XMLTemplatesGrid.DataSourceList.Count; i++)
-                        {
-                            if (ValidateFile(((TemplateFile)XMLTemplatesGrid.DataSourceList[i]).FilePath))
+                            if (ValidateFile(xURLTextBox.Text))
                             {
                                 WizardEventArgs.CancelEvent = false;
                             }
-                            else
+                        }
+                        else if (XMLTemplatesGrid.DataSourceList != null && XMLTemplatesGrid.DataSourceList.Count > 0)
+                        {
+                            for (int i = 0; i < XMLTemplatesGrid.DataSourceList.Count; i++)
                             {
-                                WizardEventArgs.CancelEvent = true;
-                                break;
+                                if (ValidateFile(((TemplateFile)XMLTemplatesGrid.DataSourceList[i]!).FilePath))
+                                {
+                                    WizardEventArgs.CancelEvent = false;
+                                }
+                                else
+                                {
+                                    WizardEventArgs.CancelEvent = true;
+                                    break;
+                                }
                             }
                         }
-                    }
-                }
-                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
-                {
-                    AddAPIModelWizard.APIType = eAPIType.Swagger;
-                    WizardEventArgs.CancelEvent = true;
-                    if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
-                    {
-                        if (ValidateFile(xURLTextBox.Text))
+                        break;
+                    case eAPIType.Swagger:
+                        AddAPIModelWizard.APIType = eAPIType.Swagger;
+                        WizardEventArgs.CancelEvent = true;
+                        if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
                         {
-                            WizardEventArgs.CancelEvent = false;
+                            if (ValidateFile(xURLTextBox.Text))
+                            {
+                                WizardEventArgs.CancelEvent = false;
+                            }
                         }
-                    }
+                        break;
+                    default:
+                        throw new Exception("Selected API Type not found.");
+                        break;
                 }
             }
         }
@@ -659,7 +661,17 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             xPreviewButton.IsEnabled = false;
             XmlDocument doc = null;
             string s = xURLTextBox.Text;
-            await Task.Run(() => doc = GetDocumentFromWeb(s));
+            await Task.Run(() =>
+            {
+                try
+                {
+                    doc = GetDocumentFromWeb(s);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Document from Web", ex);
+                }
+            });
             XMLViewer.xmlDocument = doc;
             xPreviewButton.IsEnabled = true;
         }

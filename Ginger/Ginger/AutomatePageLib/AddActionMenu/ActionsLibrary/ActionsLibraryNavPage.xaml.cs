@@ -244,7 +244,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKey.MissingActivityAppMapping);
+                        Reporter.ToUser(eUserMsgKey.MissingActivityAppMapping, GingerDicser.GetTermResValue(eTermResKey.Activity),GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
                         return null;
                     }
                 }

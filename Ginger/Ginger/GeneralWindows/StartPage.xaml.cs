@@ -39,7 +39,7 @@ namespace Ginger
             InitializeComponent();
 
             //TODO: load from external - so easier to update
-            lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
+            lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion;
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(autoLoadLastSolCheckBox, CheckBox.IsCheckedProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoLoadLastSolution));
             SetRecentSolutions();

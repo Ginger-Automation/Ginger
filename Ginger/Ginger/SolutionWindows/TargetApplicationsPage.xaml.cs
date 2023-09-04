@@ -63,7 +63,7 @@ namespace Ginger.SolutionWindows
 
         private void SetAppsGrid()
         {
-            xTargetApplicationsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Application, GingerDicser.GetTermResValue(eTermResKey.TargetApplication), saveAllHandler: SaveHandler, addHandler: AddApplication, true);
+            xTargetApplicationsGrid.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.Application, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}s", saveAllHandler: SaveHandler, addHandler: AddApplication, true);
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16, Style = FindResource("@DataGridColumn_Image") as Style });
@@ -165,7 +165,7 @@ namespace Ginger.SolutionWindows
                     }
                     if (NameAlreadyExists(currentApp.AppName))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Target Application with same name already exists");
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} with same name already exists");
                         return;
                     }
                     UpdateApplicationNameChangeInSolution(currentApp);

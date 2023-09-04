@@ -246,13 +246,21 @@ namespace Amdocs.Ginger.Repository
 
         public bool SaveBackup()
         {
-            if (DirtyStatus != eDirtyStatus.NoChange)
+            try
             {
-                return CreateBackup();
+                if (DirtyStatus != eDirtyStatus.NoChange)
+                {
+                    return CreateBackup();
+                }
+                else
+                {
+                    return CreateBackup(true);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return CreateBackup(true);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Save backup", ex);
+                return false;
             }
         }
 
@@ -677,7 +685,7 @@ namespace Amdocs.Ginger.Repository
             {
                 Created = GetUTCDateTime(),
                 CreatedBy = Environment.UserName,
-                GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion,
+                GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationBackendVersion,
                 Version = 1,
                 LastUpdateBy = Environment.UserName,
                 LastUpdate = GetUTCDateTime()
@@ -689,7 +697,7 @@ namespace Amdocs.Ginger.Repository
         public void UpdateHeader()
         {
             RepositoryItemHeader.Version++;
-            RepositoryItemHeader.GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationMajorVersion;
+            RepositoryItemHeader.GingerVersion = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationBackendVersion;
             RepositoryItemHeader.LastUpdateBy = Environment.UserName;
             RepositoryItemHeader.LastUpdate = DateTime.UtcNow;
         }

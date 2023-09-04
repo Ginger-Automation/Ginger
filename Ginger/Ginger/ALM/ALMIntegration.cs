@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amazon.Util;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
@@ -25,6 +26,7 @@ using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.ALM.QC;
+using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
 using GingerWPF.WizardLib;
 using System;
@@ -337,7 +339,7 @@ namespace Ginger.ALM
         }
 
 
-        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false)
+        public bool ExportBusinessFlowsResultToALM(ObservableList<BusinessFlow> BusinessFlows, ref string result, PublishToALMConfig publishToALMConfig, eALMConnectType almConnectionType, bool exectutedFromAutomateTab = false,Context mContext = null)
         {
             ObservableList<ExternalItemFieldBase> solutionAlmFields = null;
             try
@@ -346,7 +348,7 @@ namespace Ginger.ALM
                 ALMCore.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
                 if (AutoALMProjectConnect(almConnectionType, false))
                 {
-                    return AlmCore.ExportBusinessFlowsResultToALM(BusinessFlows, ref result, publishToALMConfig, almConnectionType, exectutedFromAutomateTab);
+                    return AlmCore.ExportBusinessFlowsResultToALM(BusinessFlows, ref result, publishToALMConfig, almConnectionType, exectutedFromAutomateTab, mContext);
                 }
                 else
                 {
@@ -380,11 +382,11 @@ namespace Ginger.ALM
         {
             Mouse.OverrideCursor = Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, ("Update selected " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups) + " of " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ":" + businessFlow.Name + " from ALM"));
-
-            ALMIntegration._instance.AlmCore.InitCoreObjs();
-
+            IValueExpression mAGVE = new GingerCore.ValueExpression(new ProjEnvironment(), businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+            businessFlow.CalculateExternalId(mAGVE);
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
+                ALMIntegration._instance.AlmCore.InitCoreObjs();
                 AlmRepo.UpdateActivitiesGroup(ref businessFlow, TCsIDs);
                 DisconnectALMServer();
             }
@@ -396,10 +398,11 @@ namespace Ginger.ALM
             Mouse.OverrideCursor = Cursors.Wait;
             Reporter.ToLog(eLogLevel.INFO, ("Update " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " from ALM"));
 
-            ALMIntegration._instance.AlmCore.InitCoreObjs();
-
+            IValueExpression mVE = new GingerCore.ValueExpression(new ProjEnvironment(), businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+            businessFlow.CalculateExternalId(mVE);
             if (AutoALMProjectConnect(eALMConnectType.Auto))
             {
+                ALMIntegration.Instance.AlmCore.InitCoreObjs();
                 AlmRepo.UpdateBusinessFlow(ref businessFlow);
                 DisconnectALMServer();
             }

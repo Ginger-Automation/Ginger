@@ -113,7 +113,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
         {
             if (!string.IsNullOrEmpty(password) && !password.Contains("{Var Name"))
             {
-                return Encrypt(xUserPasswordTextBox.Text);
+                return Encrypt(password);
             }
             return password;
         }
@@ -328,6 +328,12 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
             bool supportsOnlyOneBodyContentType = supportedBodyContentType.Length < 2;
             bool doesNotContainDefaultBodyContentType = !supportedBodyContentType.Contains(defaultBodyContentType);
 
+            if (defaultBodyContentType == eBodyContentType.FreeText)
+            {
+                xBodyContentTypeFreeTextRadioButton.IsChecked = true;
+                return;
+            }
+
             if (supportsOnlyOneBodyContentType || doesNotContainDefaultBodyContentType)
             {
                 return;
@@ -362,6 +368,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
                 xImapHostGrid.Visibility = Visibility.Collapsed;
                 xImapPortGrid.Visibility = Visibility.Collapsed;
                 passwdLabel.Content = "User Password:";
+                xUserEmailVE.ToolTip = "Please enter the User Id, that is configured in Azure Portal";
             }
             else
             {
@@ -370,6 +377,7 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
                 xImapHostGrid.Visibility = Visibility.Visible;
                 xImapPortGrid.Visibility = Visibility.Visible;
                 passwdLabel.Content = "User App Password:";
+                xUserEmailVE.ToolTip = "Please enter your IMAP Email Id";
             }
         }
         private void TriggerReadEmailMethodChangedEvent()
