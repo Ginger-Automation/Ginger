@@ -147,10 +147,10 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChangedT;
         public void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            PropertyChangedEventHandler handler = PropertyChangedT;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
@@ -239,8 +239,6 @@ namespace Ginger.UserControlsLib
         public class Node : INotifyPropertyChanged
         {
 
-            private Guid _guidstr;
-
             public string Title => _consumer.Name;
 
             private bool _isSelected;
@@ -254,19 +252,6 @@ namespace Ginger.UserControlsLib
                 {
                     _isSelected = value;
                     NotifyPropertyChanged(nameof(IsSelected));
-                }
-            }
-
-            public Guid Guidstr
-            {
-                get
-                {
-                    return _guidstr;
-                }
-                set
-                {
-                    _guidstr = value;
-                    NotifyPropertyChanged("Guidstr");
                 }
             }
 
@@ -289,7 +274,7 @@ namespace Ginger.UserControlsLib
                 _consumer = consumer;
             }
 
-            public event PropertyChangedEventHandler PropertyChanged;
+            public event PropertyChangedEventHandler? PropertyChanged;
             protected void NotifyPropertyChanged(string propertyName)
             {
                 if (PropertyChanged != null)
