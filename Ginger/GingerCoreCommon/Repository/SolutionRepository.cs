@@ -150,38 +150,45 @@ namespace Amdocs.Ginger.Repository
         /// <param name="repositoryItem"></param>
         public void SaveRepositoryItem(RepositoryItemBase repositoryItem)
         {
-            if (string.IsNullOrEmpty(repositoryItem.ContainingFolder))
+            try
             {
-                throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
+                if (string.IsNullOrEmpty(repositoryItem.ContainingFolder))
+                {
+                    throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
+                }
+                if (repositoryItem.PreSaveHandler())
+                {
+                    return;
+                }
+
+                repositoryItem.UpdateBeforeSave();
+
+                string txt = RepositorySerializer.SerializeToString(repositoryItem);
+
+                string filePath = CreateRepositoryItemFileName(repositoryItem);
+                RepositoryFolderBase rf = GetItemRepositoryFolder(repositoryItem);
+                rf.SaveRepositoryItem(filePath, txt);
+                repositoryItem.FileName = filePath;
+                repositoryItem.FilePath = filePath;
+                repositoryItem.RefreshSourceControlStatus();
+                RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(repositoryItem.FilePath));
+
+                if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
+                {
+                    repositoryItem.SetDirtyStatusToNoChange();
+                }
+
+                repositoryItem.CreateBackup();
+                if (ModifiedFiles.Contains(repositoryItem))
+                {
+                    ModifiedFiles.Remove(repositoryItem);
+                }
+                repositoryItem.PostSaveHandler();
             }
-            if (repositoryItem.PreSaveHandler())
+            catch (Exception ex)
             {
-                return;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Save Repository Item", ex);
             }
-
-            repositoryItem.UpdateBeforeSave();
-
-            string txt = RepositorySerializer.SerializeToString(repositoryItem);
-
-            string filePath = CreateRepositoryItemFileName(repositoryItem);
-            RepositoryFolderBase rf = GetItemRepositoryFolder(repositoryItem);
-            rf.SaveRepositoryItem(filePath, txt);
-            repositoryItem.FileName = filePath;
-            repositoryItem.FilePath = filePath;
-            repositoryItem.RefreshSourceControlStatus();
-            RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(repositoryItem.FilePath));
-
-            if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
-            {
-                repositoryItem.SetDirtyStatusToNoChange();
-            }
-
-            repositoryItem.CreateBackup();
-            if (ModifiedFiles.Contains(repositoryItem))
-            {
-                ModifiedFiles.Remove(repositoryItem);
-            }
-            repositoryItem.PostSaveHandler();
         }
 
         public void Close()
