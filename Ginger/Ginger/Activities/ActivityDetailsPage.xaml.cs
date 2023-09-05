@@ -57,7 +57,6 @@ namespace Ginger.BusinessFlowPages
             mActivity = activity;
             mContext = context;
             mPageViewMode = pageViewMode;
-            xTargetApplicationComboBox.SelectionChanged += xTargetApplicationComboBox_SelectionChanged;
             SetUI();
             BindControls();
         }
@@ -114,6 +113,8 @@ namespace Ginger.BusinessFlowPages
                 xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                 xSharedRepoInstanceUCCol.Width = new GridLength(0);
             }
+
+            xTargetApplicationComboBox.SelectionChanged += xTargetApplicationComboBox_SelectionChanged;
         }
         public void UpdateActivity(Activity activity)
         {
@@ -208,6 +209,7 @@ namespace Ginger.BusinessFlowPages
             else 
             {
                 xConsumerStack.Visibility = Visibility.Collapsed;
+                mActivity.ConsumerApplications.Clear();
             }
         }
 
@@ -250,6 +252,10 @@ namespace Ginger.BusinessFlowPages
             }
         }
 
+        /// <summary>
+        /// Returns the selected target application platform 
+        /// </summary>
+        /// <returns></returns>
         private ePlatformType GetCurrentActivityPlatform()
         {
             return WorkSpace.Instance.Solution.GetApplicationPlatformForTargetApp(mActivity.TargetApplication);

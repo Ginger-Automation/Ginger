@@ -44,8 +44,6 @@ namespace Ginger.UserControlsLib
     public partial class ConsumerComboBox : UserControl
     {
         private ObservableCollection<Node> _nodeList;
-        private object obj;
-        private string AttrName;
         public ConsumerComboBox()
         {
             InitializeComponent();
