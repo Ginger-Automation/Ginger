@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Reports;
@@ -1317,6 +1318,16 @@ namespace GingerCore
                 return userId == 0;
             }
             return false;
+
+        }
+
+        public static ObservableList<SolutionCategoryValue> GetSolutionReleaseValues()
+        {
+            ObservableList<ComboEnumItem> combList = new();
+
+            SolutionCategory releaseList = WorkSpace.Instance?.Solution?.SolutionCategories?.FirstOrDefault(x => x.Category == Amdocs.Ginger.CoreNET.Run.SolutionCategory.eSolutionCategories.Release);
+
+            return releaseList.CategoryOptionalValues;
 
         }
     }
