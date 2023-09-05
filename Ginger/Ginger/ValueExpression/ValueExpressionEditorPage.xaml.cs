@@ -942,7 +942,7 @@ namespace Ginger
         {
             if (mVE == null)
             {
-                if (mContext.Environment == null && mEnvs != null && mEnvs.Count > 0 && WorkSpace.Instance.UserProfile.RecentEnvironment != Guid.Empty)
+                if (mContext.Environment == null && mEnvs != null && mEnvs.Count > 0)
                 {
                     // selects the current environment in use. this environment is then used to get the values of the environment variables
                     mContext.Environment = GetCurrentEnvironment();
