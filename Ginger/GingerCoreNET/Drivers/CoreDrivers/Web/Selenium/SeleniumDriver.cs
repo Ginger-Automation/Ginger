@@ -8665,84 +8665,92 @@ namespace GingerCore.Drivers
         }
         async Task<ElementInfo> IVisualTestingDriver.GetElementAtPoint(long ptX, long ptY)
         {
-            HTMLElementInfo elemInfo = null;
-
-            string iframeXPath = string.Empty;
-            Point parentElementLocation = new Point(0, 0);
-
-            while (true)
+            try
             {
-                string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
+                HTMLElementInfo elemInfo = null;
 
-                IWebElement ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+                string iframeXPath = string.Empty;
+                Point parentElementLocation = new Point(0, 0);
 
-                if (ele == null)
+                while (true)
                 {
-                    return null;
-                }
-                else
-                {
-                    HtmlNode elemNode = null;
-                    string elemId;
-                    try
+                    string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
+
+                    IWebElement ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+
+                    if (ele == null)
                     {
-                        elemId = ele.GetDomProperty("id");
-                        if (SSPageDoc == null)
+                        return null;
+                    }
+                    else
+                    {
+                        HtmlNode elemNode = null;
+                        string elemId;
+                        try
                         {
-                            SSPageDoc = new HtmlDocument();
-                            SSPageDoc.LoadHtml(GetCurrentPageSourceString());
+                            elemId = ele.GetDomProperty("id");
+                            if (SSPageDoc == null)
+                            {
+                                SSPageDoc = new HtmlDocument();
+                                SSPageDoc.LoadHtml(GetCurrentPageSourceString());
+                            }
+                            elemNode = SSPageDoc.DocumentNode.Descendants().FirstOrDefault(x => x.Id.Equals(elemId));
                         }
-                        elemNode = SSPageDoc.DocumentNode.Descendants().FirstOrDefault(x => x.Id.Equals(elemId));
+                        catch (Exception exc)
+                        {
+                            elemId = "";
+                        }
+
+
+                        elemInfo = new HTMLElementInfo();
+
+                        var elemTypeEnum = GetElementTypeEnum(ele);
+                        elemInfo.ElementType = elemTypeEnum.Item1;
+                        elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
+                        elemInfo.ElementObject = ele;
+                        elemInfo.Path = iframeXPath;
+                        elemInfo.XPath = string.IsNullOrEmpty(elemId) ? GenerateXpathForIWebElement(ele, string.Empty) : elemNode.XPath;
+                        elemInfo.HTMLElementObject = elemNode;
+
+                        ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
                     }
-                    catch (Exception exc)
+
+                    if (elemInfo.ElementTypeEnum != eElementType.Iframe)    // ele.TagName != "frame" && ele.TagName != "iframe")
                     {
-                        elemId = "";
+                        Driver.SwitchTo().DefaultContent();
+
+                        break;
                     }
 
+                    if (string.IsNullOrEmpty(iframeXPath))
+                    {
+                        iframeXPath = elemInfo.XPath;
+                    }
+                    else
+                    {
+                        iframeXPath += "," + elemInfo.XPath;
+                    }
 
-                    elemInfo = new HTMLElementInfo();
+                    parentElementLocation.X += elemInfo.X;
+                    parentElementLocation.Y += elemInfo.Y;
 
-                    var elemTypeEnum = GetElementTypeEnum(ele);
-                    elemInfo.ElementType = elemTypeEnum.Item1;
-                    elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
-                    elemInfo.ElementObject = ele;
-                    elemInfo.Path = iframeXPath;
-                    elemInfo.XPath = string.IsNullOrEmpty(elemId) ? GenerateXpathForIWebElement(ele, string.Empty) : elemNode.XPath;
-                    elemInfo.HTMLElementObject = elemNode;
+                    Point p_Pos = GetElementPosition((RemoteWebElement)ele);
+                    ptX -= p_Pos.X;
+                    ptY -= p_Pos.Y;
 
-                    ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
+                    Driver.SwitchTo().Frame(ele);
                 }
 
-                if (elemInfo.ElementTypeEnum != eElementType.Iframe)    // ele.TagName != "frame" && ele.TagName != "iframe")
-                {
-                    Driver.SwitchTo().DefaultContent();
+                elemInfo.X += parentElementLocation.X;
+                elemInfo.Y += parentElementLocation.Y;
 
-                    break;
-                }
-
-                if (string.IsNullOrEmpty(iframeXPath))
-                {
-                    iframeXPath = elemInfo.XPath;
-                }
-                else
-                {
-                    iframeXPath += "," + elemInfo.XPath;
-                }
-
-                parentElementLocation.X += elemInfo.X;
-                parentElementLocation.Y += elemInfo.Y;
-
-                Point p_Pos = GetElementPosition((RemoteWebElement)ele);
-                ptX -= p_Pos.X;
-                ptY -= p_Pos.Y;
-
-                Driver.SwitchTo().Frame(ele);
+                return elemInfo;
             }
-
-            elemInfo.X += parentElementLocation.X;
-            elemInfo.Y += parentElementLocation.Y;
-
-            return elemInfo;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Element At Point", ex);
+                return null;
+            }
         }
 
         public RemoteWebElement GetElementFromPoint(long X, long Y)
@@ -9706,7 +9714,17 @@ namespace GingerCore.Drivers
             if (SSPageDoc == null)
             {
                 SSPageDoc = new HtmlDocument();
-                await Task.Run(() => SSPageDoc.LoadHtml(Driver.PageSource));
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        SSPageDoc.LoadHtml(Driver.PageSource);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Page Source document", ex);
+                    }
+                });
             }
 
             return SSPageDoc;

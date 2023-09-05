@@ -320,40 +320,47 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void TestAllElements(ObservableList<ElementInfo> Elements)
         {
-            int TotalElements = Elements.Count;
-            int TotalFails = 0;
-
-            bool WarnErrorOccured = false;
-            foreach (ElementInfo EI in Elements)
+            try
             {
-                EI.ElementStatus = ElementInfo.eElementStatus.Pending;
-            }
+                int TotalElements = Elements.Count;
+                int TotalFails = 0;
 
-            foreach (ElementInfo EI in Elements)
-            {
-                if (mStopProcess)
+                bool WarnErrorOccured = false;
+                foreach (ElementInfo EI in Elements)
                 {
-                    return;
+                    EI.ElementStatus = ElementInfo.eElementStatus.Pending;
                 }
 
-                if (mWinExplorer.TestElementLocators(EI, true))
+                foreach (ElementInfo EI in Elements)
                 {
-                    EI.ElementStatus = ElementInfo.eElementStatus.Passed;
-                }
-                else
-                {
-                    TotalFails++;
-                    EI.ElementStatus = ElementInfo.eElementStatus.Failed;
-                }
-
-                if (!WarnErrorOccured && ((double)TotalFails / TotalElements) > 0.2)
-                {
-                    WarnErrorOccured = true;
-                    if (Reporter.ToUser(eUserMsgKey.POMNotOnThePageWarn, TotalFails, TotalElements) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    if (mStopProcess)
                     {
                         return;
                     }
+
+                    if (mWinExplorer.TestElementLocators(EI, true))
+                    {
+                        EI.ElementStatus = ElementInfo.eElementStatus.Passed;
+                    }
+                    else
+                    {
+                        TotalFails++;
+                        EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                    }
+
+                    if (!WarnErrorOccured && ((double)TotalFails / TotalElements) > 0.2)
+                    {
+                        WarnErrorOccured = true;
+                        if (Reporter.ToUser(eUserMsgKey.POMNotOnThePageWarn, TotalFails, TotalElements) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                        {
+                            return;
+                        }
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Test All Elements",ex);
             }
         }
 

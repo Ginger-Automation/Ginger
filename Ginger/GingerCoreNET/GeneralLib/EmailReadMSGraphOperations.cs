@@ -159,9 +159,15 @@ namespace GingerCore.GeneralLib
             {
                 return true;
             }
-
             IEnumerable<string> actualRecipients = message.ToRecipients.Select(recipient => recipient.EmailAddress.Address);
-            return HasAllExpectedRecipient(expectedRecipients, actualRecipients);
+            if ((actualRecipients == null) || (actualRecipients.Count() == 0))
+            {
+                return false;
+            }
+            else
+            {
+                return HasAllExpectedRecipient(expectedRecipients, actualRecipients);
+            }           
         }
 
         private async Task<bool> DoesSatisfyAttachmentFilter(GraphServiceClient graphServiceClient, Message message, EmailReadFilters filters)

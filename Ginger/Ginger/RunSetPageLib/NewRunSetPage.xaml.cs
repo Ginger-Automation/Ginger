@@ -1334,7 +1334,17 @@ namespace Ginger.Run
                 GingerExecutionEngine GEE = new GingerExecutionEngine(GR);
                 if (runAsync)
                 {
-                    await Task.Run(() => WorkSpace.Instance.RunsetExecutor.InitRunner(GR, GEE));
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            WorkSpace.Instance.RunsetExecutor.InitRunner(GR, GEE);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to Init Runner", ex);
+                        }
+                    });
                 }
                 else
                 {
@@ -1508,11 +1518,11 @@ namespace Ginger.Run
             {
                 bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;
-                if(WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
+                if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
                 {
                     WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Clear();
                 }
-                
+
                 if (bIsRunsetDirty && !IsCalledFromxUndoBtn)
                 {
                     UserSelectionSaveOrUndoRunsetChanges();
@@ -1814,18 +1824,18 @@ namespace Ginger.Run
                 var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
 
                 // handling ALM Defects Opening
-                
+
                 if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null && WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0)
                 {
                     ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
-                    if(ALMDefectProfiles != null && ALMDefectProfiles.Count > 0)
+                    if (ALMDefectProfiles != null && ALMDefectProfiles.Count > 0)
                     {
                         this.Dispatcher.Invoke(() =>
                         {
                             InitALMDefectsOpeningSection();
                         });
                     }
-                   
+
                 }
             }
             catch (Exception ex)
@@ -2271,7 +2281,7 @@ namespace Ginger.Run
                     General.DoEvents();//for seeing the processing icon better to do with Async
 
                     // added if condition for the Application to throw an error if the mCurrentBusinessFlowRunnerItem is null
-                    if (mCurrentBusinessFlowRunnerItem!=null)
+                    if (mCurrentBusinessFlowRunnerItem != null)
                     {
                         xActivitiesRunnerItemsListView.ItemsSource = mCurrentBusinessFlowRunnerItem.ChildItemPages;
                     }

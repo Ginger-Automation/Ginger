@@ -224,29 +224,36 @@ namespace Ginger.Actions.ActionConversion
 
             await Task.Run(() =>
             {
-                foreach (BusinessFlowToConvert bf in xBusinessFlowGrid.DataSourceList)
+                try
                 {
-                    try
+                    foreach (BusinessFlowToConvert bf in xBusinessFlowGrid.DataSourceList)
                     {
-                        if (bf.IsSelected && bf.SaveStatus != eConversionSaveStatus.NA)
+                        try
                         {
-                            if (bf.ConvertedActionsCount > 0)
+                            if (bf.IsSelected && bf.SaveStatus != eConversionSaveStatus.NA)
                             {
-                                bf.SaveStatus = eConversionSaveStatus.Saving;
-                                WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf.BusinessFlow);
-                                bf.SaveStatus = eConversionSaveStatus.Saved;
-                            }
-                            else
-                            {
-                                bf.SaveStatus = eConversionSaveStatus.NA;
+                                if (bf.ConvertedActionsCount > 0)
+                                {
+                                    bf.SaveStatus = eConversionSaveStatus.Saving;
+                                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(bf.BusinessFlow);
+                                    bf.SaveStatus = eConversionSaveStatus.Saved;
+                                }
+                                else
+                                {
+                                    bf.SaveStatus = eConversionSaveStatus.NA;
+                                }
                             }
                         }
+                        catch (Exception ex)
+                        {
+                            bf.SaveStatus = eConversionSaveStatus.Failed;
+                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Save - ", ex);
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        bf.SaveStatus = eConversionSaveStatus.Failed;
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to Save - ", ex);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while Conversion ", ex);
                 }
             });
 
