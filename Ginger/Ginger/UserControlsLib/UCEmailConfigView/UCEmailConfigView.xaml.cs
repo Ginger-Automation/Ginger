@@ -328,6 +328,12 @@ namespace Ginger.UserControlsLib.UCEmailConfigView
             bool supportsOnlyOneBodyContentType = supportedBodyContentType.Length < 2;
             bool doesNotContainDefaultBodyContentType = !supportedBodyContentType.Contains(defaultBodyContentType);
 
+            if (defaultBodyContentType == eBodyContentType.FreeText)
+            {
+                xBodyContentTypeFreeTextRadioButton.IsChecked = true;
+                return;
+            }
+
             if (supportsOnlyOneBodyContentType || doesNotContainDefaultBodyContentType)
             {
                 return;
