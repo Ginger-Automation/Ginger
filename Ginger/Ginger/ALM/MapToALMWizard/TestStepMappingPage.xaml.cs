@@ -144,7 +144,7 @@ namespace Ginger.ALM.MapToALMWizard
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+                Reporter.ToLog(eLogLevel.DEBUG,ex.Message, ex);
             }
         }
 
@@ -328,7 +328,7 @@ namespace Ginger.ALM.MapToALMWizard
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, ex.Message);
+                Reporter.ToLog(eLogLevel.DEBUG, ex.Message, ex);
             }
         }
         #endregion
