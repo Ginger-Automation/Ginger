@@ -28,6 +28,7 @@ using GingerCore.Environments;
 using Newtonsoft.Json;
 using RQMExportStd.ExportBLL;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -35,6 +36,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 //using AlmDataContractsStd.Contracts;
@@ -62,22 +64,39 @@ namespace GingerCore.ALM.RQM
 
         RQMProjectListConfiguration RQMProjectListConfig;
         XmlReader reader;
+        private static readonly object importFileLock = new object();
+        static List<string> valuelist = new List<string>();
         private void GetRQMProjectListConfiguration()
         {
             try
             {
-                if (RQMProjectListConfig != null)
-                { return; }
-                string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
-                if (File.Exists(importConfigTemplate))
-
+                lock (importFileLock)
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(RQMProjectListConfiguration));
-
-                    FileStream fs = new FileStream(importConfigTemplate, FileMode.Open);
-                    reader = XmlReader.Create(fs);
-                    RQMProjectListConfig = (RQMProjectListConfiguration)serializer.Deserialize(reader);
-                    fs.Close();
+                    Thread.Sleep(500);
+                    if (RQMProjectListConfig != null)
+                    { 
+                        return; 
+                    }
+                    string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
+                    if (File.Exists(importConfigTemplate))
+                    {
+                        XmlSerializer serializer = new XmlSerializer(typeof(RQMProjectListConfiguration));
+                        FileStream fs = new FileStream(importConfigTemplate, FileMode.Open, FileAccess.Read, FileShare.Read);
+                        try
+                        {
+                            reader = XmlReader.Create(fs);
+                            RQMProjectListConfig = (RQMProjectListConfiguration)serializer.Deserialize(reader);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, "Failed To Load RQM_ImportConfigs_Template.xml", ex);
+                        }
+                        finally
+                        {
+                            fs.Close();
+                            fs.Dispose();
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -166,6 +185,13 @@ namespace GingerCore.ALM.RQM
                         //// Updating of Execution Record Results (test plan level)
                         try
                         {
+
+                            while (valuelist.Contains(exeResultList.FirstOrDefault().TestCaseExportID))
+                            {
+                                Thread.Sleep(1000);
+                            }
+                            valuelist.Add(exeResultList.FirstOrDefault().TestCaseExportID);
+
                             resultInfo = RQMConnect.Instance.RQMRep.ExportExecutionResult(loginData, exeResultList, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName);
                             if (!resultInfo.IsSuccess)
                             {
@@ -176,6 +202,10 @@ namespace GingerCore.ALM.RQM
                         catch
                         {
                             Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for {businessFlow.Name} and testplan {bfExportedID}");
+                        }
+                        finally
+                        {
+                            valuelist.Remove(exeResultList.FirstOrDefault().TestCaseExportID);
                         }
 
                         //
@@ -483,8 +513,8 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                result = $"Unexpected error occurred- {ex.Message}";
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export execution details to RQM/ALM", ex.InnerException);
+                result = $"Unexpected error occurred- {ex}";
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to export execution details to RQM/ALM {ex.InnerException}" , ex);
                 return null;
             }
         }
@@ -638,7 +668,7 @@ namespace GingerCore.ALM.RQM
                     {
                         businessFlow.ExternalIdCalCulated = $"RQMID={plan.ExportedID.ToString()}";
                     }
-                    
+
                     int ActivityGroupCounter = 0;
                     int activityStepCounter = 0;
                     int activityStepOrderID = 1;
@@ -667,7 +697,7 @@ namespace GingerCore.ALM.RQM
                         foreach (ACL_Data_Contract.Activity act in plan.Activities)
                         {
                             string ActivityGroupID = $"RQMID={act.ExportedID.ToString()}|RQMScriptID={act.ExportedTestScriptId.ToString()}|RQMRecordID={act.ExportedTcExecutionRecId.ToString()}|AtsID={act.EntityId.ToString()}";
-                            if(string.IsNullOrEmpty(businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID))
+                            if (string.IsNullOrEmpty(businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID))
                             {
                                 businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID = ActivityGroupID;
                             }

@@ -635,34 +635,38 @@ namespace Ginger.Run
                 Task ExportResultTask = Task.Run(() =>
                 {
                     var runsetAction = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(f => f is RunSetActionPublishToQC && f.RunAt.Equals(RunSetActionBase.eRunAt.DuringExecution) && f.Active);
-                    var prevStatus = runsetAction.Status;                    
-                    bool isSuccess = false;
-                    runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Running;
-                    ObservableList<BusinessFlow> bfs = new(){executedBusFlow};
-                    string result = "";
-                    try
+
+                    if (runsetAction != null)
                     {
-                        isSuccess = TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
-                        if(!isSuccess)
+                        var prevStatus = runsetAction.Status;
+                        bool isSuccess = false;
+                        runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Running;
+                        ObservableList<BusinessFlow> bfs = new() { executedBusFlow };
+                        string result = "";
+                        try
                         {
-                            runsetAction.Errors += result + Environment.NewLine;
+                            isSuccess = TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
+                            if (!isSuccess)
+                            {
+                                runsetAction.Errors += result + Environment.NewLine;
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        runsetAction.Errors += ex.Message + Environment.NewLine;
-                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to publish execution result to ALM for {executedBusFlow.Name}", ex);
-                    }
-                    finally
-                    {
-                        if (!isSuccess)
+                        catch (Exception ex)
                         {
-                            runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Failed;
+                            runsetAction.Errors += ex.Message + Environment.NewLine;
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to publish execution result to ALM for {executedBusFlow.Name}", ex);
                         }
-                        else
+                        finally
                         {
-                            runsetAction.Status = prevStatus;
-                        }
+                            if (!isSuccess)
+                            {
+                                runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Failed;
+                            }
+                            else
+                            {
+                                runsetAction.Status = prevStatus;
+                            }
+                        } 
                     }
                 });
 
@@ -4545,6 +4549,7 @@ namespace Ginger.Run
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 SetBusinessFlowActivitiesAndActionsSkipStatus(bf);
+                StartPublishResultsToAlmTask(CurrentBusinessFlow);
             }
         }
 
@@ -4565,6 +4570,11 @@ namespace Ginger.Run
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 SetNextActivitiesBlockedStatus();
+                //TODO: Move All code Block inside the if Loop 
+                if (bf.Active)
+                {
+                    StartPublishResultsToAlmTask(CurrentBusinessFlow);
+                }
             }
         }
 
