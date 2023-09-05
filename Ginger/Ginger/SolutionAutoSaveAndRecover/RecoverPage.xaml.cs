@@ -61,35 +61,42 @@ namespace Ginger.SolutionAutoSaveAndRecover
             {
                 await Task.Run(() =>
                 {
-                    this.ShowLoader();
-                    NewRepositorySerializer serializer = new NewRepositorySerializer();
-
-                    foreach (var directory in new DirectoryInfo(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath).GetDirectories())
+                    try
                     {
-                        string timestamp = directory.Name.Replace("AutoSave_", string.Empty);
+                        this.ShowLoader();
+                        NewRepositorySerializer serializer = new NewRepositorySerializer();
 
-                        IEnumerable<FileInfo> files = directory.GetFiles("*", SearchOption.AllDirectories);
-
-                        foreach (var file in files)
+                        foreach (var directory in new DirectoryInfo(WorkSpace.Instance.AppSolutionRecover.RecoverFolderPath).GetDirectories())
                         {
-                            try
+                            string timestamp = directory.Name.Replace("AutoSave_", string.Empty);
+
+                            IEnumerable<FileInfo> files = directory.GetFiles("*", SearchOption.AllDirectories);
+
+                            foreach (var file in files)
                             {
-                                RecoveredItem recoveredItem = new RecoveredItem();
-                                recoveredItem.RecoveredItemObject = serializer.DeserializeFromFile(file.FullName);
-                                recoveredItem.RecoverDate = timestamp;
-                                recoveredItem.RecoveredItemObject.FileName = file.FullName;
-                                recoveredItem.RecoveredItemObject.ContainingFolder = file.FullName.Replace(directory.FullName, "~");
-                                recoveredItem.Status = eRecoveredItemStatus.PendingRecover;
-                                this.mRecoveredItems.Add(recoveredItem);
-                            }
-                            catch (Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, "Failed to fetch recover item : " + file.FullName, ex);
+                                try
+                                {
+                                    RecoveredItem recoveredItem = new RecoveredItem();
+                                    recoveredItem.RecoveredItemObject = serializer.DeserializeFromFile(file.FullName);
+                                    recoveredItem.RecoverDate = timestamp;
+                                    recoveredItem.RecoveredItemObject.FileName = file.FullName;
+                                    recoveredItem.RecoveredItemObject.ContainingFolder = file.FullName.Replace(directory.FullName, "~");
+                                    recoveredItem.Status = eRecoveredItemStatus.PendingRecover;
+                                    this.mRecoveredItems.Add(recoveredItem);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to fetch recover item : " + file.FullName, ex);
+                                }
                             }
                         }
+                        this.HideLoader();
+                        xRecoveredItemsGrid.DataSourceList = this.mRecoveredItems;
                     }
-                    this.HideLoader();
-                    xRecoveredItemsGrid.DataSourceList = this.mRecoveredItems;
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Load files", ex);
+                    }
                 });
 
             }

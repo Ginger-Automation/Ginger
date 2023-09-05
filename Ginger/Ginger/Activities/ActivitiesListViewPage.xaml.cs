@@ -99,7 +99,17 @@ namespace Ginger.BusinessFlowPages
                 xActivitiesListView.AddGrouping(nameof(Activity.ActivitiesGroupID));
 
                 //shared repo indicator
-                await Task.Run(() => this.SetSharedRepositoryMark());
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        this.SetSharedRepositoryMark();
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred during SetSharedRepositoryMark", ex);
+                    }
+                });
             }
             else
             {

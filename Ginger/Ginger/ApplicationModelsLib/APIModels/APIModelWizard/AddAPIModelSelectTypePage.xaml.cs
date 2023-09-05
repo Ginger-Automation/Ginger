@@ -661,7 +661,17 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             xPreviewButton.IsEnabled = false;
             XmlDocument doc = null;
             string s = xURLTextBox.Text;
-            await Task.Run(() => doc = GetDocumentFromWeb(s));
+            await Task.Run(() =>
+            {
+                try
+                {
+                    doc = GetDocumentFromWeb(s);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Document from Web", ex);
+                }
+            });
             XMLViewer.xmlDocument = doc;
             xPreviewButton.IsEnabled = true;
         }

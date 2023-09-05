@@ -87,7 +87,17 @@ namespace Ginger.ALM.MapToALMWizard
                 if (!String.IsNullOrEmpty(mWizard.mapBusinessFlow.ExternalID) && String.IsNullOrEmpty(mWizard.AlmTestSetData.TestSetID))
                 {
                     mWizard.AddActivitiesGroupsInitialMapping();
-                    await Task.Run(() => mWizard.SetMappedALMTestSetData()).ConfigureAwait(true);
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            mWizard.SetMappedALMTestSetData();
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed Set Mapped ALM Test Set data",ex);
+                        }
+                    }).ConfigureAwait(true);
                     ChangeTestSetPageVisibility();
                     mWizard.UpdateMappedTestCasesCollections();
                     mWizard.RemapTestCasesLists();
@@ -174,6 +184,7 @@ namespace Ginger.ALM.MapToALMWizard
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Failed get ALM Tree, {System.Reflection.MethodBase.GetCurrentMethod().Name}: {ex.Message}");
+                Reporter.ToLog(eLogLevel.DEBUG, $"Failed get ALM Tree, {System.Reflection.MethodBase.GetCurrentMethod().Name}: {ex}");
             }
             return win;
         }

@@ -60,7 +60,9 @@ namespace Ginger.DataSource
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FilePathTextBox, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.FilePath);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSName, TextBox.TextProperty, mDSDetails, DataSourceBase.Fields.Name);
+            DSName.AddValidationRule(new DataSourceNameValidationRule());
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DSTypeComboBox, ComboBox.SelectedValueProperty, mDSDetails, DataSourceBase.Fields.DSType);
+
 
         }
 

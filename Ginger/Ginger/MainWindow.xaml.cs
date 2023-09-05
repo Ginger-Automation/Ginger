@@ -50,6 +50,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -1465,9 +1466,16 @@ namespace Ginger
 
         private void SaveCurrentItem()
         {
-            if (Reporter.ToUser(eUserMsgKey.SaveBusinessFlowChanges, WorkSpace.Instance.CurrentSelectedItem.ItemName) == eUserMsgSelection.Yes)
+            try
             {
-                SaveHandler.Save(WorkSpace.Instance.CurrentSelectedItem);
+                if (Reporter.ToUser(eUserMsgKey.SaveBusinessFlowChanges, WorkSpace.Instance.CurrentSelectedItem.ItemName) == eUserMsgSelection.Yes)
+                {
+                    SaveHandler.Save(WorkSpace.Instance.CurrentSelectedItem);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 

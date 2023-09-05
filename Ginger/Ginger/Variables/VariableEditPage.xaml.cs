@@ -487,6 +487,10 @@ namespace Ginger.Variables
                 }
                 mVariable.NameBeforeEdit = mVariable.Name;
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Name Change", ex);
+            }
             finally
             {
                 Reporter.HideStatusMessage();
