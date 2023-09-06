@@ -1475,41 +1475,47 @@ namespace Ginger.Run
 
         private ObservableList<ErrorHandler> GetErrorHandlersForCurrentActivity()
         {
-            ObservableList<ErrorHandler> errorHandlersToExecute = new ObservableList<ErrorHandler>();
-
-            eHandlerMappingType typeHandlerMapping = (eHandlerMappingType)((Activity)CurrentBusinessFlow.CurrentActivity).ErrorHandlerMappingType;
-
-            if (typeHandlerMapping == eHandlerMappingType.None)
+            switch (CurrentBusinessFlow.CurrentActivity.ErrorHandlerMappingType)
             {
-                // if set to NONE then, return an empty list. Nothing to execute!
-                return errorHandlersToExecute;
-            }
+                case eHandlerMappingType.AllAvailableHandlers:
+                    // pass all error handlers, by default
+                    return GetAllErrorHandlersByType(eHandlerType.Error_Handler);
 
-            if (typeHandlerMapping == eHandlerMappingType.SpecificErrorHandlers)
-            {
-                // fetch list of all error handlers in the current business flow
-                ObservableList<ErrorHandler> allCurrentBusinessFlowErrorHandlers = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
+                case eHandlerMappingType.SpecificErrorHandlers:
+                    // fetch list of all error handlers in the current business flow
+                    ObservableList<ErrorHandler> allCurrentBusinessFlowErrorHandlers = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
 
-                ObservableList<ErrorHandler> lstMappedErrorHandler = new ObservableList<ErrorHandler>();
-                foreach (Guid _guid in CurrentBusinessFlow.CurrentActivity.MappedErrorHandlers)
-                {
-                    // check if mapped error handlers are PRESENT in the current list of error handlers in the business flow i.e. allCurrentBusinessFlowErrorHandlers (checking for deletion, inactive etc.)
-                    if (allCurrentBusinessFlowErrorHandlers.Any(x => x.Guid == _guid)) //.ToList().Exists(x => x.Guid == _guid))
+                    ObservableList<ErrorHandler> specificErrorHandlers = new ObservableList<ErrorHandler>();
+                    foreach (Guid _guid in CurrentBusinessFlow.CurrentActivity.MappedErrorHandlers)
                     {
-                        ErrorHandler _activity = CurrentBusinessFlow.Activities.Where(x => x.Guid == _guid).Cast<ErrorHandler>().FirstOrDefault();
-                        lstMappedErrorHandler.Add(_activity);
+                        // check if mapped error handlers are PRESENT in the current list of error handlers in the business flow i.e. allCurrentBusinessFlowErrorHandlers (checking for deletion, inactive etc.)
+                        if (allCurrentBusinessFlowErrorHandlers.Any(x => x.Guid == _guid)) //.ToList().Exists(x => x.Guid == _guid))
+                        {
+                            ErrorHandler _activity = CurrentBusinessFlow.Activities.Where(x => x.Guid == _guid).Cast<ErrorHandler>().FirstOrDefault();
+                            specificErrorHandlers.Add(_activity);
+                        }
                     }
-                }
-                // pass only specific mapped error handlers present the business flow
-                errorHandlersToExecute = lstMappedErrorHandler;
-            }
-            else if (typeHandlerMapping == eHandlerMappingType.AllAvailableHandlers || typeHandlerMapping == eHandlerMappingType.ErrorHandlersMatchingTrigger)
-            {
-                // pass all error handlers, by default
-                errorHandlersToExecute = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
-            }
-            return errorHandlersToExecute;
+                    // pass only specific mapped error handlers present the business flow
+                    return specificErrorHandlers;
 
+                case eHandlerMappingType.ErrorHandlersMatchingTrigger:
+                    ObservableList<ErrorHandler> errorHandlersMatchingTrigger = new ObservableList<ErrorHandler>();
+                    Act failedAction = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                    ObservableList<ErrorHandler> allErrorHandlers = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
+
+                    foreach (var errHandler in allErrorHandlers)
+                    {
+                        if (errHandler.TriggerType == eTriggerType.AnyError || errHandler.ErrorStringList.Any(er => er.ErrorString.Contains(failedAction.Error)))
+                        {
+                            errorHandlersMatchingTrigger.Add(errHandler);
+                        }
+                    }
+
+                    return errorHandlersMatchingTrigger;
+
+                default:
+                    return new ObservableList<ErrorHandler>();
+            }
         }
 
         private void UpdateDSReturnValues(Act act)
