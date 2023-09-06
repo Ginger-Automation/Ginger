@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.OS;
+using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore;
@@ -26,6 +27,7 @@ using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -342,6 +344,14 @@ namespace Ginger.SolutionGeneral
             }
 
             return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(relativePath);
+        }
+
+        public static ObservableList<SolutionCategoryValue> GetSolutionReleaseValues()
+        {
+            SolutionCategory releaseList = WorkSpace.Instance?.Solution?.SolutionCategories?.FirstOrDefault(x => x.Category == Amdocs.Ginger.CoreNET.Run.SolutionCategory.eSolutionCategories.Release);
+
+            return releaseList.CategoryOptionalValues;
+
         }
 
     }

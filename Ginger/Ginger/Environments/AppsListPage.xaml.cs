@@ -71,7 +71,7 @@ namespace Ginger.Environments
 
         private void InitReleaseComboBox()
         {
-            ObservableList<SolutionCategoryValue> combList = GingerCore.General.GetSolutionReleaseValues();
+            ObservableList<SolutionCategoryValue> combList = SolutionGeneral.SolutionOperations.GetSolutionReleaseValues();
             xReleaseCombobox.BindControl(AppEnvironmnet, nameof(ProjEnvironment.ReleaseVersion), combList, nameof(SolutionCategoryValue.Value), nameof(SolutionCategoryValue.Guid));
             BindingHandler.ObjFieldBinding(xReleaseCombobox, ComboBox.SelectedValueProperty, AppEnvironmnet, nameof(ProjEnvironment.ReleaseVersion));
         }

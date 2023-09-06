@@ -22,7 +22,6 @@ using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore.Environments;
-using GingerCore.GeneralLib;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -64,7 +63,7 @@ namespace Ginger.Environments
 
             view.GridColsView.Add(new GridColView() { Field = ProjEnvironment.Fields.Name, WidthWeight = 200 });
 
-            ObservableList<SolutionCategoryValue> combList = GingerCore.General.GetSolutionReleaseValues();
+            ObservableList<SolutionCategoryValue> combList = SolutionGeneral.SolutionOperations.GetSolutionReleaseValues();
 
             view.GridColsView.Add(new GridColView() { Field = nameof(ProjEnvironment.Fields.ReleaseVersion), Header = "Release", WidthWeight = 80, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = combList, ComboboxSelectedValueField = nameof(SolutionCategoryValue.Guid),ComboboxDisplayMemberField= nameof(SolutionCategoryValue.Value)  });
             view.GridColsView.Add(new GridColView() { Field = ProjEnvironment.Fields.Notes, WidthWeight = 500 });
