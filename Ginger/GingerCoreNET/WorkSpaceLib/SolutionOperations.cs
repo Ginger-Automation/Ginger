@@ -349,8 +349,14 @@ namespace Ginger.SolutionGeneral
         public static ObservableList<SolutionCategoryValue> GetSolutionReleaseValues()
         {
             SolutionCategory releaseList = WorkSpace.Instance?.Solution?.SolutionCategories?.FirstOrDefault(x => x.Category == Amdocs.Ginger.CoreNET.Run.SolutionCategory.eSolutionCategories.Release);
-
-            return releaseList.CategoryOptionalValues;
+            if(releaseList != null)
+            {
+                return releaseList.CategoryOptionalValues;
+            }
+            else
+            {
+                return new ObservableList<SolutionCategoryValue>();
+            }
 
         }
 
