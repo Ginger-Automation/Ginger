@@ -28,7 +28,6 @@ using GingerCore.Environments;
 using Newtonsoft.Json;
 using RQMExportStd.ExportBLL;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -108,7 +107,7 @@ namespace GingerCore.ALM.RQM
         RQMTestPlan testPlan;
         public bool ExportExecutionDetailsToRQM(BusinessFlow businessFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
-            result = string.Empty;
+            result = string.Empty;            
             string bfExportedID = GetExportedIDString(businessFlow.ExternalIdCalCulated, "RQMID");
             if (string.IsNullOrEmpty(bfExportedID) || bfExportedID.Equals("0"))
             {
@@ -120,9 +119,8 @@ namespace GingerCore.ALM.RQM
                 result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} Must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}";
                 return false;
             }
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
-
-            // 
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };            
+            
             // get data about execution records per current test plan - start
             GetRQMProjectListConfiguration();
             if (RQMProjectListConfig != null)
@@ -166,7 +164,7 @@ namespace GingerCore.ALM.RQM
                                 || publishToALMConfig.FilterStatus == FilterByStatus.All)
                             {
                                 testPlan.Name = !string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunNameCalculated) ? publishToALMConfig.VariableForTCRunNameCalculated : testPlan.Name;
-                                ExecutionResult exeResult = GetExeResultforActivityGroup(businessFlow, bfExportedID, activGroup, ref result, testPlan, currentRQMProjectMapping, loginData);
+                                ExecutionResult exeResult = GetExeResultforActivityGroup(businessFlow, bfExportedID, activGroup, ref result, testPlan, currentRQMProjectMapping, loginData, publishToALMConfig);
                                 if (exeResult != null)
                                 {
                                     exeResultList.Add(exeResult);
@@ -305,7 +303,7 @@ namespace GingerCore.ALM.RQM
             // get data about execution records per current test plan - finish
             return false;
         }
-        private ExecutionResult GetExeResultforActivityGroup(BusinessFlow businessFlow, string bfExportedID, ActivitiesGroup activGroup, ref string result, RQMTestPlan testPlan, RQMProject currentRQMProjectMapping, LoginDTO loginData)
+        private ExecutionResult GetExeResultforActivityGroup(BusinessFlow businessFlow, string bfExportedID, ActivitiesGroup activGroup, ref string result, RQMTestPlan testPlan, RQMProject currentRQMProjectMapping, LoginDTO loginData, PublishToALMConfig publishToALMConfig)
         {
             try
             {
@@ -449,7 +447,12 @@ namespace GingerCore.ALM.RQM
                 exeResult.ExecutionRecordExportID = exeRecordId;
                 exeResult.StartDate = businessFlow.StartTimeStamp.ToString("o");
                 exeResult.EndDate = businessFlow.EndTimeStamp.ToString("o");
-
+                if (!string.IsNullOrEmpty(publishToALMConfig.HtmlReportUrl))
+                {
+                    exeResult.HtmlReportUrl = publishToALMConfig.HtmlReportUrl;
+                    exeResult.ExecutionId = publishToALMConfig.ExecutionId;
+                    exeResult.ExecutionInstanceId = businessFlow.InstanceGuid.ToString();
+                }
                 int i = 1;
                 StringBuilder errors;
                 var relevantActivities = businessFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.FileName);
