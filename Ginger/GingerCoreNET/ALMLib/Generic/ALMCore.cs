@@ -222,7 +222,7 @@ namespace GingerCore.ALM
                     WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Any(g => g.IsSelected && !string.IsNullOrEmpty(g.CentralLoggerEndPointUrl) && g.PublishLogToCentralDB == ePublishToCentralDB.Yes)
                     && WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Any(x => x.IsSelected && !string.IsNullOrEmpty(x.CentralizedHtmlReportServiceURL)))
                 {
-                    publishToALMConfig.HtmlReportUrl = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).CentralizedHtmlReportServiceURL;
+                    publishToALMConfig.HtmlReportUrl = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => x.IsSelected).CentralizedHtmlReportServiceURL;
                     publishToALMConfig.ExecutionId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString();
                 }
                 foreach (BusinessFlow BizFlow in BusinessFlows) //Here going for each businessFlow
