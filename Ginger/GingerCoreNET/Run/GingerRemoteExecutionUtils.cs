@@ -104,7 +104,7 @@ namespace Amdocs.Ginger.CoreNET
                     ExecutionDurationHHMMSS = GingerCoreNET.GeneralLib.General.TimeConvert((runsetHLInfo.Duration / 1000).ToString()),
                     RunSetExecutionStatus = runStatus,
                     DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.Remote
-                });
+                }); ;
             }
 
             return runSetReports;
