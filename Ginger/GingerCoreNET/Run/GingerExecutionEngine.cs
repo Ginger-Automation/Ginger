@@ -445,12 +445,10 @@ namespace Ginger.Run
 
         public void RunRunner(bool doContinueRun = false)
         {
-            bool runnerExecutionSkipped = false;
-            List<BusinessFlow>  activeBusinessFlows = new List<BusinessFlow>();
+            bool runnerExecutionSkipped = false;         
             try
             {
-                checkForReRunConfiguration(ref activeBusinessFlows);
-                
+                               
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.FirstOrDefault(x => x.Active) == null)
                 {
                     runnerExecutionSkipped = true;
@@ -492,7 +490,7 @@ namespace Ginger.Run
                 Status = eRunStatus.Running;
 
                 int startingBfIndx = 0;
-                if (doContinueRun == false || WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active)
+                if (doContinueRun == false)
                 {
                     startingBfIndx = 0;
                 }
@@ -505,9 +503,8 @@ namespace Ginger.Run
                 {
                     mRunSource = eRunSource.Runner;
                 }
-                int? flowControlIndx = null;
-                int? NextFailedbfIndex = null;
-                for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx,ref NextFailedbfIndex))
+                int? flowControlIndx = null;          
+                for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx))
                 {
 
                     //need to add code here to check previous Execution Deatils and ReRunFailed check 
@@ -521,7 +518,7 @@ namespace Ginger.Run
                     }
 
                     //validate BF run
-                    if (!executedBusFlow.Active || (activeBusinessFlows.Count > 0 && !activeBusinessFlows.Any(x=>x.Guid == executedBusFlow.Guid)))
+                    if (!executedBusFlow.Active)// || (activeBusinessFlows.Count > 0 && !activeBusinessFlows.Any(x=>x.Guid == executedBusFlow.Guid)))
                     {
                         //set BF status as skipped                     
                         SetBusinessFlowActivitiesAndActionsSkipStatus(executedBusFlow);
@@ -636,24 +633,7 @@ namespace Ginger.Run
             }
         }
 
-        private void checkForReRunConfiguration(ref List<BusinessFlow> activeBusinessFlows)
-        {
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.BusinessFlow && mGingerRunner != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList.Any())
-            {
-                foreach (BusinessFlow Bf in mGingerRunner.Executor.BusinessFlows)
-                {
-                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList.Contains(Bf.InstanceGuid))
-                    {
-                        activeBusinessFlows.Add(Bf);
-                    }
-                    else
-                    {
-                        Reporter.ToLog(eLogLevel.INFO, $"{Bf.Name} is not failed in refernce ExecutionId {WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.ReferenceExecutionID} hence marked inactive for current execution\")");
-                    }
 
-                }
-            }
-        }
         private void StartPublishResultsToAlmTask(BusinessFlow executedBusFlow)
         {
             if (PublishToALMConfig != null)
@@ -812,7 +792,7 @@ namespace Ginger.Run
 
 
         //Calculate Next bfIndex for RunRunner Function
-        private void CalculateNextBFIndx(ref int? flowControlIndx, ref int bfIndx, ref int? NextFailedIndx)
+        private void CalculateNextBFIndx(ref int? flowControlIndx, ref int bfIndx)
         {
             if (flowControlIndx != null) //set bfIndex in case of BfFlowControl
             {

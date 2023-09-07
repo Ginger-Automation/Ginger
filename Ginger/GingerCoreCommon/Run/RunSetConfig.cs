@@ -485,8 +485,7 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
             }
             return false;
         }
-
-        public List<Guid?> FailedBFGuidList { get; set; }
+              
 
         [IsSerializedForLocalRepository]
         public ReRunConfig ReRunConfigurations = new ReRunConfig();

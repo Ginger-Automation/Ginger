@@ -450,16 +450,7 @@ namespace Ginger.Run
         {
             try
             {
-                mRunSetConfig.IsRunning = true;
-                //This function is for Rerun Configuration only for the Dynamic Json
-                if (WorkSpace.Instance.RunningInExecutionMode && RunSetConfig.ReRunConfigurations != null && RunSetConfig.ReRunConfigurations.Active)
-                {
-                   bool result = CheckforReRunConfig();
-                    if(!result)
-                    {
-                        return;
-                    }
-                }
+                mRunSetConfig.IsRunning = true;           
                 //reset run       
                 if (doContinueRun == false)
                 {
@@ -670,68 +661,7 @@ namespace Ginger.Run
             }
         }
 
-        private bool CheckforReRunConfig()
-        {
-            bool Result = true;
-            WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList = new List<Guid?>();
-            if (RunSetConfig.ReRunConfigurations.ReferenceExecutionID != null)
-            {
-                if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && !string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl))
-                {
-                    AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
-                    if (RunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.RunSet)
-                    {
-                        List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataToCentralDB((Guid)RunSetConfig.ReRunConfigurations.ReferenceExecutionID);
-                        if (accountReportRunset != null)
-                        {
-                            if (accountReportRunset.Any(x => x.Status.Equals(eRunStatus.Passed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
-                            {
-                                Reporter.ToLog(eLogLevel.INFO, string.Format("Their is no runset to re run because it's alreday passed in reference execution id: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
-                                Result= false;
-                            }
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.INFO, string.Format("Their is no record found to re run in reference execution id: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
-                            Result = false;
-                        }
-                    }
-                    else if (RunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.BusinessFlow)
-                    {
-                        List<AccountReportBusinessFlow> accountReportBusinessFlows = accountReportApiHandler.GetBusinessflowExecutionDataToCentralDB((Guid)RunSetConfig.ReRunConfigurations.ReferenceExecutionID);
-                        if (accountReportBusinessFlows != null)
-                        {
-                            if (accountReportBusinessFlows.Any(x => x.RunStatus.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
-                            {
-                                WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList = accountReportBusinessFlows.Where(x => x.RunStatus.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)).Select(x => x.InstanceGUID).ToList();
-                            }
-                            else
-                            {
-                                Reporter.ToLog(eLogLevel.INFO, string.Format("Their is no flow to re run because all flows are already paased in reference execution id: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
-                                Result = false;
-                            }
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.INFO, string.Format("Their is no record found to re run in reference execution id: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
-                            Result = false;
-                        }
-                    }
-                }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.INFO, string.Format("account report is not configured PublishLogToCentralDB: {0}", mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB));
-                    Result = false;
-                }
-            }
-            else
-            {
-                Reporter.ToLog(eLogLevel.INFO, string.Format("Reference execution id is empty: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
-                Result = false;
-            }
-
-            return Result;
-        }
+       
         private void FinishPublishResultsToAlmTask()
         {
             if (ALMResultsPublishTaskPool != null && ALMResultsPublishTaskPool.Count > 0)
