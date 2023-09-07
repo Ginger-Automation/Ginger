@@ -38,6 +38,7 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using NJsonSchema.Infrastructure;
 using NUglify.Helpers;
 using OfficeOpenXml.Drawing.Slicer.Style;
@@ -453,7 +454,11 @@ namespace Ginger.Run
                 //This function is for Rerun Configuration only for the Dynamic Json
                 if (WorkSpace.Instance.RunningInExecutionMode && RunSetConfig.ReRunConfigurations != null && RunSetConfig.ReRunConfigurations.Active)
                 {
-                    CheckforReRunConfig();
+                   bool result = CheckforReRunConfig();
+                    if(!result)
+                    {
+                        return;
+                    }
                 }
                 //reset run       
                 if (doContinueRun == false)
@@ -656,7 +661,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.WARN, "Exception occured when trying to Run runset ", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when trying to Run runset ", ex);
             }
             finally
             {
@@ -665,26 +670,33 @@ namespace Ginger.Run
             }
         }
 
-        private void CheckforReRunConfig()
+        private bool CheckforReRunConfig()
         {
-            if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && !string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl))
+            bool Result = true;
+            WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList = new List<Guid?>();
+            if (RunSetConfig.ReRunConfigurations.ReferenceExecutionID != null)
             {
-                AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
-                if (RunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.RunSet)
+                if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && !string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl))
                 {
-                    List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataToCentralDB((Guid)RunSetConfig.ReRunConfigurations.ReferenceExecutionID);
-                    if (accountReportRunset != null)
+                    AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+                    if (RunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.RunSet)
                     {
-                        if (accountReportRunset.Any(x => x.Status.Equals(eRunStatus.Passed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
+                        List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataToCentralDB((Guid)RunSetConfig.ReRunConfigurations.ReferenceExecutionID);
+                        if (accountReportRunset != null)
                         {
-                            Reporter.ToLog(eLogLevel.INFO, string.Format("Their is no runset to re run because it's alreday passed in reference execution id: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
-                            return;
+                            if (accountReportRunset.Any(x => x.Status.Equals(eRunStatus.Passed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
+                            {
+                                Reporter.ToLog(eLogLevel.INFO, string.Format("Their is no runset to re run because it's alreday passed in reference execution id: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                                Result= false;
+                            }
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.INFO, string.Format("Their is no record found to re run in reference execution id: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                            Result = false;
                         }
                     }
-                }
-                else if (RunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.BusinessFlow)
-                {
-                    if (RunSetConfig.ReRunConfigurations.ReferenceExecutionID != null)
+                    else if (RunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.BusinessFlow)
                     {
                         List<AccountReportBusinessFlow> accountReportBusinessFlows = accountReportApiHandler.GetBusinessflowExecutionDataToCentralDB((Guid)RunSetConfig.ReRunConfigurations.ReferenceExecutionID);
                         if (accountReportBusinessFlows != null)
@@ -692,16 +704,33 @@ namespace Ginger.Run
                             if (accountReportBusinessFlows.Any(x => x.RunStatus.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
                             {
                                 WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList = accountReportBusinessFlows.Where(x => x.RunStatus.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)).Select(x => x.InstanceGUID).ToList();
-                                if (!WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList.Any())
-                                {
-                                    Reporter.ToLog(eLogLevel.WARN, string.Format("Their is no flow to re run because all flows are already paased in reference execution id: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
-                                    return;
-                                }
                             }
+                            else
+                            {
+                                Reporter.ToLog(eLogLevel.INFO, string.Format("Their is no flow to re run because all flows are already paased in reference execution id: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                                Result = false;
+                            }
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.INFO, string.Format("Their is no record found to re run in reference execution id: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                            Result = false;
                         }
                     }
                 }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("account report is not configured PublishLogToCentralDB: {0}", mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB));
+                    Result = false;
+                }
             }
+            else
+            {
+                Reporter.ToLog(eLogLevel.INFO, string.Format("Reference execution id is empty: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                Result = false;
+            }
+
+            return Result;
         }
         private void FinishPublishResultsToAlmTask()
         {

@@ -440,7 +440,7 @@ namespace Ginger.Run
             return result;
         }
 
-
+        
 
 
         public void RunRunner(bool doContinueRun = false)
@@ -449,21 +449,8 @@ namespace Ginger.Run
             List<BusinessFlow>  activeBusinessFlows = new List<BusinessFlow>();
             try
             {
-                if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.BusinessFlow && mGingerRunner != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList.Any())
-                {
-                    foreach (BusinessFlow Bf in mGingerRunner.Executor.BusinessFlows)
-                    {
-                        if(WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList.Contains(Bf.InstanceGuid))
-                        {
-                            activeBusinessFlows.Add(Bf);
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.INFO, $"{Bf.Name} is not failed in refernce ExecutionId {WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.ReferenceExecutionID}");
-                        }
-                        
-                    }
-                }
+                checkForReRunConfiguration(ref activeBusinessFlows);
+                
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.FirstOrDefault(x => x.Active) == null)
                 {
                     runnerExecutionSkipped = true;
@@ -649,6 +636,24 @@ namespace Ginger.Run
             }
         }
 
+        private void checkForReRunConfiguration(ref List<BusinessFlow> activeBusinessFlows)
+        {
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.BusinessFlow && mGingerRunner != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList.Any())
+            {
+                foreach (BusinessFlow Bf in mGingerRunner.Executor.BusinessFlows)
+                {
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList.Contains(Bf.InstanceGuid))
+                    {
+                        activeBusinessFlows.Add(Bf);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, $"{Bf.Name} is not failed in refernce ExecutionId {WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.ReferenceExecutionID} hence marked inactive for current execution\")");
+                    }
+
+                }
+            }
+        }
         private void StartPublishResultsToAlmTask(BusinessFlow executedBusFlow)
         {
             if (PublishToALMConfig != null)
@@ -4383,12 +4388,21 @@ namespace Ginger.Run
                 }
 
                 BF.RunStatus = newStatus;
+                CalculateBusinessFlowActivyGroupStaus(BF);
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Calculating Business flow final execution status", ex);
             }
 
+        }
+
+        public void CalculateBusinessFlowActivyGroupStaus(BusinessFlow BF)
+        {
+            foreach (ActivitiesGroup currentActivityGroup in BF.ActivitiesGroups)
+            {
+                CalculateActivitiesGroupFinalStatus(currentActivityGroup, BF);
+            }
         }
 
         public void CalculateActivitiesGroupFinalStatus(ActivitiesGroup AG, BusinessFlow BF)
@@ -4568,6 +4582,7 @@ namespace Ginger.Run
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 SetBusinessFlowActivitiesAndActionsSkipStatus(bf);
+                CalculateBusinessFlowActivyGroupStaus(bf);
                 StartPublishResultsToAlmTask(CurrentBusinessFlow);
             }
         }
@@ -4589,6 +4604,7 @@ namespace Ginger.Run
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 SetNextActivitiesBlockedStatus();
+                CalculateBusinessFlowActivyGroupStaus(bf);
                 //TODO: Move All code Block inside the if Loop 
                 if (bf.Active)
                 {

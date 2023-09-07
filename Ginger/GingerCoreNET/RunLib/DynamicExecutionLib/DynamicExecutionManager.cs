@@ -928,7 +928,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
             }
 
-            if(gingerExecConfig.Runset.RerunConfigurations != null)
+            if(gingerExecConfig.Runset.RerunConfigurations != null && gingerExecConfig.Runset.RerunConfigurations.Active)
             {
                 runSetConfig.ReRunConfigurations.Active = gingerExecConfig.Runset.RerunConfigurations.Active;
                 runSetConfig.ReRunConfigurations.RerunLevel = (global::Ginger.Run.eReRunLevel)gingerExecConfig.Runset.RerunConfigurations.RerunLevel;
