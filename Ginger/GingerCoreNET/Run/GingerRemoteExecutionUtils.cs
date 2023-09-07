@@ -98,13 +98,13 @@ namespace Amdocs.Ginger.CoreNET
                     GUID = runsetHLInfo.ExecutionID.ToString(),
                     Name = runsetHLInfo.RunsetName,
                     Description = "",
-                    StartTimeStamp = Convert.ToDateTime(runsetHLInfo.StartTime).ToUniversalTime(),
-                    EndTimeStamp = Convert.ToDateTime(runsetHLInfo.EndTime).ToUniversalTime(),
+                    StartTimeStamp = Convert.ToDateTime(runsetHLInfo.StartTime).ToLocalTime(),
+                    EndTimeStamp = Convert.ToDateTime(runsetHLInfo.EndTime).ToLocalTime(),
                     Elapsed = runsetHLInfo.Duration,
                     ExecutionDurationHHMMSS = GingerCoreNET.GeneralLib.General.TimeConvert((runsetHLInfo.Duration / 1000).ToString()),
                     RunSetExecutionStatus = runStatus,
                     DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.Remote
-                });
+                }); ;
             }
 
             return runSetReports;

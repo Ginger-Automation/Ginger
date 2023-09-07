@@ -121,6 +121,11 @@
                                     <GingerCore:ucTextDicResource Text="Reset &amp; Run All Runners"/>
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
+                            <!--<usercontrols:ucButton x:Name="xReRunFailedRunsetBtn" Visibility="Collapsed" ButtonType="RoundTextAndImageButton"  ButtonText="ReRunFailed" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xReRunFailedRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="ReRunFailedBtn_MouseEnter" MouseLeave="ReRunFailedBtn_MouseLeave">
+                                <usercontrols:ucButton.ToolTip>
+                                    <GingerCore:ucTextDicResource Text="ReRun Failed Business Flows"/>
+                                </usercontrols:ucButton.ToolTip>
+                            </usercontrols:ucButton>-->
                             <usercontrols:ucButton x:Name="xStopRunsetBtn" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed">
                                 <usercontrols:ucButton.ToolTip>
                                     <GingerCore:ucTextDicResource Text="Stop All Runners"/>

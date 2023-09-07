@@ -17,9 +17,12 @@ limitations under the License.
 #endregion
 
 using AccountReport.Contracts;
+using AccountReport.Contracts.ResponseModels;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
+using GingerCore.Drivers.Selenium.SeleniumBMP;
+using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -44,6 +47,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string SEND_RUNNER_EXECUTION_DATA = "api/AccountReport/runner/";
         private const string UPLOAD_FILES = "api/AccountReport/UploadFiles/";
         private const string EXECUTION_ID_VALIDATION = "api/AccountReport/ExecutionIdValidation/";
+        private const string Get_BUSINESSFLOW_EXECUTION_DATA = "api/AccountReport/GetAccountReportBusinessflowsByExecutionId/";
+        private const string Get_RUNSET_EXECUTION_DATA = "api/AccountReport/GetRunsetHLExecutionInfo/";
+        
 
         public AccountReportApiHandler(string apiUrl)
         {
@@ -104,7 +110,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 {
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Finishing to publish execution data to central DB for Runset- '{0}'", accountReportRunSet.Name));
                 }
-                string message = string.Format("execution data to Central DB for the Runset:'{0}' (Execution Id:'{1}')", accountReportRunSet.Name, accountReportRunSet.Id);
+                string message = string.Format("execution data to Central DB for the Runset:'{0}' (Execution Id:'{1}')", accountReportRunSet.Name, accountReportRunSet.ExecutionId);
                 bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).ConfigureAwait(false);
                 if (responseIsSuccess)
                 {
@@ -361,6 +367,66 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 Reporter.ToLog(eLogLevel.ERROR, "Exception when sending " + api, ex);
                 return false;
             }
+        }
+
+        public List<AccountReportBusinessFlow> GetBusinessflowExecutionDataToCentralDB(Guid executionId)
+        {
+            List<AccountReportBusinessFlow> accountReportBusinessFlows = new List<AccountReportBusinessFlow>();
+            if (restClient != null)
+            {
+                RestRequest restRequest = (RestRequest)new RestRequest(Get_BUSINESSFLOW_EXECUTION_DATA + executionId, Method.Get);
+                string message = string.Format("execution id : {0}", executionId);
+                try
+                {
+                    RestResponse response = restClient.Execute(restRequest);
+                    if (response.IsSuccessful)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Successfully validated execution id " + message);
+                        accountReportBusinessFlows = JsonConvert.DeserializeObject<List<AccountReportBusinessFlow>>(response.Content);
+                        return accountReportBusinessFlows;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to validate " + message + "Response: " + response.Content);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception while validating execution id " + message, ex);
+                }
+                return accountReportBusinessFlows;
+            }
+            return accountReportBusinessFlows;
+        }
+
+        public List<RunsetHLInfoResponse> GetRunsetExecutionDataToCentralDB(Guid executionId)
+        {
+            List<RunsetHLInfoResponse> accountReportrunset = new List<RunsetHLInfoResponse>();
+            if (restClient != null)
+            {
+                RestRequest restRequest = (RestRequest)new RestRequest(Get_RUNSET_EXECUTION_DATA + executionId, Method.Get);
+                string message = string.Format("execution id : {0}", executionId);
+                try
+                {
+                    RestResponse response = restClient.Execute(restRequest);
+                    if (response.IsSuccessful)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Successfully validated execution id " + message);
+                        accountReportrunset = JsonConvert.DeserializeObject<List<RunsetHLInfoResponse>>(response.Content);
+                        return accountReportrunset;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to validate " + message + "Response: " + response.Content);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception while validating execution id " + message, ex);
+                }
+                return accountReportrunset;
+            }
+            return accountReportrunset;
         }
     }
 }

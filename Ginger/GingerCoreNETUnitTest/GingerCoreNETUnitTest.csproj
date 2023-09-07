@@ -114,6 +114,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Ginger.ExecuterService.Contracts">
+      <HintPath>..\GingerCoreNET\DLLS\Ginger.ExecuterService.Contracts.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="TestResources\Solutions\BasicSimple\DataSources\GingerDataSource.mdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

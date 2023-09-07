@@ -16,9 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using AccountReport.Contracts;
 using AccountReport.Contracts.Helpers;
+using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
@@ -35,6 +38,9 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using NJsonSchema.Infrastructure;
+using NUglify.Helpers;
+using OfficeOpenXml.Drawing.Slicer.Style;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -444,7 +450,11 @@ namespace Ginger.Run
             try
             {
                 mRunSetConfig.IsRunning = true;
-
+                //This function is for Rerun Configuration only for the Dynamic Json
+                if (WorkSpace.Instance.RunningInExecutionMode && RunSetConfig.ReRunConfigurations != null && RunSetConfig.ReRunConfigurations.Active)
+                {
+                    CheckforReRunConfig();
+                }
                 //reset run       
                 if (doContinueRun == false)
                 {
@@ -468,7 +478,10 @@ namespace Ginger.Run
                     RunSetConfig.LastRunsetLoggerFolder = "-1";   // !!!!!!!!!!!!!!!!!!
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     mStopwatch.Reset();
-                    ResetRunnersExecutionDetails();
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.ReferenceExecutionID != null)
+                    {
+                        ResetRunnersExecutionDetails();
+                    }                   
                 }
                 else
                 {
@@ -641,12 +654,55 @@ namespace Ginger.Run
                     await Runners[0].Executor.ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
                 }
             }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, "Exception occured when trying to Run runset ", ex);
+            }
             finally
             {
                 mRunSetConfig.IsRunning = false;
+            
             }
         }
 
+        private void CheckforReRunConfig()
+        {
+            if (mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes && !string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl))
+            {
+                AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+                if (RunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.RunSet)
+                {
+                    List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataToCentralDB((Guid)RunSetConfig.ReRunConfigurations.ReferenceExecutionID);
+                    if (accountReportRunset != null)
+                    {
+                        if (accountReportRunset.Any(x => x.Status.Equals(eRunStatus.Passed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
+                        {
+                            Reporter.ToLog(eLogLevel.INFO, string.Format("Their is no runset to re run because it's alreday passed in reference execution id: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                            return;
+                        }
+                    }
+                }
+                else if (RunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.BusinessFlow)
+                {
+                    if (RunSetConfig.ReRunConfigurations.ReferenceExecutionID != null)
+                    {
+                        List<AccountReportBusinessFlow> accountReportBusinessFlows = accountReportApiHandler.GetBusinessflowExecutionDataToCentralDB((Guid)RunSetConfig.ReRunConfigurations.ReferenceExecutionID);
+                        if (accountReportBusinessFlows != null)
+                        {
+                            if (accountReportBusinessFlows.Any(x => x.RunStatus.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
+                            {
+                                WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList = accountReportBusinessFlows.Where(x => x.RunStatus.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)).Select(x => x.InstanceGUID).ToList();
+                                if (!WorkSpace.Instance.RunsetExecutor.RunSetConfig.FailedBFGuidList.Any())
+                                {
+                                    Reporter.ToLog(eLogLevel.WARN, string.Format("Their is no flow to re run because all flows are already paased in reference execution id: {0}", RunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         private void FinishPublishResultsToAlmTask()
         {
             if (ALMResultsPublishTaskPool != null && ALMResultsPublishTaskPool.Count > 0)
