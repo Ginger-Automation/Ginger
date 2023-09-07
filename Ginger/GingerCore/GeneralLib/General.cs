@@ -1319,7 +1319,6 @@ namespace GingerCore
             return false;
 
         }
-
     }
 }
 
