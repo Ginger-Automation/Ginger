@@ -12,11 +12,11 @@
         Title="ActDiameterEditPage">
     <Grid x:Name="xPageGrid" Background="{StaticResource $BackgroundColor_LightGray}" Grid.IsSharedSizeScope="True">
         <StackPanel>
-            <Button x:Name="xViewRawRequestBtn" HorizontalAlignment="Right" Margin="0,10,0,10" Content="View Raw Request Preview" Style="{StaticResource $RoundTextButtonStyle_Generic}" Click="xViewRawRequestBtn_Click"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="220" SharedSizeGroup="LabelColumn"/>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="InputColumn"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition/>
@@ -26,16 +26,17 @@
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
+                <Button x:Name="xViewRawRequestBtn" HorizontalAlignment="Right" Margin="0,10,0,10" Content="View Raw Request Preview" Style="{StaticResource $RoundTextButtonStyle_Generic}" Click="xViewRawRequestBtn_Click" Grid.Column="2"/>
                 <Label Content="Message Type:" Style="{StaticResource $InputLabelStyle_NoFill}" Grid.Column="0" Grid.Row="0" Height="30"/>
-                <UserControlsLib:UCComboBox x:Name="xMessageTypeComboBox" Width="200" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"/>
+                <UserControlsLib:UCComboBox x:Name="xMessageTypeComboBox" Width="250" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"/>
                 <Label Content="Command Code:" Style="{StaticResource $InputLabelStyle_NoFill}" Margin="0,10,0,0" Grid.Column="0" Grid.Row="1"/>
-                <Actions:UCValueExpression x:Name="xCommandCodeTextBox" Width="100" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"/>
+                <Actions:UCValueExpression x:Name="xCommandCodeTextBox" Width="250" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left"/>
                 <Label Content="Application ID:" Style="{StaticResource $InputLabelStyle_NoFill}" Margin="0,10,0,0" Grid.Column="0" Grid.Row="2"/>
-                <Actions:UCValueExpression x:Name="xApplicationIdTextBox" Width="100" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left"/>
+                <Actions:UCValueExpression x:Name="xApplicationIdTextBox" Width="250" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left"/>
                 <Label Content="Hop-by-Hop Identifier:" Style="{StaticResource $InputLabelStyle_NoFill}" Margin="0,10,0,0" Grid.Column="0" Grid.Row="3"/>
-                <Actions:UCValueExpression x:Name="xHopByHopIdTextBox" Width="100" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left"/>
+                <Actions:UCValueExpression x:Name="xHopByHopIdTextBox" Width="250" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left"/>
                 <Label Content="End-to-End Identifier:" Style="{StaticResource $InputLabelStyle_NoFill}"  Margin="0,10,0,0" Grid.Column="0" Grid.Row="4"/>
-                <Actions:UCValueExpression x:Name="xEndToEndIdTextBox" Width="100" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left"/>
+                <Actions:UCValueExpression x:Name="xEndToEndIdTextBox" Width="250" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left"/>
             </Grid>
             <Expander x:Name="xMessageFlagsExpander" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" Grid.Row="5" Grid.ColumnSpan="2">
                 <Expander.Header>
@@ -55,7 +56,6 @@
                         <CheckBox x:Name="xIsRequestCheckBox" Content="Request" Style="{StaticResource $CeckBoxStyle}" HorizontalAlignment="Left"/>
                         <CheckBox x:Name="xProxiableCheckBox" Content="Proxiable" Style="{StaticResource $CeckBoxStyle}" Grid.Column="1" HorizontalAlignment="Left"/>
                         <CheckBox x:Name="xErrorCheckBox" Content="Error" Style="{StaticResource $CeckBoxStyle}" Grid.Column="2" HorizontalAlignment="Left"/>
-                        <CheckBox x:Name="xRetransmitMessageCheckBox" Content="Potentially retransmitted message" Style="{StaticResource $CeckBoxStyle}" Grid.Column="3" HorizontalAlignment="Left"/>
                     </Grid>
                 </Expander.Content>
             </Expander>

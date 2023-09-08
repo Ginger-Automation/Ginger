@@ -37,6 +37,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace GingerCore.Drivers.WebServicesDriverLib
@@ -205,14 +206,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             {
                 CreateSTA(ShowDriverWindow);
             }
-
-            if (UseTcp)
-            {
-                if (!InitializeTCPClient())
-                {
-                    return;
-                }
-            }
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
@@ -378,8 +371,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 //Post Execution Copy execution result fields from actWebAPI to ActWebAPIModel (act)
                 CopyExecutionAttributes(act, actWebAPI);
 
-
-
             }
             else if (act is ActScreenShot)
             {
@@ -389,7 +380,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 if (IsRunning())
                 {
                     mActDiameter = act as ActDiameter;
-                    HandleDiameterRequest(mActDiameter);
+                    _ = HandleDiameterRequest(mActDiameter);
                 }
             }
             else
@@ -398,25 +389,49 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
 
         }
-
-        private void HandleDiameterRequest(ActDiameter mActDiameter)
+        /// <summary>
+        /// Handles the constructing, sending and receiving of the Diameter message & response
+        /// </summary>
+        /// <param name="act"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="Exception"></exception>
+        private async Task HandleDiameterRequest(ActDiameter act)
         {
-            DiameterUtils diameterUtils = new DiameterUtils(new DiameterMessage());
-            if (mActDiameter != null)
+            if (act == null)
             {
-                try
-                {
-                    if (diameterUtils.ConstructDiameterRequest(mActDiameter, ref mTcpClient))
-                    {
-
-                    }
-                }
-                catch (Exception e)
-                {
-
-                }
-                int commandCode = int.Parse(mActDiameter.GetInputParamCalculatedValue(nameof(ActDiameter.CommandCode)));
+                Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while processing the Diameter Action");
+                throw new ArgumentNullException(nameof(act), $"An unexpected error occurred while processing the Diameter Action");
             }
+
+
+            if (mTcpClient == null)
+            {
+                bool tcpInitialized = InitializeTCPClient();
+                if (!tcpInitialized)
+                {
+                    HandleTCPInitializationError(act);
+                    throw new Exception("TCP client initialization failed");
+                }
+
+                Reporter.ToLog(eLogLevel.DEBUG, $"TCP client Initialization ended successfully");
+
+                DiameterUtils diameterUtils = new DiameterUtils(new DiameterMessage());
+                if (diameterUtils.ConstructDiameterRequest(act))
+                {
+                    DiameterMessage response = await diameterUtils.SendMessageAsync(act, mTcpClient);
+                }
+                else
+                {
+                    act.Error = $"Error occurred in constructing the Diameter message";
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the Diameter message");
+                }
+            }
+        }
+        private void HandleTCPInitializationError(ActDiameter act)
+        {
+            Reporter.ToLog(eLogLevel.ERROR, $"TCP client initialization failed - see log for more information");
+            act.Error = $"TCP client initialization failed";
         }
         private string ReplacePlaceHolderParameneterWithActual(string ValueBeforeReplacing, ObservableList<EnhancedActInputValue> APIModelDynamicParamsValue)
         {
@@ -809,24 +824,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         public override bool IsRunning()
         {
-            if (UseTcp)
-            {
-                if (mTcpClient != null)
-                {
-                    if (mTcpClient.Connected)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return InitializeTCPClient() ? true : false;
-                }
-            }
             if (mIsDriverWindowLaunched)
             {
                 if (mDriverWindow != null)
@@ -859,26 +856,45 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
         private bool InitializeTCPClient()
         {
-            bool isInitializeSuccess = true;
-            if (String.IsNullOrEmpty(TcpHostname) || String.IsNullOrEmpty(TcpPort))
+            if (!IsTCPConnectionDetailsValid())
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Tcp configuration error - Tcp hostname or port cannot be empty while driver is configured to use Tcp");
-                isInitializeSuccess = false;
+                return false;
             }
-            else
+
+            try
             {
-                try
+                mTcpClient = new TcpClient(TcpHostname, Convert.ToInt32(TcpPort));
+                if (mTcpClient == null || !mTcpClient.Connected)
                 {
-                    mTcpClient = new TcpClient(TcpHostname, Convert.ToInt32(TcpPort));
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to establish the connection to {TcpHostname}:{TcpPort}");
+                    return false;
                 }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error when try to start Web Services Driver - " + ex.Message);
-                    ErrorMessageFromDriver = "Failed to connect the TCP client, please check configurations";
-                    isInitializeSuccess = false;
-                }
+
+                Reporter.ToLog(eLogLevel.DEBUG, $"Connection established to {TcpHostname}:{TcpPort}");
+                return true;
             }
-            return isInitializeSuccess;
+            catch (FormatException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Invalid TCP port format - {ex.Message}");
+                ErrorMessageFromDriver = "Invalid TCP port format, please check configurations";
+            }
+            catch (SocketException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error when trying to connect to the TCP client - {ex.Message}");
+                ErrorMessageFromDriver = "Failed to connect the TCP client, please check configurations";
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error when trying to start Web Services Driver - {ex.Message}");
+                ErrorMessageFromDriver = "An unexpected error occurred, please check configurations";
+            }
+            return false;
+        }
+
+        private bool IsTCPConnectionDetailsValid()
+        {
+            return !string.IsNullOrEmpty(TcpHostname) && !string.IsNullOrEmpty(TcpPort);
         }
     }
 }

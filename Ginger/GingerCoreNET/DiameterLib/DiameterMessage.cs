@@ -81,33 +81,63 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
         }
 
-        private bool mIsRequest;
-        public bool IsRequest
+        private bool mIsRequestBitSet;
+        public bool IsRequestBitSet
         {
             get
             {
-                return mIsRequest;
+                return mIsRequestBitSet;
             }
             set
             {
-                if (mIsRequest != value)
+                if (mIsRequestBitSet != value)
                 {
-                    mIsRequest = value;
+                    mIsRequestBitSet = value;
                 }
             }
         }
-        private bool mIsProxiable;
-        public bool IsProxiable
+        private bool mIsProxiableBitSet;
+        public bool IsProxiableBitSet
         {
             get
             {
-                return mIsProxiable;
+                return mIsProxiableBitSet;
             }
             set
             {
-                if (mIsProxiable != value)
+                if (mIsProxiableBitSet != value)
                 {
-                    mIsProxiable = value;
+                    mIsProxiableBitSet = value;
+                }
+            }
+        }
+        private bool mIsErrorBitSet;
+        public bool IsErrorBitSet
+        {
+            get
+            {
+                return mIsErrorBitSet;
+            }
+            set
+            {
+                if (mIsErrorBitSet != value)
+                {
+                    mIsErrorBitSet = value;
+                }
+            }
+        }
+        private bool mIsRetransmittedBitSet;
+        public bool IsRetransmittedBitSet
+        {
+            get
+            {
+                return mIsRetransmittedBitSet;
+            }
+            set
+            {
+                if (mIsRetransmittedBitSet != value)
+                {
+                    mIsRetransmittedBitSet = value;
                 }
             }
         }
@@ -126,10 +156,6 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                     mAvpList = value;
                 }
             }
-        }
-        public DiameterMessage()
-        {
-
         }
     }
 }

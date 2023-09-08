@@ -156,7 +156,5 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 }
             }
         }
-
-        public DiameterAVP() { }
     }
 }

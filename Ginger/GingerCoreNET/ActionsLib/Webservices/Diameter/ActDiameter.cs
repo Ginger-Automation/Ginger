@@ -111,63 +111,63 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
             }
         }
 
-        public bool SetProxiableBit
+        public bool IsProxiableBitSet
         {
             get
             {
                 bool value;
-                bool.TryParse(GetOrCreateInputParam(nameof(SetProxiableBit), false.ToString()).Value, out value);
+                bool.TryParse(GetOrCreateInputParam(nameof(IsProxiableBitSet), false.ToString()).Value, out value);
                 return value;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(SetProxiableBit), value.ToString());
-                OnPropertyChanged(nameof(SetProxiableBit));
+                AddOrUpdateInputParamValue(nameof(IsProxiableBitSet), value.ToString());
+                OnPropertyChanged(nameof(IsProxiableBitSet));
             }
         }
 
-        public bool SetRequestBit
+        public bool IsRequestBitSet
         {
             get
             {
                 bool value;
-                bool.TryParse(GetOrCreateInputParam(nameof(SetRequestBit), false.ToString()).Value, out value);
+                bool.TryParse(GetOrCreateInputParam(nameof(IsRequestBitSet), false.ToString()).Value, out value);
                 return value;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(SetRequestBit), value.ToString());
-                OnPropertyChanged(nameof(SetRequestBit));
+                AddOrUpdateInputParamValue(nameof(IsRequestBitSet), value.ToString());
+                OnPropertyChanged(nameof(IsRequestBitSet));
             }
         }
-        public bool SetErrorBit
+        public bool IsErrorBitSet
         {
             get
             {
                 bool value;
-                bool.TryParse(GetOrCreateInputParam(nameof(SetErrorBit), false.ToString()).Value, out value);
+                bool.TryParse(GetOrCreateInputParam(nameof(IsErrorBitSet), false.ToString()).Value, out value);
                 return value;
             }
             set
             {
-                AddOrUpdateInputParamValue(nameof(SetErrorBit), value.ToString());
-                OnPropertyChanged(nameof(SetErrorBit));
+                AddOrUpdateInputParamValue(nameof(IsErrorBitSet), value.ToString());
+                OnPropertyChanged(nameof(IsErrorBitSet));
             }
         }
-        public bool SetRetransmitBit
-        {
-            get
-            {
-                bool value;
-                bool.TryParse(GetOrCreateInputParam(nameof(SetRetransmitBit), false.ToString()).Value, out value);
-                return value;
-            }
-            set
-            {
-                AddOrUpdateInputParamValue(nameof(SetRetransmitBit), value.ToString());
-                OnPropertyChanged(nameof(SetRetransmitBit));
-            }
-        }
+        //public bool SetRetransmitBit
+        //{
+        //    get
+        //    {
+        //        bool value;
+        //        bool.TryParse(GetOrCreateInputParam(nameof(SetRetransmitBit), false.ToString()).Value, out value);
+        //        return value;
+        //    }
+        //    set
+        //    {
+        //        AddOrUpdateInputParamValue(nameof(SetRetransmitBit), value.ToString());
+        //        OnPropertyChanged(nameof(SetRetransmitBit));
+        //    }
+        //}
         private ObservableList<DiameterAVP> mRequestAvpList = new ObservableList<DiameterAVP>();
         [IsSerializedForLocalRepository]
         public ObservableList<DiameterAVP> RequestAvpList

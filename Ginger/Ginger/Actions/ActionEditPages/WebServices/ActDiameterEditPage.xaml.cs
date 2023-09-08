@@ -40,10 +40,9 @@ namespace Ginger.Actions.WebServices
             xHopByHopIdTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActDiameter.HopByHopIdentifier)));
             xEndToEndIdTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActDiameter.EndToEndIdentifier)));
 
-            BindingHandler.ObjFieldBinding(xIsRequestCheckBox, CheckBox.IsCheckedProperty, mAct, nameof(ActDiameter.SetRequestBit));
-            BindingHandler.ObjFieldBinding(xProxiableCheckBox, CheckBox.IsCheckedProperty, mAct, nameof(ActDiameter.SetProxiableBit));
-            BindingHandler.ObjFieldBinding(xErrorCheckBox, CheckBox.IsCheckedProperty, mAct, nameof(ActDiameter.SetErrorBit));
-            BindingHandler.ObjFieldBinding(xRetransmitMessageCheckBox, CheckBox.IsCheckedProperty, mAct, nameof(ActDiameter.SetRetransmitBit));
+            BindingHandler.ObjFieldBinding(xIsRequestCheckBox, CheckBox.IsCheckedProperty, mAct, nameof(ActDiameter.IsRequestBitSet));
+            BindingHandler.ObjFieldBinding(xProxiableCheckBox, CheckBox.IsCheckedProperty, mAct, nameof(ActDiameter.IsProxiableBitSet));
+            BindingHandler.ObjFieldBinding(xErrorCheckBox, CheckBox.IsCheckedProperty, mAct, nameof(ActDiameter.IsErrorBitSet));
         }
 
         private void SetRequestAvpsGrid()
@@ -111,25 +110,26 @@ namespace Ginger.Actions.WebServices
             mAct.RequestAvpList.Add(new DiameterAVP());
         }
 
-        // TODO: display the raw request(diameter)
         private void xViewRawRequestBtn_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            //string requestContent = DiameterUtils.GetRawRequestContentPreview(mAct);
-            //if (requestContent != string.Empty)
-            //{
-            //    string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(requestContent);
-            //    if (System.IO.File.Exists(tempFilePath))
-            //    {
-            //        DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
-            //        docPage.Width = 800;
-            //        docPage.Height = 800;
-            //        docPage.ShowAsWindow("Raw Request Preview");
-            //        System.IO.File.Delete(tempFilePath);
-            //        return;
-            //    }
-            //}
+            if (mAct != null)
+            {
+                string requestContent = DiameterUtils.GetRawRequestContentPreview(mAct);
+                if (requestContent != string.Empty)
+                {
+                    string tempFilePath = GingerCoreNET.GeneralLib.General.CreateTempTextFile(requestContent);
+                    if (System.IO.File.Exists(tempFilePath))
+                    {
+                        DocumentEditorPage docPage = new DocumentEditorPage(tempFilePath, enableEdit: false, UCTextEditorTitle: string.Empty);
+                        docPage.Width = 800;
+                        docPage.Height = 800;
+                        docPage.ShowAsWindow("Raw Request Preview");
+                        System.IO.File.Delete(tempFilePath);
+                        return;
+                    }
+                }
+            }
             Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Failed to load raw request preview, see log for details.");
-
         }
 
         private void xMessageTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -149,14 +149,14 @@ namespace Ginger.Actions.WebServices
             {
                 mAct.CommandCode = 257;
                 mAct.ApplicationId = 0;
-                mAct.SetRequestBit = true;
+                mAct.IsRequestBitSet = true;
                 mAct.RequestAvpList = LoadAvpForMessage(messageType);
             }
             else if (messageType == DiameterEnums.eDiameterMessageType.CreditControlRequest)
             {
                 mAct.CommandCode = 272;
                 mAct.ApplicationId = 4;
-                mAct.SetRequestBit = true;
+                mAct.IsRequestBitSet = true;
             }
 
             UpdateRequestAvpsGridDataSource();
