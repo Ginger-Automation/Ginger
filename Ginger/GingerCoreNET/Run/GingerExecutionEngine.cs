@@ -46,9 +46,11 @@ using GingerCore.Variables;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -438,14 +440,15 @@ namespace Ginger.Run
             return result;
         }
 
-
+        
 
 
         public void RunRunner(bool doContinueRun = false)
         {
-            bool runnerExecutionSkipped = false;
+            bool runnerExecutionSkipped = false;         
             try
             {
+                               
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.FirstOrDefault(x => x.Active) == null)
                 {
                     runnerExecutionSkipped = true;
@@ -500,10 +503,12 @@ namespace Ginger.Run
                 {
                     mRunSource = eRunSource.Runner;
                 }
-
-                int? flowControlIndx = null;
+                int? flowControlIndx = null;          
                 for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx))
                 {
+
+                    //need to add code here to check previous Execution Deatils and ReRunFailed check 
+
                     BusinessFlow executedBusFlow = (BusinessFlow)BusinessFlows[bfIndx];
                     ExecutionLogBusinessFlowsCounter = bfIndx;
                     //stop if needed before executing next BF
@@ -513,7 +518,7 @@ namespace Ginger.Run
                     }
 
                     //validate BF run
-                    if (!executedBusFlow.Active)
+                    if (!executedBusFlow.Active)// || (activeBusinessFlows.Count > 0 && !activeBusinessFlows.Any(x=>x.Guid == executedBusFlow.Guid)))
                     {
                         //set BF status as skipped                     
                         SetBusinessFlowActivitiesAndActionsSkipStatus(executedBusFlow);
@@ -628,6 +633,7 @@ namespace Ginger.Run
             }
         }
 
+
         private void StartPublishResultsToAlmTask(BusinessFlow executedBusFlow)
         {
             if (PublishToALMConfig != null)
@@ -635,34 +641,38 @@ namespace Ginger.Run
                 Task ExportResultTask = Task.Run(() =>
                 {
                     var runsetAction = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(f => f is RunSetActionPublishToQC && f.RunAt.Equals(RunSetActionBase.eRunAt.DuringExecution) && f.Active);
-                    var prevStatus = runsetAction.Status;                    
-                    bool isSuccess = false;
-                    runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Running;
-                    ObservableList<BusinessFlow> bfs = new(){executedBusFlow};
-                    string result = "";
-                    try
+
+                    if (runsetAction != null)
                     {
-                        isSuccess = TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
-                        if(!isSuccess)
+                        var prevStatus = runsetAction.Status;
+                        bool isSuccess = false;
+                        runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Running;
+                        ObservableList<BusinessFlow> bfs = new() { executedBusFlow };
+                        string result = "";
+                        try
                         {
-                            runsetAction.Errors += result + Environment.NewLine;
+                            isSuccess = TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
+                            if (!isSuccess)
+                            {
+                                runsetAction.Errors += result + Environment.NewLine;
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        runsetAction.Errors += ex.Message + Environment.NewLine;
-                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to publish execution result to ALM for {executedBusFlow.Name}", ex);
-                    }
-                    finally
-                    {
-                        if (!isSuccess)
+                        catch (Exception ex)
                         {
-                            runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Failed;
+                            runsetAction.Errors += ex.Message + Environment.NewLine;
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to publish execution result to ALM for {executedBusFlow.Name}", ex);
                         }
-                        else
+                        finally
                         {
-                            runsetAction.Status = prevStatus;
-                        }
+                            if (!isSuccess)
+                            {
+                                runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Failed;
+                            }
+                            else
+                            {
+                                runsetAction.Status = prevStatus;
+                            }
+                        } 
                     }
                 });
 
@@ -764,8 +774,6 @@ namespace Ginger.Run
                                     virtualagent.DriverType = agent.DriverType;
                                     applicationAgent.Agent = virtualagent;
                                     virtualagent.DriverConfiguration = agent.DriverConfiguration;
-
-
                                 }
                             }
 
@@ -4360,12 +4368,21 @@ namespace Ginger.Run
                 }
 
                 BF.RunStatus = newStatus;
+                CalculateBusinessFlowActivyGroupStaus(BF);
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Calculating Business flow final execution status", ex);
             }
 
+        }
+
+        public void CalculateBusinessFlowActivyGroupStaus(BusinessFlow BF)
+        {
+            foreach (ActivitiesGroup currentActivityGroup in BF.ActivitiesGroups)
+            {
+                CalculateActivitiesGroupFinalStatus(currentActivityGroup, BF);
+            }
         }
 
         public void CalculateActivitiesGroupFinalStatus(ActivitiesGroup AG, BusinessFlow BF)
@@ -4545,6 +4562,8 @@ namespace Ginger.Run
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 SetBusinessFlowActivitiesAndActionsSkipStatus(bf);
+                CalculateBusinessFlowActivyGroupStaus(bf);
+                StartPublishResultsToAlmTask(CurrentBusinessFlow);
             }
         }
 
@@ -4565,6 +4584,12 @@ namespace Ginger.Run
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 SetNextActivitiesBlockedStatus();
+                CalculateBusinessFlowActivyGroupStaus(bf);
+                //TODO: Move All code Block inside the if Loop 
+                if (bf.Active)
+                {
+                    StartPublishResultsToAlmTask(CurrentBusinessFlow);
+                }
             }
         }
 
