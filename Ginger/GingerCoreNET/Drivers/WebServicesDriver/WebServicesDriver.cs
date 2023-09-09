@@ -411,7 +411,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 if (!tcpInitialized)
                 {
                     HandleTCPInitializationError(act);
-                    throw new Exception("TCP client initialization failed");
+                    return;
                 }
 
                 Reporter.ToLog(eLogLevel.DEBUG, $"TCP client Initialization ended successfully");

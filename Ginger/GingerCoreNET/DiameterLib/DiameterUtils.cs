@@ -8,15 +8,12 @@ using System.Linq;
 using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
 using System.Text;
 using GingerCoreNET.GeneralLib;
-using Microsoft.Azure.Cosmos.Core.Collections;
 using System.Net.Sockets;
 using System.Net;
-using System.Reflection.Emit;
-using System.Threading;
 using System.Xml;
 using System.Threading.Tasks;
 using System.Collections;
-using Org.BouncyCastle.Utilities;
+using System.Reflection.Emit;
 
 namespace Amdocs.Ginger.CoreNET.DiameterLib
 {
@@ -140,7 +137,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 //Create Request content
                 if (diameterUtils.ConstructDiameterRequest(act))
                 {
-                    string requestMessage = CreateMessageRawResponse(act, diameterUtils.Message);
+                    string requestMessage = CreateMessageRawRequest(act, diameterUtils.Message);
                     return requestMessage;
                 }
                 else
@@ -155,7 +152,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
         }
 
-        private static string CreateMessageRawResponse(ActDiameter act, DiameterMessage message)
+        private static string CreateMessageRawRequest(ActDiameter act, DiameterMessage message)
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("<Diameter Message ::= <" + General.GetEnumValueDescription(typeof(eDiameterMessageType), act.DiameterMessageType)
@@ -171,7 +168,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             {
                 if (avp.IsGrouped)
                 {
-
+                    // TODO: DIAMETER add nested avps to the message request
                 }
                 else
                 {
@@ -223,18 +220,18 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to construct the diameter message\nerror message: '{0}'", ex.Message));
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the diameter message\nerror message: '{ex.Message}'");
                 return false;
             }
         }
         private void HandleSetMessagePropertyError(ActDiameter act, string property)
         {
-            Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to construct the diameter message on property '{0}'", property));
+            Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the diameter message on property '{property}'");
             act.Error = $"An error occurred while constructing the diameter message for the {property} property.";
         }
         private void HandleSetMessageAvpsError(ActDiameter act)
         {
-            Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to construct the diameter message on AVPs"));
+            Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the diameter message on AVPs");
             act.Error = $"An error occurred while adding AVPs to the diameter message.";
         }
         private bool SetMessageProperty(ActDiameter act, string property)
@@ -345,7 +342,8 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 byte[] messageBytesToSend = ConvertMessageToBytes();
                 if (messageBytesToSend == null)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert message: {act.DiameterMessageType} in {act.ToString()} to bytes");
+                    act.Error = $"Encountered an issue while attempting to process the message";
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert message: {act.DiameterMessageType} in {act} to bytes");
                     return null;
                 }
 
@@ -416,51 +414,62 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             try
             {
                 const int messageLengthOffset = 1;
+                const int commandCodeOffset = 5;
                 const int applicationIdOffset = 8;
                 const int hopByHopIdentifierOffset = 12;
                 const int endToEndIdentifierOffset = 16;
 
-                using (MemoryStream stream = new MemoryStream())
+                using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    byte protocolVersion = (byte)Message.ProtocolVersion;
-                    //Write protocol version
-                    stream.WriteByte(protocolVersion);
-
-                    //Reserve space for message length
-                    stream.Write(BitConverter.GetBytes(0), 1, 3);
-
-                    //Write command flags
-                    byte commandFlags = GetCommandFlags(Message);
-                    stream.WriteByte(commandFlags);
-
-                    // Write command code
-                    stream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(Message.CommandCode)), 1, 3);
-
-                    // application Id, hop-by-hop and end-to-end identifiers
-                    WriteInt32ToStream(stream, IPAddress.HostToNetworkOrder(Message.ApplicationId), applicationIdOffset);
-                    WriteInt32ToStream(stream, IPAddress.HostToNetworkOrder(Message.HopByHopIdentifier), hopByHopIdentifierOffset);
-                    WriteInt32ToStream(stream, IPAddress.HostToNetworkOrder(Message.EndToEndIdentifier), endToEndIdentifierOffset);
-
-                    foreach (DiameterAVP avp in Message.AvpList)
+                    if (!ConvertProtocolVersionToByte(memoryStream))
                     {
-                        byte[] avpAsBytes = ConvertAvpToBytes(avp);
-                        if (avpAsBytes != null)
-                        {
-                            stream.Write(avpAsBytes, 0, avpAsBytes.Length);
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Converted AVP {avp.Name} to bytes successfully");
-                        }
-                        else
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert AVP {avp.Name} to bytes");
-                            return null;
-                        }
+                        return null;
                     }
 
-                    int messageLength = (int)stream.Length;
-                    stream.Seek(messageLengthOffset, SeekOrigin.Begin);
-                    stream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(messageLength)), 1, 3);
+                    //Reserve space for message length
+                    if (!ConvertMessageLengthToBytes(memoryStream, isReserve: true, messageLengthOffset))
+                    {
+                        return null;
+                    }
 
-                    return stream.ToArray();
+                    if (!ConvertMessageCommandFlagsToByte(memoryStream))
+                    {
+                        return null;
+                    }
+
+                    if (!ConvertMessageCommandCodeToBytes(memoryStream, commandCodeOffset))
+                    {
+                        return null;
+                    }
+
+                    // application Id, hop-by-hop and end-to-end identifiers
+                    if (!ConvertMessageApplicationIdToBytes(memoryStream, applicationIdOffset))
+                    {
+                        return null;
+                    }
+                    if (!ConvertMessageHopByHopToBytes(memoryStream, hopByHopIdentifierOffset))
+                    {
+                        return null;
+                    }
+                    if (!ConvertMessageEndToEndToBytes(memoryStream, endToEndIdentifierOffset))
+                    {
+                        return null;
+                    }
+
+                    if (!ConvertMessageAvpListToBytes(memoryStream))
+                    {
+                        return null;
+                    }
+
+                    SetMessageLength((int)memoryStream.Length);
+
+                    // Write message length into memory stream with its actual value
+                    if (!ConvertMessageLengthToBytes(memoryStream, isReserve: false, messageLengthOffset))
+                    {
+                        return null;
+                    }
+
+                    return memoryStream.ToArray();
                 }
             }
             catch (Exception ex)
@@ -470,6 +479,129 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
         }
 
+        private bool ConvertMessageAvpListToBytes(MemoryStream memoryStream)
+        {
+            try
+            {
+                foreach (DiameterAVP avp in Message.AvpList)
+                {
+                    byte[] avpAsBytes = ConvertAvpToBytes(avp);
+                    if (avpAsBytes != null)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Converted AVP {avp.Name} to bytes successfully");
+                        WriteBytesToStream(memoryStream, avpAsBytes, (int)memoryStream.Position);
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert AVP {avp.Name} to bytes");
+                        return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert AVPs to bytes {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
+
+        private bool ConvertMessageEndToEndToBytes(MemoryStream memoryStream, int endToEndIdentifierOffset)
+        {
+            try
+            {
+                WriteInt32ToStream(memoryStream, IPAddress.HostToNetworkOrder(Message.EndToEndIdentifier), endToEndIdentifierOffset);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert end-to-end identifier: {Message.EndToEndIdentifier} to bytes {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
+
+        private bool ConvertMessageHopByHopToBytes(MemoryStream memoryStream, int hopByHopOffset)
+        {
+            try
+            {
+                WriteInt32ToStream(memoryStream, IPAddress.HostToNetworkOrder(Message.HopByHopIdentifier), hopByHopOffset);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert hop-by-hop identifier: {Message.HopByHopIdentifier} to bytes {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
+
+        private bool ConvertMessageApplicationIdToBytes(MemoryStream memoryStream, int applicationIdOffset)
+        {
+            try
+            {
+                WriteInt32ToStream(memoryStream, IPAddress.HostToNetworkOrder(Message.ApplicationId), applicationIdOffset);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert application id: {Message.ApplicationId} to bytes {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
+
+        private bool ConvertMessageCommandCodeToBytes(MemoryStream memoryStream, int commandCodeOffset)
+        {
+            try
+            {
+                WriteThreeBytesToStream(memoryStream, Message.CommandCode, commandCodeOffset);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert message command code {Message.CommandCode} to bytes. Error: {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
+
+        private bool ConvertMessageCommandFlagsToByte(MemoryStream memoryStream)
+        {
+            try
+            {
+                //Write command flags
+                byte commandFlags = GetCommandFlags(Message);
+                memoryStream.WriteByte(commandFlags);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert message command flags to byte {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
+        private void SetMessageLength(int messageLength)
+        {
+            Message.MessageLength = messageLength;
+        }
+        private bool ConvertMessageLengthToBytes(MemoryStream memoryStream, bool isReserve, int messageLengthOffset)
+        {
+            try
+            {
+                if (isReserve)
+                {
+                    //Reserve space for message length
+                    WriteThreeBytesToStream(memoryStream, value: 0, messageLengthOffset);
+                }
+                else
+                {
+                    WriteThreeBytesToStream(memoryStream, value: Message.MessageLength, messageLengthOffset);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, isReserve ? $"Failed to reserve space for message length {ex.Message}\n{ex.StackTrace}" : $"Failed to convert message length {Message.MessageLength} into bytes {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
         private byte GetCommandFlags(DiameterMessage message)
         {
             byte commandFlags = 0;
@@ -490,9 +622,50 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
         private void WriteInt32ToStream(MemoryStream stream, int value, int offset)
         {
-            byte[] bytes = BitConverter.GetBytes(value);
-            stream.Seek(offset, SeekOrigin.Begin);
-            stream.Write(bytes, 0, bytes.Length);
+            try
+            {
+                byte[] bytes = BitConverter.GetBytes(value);
+                WriteBytesToStream(stream, data: bytes, seekPosition: offset);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to write 4 bytes with value: {value} to memory stream. Error: {ex.Message}\n{ex.StackTrace}");
+                throw ex;
+            }
+        }
+
+        private void WriteThreeBytesToStream(MemoryStream stream, int value, int offset)
+        {
+            try
+            {
+                byte[] bytes = BitConverter.GetBytes(value);
+                WriteBytesToStream(stream, data: bytes, seekPosition: offset, offsetInData: 1, byteCount: 3);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to write 4 bytes with value: {value} to memory stream. Error: {ex.Message}\n{ex.StackTrace}");
+                throw ex;
+            }
+        }
+
+        private void WriteBytesToStream(MemoryStream stream, byte[] data, int seekPosition, int offsetInData = 0, int byteCount = 0)
+        {
+            try
+            {
+                stream.Seek(seekPosition, SeekOrigin.Begin);
+
+                if (byteCount == 0)
+                {
+                    byteCount = data.Length;
+                }
+
+                stream.Write(data, offsetInData, byteCount);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to write bytes to memory stream. Error: {ex.Message}\n{ex.StackTrace}");
+                throw ex;
+            }
         }
 
         private byte[] ConvertAvpToBytes(DiameterAVP avp)
@@ -507,35 +680,47 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
                 using (MemoryStream stream = new MemoryStream())
                 {
-                    // Write Avp Code
-                    WriteInt32ToStream(stream, IPAddress.HostToNetworkOrder(avp.Code), avpCodeOffset);
+                    if (!ConvertAvpCodeToBytes(stream, avp.Code, avpCodeOffset))
+                    {
+                        return null;
+                    }
 
-                    // Write Avp Flags
-                    byte avpFlags = GetAvpFlags(avp);
-                    stream.WriteByte(avpFlags);
+                    if (!ConvertAvpFlagsToByte(stream, avp))
+                    {
+                        return null;
+                    }
 
                     // Reserve space for AVP length
-                    stream.Write(BitConverter.GetBytes(0), 1, 3);
+                    if (!ConvertAvpLengthToBytes(stream, avpLengthOffset, isReserve: true))
+                    {
+                        return null;
+                    }
 
                     if (avp.IsVendorSpecific)
                     {
-                        WriteInt32ToStream(stream, IPAddress.HostToNetworkOrder(avp.VendorId), vendorIdOffset);
+                        if (!ConvertAvpVendorIdToBytes(stream, avp.VendorId, vendorIdOffset))
+                        {
+                            return null;
+                        }
                         avpValueOffset = 12;
                     }
 
-                    // Add Avp Value
+                    // Get avp value as bytes
                     byte[] avpValueAsBytes = GetAvpValueAsBytes(avp.ValueForDriver, avp.DataType, ref padding);
 
-                    // Get the AVP Length, Discard 0th Byte and Always excluding the paddings from length 
-                    avp.Length = (avpValueAsBytes.Length + (int)stream.Length) - padding;
+                    // Set the avp length
+                    SetAvpLength(avp, padding, (int)stream.Length, avpValueAsBytes.Length);
 
                     // Write Avp Length
-                    stream.Seek(avpLengthOffset, SeekOrigin.Begin);
-                    stream.Write(BitConverter.GetBytes(IPAddress.HostToNetworkOrder(avp.Length)), 1, 3);
+                    if (!ConvertAvpLengthToBytes(stream, avpLengthOffset, value: IPAddress.HostToNetworkOrder(avp.Length)))
+                    {
+                        return null;
+                    }
 
-                    // Add Value Bytes
-                    stream.Seek(avpValueOffset, SeekOrigin.Begin);
-                    stream.Write(avpValueAsBytes, 0, avpValueAsBytes.Length);
+                    if (!WriteAvpValueToStream(stream, avpValueAsBytes, avpValueOffset))
+                    {
+                        return null;
+                    }
 
                     return stream.ToArray();
                 }
@@ -547,6 +732,90 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
         }
 
+        private bool WriteAvpValueToStream(MemoryStream stream, byte[] avpValueAsBytes, int avpValueOffset)
+        {
+            try
+            {
+                WriteBytesToStream(stream, avpValueAsBytes, avpValueOffset);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to write avp value bytes to stream {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
+
+        private static void SetAvpLength(DiameterAVP avp, int padding, int streamLength, int avpValueLength)
+        {
+            // Get the AVP Length, Discard 0th Byte and Always excluding the paddings from length 
+            avp.Length = avpValueLength + streamLength - padding;
+        }
+
+        private bool ConvertAvpVendorIdToBytes(MemoryStream stream, int vendorId, int vendorIdOffset)
+        {
+            try
+            {
+                WriteInt32ToStream(stream, IPAddress.HostToNetworkOrder(vendorId), vendorIdOffset);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert Vendor Id: {vendorId} to bytes {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
+
+        private bool ConvertAvpLengthToBytes(MemoryStream memoryStream, int avpLengthOffset, bool isReserve = false, int value = 0)
+        {
+            try
+            {
+                if (isReserve)
+                {
+                    //Reserve space for message length
+                    WriteThreeBytesToStream(memoryStream, value: value, avpLengthOffset);
+                }
+                else
+                {
+                    WriteThreeBytesToStream(memoryStream, value: value, avpLengthOffset);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, isReserve ? $"Failed to reserve space for avp length {ex.Message}\n{ex.StackTrace}" : $"Failed to convert avp length: {value} into bytes {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
+        private bool ConvertAvpFlagsToByte(MemoryStream stream, DiameterAVP avp)
+        {
+            try
+            {
+                // Write Avp Flags
+                byte avpFlags = GetAvpFlags(avp);
+                stream.WriteByte(avpFlags);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert avp flags to bytes {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
+
+        private bool ConvertAvpCodeToBytes(MemoryStream memoryStream, int avpCode, int avpCodeOffset)
+        {
+            try
+            {
+                WriteInt32ToStream(memoryStream, IPAddress.HostToNetworkOrder(avpCode), avpCodeOffset);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert avp code: {avpCode} to bytes {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
+        }
         private byte[] GetAvpValueAsBytes(string valueForDriver, eDiameterAvpDataType dataType, ref int padding)
         {
             try
@@ -661,7 +930,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             try
             {
                 int avpValueAsInt = Convert.ToInt32(avpValue);
-                byte[] enumeratedBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder((int)avpValueAsInt));
+                byte[] enumeratedBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(avpValueAsInt));
 
                 //Calculate Padding
                 padding = CalculatePadding(enumeratedBytes.Length);
@@ -947,14 +1216,21 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             DiameterMessage responseMessage = null;
             try
             {
-                responseMessage = new DiameterMessage();
+                Message = new DiameterMessage();
                 using (MemoryStream stream = new MemoryStream(receivedBytes))
                 using (BinaryReader reader = new BinaryReader(stream))
                 {
-                    //Get the protocol Version
-                    responseMessage.ProtocolVersion = reader.ReadByte();
-                    ValidateProtocolVersion(responseMessage.ProtocolVersion);
+                    if (!ConvertProtocolVersionByteToMessage(reader))
+                    {
+                        act.Error = $"Diameter only supports Protocol Version 1, Protocol Version received from response was {Message.ProtocolVersion}";
+                        return null;
+                    }
 
+                    if (!ConvertMessageLengthBytesToMessage(reader))
+                    {
+                        act.Error = $"Failed to read message length from response: {Message.MessageLength}";
+                        return null;
+                    }
                     // Get message length
                     byte[] messageLengthBytes = reader.ReadBytes(3);
                     responseMessage.MessageLength = ConvertMessageBytesToInt(messageLengthBytes);
@@ -966,6 +1242,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                     // Get Command Code
                     byte[] commandCodeBytes = reader.ReadBytes(3);
                     responseMessage.CommandCode = ConvertMessageBytesToInt(commandCodeBytes);
+
                     // Get Application Id, Hop-By-Hop and End-To-End Identifier
                     responseMessage.ApplicationId = IPAddress.NetworkToHostOrder(reader.ReadInt32());
                     responseMessage.HopByHopIdentifier = IPAddress.NetworkToHostOrder(reader.ReadInt32());
@@ -975,7 +1252,8 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                     int headerLength = 20;
                     if (stream.Length - stream.Position < responseMessage.MessageLength - headerLength)
                     {
-                        throw new Exception("Insufficient data for AVPs");
+                        act.Error = $"Insufficient data to process the response AVPs";
+                        return null;
                     }
                     byte[] avpBytes = reader.ReadBytes(responseMessage.MessageLength - headerLength);
 
@@ -989,12 +1267,52 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             return responseMessage;
         }
 
-        private void ValidateProtocolVersion(int protocolVersion)
+        private bool ConvertMessageLengthBytesToMessage(BinaryReader reader)
         {
-            if (protocolVersion != 1)
+            try
             {
-                throw new Exception($"Diameter protocol only support version 1");
+                int messageLengthBytesToRead = 3;
+                byte[] messageLengthBytes = reader.ReadBytes(messageLengthBytesToRead);
+                Message.MessageLength = ConvertMessageBytesToInt(messageLengthBytes);
+                return true;
             }
+            catch (ObjectDisposedException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Reader has been disposed: {ex.Message}\n{ex.StackTrace}");
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"unexpected error occured: {ex.Message}\n{ex.StackTrace}");
+            }
+            return false;
+        }
+
+        private bool ConvertProtocolVersionByteToMessage(BinaryReader binaryReader)
+        {
+            try
+            {
+                //Get the protocol Version
+                Message.ProtocolVersion = binaryReader.ReadByte();
+                return ValidateProtocolVersion(Message.ProtocolVersion);
+            }
+            catch (EndOfStreamException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Reached end of the stream while trying to read for the protocol version: {ex.Message}\n{ex.StackTrace}");
+            }
+            catch (ObjectDisposedException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Reader has been disposed: {ex.Message}\n{ex.StackTrace}");
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"unexpected error occured: {ex.Message}\n{ex.StackTrace}");
+            }
+            return false;
+        }
+
+        private bool ValidateProtocolVersion(int protocolVersion)
+        {
+            return protocolVersion == 1;
         }
         private void SetResponseCommandFlags(byte commandFlagsByte)
         {
@@ -1018,6 +1336,22 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 Array.Reverse(bytes);
             }
             return bytes[0] + (bytes[1] << 8) + (bytes[2] << 16);
+        }
+
+        private bool ConvertProtocolVersionToByte(MemoryStream memoryStream)
+        {
+            try
+            {
+                byte protocolVersion = (byte)Message.ProtocolVersion;
+                //Write protocol version
+                memoryStream.WriteByte(protocolVersion);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred when converting protocol version: {Message.ProtocolVersion} to byte. Error {ex.Message}\n{ex.StackTrace}");
+                return false;
+            }
         }
         private class StateObject
         {

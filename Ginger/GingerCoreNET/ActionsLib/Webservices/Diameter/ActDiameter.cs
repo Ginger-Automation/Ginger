@@ -154,20 +154,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
                 OnPropertyChanged(nameof(IsErrorBitSet));
             }
         }
-        //public bool SetRetransmitBit
-        //{
-        //    get
-        //    {
-        //        bool value;
-        //        bool.TryParse(GetOrCreateInputParam(nameof(SetRetransmitBit), false.ToString()).Value, out value);
-        //        return value;
-        //    }
-        //    set
-        //    {
-        //        AddOrUpdateInputParamValue(nameof(SetRetransmitBit), value.ToString());
-        //        OnPropertyChanged(nameof(SetRetransmitBit));
-        //    }
-        //}
         private ObservableList<DiameterAVP> mRequestAvpList = new ObservableList<DiameterAVP>();
         [IsSerializedForLocalRepository]
         public ObservableList<DiameterAVP> RequestAvpList
