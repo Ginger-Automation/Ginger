@@ -18,10 +18,12 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using MongoDB.Driver.Linq;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -85,7 +87,7 @@ namespace Ginger.BusinessFlowWindows
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
-            if (IsNewBusinessflow == true)
+            if (IsNewBusinessflow)
             {
                 SetTargetApplications();
                 if (mBusinessFlow.TargetApplications?.Count != 0)
@@ -95,6 +97,11 @@ namespace Ginger.BusinessFlowWindows
             }
             else
             {
+                if (!mApplicationsPlatforms.Any(x => x.Selected))
+                {
+                    Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication,GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
+                    return;
+                }
                 SetTargetApplications();
                 if (mBusinessFlow.TargetApplications.Count == 1)
                 {
@@ -110,7 +117,7 @@ namespace Ginger.BusinessFlowWindows
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication);
+                Reporter.ToUser(eUserMsgKey.BusinessFlowNeedTargetApplication,GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
             }
         }
 
@@ -147,7 +154,7 @@ namespace Ginger.BusinessFlowWindows
             }
 
             //add new
-            foreach (ApplicationPlatform TA in mApplicationsPlatforms.Where(x => x.Selected).ToList())
+            foreach (ApplicationPlatform TA in mApplicationsPlatforms.Where(x => x.Selected))
             {
                 if (mBusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == TA.AppName) == null)
                 {

@@ -854,7 +854,6 @@ namespace GingerCoreNET.DataSource
             if (MarkUpdate)
             {
                 string[] tokens = query.Split(new[] { "where" }, StringSplitOptions.None);
-                string rowID = row[0].ToString();
                 string Newquery = "db." + DSTableName + ".update GINGER_USED = \"True\" where " + tokens[1];
                 RunQuery(Newquery);
             }

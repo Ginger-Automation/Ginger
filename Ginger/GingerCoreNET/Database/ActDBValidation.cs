@@ -91,45 +91,47 @@ namespace GingerCore.Actions
 
         public string mTable;
         [IsSerializedForLocalRepository]
-        public string Table 
-        { 
+        public string Table
+        {
             get
             {
                 return mTable;
             }
-            set 
-            { 
-                mTable = value; 
-                OnPropertyChanged(Fields.Table); 
+            set
+            {
+                mTable = value;
+                OnPropertyChanged(Fields.Table);
             }
         }
 
         public string mColumn;
         [IsSerializedForLocalRepository]
-        public string Column 
-        { 
-            get 
-            { 
-                return mColumn; 
-            } 
-            set 
-            { mColumn = value;
-              OnPropertyChanged(Fields.Column); 
-            } 
+        public string Column
+        {
+            get
+            {
+                return mColumn;
+            }
+            set
+            {
+                mColumn = value;
+                OnPropertyChanged(Fields.Column);
+            }
         }
 
         public string mWhere;
         [IsSerializedForLocalRepository]
-        public string Where 
-        { 
-            get 
-            { 
+        public string Where
+        {
+            get
+            {
                 return mWhere;
-            } 
-            set 
-            { mWhere = value; 
-              OnPropertyChanged(Fields.Where); 
-            } 
+            }
+            set
+            {
+                mWhere = value;
+                OnPropertyChanged(Fields.Where);
+            }
         }
 
         public string PrimaryKey
@@ -264,7 +266,7 @@ namespace GingerCore.Actions
             }
             set
             {
-                if(mDBValidationType != value)
+                if (mDBValidationType != value)
                 {
                     mDBValidationType = value;
                     OnPropertyChanged(nameof(DBValidationType));
@@ -547,7 +549,10 @@ namespace GingerCore.Actions
                 {
                     return;
                 }
-
+                if (!string.IsNullOrEmpty(calcSQL))
+                {
+                    this.AddOrUpdateReturnParamActualWithPath("SQL Query", calcSQL, "");
+                }
                 int recordcount = Records.Count;
                 for (int j = 0; j < Records.Count; j++)
 
@@ -568,11 +573,6 @@ namespace GingerCore.Actions
                         }
                     }
                 }
-                if(!string.IsNullOrEmpty(calcSQL))
-                {
-                    this.AddOrUpdateReturnParamActualWithPath("SQL Query", calcSQL, (recordcount + 1).ToString() + "");
-                }
-                
 
             }
             catch (Exception e)

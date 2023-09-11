@@ -236,21 +236,18 @@ namespace GingerCore.Actions.ScreenCapture
         public void CaptureImage(System.Drawing.Point SourcePoint, System.Drawing.Rectangle SelectionRectangle, string FilePath)
         {
             this.Hide();
-
-            using (Bitmap bitmap = new Bitmap(SelectionRectangle.Width, SelectionRectangle.Height))
+            if (SelectionRectangle != null && SelectionRectangle.Height > 0 && SelectionRectangle.Width > 0)
             {
-
-                using (Graphics g = Graphics.FromImage(bitmap))
+                using (Bitmap bitmap = new Bitmap(SelectionRectangle.Width, SelectionRectangle.Height))
                 {
-
-                    g.CopyFromScreen(SourcePoint, System.Drawing.Point.Empty, SelectionRectangle.Size);
-
+                    using (Graphics g = Graphics.FromImage(bitmap))
+                    {
+                        g.CopyFromScreen(SourcePoint, System.Drawing.Point.Empty, SelectionRectangle.Size);
+                    }
+                    //FilePath = FilePath.Replace("~\\", f.SolutionFolder);
+                    FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FilePath);
+                    bitmap.Save(FilePath, ImageFormat.Png);
                 }
-
-                //FilePath = FilePath.Replace("~\\", f.SolutionFolder);
-                FilePath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(FilePath);
-
-                bitmap.Save(FilePath, ImageFormat.Png);
             }
         }
 

@@ -46,9 +46,11 @@ using GingerCore.Variables;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -378,27 +380,51 @@ namespace Ginger.Run
         }
         public void UpdateBusinessFlowsRunList()
         {
-            GingerRunner.BusinessFlowsRunList.Clear();
+            List<BusinessFlowRun> oldBFRuns = new(GingerRunner.BusinessFlowsRunList);
+            List<BusinessFlowRun> newBFRuns = new();
+
             foreach (BusinessFlow bf in BusinessFlows)
             {
-                BusinessFlowRun BFR = new BusinessFlowRun();
-                BFR.BusinessFlowName = bf.Name;
-                BFR.BusinessFlowGuid = bf.Guid;
-                BFR.BusinessFlowIsActive = bf.Active;
-                BFR.BusinessFlowIsMandatory = bf.Mandatory;
-                BFR.BusinessFlowInstanceGuid = bf.InstanceGuid;
+                Guid newBFRunGuid = Guid.NewGuid();
+
+                //reuse the same Guid for BusinessFlowRun if the wrapped BF is the same
+                BusinessFlowRun oldBFRun = oldBFRuns.FirstOrDefault(bfr => bfr.BusinessFlowGuid == bf.Guid);
+                if (oldBFRun != null)
+                {
+                    newBFRunGuid = oldBFRun.Guid;
+                    oldBFRuns.Remove(oldBFRun);
+                }
+
+                BusinessFlowRun newBFRun = new()
+                {
+                    Guid = newBFRunGuid,
+                    BusinessFlowName = bf.Name,
+                    BusinessFlowGuid = bf.Guid,
+                    BusinessFlowIsActive = bf.Active,
+                    BusinessFlowIsMandatory = bf.Mandatory,
+                    BusinessFlowInstanceGuid = bf.InstanceGuid,
+                    BusinessFlowRunDescription = bf.RunDescription,
+                    BFFlowControls = bf.BFFlowControls
+                };
 
                 foreach (VariableBase var in bf.GetBFandActivitiesVariabeles(true))
                 {
-                    if (var.DiffrentFromOrigin == true || string.IsNullOrEmpty(var.MappedOutputValue) == false)//save only variables which were modified in this run configurations
+                    //save only variables which were modified in this run configurations
+                    if (var.DiffrentFromOrigin == true || string.IsNullOrEmpty(var.MappedOutputValue) == false)
                     {
                         VariableBase varCopy = (VariableBase)var.CreateCopy(false);
-                        BFR.BusinessFlowCustomizedRunVariables.Add(varCopy);
+                        newBFRun.BusinessFlowCustomizedRunVariables.Add(varCopy);
                     }
                 }
-                BFR.BusinessFlowRunDescription = bf.RunDescription;
-                BFR.BFFlowControls = bf.BFFlowControls;
-                GingerRunner.BusinessFlowsRunList.Add(BFR);
+                
+                newBFRuns.Add(newBFRun);
+            }
+
+            GingerRunner.BusinessFlowsRunList.Clear();
+
+            foreach (BusinessFlowRun newBFRun in newBFRuns)
+            {
+                GingerRunner.BusinessFlowsRunList.Add(newBFRun);
             }
         }
 
@@ -414,14 +440,15 @@ namespace Ginger.Run
             return result;
         }
 
-
+        
 
 
         public void RunRunner(bool doContinueRun = false)
         {
-            bool runnerExecutionSkipped = false;
+            bool runnerExecutionSkipped = false;         
             try
             {
+                               
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.FirstOrDefault(x => x.Active) == null)
                 {
                     runnerExecutionSkipped = true;
@@ -476,10 +503,12 @@ namespace Ginger.Run
                 {
                     mRunSource = eRunSource.Runner;
                 }
-
-                int? flowControlIndx = null;
+                int? flowControlIndx = null;          
                 for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx))
                 {
+
+                    //need to add code here to check previous Execution Deatils and ReRunFailed check 
+
                     BusinessFlow executedBusFlow = (BusinessFlow)BusinessFlows[bfIndx];
                     ExecutionLogBusinessFlowsCounter = bfIndx;
                     //stop if needed before executing next BF
@@ -489,7 +518,7 @@ namespace Ginger.Run
                     }
 
                     //validate BF run
-                    if (!executedBusFlow.Active)
+                    if (!executedBusFlow.Active)// || (activeBusinessFlows.Count > 0 && !activeBusinessFlows.Any(x=>x.Guid == executedBusFlow.Guid)))
                     {
                         //set BF status as skipped                     
                         SetBusinessFlowActivitiesAndActionsSkipStatus(executedBusFlow);
@@ -604,6 +633,7 @@ namespace Ginger.Run
             }
         }
 
+
         private void StartPublishResultsToAlmTask(BusinessFlow executedBusFlow)
         {
             if (PublishToALMConfig != null)
@@ -611,34 +641,38 @@ namespace Ginger.Run
                 Task ExportResultTask = Task.Run(() =>
                 {
                     var runsetAction = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(f => f is RunSetActionPublishToQC && f.RunAt.Equals(RunSetActionBase.eRunAt.DuringExecution) && f.Active);
-                    var prevStatus = runsetAction.Status;                    
-                    bool isSuccess = false;
-                    runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Running;
-                    ObservableList<BusinessFlow> bfs = new(){executedBusFlow};
-                    string result = "";
-                    try
+
+                    if (runsetAction != null)
                     {
-                        isSuccess = TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
-                        if(!isSuccess)
+                        var prevStatus = runsetAction.Status;
+                        bool isSuccess = false;
+                        runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Running;
+                        ObservableList<BusinessFlow> bfs = new() { executedBusFlow };
+                        string result = "";
+                        try
                         {
-                            runsetAction.Errors += result + Environment.NewLine;
+                            isSuccess = TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
+                            if (!isSuccess)
+                            {
+                                runsetAction.Errors += result + Environment.NewLine;
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        runsetAction.Errors += ex.Message + Environment.NewLine;
-                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to publish execution result to ALM for {executedBusFlow.Name}", ex);
-                    }
-                    finally
-                    {
-                        if (!isSuccess)
+                        catch (Exception ex)
                         {
-                            runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Failed;
+                            runsetAction.Errors += ex.Message + Environment.NewLine;
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to publish execution result to ALM for {executedBusFlow.Name}", ex);
                         }
-                        else
+                        finally
                         {
-                            runsetAction.Status = prevStatus;
-                        }
+                            if (!isSuccess)
+                            {
+                                runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Failed;
+                            }
+                            else
+                            {
+                                runsetAction.Status = prevStatus;
+                            }
+                        } 
                     }
                 });
 
@@ -740,8 +774,6 @@ namespace Ginger.Run
                                     virtualagent.DriverType = agent.DriverType;
                                     applicationAgent.Agent = virtualagent;
                                     virtualagent.DriverConfiguration = agent.DriverConfiguration;
-
-
                                 }
                             }
 
@@ -1570,7 +1602,7 @@ namespace Ginger.Run
                         act.OutDataSourceTableName = act.DSOutputConfigParams[0].DSTable;
                     }
 
-                    var mUniqueRVs = act.ReturnValues.Where(arc => arc.Path == "" || arc.Path == "1");
+                    var mUniqueRVs = act.ReturnValues.Where(arc => string.IsNullOrEmpty(arc.Path) || arc.Path == "1");
                     // if in output values there is only 1 record with Path = null
                     if (!mUniqueRVs.Any() && act.ReturnValues != null)
                     {
@@ -1631,7 +1663,7 @@ namespace Ginger.Run
                     }
 
                     int iPathCount = 0;
-                    var mOutRVs = act.ReturnValues.Where(arc => arc.Path == "");
+                    var mOutRVs = act.ReturnValues.Where(arc => string.IsNullOrEmpty(arc.Path));
                     if (!mOutRVs.Any())
                     {
                         iPathCount++;
@@ -3939,67 +3971,75 @@ namespace Ginger.Run
 
         public bool ContinueRun(eContinueLevel continueLevel, eContinueFrom continueFrom, BusinessFlow specificBusinessFlow = null, Activity specificActivity = null, IAct specificAction = null)
         {
-            switch (continueFrom)
+            try
             {
-                case eContinueFrom.LastStoppedAction:
-                    if (mExecutedBusinessFlowWhenStopped != null && BusinessFlows.Contains(mExecutedBusinessFlowWhenStopped))
-                    {
-                        CurrentBusinessFlow = mExecutedBusinessFlowWhenStopped;
-                    }
-                    else
-                    {
-                        return false;//can't do continue
-                    }
+                switch (continueFrom)
+                {
+                    case eContinueFrom.LastStoppedAction:
+                        if (mExecutedBusinessFlowWhenStopped != null && BusinessFlows.Contains(mExecutedBusinessFlowWhenStopped))
+                        {
+                            CurrentBusinessFlow = mExecutedBusinessFlowWhenStopped;
+                        }
+                        else
+                        {
+                            return false;//can't do continue
+                        }
 
-                    if (mExecutedActivityWhenStopped != null && mExecutedBusinessFlowWhenStopped.Activities.Contains(mExecutedActivityWhenStopped))
-                    {
-                        CurrentBusinessFlow.CurrentActivity = mExecutedActivityWhenStopped;
-                        CurrentBusinessFlow.ExecutionLogActivityCounter--;
-                    }
-                    else
-                    {
-                        return false;//can't do continue
-                    }
+                        if (mExecutedActivityWhenStopped != null && mExecutedBusinessFlowWhenStopped.Activities.Contains(mExecutedActivityWhenStopped))
+                        {
+                            CurrentBusinessFlow.CurrentActivity = mExecutedActivityWhenStopped;
+                            CurrentBusinessFlow.ExecutionLogActivityCounter--;
+                        }
+                        else
+                        {
+                            return false;//can't do continue
+                        }
 
-                    if (mExecutedActionWhenStopped != null && mExecutedActivityWhenStopped.Acts.Contains(mExecutedActionWhenStopped))
-                    {
-                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = mExecutedActionWhenStopped;
-                    }
-                    else
-                    {
-                        return false;//can't do continue
-                    }
+                        if (mExecutedActionWhenStopped != null && mExecutedActivityWhenStopped.Acts.Contains(mExecutedActionWhenStopped))
+                        {
+                            CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = mExecutedActionWhenStopped;
+                        }
+                        else
+                        {
+                            return false;//can't do continue
+                        }
 
-                    break;
+                        break;
 
-                case eContinueFrom.SpecificBusinessFlow:
-                    CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
-                    CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.FirstOrDefault();
-                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.FirstOrDefault();
-                    break;
+                    case eContinueFrom.SpecificBusinessFlow:
+                        CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
+                        CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.FirstOrDefault();
+                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.FirstOrDefault();
+                        break;
 
-                case eContinueFrom.SpecificActivity:
-                    CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
-                    CurrentBusinessFlow.CurrentActivity = specificActivity;
-                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificActivity.Acts.FirstOrDefault();
-                    break;
+                    case eContinueFrom.SpecificActivity:
+                        CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
+                        CurrentBusinessFlow.CurrentActivity = specificActivity;
+                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificActivity.Acts.FirstOrDefault();
+                        break;
 
-                case eContinueFrom.SpecificAction:
-                    CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
-                    CurrentBusinessFlow.CurrentActivity = specificActivity;
-                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificAction;
-                    break;
+                    case eContinueFrom.SpecificAction:
+                        CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
+                        CurrentBusinessFlow.CurrentActivity = specificActivity;
+                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificAction;
+                        break;
+                }
+
+                if (continueLevel == eContinueLevel.Runner)
+                {
+                    RunRunner(true);
+                }
+                else
+                {
+                    RunBusinessFlow(null, true, true);
+                }
+                return true;
             }
-
-            if (continueLevel == eContinueLevel.Runner)
+            catch (Exception ex)
             {
-                RunRunner(true);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Continue run", ex);
+                return false;
             }
-            else
-            {
-                RunBusinessFlow(null, true, true);
-            }
-            return true;
         }
 
         public async Task<int> RunBusinessFlowAsync(BusinessFlow businessFlow, bool standaloneBfExecution = false, bool doContinueRun = false)
@@ -4328,12 +4368,21 @@ namespace Ginger.Run
                 }
 
                 BF.RunStatus = newStatus;
+                CalculateBusinessFlowActivyGroupStaus(BF);
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Calculating Business flow final execution status", ex);
             }
 
+        }
+
+        public void CalculateBusinessFlowActivyGroupStaus(BusinessFlow BF)
+        {
+            foreach (ActivitiesGroup currentActivityGroup in BF.ActivitiesGroups)
+            {
+                CalculateActivitiesGroupFinalStatus(currentActivityGroup, BF);
+            }
         }
 
         public void CalculateActivitiesGroupFinalStatus(ActivitiesGroup AG, BusinessFlow BF)
@@ -4513,6 +4562,8 @@ namespace Ginger.Run
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 SetBusinessFlowActivitiesAndActionsSkipStatus(bf);
+                CalculateBusinessFlowActivyGroupStaus(bf);
+                StartPublishResultsToAlmTask(CurrentBusinessFlow);
             }
         }
 
@@ -4533,6 +4584,12 @@ namespace Ginger.Run
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 SetNextActivitiesBlockedStatus();
+                CalculateBusinessFlowActivyGroupStaus(bf);
+                //TODO: Move All code Block inside the if Loop 
+                if (bf.Active)
+                {
+                    StartPublishResultsToAlmTask(CurrentBusinessFlow);
+                }
             }
         }
 
@@ -4775,7 +4832,16 @@ namespace Ginger.Run
             //Remove the non relevant ApplicationAgents
             for (int indx = 0; indx < mGingerRunner.ApplicationAgents.Count;)
             {
-                if (bfsTargetApplications.FirstOrDefault(x => x.Name == mGingerRunner.ApplicationAgents[indx].AppName) == null || ((ApplicationAgent)mGingerRunner.ApplicationAgents[indx]).Agent == null)
+                ApplicationAgent applicationAgent = (ApplicationAgent)mGingerRunner.ApplicationAgents[indx];
+
+                bool appNotMappedInBF = bfsTargetApplications.All(x => x.Name != applicationAgent.AppName);
+
+                bool appHasPlatformButNoAgent =
+                    applicationAgent.Agent == null &&
+                    applicationAgent.AppPlatform != null &&
+                    applicationAgent.AppPlatform.Platform != ePlatformType.NA;
+
+                if (appNotMappedInBF || appHasPlatformButNoAgent)
                 {
                     bTargetAppListModified = true;
                     mGingerRunner.ApplicationAgents.RemoveAt(indx);

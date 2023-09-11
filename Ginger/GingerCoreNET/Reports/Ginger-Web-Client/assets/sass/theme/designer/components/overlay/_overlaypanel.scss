@@ -1,0 +1,62 @@
+.p-overlaypanel {
+    background: $overlayContentBg;
+    color: $panelContentTextColor;
+    border: $overlayContentBorder;
+    border-radius: $borderRadius;
+    box-shadow: $overlayContainerShadow;
+
+    .p-overlaypanel-content {
+        padding: $panelContentPadding;
+    }
+
+    .p-overlaypanel-close {
+        background: $buttonBg;
+        color: $buttonTextColor;
+        width: $actionIconWidth;
+        height: $actionIconHeight;
+        transition: $actionIconTransition;
+        border-radius: $actionIconBorderRadius;
+        position: absolute;
+        top: -1 * $actionIconWidth / 2;
+        right: -1 * $actionIconWidth / 2;
+
+        &:enabled:hover {
+            background: $buttonHoverBg;
+            color: $buttonTextHoverColor;
+        }
+    }
+
+    &:after {
+        border: solid transparent;
+        border-color: rgba($overlayContentBg, 0);
+        border-bottom-color: $overlayContentBg;
+    }
+
+    &:before {
+        border: solid transparent;
+
+        @if (nth($overlayContentBorder, 2) == 'none') {
+            border-color: rgba($overlayContentBg, 0);
+            border-bottom-color: $overlayContentBg;
+        }
+        @else {
+            border-color: rgba(nth($overlayContentBorder, 3), 0);
+            border-bottom-color: nth($overlayContentBorder, 3);
+        }
+    }
+
+    &.p-overlaypanel-flipped {
+        &:after {
+            border-top-color: $overlayContentBg;
+        }
+
+        &:before {
+            @if (nth($overlayContentBorder, 2) == 'none') {
+                border-top-color: $overlayContentBg;
+            }
+            @else {
+                border-top-color: nth($overlayContentBorder, 3);
+            }
+        }
+    }
+}
