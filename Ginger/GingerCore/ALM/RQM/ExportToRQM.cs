@@ -154,27 +154,41 @@ namespace GingerCore.ALM.RQM
                         List<ExecutionResult> exeResultList = new List<ExecutionResult>();
                         foreach (ActivitiesGroup activGroup in businessFlow.ActivitiesGroups)
                         {
-                            if (projEnvironment != null)
+                            if (activGroup.ActivitiesIdentifiers.Count > 0)
                             {
-                                IValueExpression mAGVE = new GingerCore.ValueExpression(projEnvironment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
-                                activGroup.CalculateExternalId(mAGVE);
+                                if (projEnvironment != null)
+                                {
+                                    IValueExpression mAGVE = new GingerCore.ValueExpression(projEnvironment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                                    activGroup.CalculateExternalId(mAGVE);
+                                }
+                                if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
+                                    || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
+                                    || publishToALMConfig.FilterStatus == FilterByStatus.All)
+                                {
+                                    testPlan.Name = !string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunNameCalculated) ? publishToALMConfig.VariableForTCRunNameCalculated : testPlan.Name;
+                                    ExecutionResult exeResult = GetExeResultforActivityGroup(businessFlow, bfExportedID, activGroup, ref result, testPlan, currentRQMProjectMapping, loginData, publishToALMConfig);
+                                    if (exeResult != null)
+                                    {
+                                        exeResultList.Add(exeResult);
+                                    }
+                                    else
+                                    {
+                                        result = $"Execution Results List not found for {businessFlow.Name} and testplan {bfExportedID}";
+                                        //return false;
+                                    }
+                                }
                             }
-                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
-                                || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
-                                || publishToALMConfig.FilterStatus == FilterByStatus.All)
+                            else
                             {
-                                testPlan.Name = !string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunNameCalculated) ? publishToALMConfig.VariableForTCRunNameCalculated : testPlan.Name;
-                                ExecutionResult exeResult = GetExeResultforActivityGroup(businessFlow, bfExportedID, activGroup, ref result, testPlan, currentRQMProjectMapping, loginData, publishToALMConfig);
-                                if (exeResult != null)
-                                {
-                                    exeResultList.Add(exeResult);
-                                }
-                                else
-                                {
-                                    result = $"Execution Results List not found for {businessFlow.Name} and testplan {bfExportedID}";
-                                    //return false;
-                                }
+                                Reporter.ToLog(eLogLevel.DEBUG, $"Skippinng ALM Results Publish of '{activGroup.Name}' Group in {businessFlow.Name}' Flow as it dows not have any activities in it");
                             }
+                        }
+
+                        if (!exeResultList.Any())
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as no valid Execution found for it");
+                            result = $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and 'testplan {bfExportedID}' as no valid Execution found for it ";
+                            return false;
                         }
 
                         ResultInfo resultInfo = new ResultInfo();
