@@ -66,13 +66,13 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                     Flow requestFlow = Flow.Create(name: $"{activity.ActivityName}_IN", requestSourceTask, requestTargetTask);
                     if(requestFlow is MessageFlow requestMessageFlow)
                     {
-                        requestMessageFlow.MessageRef = activity.Guid.ToString();
+                        requestMessageFlow.MessageRef = activity.Guid.ToString().Remove(activity.Guid.ToString().Length - 2) + "aa";
                     }
                     Flow.Create(name: string.Empty, requestTargetTask, responseSourceTask);
                     Flow responseFlow = Flow.Create(name: $"{activity.ActivityName}_OUT", responseSourceTask, responseTargetTask);
                     if(responseFlow is MessageFlow responseMessageFlow)
                     {
-                        responseMessageFlow.MessageRef = activity.Guid.ToString();
+                        responseMessageFlow.MessageRef = activity.Guid.ToString().Remove(activity.Guid.ToString().Length - 2) + "bb";
                     }
                     previousFlowSource = responseTargetTask;
                 }
