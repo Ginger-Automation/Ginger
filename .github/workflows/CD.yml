@@ -62,16 +62,11 @@ jobs:
               echo "TAG=${{ env.gingertag}}" >> version.txt
               cat version.txt
           
-          - name: Cache Version text file
-            id: cache
-            uses: actions/cache@v3.2.6
+          - name: 'Upload static site content'
+            uses: actions/upload-artifact@v3
             with:
-              path: 
-                ./version.txt
-              key: 
-                cache-version-${{ github.run_number }}
-              enableCrossOsArchive:
-                true
+              name: ginger-version
+              path: ./version.txt
                
     CI:
         name: CI
