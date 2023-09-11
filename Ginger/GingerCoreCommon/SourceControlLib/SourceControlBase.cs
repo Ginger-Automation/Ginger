@@ -158,16 +158,16 @@ namespace GingerCoreNET.SourceControl
         /// <summary>
         /// Get local version content from the conflicted content.
         /// </summary>
-        /// <param name="conflictedFilePath">Path to conflicted file.</param>
+        /// <param name="conflictedContent">Content of conflicted file.</param>
         /// <returns>Local version content.</returns>
-        public abstract string GetLocalContentFromConflicted(string conflictedFilePath);
+        public abstract string GetLocalContentFromConflicted(string conflictedContent);
 
         /// <summary>
         /// Get remote version content from the conflicted content.
         /// </summary>
-        /// <param name="conflictedFilePath">Path to conflicted file.</param>
+        /// <param name="conflictedContent">Content of conflicted file.</param>
         /// <returns>Remote version content.</returns>
-        public abstract string GetRemoteContentFromConflicted(string conflictedFilePath);
+        public abstract string GetRemoteContentFromConflicted(string conflictedContent);
 
         /// <summary>
         /// Resolve merge conflict with content that contains the resolved data of the file.

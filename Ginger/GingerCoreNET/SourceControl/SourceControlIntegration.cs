@@ -201,7 +201,8 @@ namespace Ginger.SourceControl
                 path = path.Replace("@/", "\\");
             }
 
-            string localContent = sourceControl.GetLocalContentFromConflicted(path);
+            string conflictedContent = File.ReadAllText(path);
+            string localContent = sourceControl.GetLocalContentFromConflicted(conflictedContent);
             RepositoryItemBase localItem = NewRepositorySerializer.DeserializeFromText(localContent);
 
             return localItem;
@@ -214,7 +215,8 @@ namespace Ginger.SourceControl
                 path = path.Replace("@/", "\\");
             }
 
-            string remoteContent = sourceControl.GetRemoteContentFromConflicted(path);
+            string conflictedContent = File.ReadAllText(path);
+            string remoteContent = sourceControl.GetRemoteContentFromConflicted(conflictedContent);
             RepositoryItemBase remoteItem = NewRepositorySerializer.DeserializeFromText(remoteContent);
 
             return remoteItem;
@@ -234,9 +236,10 @@ namespace Ginger.SourceControl
                 path = path.Replace("@/", "\\");
             }
 
-            string localContent = sourceControl.GetLocalContentFromConflicted(path);
+            string conflictedContent = File.ReadAllText(path);
+            string localContent = sourceControl.GetLocalContentFromConflicted(conflictedContent);
             RepositoryItemBase localItem = NewRepositorySerializer.DeserializeFromText(localContent);
-            string remoteContent = sourceControl.GetRemoteContentFromConflicted(path);
+            string remoteContent = sourceControl.GetRemoteContentFromConflicted(conflictedContent);
             RepositoryItemBase remoteItem = NewRepositorySerializer.DeserializeFromText(remoteContent);
             ICollection<Comparison> childComparisons = RepositoryItemBaseComparer.Compare("[0]", localItem, remoteItem);
             Comparison.StateType state = childComparisons.All(c => c.State == Comparison.StateType.Unmodified) ? Comparison.StateType.Unmodified : Comparison.StateType.Modified;

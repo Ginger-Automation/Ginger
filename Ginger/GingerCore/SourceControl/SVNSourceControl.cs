@@ -552,23 +552,13 @@ namespace GingerCore.SourceControl
         private const string ConflictEndMarker = ">>>>>>>";
         private const string CR_LF = "\r\n";
 
-        /// <summary>
-        /// Get only the local content from <paramref name="conflictedContent"/>.
-        /// </summary>
-        /// <param name="conflictedContent">Content with conflicting data.</param>
-        /// <returns>Local content from the <paramref name="conflictedContent"/>.</returns>
-        public override string GetLocalContentFromConflicted(string conflictedFilePath)
+        public override string GetLocalContentFromConflicted(string conflictedContent)
         {
-            string localContent;
-            if (!GetLocalContentViaMineFile(conflictedFilePath, out localContent))
-            {
-                string conflictedContent = File.ReadAllText(conflictedFilePath);
-                localContent = GetLocalContentViaMarkers(conflictedContent);
-            }
+            string localContent = GetLocalContentViaMarkers(conflictedContent);
             return localContent;
         }
 
-        private bool GetLocalContentViaMineFile(string conflictedFilePath, out string localContent)
+        public bool GetLocalContentViaMineFile(string conflictedFilePath, out string localContent)
         {
             string mineFilePath = conflictedFilePath + ".mine";
             bool wasMineFileFound = File.Exists(mineFilePath);
@@ -597,24 +587,13 @@ namespace GingerCore.SourceControl
             return localContent;
         }
 
-        /// <summary>
-        /// Get only the remote content from <paramref name="conflictedContent"/>.
-        /// </summary>
-        /// <param name="conflictedContent">Content with conflicting data.</param>
-        /// <returns>Remote content from the <paramref name="conflictedContent"/>.</returns>
-        public override string GetRemoteContentFromConflicted(string conflictedFilePath)
+        public override string GetRemoteContentFromConflicted(string conflictedContent)
         {
-            string remoteContent;
-            if(!GetRemoteContentViaHead(conflictedFilePath, out remoteContent))
-            {
-                string conflictedContent = File.ReadAllText(conflictedFilePath);
-                remoteContent = GetRemoteContentViaMarkers(conflictedContent);
-            }
-
+            string remoteContent = GetRemoteContentViaMarkers(conflictedContent);
             return remoteContent;
         }
 
-        private bool GetRemoteContentViaHead(string conflictedFilePath, out string remoteContent)
+        public bool GetRemoteContentViaHead(string conflictedFilePath, out string remoteContent)
         {
             try
             {

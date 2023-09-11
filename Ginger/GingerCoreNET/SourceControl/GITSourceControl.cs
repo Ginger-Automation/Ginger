@@ -324,7 +324,7 @@ namespace GingerCore.SourceControl
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting latest changes.", ex);
-                conflictsPaths = GetConflictsPathsforGetLatestConflict(path);
+                conflictsPaths = GetConflictPaths();
                 error = ex.Message + Environment.NewLine + ex.InnerException;
                 return false;
             }
@@ -556,9 +556,8 @@ namespace GingerCore.SourceControl
         private const string ConflictEndMarker = ">>>>>>>";
         private const string CR_LF = "\r\n";
 
-        public override string GetLocalContentFromConflicted(string conflictedFilePath)
+        public override string GetLocalContentFromConflicted(string conflictedContent)
         {
-            string conflictedContent = File.ReadAllText(conflictedFilePath);
             string leadingContent = GetLeadingContentFromConflicted(conflictedContent);
             string headContent = GetHeadContentFromConflicted(conflictedContent);
             string trailingContent = GetTrailingContentFromConflicted(conflictedContent);
@@ -573,9 +572,8 @@ namespace GingerCore.SourceControl
             return localContent;
         }
 
-        public override string GetRemoteContentFromConflicted(string conflictedFilePath)
+        public override string GetRemoteContentFromConflicted(string conflictedContent)
         {
-            string conflictedContent = File.ReadAllText(conflictedFilePath);
             string leadingContent = GetLeadingContentFromConflicted(conflictedContent);
             string branchContent = GetBranchContentFromConflicted(conflictedContent);
             string trailingContent = GetTrailingContentFromConflicted(conflictedContent);

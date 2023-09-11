@@ -113,14 +113,14 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         if (!IsPropertySerialized(property))
                             continue;
                         object? remotePropertyValue = property.GetValue(remoteRIB);
-                        childComparisons.AddRange(CompareValue(property.Name, localValue: null, new Value(remoteValue)));
+                        childComparisons.AddRange(CompareValue(property.Name, localValue: null, new Value(remotePropertyValue)));
                     }
                     foreach (FieldInfo field in remoteRIB.GetType().GetFields())
                     {
                         if (!IsPropertySerialized(field))
                             continue;
                         object? remotePropertyValue = field.GetValue(remoteRIB);
-                        childComparisons.AddRange(CompareValue(field.Name, localValue: null, new Value(remoteValue)));
+                        childComparisons.AddRange(CompareValue(field.Name, localValue: null, new Value(remotePropertyValue)));
                     }
                     return new Comparison[] { new(name, state: Comparison.StateType.Added, childComparisons, data: remoteRIB) };
                 }
@@ -147,10 +147,9 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 //data in both local and remote is not null
                 else
                 {
-                    Type seniorType = GetSeniorType(localRIB.GetType(), remoteRIB.GetType());
-
                     if (localRIB.Guid == remoteRIB.Guid)
                     {
+                        Type seniorType = GetSeniorType(localRIB.GetType(), remoteRIB.GetType());
                         List<Comparison> childComparisons = new();
                         foreach (PropertyInfo property in seniorType.GetProperties())
                         {
@@ -181,7 +180,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     else
                     {
                         List<Comparison> localChildComparisons = new();
-                        foreach (PropertyInfo property in seniorType.GetProperties())
+                        foreach (PropertyInfo property in localRIB.GetType().GetProperties())
                         {
                             if (!IsPropertySerialized(property))
                                 continue;
@@ -191,7 +190,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                                     localValue: new Value(property.GetValue(localRIB)),
                                     remoteValue: null));
                         }
-                        foreach (FieldInfo field in seniorType.GetFields())
+                        foreach (FieldInfo field in localRIB.GetType().GetFields())
                         {
                             if (!IsPropertySerialized(field))
                                 continue;
@@ -204,7 +203,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         Comparison localComparisonResult = new(name, state: Comparison.StateType.Deleted, localChildComparisons, data: localRIB);
 
                         List<Comparison> remoteChildComparisons = new();
-                        foreach (PropertyInfo property in seniorType.GetProperties())
+                        foreach (PropertyInfo property in remoteRIB.GetType().GetProperties())
                         {
                             if (!IsPropertySerialized(property))
                                 continue;
@@ -214,7 +213,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                                     localValue: null,
                                     remoteValue: new Value(property.GetValue(remoteRIB))));
                         }
-                        foreach (FieldInfo field in seniorType.GetFields())
+                        foreach (FieldInfo field in remoteRIB.GetType().GetFields())
                         {
                             if (!IsPropertySerialized(field))
                                 continue;
