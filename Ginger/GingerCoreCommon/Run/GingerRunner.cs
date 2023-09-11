@@ -43,6 +43,13 @@ namespace Ginger.Run
         Runner,
         BusinessFlow
     }
+
+    public enum eReRunLevel
+    {
+        Runner,
+        BusinessFlow,
+        RunSet
+    }
     public class GingerRunner : RepositoryItemBase
     {
         public enum eActionExecutorType

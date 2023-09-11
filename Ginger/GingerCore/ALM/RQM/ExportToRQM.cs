@@ -523,6 +523,36 @@ namespace GingerCore.ALM.RQM
                             exeStep.StepActualResult = "Stopped";
                             break;
                     }
+
+                    //////Update Activity Group status
+                    switch (activGroup.RunStatus)
+                    {
+                        case eActivitiesGroupRunStatus.Failed:
+                            exeResult.ExecutionResultState = ExecutoinStatus.Failed;
+                            break;
+                        case eActivitiesGroupRunStatus.Passed:
+                            exeResult.ExecutionResultState = ExecutoinStatus.Passed;
+                            break;
+                        case eActivitiesGroupRunStatus.NA:
+                            exeResult.ExecutionResultState = ExecutoinStatus.NA;
+                            break;
+                        case eActivitiesGroupRunStatus.Pending:
+                            exeResult.ExecutionResultState = ExecutoinStatus.In_Progress;
+                            break;
+                        case eActivitiesGroupRunStatus.Running:
+                            exeResult.ExecutionResultState = ExecutoinStatus.In_Progress;
+                            break;
+                        case eActivitiesGroupRunStatus.Skipped:
+                            exeResult.ExecutionResultState = ExecutoinStatus.Skipped;
+                            break;
+                        case eActivitiesGroupRunStatus.Blocked:
+                            exeResult.ExecutionResultState = ExecutoinStatus.Blocked;
+                            break;
+                        case eActivitiesGroupRunStatus.Stopped:
+                            exeResult.ExecutionResultState = ExecutoinStatus.Inconclusive;
+                            break;
+                    }
+
                     exeResult.ExecutionStep.Add(exeStep);
                 }
                 return exeResult;
