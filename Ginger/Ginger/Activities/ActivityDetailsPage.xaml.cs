@@ -16,13 +16,25 @@ limitations under the License.
 */
 #endregion
 
+using Amazon.Runtime.Internal.Transform;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Ginger.Activities;
+using Ginger.UserControlsLib;
 using GingerCore;
+using GingerCore.Activities;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerWPF.BusinessFlowsLib;
+using Microsoft.Graph;
+using OpenQA.Selenium;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -45,7 +57,6 @@ namespace Ginger.BusinessFlowPages
             mActivity = activity;
             mContext = context;
             mPageViewMode = pageViewMode;
-
             SetUI();
             BindControls();
         }
@@ -74,6 +85,7 @@ namespace Ginger.BusinessFlowPages
                 xErrorHandlerMappingCmb.IsEnabled = false;
                 xSpecificErrorHandlerBtn.IsEnabled = false;
                 xSharedRepoInstanceUC.IsEnabled = false;
+                xConsumerCB.IsEnabled = false;
             }
             else
             {
@@ -92,6 +104,7 @@ namespace Ginger.BusinessFlowPages
                 xErrorHandlerMappingCmb.IsEnabled = true;
                 xSpecificErrorHandlerBtn.IsEnabled = true;
                 xSharedRepoInstanceUC.IsEnabled = true;
+                xConsumerCB.IsEnabled = true;
             }
 
 
@@ -100,6 +113,8 @@ namespace Ginger.BusinessFlowPages
                 xSharedRepoInstanceUC.Visibility = Visibility.Collapsed;
                 xSharedRepoInstanceUCCol.Width = new GridLength(0);
             }
+
+            xTargetApplicationComboBox.SelectionChanged += xTargetApplicationComboBox_SelectionChanged;
         }
         public void UpdateActivity(Activity activity)
         {
@@ -128,6 +143,7 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearAllBindings(xPublishcheckbox);
             BindingOperations.ClearAllBindings(xHandlerTypeCombo);
             BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);
+            BindingOperations.ClearAllBindings(xHandlerPostExecutionCombo);
         }
 
         private void BindControls()
@@ -159,7 +175,7 @@ namespace Ginger.BusinessFlowPages
             xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
             BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
-            
+
             if (mActivity.GetType() == typeof(ErrorHandler))
             {
                 xHandlerTypeStack.Visibility = Visibility.Visible;
@@ -184,6 +200,17 @@ namespace Ginger.BusinessFlowPages
                 xHandlerTypeStack.Visibility = Visibility.Collapsed;
                 xHandlerTriggerOnStackPanel.Visibility = Visibility.Collapsed;
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Collapsed;
+            }
+
+            if (GetCurrentActivityPlatform() == ePlatformType.WebServices)
+            {
+                xConsumerStack.Visibility = Visibility.Visible;
+                xConsumerStackLogic();
+            }
+            else 
+            {
+                xConsumerStack.Visibility = Visibility.Collapsed;
+                mActivity.ConsumerApplications.Clear();
             }
         }
 
@@ -224,6 +251,82 @@ namespace Ginger.BusinessFlowPages
             {
                 xTriggerOnSpecificErrorBtn.Visibility = Visibility.Collapsed;
             }
+        }
+
+        /// <summary>
+        /// Returns the selected target application platform 
+        /// </summary>
+        /// <returns></returns>
+        private ePlatformType GetCurrentActivityPlatform()
+        {
+            return WorkSpace.Instance.Solution.GetApplicationPlatformForTargetApp(mActivity.TargetApplication);
+        }
+
+        private void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+            if (xTargetApplicationComboBox.SelectedItem != null &&
+                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+            {
+                if (GetCurrentActivityPlatform() == ePlatformType.WebServices)
+                {
+                    xConsumerStack.Visibility = Visibility.Visible;
+                    xConsumerStackLogic();
+                }
+                else
+                {
+                    xConsumerStack.Visibility = Visibility.Collapsed;
+                    mActivity.ConsumerApplications.Clear();
+                }
+            }
+            else
+            {
+                xConsumerStack.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void xConsumerStackLogic()
+        {
+            //logic for Consumer ComboBox for Otoma
+            ObservableList<TargetApplication>  templist = new ObservableList<TargetApplication>();
+            ObservableList<Consumer> consumerList = new ObservableList<Consumer>();
+            if (mContext.BusinessFlow != null)
+            {
+                foreach (TargetApplication _list in mContext.BusinessFlow.TargetApplications)
+                {
+                    if (_list.AppName != xTargetApplicationComboBox.SelectedItem.ToString())
+                    {
+                        templist.Add(_list);
+                    }
+                }
+            }
+            else
+            {
+                foreach (TargetApplication _list in WorkSpace.Instance.Solution.GetSolutionTargetApplications())
+                {
+                    if (_list.AppName != xTargetApplicationComboBox.SelectedItem.ToString())
+                    {
+                        templist.Add(_list);
+                    }
+                }
+            }
+
+            foreach (TargetApplication targetApp in templist)
+            {
+                
+                Consumer consumer = new Consumer
+                {
+                    ConsumerGuid = targetApp.Guid,
+                    Name = targetApp.ItemName
+                };
+                consumerList.Add(consumer);
+            }
+
+            xConsumerCB.ConsumerSource = consumerList;
+            //Binding for the consumer ComboBox & EnterPrise flag check for consumer combobox
+            BindingHandler.ObjFieldBinding(xConsumerCB, ConsumerComboBox.SelectedConsumerProperty, mActivity, nameof(Activity.ConsumerApplications));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xConsumerStack, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
+
         }
     }
 }

@@ -29,6 +29,8 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
+using GingerCore.Activities;
+using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
@@ -500,6 +502,25 @@ namespace GingerCore
             {
                 mVariables = value;
             }
+        }
+
+
+        private ObservableList<Consumer> mConsumerApplications = new ObservableList<Consumer>();
+        [IsSerializedForLocalRepository]
+        public ObservableList<Consumer> ConsumerApplications
+        {
+            get
+            {
+                return mConsumerApplications;
+            }
+            set
+            {
+                if (mConsumerApplications != null)
+                {
+                    mConsumerApplications = value;
+                    OnPropertyChanged(nameof(ConsumerApplications));
+                }       
+             }
         }
 
         [IsSerializedForLocalRepository]

@@ -99,7 +99,7 @@ namespace Ginger.Actions
                 parseScriptHeader(script);
             }
 
-            if (actScript.InputValues.Count == 0)
+            if (actScript.InputValues.Count == 0 && ScriptInterpreterComboBox.SelectedValue.ToString() != ActScript.eScriptInterpreterType.VBS.ToString())
             {
                 actScript.AddInputValueParam("Value");
             }
