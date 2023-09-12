@@ -316,7 +316,7 @@ namespace Ginger.BusinessFlowPages
                 
                 Consumer consumer = new Consumer
                 {
-                    ConsumerGuid = targetApp.Guid,
+                    ConsumerGuid = targetApp.TargetGuid,
                     Name = targetApp.ItemName
                 };
                 consumerList.Add(consumer);

@@ -24,11 +24,21 @@ namespace GingerCore.Activities
     public class Consumer : RepositoryItemBase
     {
 
+        private Guid mConsumerGuid;
+        [IsSerializedForLocalRepository]
         public Guid ConsumerGuid
         {
-            get { return base.Guid; }
-            set { base.Guid = value; }
+            get { return mConsumerGuid; }
+            set
+            {
+                if (mConsumerGuid != value)
+                {
+                    mConsumerGuid = value;
+                    OnPropertyChanged(nameof(ConsumerGuid));
+                }
+            }
         }
+
 
 
 
