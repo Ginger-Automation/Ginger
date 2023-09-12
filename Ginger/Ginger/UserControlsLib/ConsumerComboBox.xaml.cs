@@ -122,33 +122,24 @@ namespace Ginger.UserControlsLib
 
         private static void OnOperationSelectedConsumerPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
-            var control = sender as ConsumerComboBox;
-            if (control != null)
+            if (args.NewValue is ObservableList<Consumer> newValueAsObservableList && sender is ConsumerComboBox control)
             {
-                control.OperationSelectedConsumerPropertyChanged((ObservableList<Consumer>)args.NewValue);
+                control.OperationSelectedConsumerPropertyChanged(newValueAsObservableList);
             }
+
         }
 
         private void OperationSelectedConsumerPropertyChanged(ObservableList<Consumer> oprationSelectedConsumer)
         {
             OnPropertyChanged(nameof(OperationSelectedConsumer));
             SelectedConsumer = OperationSelectedConsumer;
-            if (this.ConsumerSource.Count > 0 && this.SelectedConsumer != null && this.ConsumerSource.Count == this.SelectedConsumer.Count)
-            {
-                foreach (Node node in _nodeList)
-                {
-                    if (node.Title == "All")
-                    {
-                        node.IsSelected = true;
-                    }
-                }
-            }
+            
         }
 
-        public event PropertyChangedEventHandler PropertyChangedT;
+        public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChangedT;
+            PropertyChangedEventHandler handler = PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
@@ -174,7 +165,7 @@ namespace Ginger.UserControlsLib
         {
             foreach (Consumer consumer in SelectedConsumer)
             {
-                Node? node = _nodeList.FirstOrDefault(n => n.Consumer.Guid == consumer.Guid);
+                Node? node = _nodeList.FirstOrDefault(n => n.Consumer.ConsumerGuid == consumer.ConsumerGuid);
                 if (node != null)
                 {
                     node.IsSelected = true;
