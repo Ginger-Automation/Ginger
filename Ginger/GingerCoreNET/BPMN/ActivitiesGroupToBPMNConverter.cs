@@ -79,7 +79,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                 else
                 {
                     UserTask userTask = activityParticipant.Process.AddUserTask(new Process.AddTaskArguments(activity.Guid, activity.ActivityName));
-                    userTask.MessageRef = activity.Guid.ToString();
+                    userTask.MessageRef = activity.Guid.ToString().Remove(activity.Guid.ToString().Length - 2) + "aa";
                     Flow.Create(name: string.Empty, previousFlowSource, userTask);
                     previousFlowSource = userTask;
                 }
