@@ -1509,7 +1509,7 @@ namespace Ginger.Run
 
                     foreach (var errHandler in allErrorHandlers)
                     {
-                        if (errHandler.TriggerType == eTriggerType.AnyError || errHandler.ErrorStringList.Any(er => er.ErrorString.Contains(failedAction.Error)))
+                        if (errHandler.TriggerType == eTriggerType.AnyError || errHandler.ErrorStringList.Any(er => er.ErrorString.Equals(failedAction.Error)))
                         {
                             errorHandlersMatchingTrigger.Add(errHandler);
                         }
