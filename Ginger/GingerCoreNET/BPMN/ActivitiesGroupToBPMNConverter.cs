@@ -49,19 +49,17 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             StartEvent startEvent = firstActivityParticipant.Process.AddStartEvent(name: string.Empty);
             previousFlowSource = startEvent;
 
-            Activity? previousActivity = null;
             foreach (Activity activity in activitiesInActivityGroup)
             {
                 Participant activityParticipant = GetParticipantForTargetAppName(collaboration, activity.TargetApplication);
                 if(IsWebServicesActivity(activity))
                 {
-                    if (previousActivity == null)
-                        throw new InvalidOperationException("Cannot have WebServices activity without having any previous activity");
-                    Participant previousActivityParticipant = GetParticipantForTargetAppName(collaboration, previousActivity.TargetApplication);
-                    Task requestSourceTask = previousActivityParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_RequestSource"));
+                    string consumerAppName = GetTargetAppNameFromConsumerId(activity.ConsumerApplications.First());
+                    Participant consumerParticipant = GetParticipantForTargetAppName(collaboration, consumerAppName);
+                    Task requestSourceTask = consumerParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_RequestSource"));
                     Task requestTargetTask = activityParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_RequestTarget"));
                     Task responseSourceTask = activityParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_ResponseSource"));
-                    Task responseTargetTask = previousActivityParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_ResponseTarget"));
+                    Task responseTargetTask = consumerParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_ResponseTarget"));
                     Flow.Create(name: string.Empty, previousFlowSource, requestSourceTask);
                     Flow requestFlow = Flow.Create(name: $"{activity.ActivityName}_IN", requestSourceTask, requestTargetTask);
                     if(requestFlow is MessageFlow requestMessageFlow)
@@ -83,8 +81,6 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                     Flow.Create(name: string.Empty, previousFlowSource, userTask);
                     previousFlowSource = userTask;
                 }
-
-                previousActivity = activity;
             }
 
             Participant lastTaskParticipant = GetParticipantForProcessId(collaboration, previousFlowSource.ProcessId);
@@ -114,6 +110,13 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                 activityGroup
                     .ActivitiesIdentifiers
                     .Select(identifier => identifier.IdentifiedActivity);
+        }
+
+        private string GetTargetAppNameFromConsumerId(Consumer consumer)
+        {
+            IEnumerable<TargetBase> targetApps = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+            TargetBase consumerTargetApp = targetApps.First(targetApp => string.Equals(targetApp.Guid, consumer.ConsumerGuid));
+            return consumerTargetApp.Name;
         }
 
         private Participant GetParticipantForTargetAppName(Collaboration collaboration, string targetAppName)
