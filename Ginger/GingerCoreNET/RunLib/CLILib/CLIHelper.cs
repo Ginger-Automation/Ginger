@@ -212,6 +212,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
                 if (mRunSetConfig.ReRunConfigurations != null && mRunSetConfig.ReRunConfigurations.Active)
                 {
+                    if(mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == null)
+                    {
+                        mRunSetConfig.ReRunConfigurations.ReferenceExecutionID = GetLastExecutionIdBySolutionAndRunsetId(WorkSpace.Instance.Solution.Guid, mRunSetConfig.Guid);
+                    }
                     bool result = CheckforReRunConfig();
                     if (!result)
                     {
@@ -235,6 +239,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 return false;
             }
         }
+
+        public Guid GetLastExecutionIdBySolutionAndRunsetId(Guid soluionGuid, Guid runsetGuid)
+        {
+            List<RunSetReport> runsetsReport = new List<RunSetReport>();
+            runsetsReport = new GingerRemoteExecutionUtils().GetRunsetExecutionInfo(soluionGuid, runsetGuid);
+            return runsetsReport != null ? Guid.Parse(runsetsReport.FirstOrDefault().GUID) : Guid.Empty;
+        }
+
 
         public void PostExecution()
         {
@@ -288,7 +300,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     AccountReportApiHandler accountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
                     if (mRunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.RunSet)
                     {
-                        List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataToCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
+                        List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
                         if (accountReportRunset != null)
                         {
                             if (accountReportRunset.Any(x => x.Status.Equals(eRunStatus.Passed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
@@ -305,7 +317,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     }
                     else if (mRunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.BusinessFlow)
                     {
-                        List<AccountReportBusinessFlow> accountReportBusinessFlows = accountReportApiHandler.GetBusinessflowExecutionDataToCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
+                        List<AccountReportBusinessFlow> accountReportBusinessFlows = accountReportApiHandler.GetBusinessflowExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
                         if (accountReportBusinessFlows != null)
                         {
                             if (accountReportBusinessFlows.Any(x => x.RunStatus.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
