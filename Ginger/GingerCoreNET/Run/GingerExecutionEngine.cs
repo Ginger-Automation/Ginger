@@ -1495,7 +1495,7 @@ namespace Ginger.Run
                         // check if mapped error handlers are PRESENT in the current list of error handlers in the business flow i.e. allCurrentBusinessFlowErrorHandlers (checking for deletion, inactive etc.)
                         if (allCurrentBusinessFlowErrorHandlers.Any(x => x.Guid == _guid)) //.ToList().Exists(x => x.Guid == _guid))
                         {
-                            ErrorHandler _activity = CurrentBusinessFlow.Activities.Where(x => x.Guid == _guid).Cast<ErrorHandler>().FirstOrDefault();
+                            var _activity = CurrentBusinessFlow.Activities.FirstOrDefault(x => x.Guid == _guid) as ErrorHandler;
                             specificErrorHandlers.Add(_activity);
                         }
                     }
