@@ -49,7 +49,9 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 if ((State == StateType.Added || State == StateType.Deleted) && HasChildComparisons)
                 {
                     foreach (Comparison nestedChange in ChildComparisons)
+                    {
                         nestedChange.Selected = _selected;
+                    }
                 }
                 if (_selected && HasSiblingComparison)
                 {
@@ -140,13 +142,19 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             {
                 double unselectedComparisonCount;
                 if (Selected || (HasSiblingComparison && SiblingComparison.Selected))
+                {
                     unselectedComparisonCount = 0;
+                }
                 else
                 {
                     if (HasSiblingComparison)
+                    {
                         unselectedComparisonCount = 0.5;
+                    }
                     else
+                    {
                         unselectedComparisonCount = 1;
+                    }
                 }
                 return unselectedComparisonCount;
             }

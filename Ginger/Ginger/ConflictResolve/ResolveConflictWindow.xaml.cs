@@ -87,6 +87,8 @@ namespace Ginger.ConflictResolve
                         string content = serializer.SerializeToString(conflict.GetMergedItem());
                         SourceControlIntegration.ResolveConflictWithContent(WorkSpace.Instance.Solution.SourceControl, conflict.Path, content);
                         break;
+                    default:
+                        break;
                 }
             }
             Reporter.HideStatusMessage();

@@ -63,9 +63,13 @@ namespace Ginger.ConflictResolve
             {
                 RepositoryItemBase? rib = (RepositoryItemBase?)Activator.CreateInstance(_comparison.DataType);
                 if (rib != null)
+                {
                     itemImage.ImageType = rib.ItemImageType;
+                }
                 else
+                {
                     itemImage.ImageType = eImageType.Info;
+                }
             }
             else
             {
@@ -83,10 +87,13 @@ namespace Ginger.ConflictResolve
             Label itemHeaderLabel = new();
 
             if (_comparison.HasChildComparisons)
+            {
                 itemHeaderLabel.Content = _comparison.Name;
+            }
             else
+            {
                 itemHeaderLabel.Content = _comparison.Name + ": " + _comparison.DataAsString;
-
+            }
             return itemHeaderLabel;
         }
 
@@ -109,7 +116,7 @@ namespace Ginger.ConflictResolve
 
         public void SetTools(ITreeView TV)
         {
-
+            //this method is not required
         }
     }
 }

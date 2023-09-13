@@ -127,9 +127,13 @@ namespace Ginger.ConflictResolve
             {
                 RepositoryItemBase? rib = (RepositoryItemBase?)Activator.CreateInstance(_comparison.DataType);
                 if (rib != null)
+                {
                     itemImage.ImageType = rib.ItemImageType;
+                }
                 else
+                {
                     itemImage.ImageType = eImageType.Info;
+                }
             }
             else
             {

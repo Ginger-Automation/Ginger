@@ -49,7 +49,7 @@ namespace Ginger.ConflictResolve
 
         public override void Finish()
         {
-
+            //no action required
         }
     }
 }

@@ -40,7 +40,9 @@ namespace Ginger.ConflictResolve
             ResolveMergeConflictWizard? wizard = wizardEventArgs.Wizard as ResolveMergeConflictWizard;
 
             if (wizard == null)
+            {
                 throw new InvalidOperationException($"{nameof(ConflictViewPage)} must be used with {nameof(ResolveMergeConflictWizard)}.");
+            }
 
             switch (wizardEventArgs.EventType)
             {
@@ -49,6 +51,8 @@ namespace Ginger.ConflictResolve
                     break;
                 case EventType.LeavingForNextPage:
                     OnWizardPageLeavingForNextPage(wizard, wizardEventArgs);
+                    break;
+                default:
                     break;
             }
         }
@@ -70,7 +74,9 @@ namespace Ginger.ConflictResolve
             {
                 xContentGrid.Visibility = Visibility.Collapsed;
                 if (xLoadingFrame.Content == null)
+                {
                     xLoadingFrame.Content = new LoadingPage();
+                }
                 xLoadingFrame.Visibility = Visibility.Visible;
             });
         }
