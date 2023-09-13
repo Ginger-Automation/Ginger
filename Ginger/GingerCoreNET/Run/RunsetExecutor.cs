@@ -457,6 +457,7 @@ namespace Ginger.Run
                     if (WorkSpace.Instance.RunningInExecutionMode == false || RunSetConfig.ExecutionID == null)
                     {
                         RunSetConfig.ExecutionID = Guid.NewGuid();
+                       
                     }
                     else
                     {
@@ -471,6 +472,8 @@ namespace Ginger.Run
                             }
                         }
                     }
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("Ginger Execution Id: {0}", RunSetConfig.ExecutionID));
+
                     RunSetConfig.LastRunsetLoggerFolder = "-1";   // !!!!!!!!!!!!!!!!!!
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     mStopwatch.Reset();
