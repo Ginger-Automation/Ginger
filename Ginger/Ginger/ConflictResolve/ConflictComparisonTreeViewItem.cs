@@ -113,7 +113,7 @@ namespace Ginger.ConflictResolve
 
         private void CheckBox_CheckedUnchecked(object sender, RoutedEventArgs e)
         {
-
+            //not required
         }
 
         private ImageMakerControl GetItemImage()
@@ -181,7 +181,7 @@ namespace Ginger.ConflictResolve
 
         public void SetTools(ITreeView TV)
         {
-
+            //not required
         }
     }
 }

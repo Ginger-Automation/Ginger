@@ -41,6 +41,8 @@ namespace Ginger.ConflictResolve
                 case EventType.Active:
                     OnWizardPageActive(wizard);
                     break;
+                default:
+                    break;
             }
         }
 
@@ -62,7 +64,9 @@ namespace Ginger.ConflictResolve
             {
                 xContentGrid.Visibility = Visibility.Collapsed;
                 if (xLoadingFrame.Content == null)
+                {
                     xLoadingFrame.Content = new LoadingPage();
+                }
                 xLoadingFrame.Visibility = Visibility.Visible;
             });
         }
