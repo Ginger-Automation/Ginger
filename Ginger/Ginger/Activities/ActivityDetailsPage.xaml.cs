@@ -288,53 +288,26 @@ namespace Ginger.BusinessFlowPages
         private void xConsumerStackLogic()
         {
             //logic for Consumer ComboBox for Otoma
-            ObservableList<TargetApplication>  templist = new ObservableList<TargetApplication>();
-            ObservableList<TargetApplication> templist2 = new ObservableList<TargetApplication>();
-            ObservableList<Consumer> consumerList = new ObservableList<Consumer>();
+            ObservableList<TargetBase> targetApplications;//= new ObservableList<TargetApplication>();
+            ObservableList<Consumer> consumerList = new();
             if (mContext.BusinessFlow != null)
             {
-                foreach (TargetApplication _list in mContext.BusinessFlow.TargetApplications)
-                {
-                    if (_list.AppName != xTargetApplicationComboBox.SelectedItem.ToString())
-                    {
-
-                        templist.Add(_list);
-                    }
-                }
+                targetApplications = mContext.BusinessFlow.TargetApplications;               
             }
             else
             {
-                foreach (TargetApplication _list in WorkSpace.Instance.Solution.GetSolutionTargetApplications())
-                {
-                    if (_list.AppName != xTargetApplicationComboBox.SelectedItem.ToString())
-                    {
-                        templist2.Add(_list);
-                    }
-                }
+                targetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
             }
-            if(templist2.Count>0)
-            {
-                foreach (TargetApplication targetApp in templist2)
-                {
 
-                    Consumer consumer = new Consumer
-                    {
-                        ConsumerGuid = targetApp.Guid,
-                        Name = targetApp.ItemName
-                    };
-                    consumerList.Add(consumer);
-                }
-            }
-            
-            if(templist.Count>0)
+            foreach (TargetApplication targetApplication in targetApplications)
             {
-                foreach (TargetApplication targetApp in templist)
+                if (!targetApplication.AppName.Equals(xTargetApplicationComboBox.SelectedItem.ToString()))
                 {
-
-                    Consumer consumer = new Consumer
+                    Consumer consumer = new()
                     {
-                        ConsumerGuid = targetApp.TargetGuid,
-                        Name = targetApp.ItemName
+                        ConsumerGuid = targetApplication.TargetGuid != Guid.Empty ? targetApplication.TargetGuid :
+                        targetApplication.Guid,
+                        Name = targetApplication.ItemName
                     };
                     consumerList.Add(consumer);
                 }
