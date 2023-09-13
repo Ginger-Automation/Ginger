@@ -21,7 +21,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.BusinessFlowWindows;
+using Ginger.ConflictResolve;
 using Ginger.UserControls;
+using System.Collections.Generic;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
@@ -31,6 +33,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -182,7 +185,6 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xCreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader, nameof(RepositoryItemHeader.CreatedBy));
             BindingHandler.ObjFieldBinding(xAutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.AutomationPrecentage), System.Windows.Data.BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mBusinessFlow, nameof(RepositoryItemBase.Publish));
-
             //// Per source we can show specific source page info
             //if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
             //{

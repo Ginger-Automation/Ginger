@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 
@@ -24,6 +25,25 @@ namespace GingerCore.Platforms
     public class TargetApplication : TargetBase
     {
         public override string Name { get { return AppName; } }
+
+
+        
+        public Guid TargetGuid
+        {
+            get
+            {
+                return this.ParentGuid;
+            }
+            set
+            {
+                if (this.ParentGuid != value)
+                {
+                    this.ParentGuid = value;
+                    OnPropertyChanged(nameof(this.ParentGuid));
+                }
+            }
+        }
+
 
         string mAppName;
         //TODO: how about use GUID or add it for in case        
