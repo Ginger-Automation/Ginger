@@ -29,11 +29,17 @@ namespace Amdocs.Ginger.Common.SourceControlLib
         private static ICollection<Comparison> CompareValue(string name, Value? localValue, Value? remoteValue)
         {
             if (IsRepositoryItemBaseValue(localValue, remoteValue))
+            {
                 return CompareRIBValue(name, localValue, remoteValue);
+            }
             else if (IsCollectionValue(localValue, remoteValue))
+            {
                 return CompareCollectionValue(name, localValue, remoteValue);
+            }
             else
+            {
                 return CompareSimpleValue(name, localValue, remoteValue);
+            }
         }
 
         private static bool IsRepositoryItemBaseValue(Value? localValue, Value? remoteValue)
@@ -60,15 +66,17 @@ namespace Amdocs.Ginger.Common.SourceControlLib
         {
             //both local and remote doesn't have value
             if (localValue == null && remoteValue == null)
+            {
                 return new Comparison[] { new(name, Comparison.StateType.Unmodified, data: null) };
-
+            }
             //remote doesn't have value but, local does
             else if (remoteValue == null)
             {
                 //data in local is null
                 if (localValue!.Data == null)
+                {
                     return new Comparison[] { new(name, Comparison.StateType.Deleted, data: null) };
-
+                }
                 //data in local is not null
                 else
                 {
@@ -79,14 +87,18 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     foreach (PropertyInfo property in localRIB.GetType().GetProperties())
                     {
                         if (!IsPropertySerialized(property))
+                        {
                             continue;
+                        }
                         object? localPropertyValue = property.GetValue(localRIB);
                         childComparisons.AddRange(CompareValue(property.Name, new Value(localPropertyValue), remoteValue: null));
                     }
                     foreach (FieldInfo field in localRIB.GetType().GetFields())
                     {
                         if (!IsPropertySerialized(field))
+                        {
                             continue;
+                        }
                         object? localPropertyValue = field.GetValue(localRIB);
                         childComparisons.AddRange(CompareValue(field.Name, new Value(localPropertyValue), remoteValue: null));
                     }
@@ -99,8 +111,9 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             {
                 //data in remote is null
                 if (remoteValue!.Data == null)
+                {
                     return new Comparison[] { new(name, Comparison.StateType.Added, data: null) };
-
+                }
                 //data in remote is not null
                 else
                 {
@@ -111,14 +124,18 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     foreach (PropertyInfo property in remoteRIB.GetType().GetProperties())
                     {
                         if (!IsPropertySerialized(property))
+                        {
                             continue;
+                        }
                         object? remotePropertyValue = property.GetValue(remoteRIB);
                         childComparisons.AddRange(CompareValue(property.Name, localValue: null, new Value(remotePropertyValue)));
                     }
                     foreach (FieldInfo field in remoteRIB.GetType().GetFields())
                     {
                         if (!IsPropertySerialized(field))
+                        {
                             continue;
+                        }
                         object? remotePropertyValue = field.GetValue(remoteRIB);
                         childComparisons.AddRange(CompareValue(field.Name, localValue: null, new Value(remotePropertyValue)));
                     }
@@ -134,16 +151,19 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 
                 //data in both local and remote is null
                 if (localRIB == null && remoteRIB == null)
+                {
                     return new Comparison[] { new(name, Comparison.StateType.Unmodified, data: null) };
-
+                }
                 //data in local is null
                 else if (localRIB == null)
+                {
                     return CompareValue(name, localValue: null, remoteValue);
-
+                }
                 //data in remote is null
                 else if (remoteRIB == null)
+                {
                     return CompareValue(name, localValue, remoteValue: null);
-
+                }
                 //data in both local and remote is not null
                 else
                 {
@@ -154,7 +174,9 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         foreach (PropertyInfo property in seniorType.GetProperties())
                         {
                             if (!IsPropertySerialized(property))
+                            {
                                 continue;
+                            }
                             childComparisons.AddRange(
                                 CompareValue(
                                     name: property.Name,
@@ -164,7 +186,9 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         foreach (FieldInfo field in seniorType.GetFields())
                         {
                             if (!IsPropertySerialized(field))
+                            {
                                 continue;
+                            }
                             childComparisons.AddRange(
                                 CompareValue(
                                     name: field.Name,
@@ -173,9 +197,13 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         }
                         Comparison.StateType state = childComparisons.All(c => c.State == Comparison.StateType.Unmodified) ? Comparison.StateType.Unmodified : Comparison.StateType.Modified;
                         if (state == Comparison.StateType.Unmodified)
+                        {
                             return new Comparison[] { new(name, state, childComparisons, localRIB) };
+                        }
                         else
+                        {
                             return new Comparison[] { new(name, state, childComparisons, dataType: seniorType) };
+                        }
                     }
                     else
                     {
@@ -183,7 +211,9 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         foreach (PropertyInfo property in localRIB.GetType().GetProperties())
                         {
                             if (!IsPropertySerialized(property))
+                            {
                                 continue;
+                            }
                             localChildComparisons.AddRange(
                                 CompareValue(
                                     name: property.Name,
@@ -193,7 +223,9 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         foreach (FieldInfo field in localRIB.GetType().GetFields())
                         {
                             if (!IsPropertySerialized(field))
+                            {
                                 continue;
+                            }
                             localChildComparisons.AddRange(
                                 CompareValue(
                                     name: field.Name,
@@ -206,7 +238,9 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         foreach (PropertyInfo property in remoteRIB.GetType().GetProperties())
                         {
                             if (!IsPropertySerialized(property))
+                            {
                                 continue;
+                            }
                             remoteChildComparisons.AddRange(
                                 CompareValue(
                                     name: property.Name,
@@ -216,7 +250,9 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         foreach (FieldInfo field in remoteRIB.GetType().GetFields())
                         {
                             if (!IsPropertySerialized(field))
+                            {
                                 continue;
+                            }
                             remoteChildComparisons.AddRange(
                                 CompareValue(
                                     name: field.Name,
@@ -237,10 +273,13 @@ namespace Amdocs.Ginger.Common.SourceControlLib
         {
             Type seniorType;
             if (type1.IsAssignableTo(type2))
+            {
                 seniorType = type2;
+            }
             else
+            {
                 seniorType = type1;
-
+            }
             return seniorType;
         }
 
@@ -258,15 +297,17 @@ namespace Amdocs.Ginger.Common.SourceControlLib
         {
             //both local and remote doesn't have value
             if (localValue == null && remoteValue == null)
+            {
                 return new Comparison[] { new(name, state: Comparison.StateType.Unmodified, data: null) };
-
+            }
             //local doesn't have value but, remote does
             else if (localValue == null)
             {
                 //data in remote is null
                 if (remoteValue!.Data == null)
+                {
                     return new Comparison[] { new(name, Comparison.StateType.Added, data: null) };
-
+                }
                 //data in remote is not null
                 else
                 {
@@ -292,8 +333,9 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             {
                 //data in local is null
                 if (localValue!.Data == null)
+                {
                     return new Comparison[] { new(name, Comparison.StateType.Deleted, data: null) };
-
+                }
                 //data in local is not null
                 else
                 {
@@ -322,15 +364,19 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 
                 //data in both local and remote is null
                 if (localCollection == null && remoteCollection == null)
+                {
                     return new Comparison[] { new(name, Comparison.StateType.Unmodified, data: null) };
-
+                }
                 //data in local is null
                 else if (localCollection == null)
+                {
                     return CompareValue(name, localValue: null, remoteValue);
-
+                }
                 //data in remote is null
                 else if (remoteCollection == null)
+                {
                     return CompareValue(name, localValue, remoteValue: null);
+                }
 
                 List<Comparison> childComparisons = new();
                 int index = 0;
@@ -357,24 +403,36 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 }
                 Comparison.StateType state = childComparisons.All(c => c.State == Comparison.StateType.Unmodified) ? Comparison.StateType.Unmodified : Comparison.StateType.Modified;
                 if (state == Comparison.StateType.Unmodified)
+                {
                     return new Comparison[] { new(name, state, childComparisons, localCollection) };
+                }
                 else
+                {
                     return new Comparison[] { new(name, state, childComparisons, dataType: GetSeniorType(localCollection.GetType(), remoteCollection.GetType())) };
+                }
             }
         }
 
         private static ICollection<Comparison> CompareSimpleValue(string name, Value? localValue, Value? remoteValue)
         {
             if (localValue == null && remoteValue == null)
+            {
                 return new Comparison[] { new(name, state: Comparison.StateType.Unmodified, data: null) };
+            }
             else if (localValue == null)
+            {
                 return new Comparison[] { new(name, state: Comparison.StateType.Added, data: remoteValue!.Data) };
+            }
             else if (remoteValue == null)
+            {
                 return new Comparison[] { new(name, state: Comparison.StateType.Deleted, data: localValue!.Data) };
+            }
             else
             {
                 if (string.Equals(localValue!.Data?.ToString(), remoteValue!.Data?.ToString()))
+                {
                     return new Comparison[] { new(name, state: Comparison.StateType.Unmodified, data: localValue!.Data) };
+                }
                 else
                 {
                     Comparison localComparison = new(name, state: Comparison.StateType.Deleted, data: localValue!.Data);

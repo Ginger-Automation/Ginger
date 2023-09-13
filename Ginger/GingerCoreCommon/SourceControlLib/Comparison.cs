@@ -119,9 +119,13 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 foreach (Comparison childComparison in ChildComparisons)
                 {
                     if (uniqueNameComparisons.ContainsKey(childComparison.Name))
+                    {
                         uniqueNameComparisons[childComparison.Name].Add(childComparison);
+                    }
                     else
+                    {
                         uniqueNameComparisons.Add(childComparison.Name, new List<Comparison>() { childComparison });
+                    }
                 }
 
                 double unselectedChildComparisonCount = 0;

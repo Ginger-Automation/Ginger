@@ -52,9 +52,11 @@ namespace Ginger.ConflictResolve
             headerStackPanel.Background = itemColor;
 
             CheckBox? itemSelectCheckBox = GetItemSelectCheckBox();
-            if(itemSelectCheckBox != null)
+            if (itemSelectCheckBox != null)
+            {
                 headerStackPanel.Children.Add(itemSelectCheckBox);
-           
+            }
+
             ImageMakerControl itemImage = GetItemImage();
             headerStackPanel.Children.Add(itemImage);
 
@@ -84,12 +86,16 @@ namespace Ginger.ConflictResolve
         private CheckBox? GetItemSelectCheckBox()
         {
             if (_comparison.State == Comparison.StateType.Unmodified || _comparison.State == Comparison.StateType.Modified)
+            {
                 return null;
+            }
 
             if (_comparison.HasParentComparison &&
                 (_comparison.ParentComparison.State == Comparison.StateType.Added ||
                 _comparison.ParentComparison.State == Comparison.StateType.Deleted))
+            {
                 return null;
+            }
 
             CheckBox itemSelectCheckbox = new();
             itemSelectCheckbox.VerticalAlignment = System.Windows.VerticalAlignment.Center;
@@ -141,9 +147,13 @@ namespace Ginger.ConflictResolve
             Label itemHeaderLabel = new();
 
             if (_comparison.HasChildComparisons)
+            {
                 itemHeaderLabel.Content = _comparison.Name;
+            }
             else
+            {
                 itemHeaderLabel.Content = _comparison.Name + ": " + _comparison.DataAsString;
+            }
 
             return itemHeaderLabel;
         }
