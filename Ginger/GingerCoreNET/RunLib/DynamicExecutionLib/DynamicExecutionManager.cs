@@ -47,6 +47,7 @@ using System.Linq;
 using System.Xml.Serialization;
 using ZephyrEntStdSDK.Models;
 using static Ginger.Configurations.SealightsConfiguration;
+using static Ginger.Run.GingerRunner;
 using eReRunLevel = Ginger.ExecuterService.Contracts.eReRunLevel;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
@@ -572,7 +573,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 Active = false,
                 RerunLevel= eReRunLevel.RunSet,
-                ReferenceExecutionID= new Guid(),
+                ReferenceExecutionID= Guid.Empty,
             };
 
             runset.RerunConfigurations = rerunconfiguration;

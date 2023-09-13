@@ -47,8 +47,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string SEND_RUNNER_EXECUTION_DATA = "api/AccountReport/runner/";
         private const string UPLOAD_FILES = "api/AccountReport/UploadFiles/";
         private const string EXECUTION_ID_VALIDATION = "api/AccountReport/ExecutionIdValidation/";
-        private const string Get_BUSINESSFLOW_EXECUTION_DATA = "api/AccountReport/GetAccountReportBusinessflowsByExecutionId/";
-        private const string Get_RUNSET_EXECUTION_DATA = "api/AccountReport/GetRunsetHLExecutionInfo/";
+        private const string GET_BUSINESSFLOW_EXECUTION_DATA = "api/AccountReport/GetAccountReportBusinessflowsByExecutionId/";
+        private const string GET_RUNSET_EXECUTION_DATA = "api/AccountReport/GetRunsetHLExecutionInfo/";
         
 
         public AccountReportApiHandler(string apiUrl)
@@ -114,11 +114,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).ConfigureAwait(false);
                 if (responseIsSuccess)
                 {
-                    Reporter.ToLog(eLogLevel.INFO, "Successfully sent " + message);
+                    Reporter.ToLog(eLogLevel.INFO, $"Successfully sent { message}");
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to send { message}");
                 }
             }
             else
@@ -137,16 +137,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_RUNNER_EXECUTION_DATA, accountReportRunner, isUpdate).ConfigureAwait(false);
                     if (responseIsSuccess)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Successfully sent { message}");
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to send { message}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception when sending " + message, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception when sending { message}", ex);
                 }
             }
         }
@@ -159,11 +159,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_BUSINESSFLOW_EXECUTION_DATA, accountReportBusinessFlow, isUpdate).ConfigureAwait(false);
                 if (responseIsSuccess)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Successfully sent { message}");
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to send { message}");
                 }
             }
         }
@@ -179,16 +179,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_ACTIVITYGROUP_EXECUTION_DATA, accountReportActivityGroup, isUpdate).ConfigureAwait(false);
                     if (responseIsSuccess)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Successfully sent { message} ");
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to send { message}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception when sending " + message, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception when sending { message}", ex);
                 }
             }
         }
@@ -203,16 +203,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_ACTIVITY_EXECUTION_DATA, accountReportActivity, isUpdate).ConfigureAwait(false);
                     if (responseIsSuccess)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Successfully sent { message}");
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to send { message}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception when sending " + message, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception when sending { message}", ex);
                 }
             }
         }
@@ -227,16 +227,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_ACTION_EXECUTION_DATA, accountReportAction, isUpdate).ConfigureAwait(false);
                     if (responseIsSuccess)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + message);
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Successfully sent { message}");
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + message);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to send { message}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception when sending " + message, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception when sending { message}", ex);
                 }
             }
         }
@@ -252,17 +252,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     RestResponse response = restClient.Execute(restRequest);
                     if (response.IsSuccessful)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Successfully validated execution id " + message);
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Successfully validated execution id { message}");
                         return Convert.ToBoolean(response.Content);
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to validate " + message + "Response: " + response.Content);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to validate { message } Response: { response.Content}");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception while validating execution id " + message, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception while validating execution id { message}", ex);
                 }
                 return true;
             }
@@ -329,17 +329,17 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
                     if (response.IsSuccessful)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Successfully uploaded " + message);
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Successfully uploaded {message}");
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to upload " + message + "Response: " + response.Content);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to upload { message} Response: { response.Content}");
                     }
 
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception occured during uploading " + message, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception occured during uploading { message}", ex);
                 }
             }
         }
@@ -353,76 +353,76 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 RestResponse response = await restClient.ExecuteAsync(restRequest);
                 if (response.IsSuccessful)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Successfully sent " + api);
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Successfully sent { api}");
                     return true;
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to send " + api + "Response: " + response.Content);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to send { api} Response:{ response.Content}");
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception when sending " + api, ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Exception when sending { api}", ex);
                 return false;
             }
         }
 
-        public List<AccountReportBusinessFlow> GetBusinessflowExecutionDataToCentralDB(Guid executionId)
+        public List<AccountReportBusinessFlow> GetBusinessflowExecutionDataFromCentralDB(Guid executionId)
         {
             List<AccountReportBusinessFlow> accountReportBusinessFlows = new List<AccountReportBusinessFlow>();
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(Get_BUSINESSFLOW_EXECUTION_DATA + executionId, Method.Get);
+                RestRequest restRequest = (RestRequest)new RestRequest(GET_BUSINESSFLOW_EXECUTION_DATA + executionId, Method.Get);
                 string message = string.Format("execution id : {0}", executionId);
                 try
                 {
                     RestResponse response = restClient.Execute(restRequest);
                     if (response.IsSuccessful)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Successfully validated execution id " + message);
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Successfully validated execution id { message}");
                         accountReportBusinessFlows = JsonConvert.DeserializeObject<List<AccountReportBusinessFlow>>(response.Content);
                         return accountReportBusinessFlows;
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to validate " + message + "Response: " + response.Content);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to validate { message} Response: { response.Content} ");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception while validating execution id " + message, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception while validating execution id { message}", ex);
                 }
                 return accountReportBusinessFlows;
             }
             return accountReportBusinessFlows;
         }
 
-        public List<RunsetHLInfoResponse> GetRunsetExecutionDataToCentralDB(Guid executionId)
+        public List<RunsetHLInfoResponse> GetRunsetExecutionDataFromCentralDB(Guid executionId)
         {
             List<RunsetHLInfoResponse> accountReportrunset = new List<RunsetHLInfoResponse>();
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(Get_RUNSET_EXECUTION_DATA + executionId, Method.Get);
+                RestRequest restRequest = (RestRequest)new RestRequest(GET_RUNSET_EXECUTION_DATA + executionId, Method.Get);
                 string message = string.Format("execution id : {0}", executionId);
                 try
                 {
                     RestResponse response = restClient.Execute(restRequest);
                     if (response.IsSuccessful)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Successfully validated execution id " + message);
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Successfully validated execution id { message}");
                         accountReportrunset = JsonConvert.DeserializeObject<List<RunsetHLInfoResponse>>(response.Content);
                         return accountReportrunset;
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Failed to validate " + message + "Response: " + response.Content);
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to validate { message} Response: { response.Content} ");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception while validating execution id " + message, ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception while validating execution id { message}", ex);
                 }
                 return accountReportrunset;
             }
