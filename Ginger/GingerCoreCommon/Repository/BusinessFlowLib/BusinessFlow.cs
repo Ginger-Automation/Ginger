@@ -1324,7 +1324,7 @@ namespace GingerCore
                     ApplicationPlatform appAgent = ApplicationPlatforms.FirstOrDefault(x => x.AppName == activityIns.TargetApplication);
                     if (appAgent != null)
                     {
-                        this.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName });
+                        this.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName, TargetGuid = appAgent.Guid });
                     }
                 }
             }
