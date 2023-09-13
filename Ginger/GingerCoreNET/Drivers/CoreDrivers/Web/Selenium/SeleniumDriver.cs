@@ -62,7 +62,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V113.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
@@ -9822,8 +9822,8 @@ namespace GingerCore.Drivers
 
             //DevTool Session 
             devToolsSession = devTools.GetDevToolsSession(113);
-            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V113.DevToolsSessionDomains>();
-            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V113.Network.EnableCommandSettings());
+            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains>();
+            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V116.Network.EnableCommandSettings());
 
 
         }
@@ -9888,7 +9888,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V113.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V116.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 
