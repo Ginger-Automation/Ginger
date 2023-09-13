@@ -181,33 +181,37 @@ namespace GingerCore.ALM
         }
 
         #region RQM Configurations Package
+        private readonly object fileLock = new object();
         private Dictionary<String, Object> GetDynamicServerConfigAndSetPaths()
         {
             if (IsConfigPackageExists())
             {
                 try
                 {
-                    XmlDocument RQMSettingsXML = new XmlDocument();
-                    string RQMSettingsXMLFilePath = Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml");
-                    RQMSettingsXML.Load(RQMSettingsXMLFilePath);
+                    lock (fileLock)
+                    {
+                        XmlDocument RQMSettingsXML = new XmlDocument();
+                        string RQMSettingsXMLFilePath = Path.Combine(RQMCore.ConfigPackageFolderPath, "RQMSettings.xml");
+                        RQMSettingsXML.Load(RQMSettingsXMLFilePath);
 
-                    //Set Path of Export_Settings.xml file inside RQMSettings.xml file
-                    XmlNode Export_SettingsFile_Location = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/Export_SettingsFile_Location");
-                    Export_SettingsFile_Location.InnerText = Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Export");
-                    RQMSettingsXML.Save(RQMSettingsXMLFilePath);
+                        //Set Path of Export_Settings.xml file inside RQMSettings.xml file
+                        XmlNode Export_SettingsFile_Location = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/Export_SettingsFile_Location");
+                        Export_SettingsFile_Location.InnerText = Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Export");
+                        RQMSettingsXML.Save(RQMSettingsXMLFilePath);
 
-                    //Extract end return ServerURL value from RQM/GeneralData/ServerURL node
-                    XmlNode ServerURLNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/ServerURL");
-                    string serverURL = ServerURLNode.InnerText;
-                    XmlNode IsTestSuiteNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/IsTestSuite");
-                    string IsTestSuite = IsTestSuiteNode.InnerText;
-                    XmlNode DefectFieldAPINode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/DefectFieldAPI");
-                    string DefectFieldAPI = DefectFieldAPINode.InnerText;
-                    Dictionary<String, Object> dictionary = new Dictionary<string, object>();
-                    dictionary.Add("ServerURL", serverURL);
-                    dictionary.Add("IsTestSuite", IsTestSuite);
-                    dictionary.Add("DefectFieldAPI", DefectFieldAPI);
-                    return dictionary;
+                        //Extract end return ServerURL value from RQM/GeneralData/ServerURL node
+                        XmlNode ServerURLNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/ServerURL");
+                        string serverURL = ServerURLNode.InnerText;
+                        XmlNode IsTestSuiteNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/IsTestSuite");
+                        string IsTestSuite = IsTestSuiteNode.InnerText;
+                        XmlNode DefectFieldAPINode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/DefectFieldAPI");
+                        string DefectFieldAPI = DefectFieldAPINode.InnerText;
+                        Dictionary<String, Object> dictionary = new Dictionary<string, object>();
+                        dictionary.Add("ServerURL", serverURL);
+                        dictionary.Add("IsTestSuite", IsTestSuite);
+                        dictionary.Add("DefectFieldAPI", DefectFieldAPI);
+                        return dictionary; 
+                    }
                 }
                 catch (Exception e)
                 {
