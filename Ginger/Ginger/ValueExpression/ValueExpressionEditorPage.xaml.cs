@@ -946,6 +946,7 @@ namespace Ginger
                 {
                     // selects the current environment in use. this environment is then used to get the values of the environment variables
                     mContext.Environment = GetCurrentEnvironment();
+                    if (mContext.Environment == null) mContext.Environment = mEnvs[0];
                 }
                 mVE = new ValueExpression(mContext.Environment, mContext, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
 
