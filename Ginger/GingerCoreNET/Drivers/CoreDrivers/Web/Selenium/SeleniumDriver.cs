@@ -266,6 +266,7 @@ namespace GingerCore.Drivers
         public string DebugAddress { get; set; }
 
         [UserConfigured]
+        // Changed the default from ignore to Actual Default suggested by Selenium i.e. dismissAndNotify
         [UserConfiguredDefault("dismissAndNotify")]
         [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
         public string UnhandledPromptBehavior { get; set; }
@@ -1205,6 +1206,7 @@ namespace GingerCore.Drivers
                                       (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
                                       || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
                                       || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox
+                                      //Added below 2 conditions for comparision for Alert Text Box
                                       || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.GetMessageBoxText
                                       || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SetAlertBoxText));
 
