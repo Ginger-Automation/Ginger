@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
@@ -50,6 +51,7 @@ namespace Ginger.Environments
             xShowIDUC.Init(AppEnvironmnet);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, AppEnvironmnet, nameof(RepositoryItemBase.Publish));
 
+            InitReleaseComboBox();
 
             grdApps.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddApp));
             grdApps.AddToolbarTool("@Share_16x16.png", "Add Selected Applications to All Environments", new RoutedEventHandler(AddAppsToOtherEnvironments));
@@ -66,6 +68,13 @@ namespace Ginger.Environments
         }
 
         #region Functions
+
+        private void InitReleaseComboBox()
+        {
+            ObservableList<SolutionCategoryValue> combList = SolutionGeneral.SolutionOperations.GetSolutionReleaseValues();
+            xReleaseCombobox.BindControl(AppEnvironmnet, nameof(ProjEnvironment.ReleaseVersion), combList, nameof(SolutionCategoryValue.Value), nameof(SolutionCategoryValue.Guid));
+            BindingHandler.ObjFieldBinding(xReleaseCombobox, ComboBox.SelectedValueProperty, AppEnvironmnet, nameof(ProjEnvironment.ReleaseVersion));
+        }
         private void SetGridView()
         {
             //Set the grid name
