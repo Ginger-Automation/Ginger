@@ -86,6 +86,11 @@ namespace Ginger.ConflictResolve
             if (_comparison.State == Comparison.StateType.Unmodified || _comparison.State == Comparison.StateType.Modified)
                 return null;
 
+            if (_comparison.HasParentComparison &&
+                (_comparison.ParentComparison.State == Comparison.StateType.Added ||
+                _comparison.ParentComparison.State == Comparison.StateType.Deleted))
+                return null;
+
             CheckBox itemSelectCheckbox = new();
             itemSelectCheckbox.VerticalAlignment = System.Windows.VerticalAlignment.Center;
             BindingHandler.ObjFieldBinding(
@@ -157,7 +162,7 @@ namespace Ginger.ConflictResolve
 
         public object NodeObject()
         {
-            return null;
+            return _comparison;
         }
 
         public void SetTools(ITreeView TV)

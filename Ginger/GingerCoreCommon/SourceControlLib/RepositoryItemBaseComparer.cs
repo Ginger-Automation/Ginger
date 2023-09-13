@@ -225,6 +225,8 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         }
                         Comparison remoteComparisonResult = new(name, state: Comparison.StateType.Added, remoteChildComparisons, data: remoteRIB);
 
+                        localComparisonResult.SetSiblingComparison(remoteComparisonResult);
+
                         return new Comparison[] { localComparisonResult, remoteComparisonResult };
                     }
                 }
@@ -374,11 +376,18 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 if (string.Equals(localValue!.Data?.ToString(), remoteValue!.Data?.ToString()))
                     return new Comparison[] { new(name, state: Comparison.StateType.Unmodified, data: localValue!.Data) };
                 else
+                {
+                    Comparison localComparison = new(name, state: Comparison.StateType.Deleted, data: localValue!.Data);
+                    Comparison remoteComparison = new(name, state: Comparison.StateType.Added, data: remoteValue!.Data);
+
+                    localComparison.SetSiblingComparison(remoteComparison);
+
                     return new List<Comparison>()
                     {
-                        new(name, state: Comparison.StateType.Deleted, data: localValue!.Data),
-                        new(name, state: Comparison.StateType.Added, data: remoteValue!.Data)
+                        localComparison,
+                        remoteComparison
                     };
+                }
             }
         }
     }

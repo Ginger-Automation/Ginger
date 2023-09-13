@@ -45,9 +45,8 @@ namespace GingerWPF.BusinessFlowsLib
         BusinessFlow mBusinessFlow;
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
-        List<string> ListCompareObject;
 
-        public BusinessFlowConfigurationsPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode, bool RenderConflict = false, List<string> listCompareObject = null)
+        public BusinessFlowConfigurationsPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
 
@@ -59,44 +58,6 @@ namespace GingerWPF.BusinessFlowsLib
             mBusinessFlow.TargetApplications.CollectionChanged += TargetApplications_CollectionChanged;
             TrackBusinessFlowAutomationPrecentage();
             BindControls();
-            if (RenderConflict)
-            {
-                this.Loaded += BusinessFlowConfigurationsPage_Loaded;
-                ListCompareObject = listCompareObject;
-            }
-        }
-
-        private void BusinessFlowConfigurationsPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            List<FrameworkElement> lstLocalContrls = GetListOfChildControls.GetAllControls(this);
-
-            foreach (FrameworkElement control in lstLocalContrls)
-            {
-                Type getType = typeof(FrameworkElement);
-                Binding bindingObj = BindingElementsOperations.GetBindingElement(control, out getType);
-                if (bindingObj != null)
-                {
-                    string variableName = bindingObj.Path.Path;
-                    if (ListCompareObject.Any(l => l.Contains(variableName)))
-                    {
-                        if (getType.Equals(typeof(TextBox)))
-                        {
-                            int idx = lstLocalContrls.IndexOf(control);
-                            ((TextBox)control).SetStyleToHighlightConflict();
-                        }
-                        if (getType.Equals(typeof(ComboBox)))
-                        {
-                            int idx = lstLocalContrls.IndexOf(control);
-                            ((ComboBox)control).SetStyleToHighlightConflict();
-                        }
-                        if (getType.Equals(typeof(CheckBox)))
-                        {
-                            int idx = lstLocalContrls.IndexOf(control);
-                            ((CheckBox)control).SetStyleToHighlightConflict();
-                        }
-                    }
-                }
-            }
         }
 
         private void TargetApplications_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

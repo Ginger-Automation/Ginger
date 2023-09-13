@@ -1,7 +1,8 @@
-﻿using Amdocs.Ginger.Common.SourceControlLib;
-using DocumentFormat.OpenXml.Bibliography;
+﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.SourceControlLib;
 using GingerCore;
 using GingerTest.WizardLib;
+using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Windows.Forms.AxHost;
 
 namespace Ginger.ConflictResolve
 {
@@ -26,6 +28,8 @@ namespace Ginger.ConflictResolve
     /// </summary>
     public partial class ConflictViewPage : Page, IWizardPage
     {
+        private Comparison _wizardComparison;
+
         public ConflictViewPage()
         {
             InitializeComponent();
@@ -43,9 +47,6 @@ namespace Ginger.ConflictResolve
                 case EventType.Init:
                     OnWizardPageInit(wizard);
                     break;
-                case EventType.Active:
-                    OnWizardPageActive(wizard);
-                    break;
                 case EventType.LeavingForNextPage:
                     OnWizardPageLeavingForNextPage(wizard, wizardEventArgs);
                     break;
@@ -57,6 +58,7 @@ namespace Ginger.ConflictResolve
             Task.Run(() =>
             {
                 ShowLoading();
+                _wizardComparison = wizard.Comparison;
                 SetTreeItems(wizard.Comparison);
                 HideLoading();
             });
@@ -84,23 +86,102 @@ namespace Ginger.ConflictResolve
 
         private void SetTreeItems(Comparison comparison)
         {
-            Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke(() =>
             {
-                xLocalItemTree.AddItem(new ConflictComparisonTreeViewItem(comparison, (Comparison.StateType[])(new[] { Comparison.StateType.Unmodified, Comparison.StateType.Modified, Comparison.StateType.Deleted })));
-                xRemoteItemTree.AddItem(new ConflictComparisonTreeViewItem(comparison, (Comparison.StateType[])(new[] { Comparison.StateType.Unmodified, Comparison.StateType.Modified, Comparison.StateType.Added })));
-            }));
-        }
-
-        private void OnWizardPageActive(ResolveMergeConflictWizard wizard)
-        {
-
+                xLocalItemTree.AddItem(
+                    new ConflictComparisonTreeViewItem(
+                        comparison, 
+                        childrenStateFilter: new[] 
+                        { 
+                            Comparison.StateType.Unmodified, 
+                            Comparison.StateType.Modified, 
+                            Comparison.StateType.Deleted 
+                        }));
+                xRemoteItemTree.AddItem(
+                    new ConflictComparisonTreeViewItem(
+                        comparison, 
+                        childrenStateFilter: new[] 
+                        { 
+                            Comparison.StateType.Unmodified, 
+                            Comparison.StateType.Modified, 
+                            Comparison.StateType.Added 
+                        }));
+            });
         }
 
         private void OnWizardPageLeavingForNextPage(ResolveMergeConflictWizard wizard, WizardEventArgs eventArgs)
         {
-            if (!wizard.Comparison.CanBeMerged())
+            int unselectedComparisonCount = wizard.Comparison.UnselectedComparisonCount();
+            if (unselectedComparisonCount > 0)
             {
+                Reporter.ToUser(eUserMsgKey.HasUnselectedConflicts, messageArgs: unselectedComparisonCount);
                 eventArgs.CancelEvent = true;
+            }
+        }
+
+        private void xPrevConflict_Click(object sender, RoutedEventArgs e)
+        {
+            ITreeViewItem? previousConflictTVI = null;
+            Func<ITreeViewItem, bool> iterationConsumer = tvi =>
+            {
+                Comparison comparison = (Comparison)tvi.NodeObject();
+                bool continueIteration = true;
+
+                bool IsAddedOrDeleted = comparison.State == Comparison.StateType.Added || comparison.State == Comparison.StateType.Deleted;
+                bool selfAndSiblingNotSelected = !comparison.Selected && (!comparison.HasSiblingComparison || !comparison.SiblingComparison.Selected);
+
+                if (IsAddedOrDeleted && selfAndSiblingNotSelected)
+                {
+                    previousConflictTVI = tvi;
+                    continueIteration = false;
+                }
+
+                return continueIteration;
+            };
+
+            xLocalItemTree.IterateTreeViewItems(iterationConsumer, inReverseOrder: true);
+            if (previousConflictTVI != null)
+            {
+                xLocalItemTree.SelectItem(previousConflictTVI);
+            }
+
+            xRemoteItemTree.IterateTreeViewItems(iterationConsumer, inReverseOrder: true);
+            if (previousConflictTVI != null)
+            {
+                xRemoteItemTree.SelectItem(previousConflictTVI);
+            }
+        }
+
+        private void xNextConflict_Click(object sender, RoutedEventArgs e)
+        {
+            ITreeViewItem? nextConflictTVI = null;
+            Func<ITreeViewItem, bool> iterationConsumer = tvi =>
+            {
+                Comparison comparison = (Comparison)tvi.NodeObject();
+                bool continueIteration = true;
+
+                bool IsAddedOrDeleted = comparison.State == Comparison.StateType.Added || comparison.State == Comparison.StateType.Deleted;
+                bool selfAndSiblingNotSelected = !comparison.Selected && (!comparison.HasSiblingComparison || !comparison.SiblingComparison.Selected);
+
+                if (IsAddedOrDeleted && selfAndSiblingNotSelected)
+                {
+                    nextConflictTVI = tvi;
+                    continueIteration = false;
+                }
+
+                return continueIteration;
+            };
+
+            xLocalItemTree.IterateTreeViewItems(iterationConsumer);
+            if (nextConflictTVI != null)
+            {
+                xLocalItemTree.SelectItem(nextConflictTVI);
+            }
+
+            xRemoteItemTree.IterateTreeViewItems(iterationConsumer);
+            if (nextConflictTVI != null)
+            {
+                xRemoteItemTree.SelectItem(nextConflictTVI);
             }
         }
     }

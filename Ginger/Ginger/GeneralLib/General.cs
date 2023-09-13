@@ -94,11 +94,7 @@ namespace Ginger
             /// <summary>
             /// Item should be open for read only but should allow execute
             /// </summary>
-            ViewAndExecute = 10,
-            /// <summary>
-            /// Item should be open for read only and synchronize as per source control conflict
-            /// </summary>
-            SourceControlConflict = 11
+            ViewAndExecute = 10
 
         }
 

@@ -30,15 +30,15 @@ namespace Ginger.ConflictResolve
         private void AddPages()
         {
             AddPage(
-                Name: "Name - Compare And Select",
-                Title: "Title - Compare and Select",
-                SubTitle: "SubTitle - Compare and Select",
+                Name: "CompareAndSelect",
+                Title: "Compare and Select Conflicts",
+                SubTitle: "Compare and Select Conflicts",
                 new ConflictViewPage());
 
             AddPage(
-                Name: "Name - Preview Merged",
-                Title: "Title - Preview Merged",
-                SubTitle: "SubTitle - Preview Merged",
+                Name: "PreviewMergedResult",
+                Title: "Preview Merged Result",
+                SubTitle: "Preview Merged Result",
                 new PreviewMergedPage());
         }
 

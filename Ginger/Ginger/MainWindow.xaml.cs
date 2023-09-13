@@ -777,12 +777,16 @@ namespace Ginger
 
         private void ResolveConflictsServerMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ResolveSourceControlConflicts(eResolveConflictsSide.Server);
+            //ResolveSourceControlConflicts(eResolveConflictsSide.Server);
+            List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
+            ResolveConflictWindow resolveConflictWindow = new(conflictPaths, defaultResolutionType: Conflict.ResolutionType.AcceptServer);
+            resolveConflictWindow.ShowAsWindow();
         }
 
         private void ResolveConflictsManuallyMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ResolveConflictWindow resolveConflictWindow = new(SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl));
+            List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
+            ResolveConflictWindow resolveConflictWindow = new(conflictPaths, defaultResolutionType: Conflict.ResolutionType.CherryPick);
             resolveConflictWindow.ShowAsWindow();
         }
 

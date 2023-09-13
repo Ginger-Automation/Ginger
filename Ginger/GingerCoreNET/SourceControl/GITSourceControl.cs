@@ -470,7 +470,7 @@ namespace GingerCore.SourceControl
 
         public override void Init()
         {
-            Console.WriteLine("GITHub - Init");
+            //Console.WriteLine("GITHub - Init");
         }
 
         public override bool Lock(string path, string lockComment, ref string error)

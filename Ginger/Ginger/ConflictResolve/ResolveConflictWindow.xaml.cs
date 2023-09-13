@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.ObjectCompare;
 using Amdocs.Ginger.Repository;
 using Ginger.SourceControl;
 using Ginger.UserControls;
@@ -47,13 +46,18 @@ namespace Ginger.ConflictResolve
     {
         GenericWindow genWin = null;
         List<string> mConflictPaths;
-        public bool IsResolved { get; set; }
         ObservableList<Conflict> conflictResolves = new ObservableList<Conflict>();
-        public ResolveConflictWindow(List<string> conflictPaths)
+        private readonly ResolutionType _defaultResolutionType;
+
+        public bool IsResolved { get; set; }
+
+
+        public ResolveConflictWindow(List<string> conflictPaths, ResolutionType defaultResolutionType = ResolutionType.AcceptServer)
         {
             IsResolved = false;
             InitializeComponent();
             mConflictPaths = conflictPaths;
+            _defaultResolutionType = defaultResolutionType;
             SetGridView();
         }
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
@@ -95,7 +99,7 @@ namespace Ginger.ConflictResolve
             {
                 Conflict conflict = new(conflictPath)
                 {
-                    Resolution = ResolutionType.AcceptServer
+                    Resolution = _defaultResolutionType
                 };
                 conflictResolves.Add(conflict);
             }

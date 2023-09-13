@@ -19,7 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
-using Ginger.ConflictResolve;
 using Ginger.Reports.ValidationRules;
 using Ginger.Repository;
 using Ginger.Run;
@@ -65,9 +64,8 @@ namespace Ginger.Variables
         public eEditMode editMode { get; set; }
 
         Context mContext;
-        List<string> mListConflict;
 
-        public VariableEditPage(VariableBase v, Context context, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.Default, RepositoryItemBase parent = null, bool argsIsConflictRender = false, List<string> argsListCompareObject = null)
+        public VariableEditPage(VariableBase v, Context context, bool setGeneralConfigsAsReadOnly = false, eEditMode mode = eEditMode.Default, RepositoryItemBase parent = null)
         {
             InitializeComponent();
 
@@ -156,45 +154,6 @@ namespace Ginger.Variables
             xTagsViewer.Init(mVariable.Tags);
 
             xDetailsExpander.IsExpanded = ExpandDetails;
-
-            if (argsIsConflictRender)
-            {
-                mListConflict = argsListCompareObject;
-                this.Loaded += VariableEditPage_Loaded;
-            }
-        }
-
-        private void VariableEditPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            List<FrameworkElement> lstLocalContrls = GetListOfChildControls.GetAllControls(this);
-
-            foreach (FrameworkElement control in lstLocalContrls)
-            {
-                Type getType = typeof(FrameworkElement);
-                Binding bindingObj = BindingElementsOperations.GetBindingElement(control, out getType);
-                if (bindingObj != null)
-                {
-                    string variableName = bindingObj.Path.Path;
-                    if (mListConflict.Any(l => l.Contains(variableName)))
-                    {
-                        if (getType.Equals(typeof(TextBox)))
-                        {
-                            int idx = lstLocalContrls.IndexOf(control);
-                            ((TextBox)control).SetStyleToHighlightConflict();
-                        }
-                        if (getType.Equals(typeof(ComboBox)))
-                        {
-                            int idx = lstLocalContrls.IndexOf(control);
-                            ((ComboBox)control).SetStyleToHighlightConflict();
-                        }
-                        if (getType.Equals(typeof(CheckBox)))
-                        {
-                            int idx = lstLocalContrls.IndexOf(control);
-                            ((CheckBox)control).SetStyleToHighlightConflict();
-                        }
-                    }
-                }
-            }
         }
 
         private void XVarNameTxtBox_GotFocus(object sender, RoutedEventArgs e)

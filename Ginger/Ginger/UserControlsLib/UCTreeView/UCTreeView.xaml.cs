@@ -777,73 +777,86 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return (ITreeViewItem)TVIChild.Tag;
         }
 
-        public TreeViewItem FindMatchingTreeItem(ITreeViewItem item)
+        public ITreeViewItem? FindMatchingTreeItem(Predicate<object> matchPredicate)
         {
-            TreeViewItem TVI = SearchTVIRecursive((TreeViewItem)Tree.Items[0], item);
-            return TVI;
+            return FindMatchingTreeItemPrivate(matchPredicate, (TreeViewItem)Tree.Items[0]);
         }
 
-        public TreeViewItem FindMatchingTreeItemByObject(Object searchItem, TreeViewItem root = null)
+        private ITreeViewItem? FindMatchingTreeItemPrivate(Predicate<object> matchPredicate, TreeViewItem root)
         {
-            Object currentItem = null;
-
-            if (root == null)
+            foreach (TreeViewItem currentTreeItem in root.Items)
             {
-                root = (TreeViewItem)Tree.Items[0];
-            }
-
-            foreach (TreeViewItem TVI in root.Items)
-            {
-                ITreeViewItem o = (ITreeViewItem)TVI.Tag;
-                if (o != null)
+                ITreeViewItem tvi = (ITreeViewItem)currentTreeItem.Tag;
+                if (tvi != null)
                 {
-                    currentItem = o.NodeObject();
-
-                    if (currentItem.Equals(searchItem))
+                    if (matchPredicate(tvi.NodeObject()))
                     {
-                        return TVI;
+                        return tvi;
                     }
                 }
-                if (TVI.Items.Count > 0)
+                if (currentTreeItem.Items.Count > 0)
                 {
-                    TVI.IsExpanded = true;
-                    TreeViewItem vv = FindMatchingTreeItemByObject(searchItem, TVI);
-                    if (vv != null)
+                    currentTreeItem.IsExpanded = true;
+                    ITreeViewItem? matchedSubTreeItem = FindMatchingTreeItemPrivate(matchPredicate, currentTreeItem);
+                    if (matchedSubTreeItem != null)
                     {
-                        return vv;
+                        return matchedSubTreeItem;
                     }
                 }
             }
             return null;
         }
 
-        public TreeViewItem FindMatchingTreeItemByType(TreeViewItem root, Type searchItem)
+        public void IterateTreeViewItems(Func<ITreeViewItem, bool> iterationConsumer, bool inReverseOrder = false)
         {
-            Object currentItem = null;
+            IterateTreeViewItemsPrivate(iterationConsumer, inReverseOrder, (TreeViewItem)Tree.Items[0]);
+        }
 
-            foreach (TreeViewItem TVI in root.Items)
+        private bool IterateTreeViewItemsPrivate(Func<ITreeViewItem, bool> iterationConsumer, bool inReverseOrder, TreeViewItem root)
+        {
+            bool continueIteration = true;
+
+            int index = 0;
+            Predicate<int> boundCheck = index => index < root.Items.Count;
+            int indexIncrementation = 1;
+            if(inReverseOrder)
             {
-                ITreeViewItem o = (ITreeViewItem)TVI.Tag;
-                if (o != null)
-                {
-                    currentItem = o.GetType();
-
-                    if (currentItem.GetType() == searchItem)
-                    {
-                        return TVI;
-                    }
-                }
-                if (TVI.Items.Count > 0)
-                {
-                    TVI.IsExpanded = true;
-                    TreeViewItem vv = FindMatchingTreeItemByType(TVI, searchItem);
-                    if (vv != null)
-                    {
-                        return vv;
-                    }
-                }
+                index = root.Items.Count - 1;
+                boundCheck = index => index >= 0;
+                indexIncrementation = -1;
             }
-            return null;
+
+            root.IsExpanded = true;
+
+            while(boundCheck.Invoke(index))
+            {
+                TreeViewItem currentTreeItem = (TreeViewItem)root.Items[index];
+                ITreeViewItem tvi = (ITreeViewItem)currentTreeItem.Tag;
+
+                if (tvi != null)
+                {
+                    continueIteration = iterationConsumer.Invoke(tvi);
+                    if (!continueIteration)
+                    {
+                        break;
+                    }
+                }
+
+                if (currentTreeItem.Items.Count > 0)
+                {
+                    continueIteration = IterateTreeViewItemsPrivate(iterationConsumer, inReverseOrder, currentTreeItem);
+                    if (!continueIteration)
+                    {
+                        break;
+                    }
+                }
+
+                index += indexIncrementation;
+            }
+
+            root.IsExpanded = false;
+
+            return continueIteration;
         }
 
         public void SelectItem(ITreeViewItem item)

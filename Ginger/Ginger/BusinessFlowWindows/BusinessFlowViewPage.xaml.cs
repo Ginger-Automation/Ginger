@@ -32,15 +32,13 @@ using GingerCore.Helpers;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Collections.Generic;
-using Amdocs.Ginger.CoreNET;
 
 namespace GingerWPF.BusinessFlowsLib
 {
     /// <summary>
     /// Interaction logic for BusinessFlowViewPage.xaml
     /// </summary>
-    public partial class BusinessFlowViewPage : GingerUIPage, IObserverListener
+    public partial class BusinessFlowViewPage : GingerUIPage
     {
         BusinessFlow mBusinessFlow;
         Context mContext;
@@ -52,12 +50,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         GenericWindow mGenericWin = null;
 
-        public EventHandler EvtSyncTabChanged;
-        bool RenderConflict = false;
-        List<string> ListConflictChanges;
-        public BusinessFlowViewPage mParallelView;
-
-        public BusinessFlowViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode, bool bIsRenderConflict = false, List<string> lstConflictChanges = null, BusinessFlowViewPage argsParallelViewPage = null)
+        public BusinessFlowViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
 
@@ -73,12 +66,6 @@ namespace GingerWPF.BusinessFlowsLib
 
             SetUIView();
             BindControlsToBusinessFlow();
-            RenderConflict = bIsRenderConflict;
-            if (RenderConflict)
-            {
-                ListConflictChanges = lstConflictChanges;
-                mParallelView = argsParallelViewPage;
-            }
         }
 
         private void SetUIView()
@@ -161,7 +148,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mActivitiesPage == null)
                     {
-                        mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, childPagesMode, RenderConflict, ListConflictChanges, mParallelView);
+                        mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, childPagesMode);
                         mActivitiesPage.ListView.ListSelectionMode = SelectionMode.Extended;
                         mActivitiesPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         xActivitiesTabFrame.SetContent(mActivitiesPage);
@@ -170,46 +157,33 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         mActivitiesPage.UpdateBusinessFlow(mBusinessFlow);
                     }
-                    if (EvtSyncTabChanged != null)
-                    {
-                        EvtSyncTabChanged("xActivitisTab", EventArgs.Empty);
-                    }
                 }
                 else if (xVariablesTab.IsSelected == true)
                 {
                     if (mVariabelsPage == null)
                     {
-                        mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, childPagesMode, RenderConflict, ListConflictChanges, mParallelView);
+                        mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, childPagesMode);
                         if (mVariabelsPage.ListView != null)
                         {
                             mVariabelsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         }
-                        //mVariabelsPage.SyncListSelectionWithParallelControl(mParallelView.mVariabelsPage);
                         xVariabelsTabFrame.SetContent(mVariabelsPage);
                     }
                     else
                     {
                         mVariabelsPage.UpdateParent(mBusinessFlow);
                     }
-                    if (EvtSyncTabChanged != null)
-                    {
-                        EvtSyncTabChanged("xVariablesTab", EventArgs.Empty);
-                    }
                 }
                 else if (xDetailsTab.IsSelected == true)
                 {
                     if (mConfigurationsPage == null)
                     {
-                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, childPagesMode, RenderConflict, ListConflictChanges);
+                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, childPagesMode);
                         xDetailsTabFrame.SetContent(mConfigurationsPage);
                     }
                     else
                     {
                         mConfigurationsPage.UpdateBusinessFlow(mBusinessFlow);
-                    }
-                    if (EvtSyncTabChanged != null)
-                    {
-                        EvtSyncTabChanged("xDetailsTab", EventArgs.Empty);
                     }
                 }
 
@@ -440,39 +414,6 @@ namespace GingerWPF.BusinessFlowsLib
         private void xAutomateBtn_Loaded(object sender, RoutedEventArgs e)
         {
             App.MainWindow.AddHelpLayoutToShow("BusinessFlowPage_AutomateBtnHelp", xAutomateBtn, "Click here to design your automation flow");
-        }
-        int countOfEvtTab = 0;
-
-        public void EvtTabChanged(object sender, EventArgs e)
-        {
-            string targetTab = (string)sender;
-            switch (targetTab)
-            {
-                case "xActivitisTab":
-                    xActivitisTab.IsSelected = true;
-                    break;
-                case "xVariablesTab":
-                    xVariablesTab.IsSelected = true;
-                    break;
-                case "xDetailsTab":
-                    xDetailsTab.IsSelected = true;
-                    break;
-            }
-            countOfEvtTab++;
-            Reporter.ToLog(eLogLevel.DEBUG, $"EvtTabChanged hit {countOfEvtTab} times");
-        }
-
-        public void NotifyListener(object sender)
-        {
-            SyncListViews objSync = (SyncListViews)sender;
-            if (objSync.TargetSite.Equals("Activities"))
-            {
-                mActivitiesPage.ListView.SyncViews(objSync, EventArgs.Empty);
-            }
-            if (objSync.TargetSite.Equals("Variables"))
-            {
-                mVariabelsPage.ListView.SyncViews(objSync, EventArgs.Empty);
-            }
         }
     }
 }

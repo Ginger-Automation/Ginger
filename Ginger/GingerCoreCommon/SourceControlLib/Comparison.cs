@@ -24,6 +24,12 @@ namespace Amdocs.Ginger.Common.SourceControlLib
         public bool HasChildComparisons { get; } = false;
         public ICollection<Comparison> ChildComparisons { get; }
 
+        public bool HasSiblingComparison => SiblingComparison != null;
+        public Comparison SiblingComparison { get; private set; } = null!;
+
+        public bool HasParentComparison => ParentComparison != null;
+        public Comparison ParentComparison { get; private set; } = null!;
+
         public bool HasData { get; } = false;
         public object? Data { get; }
         public string DataAsString => $"{Data}";
@@ -45,6 +51,10 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     foreach (Comparison nestedChange in ChildComparisons)
                         nestedChange.Selected = _selected;
                 }
+                if (_selected && HasSiblingComparison)
+                {
+                    SiblingComparison.Selected = false;
+                }
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Selected)));
             }
         }
@@ -55,6 +65,10 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             State = state;
             ChildComparisons = childComparisons;
             HasChildComparisons = true;
+            foreach(Comparison childComparison in childComparisons)
+            {
+                childComparison.ParentComparison = this;
+            }
             Data = null!;
             DataType = dataType;
         }
@@ -64,7 +78,11 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             Name = name;
             State = state;
             ChildComparisons = childComparisons;
-            HasChildComparisons = true;
+            HasChildComparisons = true; 
+            foreach (Comparison childComparison in childComparisons)
+            {
+                childComparison.ParentComparison = this;
+            }
             Data = data;
             HasData = true;
         }
@@ -78,16 +96,27 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             ChildComparisons = null!;
         }
 
-        public bool CanBeMerged()
+        public void SetSiblingComparison(Comparison siblingComparison)
+        {
+            SiblingComparison = siblingComparison;
+            SiblingComparison.SiblingComparison = this;
+        }
+
+        public int UnselectedComparisonCount()
+        {
+            return (int)UnselectedComparisonCountPrivate();
+        }
+
+        private double UnselectedComparisonCountPrivate()
         {
             if (State == StateType.Unmodified)
             {
-                return true;
+                return 0;
             }
             else if (State == StateType.Modified)
             {
                 Dictionary<string, List<Comparison>> uniqueNameComparisons = new();
-                foreach(Comparison childComparison in ChildComparisons)
+                foreach (Comparison childComparison in ChildComparisons)
                 {
                     if (uniqueNameComparisons.ContainsKey(childComparison.Name))
                         uniqueNameComparisons[childComparison.Name].Add(childComparison);
@@ -95,19 +124,27 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         uniqueNameComparisons.Add(childComparison.Name, new List<Comparison>() { childComparison });
                 }
 
-                foreach(KeyValuePair<string,List<Comparison>> nameComparison in uniqueNameComparisons)
+                double unselectedChildComparisonCount = 0;
+                foreach (KeyValuePair<string, List<Comparison>> nameComparison in uniqueNameComparisons)
                 {
-                    if(!nameComparison.Value.Any(c => c.CanBeMerged()))
-                    {
-                        return false;
-                    }
+                    unselectedChildComparisonCount += nameComparison.Value.Aggregate(0.0, (total, c) => total + c.UnselectedComparisonCountPrivate());
                 }
 
-                return true;
+                return unselectedChildComparisonCount;
             }
             else
             {
-                return Selected;
+                double unselectedComparisonCount;
+                if (Selected || (HasSiblingComparison && SiblingComparison.Selected))
+                    unselectedComparisonCount = 0;
+                else
+                {
+                    if (HasSiblingComparison)
+                        unselectedComparisonCount = 0.5;
+                    else
+                        unselectedComparisonCount = 1;
+                }
+                return unselectedComparisonCount;
             }
         }
     }

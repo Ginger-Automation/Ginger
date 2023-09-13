@@ -46,11 +46,8 @@ namespace Ginger.BusinessFlowPages
         {
             get { return xActivitiesListView; }
         }
-        IObserverListener Observer = null;
-        List<string> ListConflictCompare;
-        List<int> conflictedIndices;
-        public ActivitiesListViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode,
-            bool IsRenderConflict = false, List<string> argsListConflict = null, IObserverListener argsObserver = null)
+
+        public ActivitiesListViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
             mBusinessFlow = businessFlow;
@@ -58,28 +55,7 @@ namespace Ginger.BusinessFlowPages
             mPageViewMode = pageViewMode;
 
             SetListView();
-            if (IsRenderConflict)
-            {
-                ListConflictCompare = argsListConflict;
-                GetListOfActivitiesChanges();
-                Observer = argsObserver;
-            }
             SetListViewData();
-        }
-
-        private void GetListOfActivitiesChanges()
-        {
-            var ActivityList = mBusinessFlow.Activities;
-            foreach (string conflict in ListConflictCompare)
-            {
-                if (conflict.StartsWith("Activities") && !conflict.Contains("ActivitiesGroup") && !conflict.Contains("ActivitiesLazy"))
-                {
-                    string targetString = conflict.Split(':')[0];
-                    string[] findEntities = targetString.Split('.');
-                    string idxValue = findEntities[0].Substring("Activities".Length + 1, findEntities[0].IndexOf(']') - "Activities".Length - 1);
-                    ActivityList[int.Parse(idxValue)].ItemIsConflicted = true;
-                }
-            }
         }
 
         /// <summary>
