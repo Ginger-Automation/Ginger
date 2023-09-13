@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -74,6 +74,9 @@ namespace Amdocs.Ginger.Common
         // CDL
         public bool ShowCDL { get { return GetFeature(nameof(ShowCDL)).Selected; } set { UpdateFeature(nameof(ShowCDL), value); } }
 
+        // Merge-Conflict
+        public bool AllowMergeConflict { get { return GetFeature(nameof(AllowMergeConflict)).Selected; } set { UpdateFeature(nameof(AllowMergeConflict), value); } }
+
         public BetaFeatures()
         {
             // Env
@@ -103,6 +106,9 @@ namespace Amdocs.Ginger.Common
 
             //CDL            
             mFeatures.Add(new BetaFeature() { Group = "CDL", Description = "Show CDL - Change Definition Language", ID = nameof(ShowCDL) });
+
+            //Merge-Conflict
+            mFeatures.Add(new BetaFeature() { Group = "Source Control", Description = "Merge Conflicts", ID = nameof(AllowMergeConflict) });
 
             //hook prop change
             foreach (BetaFeature f in mFeatures)

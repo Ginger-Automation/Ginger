@@ -139,9 +139,8 @@ namespace Ginger.Functionalities
             xFoundItemsGrid.AddCustomView(mFineView);
 
 
-            xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Visible;
+            xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
             xFoundItemsGrid.ShowViewCombo = Visibility.Collapsed;
-
             xFoundItemsGrid.MarkUnMarkAllActive += MarkUnMarkAllActions;
 
             xFoundItemsGrid.InitViewItems();
@@ -395,17 +394,24 @@ namespace Ginger.Functionalities
 
         private void ReplaceItems(List<FoundItem> FIList, string newValue)
         {
-            foreach (FoundItem foundItem in FIList)
+            try
             {
-                if (mFindAndReplaceUtils.ReplaceItem(mSearchConfig, mFindWhat, foundItem, newValue))
+                foreach (FoundItem foundItem in FIList)
                 {
-                    foundItem.Status = FoundItem.eStatus.Replaced;
-                }
-                else
-                {
-                    foundItem.Status = FoundItem.eStatus.ReplaceFailed;
-                }
+                    if (mFindAndReplaceUtils.ReplaceItem(mSearchConfig, mFindWhat, foundItem, newValue))
+                    {
+                        foundItem.Status = FoundItem.eStatus.Replaced;
+                    }
+                    else
+                    {
+                        foundItem.Status = FoundItem.eStatus.ReplaceFailed;
+                    }
 
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Faile to Replace Items", ex);
             }
         }
 
@@ -463,17 +469,24 @@ namespace Ginger.Functionalities
 
         private void FindItems()
         {
-            mItemsToSearchIn.Clear();
-            mMainItemType.GetItemsToSearchIn();
-
-            foreach (ItemToSearchIn searchItem in mItemsToSearchIn)
+            try
             {
-                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
-                {
-                    return;
-                }
+                mItemsToSearchIn.Clear();
+                mMainItemType.GetItemsToSearchIn();
 
-                mFindAndReplaceUtils.FindItemsByReflection(searchItem.OriginItemObject, searchItem.Item, mFoundItemsList, mFindWhat, mSearchConfig, searchItem.ParentItemToSave, searchItem.ItemParent, searchItem.FoundField);
+                foreach (ItemToSearchIn searchItem in mItemsToSearchIn)
+                {
+                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                    {
+                        return;
+                    }
+
+                    mFindAndReplaceUtils.FindItemsByReflection(searchItem.OriginItemObject, searchItem.Item, mFoundItemsList, mFindWhat, mSearchConfig, searchItem.ParentItemToSave, searchItem.ItemParent, searchItem.FoundField);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Faile to Find Items", ex);
             }
         }
 
@@ -991,37 +1004,40 @@ namespace Ginger.Functionalities
 
         public void ViewAction(FoundItem actionToView)
         {
-            Act act = (Act)actionToView.OriginObject;
-            RepositoryItemBase Parent = actionToView.ParentItemToSave;
-            if (Parent is BusinessFlow)
+            if (actionToView != null)
             {
-                act.Context = new Context() { BusinessFlow = (BusinessFlow)Parent };
-            }
-            ActionEditPage w;
-            if (mContext == eContext.RunsetPage)
-            {
-                w = new ActionEditPage(act, General.eRIPageViewMode.View);
-            }
-            else if (mContext == eContext.AutomatePage)
-            {
-                w = new ActionEditPage(act, General.eRIPageViewMode.Automation);
-            }
-            else if (Parent is BusinessFlow)
-            {
-                w = new ActionEditPage(act, General.eRIPageViewMode.ChildWithSave, Parent as BusinessFlow);
-            }
-            else if (Parent is Activity)
-            {
-                w = new ActionEditPage(act, General.eRIPageViewMode.ChildWithSave, actParentActivity: Parent as Activity);
-            }
-            else
-            {
-                w = new ActionEditPage(act, General.eRIPageViewMode.SharedReposiotry);
-            }
+                Act act = (Act)actionToView.OriginObject;
+                RepositoryItemBase Parent = actionToView.ParentItemToSave;
+                if (Parent is BusinessFlow)
+                {
+                    act.Context = new Context() { BusinessFlow = (BusinessFlow)Parent };
+                }
+                ActionEditPage w;
+                if (mContext == eContext.RunsetPage)
+                {
+                    w = new ActionEditPage(act, General.eRIPageViewMode.View);
+                }
+                else if (mContext == eContext.AutomatePage)
+                {
+                    w = new ActionEditPage(act, General.eRIPageViewMode.Automation);
+                }
+                else if (Parent is BusinessFlow)
+                {
+                    w = new ActionEditPage(act, General.eRIPageViewMode.ChildWithSave, Parent as BusinessFlow);
+                }
+                else if (Parent is Activity)
+                {
+                    w = new ActionEditPage(act, General.eRIPageViewMode.ChildWithSave, actParentActivity: Parent as Activity);
+                }
+                else
+                {
+                    w = new ActionEditPage(act, General.eRIPageViewMode.SharedReposiotry);
+                }
 
-            if (w.ShowAsWindow(eWindowShowStyle.Dialog) == true)
-            {
-                RefreshFoundItemField(actionToView);
+                if (w.ShowAsWindow(eWindowShowStyle.Dialog) == true)
+                {
+                    RefreshFoundItemField(actionToView);
+                }
             }
         }
 
@@ -1195,23 +1211,30 @@ namespace Ginger.Functionalities
 
         private void Save(List<FoundItem> FIList)
         {
-            foreach (FoundItem foundItem in FIList)
+            try
             {
-                if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                foreach (FoundItem foundItem in FIList)
                 {
-                    return;
-                }
+                    if (mFindAndReplaceUtils.ProcessingState == FindAndReplaceUtils.eProcessingState.Stopping)
+                    {
+                        return;
+                    }
 
-                try
-                {
-                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(foundItem.ParentItemToSave);
-                    foundItem.Status = FoundItem.eStatus.Saved;
-                }
-                catch
-                {
-                    foundItem.Status = FoundItem.eStatus.SavedFailed;
-                }
+                    try
+                    {
+                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(foundItem.ParentItemToSave);
+                        foundItem.Status = FoundItem.eStatus.Saved;
+                    }
+                    catch
+                    {
+                        foundItem.Status = FoundItem.eStatus.SavedFailed;
+                    }
 
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR,"Faile to Save",ex);
             }
         }
 
@@ -1242,6 +1265,7 @@ namespace Ginger.Functionalities
             if (xFoundItemsGrid != null)
             {
                 xFoundItemsGrid.ChangeGridView(eGridView.FindView.ToString());
+                xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Collapsed;
             }
 
             EnableDisableReplaceControlsAndFillReplaceComboBox();
@@ -1252,8 +1276,10 @@ namespace Ginger.Functionalities
             EnableDisableReplaceControlsAndFillReplaceComboBox();
             xReplaceLabel.Visibility = Visibility.Visible;
             xReplaceButton.Visibility = Visibility.Visible;
+            xFoundItemsGrid.btnMarkAll.Visibility = Visibility.Visible;
             xRow3.Height = new GridLength(30);
             xFoundItemsGrid.ChangeGridView(GridViewDef.DefaultViewName);
+
         }
 
         private void SubItemTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -335,9 +335,17 @@ namespace Ginger.ALM.MapToALMWizard
                 }
                 AlmTestSetData = await Task.Run(() =>
                 {
-                    return ALMIntegration.Instance.GetALMTestCases(AlmTestSetData);
+                    try
+                    {
+                        return ALMIntegration.Instance.GetALMTestCases(AlmTestSetData);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed Get ALM Test cases ", ex);
+                        return null;
+                    }
                 });
-                foreach (ALMTSTest testCase in AlmTestSetData.Tests)
+                foreach (ALMTSTest testCase in AlmTestSetData?.Tests)
                 {
                     testCasesUnMappedList.Add(testCase);
                 }

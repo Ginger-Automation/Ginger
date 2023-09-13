@@ -323,9 +323,16 @@ namespace Ginger.Drivers.DriversWindows
 
             await Task.Run(() =>
             {
-                mDeviceCPUInfo = mDriver.GetDeviceCPUInfo();
-                mDeviceMemoryInfo = mDriver.GetDeviceMemoryInfo();
-                mDeviceNetworkInfo = mDriver.GetDeviceNetworkInfo().Result;
+                try
+                {
+                    mDeviceCPUInfo = mDriver.GetDeviceCPUInfo();
+                    mDeviceMemoryInfo = mDriver.GetDeviceMemoryInfo();
+                    mDeviceNetworkInfo = mDriver.GetDeviceNetworkInfo().Result;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Device Info", ex);
+                }
             });
 
 
@@ -395,23 +402,30 @@ namespace Ginger.Drivers.DriversWindows
 
             await Task.Run(() =>
             {
-                mDeviceGeneralInfo = mDriver.GetDeviceGeneralInfo();
-                if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
+                try
                 {
-                    object value;
-                    mDeviceGeneralInfo.TryGetValue("isSimulator", out value);
-                    if (value is bool)
+                    mDeviceGeneralInfo = mDriver.GetDeviceGeneralInfo();
+                    if (mDriver.GetDevicePlatformType() == eDevicePlatformType.iOS)
                     {
-                        isPhysicalDevice = !(bool)value;
+                        object value;
+                        mDeviceGeneralInfo.TryGetValue("isSimulator", out value);
+                        if (value is bool)
+                        {
+                            isPhysicalDevice = !(bool)value;
+                        }
                     }
-                }
-                else
-                {
-                    isPhysicalDevice = mDriver.IsRealDeviceAsync().Result;
-                }
+                    else
+                    {
+                        isPhysicalDevice = mDriver.IsRealDeviceAsync().Result;
+                    }
 
-                mDeviceBatteryInfo = mDriver.GetDeviceBatteryInfo();
-                mActivityAndPackageInfo = mDriver.GetDeviceActivityAndPackage();
+                    mDeviceBatteryInfo = mDriver.GetDeviceBatteryInfo();
+                    mActivityAndPackageInfo = mDriver.GetDeviceActivityAndPackage();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Device Details", ex);
+                }
             });
 
             mDeviceDetails = new ObservableList<DeviceInfo>(mDeviceDetails.Where(x => x.Category == DeviceInfo.eDeviceInfoCategory.Metric).ToList());
@@ -1317,19 +1331,27 @@ namespace Ginger.Drivers.DriversWindows
 
                 await Task.Run(() =>
                 {
-                    //wait before taking screen shot
-                    if (waitingTimeInMiliSeconds > 0)
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            waitingRatio = int.Parse(xRefreshWaitingRateCombo.Text);
-                        });
-                        Thread.Sleep(waitingTimeInMiliSeconds * (waitingRatio));
-                    }
-
-                    //take screen shot
                     try
                     {
+                        //wait before taking screen shot
+                        if (waitingTimeInMiliSeconds > 0)
+                        {
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                try
+                                {
+                                    waitingRatio = int.Parse(xRefreshWaitingRateCombo.Text);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Parse Waiting Ratio", ex);
+                                }
+                            });
+                            Thread.Sleep(waitingTimeInMiliSeconds * (waitingRatio));
+                        }
+
+                        //take screen shot
+
                         byte[] imageByteArray = mDriver.GetScreenshotImage();
                         if (imageByteArray == null || imageByteArray.Length == 0)
                         {
@@ -1461,11 +1483,31 @@ namespace Ginger.Drivers.DriversWindows
                 //click the element
                 if (performLongPress)
                 {
-                    await Task.Run(() => { mDriver.PerformLongPress(pointOnMobile_X, pointOnMobile_Y); });
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            mDriver.PerformLongPress(pointOnMobile_X, pointOnMobile_Y);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to Perform Long Press", ex);
+                        }
+                    });
                 }
                 else
                 {
-                    await Task.Run(() => { mDriver.PerformTap(pointOnMobile_X, pointOnMobile_Y); });
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            mDriver.PerformTap(pointOnMobile_X, pointOnMobile_Y);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to Perform Tap", ex);
+                        }
+                    });
                 }
 
                 //update the screen
@@ -1491,7 +1533,14 @@ namespace Ginger.Drivers.DriversWindows
                 //Perform drag
                 await Task.Run(() =>
                 {
-                    mDriver.PerformDrag(new System.Drawing.Point((int)startPoint.X, (int)startPoint.Y), new System.Drawing.Point((int)endPoint.X, (int)endPoint.Y));
+                    try
+                    {
+                        mDriver.PerformDrag(new System.Drawing.Point((int)startPoint.X, (int)startPoint.Y), new System.Drawing.Point((int)endPoint.X, (int)endPoint.Y));
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Perform Drag", ex);
+                    }
                 });
 
                 //update the screen
