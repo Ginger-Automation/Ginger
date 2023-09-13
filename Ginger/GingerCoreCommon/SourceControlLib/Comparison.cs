@@ -57,7 +57,8 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 {
                     SiblingComparison.Selected = false;
                 }
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Selected)));
+                PropertyChangedEventHandler? propertyChangedEventHandler = PropertyChanged;
+                propertyChangedEventHandler?.Invoke(this, new PropertyChangedEventArgs(nameof(Selected)));
             }
         }
 

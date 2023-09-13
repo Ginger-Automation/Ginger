@@ -94,7 +94,6 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                             throw new InvalidOperationException($"No appropriate {nameof(Comparison)} found for merging property {property.Name}.");
                         }
 
-                        //property.SetValue(rib, Merge(property.PropertyType, new ComparisonResult[] { propertyComparisonForMerge }));
                         property.SetValue(rib, MergeInternal(propertyComparisonForMerge.DataType!, new Comparison[] { propertyComparisonForMerge }));
                     }
                 }
@@ -177,7 +176,6 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     }
                     else if (itemComparison.State == Comparison.StateType.Modified)
                     {
-                        //items.Add(Merge(GetCollectionItemType(type), new ComparisonResult[] { itemComparison }));
                         items.Add(MergeInternal(itemComparison.DataType!, new Comparison[] { itemComparison }));
                     }
                     else
@@ -247,7 +245,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 
                     if (constructor == null)
                     {
-                        throw new Exception($"No appropriate constructor found for collection of type {type.FullName}");
+                        throw new NotImplementedException($"No appropriate constructor found for collection of type {type.FullName}");
                     }
                     collection = (System.Collections.ICollection)constructor.Invoke(Array.Empty<object>());
                     MethodInfo addMethod = type.GetMethod(nameof(System.Collections.IList.Add))!;

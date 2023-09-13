@@ -9,17 +9,6 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 {
     public static class RepositoryItemBaseComparer
     {
-        //public static ICollection<Comparison> Compare<T>(string name, T? localItem, T? remoteItem) where T : RepositoryItemBase
-        //{
-        //    ICollection<Comparison> comparisons = CompareValue(name, new Value(localItem), new Value(remoteItem));
-        //    //State state = comparisons.All(comparison => comparison.State == State.Unmodified) ? State.Unmodified : State.Modified;
-        //    //if(state == State.Unmodified)
-        //    //    return new ComparisonResult(name, state, comparisons, value: localItem);
-        //    //else
-        //    //    return new ComparisonResult(name, state, comparisons);
-        //    return comparisons;
-        //}
-
         public static ICollection<Comparison> Compare(string name, RepositoryItemBase? localItem, RepositoryItemBase? remoteItem)
         {
             ICollection<Comparison> comparisons = CompareValue(name, new Value(localItem), new Value(remoteItem));
