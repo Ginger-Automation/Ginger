@@ -17,52 +17,48 @@ limitations under the License.
 #endregion
 
 using System;
-using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 
-namespace GingerCore.Platforms
+namespace GingerCore.Activities
 {
-    public class TargetApplication : TargetBase
+    public class Consumer : RepositoryItemBase
     {
-        public override string Name { get { return AppName; } }
 
-
-        
-        public Guid TargetGuid
+        private Guid mConsumerGuid;
+        [IsSerializedForLocalRepository]
+        public Guid ConsumerGuid
         {
-            get
-            {
-                return this.ParentGuid;
-            }
+            get { return mConsumerGuid; }
             set
             {
-                if (this.ParentGuid != value)
+                if (mConsumerGuid != value)
                 {
-                    this.ParentGuid = value;
-                    OnPropertyChanged(nameof(this.ParentGuid));
+                    mConsumerGuid = value;
+                    OnPropertyChanged(nameof(ConsumerGuid));
                 }
             }
         }
 
 
-        string mAppName;
-        //TODO: how about use GUID or add it for in case        
-        [IsSerializedForLocalRepository]
-        public string AppName
+
+
+        private string mName;
+        public string Name
         {
             get
             {
-                return mAppName;
+                return mName;
             }
             set
             {
-                if (mAppName != value)
+                if (mName != value)
                 {
-                    mAppName = value;
-                    OnPropertyChanged(nameof(AppName));
+                    mName = value;
                     OnPropertyChanged(nameof(Name));
                 }
             }
         }
+
+        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
 }
