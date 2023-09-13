@@ -16,9 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using AccountReport.Contracts;
 using AccountReport.Contracts.Helpers;
+using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
@@ -35,6 +38,10 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow;
+using NJsonSchema.Infrastructure;
+using NUglify.Helpers;
+using OfficeOpenXml.Drawing.Slicer.Style;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -443,14 +450,14 @@ namespace Ginger.Run
         {
             try
             {
-                mRunSetConfig.IsRunning = true;
-
+                mRunSetConfig.IsRunning = true;           
                 //reset run       
                 if (doContinueRun == false)
                 {
                     if (WorkSpace.Instance.RunningInExecutionMode == false || RunSetConfig.ExecutionID == null)
                     {
                         RunSetConfig.ExecutionID = Guid.NewGuid();
+                       
                     }
                     else
                     {
@@ -465,10 +472,15 @@ namespace Ginger.Run
                             }
                         }
                     }
+                    Reporter.ToLog(eLogLevel.INFO, string.Format("Ginger Execution Id: {0}", RunSetConfig.ExecutionID));
+
                     RunSetConfig.LastRunsetLoggerFolder = "-1";   // !!!!!!!!!!!!!!!!!!
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Reseting {0} elements", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     mStopwatch.Reset();
-                    ResetRunnersExecutionDetails();
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.ReferenceExecutionID != null)
+                    {
+                        ResetRunnersExecutionDetails();
+                    }                   
                 }
                 else
                 {
@@ -641,12 +653,18 @@ namespace Ginger.Run
                     await Runners[0].Executor.ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
                 }
             }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when trying to Run runset ", ex);
+            }
             finally
             {
                 mRunSetConfig.IsRunning = false;
+            
             }
         }
 
+       
         private void FinishPublishResultsToAlmTask()
         {
             if (ALMResultsPublishTaskPool != null && ALMResultsPublishTaskPool.Count > 0)

@@ -850,9 +850,9 @@ namespace Ginger.Run
                 {
                     Reporter.ToLog(eLogLevel.INFO, string.Format("######## Publishing {0} Execution details to central DB", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                     Configuration.IsPublishToCentralDBRunning = true;
-
+                    
                     await mExecutionLogger.SendExecutionLogToCentralDBAsync(runsetId, executionId, Configuration.DeleteLocalDataOnPublish);
-
+                    
                     Reporter.ToLog(eLogLevel.INFO, string.Format("########################## Execution details Publish to Central DB Completed", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
                 }
                 catch (Exception ex)

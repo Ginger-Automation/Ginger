@@ -13,20 +13,28 @@
 
     <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="120"/>
+            <RowDefinition Height="145"/>
             <RowDefinition Height="30*"/>
         </Grid.RowDefinitions>
         <StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label Style="{StaticResource $LabelStyle}" Content="Environment Name:"/>
-                <usercontrols:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
-            </StackPanel>
             <StackPanel>
-            <TextBox x:Name="EnvNameTextBox" Style="{StaticResource @TextBoxStyle}" FontSize="14" FontWeight="Bold"></TextBox>
-            <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="0,5,0,0" HorizontalAlignment="Left"/>
-           
-            <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Style="{StaticResource $LabelStyle}" Content="Environment Name:"/>
+                    <usercontrols:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" />
+                </StackPanel>
+                <TextBox x:Name="EnvNameTextBox" Style="{StaticResource @TextBoxStyle}" HorizontalAlignment="Left" MinWidth="500px" FontSize="14" FontWeight="Bold"></TextBox>
+                <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="-5,0,0,0" HorizontalAlignment="Left"/>
             </StackPanel>
+
+            <StackPanel>
+                <DockPanel>
+                    <Label  Style="{StaticResource $LabelStyle}" Content="Release:"/>
+                    <ComboBox x:Name="xReleaseCombobox" Style="{StaticResource $FlatEditInputComboBoxStyle}"  MinWidth="300px"  HorizontalAlignment="Left"></ComboBox>
+                </DockPanel>
+
+                <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,5,0,0"  Style="{StaticResource $CeckBoxStyle}"/>
+            </StackPanel>
+
         </StackPanel>
 
         <Ginger:ucGrid x:Name="grdApps" Title="Environment Applications" Grid.Row="1" ShowEdit="Collapsed" ShowRefresh="Collapsed"/>
