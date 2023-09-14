@@ -466,6 +466,8 @@ namespace GingerCore.Drivers
                         FirefoxOption.AcceptInsecureCertificates = true;
                         SetCurrentPageLoadStrategy(FirefoxOption);
                         SetBrowserLogLevel(FirefoxOption);
+                        SetUnhandledPromptBehavior(FirefoxOption);
+
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
