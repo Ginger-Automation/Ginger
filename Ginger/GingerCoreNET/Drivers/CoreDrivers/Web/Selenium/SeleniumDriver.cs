@@ -680,7 +680,7 @@ namespace GingerCore.Drivers
                             SetBrowserLogLevel(EDOpts);
                             //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
                             //EDOpts.UseChromium = true;
-                            EDOpts.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Default;
+                            SetUnhandledPromptBehavior(EDOpts);
                             if (IsUserProfileFolderPathValid())
                             {
                                 EDOpts.AddAdditionalEdgeOption("user-data-dir=", UserProfileFolderPath);
@@ -768,7 +768,7 @@ namespace GingerCore.Drivers
                                 edgeOptions.AddAdditionalOption(SeleniumDriver.RemoteVersionParam, RemoteVersion);
                             }
 
-                            edgeOptions.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Default;
+                            SetUnhandledPromptBehavior(edgeOptions);
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
