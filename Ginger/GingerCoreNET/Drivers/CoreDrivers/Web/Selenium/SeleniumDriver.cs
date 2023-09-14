@@ -9772,31 +9772,38 @@ namespace GingerCore.Drivers
 
         public void SetUnhandledPromptBehavior(DriverOptions options)
         {
-            if (UnhandledPromptBehavior != null)
+            if (UnhandledPromptBehavior == null)
             {
-                if (UnhandledPromptBehavior.ToLower() == nameof(OpenQA.Selenium.UnhandledPromptBehavior.Accept).ToLower())
+                return;
+            }
+
+            if (Enum.TryParse(UnhandledPromptBehavior, true, out UnhandledPromptBehavior unhandledPromptBehavior))
+            {
+                switch (unhandledPromptBehavior)
                 {
-                    options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Accept;
-                }
-                else if (UnhandledPromptBehavior.ToLower() == nameof(OpenQA.Selenium.UnhandledPromptBehavior.Dismiss).ToLower())
-                {
-                    options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Dismiss;
-                }
-                else if (UnhandledPromptBehavior.ToLower() == nameof(OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify).ToLower())
-                {
-                    options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify;
-                }
-                else if (UnhandledPromptBehavior.ToLower() == nameof(OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify).ToLower())
-                {
-                    options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify;
-                }
-                else if (UnhandledPromptBehavior.ToLower() == nameof(OpenQA.Selenium.UnhandledPromptBehavior.Ignore).ToLower())
-                {
-                    options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Ignore;
-                }
-                else
-                {
-                    options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Default;
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Ignore:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Ignore;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Accept:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Accept;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Dismiss:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Dismiss;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify;
+                        break;
+
+                    default:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Default;
+                        break;
                 }
             }
         }
