@@ -238,9 +238,9 @@
   
     <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
-    <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.1" />
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.2" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="4.5.3" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.4.2" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   
@@ -280,15 +280,15 @@
     <PackageReference Include="NUglify" Version="1.9.7" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="108.0.3" />
-    <PackageReference Include="Selenium.Support" Version="4.10.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.10.0" />
+    <PackageReference Include="Selenium.Support" Version="4.12.4" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.12.4" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="4.1.0" />
     <PackageReference Include="SharpAdbClient" Version="2.3.23" />
     <PackageReference Include="SSH.NET" Version="2020.0.1" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Data.OleDb" Version="6.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
-    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />

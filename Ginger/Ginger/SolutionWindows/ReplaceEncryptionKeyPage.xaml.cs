@@ -613,11 +613,18 @@ namespace Ginger.SolutionWindows
             return await Task.Run(async () =>
             {
                 int varReencryptedCount = 0;
-                varReencryptedCount += await ReEncryptBFAndACtivityVariable(oldKey);
-                varReencryptedCount += await ReEncryptGlobalVariables(oldKey);
-                varReencryptedCount += await ReEncryptEnvironmentPasswordValues(oldKey);
-                varReencryptedCount += await ReEncryptRunsetOperationsPassowrdValues(oldKey);
-                varReencryptedCount += await ReEncryptSharedRepositoryPasswordValues(oldKey);
+                try
+                {
+                    varReencryptedCount += await ReEncryptBFAndACtivityVariable(oldKey);
+                    varReencryptedCount += await ReEncryptGlobalVariables(oldKey);
+                    varReencryptedCount += await ReEncryptEnvironmentPasswordValues(oldKey);
+                    varReencryptedCount += await ReEncryptRunsetOperationsPassowrdValues(oldKey);
+                    varReencryptedCount += await ReEncryptSharedRepositoryPasswordValues(oldKey);                  
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to ReEncrypt", ex);
+                }
                 return varReencryptedCount;
             });
         }

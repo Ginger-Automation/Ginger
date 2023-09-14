@@ -73,12 +73,12 @@ namespace Ginger.AnalyzerLib
             get { return mAnalyzerCompleted; }
         }
 
-        public int TotalIssues { get; set; }    
+        public int TotalIssues { get; set; }
 
         public int TotalHighAndCriticalIssues { get; set; }
-        
+
         public int AutoFixIssues { get; set; }
-       
+
         private bool mAnalyzeDoneOnce = false;
         private bool mAnalyzeWithUI = true;
 
@@ -99,9 +99,9 @@ namespace Ginger.AnalyzerLib
         private void MIssues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Dispatcher.Invoke(() =>
-            {               
+            {
                 if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.NewItems != null)
-                {                   
+                {
                     foreach (AnalyzerItemBase item in e.NewItems)
                     {
                         TotalIssues++;
@@ -112,19 +112,19 @@ namespace Ginger.AnalyzerLib
                             CriticalAndHighIssuesLabelCounter.Content = TotalHighAndCriticalIssues;
                             if (TotalHighAndCriticalIssues == 1)
                             {
-                                CriticalAndHighIssuesLabelCounter.Foreground = _brush;                                
+                                CriticalAndHighIssuesLabelCounter.Foreground = _brush;
                             }
                         }
-                        else if(item.CanAutoFix == AnalyzerItemBase.eCanFix.Yes)
+                        else if (item.CanAutoFix == AnalyzerItemBase.eCanFix.Yes)
                         {
                             AutoFixIssues++;
-                            CanAutoFixLableCounter.Content = AutoFixIssues;                            
+                            CanAutoFixLableCounter.Content = AutoFixIssues;
                         }
-                    }                                   
+                    }
                 }
-            });            
+            });
         }
-        
+
         public void Init(Solution Solution)
         {
             mAnalyzedObject = AnalyzedObject.Solution;
@@ -283,7 +283,7 @@ namespace Ginger.AnalyzerLib
 
                         mIssues = SortedList;
                         AnalyzerItemsGrid.DataSourceList = mIssues;
-                        AnalyzerItemsGrid.Grid.SelectedItem = mIssues[0];                       
+                        AnalyzerItemsGrid.Grid.SelectedItem = mIssues[0];
                     });
                 }
             }
@@ -658,7 +658,17 @@ namespace Ginger.AnalyzerLib
                 StatusLabel.Visibility = Visibility.Visible;
                 try
                 {
-                    await Task.Run(() => FixSelectedItems());
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            FixSelectedItems();
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to fix selected item", ex);
+                        }
+                    });
                 }
                 finally
                 {
@@ -714,7 +724,17 @@ namespace Ginger.AnalyzerLib
                 StatusLabel.Visibility = Visibility.Visible;
                 try
                 {
-                    await Task.Run(() => SaveAllFixedItems());
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            SaveAllFixedItems();
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to Save fixed item", ex);
+                        }
+                    });
                 }
                 finally
                 {

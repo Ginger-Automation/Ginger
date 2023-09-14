@@ -665,7 +665,11 @@ namespace GingerCore
             p = p.Substring(p.IndexOf(" DST=")).Trim();
             if (DataSource == null)
             {
-                mValueCalculated = mValueCalculated.Replace(p, string.Format("ERROR: The Data Source Variable '{0}' was not found", DataSource));
+                // whenever error is to be displayed, do not use Replace,
+                // use only the error string otherwise the output might look anamalous
+                // eg: //*[text()="{Error: The Data Source Variable was not found }"]
+      
+                mValueCalculated = string.Format("ERROR: The Data Source Variable '{0}' was not found", DSName);
                 return;
             }
 
@@ -1063,7 +1067,9 @@ namespace GingerCore
                         // Get Value query
                         if (litedbquery.Contains(".find") || litedbquery.Contains(".select $ where"))
                         {
-                            mValueCalculated = liteDB.GetQueryOutput(litedbquery, Name[0], rowNumber, Markasdone, tableName[0]);
+                            // Use Replace because incase, if it is used with something else for example xpath (//*[text() = "<DataSource Query>"]) the whole string should be the output instead of just the result
+                            // data source query
+                            mValueCalculated = mValueCalculated.Replace(pOrg , liteDB.GetQueryOutput(litedbquery, Name[0], rowNumber, Markasdone, tableName[0]));
                         }
 
                         // Set value Query
@@ -1124,13 +1130,17 @@ namespace GingerCore
                         }
                         else
                         {
-                            mValueCalculated = liteDB.GetResut(litedbquery, col[0], Markasdone);
+                            // Use Replace because incase, if it is used with something else for example xpath (//*[text() = "<DataSource Query>"]) the whole string should be the output instead of just the result
+                            // data source query
+
+                            mValueCalculated = mValueCalculated.Replace(pOrg, liteDB.GetResut(litedbquery, col[0], Markasdone));
                         }
                     }
                 }
                 catch (Exception e)
                 {
                     mValueCalculated = e.Message.Contains("There is no row at") ? "No Row Found" : pOrg;
+                    // Is there a reason to print an error in the console? 
                     Console.WriteLine(e.StackTrace);
                 }
             }

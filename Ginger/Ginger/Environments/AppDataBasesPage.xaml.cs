@@ -117,27 +117,34 @@ namespace Ginger.Environments
             {
                 await Task.Run(() =>
                 {
-                    Reporter.ToStatus(eStatusMsgKey.RenameItem, null, ((DatabaseOperations)db.DatabaseOperations).NameBeforeEdit, db.Name);
-                    ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                    Parallel.ForEach(allBF, new ParallelOptions { MaxDegreeOfParallelism = 5 }, businessFlow =>
+                    try
                     {
-                        Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
+                        Reporter.ToStatus(eStatusMsgKey.RenameItem, null, ((DatabaseOperations)db.DatabaseOperations).NameBeforeEdit, db.Name);
+                        ObservableList<BusinessFlow> allBF = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                        Parallel.ForEach(allBF, new ParallelOptions { MaxDegreeOfParallelism = 5 }, businessFlow =>
                         {
-                            Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, act =>
+                            Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
                             {
-                                if (act.GetType() == typeof(ActDBValidation))
+                                Parallel.ForEach(activity.Acts, new ParallelOptions { MaxDegreeOfParallelism = 5 }, act =>
                                 {
-                                    ActDBValidation actDB = (ActDBValidation)act;
-                                    if (actDB.DBName == ((DatabaseOperations)db.DatabaseOperations).NameBeforeEdit)
+                                    if (act.GetType() == typeof(ActDBValidation))
                                     {
-                                        businessFlow.DirtyStatus = eDirtyStatus.Modified;
-                                        actDB.DBName = db.Name;
+                                        ActDBValidation actDB = (ActDBValidation)act;
+                                        if (actDB.DBName == ((DatabaseOperations)db.DatabaseOperations).NameBeforeEdit)
+                                        {
+                                            businessFlow.DirtyStatus = eDirtyStatus.Modified;
+                                            actDB.DBName = db.Name;
+                                        }
                                     }
-                                }
 
+                                });
                             });
                         });
-                    });
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Database Name Change", ex);
+                    }
                 });
 
                 ((DatabaseOperations)db.DatabaseOperations).NameBeforeEdit = db.Name;

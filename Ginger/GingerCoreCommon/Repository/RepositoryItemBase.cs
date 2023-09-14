@@ -246,13 +246,21 @@ namespace Amdocs.Ginger.Repository
 
         public bool SaveBackup()
         {
-            if (DirtyStatus != eDirtyStatus.NoChange)
+            try
             {
-                return CreateBackup();
+                if (DirtyStatus != eDirtyStatus.NoChange)
+                {
+                    return CreateBackup();
+                }
+                else
+                {
+                    return CreateBackup(true);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return CreateBackup(true);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Save backup", ex);
+                return false;
             }
         }
 

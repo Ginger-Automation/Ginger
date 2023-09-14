@@ -14,7 +14,7 @@
     <SolidColorBrush x:Key="$BackgroundColor_WhiteSmoke" Color="WhiteSmoke" />
 
     <!--Selection Colors-->
-    
+
     <SolidColorBrush x:Key="$SelectionColor_Pink" Color="#F26F6F" />
     <SolidColorBrush x:Key="$SelectionColor_LightBlue" Color="#3EA7FC" />
     <SolidColorBrush x:Key="$SelectionColor_VeryLightBlue" Color="#BADDFF" />
@@ -300,7 +300,7 @@
         </Setter>
     </Style>
 
-      <Style TargetType="Button" x:Key="$ImageButtonStyle_Execution">
+    <Style TargetType="Button" x:Key="$ImageButtonStyle_Execution">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
         <Setter Property="Template">
@@ -1074,7 +1074,7 @@
         <!--<Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
         <Setter Property="BorderThickness" Value="1"/>-->
     </Style>
-    
+
     <Style TargetType="ComboBox" x:Key="$FlatEditInputComboBoxStyle" >
         <Setter Property="SnapsToDevicePixels" Value="true"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
@@ -1425,7 +1425,7 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style TargetType="ListViewItem" x:Key="$ListViewItemBorderStyle">
         <Setter Property="Margin" Value="0 0 0 5"/>
         <Setter Property="Width" Value="515"/>
@@ -1981,33 +1981,33 @@
     </Style>
 
     <!---->
-        <Style TargetType="Label" x:Key="DataGridTitle" >
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="Foreground" Value="LightSkyBlue"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Background" Value="Transparent"/>
-        </Style>
+    <Style TargetType="Label" x:Key="DataGridTitle" >
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="LightSkyBlue"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
 
-        <Style TargetType="DataGridColumnHeader" x:Key="DataGridColumnHeader" >
-            <Setter Property="Height" Value="20" />
-            <Setter Property="Background" Value="Gray"/>
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="FontWeight"  Value="Bold"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="BorderThickness" Value="0.8"/>
-            <Setter Property="BorderBrush" Value="Black"/>
-        </Style>
+    <Style TargetType="DataGridColumnHeader" x:Key="DataGridColumnHeader" >
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Background" Value="Gray"/>
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="FontWeight"  Value="Bold"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="BorderThickness" Value="0.8"/>
+        <Setter Property="BorderBrush" Value="Black"/>
+    </Style>
 
-        <Style TargetType="DataGridRow" x:Key="DataGridRowStyle">
-            <Setter Property="Background" Value="White" />
-            <Style.Triggers>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="DeepSkyBlue"/>
-                    <Setter Property="Foreground" Value="White"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+    <Style TargetType="DataGridRow" x:Key="DataGridRowStyle">
+        <Setter Property="Background" Value="White" />
+        <Style.Triggers>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="DeepSkyBlue"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 
     <Style TargetType="DataGridCell" x:Key="DataGridCellStyle" >
         <Style.Triggers>
@@ -2051,13 +2051,12 @@
                             <Setter Property="BorderBrush" Value="Gray" />
                             <Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}" />
                         </Trigger>
-                        
+
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-    <BitmapImage x:Key="@RunAll_16x16.png" UriSource="C:/Users/pravishe/source/repos/Ginger/Ginger/Ginger/Images/@RunAll_16x16.png"> </BitmapImage> 
     <!--TODO: find why this is not working - put images in separate dictionary-->
     <!--<ResourceDictionary x:Key="dicImages" Source="Images/_Images.xaml" />-->
 
@@ -3156,9 +3155,11 @@
             </Trigger>
             <!--<Trigger Property="IsEditing" Value="True">
                 <Setter Property="Background" Value="{StaticResource $SelectionColor_Pink}"/>
-                --><!--<Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}"/>
+                -->
+            <!--<Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>--><!--
+                <Setter Property="VerticalAlignment" Value="Center"/>-->
+            <!--
             </Trigger>-->
         </Style.Triggers>
     </Style>
@@ -3245,7 +3246,7 @@
         <Setter Property="Background" Value="{StaticResource $Color_DarkBlue}"/>
         <Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
     </Style>
-    
+
     <Style TargetType="GridSplitter" x:Key="@VerticalGridSplitterStyle" >
         <Setter Property="Width" Value="10"/>
         <Setter Property="Background">
@@ -3258,13 +3259,13 @@
         </Setter>
         <Setter Property="BorderBrush" Value="DarkGray"/>
     </Style>
-    
+
     <Style TargetType="GridSplitter" x:Key="$VerticalGridSplitterStyle" >
         <Setter Property="Width" Value="5"/>
         <Setter Property="Background" Value="{StaticResource $Color_DarkBlue}"/>
         <Setter Property="BorderBrush" Value="{StaticResource $Color_DarkBlue}"/>
     </Style>
-    
+
     <Style TargetType="Expander" x:Key="@ExpanderLightStyle" >
         <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource $Color_DarkBlue}"/>
@@ -3286,7 +3287,7 @@
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
     </Style>
-    
+
     <Style TargetType="GridSplitter" x:Key="@TreeSplitterStyle" >
         <Setter Property="Width" Value="10"/>
         <Setter Property="Background" Value="{DynamicResource $Color_DarkBlue}"/>
@@ -3769,6 +3770,6 @@
         </Setter>
     </Style>-->
 
- 
+
 
 </ResourceDictionary>
