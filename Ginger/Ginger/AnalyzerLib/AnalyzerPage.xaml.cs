@@ -759,7 +759,7 @@ namespace Ginger.AnalyzerLib
                     }
                     else if (AI.GetType() == typeof(AnalyzeActivity))
                     {
-                        bs = ((AnalyzeActivity)AI).mBusinessFlow;
+                        bs = ((AnalyzeActivity)AI).BusinessFlow;
                     }
                     else if (AI.GetType() == typeof(AnalyzeAction))
                     {
@@ -837,9 +837,9 @@ namespace Ginger.AnalyzerLib
             if (AnalyzerItemsGrid.CurrentItem is AnalyzeActivity)
             {
                 AnalyzeActivity currentAnalyzeActivity = (AnalyzeActivity)AnalyzerItemsGrid.CurrentItem;
-                Activity ActivityIssue = currentAnalyzeActivity.mActivity;
+                Activity ActivityIssue = currentAnalyzeActivity.Activity;
                 //ActivityIssue.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-                GingerWPF.BusinessFlowsLib.ActivityPage ActivityEdit = new GingerWPF.BusinessFlowsLib.ActivityPage(ActivityIssue, new Context() { BusinessFlow = currentAnalyzeActivity.mBusinessFlow }, General.eRIPageViewMode.ChildWithSave);
+                GingerWPF.BusinessFlowsLib.ActivityPage ActivityEdit = new GingerWPF.BusinessFlowsLib.ActivityPage(ActivityIssue, new Context() { BusinessFlow = currentAnalyzeActivity.BusinessFlow }, General.eRIPageViewMode.ChildWithSave);
                 //setting the BusinessFlow on the Activity in Order to save
                 //ActivityEdit.mBusinessFlow = ((AnalyzeActivity)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
                 //ActivityEdit.ap = null;

@@ -36,6 +36,8 @@ using GingerWPF.WizardLib;
 using GingerCore.GeneralLib;
 using System.Globalization;
 using System.Linq;
+using Ginger.AnalyzerLib;
+using System.Threading.Tasks;
 
 namespace Ginger.ConflictResolve
 {
@@ -44,35 +46,54 @@ namespace Ginger.ConflictResolve
     /// </summary>
     public partial class ResolveConflictWindow : Page
     {
-        GenericWindow genWin = null;
-        List<string> mConflictPaths;
-        ObservableList<Conflict> conflictResolves = new ObservableList<Conflict>();
-        private readonly ResolutionType _defaultResolutionType;
+        private GenericWindow? _genericWindow = null;
+        private readonly ObservableList<Conflict> _conflicts;
 
-        public bool IsResolved { get; set; }
+        public bool IsResolved { get; private set; }
 
 
         public ResolveConflictWindow(List<string> conflictPaths, ResolutionType defaultResolutionType = ResolutionType.AcceptServer)
         {
             IsResolved = false;
             InitializeComponent();
-            mConflictPaths = conflictPaths;
-            _defaultResolutionType = defaultResolutionType;
+            _conflicts = CreateConflictList(conflictPaths, defaultResolutionType);
             SetGridView();
         }
+
+        private ObservableList<Conflict> CreateConflictList(IEnumerable<string> conflictPaths, ResolutionType defaultResolutionType)
+        {
+            ObservableList<Conflict> conflicts = new();
+            foreach (string conflictPath in conflictPaths)
+            {
+                Conflict conflict = new(conflictPath)
+                {
+                    Resolution = defaultResolutionType
+                };
+                conflicts.Add(conflict);
+            }
+            return conflicts;
+        }
+
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button resolveBtn = new Button();
-            resolveBtn.Content = "Resolve";
+            Button resolveBtn = new()
+            {
+                Content = "Resolve"
+            };
             resolveBtn.Click += new RoutedEventHandler(resolve_Click);
 
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Source Control Conflicts", this, new ObservableList<Button> { resolveBtn }, true, "Do Not Resolve", CloseWindow);
+            Button analyzeBtn = new()
+            {
+                Content = "Analyze",
+            };
+            analyzeBtn.Click += analyzeBtn_Click;
+
+            GingerCore.General.LoadGenericWindow(ref _genericWindow, App.MainWindow, windowStyle, "Source Control Conflicts", this, new ObservableList<Button> { resolveBtn, analyzeBtn }, true, "Do Not Resolve", CloseWindow);
         }
         private void resolve_Click(object sender, EventArgs e)
         {
-            IsResolved = true;
             Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
-            foreach (Conflict conflict in conflictResolves)
+            foreach (Conflict conflict in _conflicts)
             {
                 switch (conflict.Resolution)
                 {
@@ -91,21 +112,61 @@ namespace Ginger.ConflictResolve
                         break;
                 }
             }
+            IsResolved = true;
             Reporter.HideStatusMessage();
             CloseWindow();
         }
 
-        private void SetGridView()
+        private void analyzeBtn_Click(object sender, RoutedEventArgs e)
         {
-            foreach (string conflictPath in mConflictPaths)
+            foreach(Conflict conflict in _conflicts)
             {
-                Conflict conflict = new(conflictPath)
-                {
-                    Resolution = _defaultResolutionType
-                };
-                conflictResolves.Add(conflict);
+                AnalyzeForConflict(conflict);
+            }
+        }
+
+        private void AnalyzeForConflict(Conflict conflict)
+        {
+            if(!IsBusinessFlowFile(conflict.Path))
+            {
+                return;
             }
 
+            Task.Run(() => AnalyzeBusinessFlow((BusinessFlow)conflict.GetMergedItem()));
+        }
+
+        private bool IsBusinessFlowFile(string filePath)
+        {
+            return filePath.EndsWith("BusinessFlow.xml");
+        }
+
+        private async Task AnalyzeBusinessFlow(BusinessFlow businessFlow)
+        {
+            Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+            try
+            {
+                AnalyzerPage analyzerPage = null!;
+
+                Dispatcher.Invoke(() => analyzerPage = new());
+
+                analyzerPage.Init(WorkSpace.Instance.Solution, businessFlow, WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
+                await analyzerPage.AnalyzeWithoutUI();
+                Dispatcher.Invoke(() => Reporter.HideStatusMessage());
+                if (analyzerPage.TotalHighAndCriticalIssues > 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
+                    Dispatcher.Invoke(() => analyzerPage.ShowAsWindow());
+                    return;
+                }
+            }
+            finally
+            {
+                Dispatcher.Invoke(() => Reporter.HideStatusMessage());
+            }
+        }
+
+        private void SetGridView()
+        {
             GridViewDef view = new(GridViewDef.DefaultViewName)
             {
                 GridColsView = new()
@@ -134,7 +195,7 @@ namespace Ginger.ConflictResolve
             xConflictingItemsGrid.SetAllColumnsDefaultView(view);
             xConflictingItemsGrid.InitViewItems();
             xConflictingItemsGrid.SetTitleLightStyle = true;
-            xConflictingItemsGrid.DataSourceList = this.conflictResolves;
+            xConflictingItemsGrid.DataSourceList = this._conflicts;
         }
 
         private DataTemplate CreateDataTemplateForCherryPickChangesColumn()
@@ -195,7 +256,7 @@ namespace Ginger.ConflictResolve
         }
         private void CloseWindow()
         {
-            genWin.Close();
+            _genericWindow.Close();
         }
 
 
