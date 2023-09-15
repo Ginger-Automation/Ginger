@@ -89,6 +89,10 @@ namespace Ginger.SourceControl
                         }
                     }
                 }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, $"Unable to get latest changes. {error}");
+                }
             }
             return true;
         }

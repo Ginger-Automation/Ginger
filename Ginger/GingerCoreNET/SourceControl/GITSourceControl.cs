@@ -323,6 +323,11 @@ namespace GingerCore.SourceControl
             }
             catch (Exception ex)
             {
+                if(ex is AggregateException && ex.InnerException is CheckoutConflictException)
+                {
+                    error = "Local branch has uncommited changes, check-in them before getting latest.";
+                    return false;
+                }
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting latest changes.", ex);
                 conflictsPaths = GetConflictPaths();
                 error = ex.Message + Environment.NewLine + ex.InnerException;
@@ -1110,6 +1115,11 @@ namespace GingerCore.SourceControl
             }
         }
 
+        /// <summary>
+        /// Perform a Git Fetch and Merge operation to get the latest changes.
+        /// </summary>
+        /// <returns><see cref="MergeResult"/> representing the result of the merge operation after fetch.</returns>
+        /// <exception cref="CheckoutConflictException">If local branch has uncommited changes.</exception>
         private MergeResult Pull()
         {
             MergeResult mergeResult = null;
