@@ -1472,7 +1472,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
                         if (publishToALMOperationExecConfig.ALMType.ToLower() == "default")
                         {
-                            publishToQCRunSetOperation.PublishALMType = gingerExecConfig.AlmsDetails.FirstOrDefault(x => x.IsDefault != null && x.IsDefault.Value == true).ALMType;
+                            publishToQCRunSetOperation.PublishALMType =gingerExecConfig.AlmsDetails != null ?  gingerExecConfig.AlmsDetails.FirstOrDefault(x => x.IsDefault != null && x.IsDefault.Value == true).ALMType : publishToALMOperationExecConfig.ALMType.ToLower();
                         }
                         else
                         {

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
 using Ginger;
@@ -461,6 +462,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             if (verboseLevel == OptionsBase.eVerboseLevel.debug)
             {
                 Reporter.AppLoggingLevel = eAppReporterLoggingLevel.Debug;
+                GingerLog.StartCustomTraceListeners();
             }
             else
             {

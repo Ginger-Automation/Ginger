@@ -174,7 +174,8 @@ namespace GingerCore.ALM.RQM
                                     else
                                     {
                                         result = $"Execution Results List not found for {businessFlow.Name} and testplan {bfExportedID}";
-                                        //return false;
+                                        Reporter.ToLog(eLogLevel.DEBUG, result);
+                                        //return false;///Need to improve for Multiple Activity Group
                                     }
                                 }
                             }
@@ -211,9 +212,10 @@ namespace GingerCore.ALM.RQM
                                 return false;
                             }
                         }
-                        catch
+                        catch(Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for {businessFlow.Name} and testplan {bfExportedID}");
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Failed to Update Execution Record Results for {businessFlow.Name} and testplan {bfExportedID}",ex);
                         }
                         finally
                         {
@@ -307,9 +309,13 @@ namespace GingerCore.ALM.RQM
                         else
                         {
                             result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} Execution results failed to publist to RQM due to {resultInfo.ErrorDesc}";
-                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to export execution details to RQM/ALM due to{resultInfo.ErrorDesc}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to export execution details to RQM/ALM due to {resultInfo.ErrorDesc}");
                             return false;
                         }
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to Get Project list");
                     }
 
                 }
@@ -588,7 +594,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to create Execution Record Per Activity- {currentActivity.EntityName} in CreateExecutionRecord {ex.InnerException}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to create Execution Record Per Activity- {currentActivity.EntityName} in CreateExecutionRecord {ex.InnerException}",ex);
             }
         }
 
