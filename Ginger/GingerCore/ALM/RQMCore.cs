@@ -205,14 +205,18 @@ namespace GingerCore.ALM
                         string serverURL = ServerURLNode.InnerText;
                         XmlNode IsTestSuiteNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/IsTestSuite");
                         string IsTestSuite = IsTestSuiteNode.InnerText;
-                        XmlNode IsSkippedUpdateNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/IsSkippedUpdate");
-                        string IsSkippedUpdate = IsSkippedUpdateNode.InnerText;
+                        XmlNode PublishSkippedNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/PublishSkipped");
+                        string PublishSkipped = "False";
+                        if (PublishSkippedNode != null)
+                        {
+                            PublishSkipped = PublishSkippedNode.InnerText;
+                        }
                         XmlNode DefectFieldAPINode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/DefectFieldAPI");
                         string DefectFieldAPI = DefectFieldAPINode.InnerText;
                         Dictionary<String, Object> dictionary = new Dictionary<string, object>();
                         dictionary.Add("ServerURL", serverURL);
                         dictionary.Add("IsTestSuite", IsTestSuite);
-                        dictionary.Add("IsSkippedUpdate", IsSkippedUpdate);
+                        dictionary.Add("PublishSkipped", PublishSkipped);
                         dictionary.Add("DefectFieldAPI", DefectFieldAPI);
                         return dictionary; 
                     }

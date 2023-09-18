@@ -156,7 +156,7 @@ namespace GingerCore.ALM.RQM
                         foreach (ActivitiesGroup activGroup in businessFlow.ActivitiesGroups)
                         {
 
-                            if (ALMCore.DefaultAlmConfig.PublishSkipped == "False")
+                            if (ALMCore.DefaultAlmConfig.PublishSkipped.Equals("False",StringComparison.CurrentCultureIgnoreCase))
                             {
                                 if(activGroup.RunStatus == eActivitiesGroupRunStatus.Skipped)
                                 {
