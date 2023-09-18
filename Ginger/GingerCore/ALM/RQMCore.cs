@@ -173,7 +173,7 @@ namespace GingerCore.ALM
             AlmConfig.ALMProjectKey = ALMProjectKey;
             AlmConfig.AlmType = almType;
             AlmConfig.IsTestSuite = GetIsTestSuiteValueFromDict(dic);
-            AlmConfig.IsSkippedUpdate = GetIsSkippedUpdateValueFromDict(dic);
+            AlmConfig.PublishSkipped = GetPublishSkippedValueFromDict(dic);
             AlmConfig.DefectFieldAPI = GetDefectFieldAPIValueFromDict(dic);
             AlmConfig.ALMConfigPackageFolderPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(ALMConfigPackageFolderPath);
             AlmConfig.JiraTestingALM = testingALMType;
@@ -309,15 +309,15 @@ namespace GingerCore.ALM
             }
         }
 
-        private string GetIsSkippedUpdateValueFromDict(Dictionary<string, object> dic)
+        private string GetPublishSkippedValueFromDict(Dictionary<string, object> dic)
         {
-            if (dic.ContainsKey("IsSkippedUpdate"))
+            if (dic.ContainsKey("PublishSkipped"))
             {
-                return (string)dic["IsSkippedUpdate"];
+                return (string)dic["PublishSkipped"];
             }
             else
             {
-                return "";
+                return "False";
             }
         }
 

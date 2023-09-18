@@ -232,16 +232,16 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
-        private string mIsSkippedUpdate;
-        public string IsSkippedUpdate
+        private string mPublishSkipped;
+        public string PublishSkipped
         {
-            get { return mIsSkippedUpdate; }
+            get { return mPublishSkipped; }
             set
             {
-                if (mIsSkippedUpdate != value)
+                if (mPublishSkipped != value)
                 {
-                    mIsSkippedUpdate = value;
-                    OnPropertyChanged(nameof(IsSkippedUpdate));
+                    mPublishSkipped = value;
+                    OnPropertyChanged(nameof(PublishSkipped));
                 }
             }
         }
