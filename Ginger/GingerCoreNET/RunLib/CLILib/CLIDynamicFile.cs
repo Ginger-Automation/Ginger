@@ -88,7 +88,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             if (FileType == eFileType.JSON)
             {
                 //Dynamic JSON
-                GingerExecConfig exeConfiguration = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(content);
+                try
+                {
+                    exeConfiguration = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(content);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"error while convert dynamic json {ex.InnerException}",ex);
+                    return;
+                }
+
                 cliHelper.SetEncryptionKey(exeConfiguration.EncryptionKey);
                 if (exeConfiguration.SolutionScmDetails != null)
                 {
