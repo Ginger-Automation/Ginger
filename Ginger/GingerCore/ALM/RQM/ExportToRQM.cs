@@ -198,7 +198,7 @@ namespace GingerCore.ALM.RQM
                         {
                             if(isFlowskipped)
                             {
-                                Reporter.ToLog(eLogLevel.DEBUG, $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as skippedUpdate configured as {ALMCore.DefaultAlmConfig.IsSkippedUpdate}");
+                                Reporter.ToLog(eLogLevel.DEBUG, $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as skippedUpdate configured as {ALMCore.DefaultAlmConfig.PublishSkipped}");
                                 return false;
                             }
                             else
