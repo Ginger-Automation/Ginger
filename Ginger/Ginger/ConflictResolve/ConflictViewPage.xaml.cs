@@ -120,7 +120,7 @@ namespace Ginger.ConflictResolve
             int unselectedComparisonCount = wizard.Comparison.UnselectedComparisonCount();
             if (unselectedComparisonCount > 0)
             {
-                Reporter.ToUser(eUserMsgKey.HasUnselectedConflicts, messageArgs: unselectedComparisonCount);
+                Reporter.ToUser(eUserMsgKey.HasHandledConflicts, messageArgs: unselectedComparisonCount);
                 eventArgs.CancelEvent = true;
             }
         }
