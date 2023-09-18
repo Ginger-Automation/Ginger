@@ -170,7 +170,8 @@ namespace Amdocs.Ginger.Common
         EnvParamNameEmpty,
         NoPublishRepositoryInfo,
         NotAllowedForMappedRuntimeValue,
-        HasUnselectedConflicts
+        HasUnselectedConflicts,
+        UncommitedChangesPreventCheckout
     }
 
     public static class UserMsgsPool
@@ -308,6 +309,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionFailed, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Failed to Upload Solution to Source Control" + Environment.NewLine + "'{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlBranchNameEmpty, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Branch name cannot be empty.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.HasUnselectedConflicts, new UserMsg(eUserMsgType.ERROR, "Unselected Conflicts", "You have {0} unselected conflicts, select them before moving forward.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.UncommitedChangesPreventCheckout, new UserMsg(eUserMsgType.ERROR, "Uncommited Changes", "Local branch has uncommited changes, check-in them before getting latest.", eUserMsgOption.OK, eUserMsgSelection.OK));
             #endregion SourceControl Messages
 
             #region Validation Messages

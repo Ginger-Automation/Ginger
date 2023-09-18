@@ -24,6 +24,7 @@ using GingerCore.Drivers.Selenium.SeleniumBMP;
 using GingerCoreNET.SourceControl;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -325,7 +326,8 @@ namespace GingerCore.SourceControl
             {
                 if(ex is AggregateException && ex.InnerException is CheckoutConflictException)
                 {
-                    error = "Local branch has uncommited changes, check-in them before getting latest.";
+                    Reporter.ToUser(eUserMsgKey.UncommitedChangesPreventCheckout);
+                    error = Reporter.UserMsgsPool[eUserMsgKey.UncommitedChangesPreventCheckout].Message;
                     return false;
                 }
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting latest changes.", ex);
