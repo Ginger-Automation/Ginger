@@ -101,26 +101,27 @@ namespace GingerCore.Actions
             return Path.Combine(directory, baseName + extension);
         }
 
-        private void ValidateInput()
+        private bool ValidateInput()
         {
             if (string.IsNullOrEmpty(SaveToFileName))
             {
                 Error = "File pathname for saving the screenshot was not provided.";
-                return;
+                return false;
             }
 
             string fileExtension = Path.GetExtension(SaveToFileName);
             if (!string.IsNullOrEmpty(fileExtension) && fileExtension != DEFAULT_IMAGE_EXTENSION)
             {
                 Error = $"Unsupported file extension '{fileExtension}'. Only {DEFAULT_IMAGE_EXTENSION} is allowed.";
-                return;
+                return false;
             }
 
             if (!ScreenShots.Any())
             {
                 Error = "No screenshots were captured for saving.";
-                return;
+                return false;
             }
+            return true;
         }
 
         private string ManageFilePath()
@@ -189,10 +190,11 @@ namespace GingerCore.Actions
         {
             try
             {
-                ValidateInput();
-
-                string directoryPath = ManageFilePath();
-                SaveImages(directoryPath);
+                if (ValidateInput())
+                {
+                    string directoryPath = ManageFilePath();
+                    SaveImages(directoryPath);
+                }
             }
             catch (Exception ex)
             {
