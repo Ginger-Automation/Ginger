@@ -18,7 +18,6 @@
         IsSynchronizedWithCurrentItem="True" Style="{StaticResource $FlatInputComboBoxStyle}">
         <ComboBox.ItemTemplate>
             <DataTemplate>
-                
                 <CheckBox Content="{Binding Title}"
                           IsChecked="{Binding Path=IsSelected, Mode=TwoWay}"
                           Tag="{RelativeSource FindAncestor, AncestorType={x:Type ComboBox}}"
@@ -28,7 +27,7 @@
         <ComboBox.Template>
             <ControlTemplate TargetType="ComboBox">
                 <Grid>
-
+                    <TextBlock x:Name="TextProperty" TextWrapping="Wrap"/>
                     <ToggleButton 
                         Name="ToggleButton" Content="{Binding Path=Text,Mode=TwoWay,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
                        Grid.Column="2" IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"

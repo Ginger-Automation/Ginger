@@ -200,8 +200,6 @@ namespace Ginger.BusinessFlowPages
                 xHandlerTriggerOnStackPanel.Visibility = Visibility.Collapsed;
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Collapsed;
             }
-
-            //PrepareAndLoadConsumerComboBox();
         }
 
         private void xErrorHandlerMappingCmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -279,7 +277,7 @@ namespace Ginger.BusinessFlowPages
                 xConsumerStack.Visibility = Visibility.Visible;                
 
                 //logic for Consumer ComboBox for Otoma
-                ObservableList<TargetBase> targetApplications;//= new ObservableList<TargetApplication>();
+                ObservableList<TargetBase> targetApplications;
                 ObservableList<Consumer> consumerList = new();
                 if (mContext.BusinessFlow != null)
                 {

@@ -1354,12 +1354,41 @@ namespace GingerCore
                     if (appAgent != null)
                     {
                         this.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName, TargetGuid = appAgent.Guid });
+                        if (activityIns.ConsumerApplications.Count > 0)
+                        {
+                            MapCAToBF(activityIns, ApplicationPlatforms); 
+                        }
                     }
                 }
             }
 
             return userSelection;
         }
+
+        /// <summary>
+        /// Adds the consumer application related TA in the business flow for shared repository
+        /// </summary>
+        /// <param name="activityIns"></param>
+        /// <param name="ApplicationPlatforms"></param>
+        public void MapCAToBF(Activity activityIns, ObservableList<ApplicationPlatform> ApplicationPlatforms)
+        {
+            foreach (var consumerPlat in activityIns.ConsumerApplications)
+            {
+                // Get the corresponding TargetApplication for the consumerGuid
+                TargetBase targetApp = GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications()
+                    .FirstOrDefault(app => Guid.Equals(app.Guid, consumerPlat.ConsumerGuid));
+
+                if (targetApp != null)
+                {
+                    this.TargetApplications.Add(new TargetApplication() { AppName = targetApp.Name, TargetGuid = targetApp.Guid });
+                }
+                else
+                {
+                    return;
+                }
+            }
+        }
+
         public object GetValidationsStat(ref bool isValidaionsExist)
         {
             List<StatItem> lst = new List<StatItem>();
