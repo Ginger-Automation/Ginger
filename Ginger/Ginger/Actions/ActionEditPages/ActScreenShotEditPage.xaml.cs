@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -54,8 +55,16 @@ namespace Ginger.Actions
                 if (FileName.Contains(SolutionFolder))
                 {
                     FileName = FileName.Replace(SolutionFolder, @"~\");
+                }                               
+                if ( File.GetAttributes(FileName).HasFlag(FileAttributes.Directory) && (!(FileName.EndsWith("\\"))))
+                {
+                    mAct.SaveToFileName = $"{FileName}\\";
+                    
                 }
-                mAct.SaveToFileName = FileName;
+                else
+                {
+                    mAct.SaveToFileName = FileName;
+                }
             }
 
         }
