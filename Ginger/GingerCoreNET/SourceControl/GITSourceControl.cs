@@ -24,7 +24,6 @@ using GingerCore.Drivers.Selenium.SeleniumBMP;
 using GingerCoreNET.SourceControl;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
-using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -332,7 +331,7 @@ namespace GingerCore.SourceControl
                 }
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting latest changes.", ex);
                 conflictsPaths = GetConflictPaths();
-                error = ex.Message + Environment.NewLine + ex.InnerException;
+                error = $"{ex.Message} {Environment.NewLine} {ex.InnerException}";
                 return false;
             }
         }
