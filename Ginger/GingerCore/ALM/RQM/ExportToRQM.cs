@@ -214,8 +214,7 @@ namespace GingerCore.ALM.RQM
                         }
                         catch(Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for {businessFlow.Name} and testplan {bfExportedID}");
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Failed to Update Execution Record Results for {businessFlow.Name} and testplan {bfExportedID}",ex);
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for {businessFlow.Name} and testplan {bfExportedID}",ex);
                         }
                         finally
                         {
