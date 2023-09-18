@@ -152,8 +152,18 @@ namespace GingerCore.ALM.RQM
                         //}
 
                         List<ExecutionResult> exeResultList = new List<ExecutionResult>();
+                        bool isFlowskipped = false;
                         foreach (ActivitiesGroup activGroup in businessFlow.ActivitiesGroups)
                         {
+
+                            if (ALMCore.DefaultAlmConfig.IsSkippedUpdate == "False")
+                            {
+                                if(activGroup.RunStatus == eActivitiesGroupRunStatus.Skipped)
+                                {
+                                    isFlowskipped = true;   
+                                    continue;
+                                }
+                            }
                             if (activGroup.ActivitiesIdentifiers.Count > 0)
                             {
                                 if (projEnvironment != null)
@@ -186,9 +196,18 @@ namespace GingerCore.ALM.RQM
 
                         if (!exeResultList.Any())
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as no valid Execution found for it");
-                            result = $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and 'testplan {bfExportedID}' as no valid Execution found for it ";
-                            return false;
+                            if(isFlowskipped)
+                            {
+                                Reporter.ToLog(eLogLevel.INFO, $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as skippedUpdate configured as {ALMCore.DefaultAlmConfig.IsSkippedUpdate}");
+                                result = $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and 'testplan {bfExportedID}' as skippedUpdate configured as {ALMCore.DefaultAlmConfig.IsSkippedUpdate}";
+                                return false;
+                            }
+                            else
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as no valid Execution found for it");
+                                result = $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and 'testplan {bfExportedID}' as no valid Execution found for it ";
+                                return false;
+                            }
                         }
 
                         ResultInfo resultInfo = new ResultInfo();

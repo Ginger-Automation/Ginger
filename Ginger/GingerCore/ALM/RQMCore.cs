@@ -173,6 +173,7 @@ namespace GingerCore.ALM
             AlmConfig.ALMProjectKey = ALMProjectKey;
             AlmConfig.AlmType = almType;
             AlmConfig.IsTestSuite = GetIsTestSuiteValueFromDict(dic);
+            AlmConfig.IsSkippedUpdate = GetIsSkippedUpdateValueFromDict(dic);
             AlmConfig.DefectFieldAPI = GetDefectFieldAPIValueFromDict(dic);
             AlmConfig.ALMConfigPackageFolderPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(ALMConfigPackageFolderPath);
             AlmConfig.JiraTestingALM = testingALMType;
@@ -204,11 +205,14 @@ namespace GingerCore.ALM
                         string serverURL = ServerURLNode.InnerText;
                         XmlNode IsTestSuiteNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/IsTestSuite");
                         string IsTestSuite = IsTestSuiteNode.InnerText;
+                        XmlNode IsSkippedUpdateNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/IsSkippedUpdate");
+                        string IsSkippedUpdate = IsSkippedUpdateNode.InnerText;
                         XmlNode DefectFieldAPINode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/DefectFieldAPI");
                         string DefectFieldAPI = DefectFieldAPINode.InnerText;
                         Dictionary<String, Object> dictionary = new Dictionary<string, object>();
                         dictionary.Add("ServerURL", serverURL);
                         dictionary.Add("IsTestSuite", IsTestSuite);
+                        dictionary.Add("IsSkippedUpdate", IsSkippedUpdate);
                         dictionary.Add("DefectFieldAPI", DefectFieldAPI);
                         return dictionary; 
                     }
@@ -304,6 +308,20 @@ namespace GingerCore.ALM
                 return "";
             }
         }
+
+        private string GetIsSkippedUpdateValueFromDict(Dictionary<string, object> dic)
+        {
+            if (dic.ContainsKey("IsSkippedUpdate"))
+            {
+                return (string)dic["IsSkippedUpdate"];
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        
         #endregion
 
         public void UpdatedRQMTestInBF(ref BusinessFlow busFlow, RQMTestPlan testPlan, List<string> TCsIDs)
