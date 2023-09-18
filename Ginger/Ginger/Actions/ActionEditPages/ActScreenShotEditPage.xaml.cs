@@ -55,16 +55,8 @@ namespace Ginger.Actions
                 if (FileName.Contains(SolutionFolder))
                 {
                     FileName = FileName.Replace(SolutionFolder, @"~\");
-                }                               
-                if ( File.GetAttributes(FileName).HasFlag(FileAttributes.Directory) && (!(FileName.EndsWith("\\"))))
-                {
-                    mAct.SaveToFileName = $"{FileName}\\";
-                    
-                }
-                else
-                {
-                    mAct.SaveToFileName = FileName;
-                }
+                }                                            
+                mAct.SaveToFileName = FileName;                
             }
 
         }

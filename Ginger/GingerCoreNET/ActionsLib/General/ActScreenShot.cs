@@ -125,12 +125,22 @@ namespace GingerCore.Actions
 
         private string ManageFilePath()
         {
-            string directoryPath = Path.GetDirectoryName(SaveToFileName);
+            string directoryPath;
+            if (File.GetAttributes(SaveToFileName).HasFlag(FileAttributes.Directory) && !Path.EndsInDirectorySeparator(SaveToFileName))
+            {
+                SaveToFileName += Path.DirectorySeparatorChar;
+
+                directoryPath = Path.GetDirectoryName(SaveToFileName + Path.DirectorySeparatorChar);
+            }
+            else
+            {
+                directoryPath = Path.GetDirectoryName(SaveToFileName);
+            }
 
             if (directoryPath.StartsWith(TILDE_PATH_PREFIX))
             {
                 directoryPath = Path.Combine(SolutionFolder, directoryPath.Replace(TILDE_PATH_PREFIX, string.Empty));
-            }
+            }            
 
             if (!Directory.Exists(directoryPath))
             {
