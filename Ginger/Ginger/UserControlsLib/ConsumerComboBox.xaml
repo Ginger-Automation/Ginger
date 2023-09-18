@@ -18,8 +18,9 @@
         IsSynchronizedWithCurrentItem="True" Style="{StaticResource $FlatInputComboBoxStyle}">
         <ComboBox.ItemTemplate>
             <DataTemplate>
+                
                 <CheckBox Content="{Binding Title}"
-                          IsChecked="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          IsChecked="{Binding Path=IsSelected, Mode=TwoWay}"
                           Tag="{RelativeSource FindAncestor, AncestorType={x:Type ComboBox}}"
                            Click="ConsumerCheckBox_Click" />
             </DataTemplate>
