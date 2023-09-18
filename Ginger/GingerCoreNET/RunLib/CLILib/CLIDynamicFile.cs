@@ -87,6 +87,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             if (FileType == eFileType.JSON)
             {
+                GingerExecConfig exeConfiguration;
                 //Dynamic JSON
                 try
                 {
