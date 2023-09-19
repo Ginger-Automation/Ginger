@@ -87,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             if (FileType == eFileType.JSON)
             {
-                GingerExecConfig exeConfiguration = new GingerExecConfig();//= DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(content);
+                GingerExecConfig exeConfiguration;
                 //Dynamic JSON
                 try
                 {
@@ -95,8 +95,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"error while convert dynamic json {ex.InnerException}");
-                    Reporter.ToLog(eLogLevel.DEBUG, $"error while convert dynamic json {ex.InnerException}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"error while convert dynamic json {ex.InnerException}",ex);
                     return;
                 }
 

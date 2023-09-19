@@ -212,7 +212,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
                 if (mRunSetConfig.ReRunConfigurations != null && mRunSetConfig.ReRunConfigurations.Active)
                 {
-                    if(mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == null)
+                    if( mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == Guid.Empty || mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == null)
                     {
                         mRunSetConfig.ReRunConfigurations.ReferenceExecutionID = GetLastExecutionIdBySolutionAndRunsetId(WorkSpace.Instance.Solution.Guid, mRunSetConfig.Guid);
                     }
@@ -649,7 +649,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                return WorkSpace.Instance.OpenSolution(Solution, EncryptionKey);
+                if(Solution != null)
+                {
+                    return WorkSpace.Instance.OpenSolution(Solution, EncryptionKey);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution, Solution path is empty");
+                    return false;
+                }
+                
             }
             catch (Exception ex)
             {
