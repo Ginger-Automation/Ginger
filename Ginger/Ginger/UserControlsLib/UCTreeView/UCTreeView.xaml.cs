@@ -249,16 +249,21 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         private void TVI_Expanded(object? sender, RoutedEventArgs e)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            TreeViewItem treeViewItem = (TreeViewItem)e.Source;
+            _ = LoadChildItems(treeViewItem);
+        }
 
-            TreeViewItem TVI = (TreeViewItem)e.Source;
-            RemoveDummyNode(TVI);
-            SetRepositoryFolderIsExpanded(TVI, true);
-            SetTreeNodeItemChilds(TVI);
+        private async Task LoadChildItems(TreeViewItem treeViewItem)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            RemoveDummyNode(treeViewItem);
+            SetRepositoryFolderIsExpanded(treeViewItem, isExpanded: true);
+            await SetTreeNodeItemChilds(treeViewItem);
             GingerCore.General.DoEvents();
             // remove the handler as expand data is cached now on tree
-            WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(source: TVI, eventName: nameof(TreeViewItem.Expanded), handler: TVI_Expanded);
-            WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(source: TVI, eventName: nameof(TreeViewItem.Expanded), handler: TVI_ExtraExpanded);
+            WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_Expanded);
+            WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_ExtraExpanded);
 
             Mouse.OverrideCursor = null;
         }
@@ -289,21 +294,19 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         private readonly Dictionary<TreeViewItem, Task> tviChildNodesLoadTaskMap = new();
 
-        private void SetTreeNodeItemChilds(TreeViewItem TVI)
+        private Task SetTreeNodeItemChilds(TreeViewItem TVI)
         {
             // TODO: remove temp code after cleanup 
+            Task setChildItemsTask = Task.CompletedTask;
 
-            if (TVI.Tag is ITreeViewItem)
+            if (TVI.Tag is ITreeViewItem ITVI)
             {
-                ITreeViewItem ITVI = (ITreeViewItem)TVI.Tag;
-
-                List<ITreeViewItem> Childs = null;
-                Childs = ITVI.Childrens();
+                List<ITreeViewItem> Childs = ITVI.Childrens();
 
                 TVI.Items.Clear();
                 if (Childs != null)
                 {
-                    tviChildNodesLoadTaskMap.Add(TVI, Task.Run(() =>
+                    setChildItemsTask = Task.Run(() =>
                     {
                         try
                         {
@@ -330,15 +333,20 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                             }
                             mSetTreeNodeItemChildsEvent.Set();
                             if (tviChildNodesLoadTaskMap.ContainsKey(TVI))
+                            {
                                 tviChildNodesLoadTaskMap.Remove(TVI);
+                            }
                         }
                         catch(Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
                         }
-                    }));
+                    });
+                    tviChildNodesLoadTaskMap.Add(TVI, setChildItemsTask);
                 }
             }
+
+            return setChildItemsTask;
         }
 
         private bool IsTreeItemFitsFilter(ITreeViewItem treeItemToCheck)
@@ -427,7 +435,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             TVI.IsExpanded = true;
         }
 
-        public void RefresTreeNodeChildrens(ITreeViewItem NodeItem)
+        public void RefreshTreeNodeChildrens(ITreeViewItem NodeItem)
         {
             TreeViewItem TVI = SearchTVIRecursive((TreeViewItem)Tree.Items[0], NodeItem);
             if (TVI != null)
@@ -807,35 +815,51 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return null;
         }
 
-        public void IterateTreeViewItems(Func<ITreeViewItem, bool> iterationConsumer, bool inReverseOrder = false)
+        public Task IterateTreeViewItemsAsync(Func<ITreeViewItem, bool> iterationConsumer, bool inReverseOrder)
         {
-            IterateTreeViewItemsPrivate(iterationConsumer, inReverseOrder, (TreeViewItem)Tree.Items[0]);
+            return IterateTreeViewItemsAsync(treeViewItem =>
+            {
+                bool continueIteration = true;
+                object treeViewItemTag = treeViewItem.Tag;
+                if (treeViewItemTag != null && treeViewItemTag is ITreeViewItem iTreeViewItem)
+                {
+                    continueIteration = iterationConsumer.Invoke(iTreeViewItem);
+                }
+                return continueIteration;
+            }, inReverseOrder);
         }
 
-        private bool IterateTreeViewItemsPrivate(Func<ITreeViewItem, bool> iterationConsumer, bool inReverseOrder, TreeViewItem root)
+        public Task IterateTreeViewItemsAsync(Func<TreeViewItem, bool> iterationConsumer, bool inReverseOrder = false)
+        {
+            TreeViewItem firstTreeItem = (TreeViewItem)Tree.Items[0];
+            return IterateTreeViewItemsPrivateAsync(iterationConsumer, inReverseOrder, root: firstTreeItem);
+        }
+
+        private async Task<bool> IterateTreeViewItemsPrivateAsync(Func<TreeViewItem, bool> iterationConsumer, bool inReverseOrder, TreeViewItem root)
         {
             bool continueIteration = true;
 
             int index = 0;
             Predicate<int> boundCheck = index => index < root.Items.Count;
             int indexIncrementation = 1;
-            if(inReverseOrder)
+
+            await LoadChildItems(root);
+
+            if (inReverseOrder)
             {
                 index = root.Items.Count - 1;
                 boundCheck = index => index >= 0;
                 indexIncrementation = -1;
             }
 
-            root.IsExpanded = true;
-
-            while(boundCheck.Invoke(index))
+            while (boundCheck.Invoke(index))
             {
                 TreeViewItem currentTreeItem = (TreeViewItem)root.Items[index];
                 ITreeViewItem tvi = (ITreeViewItem)currentTreeItem.Tag;
 
                 if (tvi != null)
                 {
-                    continueIteration = iterationConsumer.Invoke(tvi);
+                    continueIteration = iterationConsumer.Invoke(currentTreeItem);
                     if (!continueIteration)
                     {
                         break;
@@ -844,7 +868,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
                 if (currentTreeItem.Items.Count > 0)
                 {
-                    continueIteration = IterateTreeViewItemsPrivate(iterationConsumer, inReverseOrder, currentTreeItem);
+                    continueIteration = await IterateTreeViewItemsPrivateAsync(iterationConsumer, inReverseOrder, currentTreeItem);
                     if (!continueIteration)
                     {
                         break;
@@ -854,9 +878,18 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 index += indexIncrementation;
             }
 
-            root.IsExpanded = false;
-
             return continueIteration;
+        }
+
+        public void FocusItem(TreeViewItem treeViewItem)
+        {
+            DependencyObject? parent = treeViewItem.Parent;
+            while (parent != null && parent is TreeViewItem parentTreeViewItem)
+            {
+                parentTreeViewItem.IsExpanded = true;
+                parent = parentTreeViewItem.Parent;
+            }
+            treeViewItem.IsSelected = true;
         }
 
         public void SelectItem(ITreeViewItem item)

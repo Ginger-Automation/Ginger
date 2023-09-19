@@ -6,6 +6,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -127,10 +128,15 @@ namespace Ginger.ConflictResolve
 
         private void xPrevConflict_Click(object sender, RoutedEventArgs e)
         {
-            ITreeViewItem? previousConflictTVI = null;
-            Func<ITreeViewItem, bool> iterationConsumer = tvi =>
+            _ = HighlighPrevConflictAsync();
+        }
+
+        private async Task HighlighPrevConflictAsync()
+        {
+            TreeViewItem? previousConflictTVI = null;
+            Func<TreeViewItem, bool> iterationConsumer = tvi =>
             {
-                Comparison comparison = (Comparison)tvi.NodeObject();
+                Comparison comparison = (Comparison)((ITreeViewItem)tvi.Tag).NodeObject();
                 bool continueIteration = true;
 
                 bool IsAddedOrDeleted = comparison.State == Comparison.StateType.Added || comparison.State == Comparison.StateType.Deleted;
@@ -145,25 +151,33 @@ namespace Ginger.ConflictResolve
                 return continueIteration;
             };
 
-            xLocalItemTree.IterateTreeViewItems(iterationConsumer, inReverseOrder: true);
+            await xLocalItemTree.IterateTreeViewItemsAsync(iterationConsumer, inReverseOrder: true);
             if (previousConflictTVI != null)
             {
-                xLocalItemTree.SelectItem(previousConflictTVI);
+                xLocalItemTree.FocusItem(previousConflictTVI);
             }
 
-            xRemoteItemTree.IterateTreeViewItems(iterationConsumer, inReverseOrder: true);
+            await xRemoteItemTree.IterateTreeViewItemsAsync(iterationConsumer, inReverseOrder: true);
             if (previousConflictTVI != null)
             {
-                xRemoteItemTree.SelectItem(previousConflictTVI);
+                xRemoteItemTree.FocusItem(previousConflictTVI);
             }
         }
 
+        private static int iterationCount = 0;
+
         private void xNextConflict_Click(object sender, RoutedEventArgs e)
         {
-            ITreeViewItem? nextConflictTVI = null;
-            Func<ITreeViewItem, bool> iterationConsumer = tvi =>
+            _ = HighlightNextConflictAsync();
+        }
+
+        private async Task HighlightNextConflictAsync()
+        {
+            TreeViewItem? nextConflictTVI = null;
+            Func<TreeViewItem, bool> iterationConsumer = tvi =>
             {
-                Comparison comparison = (Comparison)tvi.NodeObject();
+                iterationCount++;
+                Comparison comparison = (Comparison)((ITreeViewItem)tvi.Tag).NodeObject();
                 bool continueIteration = true;
 
                 bool IsAddedOrDeleted = comparison.State == Comparison.StateType.Added || comparison.State == Comparison.StateType.Deleted;
@@ -173,22 +187,30 @@ namespace Ginger.ConflictResolve
                 {
                     nextConflictTVI = tvi;
                     continueIteration = false;
+                    //Debug.WriteLine($"Comparison found at {DateTime.Now:hh:mm:ss.ffff}");
                 }
 
                 return continueIteration;
             };
 
-            xLocalItemTree.IterateTreeViewItems(iterationConsumer);
+            await xLocalItemTree.IterateTreeViewItemsAsync(iterationConsumer);
             if (nextConflictTVI != null)
             {
-                xLocalItemTree.SelectItem(nextConflictTVI);
+                xLocalItemTree.FocusItem(nextConflictTVI);
             }
 
-            xRemoteItemTree.IterateTreeViewItems(iterationConsumer);
+            await xRemoteItemTree.IterateTreeViewItemsAsync(iterationConsumer);
+            //Debug.WriteLine($"If check started at {DateTime.Now:hh:mm:ss.ffff}");
             if (nextConflictTVI != null)
             {
-                xRemoteItemTree.SelectItem(nextConflictTVI);
+                //Debug.WriteLine($"Conflict TreeViewItem Found");
+                xRemoteItemTree.FocusItem(nextConflictTVI);
             }
+            //else
+            //{
+            //    Debug.WriteLine($"Conflict TreeViewItem Not-Found");
+            //}
+            //Debug.WriteLine($"If check completed at {DateTime.Now:hh:mm:ss.ffff}");
         }
     }
 }

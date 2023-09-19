@@ -75,7 +75,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             if (mTreeView != null) //TODO: add handling to make sure this will never be Null and won't be set only on SetTools
             {
-                mTreeView.Tree.RefresTreeNodeChildrens(this);
+                mTreeView.Tree.RefreshTreeNodeChildrens(this);
             }
         }
 
