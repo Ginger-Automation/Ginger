@@ -301,7 +301,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     if (mRunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.RunSet)
                     {
                         List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
-                        if (accountReportRunset != null)
+                        if (accountReportRunset != null && accountReportRunset.Count > 0)
                         {
                             if (accountReportRunset.Any(x => x.Status.Equals(eRunStatus.Passed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
                             {
@@ -318,7 +318,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     else if (mRunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.BusinessFlow)
                     {
                         List<AccountReportBusinessFlow> accountReportBusinessFlows = accountReportApiHandler.GetBusinessflowExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
-                        if (accountReportBusinessFlows != null)
+                        if (accountReportBusinessFlows != null && accountReportBusinessFlows.Count > 0)
                         {
                             if (accountReportBusinessFlows.Any(x => x.RunStatus.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
                             {
@@ -370,10 +370,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        private void SetDebugLevel()
-        {
-            Reporter.AppLoggingLevel = AppLoggingLevel;
-        }
+        //private void SetDebugLevel()
+        //{
+        //    Reporter.AppLoggingLevel = AppLoggingLevel;
+        //}
 
         private void HandleAutoRunWindow()
         {
