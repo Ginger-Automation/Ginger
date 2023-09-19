@@ -61,11 +61,13 @@
             </Expander>
             <StackPanel Margin="0,20,0,0" x:Name="xRequestAVPPanel">
                 <StackPanel.Resources>
-                    <DataTemplate x:Key="ValueExpressionButton">
-                        <Button x:Name="GridVEButton" Content="..." Click="GridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
-                    </DataTemplate>
                 </StackPanel.Resources>
-                <Ginger:ucGrid x:Name="xRequestAvpListGrid" Title="Request AVPS" ShowUpDown="Collapsed" MinHeight="350" SelectionMode="Single"/>
+                <Ginger:ucGrid x:Name="xRequestAvpListGrid" Title="Request AVPS" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" MinHeight="350" SelectionMode="Single"/>
+            </StackPanel>
+            <StackPanel Margin="0,20,0,0" x:Name="xResponseCustomAVPPanel">
+                <StackPanel.Resources>
+                </StackPanel.Resources>
+                <Ginger:ucGrid x:Name="xCustomResponseAvpListGrid" Title="Custom Response AVPS" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" MinHeight="350" SelectionMode="Single"/>
             </StackPanel>
         </StackPanel>
     </Grid>

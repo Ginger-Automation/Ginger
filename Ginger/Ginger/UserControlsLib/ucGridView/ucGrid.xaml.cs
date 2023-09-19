@@ -1666,7 +1666,7 @@ namespace Ginger
             return template;
         }
 
-        public static DataTemplate GetGridComboBoxTemplate<T>(ObservableList<T> comboValuesList, string displayMemberPath, string selectedValuePath, string selectedValueField, bool allowEdit = false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
+        public static DataTemplate GetGridComboBoxTemplate<T>(ObservableList<T> comboValuesList, string displayMemberPath, string selectedValuePath, string selectedValueField, bool allowEdit = false, SelectionChangedEventHandler comboSelectionChangedHandler = null, string comboBoxTag = null)
         {
             DataTemplate template = new DataTemplate();
             FrameworkElementFactory comboBox = new FrameworkElementFactory(typeof(ComboBox));
@@ -1681,6 +1681,13 @@ namespace Ginger
             };
             comboBox.SetBinding(ComboBox.SelectedValueProperty, selectedValueBinding);
 
+            Binding textValueBinding = new Binding(selectedValuePath)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            comboBox.SetBinding(ComboBox.TextProperty, textValueBinding);
+
             if (allowEdit)
             {
                 comboBox.SetValue(ComboBox.IsEditableProperty, true);
@@ -1688,6 +1695,10 @@ namespace Ginger
             if (comboSelectionChangedHandler != null)
             {
                 comboBox.AddHandler(ComboBox.SelectionChangedEvent, comboSelectionChangedHandler);
+            }
+            if (!string.IsNullOrEmpty(comboBoxTag))
+            {
+                comboBox.SetValue(ComboBox.TagProperty, comboBoxTag);
             }
             template.VisualTree = comboBox;
             return template;

@@ -3,12 +3,8 @@ using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.DiameterLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
-using GingerCore.DataSource;
-using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
 using static Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums;
 
 namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
@@ -171,23 +167,45 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
                 }
             }
         }
+
+        private ObservableList<DiameterAVP> mCustomResponseAvpList = new ObservableList<DiameterAVP>();
+        [IsSerializedForLocalRepository]
+        public ObservableList<DiameterAVP> CustomResponseAvpList
+        {
+            get
+            {
+                return mCustomResponseAvpList;
+            }
+            set
+            {
+                if (mCustomResponseAvpList != value)
+                {
+                    mCustomResponseAvpList = value;
+                    OnPropertyChanged(nameof(mCustomResponseAvpList));
+                }
+            }
+        }
         public override List<ObservableList<ActInputValue>> GetInputValueListForVEProcessing()
         {
             List<ObservableList<ActInputValue>> list = new List<ObservableList<ActInputValue>>
             {
-                FormDataToAIVConverter()
+                AVPToAIVConverter()
             };
 
             return list;
         }
-        private ObservableList<ActInputValue> FormDataToAIVConverter()
+        private ObservableList<ActInputValue> AVPToAIVConverter()
         {
-            ObservableList<ActInputValue> fa = new ObservableList<ActInputValue>();
-            foreach (DiameterAVP reqAvp in RequestAvpList)
+            ObservableList<ActInputValue> AIVList = new ObservableList<ActInputValue>();
+            foreach (DiameterAVP requestAvp in RequestAvpList)
             {
-                fa.Add((ActInputValue)reqAvp);
+                AIVList.Add(requestAvp);
             }
-            return fa;
+            foreach (DiameterAVP customResponseAvp in CustomResponseAvpList)
+            {
+                AIVList.Add(customResponseAvp);
+            }
+            return AIVList;
         }
     }
 }

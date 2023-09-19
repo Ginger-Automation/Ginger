@@ -11,18 +11,18 @@ using GingerCoreNET.GeneralLib;
 using System.Net.Sockets;
 using System.Net;
 using System.Xml;
-using System.Threading.Tasks;
-using System.Collections;
-using System.Reflection.Emit;
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.IO;
+using System.Collections.Generic;
 
 namespace Amdocs.Ginger.CoreNET.DiameterLib
 {
     public class DiameterUtils
     {
         private const string DIAMETER_AVP_DICTIONARY_FILENAME = "AVPDictionary.xml";
-
         private static ObservableList<DiameterAVP> mAvpDictionaryList;
         private static readonly object dictionaryLock = new object();
+        private static readonly object fileLock = new object();
         public static ObservableList<DiameterAVP> AvpDictionaryList
         {
             get
@@ -40,7 +40,11 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 return mAvpDictionaryList;
             }
         }
-        private DiameterMessage mMessage = null;
+
+        public string ResponseMessage;
+        public string RequestFileContent;
+        public string ResponseFileContent;
+        private DiameterMessage mMessage;
         public DiameterMessage Message
         {
             get
@@ -55,11 +59,19 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 }
             }
         }
+        private DiameterMessage mResponse;
+        public DiameterMessage Response
+        {
+            get { return mResponse; }
+            set
+            {
+                mResponse = value;
+            }
+        }
         public DiameterUtils(DiameterMessage message)
         {
             mMessage = message ?? new DiameterMessage();
         }
-
         public static ObservableList<DiameterAVP> LoadDictionary()
         {
             ObservableList<DiameterAVP> avpListDictionary = new ObservableList<DiameterAVP>();
@@ -85,25 +97,26 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                             avp.IsGrouped = avp.DataType == eDiameterAvpDataType.Grouped;
                             avpListDictionary.Add(avp);
                         }
+                        var sortedDictionary = avpListDictionary.OrderBy(a => a.Name).ToList();
+                        avpListDictionary = new ObservableList<DiameterAVP>(sortedDictionary);
                     }
                 }
             }
             catch (FileNotFoundException ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"AVPs dictionary file '{DIAMETER_AVP_DICTIONARY_FILENAME}' not found. Issue: {ex.Message}\nStack: {ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"AVPs dictionary file '{DIAMETER_AVP_DICTIONARY_FILENAME}' not found. Issue: {ex.Message}{Environment.NewLine}Stack: {ex.StackTrace}");
             }
             catch (XmlException ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to read AVPs dictionary from file '{DIAMETER_AVP_DICTIONARY_FILENAME}'. Issue: {ex.Message}\nStack: {ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to read AVPs dictionary from file '{DIAMETER_AVP_DICTIONARY_FILENAME}'. Issue: {ex.Message}{Environment.NewLine}Stack: {ex.StackTrace}");
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while loading AVPs dictionary. Issue: {ex.Message}\nStack: {ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while loading AVPs dictionary. Issue: {ex.Message}{Environment.NewLine}Stack: {ex.StackTrace}");
             }
 
             return avpListDictionary;
         }
-
         public static ObservableList<DiameterAVP> GetMandatoryAVPForMessage(DiameterEnums.eDiameterMessageType messageType)
         {
             ObservableList<DiameterAVP> avpList = null;
@@ -112,7 +125,23 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 string[] avpsNamesCER = { "Origin-Host", "Origin-Realm", "Host-IP-Address", "Vendor-Id", "Product-Name", "Origin-State-Id" };
                 if (AvpDictionaryList != null && AvpDictionaryList.Any())
                 {
-                    System.Collections.Generic.List<DiameterAVP> avps = AvpDictionaryList.Where(avp => avpsNamesCER.Contains(avp.Name)).ToList();
+                    List<DiameterAVP> avps = AvpDictionaryList.Where(avp => avpsNamesCER.Contains(avp.Name)).ToList();
+                    if (avps.Any())
+                    {
+                        avpList = new ObservableList<DiameterAVP>(avps);
+                    }
+                }
+            }
+            else if (messageType == eDiameterMessageType.CreditControlRequest)
+            {
+                string[] avpsNamesCCR = {
+                    "Session-Id", "Origin-Host", "Origin-Realm", "Destination-Realm",
+                    "Auth-Application-Id", "Service-Context-Id", "CC-Request-Type",
+                    "CC-Request-Number", "Destination-Host", "Origin-State-Id",
+                    "User-Name", "3GPP-RAT-Type", "Event-Timestamp"};
+                if (AvpDictionaryList != null && AvpDictionaryList.Any())
+                {
+                    List<DiameterAVP> avps = AvpDictionaryList.Where(avp => avpsNamesCCR.Contains(avp.Name)).ToList();
                     if (avps.Any())
                     {
                         avpList = new ObservableList<DiameterAVP>(avps);
@@ -122,7 +151,6 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
             return avpList;
         }
-
         public static string GetRawRequestContentPreview(ActDiameter act)
         {
             try
@@ -137,12 +165,12 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 //Create Request content
                 if (diameterUtils.ConstructDiameterRequest(act))
                 {
-                    string requestMessage = CreateMessageRawRequest(act, diameterUtils.Message);
+                    string requestMessage = CreateMessageRawRequestResponse(act, diameterUtils.Message);
                     return requestMessage;
                 }
                 else
                 {
-                    return String.Empty;
+                    return string.Empty;
                 }
             }
             catch (Exception ex)
@@ -151,8 +179,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 return string.Empty;
             }
         }
-
-        private static string CreateMessageRawRequest(ActDiameter act, DiameterMessage message)
+        private static string CreateMessageRawRequestResponse(ActDiameter act, DiameterMessage message)
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("<Diameter Message ::= <" + General.GetEnumValueDescription(typeof(eDiameterMessageType), act.DiameterMessageType)
@@ -163,38 +190,53 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 + $", retransmit=\"{message.IsRetransmittedBitSet.ToString().ToLower()}\""
                 + $", hopbyhop=\"{message.HopByHopIdentifier}\""
                 + $", endtoend=\"{message.EndToEndIdentifier}\""
-                + ">\r\n");
-            foreach (DiameterAVP avp in message.AvpList)
+                + $">{Environment.NewLine}");
+            foreach (DiameterAVP avp in message?.AvpList)
             {
-                if (avp.IsGrouped)
-                {
-                    // TODO: DIAMETER add nested avps to the message request
-                }
-                else
-                {
-                    stringBuilder.Append($"\t<avp name=\"{avp.Name}\" mandatory=\"{avp.IsMandatory.ToString().ToLower()}\" value=\"{avp.ValueForDriver}\" </avp>\r\n");
-                }
+                stringBuilder.Append(CreateAVPAsString(avp) + Environment.NewLine);
             }
             stringBuilder.Append("</Diameter Message>");
             return stringBuilder.ToString();
         }
-
-        public static void AddAvpToMessage(DiameterAVP diameterAvp, ref DiameterMessage message)
+        private static string CreateAVPAsString(DiameterAVP avp, int identLevel = 1)
         {
-            if (diameterAvp != null)
+            StringBuilder stringBuilder = new StringBuilder();
+            string identation = new string('\t', identLevel);
+            if (avp != null)
             {
-                message.AvpList.Add(diameterAvp);
+                if (avp.DataType == eDiameterAvpDataType.Grouped)
+                {
+                    stringBuilder.Append($"{identation}<grouped avp name=\"{avp.Name}\" mandatory=\"{avp.IsMandatory.ToString().ToLower()}\">");
+                    if (avp.NestedAvpList != null && avp.NestedAvpList.Any())
+                    {
+                        foreach (DiameterAVP nestedAVP in avp.NestedAvpList)
+                        {
+                            stringBuilder.Append(Environment.NewLine + CreateAVPAsString(nestedAVP, identLevel + 1));
+                        }
+                        stringBuilder.Append($"{Environment.NewLine}{identation}</grouped avp>");
+                    }
+                    else
+                    {
+                        stringBuilder.Append($" </grouped avp>");
+                    }
+                }
+                else
+                {
+                    stringBuilder.Append($"{identation}<avp name=\"{avp.Name}\" mandatory=\"{avp.IsMandatory.ToString().ToLower()}\" value=\"{avp.ValueForDriver}\" </avp>");
+                }
             }
+            return stringBuilder.ToString();
         }
-
         public bool ConstructDiameterRequest(ActDiameter act)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Starting to construct the diameter request");
             try
             {
                 string[] messagePropertyNames = new string[]
                 {
                     nameof(DiameterMessage.IsRequestBitSet),
                     nameof(DiameterMessage.IsProxiableBitSet),
+                    nameof(DiameterMessage.IsErrorBitSet),
                     nameof(DiameterMessage.CommandCode),
                     nameof(DiameterMessage.ApplicationId),
                     nameof(DiameterMessage.HopByHopIdentifier),
@@ -203,6 +245,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
                 foreach (string property in messagePropertyNames)
                 {
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Setting Message's property {property}");
                     if (!SetMessageProperty(act, property))
                     {
                         HandleSetMessagePropertyError(act, property);
@@ -210,6 +253,9 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                     }
                 }
 
+                Message.Name = General.GetEnumValueDescription(typeof(eDiameterMessageType), act.DiameterMessageType);
+
+                Reporter.ToLog(eLogLevel.DEBUG, $"Setting Message's AVPs");
                 if (!SetMessageAvps(act))
                 {
                     HandleSetMessageAvpsError(act);
@@ -220,33 +266,32 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the diameter message\nerror message: '{ex.Message}'");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the diameter message {Message.Name}{Environment.NewLine}error message: '{ex.Message}{Environment.NewLine}{ex.StackTrace}'");
                 return false;
             }
         }
         private void HandleSetMessagePropertyError(ActDiameter act, string property)
         {
             Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the diameter message on property '{property}'");
-            act.Error = $"An error occurred while constructing the diameter message for the {property} property.";
+            UpdateActionError(act, $"An error occurred while constructing the diameter message for the {property} property.");
         }
         private void HandleSetMessageAvpsError(ActDiameter act)
         {
             Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the diameter message on AVPs");
-            act.Error = $"An error occurred while adding AVPs to the diameter message.";
+            UpdateActionError(act, $"An error occurred while adding AVPs to the diameter message.");
         }
         private bool SetMessageProperty(ActDiameter act, string property)
         {
             try
             {
                 PropertyInfo propertyInfo = typeof(DiameterMessage).GetProperty(property);
+                bool isSuccessfullyParsed = false;
 
                 if (propertyInfo == null)
                 {
                     HandlePropertyNotFound(act, property);
                     return false;
                 }
-
-                bool isSuccessfullyParsed = false;
 
                 if (propertyInfo.PropertyType == typeof(int))
                 {
@@ -263,7 +308,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
                 if (!isSuccessfullyParsed)
                 {
-                    act.Error = $"Failed to set {property} value";
+                    UpdateActionError(act, $"Failed to set {property} value");
                 }
 
                 return isSuccessfullyParsed;
@@ -274,7 +319,6 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 return false;
             }
         }
-
         private static void HandleUnsupportedPropertyType(string property)
         {
             Reporter.ToLog(eLogLevel.ERROR, $"Unsupported property type for {property}.");
@@ -283,9 +327,8 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         private void HandlePropertyNotFound(ActDiameter act, string property)
         {
             Reporter.ToLog(eLogLevel.ERROR, $"Property {property} not found in DiameterMessage.");
-            act.Error = $"Property {property} not found";
+            UpdateActionError(act, $"Property {property} not found");
         }
-
         private bool TryParseAndSetValue<T>(PropertyInfo propertyInfo, ActDiameter act, string property)
         {
             if (TryParse<T>(act.GetInputParamCalculatedValue(property), out T value))
@@ -332,85 +375,48 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             {
                 return false;
             }
-            Message.AvpList = act.RequestAvpList;
-            return true;
-        }
-        public async Task<DiameterMessage> SendMessageAsync(ActDiameter act, TcpClient tcpClient)
-        {
-            try
+            ClearChildrenFromAVPs(act);
+            foreach (DiameterAVP avp in act.RequestAvpList)
             {
-                byte[] messageBytesToSend = ConvertMessageToBytes();
-                if (messageBytesToSend == null)
+                if (avp.ParentAvpGuid == Guid.Empty)
                 {
-                    act.Error = $"Encountered an issue while attempting to process the message";
-                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert message: {act.DiameterMessageType} in {act} to bytes");
-                    return null;
-                }
-
-                using (NetworkStream networkStream = tcpClient.GetStream())
-                {
-                    StateObject state = new StateObject()
-                    {
-                        TcpClient = tcpClient,
-                        ReceivedBytes = new byte[1024],
-                        DiameterAction = act,
-                        // Create a TaskCompletionSource to await the response
-                        TaskCompletionSource = new TaskCompletionSource<DiameterMessage>()
-                    };
-
-                    networkStream.Write(messageBytesToSend, 0, messageBytesToSend.Length);
-
-                    // Begin the asynchronous receive operation.
-                    tcpClient.Client.BeginReceive(state.ReceivedBytes, 0, state.ReceivedBytes.Length, 0, new AsyncCallback(ReceiveCallback), state);
-
-                    return await state.TaskCompletionSource.Task;
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error in SendMessageAsync: {ex.Message}\n{ex.StackTrace}");
-                return null;
-            }
-        }
-        private void ReceiveCallback(IAsyncResult result)
-        {
-            var state = (StateObject)result.AsyncState;
-            Socket client = state.TcpClient.Client;
-
-            try
-            {
-                int bytesRead = client.EndReceive(result);
-                if (bytesRead > 0)
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, $"Received response successfully. bytes read: {bytesRead}");
-
-                    // Increase buffer if bytes received from server is bigger than buffer
-                    if (bytesRead > state.ReceivedBytes.Length)
-                    {
-                        byte[] tempBuffer = new byte[bytesRead];
-                        Array.Copy(state.ReceivedBytes, 0, tempBuffer, 0, bytesRead);
-                        state.ReceivedBytes = tempBuffer;
-                    }
-
-                    DiameterMessage response = ProcessDiameterResponse(state.ReceivedBytes, state.DiameterAction);
-
-                    state.TaskCompletionSource.SetResult(response);
+                    Message.AvpList.Add(avp);
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Failed to process the response");
-                    state.TaskCompletionSource.SetResult(null);
+                    AddAVPToParent(act, avp);
                 }
             }
-            catch (Exception ex)
+            return Message.AvpList != null && Message.AvpList.Any();
+        }
+        private void ClearChildrenFromAVPs(ActDiameter act)
+        {
+            foreach (DiameterAVP avp in act.RequestAvpList)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error in ReceiveCallback: {ex.Message}\n{ex.StackTrace}");
-                // Set the exception to the TaskCompletionSource if an error occurs.
-                state.TaskCompletionSource.SetException(ex);
+                if (avp.NestedAvpList != null && avp.NestedAvpList.Any())
+                {
+                    avp.NestedAvpList.Clear();
+                }
+            }
+            foreach (DiameterAVP avp in act.CustomResponseAvpList)
+            {
+                if (avp.NestedAvpList != null && avp.NestedAvpList.Any())
+                {
+                    avp.NestedAvpList.Clear();
+                }
+            }
+        }
+        private void AddAVPToParent(ActDiameter act, DiameterAVP childAvp)
+        {
+            DiameterAVP parentAVP = act.RequestAvpList.FirstOrDefault(avp => avp.Guid == childAvp.ParentAvpGuid);
+            if (parentAVP != null)
+            {
+                parentAVP.NestedAvpList?.Add(childAvp);
             }
         }
         private byte[] ConvertMessageToBytes()
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Starting to convert message: {Message} to bytes");
             try
             {
                 const int messageLengthOffset = 1;
@@ -474,15 +480,16 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error converting message object into bytes\nError message: {ex.Message}\nStack Trace: {ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error converting message object into bytes{Environment.NewLine}Error message: {ex.Message}{Environment.NewLine}Stack Trace: {ex.StackTrace}");
                 return null;
             }
         }
-
         private bool ConvertMessageAvpListToBytes(MemoryStream memoryStream)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Starting to convert avp list into bytes");
             try
             {
+
                 foreach (DiameterAVP avp in Message.AvpList)
                 {
                     byte[] avpAsBytes = ConvertAvpToBytes(avp);
@@ -501,71 +508,71 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert AVPs to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert AVPs to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
         }
-
         private bool ConvertMessageEndToEndToBytes(MemoryStream memoryStream, int endToEndIdentifierOffset)
         {
             try
             {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Converting message End-To-End Identifier: {Message.EndToEndIdentifier} to bytes");
                 WriteInt32ToStream(memoryStream, IPAddress.HostToNetworkOrder(Message.EndToEndIdentifier), endToEndIdentifierOffset);
                 return true;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert end-to-end identifier: {Message.EndToEndIdentifier} to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert end-to-end identifier: {Message.EndToEndIdentifier} to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
         }
-
         private bool ConvertMessageHopByHopToBytes(MemoryStream memoryStream, int hopByHopOffset)
         {
             try
             {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Converting message Hop-By-Hop Identifier: {Message.HopByHopIdentifier} to bytes");
                 WriteInt32ToStream(memoryStream, IPAddress.HostToNetworkOrder(Message.HopByHopIdentifier), hopByHopOffset);
                 return true;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert hop-by-hop identifier: {Message.HopByHopIdentifier} to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert hop-by-hop identifier: {Message.HopByHopIdentifier} to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
         }
-
         private bool ConvertMessageApplicationIdToBytes(MemoryStream memoryStream, int applicationIdOffset)
         {
             try
             {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Converting message application id: {Message.ApplicationId} to bytes");
                 WriteInt32ToStream(memoryStream, IPAddress.HostToNetworkOrder(Message.ApplicationId), applicationIdOffset);
                 return true;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert application id: {Message.ApplicationId} to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert application id: {Message.ApplicationId} to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
         }
-
         private bool ConvertMessageCommandCodeToBytes(MemoryStream memoryStream, int commandCodeOffset)
         {
             try
             {
-                WriteThreeBytesToStream(memoryStream, Message.CommandCode, commandCodeOffset);
+                Reporter.ToLog(eLogLevel.DEBUG, $"Converting message command code: {Message.CommandCode} to bytes");
+                WriteThreeBytesToStream(memoryStream, IPAddress.HostToNetworkOrder(Message.CommandCode), commandCodeOffset);
                 return true;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert message command code {Message.CommandCode} to bytes. Error: {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert message command code {Message.CommandCode} to bytes. Error: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
         }
-
         private bool ConvertMessageCommandFlagsToByte(MemoryStream memoryStream)
         {
             try
             {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Converting message command flags to byte");
                 //Write command flags
                 byte commandFlags = GetCommandFlags(Message);
                 memoryStream.WriteByte(commandFlags);
@@ -573,7 +580,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert message command flags to byte {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert message command flags to byte {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
         }
@@ -585,6 +592,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         {
             try
             {
+                Reporter.ToLog(eLogLevel.DEBUG, isReserve ? $"Reserving space in memory for message length bytes" : $"Starting to convert message length: {Message.MessageLength} to bytes");
                 if (isReserve)
                 {
                     //Reserve space for message length
@@ -592,13 +600,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 }
                 else
                 {
-                    WriteThreeBytesToStream(memoryStream, value: Message.MessageLength, messageLengthOffset);
+                    WriteThreeBytesToStream(memoryStream, value: IPAddress.HostToNetworkOrder(Message.MessageLength), messageLengthOffset);
                 }
                 return true;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, isReserve ? $"Failed to reserve space for message length {ex.Message}\n{ex.StackTrace}" : $"Failed to convert message length {Message.MessageLength} into bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, isReserve ? $"Failed to reserve space for message length {ex.Message}{Environment.NewLine}{ex.StackTrace}" : $"Failed to convert message length {Message.MessageLength} into bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
         }
@@ -619,35 +627,34 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             return commandFlags;
         }
-
         private void WriteInt32ToStream(MemoryStream stream, int value, int offset)
         {
             try
             {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Writing value: {value} to memory stream");
                 byte[] bytes = BitConverter.GetBytes(value);
                 WriteBytesToStream(stream, data: bytes, seekPosition: offset);
             }
             catch (InvalidOperationException ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to write 4 bytes with value: {value} to memory stream. Error: {ex.Message}\n{ex.StackTrace}");
-                throw ex;
+                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to write 4 bytes with value: {value} to memory stream. Error: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                throw;
             }
         }
-
         private void WriteThreeBytesToStream(MemoryStream stream, int value, int offset)
         {
             try
             {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Writing value: {value} to memory stream");
                 byte[] bytes = BitConverter.GetBytes(value);
                 WriteBytesToStream(stream, data: bytes, seekPosition: offset, offsetInData: 1, byteCount: 3);
             }
             catch (InvalidOperationException ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to write 4 bytes with value: {value} to memory stream. Error: {ex.Message}\n{ex.StackTrace}");
-                throw ex;
+                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to write 4 bytes with value: {value} to memory stream. Error: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                throw;
             }
         }
-
         private void WriteBytesToStream(MemoryStream stream, byte[] data, int seekPosition, int offsetInData = 0, int byteCount = 0)
         {
             try
@@ -663,13 +670,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (InvalidOperationException ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to write bytes to memory stream. Error: {ex.Message}\n{ex.StackTrace}");
-                throw ex;
+                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to write bytes to memory stream. Error: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                throw;
             }
         }
-
         private byte[] ConvertAvpToBytes(DiameterAVP avp)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Starting to convert avp: {avp.Name} to bytes");
             try
             {
                 const int avpCodeOffset = 0;
@@ -705,8 +712,17 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                         avpValueOffset = 12;
                     }
 
-                    // Get avp value as bytes
-                    byte[] avpValueAsBytes = GetAvpValueAsBytes(avp.ValueForDriver, avp.DataType, ref padding);
+                    // Grouped AVP doesn't have value
+                    if (avp.DataType != eDiameterAvpDataType.Grouped)
+                    {
+                        // Get avp value as bytes
+                        if (string.IsNullOrEmpty(avp.ValueForDriver))
+                        {
+                            return null;
+                        }
+                    }
+
+                    byte[] avpValueAsBytes = GetAvpValueAsBytes(avp.ValueForDriver, avp.DataType, ref padding, stream, avp);
 
                     // Set the avp length
                     SetAvpLength(avp, padding, (int)stream.Length, avpValueAsBytes.Length);
@@ -727,13 +743,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error converting Avps into bytes\nError message: {ex.Message}\nStack Trace: {ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error converting Avps into bytes{Environment.NewLine}Error message: {ex.Message}{Environment.NewLine}Stack Trace: {ex.StackTrace}");
                 return null;
             }
         }
-
         private bool WriteAvpValueToStream(MemoryStream stream, byte[] avpValueAsBytes, int avpValueOffset)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Writing AVP value bytes to memory stream");
             try
             {
                 WriteBytesToStream(stream, avpValueAsBytes, avpValueOffset);
@@ -741,33 +757,32 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to write avp value bytes to stream {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to write avp value bytes to stream {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
         }
-
         private static void SetAvpLength(DiameterAVP avp, int padding, int streamLength, int avpValueLength)
         {
             // Get the AVP Length, Discard 0th Byte and Always excluding the paddings from length 
             avp.Length = avpValueLength + streamLength - padding;
         }
-
         private bool ConvertAvpVendorIdToBytes(MemoryStream stream, int vendorId, int vendorIdOffset)
         {
             try
             {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Converting avp vendor id: {vendorId} to bytes");
                 WriteInt32ToStream(stream, IPAddress.HostToNetworkOrder(vendorId), vendorIdOffset);
                 return true;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert Vendor Id: {vendorId} to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert Vendor Id: {vendorId} to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
         }
-
         private bool ConvertAvpLengthToBytes(MemoryStream memoryStream, int avpLengthOffset, bool isReserve = false, int value = 0)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, isReserve ? $"Reserving space for avp length bytes" : $"Converting avp length: {value} to bytes");
             try
             {
                 if (isReserve)
@@ -783,7 +798,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, isReserve ? $"Failed to reserve space for avp length {ex.Message}\n{ex.StackTrace}" : $"Failed to convert avp length: {value} into bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, isReserve ? $"Failed to reserve space for avp length {ex.Message}{Environment.NewLine}{ex.StackTrace}" : $"Failed to convert avp length: {value} into bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
         }
@@ -791,6 +806,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         {
             try
             {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Converting avp flags to byte");
                 // Write Avp Flags
                 byte avpFlags = GetAvpFlags(avp);
                 stream.WriteByte(avpFlags);
@@ -798,26 +814,27 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert avp flags to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert avp flags to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
         }
-
         private bool ConvertAvpCodeToBytes(MemoryStream memoryStream, int avpCode, int avpCodeOffset)
         {
             try
             {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Converting avp code: {avpCode} to bytes");
                 WriteInt32ToStream(memoryStream, IPAddress.HostToNetworkOrder(avpCode), avpCodeOffset);
                 return true;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert avp code: {avpCode} to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert avp code: {avpCode} to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
         }
-        private byte[] GetAvpValueAsBytes(string valueForDriver, eDiameterAvpDataType dataType, ref int padding)
+        private byte[] GetAvpValueAsBytes(string valueForDriver, eDiameterAvpDataType dataType, ref int padding, MemoryStream stream, DiameterAVP avp)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Converting avp value: {valueForDriver} to bytes");
             try
             {
                 byte[] valueAsBytes = null;
@@ -873,7 +890,8 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                         }
                     case eDiameterAvpDataType.Grouped:
                         {
-                            valueAsBytes = ConvertGroupedToBytes();
+                            //TODO: DIAMETER - convert grouped data type to bytes
+                            valueAsBytes = ConvertGroupedToBytes(stream, avp, ref padding);
                             break;
                         }
                     default:
@@ -887,18 +905,35 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to process Avps for sending the request {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to process Avps for sending the request {ex.Message}{Environment.NewLine}{ex.StackTrace}");
             }
             return null;
         }
-
-        private byte[] ConvertGroupedToBytes()
+        private byte[] ConvertGroupedToBytes(MemoryStream stream, DiameterAVP avp, ref int padding)
         {
-            throw new NotImplementedException();
-        }
+            Reporter.ToLog(eLogLevel.DEBUG, $"Converting children AVPs to bytes");
+            List<byte> childrenAVPsBytesList = new List<byte>();
+            foreach (var childAvp in avp.NestedAvpList)
+            {
+                byte[] childAvpBytes = ConvertAvpToBytes(childAvp);
+                if (childAvpBytes != null)
+                {
+                    childrenAVPsBytesList.AddRange(childAvpBytes);
+                }
+            }
 
+            byte[] childrenAVPsBytes = childrenAVPsBytesList.ToArray();
+
+            padding = CalculatePadding(childrenAVPsBytes.Length);
+
+            //Add Padding Bytes
+            AddPaddingBytesToAvpValue(padding, childrenAVPsBytes);
+
+            return childrenAVPsBytes;
+        }
         private byte[] ConvertTimeToBytes(string avpValue, ref int padding)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Converting Time value: {avpValue} to bytes");
             try
             {
                 ulong seconds = Convert.ToUInt64(avpValue);
@@ -920,13 +955,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error converting Time Avp value to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error converting Time Avp value to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 throw;
             }
         }
-
         private byte[] ConvertEnumeratedToBytes(string avpValue, ref int padding)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Converting Enumerated value: {avpValue} to bytes");
             try
             {
                 int avpValueAsInt = Convert.ToInt32(avpValue);
@@ -948,13 +983,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error converting Enumerated Avp value to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error converting Enumerated Avp value to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 throw;
             }
         }
-
         private byte[] ConvertUTF8StringToBytes(string avpValue, ref int padding)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Converting UTF8String value: {avpValue} to bytes");
             try
             {
                 byte[] UTF8Bytes = Encoding.UTF8.GetBytes(avpValue);
@@ -973,13 +1008,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error converting UTF8String Avp value to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error converting UTF8String Avp value to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 throw;
             }
         }
-
         private byte[] ConvertInteger32ToBytes(string avpValue, ref int padding)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Converting Integer32 value: {avpValue} to bytes");
             try
             {
                 int avpValueAsInt = Convert.ToInt32(avpValue);
@@ -1000,13 +1035,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error converting Integer32 Avp value to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error converting Integer32 Avp value to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 throw;
             }
         }
-
         private byte[] ConvertUnsigned64ToBytes(string valueForDriver, ref int padding)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Converting Unsigned64/Integer64/Integer8 value: {valueForDriver} to bytes");
             try
             {
                 long avpValue = Convert.ToInt64(valueForDriver);
@@ -1028,13 +1063,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error converting Unsgined64 Avp value to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error converting Unsgined64 Avp value to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 throw;
             }
         }
-
         private byte[] ConvertUnsigned32ToBytes(string avpValue, ref int padding)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Converting Unsigned32: {avpValue} to bytes");
             try
             {
                 int avpValueAsInt = Convert.ToInt32(avpValue);
@@ -1056,13 +1091,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error converting Unsgined32 Avp value to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error converting Unsgined32 Avp value to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 throw;
             }
         }
-
         private byte[] ConvertDiamIdentToBytes(string avpValue, ref int padding)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Converting DiamIdent value: {avpValue} to bytes");
             try
             {
                 byte[] diamIdentityBytes = Encoding.UTF8.GetBytes(avpValue);
@@ -1082,13 +1117,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error converting DiamIdent Avp value to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error converting DiamIdent Avp value to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 throw;
             }
         }
-
         private byte[] ConvertOctetStringToBytes(string avpValue, ref int padding)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Converting OctetString value: {avpValue} to bytes");
             try
             {
                 byte[] octetStringBytes;
@@ -1125,13 +1160,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error converting OctetString Avp value to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error converting OctetString Avp value to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 throw;
             }
         }
-
         private byte[] ConvertIpAddressToBytes(string avpValue, ref int padding)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Converting Ip Address value: {avpValue} to bytes");
             try
             {
                 const short addressFamily = 1;
@@ -1156,26 +1191,25 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error converting IPAddress Avp value to bytes {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error converting IPAddress Avp value to bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 throw;
             }
         }
-
         private static int CalculatePadding(int bytesArrayLength)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Calculating padding for bytes array length: {bytesArrayLength}");
             int remainder = bytesArrayLength % 4;
             return remainder == 0 ? 0 : 4 - remainder;
         }
-
         private static void AddPaddingBytesToAvpValue(int padding, byte[] valueAsBytes)
         {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Adding {padding} bytes as padding");
             if (padding > 0)
             {
                 int destinationOffset = valueAsBytes.Length - padding;
                 Buffer.BlockCopy(Enumerable.Repeat((byte)0x0, padding).ToArray(), 0, valueAsBytes, destinationOffset, padding);
             }
         }
-
         private byte GetAvpFlags(DiameterAVP avp)
         {
             byte avpFlags = 0;
@@ -1191,7 +1225,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         }
         private void BufferCopy(byte[] source, byte[] destination, int destinationOffset, int count)
         {
-            Buffer.BlockCopy(source, 0, destination, destinationOffset, count);
+            Buffer.BlockCopy(src: source, srcOffset: 0, dst: destination, dstOffset: destinationOffset, count);
         }
         private byte[] ConvertMilisecondsToNTP(decimal milliseconds)
         {
@@ -1210,126 +1244,708 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
             return ntpData;
         }
-
         private DiameterMessage ProcessDiameterResponse(byte[] receivedBytes, ActDiameter act)
         {
-            DiameterMessage responseMessage = null;
+            Reporter.ToLog(eLogLevel.DEBUG, $"Starting to process diameter response");
             try
             {
-                Message = new DiameterMessage();
+                DiameterMessage response = new DiameterMessage();
                 using (MemoryStream stream = new MemoryStream(receivedBytes))
                 using (BinaryReader reader = new BinaryReader(stream))
                 {
-                    if (!ConvertProtocolVersionByteToMessage(reader))
+                    if (!ConvertProtocolVersionFromByte(reader, response))
                     {
-                        act.Error = $"Diameter only supports Protocol Version 1, Protocol Version received from response was {Message.ProtocolVersion}";
+                        UpdateActionError(act, $"Diameter only supports Protocol Version 1, Protocol Version received from response was {response.ProtocolVersion}");
                         return null;
                     }
 
-                    if (!ConvertMessageLengthBytesToMessage(reader))
+                    if (!ConvertMessageLengthFromBytes(reader, byteCount: 3, response))
                     {
-                        act.Error = $"Failed to read message length from response: {Message.MessageLength}";
+                        UpdateActionError(act, $"Failed to read message length from response: {response.MessageLength}");
                         return null;
                     }
-                    // Get message length
-                    byte[] messageLengthBytes = reader.ReadBytes(3);
-                    responseMessage.MessageLength = ConvertMessageBytesToInt(messageLengthBytes);
+
                     // Get Command Flags
-                    byte commandFlagByte = reader.ReadByte();
-                    //SetResponseCommandFlags(commandFlagByte);
-                    //byte[] commandFlagByteArray = new byte[] { commandFlagByte };
-                    //BitArray commandFlags = new BitArray(commandFlagByteArray);
-                    // Get Command Code
-                    byte[] commandCodeBytes = reader.ReadBytes(3);
-                    responseMessage.CommandCode = ConvertMessageBytesToInt(commandCodeBytes);
+                    if (!ConvertCommandFlagsFromByte(reader, response))
+                    {
+                        UpdateActionError(act, $"Failed to read command flags from response");
+                        return null;
+                    }
 
-                    // Get Application Id, Hop-By-Hop and End-To-End Identifier
-                    responseMessage.ApplicationId = IPAddress.NetworkToHostOrder(reader.ReadInt32());
-                    responseMessage.HopByHopIdentifier = IPAddress.NetworkToHostOrder(reader.ReadInt32());
-                    responseMessage.EndToEndIdentifier = IPAddress.NetworkToHostOrder(reader.ReadInt32());
+                    if (!ConvertCommandCodeFromBytes(reader, byteCount: 3, response))
+                    {
+                        UpdateActionError(act, $"Failed to read command code from response: {response.CommandCode}");
+                        return null;
+                    }
+
+                    if (!ConvertApplicationIdFromBytes(reader, response))
+                    {
+                        UpdateActionError(act, $"Failed to read application id from response: {response.ApplicationId}");
+                        return null;
+                    }
+
+                    if (!ConvertHopByHopFromBytes(reader, response))
+                    {
+                        UpdateActionError(act, $"Failed to read hop-by-hop identifier from response: {response.HopByHopIdentifier}");
+                        return null;
+                    }
+                    if (!ConvertEndToEndFromBytes(reader, response))
+                    {
+                        UpdateActionError(act, $"Failed to read end-to-end identifier from response: {response.EndToEndIdentifier}");
+                        return null;
+                    }
 
                     // Get the AVPs
                     int headerLength = 20;
-                    if (stream.Length - stream.Position < responseMessage.MessageLength - headerLength)
+                    if (stream.Length - stream.Position < response.MessageLength - headerLength)
                     {
-                        act.Error = $"Insufficient data to process the response AVPs";
+                        UpdateActionError(act, $"Insufficient data to process the response AVPs");
                         return null;
                     }
-                    byte[] avpBytes = reader.ReadBytes(responseMessage.MessageLength - headerLength);
 
-                    responseMessage.AvpList = ProcessMessageResponseAvpList(avpBytes, receivedBytes);
+                    if (!ReadResponseAvpBytes(reader, headerLength, response, out byte[] avpBytes))
+                    {
+                        if (avpBytes == null || !avpBytes.Any())
+                        {
+                            response.AvpList = null;
+                        }
+
+                        UpdateActionError(act, $"failed to read the response AVP list bytes");
+                        return null;
+                    }
+
+                    response.AvpList = ProcessMessageResponseAvpList(avpBytes, act);
+
+                    if (response.AvpList == null || !response.AvpList.Any())
+                    {
+                        UpdateActionError(act, $"Failed to read AVP List from response");
+                        return null;
+                    }
                 }
+
+                return response;
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error processing Diameter response + {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error processing Diameter response + {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return null;
             }
-            return responseMessage;
         }
-
-        private bool ConvertMessageLengthBytesToMessage(BinaryReader reader)
+        private bool ReadResponseAvpBytes(BinaryReader reader, int headerLength, DiameterMessage response, out byte[] avpBytes)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Starting to read response AVPs list bytes");
+            try
+            {
+                avpBytes = reader.ReadBytes(response.MessageLength - headerLength);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Failed to read AVPs bytes from response {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                avpBytes = null;
+                return false;
+            }
+        }
+        private bool ConvertCommandFlagsFromByte(BinaryReader reader, DiameterMessage response)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Reading response command flags byte");
+            try
+            {
+                byte commandFlags = reader.ReadByte();
+                if (commandFlags != 0)
+                {
+                    SetResponseCommandFlags(commandFlags, response);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert command flags from byte {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+        }
+        private bool ConvertEndToEndFromBytes(BinaryReader reader, DiameterMessage response)
         {
             try
             {
-                int messageLengthBytesToRead = 3;
-                byte[] messageLengthBytes = reader.ReadBytes(messageLengthBytesToRead);
-                Message.MessageLength = ConvertMessageBytesToInt(messageLengthBytes);
+                response.EndToEndIdentifier = IPAddress.NetworkToHostOrder(reader.ReadInt32());
                 return true;
-            }
-            catch (ObjectDisposedException ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"Reader has been disposed: {ex.Message}\n{ex.StackTrace}");
+
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"unexpected error occured: {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to read end-to-end value from response {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
             }
-            return false;
         }
-
-        private bool ConvertProtocolVersionByteToMessage(BinaryReader binaryReader)
+        private bool ConvertHopByHopFromBytes(BinaryReader reader, DiameterMessage response)
         {
+            try
+            {
+                response.HopByHopIdentifier = IPAddress.NetworkToHostOrder(reader.ReadInt32());
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to read hop-by-hop value from response {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+        }
+        private bool ConvertApplicationIdFromBytes(BinaryReader reader, DiameterMessage response)
+        {
+            try
+            {
+                response.ApplicationId = IPAddress.NetworkToHostOrder(reader.ReadInt32());
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to read application id value from response {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+        }
+        private bool ConvertCommandCodeFromBytes(BinaryReader reader, int byteCount, DiameterMessage response)
+        {
+            try
+            {
+                byte[] commandCodeBytes = reader.ReadBytes(byteCount);
+                response.CommandCode = ConvertBytesToInt(commandCodeBytes);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to read command code value from response {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+        }
+        private bool ConvertMessageLengthFromBytes(BinaryReader reader, int byteCount, DiameterMessage response)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Reading message length bytes");
+            try
+            {
+                byte[] messageLengthBytes = reader.ReadBytes(byteCount);
+                response.MessageLength = ConvertBytesToInt(messageLengthBytes);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to read message length value from response {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+        }
+        private bool ConvertProtocolVersionFromByte(BinaryReader binaryReader, DiameterMessage response)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Reading protocl version byte");
             try
             {
                 //Get the protocol Version
-                Message.ProtocolVersion = binaryReader.ReadByte();
-                return ValidateProtocolVersion(Message.ProtocolVersion);
+                response.ProtocolVersion = binaryReader.ReadByte();
+                return ValidateProtocolVersion(response.ProtocolVersion);
             }
             catch (EndOfStreamException ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Reached end of the stream while trying to read for the protocol version: {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Reached end of the stream while trying to read for the protocol version: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
             }
             catch (ObjectDisposedException ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Reader has been disposed: {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Reader has been disposed: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"unexpected error occured: {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"unexpected error occured: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
             }
             return false;
         }
-
         private bool ValidateProtocolVersion(int protocolVersion)
         {
             return protocolVersion == 1;
         }
-        private void SetResponseCommandFlags(byte commandFlagsByte)
+        private void SetResponseCommandFlags(byte commandFlagsByte, DiameterMessage response)
         {
-            BitArray commandFlags = new BitArray(new byte[] { commandFlagsByte });
+            response.IsRequestBitSet = (commandFlagsByte & 1 << 7) != 0;
+            response.IsProxiableBitSet = (commandFlagsByte & 1 << 6) != 0;
+            response.IsErrorBitSet = (commandFlagsByte & 1 << 5) != 0;
+            response.IsRetransmittedBitSet = (commandFlagsByte & 1 << 4) != 0;
         }
-        private ObservableList<DiameterAVP> ProcessMessageResponseAvpList(byte[] avpBytes, byte[] receivedBytes)
+        private ObservableList<DiameterAVP> ProcessMessageResponseAvpList(byte[] avpBytes, ActDiameter act)
         {
             ObservableList<DiameterAVP> avps = new ObservableList<DiameterAVP>();
             using (MemoryStream stream = new MemoryStream(avpBytes))
             using (BinaryReader reader = new BinaryReader(stream))
             {
-
+                while (stream.Position < avpBytes.Length)
+                {
+                    try
+                    {
+                        DiameterAVP avp = ProcessDiameterAVPFromBytes(reader, act);
+                        if (avp != null)
+                        {
+                            avps.Add(avp);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to process response avp list {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                        return null;
+                    }
+                }
             }
-            return null;
+            return avps;
         }
+        private DiameterAVP ProcessDiameterAVPFromBytes(BinaryReader binaryReader, ActDiameter act)
+        {
+            try
+            {
+                int avpHeaderLength = 8;
+                DiameterAVP avp = new DiameterAVP();
+                if (!ConvertAvpCodeFromBytes(binaryReader, avp))
+                {
+                    return null;
+                }
 
-        private int ConvertMessageBytesToInt(byte[] bytes)
+                if (!ConvertAvpFlagsFromByte(binaryReader, avp))
+                {
+                    return null;
+                }
+
+                if (!ConvertAvpLengthFromBytes(binaryReader, avp))
+                {
+                    return null;
+                }
+
+                if (avp.IsVendorSpecific)
+                {
+                    if (!ConvertAvpVendorIdFromBytes(binaryReader, avp))
+                    {
+                        return null;
+                    }
+                    avpHeaderLength = 12;
+                }
+
+                int dataLength = avp.Length - avpHeaderLength;
+
+                var avpInfo = FetchAvpInfoFromDictionary(avp.Code, act);
+                if (avpInfo == null)
+                {
+                    UpdateActionError(act, $"Failed to find AVP with code: {avp.Code} in action's Request/Response list or in the avp dictionary file");
+                    return null;
+                }
+                avp.DataType = avpInfo.DataType;
+                avp.Name = avpInfo.Name;
+
+                avp.Value = ConvertAvpValueFromBytes(binaryReader, avp.DataType, dataLength, act, avp);
+                avp.ValueForDriver = !string.IsNullOrEmpty(avp.Value) ? avp.Value.ToString() : string.Empty;
+
+                if (string.IsNullOrEmpty(avp.Value) && avp.DataType != eDiameterAvpDataType.Grouped)
+                {
+                    UpdateActionError(act, $"Failed to get the value from the response for avp {avp.Name}");
+                    return null;
+                }
+
+                int padding = CalculatePadding(dataLength);
+                if (padding > 0)
+                {
+                    binaryReader.ReadBytes(padding);
+                }
+
+                return avp;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to process the avp from the response {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return null;
+            }
+        }
+        private string ConvertAvpValueFromBytes(BinaryReader binaryReader, eDiameterAvpDataType dataType, int dataLength, ActDiameter act, DiameterAVP avp)
+        {
+            Reporter.ToLog(eLogLevel.DEBUG, $"Converting value bytes of type: {dataType} to actual value");
+            try
+            {
+                string avpValue = null;
+                switch (dataType)
+                {
+                    case eDiameterAvpDataType.Address:
+                        {
+                            avpValue = ConvertAddressBytesToValue(binaryReader, dataLength);
+                            break;
+                        }
+                    case eDiameterAvpDataType.OctetString:
+                        {
+                            avpValue = ConvertOctetStringToValue(binaryReader, dataLength);
+                            break;
+                        }
+                    case eDiameterAvpDataType.UTF8String:
+                    case eDiameterAvpDataType.DiamIdent:
+                        {
+                            avpValue = ConvertDiamIdentUTF8StringToValue(binaryReader, dataLength, dataType);
+                            break;
+                        }
+                    case eDiameterAvpDataType.Unsigned32:
+                        {
+                            avpValue = ConvertUnsigned32ToValue(binaryReader, dataLength);
+                            break;
+                        }
+                    case eDiameterAvpDataType.Integer8:
+                    case eDiameterAvpDataType.Integer64:
+                    case eDiameterAvpDataType.Unsigned64:
+                        {
+                            avpValue = ConvertInteger8Integer64Unsigned64ToValue(binaryReader, dataLength, dataType);
+                            break;
+                        }
+                    case eDiameterAvpDataType.Integer32:
+                        {
+                            avpValue = ConvertInteger32ToValue(binaryReader, dataLength);
+                            break;
+                        }
+                    case eDiameterAvpDataType.Enumerated:
+                        {
+                            avpValue = ConvertEnumeratedToValue(binaryReader, dataLength);
+                            break;
+                        }
+                    case eDiameterAvpDataType.Time:
+                        {
+                            avpValue = ConvertTimeToValue(binaryReader, dataLength);
+                            break;
+                        }
+                    case eDiameterAvpDataType.Grouped:
+                        {
+                            avpValue = ConvertGroupedToValue(binaryReader, dataLength, act, avp);
+                            break;
+                        }
+                }
+                return !string.IsNullOrEmpty(avpValue) ? avpValue : string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert avp value bytes to actual value {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return string.Empty;
+            }
+        }
+        private string ConvertGroupedToValue(BinaryReader binaryReader, int dataLength, ActDiameter act, DiameterAVP avp)
+        {
+            try
+            {
+                // Grouped AVPs doesn't have value
+                byte[] data = binaryReader.ReadBytes(dataLength);
+                if (data != null && data.Any())
+                {
+                    avp.NestedAvpList = ProcessChildrenAVP(data, act, avp.Name);
+                    if (avp.NestedAvpList == null)
+                    {
+                        UpdateActionError(act, $"Failed to process children AVPs for avp = '{avp.Name}'");
+                    }
+                }
+
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert value bytes of type: Grouped to actual value {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return null;
+            }
+        }
+        private ObservableList<DiameterAVP> ProcessChildrenAVP(byte[] childrenData, ActDiameter act, string name)
+        {
+            ObservableList<DiameterAVP> childrenAVPs = null;
+            using (MemoryStream stream = new MemoryStream(childrenData))
+            using (BinaryReader reader = new BinaryReader(stream))
+            {
+                childrenAVPs = new ObservableList<DiameterAVP>();
+                while (stream.Position < childrenData.Length)
+                {
+                    try
+                    {
+                        DiameterAVP childAvp = ProcessDiameterAVPFromBytes(reader, act);
+                        if (childAvp != null)
+                        {
+                            childrenAVPs.Add(childAvp);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to process children avp list for avp = '{name}' {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                        return null;
+                    }
+                }
+            }
+            return childrenAVPs;
+        }
+        private string ConvertTimeToValue(BinaryReader binaryReader, int dataLength)
+        {
+            try
+            {
+                const int startIndex = 0;
+
+                byte[] data = binaryReader.ReadBytes(dataLength);
+
+                // Get NTP timestamp from NTP Bytes ( 4 High Order Bytes from NTP Timestamp)
+                DateTime baseDate = DateTime.MinValue; // 1900, 1, 1, 0, 0, 0, 0
+                baseDate = DateTime.SpecifyKind(baseDate, DateTimeKind.Utc);
+                uint seconds = TimeBytesToSeconds(ntpTime: data);
+                DateTime value = baseDate.AddSeconds(seconds);
+
+                return value.ToString();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert value bytes of type: Time to actual value {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return null;
+            }
+        }
+        private uint TimeBytesToSeconds(byte[] ntpTime)
+        {
+            decimal integerPart = 0;
+            for (var i = 0; i <= 3; i++)
+            {
+                integerPart = 256 * integerPart + ntpTime[i];
+            }
+            uint milliseconds = (uint)integerPart * 1000;
+
+            return milliseconds;
+        }
+        private string ConvertEnumeratedToValue(BinaryReader binaryReader, int dataLength)
+        {
+            try
+            {
+                const int startIndex = 0;
+
+                byte[] data = binaryReader.ReadBytes(dataLength);
+                int enumerated = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(data, startIndex));
+
+                return enumerated.ToString();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert value bytes of type: Enumerated to actual value {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return null;
+            }
+        }
+        private string ConvertInteger32ToValue(BinaryReader binaryReader, int dataLength)
+        {
+            try
+            {
+                const int startIndex = 0;
+
+                byte[] data = binaryReader.ReadBytes(dataLength);
+                int signedValue = BitConverter.ToInt32(data, startIndex);
+
+                int value = IPAddress.NetworkToHostOrder(signedValue);
+
+                return value.ToString();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert value bytes of type: Integer32 to actual value {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return null;
+            }
+        }
+        private string ConvertInteger8Integer64Unsigned64ToValue(BinaryReader binaryReader, int dataLength, eDiameterAvpDataType dataType)
+        {
+            try
+            {
+                const int startIndex = 0;
+
+                byte[] data = binaryReader.ReadBytes(dataLength);
+                long unsigned64 = BitConverter.ToInt64(data, startIndex);
+
+                long value = IPAddress.NetworkToHostOrder(unsigned64);
+
+                return value.ToString();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert value bytes of type: {dataType} to actual value {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return null;
+            }
+        }
+        private string ConvertUnsigned32ToValue(BinaryReader binaryReader, int dataLength)
+        {
+            try
+            {
+                const int startIndex = 0;
+
+                byte[] data = binaryReader.ReadBytes(dataLength);
+                int unsigned32 = BitConverter.ToInt32(data, startIndex);
+
+                int value = Math.Abs(IPAddress.NetworkToHostOrder(unsigned32));
+
+                return value.ToString();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert value bytes of type: Unsigned32 to actual value {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return null;
+            }
+        }
+        private string ConvertDiamIdentUTF8StringToValue(BinaryReader binaryReader, int dataLength, eDiameterAvpDataType dataType)
+        {
+            try
+            {
+                byte[] data = binaryReader.ReadBytes(dataLength);
+                string diamIdent = Encoding.UTF8.GetString(data);
+
+                return diamIdent;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert value bytes of type: {dataType} to actual value {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return null;
+            }
+        }
+        private string ConvertOctetStringToValue(BinaryReader binaryReader, int dataLength)
+        {
+            try
+            {
+                byte[] data = binaryReader.ReadBytes(dataLength);
+                string octetString = Encoding.Default.GetString(data);
+
+                return octetString;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert value bytes of type: OctetString to actual value {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return null;
+            }
+        }
+        private string ConvertAddressBytesToValue(BinaryReader binaryReader, int dataLength)
+        {
+            try
+            {
+                const int addressFamilySize = 2;
+                const int bytesCount = 4;
+
+                short addressFamily = IPAddress.NetworkToHostOrder(binaryReader.ReadInt16());
+                byte[] addressBytes = binaryReader.ReadBytes(dataLength - addressFamilySize);
+                sbyte[] data = new sbyte[4];
+                Buffer.BlockCopy(addressBytes, 0, data, 0, bytesCount);
+
+                IPAddress avpValue = ConvertBytesToIPAddress(data);
+
+                return avpValue.ToString();
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert value bytes of type: Address to actual value {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return null;
+            }
+        }
+        private IPAddress ConvertBytesToIPAddress(sbyte[] data)
+        {
+            const int sourceOffset = 0;
+            const int destinationOffset = 0;
+
+            byte[] ipAddressBytes = new byte[data.Length];
+            Buffer.BlockCopy(data, sourceOffset, ipAddressBytes, destinationOffset, data.Length);
+
+            return new IPAddress(ipAddressBytes);
+        }
+        private DiameterAVP FetchAvpInfoFromDictionary(int avpCode, ActDiameter act)
+        {
+            DiameterAVP avpInfo = null;
+            try
+            {
+                // First search in the user request avp list
+                if (act.RequestAvpList != null)
+                {
+                    avpInfo = act.RequestAvpList.FirstOrDefault(avp => avp.Code == avpCode);
+                    if (avpInfo != null)
+                    {
+                        return avpInfo;
+                    }
+                }
+
+                // Search in the user custom response avp list
+                if (act.CustomResponseAvpList != null)
+                {
+                    avpInfo = act.CustomResponseAvpList.FirstOrDefault(avp => avp.Code == avpCode);
+                    if (avpInfo != null)
+                    {
+                        return avpInfo;
+                    }
+                }
+
+                // Avp was not found on the request and in the custom response, fetch the avp from the dictionary
+                avpInfo = AvpDictionaryList.FirstOrDefault(avp => avp.Code == avpCode);
+                return avpInfo;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to fetch avp info for avp code = '{avpCode}' {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return avpInfo;
+            }
+        }
+        private bool ConvertAvpVendorIdFromBytes(BinaryReader binaryReader, DiameterAVP avp)
+        {
+            try
+            {
+                avp.VendorId = IPAddress.NetworkToHostOrder(binaryReader.ReadInt32());
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to read avp vendor id {avp.VendorId} from the response {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+        }
+        private bool ConvertAvpLengthFromBytes(BinaryReader binaryReader, DiameterAVP avp)
+        {
+            try
+            {
+                avp.Length = ConvertBytesToInt(binaryReader.ReadBytes(3));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to read avp length {avp.Length} from the response {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+        }
+        private bool ConvertAvpFlagsFromByte(BinaryReader binaryReader, DiameterAVP avp)
+        {
+            try
+            {
+                byte avpFlags = binaryReader.ReadByte();
+                if (avpFlags != 0)
+                {
+                    SetResponseAvpFlags(avp, avpFlags);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to read avp flags from the response {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+        }
+        private void SetResponseAvpFlags(DiameterAVP avp, byte avpFlags)
+        {
+            avp.IsVendorSpecific = (avpFlags & 1 << 7) != 0;
+            avp.IsMandatory = (avpFlags & 1 << 6) != 0;
+        }
+        private bool ConvertAvpCodeFromBytes(BinaryReader reader, DiameterAVP avp)
+        {
+            try
+            {
+                avp.Code = IPAddress.NetworkToHostOrder(reader.ReadInt32());
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to read avp code {avp.Code} from the response {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+        }
+        private int ConvertBytesToInt(byte[] bytes)
         {
             if (BitConverter.IsLittleEndian)
             {
@@ -1337,11 +1953,11 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             return bytes[0] + (bytes[1] << 8) + (bytes[2] << 16);
         }
-
         private bool ConvertProtocolVersionToByte(MemoryStream memoryStream)
         {
             try
             {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Starting to convert protocol version: {Message.ProtocolVersion} to byte");
                 byte protocolVersion = (byte)Message.ProtocolVersion;
                 //Write protocol version
                 memoryStream.WriteByte(protocolVersion);
@@ -1349,17 +1965,175 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred when converting protocol version: {Message.ProtocolVersion} to byte. Error {ex.Message}\n{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred when converting protocol version: {Message.ProtocolVersion} to byte. Error {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
         }
-        private class StateObject
+        private void UpdateActionError(ActDiameter act, string error)
         {
-            public TcpClient TcpClient { get; set; }
-            public byte[] ReceivedBytes { get; set; }
-            public ActDiameter DiameterAction { get; set; }
-            // TaskCompletionSource property to store the result of the async operation.
-            public TaskCompletionSource<DiameterMessage> TaskCompletionSource { get; set; }
+            act.Error += $"{error}{Environment.NewLine}";
+        }
+        public void SaveRequestToFile(bool isSaveRequest, string saveDirectory, ActDiameter act)
+        {
+            if (isSaveRequest)
+            {
+                RequestFileContent = CreateMessageRawRequestResponse(act, Message);
+                string fullFilePath = SaveToFile("Request", RequestFileContent, saveDirectory, act);
+                act.AddOrUpdateReturnParamActual("Saved Request Filename", Path.GetFileName(fullFilePath));
+            }
+        }
+        public void SaveResponseToFile(bool isSaveResponse, string saveDirectory, ActDiameter act, DiameterMessage response)
+        {
+            if (isSaveResponse)
+            {
+                ResponseFileContent = CreateMessageRawRequestResponse(act, response);
+                string fullFilePath = SaveToFile("Response", ResponseFileContent, saveDirectory, act);
+                act.AddOrUpdateReturnParamActual("Saved Response Filename", Path.GetFileName(fullFilePath));
+            }
+        }
+        public void ParseResponseToOutputParams(ActDiameter act, DiameterMessage response)
+        {
+            act.AddOrUpdateReturnParamActual($"Command Code: ", response.CommandCode.ToString());
+            act.AddOrUpdateReturnParamActual($"Application Id: ", response.ApplicationId.ToString());
+            act.AddOrUpdateReturnParamActual($"Hob-By-Hop: ", response.HopByHopIdentifier.ToString());
+            act.AddOrUpdateReturnParamActual($"End-To-End: ", response.EndToEndIdentifier.ToString());
+
+            act.AddOrUpdateReturnParamActual($"Request: ", response.IsRequestBitSet.ToString());
+            act.AddOrUpdateReturnParamActual($"Proxiable: ", response.IsProxiableBitSet.ToString());
+            act.AddOrUpdateReturnParamActual($"Error: ", response.IsErrorBitSet.ToString());
+            act.AddOrUpdateReturnParamActual($"Retransmit: ", response.IsRetransmittedBitSet.ToString());
+
+            //AVPs
+            foreach (var avp in response.AvpList)
+            {
+                ParseResponseAvpToOutputParams(act, avp);
+            }
+
+            AddRawResponseAndRequestToOutputParams(act);
+        }
+        private void AddRawResponseAndRequestToOutputParams(ActDiameter act)
+        {
+            act.RawResponseValues = ">>>>>>>>>>>>>>>>>>>>>>>>>>> REQUEST:" + Environment.NewLine + Environment.NewLine + RequestFileContent;
+            act.RawResponseValues += Environment.NewLine + Environment.NewLine;
+            act.RawResponseValues += ">>>>>>>>>>>>>>>>>>>>>>>>>>> RESPONSE:" + Environment.NewLine + Environment.NewLine + ResponseFileContent;
+            act.AddOrUpdateReturnParamActual("Raw Request: ", RequestFileContent);
+            act.AddOrUpdateReturnParamActual("Raw Response: ", ResponseFileContent);
+        }
+        private void ParseResponseAvpToOutputParams(ActDiameter act, DiameterAVP avp)
+        {
+            act.AddOrUpdateReturnParamActual($"AVP {nameof(avp.Name)}: ", avp.Name);
+            act.AddOrUpdateReturnParamActual($"AVP {nameof(avp.Value)}: ", avp.Value);
+            if (avp.DataType == eDiameterAvpDataType.Grouped)
+            {
+                if (avp.NestedAvpList != null)
+                {
+                    foreach (var childAVP in avp.NestedAvpList)
+                    {
+                        ParseResponseAvpToOutputParams(act, childAVP);
+                    }
+                }
+            }
+
+        }
+        private string SaveToFile(string fileType, string fileContent, string saveDirectory, ActDiameter act)
+        {
+            try
+            {
+                string fileExtention = "txt";
+
+                string directoryFullPath = Path.Combine(saveDirectory.Replace("~//", WorkSpace.Instance.Solution.ContainingFolderFullPath), fileType + "s");
+                if (!Directory.Exists(directoryFullPath))
+                {
+                    Directory.CreateDirectory(directoryFullPath);
+                }
+
+                string fullFileName = "";
+                lock (fileLock)
+                {
+                    String timeStamp = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss");
+                    string actionName = PathHelper.CleanInValidPathChars(act.Description);
+                    fullFileName = Path.Combine(directoryFullPath, actionName + "_" + timeStamp + "_" + fileType + "." + fileExtention);
+                    File.WriteAllText(fullFileName, fileContent);
+                }
+
+                return fullFileName;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Failed to save the {fileType} file to the path {saveDirectory} {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return string.Empty;
+            }
+        }
+        public bool SendRequest(ActDiameter act, TcpClient tcpClient, string tcpHostname, string tcpPort)
+        {
+            try
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Starting to send message to {tcpHostname}:{tcpPort}");
+
+                // Convert message to bytes
+                byte[] messageBytesToSend = ConvertMessageToBytes();
+                if (messageBytesToSend == null)
+                {
+                    UpdateActionError(act, $"Encountered an issue while attempting to process the message");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert message: {Message.Name} to bytes");
+                    return false;
+                }
+
+                // check if TCP client is connected
+                if (!tcpClient.Connected)
+                {
+                    UpdateActionError(act, $"Tcp client is not connected to: {tcpHostname}:{tcpPort}");
+                    return false;
+                }
+
+                // Set a timeout
+                int timeoutMilliseconds = 0;
+                if (!string.IsNullOrEmpty(Convert.ToString(act.Timeout)))
+                {
+                    timeoutMilliseconds = ((int)act.Timeout) * 1000;
+                    tcpClient.ReceiveTimeout = timeoutMilliseconds;
+                }
+
+                _ = tcpClient.Client.SendAsync(messageBytesToSend).Result;
+
+                var responseDataBytes = new byte[1024];
+
+                var received = tcpClient.Client.ReceiveAsync(responseDataBytes).Result;
+
+                // Process the response
+                Response = ProcessDiameterResponse(responseDataBytes, act);
+
+                bool isResponseValid = ValidateResponse(act);
+                if (!isResponseValid)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Invalid response - error: '{act.Error}'");
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error in SendRequest: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+        }
+
+        private bool ValidateResponse(ActDiameter act)
+        {
+            if (Response == null)
+            {
+                UpdateActionError(act, $"Error occurred trying to process the response");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to process response from server");
+                return false;
+            }
+
+            if (Response.CommandCode != Message.CommandCode)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Received response with different command code - '{Response.CommandCode}' than expected: {Message.CommandCode}");
+                return false;
+            }
+            return true;
         }
     }
 }

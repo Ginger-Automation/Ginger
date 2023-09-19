@@ -13,4 +13,45 @@
 	<Avp name="Vendor-Specific-Application-Id" code="260" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
 	<Avp name="Firmware-Revision" code="267" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
 	<Avp name="Error-Message" code="281" type="UTF8String" isMandatory="false" isVendorSpecific="false"/>
+	<Avp name="Result-Code" code="268" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Session-Id" code="263" type="UTF8String" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Destination-Realm" code="283" type="DiamIdent" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Destination-Host" code="293" type="DiamIdent" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Service-Context-Id" code="461" type="UTF8String" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="CC-Request-Type" code="416" type="Enumerated" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="CC-Request-Number" code="415" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="User-Name" code="1" type="UTF8String" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="3GPP-RAT-Type" code="21" type="OctetString" isMandatory="false" isVendorSpecific="true"/>
+	<Avp name="Event-Timestamp" code="55" type="Time" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Subscription-Id" code="443" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Subscription-Id-Type" code="450" type="Enumerated" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Subscription-Id-Data" code="444" type="UTF8String" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Service-Identifier" code="439" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Multiple-Services-Indicator" code="455" type="Enumerated" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Multiple-Services-Credit-Control" code="456" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Requested-Service-Unit" code="437" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Rating-Group" code="432" type="Integer32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Service-Information" code="873" type="Grouped" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="PS-Information" code="874" type="Grouped" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="3GPP-GPRS-Negotiated-QoS-Profile" code="5" type="UTF8String" isMandatory="false" isVendorSpecific="true"/>
+	<Avp name="PDN-Connection-Charging-Id" code="2050" type="Unsigned32" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="PDP-Address-Prefix-Length" code="2606" type="Unsigned32" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="TWAN-User-Location-Info" code="2714" type="Grouped" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="TWAN-SSID" code="2715" type="UTF8String" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="TWAN-BSSID" code="2716" type="UTF8String" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="3GPP-Charging-Id" code="2" type="Unsigned32" isMandatory="false" isVendorSpecific="true"/>
+	<Avp name="Node-Id" code="2064" type="UTF8String" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="3GPP-PDP-Type" code="3" type="Enumerated" isMandatory="false" isVendorSpecific="true"/>
+	<Avp name="PDP-Address" code="1227" type="Address" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="Dynamic-Address-Flag" code="2051" type="Enumerated" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="SGSN-Address" code="1228" type="Address" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="GGSN-Address" code="847" type="Address" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="Serving-Node-Type" code="2047" type="Enumerated" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="3GPP-SGSN-MCC-MNC" code="18" type="UTF8String" isMandatory="false" isVendorSpecific="true"/>
+	<Avp name="Called-Station-Id" code="30" type="UTF8String" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="3GPP-MS-Timezone" code="23" type="UTF8String" isMandatory="false" isVendorSpecific="true"/>
+	<Avp name="3GPP-User-Location-Info" code="22" type="OctetString" isMandatory="false" isVendorSpecific="true"/>
+	<Avp name="User-Equipment-Info" code="458" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="User-Equipment-Info-Type" code="459" type="Enumerated" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="User-Equipment-Info-Value" code="460" type="OctetString" isMandatory="true" isVendorSpecific="false"/>
 </DiameterAvps>

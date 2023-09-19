@@ -4,6 +4,21 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 {
     public class DiameterMessage
     {
+        private string mName;
+        public string Name
+        {
+            get
+            {
+                return mName;
+            }
+            set
+            {
+                if (mName != value)
+                {
+                    mName = value;
+                }
+            }
+        }
         public int ProtocolVersion { get; set; } = 1;
         private int mMessageLength;
         public int MessageLength
@@ -156,6 +171,11 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                     mAvpList = value;
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

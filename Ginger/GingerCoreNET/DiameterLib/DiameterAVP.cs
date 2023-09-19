@@ -1,11 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
 using Amdocs.Ginger.Repository;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums;
 
 namespace Amdocs.Ginger.CoreNET.DiameterLib
@@ -141,20 +136,60 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
         }
 
-        private ObservableList<DiameterAVP> mNestedAvps = new ObservableList<DiameterAVP>();
-        public ObservableList<DiameterAVP> NestedAvps
+        private ObservableList<DiameterAVP> mNestedAvpList;
+        public ObservableList<DiameterAVP> NestedAvpList
         {
             get
             {
-                return mNestedAvps;
+                return mNestedAvpList;
             }
             set
             {
-                if (value != mNestedAvps)
+                if (mNestedAvpList != value)
                 {
-                    mNestedAvps = value;
+                    mNestedAvpList = value;
+                    OnPropertyChanged(nameof(NestedAvpList));
                 }
             }
+        }
+
+        private string mParentName;
+        public string ParentName
+        {
+            get
+            {
+                return mParentName;
+            }
+            set
+            {
+                if (mParentName != value)
+                {
+                    mParentName = value;
+                    OnPropertyChanged(nameof(ParentName));
+                }
+            }
+        }
+
+        private Guid mParentAvpGuid;
+        [IsSerializedForLocalRepository]
+        public Guid ParentAvpGuid
+        {
+            get
+            {
+                return mParentAvpGuid;
+            }
+            set
+            {
+                if (mParentAvpGuid != value)
+                {
+                    mParentAvpGuid = value;
+                    OnPropertyChanged(nameof(ParentAvpGuid));
+                }
+            }
+        }
+        public DiameterAVP()
+        {
+            mNestedAvpList = new ObservableList<DiameterAVP>();
         }
     }
 }

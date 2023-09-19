@@ -377,11 +377,8 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             else if (act is ActDiameter)
             {
-                if (IsRunning())
-                {
-                    mActDiameter = act as ActDiameter;
-                    _ = HandleDiameterRequest(mActDiameter);
-                }
+                mActDiameter = act as ActDiameter;
+                HandleDiameterRequest(mActDiameter);
             }
             else
             {
@@ -389,45 +386,64 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
 
         }
-        /// <summary>
-        /// Handles the constructing, sending and receiving of the Diameter message & response
-        /// </summary>
-        /// <param name="act"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="Exception"></exception>
-        private async Task HandleDiameterRequest(ActDiameter act)
+        private void HandleDiameterRequest(ActDiameter act)
         {
+            Reporter.ToLog(eLogLevel.INFO, $"Starting Diameter Action");
             if (act == null)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while processing the Diameter Action");
-                throw new ArgumentNullException(nameof(act), $"An unexpected error occurred while processing the Diameter Action");
+                return;
             }
 
+            if (!UseTcp)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"WebService Driver isn't configured to use TCP, please change driver configurations");
+                act.Error = $"The used WebService agent isn't configured to use TCP, please set configurations on agent's page";
+                return;
+            }
 
             if (mTcpClient == null)
             {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Starting TCP client initialization");
+
                 bool tcpInitialized = InitializeTCPClient();
                 if (!tcpInitialized)
                 {
                     HandleTCPInitializationError(act);
                     return;
                 }
-
                 Reporter.ToLog(eLogLevel.DEBUG, $"TCP client Initialization ended successfully");
-
-                DiameterUtils diameterUtils = new DiameterUtils(new DiameterMessage());
-                if (diameterUtils.ConstructDiameterRequest(act))
-                {
-                    DiameterMessage response = await diameterUtils.SendMessageAsync(act, mTcpClient);
-                }
-                else
-                {
-                    act.Error = $"Error occurred in constructing the Diameter message";
-                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the Diameter message");
-                }
             }
+
+            DiameterUtils diameterUtils = new DiameterUtils(new DiameterMessage());
+
+            if (!diameterUtils.ConstructDiameterRequest(act))
+            {
+                act.Error += $"Error occurred in constructing the Diameter message";
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the Diameter message");
+                return;
+            }
+            Reporter.ToLog(eLogLevel.DEBUG, $"ConstructDiameterRequest passed successfully");
+
+            diameterUtils.SaveRequestToFile(SaveRequestXML, SavedXMLDirectoryPath, act);
+            mRawRequest = diameterUtils.RequestFileContent;
+
+            var result = diameterUtils.SendRequest(act, mTcpClient, TcpHostname, TcpPort);
+            if (!result)
+            {
+                act.Error += $"Error occurred in sending the Diameter message";
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to send the Diameter message");
+                return;
+            }
+
+            Reporter.ToLog(eLogLevel.DEBUG, $"SendRequest passed successfully");
+
+            diameterUtils.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath, act, diameterUtils.Response);
+            mRawResponse = diameterUtils.ResponseFileContent;
+
+            diameterUtils.ParseResponseToOutputParams(act, diameterUtils.Response);
         }
+
         private void HandleTCPInitializationError(ActDiameter act)
         {
             Reporter.ToLog(eLogLevel.ERROR, $"TCP client initialization failed - see log for more information");
