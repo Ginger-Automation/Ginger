@@ -211,5 +211,18 @@ namespace Amdocs.Ginger.Repository
             return Param;
         }
 
+        public override string GetItemType()
+        {
+            return "ActInputValue";
+        }
+
+        public override string ItemNameField
+        {
+            get
+            {
+                return this.Param;
+            }
+        }
+
     }
 }

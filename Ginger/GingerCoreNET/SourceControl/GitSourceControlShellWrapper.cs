@@ -98,6 +98,11 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             return "master";
         }
 
+        public override List<string> GetConflictPaths()
+        {
+            throw new NotImplementedException();
+        }
+
         public override SourceControlFileInfo.eRepositoryItemStatus GetFileStatus(string Path, bool ShowIndicationkForLockedItems, ref string error)
         {
             throw new NotImplementedException();
@@ -233,6 +238,21 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         public override bool IsRepositoryPublic()
         {
             return false;
+        }
+
+        public override string GetLocalContentFromConflicted(string conflictedFilePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GetRemoteContentFromConflicted(string conflictedFilePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ResolveConflictWithContent(string path, string content, ref string error)
+        {
+            throw new NotImplementedException();
         }
     }
 }

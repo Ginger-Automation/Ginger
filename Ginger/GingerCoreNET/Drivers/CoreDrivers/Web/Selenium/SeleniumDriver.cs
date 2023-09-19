@@ -62,7 +62,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V113.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
@@ -265,6 +265,12 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Sample Value is 'localhost:9222'.This allows to Connect to existing browser session on specific debug port instead of Launching a new browser")]
         public string DebugAddress { get; set; }
 
+        [UserConfigured]
+        // Changed the default from ignore to Actual Default suggested by Selenium i.e. dismissAndNotify
+        [UserConfiguredDefault("dismissAndNotify")]
+        [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
+        public string UnhandledPromptBehavior { get; set; }
+
         protected IWebDriver Driver;
 
         protected eBrowserType mBrowserTpe;
@@ -460,6 +466,8 @@ namespace GingerCore.Drivers
                         FirefoxOption.AcceptInsecureCertificates = true;
                         SetCurrentPageLoadStrategy(FirefoxOption);
                         SetBrowserLogLevel(FirefoxOption);
+                        SetUnhandledPromptBehavior(FirefoxOption);
+
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
@@ -498,6 +506,7 @@ namespace GingerCore.Drivers
                         options.AddArgument("--start-maximized");
                         SetCurrentPageLoadStrategy(options);
                         SetBrowserLogLevel(options);
+                        SetUnhandledPromptBehavior(options);
 
                         if (IsUserProfileFolderPathValid())
                         {
@@ -673,7 +682,7 @@ namespace GingerCore.Drivers
                             SetBrowserLogLevel(EDOpts);
                             //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
                             //EDOpts.UseChromium = true;
-                            EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            SetUnhandledPromptBehavior(EDOpts);
                             if (IsUserProfileFolderPathValid())
                             {
                                 EDOpts.AddAdditionalEdgeOption("user-data-dir=", UserProfileFolderPath);
@@ -761,7 +770,7 @@ namespace GingerCore.Drivers
                                 edgeOptions.AddAdditionalOption(SeleniumDriver.RemoteVersionParam, RemoteVersion);
                             }
 
-                            edgeOptions.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            SetUnhandledPromptBehavior(edgeOptions);
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -1195,9 +1204,13 @@ namespace GingerCore.Drivers
             //Checking if Alert handling is asked to be performed (in that case we can't modify anything on driver before handling the Alert)
             bool isActBrowser = act is ActBrowserElement;
             ActBrowserElement actBrowserObj = isActBrowser ? (act as ActBrowserElement) : null;
-            bool runActHandlerDirect = act is ActHandleBrowserAlert || (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
-                                    || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
-                                        || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox));
+            bool runActHandlerDirect = act is ActHandleBrowserAlert ||
+                                      (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox
+                                      //Added below 2 conditions for comparision for Alert Text Box
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.GetMessageBoxText
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SetAlertBoxText));
 
             if (!runActHandlerDirect)
             {
@@ -9759,6 +9772,44 @@ namespace GingerCore.Drivers
 
         }
 
+        public void SetUnhandledPromptBehavior(DriverOptions options)
+        {
+            if (UnhandledPromptBehavior == null)
+            {
+                return;
+            }
+
+            if (Enum.TryParse(UnhandledPromptBehavior, true, out UnhandledPromptBehavior unhandledPromptBehavior))
+            {
+                switch (unhandledPromptBehavior)
+                {
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Ignore:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Ignore;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Accept:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Accept;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Dismiss:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Dismiss;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify;
+                        break;
+
+                    default:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Default;
+                        break;
+                }
+            }
+        }
+
         private void SetBrowserLogLevel(DriverOptions options)
         {
             if (!BrowserLogLevel.Equals("3"))
@@ -9822,8 +9873,8 @@ namespace GingerCore.Drivers
 
             //DevTool Session 
             devToolsSession = devTools.GetDevToolsSession(113);
-            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V113.DevToolsSessionDomains>();
-            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V113.Network.EnableCommandSettings());
+            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains>();
+            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V116.Network.EnableCommandSettings());
 
 
         }
@@ -9888,7 +9939,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V113.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V116.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 

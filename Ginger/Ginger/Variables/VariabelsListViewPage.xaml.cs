@@ -228,7 +228,6 @@ namespace Ginger.BusinessFlowPages
                 mVariabelsListView.ItemDropped += ListVars_ItemDropped;
 
                 mVariabelsListView.List.MouseDoubleClick += VariabelsListView_MouseDoubleClick;
-
                 mVariabelsListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
 
                 if (mPageViewMode == Ginger.General.eRIPageViewMode.View || mPageViewMode == Ginger.General.eRIPageViewMode.ViewAndExecute)
@@ -260,7 +259,6 @@ namespace Ginger.BusinessFlowPages
                 mVariabelsListView.DataSourceList = null;
             }
         }
-
         private void MVariabelListItemInfo_VariabelListItemEvent(VariabelListItemEventArgs EventArgs)
         {
             switch (EventArgs.EventType)

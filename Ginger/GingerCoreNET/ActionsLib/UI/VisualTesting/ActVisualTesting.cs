@@ -485,7 +485,7 @@ namespace GingerCore.Actions
             // ----------------------------------------------------------------
 
             //TODO: need to work with value for driver
-            string baselinefilename = GetInputParamValue(Fields.SavedBaseImageFilenameString);
+            string baselinefilename = GetInputParamCalculatedValue(Fields.SavedBaseImageFilenameString);
             string fullBaseFilePath = GetFullFilePath(baselinefilename);
 
             if (!File.Exists(fullBaseFilePath))
@@ -508,7 +508,15 @@ namespace GingerCore.Actions
             else
             {
                 // get it from the file
-                string fullTargetFilePath = GetFullFilePath(TargetFileName);
+                string targetFileName = GetInputParamCalculatedValue(Fields.SavedTargetImageFilenameString);
+                string fullTargetFilePath = GetFullFilePath(targetFileName);
+
+                if (!File.Exists(fullTargetFilePath))
+                {
+                    Error = "Target file not found - " + fullTargetFilePath;
+                    return;
+
+                }
                 targetImage = new Bitmap(fullTargetFilePath);
             }
 
