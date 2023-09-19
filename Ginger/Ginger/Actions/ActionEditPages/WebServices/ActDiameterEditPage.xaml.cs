@@ -26,7 +26,6 @@ namespace Ginger.Actions.WebServices
         }
         ActDiameter mAct;
         ObservableList<DiameterAVP> groupedAvpsList = new ObservableList<DiameterAVP>();
-        object whereMyChanges;
 
         public ActDiameterEditPage(ActDiameter act)
         {
