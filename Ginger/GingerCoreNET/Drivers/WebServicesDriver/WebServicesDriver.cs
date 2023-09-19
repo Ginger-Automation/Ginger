@@ -167,7 +167,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public string mRawRequest;
         private HttpWebClientUtils mWebAPI;
         private TcpClient mTcpClient;
-        private ActDiameter mActDiameter;
 
         public override bool IsSTAThread()
         {
@@ -377,7 +376,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             else if (act is ActDiameter)
             {
-                mActDiameter = act as ActDiameter;
+                ActDiameter mActDiameter = act as ActDiameter;
                 HandleDiameterRequest(mActDiameter);
             }
             else

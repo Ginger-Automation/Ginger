@@ -1618,6 +1618,12 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                             avpValue = ConvertGroupedToValue(binaryReader, dataLength, act, avp);
                             break;
                         }
+                    default:
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Value bytes type: '{dataType}' is not supported");
+                            UpdateActionError(act, $"Value bytes type: '{dataType}' is not supported");
+                            break;
+                        }
                 }
                 return !string.IsNullOrEmpty(avpValue) ? avpValue : string.Empty;
             }
