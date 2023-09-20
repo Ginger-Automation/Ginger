@@ -4292,12 +4292,9 @@ namespace GingerCore.Drivers
                     var action = Task.Run(() =>
                     {
                         try
-                        {
-                        
-                            
+                        {    
                             Thread.Sleep(100);
                             count = Driver.WindowHandles.Count;
-
                         }
                         catch (System.InvalidCastException ex)
                         {
@@ -4321,7 +4318,6 @@ namespace GingerCore.Drivers
                             Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex);
                             throw;
                         }
-
                     });
 
                     //result = action.BeginInvoke(null, null);
@@ -9872,7 +9868,7 @@ namespace GingerCore.Drivers
             devTools = webDriver as IDevTools;
 
             //DevTool Session 
-            devToolsSession = devTools.GetDevToolsSession(113);
+            devToolsSession = devTools.GetDevToolsSession(116);
             devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains>();
             devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V116.Network.EnableCommandSettings());
 

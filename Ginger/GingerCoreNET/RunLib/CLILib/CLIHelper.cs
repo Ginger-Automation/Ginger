@@ -211,15 +211,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 mRunSetConfig.RunWithAnalyzer = RunAnalyzer;
 
                 if (mRunSetConfig.ReRunConfigurations != null && mRunSetConfig.ReRunConfigurations.Active)
-                {
-                    if(mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == null)
+                { 
+                    if( mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == Guid.Empty || mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == null)
                     {
+                        Reporter.ToLog(eLogLevel.INFO, $"ReferenceExecutionId is empty,so checking for recent ExecutionId from Centerlized Report Service");
                         mRunSetConfig.ReRunConfigurations.ReferenceExecutionID = GetLastExecutionIdBySolutionAndRunsetId(WorkSpace.Instance.Solution.Guid, mRunSetConfig.Guid);
                     }
                     bool result = CheckforReRunConfig();
                     if (!result)
                     {
                         return result;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, $"Using ReferenceExecutionId for Re run = {mRunSetConfig.ReRunConfigurations.ReferenceExecutionID}");
                     }
                 }
 
@@ -301,7 +306,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     if (mRunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.RunSet)
                     {
                         List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
-                        if (accountReportRunset != null)
+                        if (accountReportRunset != null && accountReportRunset.Count > 0)
                         {
                             if (accountReportRunset.Any(x => x.Status.Equals(eRunStatus.Passed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
                             {
@@ -318,7 +323,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                     else if (mRunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.BusinessFlow)
                     {
                         List<AccountReportBusinessFlow> accountReportBusinessFlows = accountReportApiHandler.GetBusinessflowExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
-                        if (accountReportBusinessFlows != null)
+                        if (accountReportBusinessFlows != null && accountReportBusinessFlows.Count > 0)
                         {
                             if (accountReportBusinessFlows.Any(x => x.RunStatus.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
                             {
@@ -370,10 +375,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        private void SetDebugLevel()
-        {
-            Reporter.AppLoggingLevel = AppLoggingLevel;
-        }
+        //private void SetDebugLevel()
+        //{
+        //    Reporter.AppLoggingLevel = AppLoggingLevel;
+        //}
 
         private void HandleAutoRunWindow()
         {
@@ -649,7 +654,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             try
             {
-                return WorkSpace.Instance.OpenSolution(Solution, EncryptionKey);
+                if(Solution != null)
+                {
+                    return WorkSpace.Instance.OpenSolution(Solution, EncryptionKey);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to load the Solution, Solution path is empty");
+                    return false;
+                }
+                
             }
             catch (Exception ex)
             {
