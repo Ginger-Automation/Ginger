@@ -280,7 +280,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                                     throw new InvalidOperationException($"Invalid value/format '{customizedVar.VariableCustomizedValue}' provided for variable '{originalVar.Name}'");
                                 }
                                 break;
-                            default: throw new InvalidOperationException($"Value customization is not allowed for variable '{originalVar.Name}'. Only String, Number,Selection List and DateTime variable value customization is allowed");
+                            default: throw new InvalidOperationException($"Value customization is not supported for variable type '{originalVar.VariableType}', variable name '{originalVar.Name}'");
                         }
                     }
                     else

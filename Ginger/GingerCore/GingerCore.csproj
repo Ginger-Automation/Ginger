@@ -62,9 +62,6 @@
     <Reference Include="ALM_CommonStd">
       <HintPath>DLLs\ALM_CommonStd.dll</HintPath>
     </Reference>
-    <Reference Include="Ginger.ExecuterService.Contracts">
-      <HintPath>..\GingerCoreNET\DLLS\Ginger.ExecuterService.Contracts.dll</HintPath>
-    </Reference>
     <Reference Include="Interop.TDAPIOLELib">
       <HintPath>DLLs\Interop.TDAPIOLELib.dll</HintPath>
     </Reference>
@@ -566,6 +563,7 @@
     <PackageReference Include="Freeware.Pdf2Png">
       <Version>1.0.1</Version>
     </PackageReference>
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.4.3" />
     <PackageReference Include="Google.Protobuf">
       <Version>3.15.0</Version>
     </PackageReference>
