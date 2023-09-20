@@ -331,11 +331,11 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateInputParamValue("SQL", GetInputParamValue("Value"));
             }
-
-            if (SetDBConnection() == false)
-            {
-                return;//Failed to find the DB in the Environment
-            }
+            // Temporarily commenting the below  3 lines for hbase. need to be uncommented
+            //if (SetDBConnection() == false)
+            //{
+            //    return ;//Failed to find the DB in the Environment
+            //}
 
             switch (DatabaseType)
             {

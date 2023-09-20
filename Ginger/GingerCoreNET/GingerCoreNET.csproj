@@ -241,6 +241,8 @@
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.2" />
   
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.4.2" />
+  
+    <PackageReference Include="HBaseNet" Version="0.1.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   

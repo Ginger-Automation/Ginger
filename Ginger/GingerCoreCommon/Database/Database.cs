@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -39,7 +39,7 @@ namespace GingerCore.Environments
             MySQL,
             Couchbase,
             MongoDb,
-            CosmosDb
+            CosmosDb,Hbase
         }
 
         public enum eConfigType

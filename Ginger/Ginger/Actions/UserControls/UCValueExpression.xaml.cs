@@ -190,6 +190,7 @@ namespace Ginger.Actions
                     }
                     break;
                 case eBrowserType.Folder:
+                    
                     var dlgf = new System.Windows.Forms.FolderBrowserDialog();
                     dlgf.Description = "Select folder";
                     dlgf.RootFolder = Environment.SpecialFolder.MyComputer;
@@ -197,7 +198,7 @@ namespace Ginger.Actions
                     System.Windows.Forms.DialogResult resultf = dlgf.ShowDialog();
                     if (resultf == System.Windows.Forms.DialogResult.OK)
                     {
-                        ValueTextBox.Text = dlgf.SelectedPath;
+                        ValueTextBox.Text = dlgf.SelectedPath+"\\";
                     }
                     break;
             }

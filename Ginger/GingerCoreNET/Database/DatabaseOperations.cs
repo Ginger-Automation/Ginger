@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore.NoSqlBase;
+using Microsoft.Graph;
 using Microsoft.Win32;
 using MySql.Data.MySqlClient;
 using NJsonSchema.Infrastructure;
@@ -29,10 +30,12 @@ using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
 using System.Data.SqlClient;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 using static GingerCore.Environments.Database;
 
 namespace GingerCore.Environments
@@ -208,7 +211,12 @@ namespace GingerCore.Environments
         public bool MakeSureConnectionIsOpen()
         {
             Boolean isCoonected = true;
-
+            ///////////////////////////////////////////////Need to write proper code for this. This is for testing purpose
+            if(Database.DBType == eDBTypes.Hbase)
+            {
+                return true;
+            }
+            //////////////////////////////////////////////////
             if ((oConn == null) || (oConn.State != ConnectionState.Open))
             {
                 isCoonected = Connect();
@@ -381,6 +389,13 @@ namespace GingerCore.Environments
                         {
                             return false;
                         }
+                    
+                    case eDBTypes.Hbase: //string Operation = "GetColumnList"/ "GetTableList"/"DBOperation"/"RowCount";
+                        GingerHbase ghbase = new GingerHbase();
+                        ghbase.Connect_HB("DBOperation", "Employee");
+                        //ghbase.PerformDBAction();
+                        return true;
+                        
                     default:
                         //not implemented
                         break;
@@ -496,6 +511,12 @@ namespace GingerCore.Environments
                             objGingerCosmos.Db = Database;
                             databaseTableNames = objGingerCosmos.GetTableList(Keyspace);
                         break;
+                        case eDBTypes.Hbase:
+                            GingerHbase ghbase = new GingerHbase();
+                            ghbase.GetTableList().Wait();
+                            databaseTableNames = ghbase.TableList;
+                            //databaseTableNames = ghbase.GetTableList();
+                            break;
 
                         case eDBTypes.Oracle:
                             string[] restr = new string[1];
@@ -518,7 +539,7 @@ namespace GingerCore.Environments
                                 databaseTableNames.Add((string)row[2]);
                             }
                             break;
-
+                       
                         default:
                             //not implemented
                             break;
@@ -544,15 +565,17 @@ namespace GingerCore.Environments
                 return command.ExecuteScalar().ToString(); 
             } 
         }
+
+
         public List<string> GetTablesColumns(string table)
         {
             DbDataReader reader = null;
             List<string> databaseColumnNames = new List<string>() { "" };
-            if ((oConn == null || string.IsNullOrEmpty(table)) && (Database.DBType != Database.eDBTypes.Cassandra) && (Database.DBType != Database.eDBTypes.MongoDb)
-                && (Database.DBType != Database.eDBTypes.CosmosDb))
-            {
-                return databaseColumnNames;
-            }
+            //if ((oConn == null || string.IsNullOrEmpty(table)) && (Database.DBType != Database.eDBTypes.Cassandra) && (Database.DBType != Database.eDBTypes.MongoDb)
+            //    && (Database.DBType != Database.eDBTypes.CosmosDb))
+            //{
+            //    return databaseColumnNames;
+            //}
             if (Database.DBType == Database.eDBTypes.Cassandra)
             {
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
@@ -578,6 +601,20 @@ namespace GingerCore.Environments
                 Database.ConnectionString = GetConnectionString();
                 NoSqlDriver.Db = Database;
                 databaseColumnNames = NoSqlDriver.GetColumnList(table);
+            }
+            else if (Database.DBType == Database.eDBTypes.Hbase)
+            {
+                //// NoSqlBase.NoSqlBase NoSqlDriver = null;
+                //// NoSqlDriver = new GingerHbase();
+                GingerHbase ghbase = new GingerHbase();
+                ghbase.GetColumnList(table);
+
+                List<string> templist = ghbase.ColumnList;
+                for (int i = 0;i < templist.Count; i++)
+                {
+                    databaseColumnNames.Add(templist[i]);
+                }
+               
             }
             else
             {
@@ -722,7 +759,6 @@ namespace GingerCore.Environments
                     {
                         command.CommandTimeout = (int)timeout;
                     }
-
 
                     // Retrieve the data.
                     reader = command.ExecuteReader();
