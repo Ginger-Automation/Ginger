@@ -211,15 +211,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 mRunSetConfig.RunWithAnalyzer = RunAnalyzer;
 
                 if (mRunSetConfig.ReRunConfigurations != null && mRunSetConfig.ReRunConfigurations.Active)
-                {
+                { 
                     if( mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == Guid.Empty || mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == null)
                     {
+                        Reporter.ToLog(eLogLevel.INFO, $"ReferenceExecutionId is empty,so checking for recent ExecutionId from Centerlized Report Service");
                         mRunSetConfig.ReRunConfigurations.ReferenceExecutionID = GetLastExecutionIdBySolutionAndRunsetId(WorkSpace.Instance.Solution.Guid, mRunSetConfig.Guid);
                     }
                     bool result = CheckforReRunConfig();
                     if (!result)
                     {
                         return result;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.INFO, $"Using ReferenceExecutionId for Re run = {mRunSetConfig.ReRunConfigurations.ReferenceExecutionID}");
                     }
                 }
 
