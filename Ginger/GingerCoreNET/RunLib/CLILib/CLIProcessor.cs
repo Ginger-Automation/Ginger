@@ -304,7 +304,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 {
                     if (!CLILoadAndPrepare(runsetConfigs: fileContent))
                     {
-                        Reporter.ToLog(eLogLevel.WARN, "Issue occured while doing CLI Load and Prepare so aborting execution");
+                        Reporter.ToLog(eLogLevel.WARN, "Issue occurred while doing CLI Load and Prepare so aborting execution");
                         Environment.ExitCode = 1;
                         return Environment.ExitCode;
                     }
@@ -316,7 +316,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while Handling File Option", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while Handling File Option", ex);
                 Environment.ExitCode = 1;
                 return 1;//error
             }
