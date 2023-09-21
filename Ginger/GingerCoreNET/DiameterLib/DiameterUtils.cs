@@ -41,6 +41,8 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
         }
 
+        private TcpClient mTcpClient;
+        private ActDiameter mAct;
         public string ResponseMessage;
         public string RequestFileContent;
         public string ResponseFileContent;
@@ -230,6 +232,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         public bool ConstructDiameterRequest(ActDiameter act)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"Starting to construct the diameter request");
+            mAct = act;
             try
             {
                 string[] messagePropertyNames = new string[]
@@ -246,19 +249,19 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 foreach (string property in messagePropertyNames)
                 {
                     Reporter.ToLog(eLogLevel.DEBUG, $"Setting Message's property {property}");
-                    if (!SetMessageProperty(act, property))
+                    if (!SetMessageProperty(property))
                     {
-                        HandleSetMessagePropertyError(act, property);
+                        UpdateActionError($"Failed to set {property} value");
                         return false;
                     }
                 }
 
-                Message.Name = General.GetEnumValueDescription(typeof(eDiameterMessageType), act.DiameterMessageType);
+                Message.Name = General.GetEnumValueDescription(typeof(eDiameterMessageType), mAct.DiameterMessageType);
 
                 Reporter.ToLog(eLogLevel.DEBUG, $"Setting Message's AVPs");
-                if (!SetMessageAvps(act))
+                if (!SetMessageAvps())
                 {
-                    HandleSetMessageAvpsError(act);
+                    HandleSetMessageAvpsError();
                     return false;
                 }
 
@@ -266,21 +269,16 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the diameter message {Message.Name}{Environment.NewLine}error message: '{ex.Message}{Environment.NewLine}{ex.StackTrace}'");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the Diameter message {Message.Name}{Environment.NewLine}error message: '{ex.Message}{Environment.NewLine}{ex.StackTrace}'");
                 return false;
             }
         }
-        private void HandleSetMessagePropertyError(ActDiameter act, string property)
+        private void HandleSetMessageAvpsError()
         {
-            Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the diameter message on property '{property}'");
-            UpdateActionError(act, $"An error occurred while constructing the diameter message for the {property} property.");
+            Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the Diameter message on AVPs");
+            UpdateActionError($"An error occurred while adding request AVPs to the Diameter message.");
         }
-        private void HandleSetMessageAvpsError(ActDiameter act)
-        {
-            Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the diameter message on AVPs");
-            UpdateActionError(act, $"An error occurred while adding AVPs to the diameter message.");
-        }
-        private bool SetMessageProperty(ActDiameter act, string property)
+        private bool SetMessageProperty(string property)
         {
             try
             {
@@ -289,26 +287,21 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
                 if (propertyInfo == null)
                 {
-                    HandlePropertyNotFound(act, property);
+                    HandlePropertyNotFound(property);
                     return false;
                 }
 
                 if (propertyInfo.PropertyType == typeof(int))
                 {
-                    isSuccessfullyParsed = TryParseAndSetValue<int>(propertyInfo, act, property);
+                    isSuccessfullyParsed = TryParseAndSetValue<int>(propertyInfo, property);
                 }
                 else if (propertyInfo.PropertyType == typeof(bool))
                 {
-                    isSuccessfullyParsed = TryParseAndSetValue<bool>(propertyInfo, act, property);
+                    isSuccessfullyParsed = TryParseAndSetValue<bool>(propertyInfo, property);
                 }
                 else
                 {
                     HandleUnsupportedPropertyType(property);
-                }
-
-                if (!isSuccessfullyParsed)
-                {
-                    UpdateActionError(act, $"Failed to set {property} value");
                 }
 
                 return isSuccessfullyParsed;
@@ -324,14 +317,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             Reporter.ToLog(eLogLevel.ERROR, $"Unsupported property type for {property}.");
         }
 
-        private void HandlePropertyNotFound(ActDiameter act, string property)
+        private void HandlePropertyNotFound(string property)
         {
             Reporter.ToLog(eLogLevel.ERROR, $"Property {property} not found in DiameterMessage.");
-            UpdateActionError(act, $"Property {property} not found");
         }
-        private bool TryParseAndSetValue<T>(PropertyInfo propertyInfo, ActDiameter act, string property)
+        private bool TryParseAndSetValue<T>(PropertyInfo propertyInfo, string property)
         {
-            if (TryParse<T>(act.GetInputParamCalculatedValue(property), out T value))
+            if (TryParse<T>(mAct.GetInputParamCalculatedValue(property), out T value))
             {
                 propertyInfo.SetValue(Message, value);
                 Reporter.ToLog(eLogLevel.DEBUG, $"Parsed the {property} as a {typeof(T).Name} with value - {value}");
@@ -369,49 +361,51 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 return false;
             }
         }
-        private bool SetMessageAvps(ActDiameter act)
+        private bool SetMessageAvps()
         {
-            if (act.RequestAvpList == null || !act.RequestAvpList.Any())
+            ClearChildrenFromRequestAVPs();
+
+            if (mAct.RequestAvpList == null || !mAct.RequestAvpList.Any())
             {
                 return false;
             }
-            ClearChildrenFromAVPs(act);
-            foreach (DiameterAVP avp in act.RequestAvpList)
+
+            foreach (DiameterAVP avp in mAct.RequestAvpList)
             {
-                if (avp.ParentAvpGuid == Guid.Empty)
+                if (avp != null)
                 {
-                    Message.AvpList.Add(avp);
-                }
-                else
-                {
-                    AddAVPToParent(act, avp);
+                    if (avp.ParentAvpGuid == Guid.Empty)
+                    {
+                        Message.AvpList.Add(avp);
+                    }
+                    else
+                    {
+                        AddAVPToParent(avp);
+                    }
                 }
             }
+
             return Message.AvpList != null && Message.AvpList.Any();
         }
-        private void ClearChildrenFromAVPs(ActDiameter act)
+        private void ClearChildrenFromRequestAVPs()
         {
-            foreach (DiameterAVP avp in act.RequestAvpList)
+            if (mAct.RequestAvpList != null)
             {
-                if (avp.NestedAvpList != null && avp.NestedAvpList.Any())
+                foreach (DiameterAVP avp in mAct.RequestAvpList)
                 {
-                    avp.NestedAvpList.Clear();
-                }
-            }
-            foreach (DiameterAVP avp in act.CustomResponseAvpList)
-            {
-                if (avp.NestedAvpList != null && avp.NestedAvpList.Any())
-                {
-                    avp.NestedAvpList.Clear();
+                    if (avp.NestedAvpList != null && avp.NestedAvpList.Any())
+                    {
+                        avp.NestedAvpList.Clear();
+                    }
                 }
             }
         }
-        private void AddAVPToParent(ActDiameter act, DiameterAVP childAvp)
+        private void AddAVPToParent(DiameterAVP childAvp)
         {
-            DiameterAVP parentAVP = act.RequestAvpList.FirstOrDefault(avp => avp.Guid == childAvp.ParentAvpGuid);
-            if (parentAVP != null)
+            DiameterAVP parentAVP = mAct.RequestAvpList.FirstOrDefault(avp => avp.Guid == childAvp.ParentAvpGuid);
+            if (parentAVP != null && parentAVP.NestedAvpList != null)
             {
-                parentAVP.NestedAvpList?.Add(childAvp);
+                parentAVP.NestedAvpList.Add(childAvp);
             }
         }
         private byte[] ConvertMessageToBytes()
@@ -429,41 +423,49 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 {
                     if (!ConvertProtocolVersionToByte(memoryStream))
                     {
+                        UpdateActionError($"Failed to process message protocol version: {Message.ProtocolVersion} for sending");
                         return null;
                     }
 
                     //Reserve space for message length
                     if (!ConvertMessageLengthToBytes(memoryStream, isReserve: true, messageLengthOffset))
                     {
+                        UpdateActionError($"Failed to process message length for sending");
                         return null;
                     }
 
                     if (!ConvertMessageCommandFlagsToByte(memoryStream))
                     {
+                        UpdateActionError($"Failed to process message command flags for sending");
                         return null;
                     }
 
                     if (!ConvertMessageCommandCodeToBytes(memoryStream, commandCodeOffset))
                     {
+                        UpdateActionError($"Failed to process message command code: {Message.CommandCode} for sending");
                         return null;
                     }
 
                     // application Id, hop-by-hop and end-to-end identifiers
                     if (!ConvertMessageApplicationIdToBytes(memoryStream, applicationIdOffset))
                     {
+                        UpdateActionError($"Failed to process message application id: {Message.ApplicationId} for sending");
                         return null;
                     }
                     if (!ConvertMessageHopByHopToBytes(memoryStream, hopByHopIdentifierOffset))
                     {
+                        UpdateActionError($"Failed to process message hop-by-hop identifier: {Message.HopByHopIdentifier} for sending");
                         return null;
                     }
                     if (!ConvertMessageEndToEndToBytes(memoryStream, endToEndIdentifierOffset))
                     {
+                        UpdateActionError($"Failed to process message end-to-end identifier: {Message.EndToEndIdentifier} for sending");
                         return null;
                     }
 
                     if (!ConvertMessageAvpListToBytes(memoryStream))
                     {
+                        UpdateActionError($"Failed to process message AVPs list for sending");
                         return null;
                     }
 
@@ -472,6 +474,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                     // Write message length into memory stream with its actual value
                     if (!ConvertMessageLengthToBytes(memoryStream, isReserve: false, messageLengthOffset))
                     {
+                        UpdateActionError($"Failed to process message length: {Message.MessageLength} for sending");
                         return null;
                     }
 
@@ -689,17 +692,20 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 {
                     if (!ConvertAvpCodeToBytes(stream, avp.Code, avpCodeOffset))
                     {
+                        UpdateActionError($"Failed to process AVP: {avp.Name} code: {avp.Code} for sending");
                         return null;
                     }
 
                     if (!ConvertAvpFlagsToByte(stream, avp))
                     {
+                        UpdateActionError($"Failed to process AVP: {avp.Name} flags for sending");
                         return null;
                     }
 
                     // Reserve space for AVP length
                     if (!ConvertAvpLengthToBytes(stream, avpLengthOffset, isReserve: true))
                     {
+                        UpdateActionError($"Failed to process AVP: {avp.Name} length for sending");
                         return null;
                     }
 
@@ -707,22 +713,25 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                     {
                         if (!ConvertAvpVendorIdToBytes(stream, avp.VendorId, vendorIdOffset))
                         {
+                            UpdateActionError($"Failed to process AVP: {avp.Name} vendor id: {avp.VendorId} for sending");
                             return null;
                         }
                         avpValueOffset = 12;
                     }
 
                     // Grouped AVP doesn't have value
-                    if (avp.DataType != eDiameterAvpDataType.Grouped)
+                    if (avp.DataType != eDiameterAvpDataType.Grouped && string.IsNullOrEmpty(avp.ValueForDriver))
                     {
-                        // Get avp value as bytes
-                        if (string.IsNullOrEmpty(avp.ValueForDriver))
-                        {
-                            return null;
-                        }
+                        UpdateActionError($"AVP: {avp.Name} value is missing");
+                        return null;
                     }
 
                     byte[] avpValueAsBytes = GetAvpValueAsBytes(avp.ValueForDriver, avp.DataType, ref padding, stream, avp);
+                    if (avpValueAsBytes == null)
+                    {
+                        UpdateActionError($"Failed to process AVP: {avp.Name} value for sending");
+                        return null;
+                    }
 
                     // Set the avp length
                     SetAvpLength(avp, padding, (int)stream.Length, avpValueAsBytes.Length);
@@ -730,6 +739,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                     // Write Avp Length
                     if (!ConvertAvpLengthToBytes(stream, avpLengthOffset, value: IPAddress.HostToNetworkOrder(avp.Length)))
                     {
+                        UpdateActionError($"Failed to process AVP: {avp.Name} length: {avp.Length} for sending");
                         return null;
                     }
 
@@ -890,7 +900,6 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                         }
                     case eDiameterAvpDataType.Grouped:
                         {
-                            //TODO: DIAMETER - convert grouped data type to bytes
                             valueAsBytes = ConvertGroupedToBytes(stream, avp, ref padding);
                             break;
                         }
@@ -915,6 +924,12 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             List<byte> childrenAVPsBytesList = new List<byte>();
             foreach (var childAvp in avp.NestedAvpList)
             {
+                if (childAvp == null)
+                {
+                    UpdateActionError($"Failed to process child AVP for Parent AVP: {avp.Name}");
+                    return null;
+                }
+
                 byte[] childAvpBytes = ConvertAvpToBytes(childAvp);
                 if (childAvpBytes != null)
                 {
@@ -1244,7 +1259,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
             return ntpData;
         }
-        private DiameterMessage ProcessDiameterResponse(byte[] receivedBytes, ActDiameter act)
+        private DiameterMessage ProcessDiameterResponse(byte[] receivedBytes)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"Starting to process diameter response");
             try
@@ -1255,43 +1270,43 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 {
                     if (!ConvertProtocolVersionFromByte(reader, response))
                     {
-                        UpdateActionError(act, $"Diameter only supports Protocol Version 1, Protocol Version received from response was {response.ProtocolVersion}");
+                        UpdateActionError($"Diameter only supports Protocol Version 1, Protocol Version received from response was {response.ProtocolVersion}");
                         return null;
                     }
 
                     if (!ConvertMessageLengthFromBytes(reader, byteCount: 3, response))
                     {
-                        UpdateActionError(act, $"Failed to read message length from response: {response.MessageLength}");
+                        UpdateActionError($"Failed to read message length from response: {response.MessageLength}");
                         return null;
                     }
 
                     // Get Command Flags
                     if (!ConvertCommandFlagsFromByte(reader, response))
                     {
-                        UpdateActionError(act, $"Failed to read command flags from response");
+                        UpdateActionError($"Failed to read command flags from response");
                         return null;
                     }
 
                     if (!ConvertCommandCodeFromBytes(reader, byteCount: 3, response))
                     {
-                        UpdateActionError(act, $"Failed to read command code from response: {response.CommandCode}");
+                        UpdateActionError($"Failed to read command code from response: {response.CommandCode}");
                         return null;
                     }
 
                     if (!ConvertApplicationIdFromBytes(reader, response))
                     {
-                        UpdateActionError(act, $"Failed to read application id from response: {response.ApplicationId}");
+                        UpdateActionError($"Failed to read application id from response: {response.ApplicationId}");
                         return null;
                     }
 
                     if (!ConvertHopByHopFromBytes(reader, response))
                     {
-                        UpdateActionError(act, $"Failed to read hop-by-hop identifier from response: {response.HopByHopIdentifier}");
+                        UpdateActionError($"Failed to read hop-by-hop identifier from response: {response.HopByHopIdentifier}");
                         return null;
                     }
                     if (!ConvertEndToEndFromBytes(reader, response))
                     {
-                        UpdateActionError(act, $"Failed to read end-to-end identifier from response: {response.EndToEndIdentifier}");
+                        UpdateActionError($"Failed to read end-to-end identifier from response: {response.EndToEndIdentifier}");
                         return null;
                     }
 
@@ -1299,7 +1314,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                     int headerLength = 20;
                     if (stream.Length - stream.Position < response.MessageLength - headerLength)
                     {
-                        UpdateActionError(act, $"Insufficient data to process the response AVPs");
+                        UpdateActionError($"Insufficient data to process the response AVPs");
                         return null;
                     }
 
@@ -1310,15 +1325,15 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                             response.AvpList = null;
                         }
 
-                        UpdateActionError(act, $"failed to read the response AVP list bytes");
+                        UpdateActionError($"failed to read the response AVP list bytes");
                         return null;
                     }
 
-                    response.AvpList = ProcessMessageResponseAvpList(avpBytes, act);
+                    response.AvpList = ProcessMessageResponseAvpList(avpBytes);
 
                     if (response.AvpList == null || !response.AvpList.Any())
                     {
-                        UpdateActionError(act, $"Failed to read AVP List from response");
+                        UpdateActionError($"Failed to read AVP List from response");
                         return null;
                     }
                 }
@@ -1469,7 +1484,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             response.IsErrorBitSet = (commandFlagsByte & 1 << 5) != 0;
             response.IsRetransmittedBitSet = (commandFlagsByte & 1 << 4) != 0;
         }
-        private ObservableList<DiameterAVP> ProcessMessageResponseAvpList(byte[] avpBytes, ActDiameter act)
+        private ObservableList<DiameterAVP> ProcessMessageResponseAvpList(byte[] avpBytes)
         {
             ObservableList<DiameterAVP> avps = new ObservableList<DiameterAVP>();
             using (MemoryStream stream = new MemoryStream(avpBytes))
@@ -1479,7 +1494,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 {
                     try
                     {
-                        DiameterAVP avp = ProcessDiameterAVPFromBytes(reader, act);
+                        DiameterAVP avp = ProcessDiameterAVPFromBytes(reader);
                         if (avp != null)
                         {
                             avps.Add(avp);
@@ -1498,7 +1513,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             return avps;
         }
-        private DiameterAVP ProcessDiameterAVPFromBytes(BinaryReader binaryReader, ActDiameter act)
+        private DiameterAVP ProcessDiameterAVPFromBytes(BinaryReader binaryReader)
         {
             try
             {
@@ -1530,21 +1545,21 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
                 int dataLength = avp.Length - avpHeaderLength;
 
-                var avpInfo = FetchAvpInfoFromDictionary(avp.Code, act);
+                DiameterAVP avpInfo = FetchAvpInfoFromDictionary(avp.Code);
                 if (avpInfo == null)
                 {
-                    UpdateActionError(act, $"Failed to find AVP with code: {avp.Code} in action's Request/Response list or in the avp dictionary file");
+                    UpdateActionError($"Failed to find AVP with code: {avp.Code} in action's response AVP list or in the AVP dictionary file");
                     return null;
                 }
                 avp.DataType = avpInfo.DataType;
                 avp.Name = avpInfo.Name;
 
-                avp.Value = ConvertAvpValueFromBytes(binaryReader, avp.DataType, dataLength, act, avp);
+                avp.Value = ConvertAvpValueFromBytes(binaryReader, avp.DataType, dataLength, avp);
                 avp.ValueForDriver = !string.IsNullOrEmpty(avp.Value) ? avp.Value.ToString() : string.Empty;
 
                 if (string.IsNullOrEmpty(avp.Value) && avp.DataType != eDiameterAvpDataType.Grouped)
                 {
-                    UpdateActionError(act, $"Failed to get the value from the response for avp {avp.Name}");
+                    UpdateActionError($"Failed to get the value from the response for avp {avp.Name}");
                     return null;
                 }
 
@@ -1562,7 +1577,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 return null;
             }
         }
-        private string ConvertAvpValueFromBytes(BinaryReader binaryReader, eDiameterAvpDataType dataType, int dataLength, ActDiameter act, DiameterAVP avp)
+        private string ConvertAvpValueFromBytes(BinaryReader binaryReader, eDiameterAvpDataType dataType, int dataLength, DiameterAVP avp)
         {
             Reporter.ToLog(eLogLevel.DEBUG, $"Converting value bytes of type: {dataType} to actual value");
             try
@@ -1615,13 +1630,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                         }
                     case eDiameterAvpDataType.Grouped:
                         {
-                            avpValue = ConvertGroupedToValue(binaryReader, dataLength, act, avp);
+                            avpValue = ConvertGroupedToValue(binaryReader, dataLength, avp);
                             break;
                         }
                     default:
                         {
                             Reporter.ToLog(eLogLevel.ERROR, $"Value bytes type: '{dataType}' is not supported");
-                            UpdateActionError(act, $"Value bytes type: '{dataType}' is not supported");
+                            UpdateActionError($"Value bytes type: '{dataType}' is not supported");
                             break;
                         }
                 }
@@ -1633,7 +1648,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 return string.Empty;
             }
         }
-        private string ConvertGroupedToValue(BinaryReader binaryReader, int dataLength, ActDiameter act, DiameterAVP avp)
+        private string ConvertGroupedToValue(BinaryReader binaryReader, int dataLength, DiameterAVP avp)
         {
             try
             {
@@ -1641,10 +1656,10 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 byte[] data = binaryReader.ReadBytes(dataLength);
                 if (data != null && data.Any())
                 {
-                    avp.NestedAvpList = ProcessChildrenAVP(data, act, avp.Name);
+                    avp.NestedAvpList = ProcessChildrenAVP(data, avp.Name);
                     if (avp.NestedAvpList == null)
                     {
-                        UpdateActionError(act, $"Failed to process children AVPs for avp = '{avp.Name}'");
+                        UpdateActionError($"Failed to process children AVPs for avp = '{avp.Name}'");
                     }
                 }
 
@@ -1656,7 +1671,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 return null;
             }
         }
-        private ObservableList<DiameterAVP> ProcessChildrenAVP(byte[] childrenData, ActDiameter act, string name)
+        private ObservableList<DiameterAVP> ProcessChildrenAVP(byte[] childrenData, string name)
         {
             ObservableList<DiameterAVP> childrenAVPs = null;
             using (MemoryStream stream = new MemoryStream(childrenData))
@@ -1667,7 +1682,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 {
                     try
                     {
-                        DiameterAVP childAvp = ProcessDiameterAVPFromBytes(reader, act);
+                        DiameterAVP childAvp = ProcessDiameterAVPFromBytes(reader);
                         if (childAvp != null)
                         {
                             childrenAVPs.Add(childAvp);
@@ -1679,7 +1694,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to process children avp list for avp = '{name}' {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to process children AVPs list for AVP = '{name}' {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                         return null;
                     }
                 }
@@ -1690,8 +1705,6 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         {
             try
             {
-                const int startIndex = 0;
-
                 byte[] data = binaryReader.ReadBytes(dataLength);
 
                 // Get NTP timestamp from NTP Bytes ( 4 High Order Bytes from NTP Timestamp)
@@ -1855,33 +1868,20 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
             return new IPAddress(ipAddressBytes);
         }
-        private DiameterAVP FetchAvpInfoFromDictionary(int avpCode, ActDiameter act)
+        private DiameterAVP FetchAvpInfoFromDictionary(int avpCode)
         {
             DiameterAVP avpInfo = null;
             try
             {
-                // First search in the user request avp list
-                if (act.RequestAvpList != null)
-                {
-                    avpInfo = act.RequestAvpList.FirstOrDefault(avp => avp.Code == avpCode);
-                    if (avpInfo != null)
-                    {
-                        return avpInfo;
-                    }
-                }
-
                 // Search in the user custom response avp list
-                if (act.CustomResponseAvpList != null)
+                avpInfo = mAct.CustomResponseAvpList?.FirstOrDefault(avp => avp.Code == avpCode);
+                if (avpInfo != null)
                 {
-                    avpInfo = act.CustomResponseAvpList.FirstOrDefault(avp => avp.Code == avpCode);
-                    if (avpInfo != null)
-                    {
-                        return avpInfo;
-                    }
+                    return avpInfo;
                 }
 
-                // Avp was not found on the request and in the custom response, fetch the avp from the dictionary
-                avpInfo = AvpDictionaryList.FirstOrDefault(avp => avp.Code == avpCode);
+                // Avp was not found in the custom response, fetch the avp from the dictionary
+                avpInfo = AvpDictionaryList?.FirstOrDefault(avp => avp.Code == avpCode);
                 return avpInfo;
             }
             catch (Exception ex)
@@ -1975,67 +1975,66 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 return false;
             }
         }
-        private void UpdateActionError(ActDiameter act, string error)
+        private void UpdateActionError(string error)
         {
-            act.Error += $"{error}{Environment.NewLine}";
+            mAct.Error += $"{error}{Environment.NewLine}";
         }
-        public void SaveRequestToFile(bool isSaveRequest, string saveDirectory, ActDiameter act)
+        public void SaveRequestToFile(bool isSaveRequest, string saveDirectory)
         {
             if (isSaveRequest)
             {
-                RequestFileContent = CreateMessageRawRequestResponse(act, Message);
-                string fullFilePath = SaveToFile("Request", RequestFileContent, saveDirectory, act);
-                act.AddOrUpdateReturnParamActual("Saved Request Filename", Path.GetFileName(fullFilePath));
+                RequestFileContent = CreateMessageRawRequestResponse(mAct, Message);
+                string fullFilePath = SaveToFile("Request", RequestFileContent, saveDirectory, mAct);
+                mAct.AddOrUpdateReturnParamActual("Saved Request Filename", Path.GetFileName(fullFilePath));
             }
         }
-        public void SaveResponseToFile(bool isSaveResponse, string saveDirectory, ActDiameter act, DiameterMessage response)
+        public void SaveResponseToFile(bool isSaveResponse, string saveDirectory, DiameterMessage response)
         {
             if (isSaveResponse)
             {
-                ResponseFileContent = CreateMessageRawRequestResponse(act, response);
-                string fullFilePath = SaveToFile("Response", ResponseFileContent, saveDirectory, act);
-                act.AddOrUpdateReturnParamActual("Saved Response Filename", Path.GetFileName(fullFilePath));
+                ResponseFileContent = CreateMessageRawRequestResponse(mAct, response);
+                string fullFilePath = SaveToFile("Response", ResponseFileContent, saveDirectory, mAct);
+                mAct.AddOrUpdateReturnParamActual("Saved Response Filename", Path.GetFileName(fullFilePath));
             }
         }
-        public void ParseResponseToOutputParams(ActDiameter act, DiameterMessage response)
+        public void ParseResponseToOutputParams(DiameterMessage response)
         {
-            act.AddOrUpdateReturnParamActual($"Command Code: ", response.CommandCode.ToString());
-            act.AddOrUpdateReturnParamActual($"Application Id: ", response.ApplicationId.ToString());
-            act.AddOrUpdateReturnParamActual($"Hob-By-Hop: ", response.HopByHopIdentifier.ToString());
-            act.AddOrUpdateReturnParamActual($"End-To-End: ", response.EndToEndIdentifier.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Command Code: ", response.CommandCode.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Application Id: ", response.ApplicationId.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Hob-By-Hop: ", response.HopByHopIdentifier.ToString());
+            mAct.AddOrUpdateReturnParamActual($"End-To-End: ", response.EndToEndIdentifier.ToString());
 
-            act.AddOrUpdateReturnParamActual($"Request: ", response.IsRequestBitSet.ToString());
-            act.AddOrUpdateReturnParamActual($"Proxiable: ", response.IsProxiableBitSet.ToString());
-            act.AddOrUpdateReturnParamActual($"Error: ", response.IsErrorBitSet.ToString());
-            act.AddOrUpdateReturnParamActual($"Retransmit: ", response.IsRetransmittedBitSet.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Request: ", response.IsRequestBitSet.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Proxiable: ", response.IsProxiableBitSet.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Error: ", response.IsErrorBitSet.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Retransmit: ", response.IsRetransmittedBitSet.ToString());
 
             //AVPs
             foreach (var avp in response.AvpList)
             {
-                ParseResponseAvpToOutputParams(act, avp);
+                ParseResponseAvpToOutputParams(avp);
             }
 
-            AddRawResponseAndRequestToOutputParams(act);
+            AddRawResponseAndRequestToOutputParams();
         }
-        private void AddRawResponseAndRequestToOutputParams(ActDiameter act)
+        private void AddRawResponseAndRequestToOutputParams()
         {
-            act.RawResponseValues = ">>>>>>>>>>>>>>>>>>>>>>>>>>> REQUEST:" + Environment.NewLine + Environment.NewLine + RequestFileContent;
-            act.RawResponseValues += Environment.NewLine + Environment.NewLine;
-            act.RawResponseValues += ">>>>>>>>>>>>>>>>>>>>>>>>>>> RESPONSE:" + Environment.NewLine + Environment.NewLine + ResponseFileContent;
-            act.AddOrUpdateReturnParamActual("Raw Request: ", RequestFileContent);
-            act.AddOrUpdateReturnParamActual("Raw Response: ", ResponseFileContent);
+            mAct.RawResponseValues = ">>>>>>>>>>>>>>>>>>>>>>>>>>> REQUEST:" + Environment.NewLine + Environment.NewLine + RequestFileContent;
+            mAct.RawResponseValues += Environment.NewLine + Environment.NewLine;
+            mAct.RawResponseValues += ">>>>>>>>>>>>>>>>>>>>>>>>>>> RESPONSE:" + Environment.NewLine + Environment.NewLine + ResponseFileContent;
+            mAct.AddOrUpdateReturnParamActual("Raw Request: ", RequestFileContent);
+            mAct.AddOrUpdateReturnParamActual("Raw Response: ", ResponseFileContent);
         }
-        private void ParseResponseAvpToOutputParams(ActDiameter act, DiameterAVP avp)
+        private void ParseResponseAvpToOutputParams(DiameterAVP avp)
         {
-            act.AddOrUpdateReturnParamActual($"AVP {nameof(avp.Name)}: ", avp.Name);
-            act.AddOrUpdateReturnParamActual($"AVP {nameof(avp.Value)}: ", avp.Value);
+            mAct.AddOrUpdateReturnParamActual($"AVP({avp.Name}): ", avp.Value);
             if (avp.DataType == eDiameterAvpDataType.Grouped)
             {
                 if (avp.NestedAvpList != null)
                 {
                     foreach (var childAVP in avp.NestedAvpList)
                     {
-                        ParseResponseAvpToOutputParams(act, childAVP);
+                        ParseResponseAvpToOutputParams(childAVP);
                     }
                 }
             }
@@ -2070,7 +2069,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 return string.Empty;
             }
         }
-        public bool SendRequest(ActDiameter act, TcpClient tcpClient, string tcpHostname, string tcpPort)
+        public bool SendRequest(string tcpHostname, string tcpPort)
         {
             try
             {
@@ -2080,39 +2079,30 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 byte[] messageBytesToSend = ConvertMessageToBytes();
                 if (messageBytesToSend == null)
                 {
-                    UpdateActionError(act, $"Encountered an issue while attempting to process the message");
+                    UpdateActionError($"Encountered an issue while attempting to process the message");
                     Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert message: {Message.Name} to bytes");
                     return false;
                 }
 
                 // check if TCP client is connected
-                if (!tcpClient.Connected)
+                if (!mTcpClient.Connected)
                 {
-                    UpdateActionError(act, $"Tcp client is not connected to: {tcpHostname}:{tcpPort}");
-                    return false;
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Tcp client is not connected to: {tcpHostname}:{tcpPort}");
+                    if (!Reconnect(tcpHostname, tcpPort))
+                    {
+                        UpdateActionError($"Failed to establish connection to: {tcpHostname}:{tcpPort}");
+                        return false;
+                    }
                 }
 
-                // Set a timeout
-                int timeoutMilliseconds = 0;
-                if (!string.IsNullOrEmpty(Convert.ToString(act.Timeout)))
+                // Set send and receive timeout
+                SetTCPClientTimeout();
+
+                bool isMessageSent = SendDiameterMessage(messageBytesToSend, tcpHostname, tcpPort);
+                if (!isMessageSent)
                 {
-                    timeoutMilliseconds = ((int)act.Timeout) * 1000;
-                    tcpClient.ReceiveTimeout = timeoutMilliseconds;
-                }
-
-                _ = tcpClient.Client.SendAsync(messageBytesToSend).Result;
-
-                var responseDataBytes = new byte[1024];
-
-                var received = tcpClient.Client.ReceiveAsync(responseDataBytes).Result;
-
-                // Process the response
-                Response = ProcessDiameterResponse(responseDataBytes, act);
-
-                bool isResponseValid = ValidateResponse(act);
-                if (!isResponseValid)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Invalid response - error: '{act.Error}'");
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to send Diameter message to: {tcpHostname}:{tcpPort}");
+                    UpdateActionError($"Failed to send Diameter message to: {tcpHostname}:{tcpPort}");
                     return false;
                 }
 
@@ -2125,11 +2115,148 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
         }
 
-        private bool ValidateResponse(ActDiameter act)
+        private bool Reconnect(string tcpHostname, string tcpPort)
+        {
+            try
+            {
+                // The socket has been closed, initialize a new tcp client
+                mTcpClient.Dispose();
+
+                mTcpClient = new TcpClient(tcpHostname, Convert.ToInt32(tcpPort));
+
+                return mTcpClient.Connected;
+            }
+            catch (SocketException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error when trying to connect the TCP client to: {tcpHostname}:{tcpPort} - {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error while reconnecting the TCP client to: {tcpHostname}:{tcpPort} - {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+        }
+
+        private byte[] ReceiveDiameterResponse(string hostname, string port, int retryReceive = 0)
+        {
+            // TODO: have a dynamic buffer rather than a fixed one
+            byte[] buffer = new byte[2048];
+            try
+            {
+                int responseLength = mTcpClient.Client.ReceiveAsync(buffer).Result;
+
+                if (responseLength == 0)
+                {
+                    return null;
+                }
+
+                byte[] responseDataBytes = new byte[responseLength];
+
+                Array.Copy(buffer, responseDataBytes, responseLength);
+
+                if (!ValidateResponseCommandCode(responseDataBytes) && retryReceive <= 1)
+                {
+                    responseDataBytes = ReceiveDiameterResponse(hostname, port, retryReceive + 1);
+                }
+
+                return responseDataBytes;
+            }
+            catch (AggregateException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"AggregateException occurred in ReceiveDiameterResponse {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                UpdateActionError($"The connection to {hostname}:{port} was lost");
+                CloseTcpConnection();
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error in receiving diameter response {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return null;
+            }
+        }
+
+        private void CloseTcpConnection()
+        {
+            try
+            {
+                if (mTcpClient != null)
+                {
+                    mTcpClient.Close();
+                    mTcpClient.Dispose();
+                    mTcpClient = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to close TCP connection gracefully {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+            }
+        }
+
+        private bool ValidateResponseCommandCode(byte[] responseDataBytes)
+        {
+            try
+            {
+                int commandCodeOffset = 5;
+                int commandCodeBytesLength = 3;
+                byte[] commandCodeBytes = new byte[commandCodeBytesLength];
+
+                Array.Copy(responseDataBytes, commandCodeOffset, commandCodeBytes, 0, commandCodeBytesLength);
+
+                int responseCommandCode = ConvertBytesToInt(commandCodeBytes);
+
+                // Server sent a keep alive response or response received for a different message type, try to get the real response
+                if (responseCommandCode == 280 || responseCommandCode != Message.CommandCode)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error occured while validating the response command code {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+
+        }
+
+        private bool SendDiameterMessage(byte[] messageBytesToSend, string hostname, string port)
+        {
+            try
+            {
+                int bytesSent = mTcpClient.Client.SendAsync(messageBytesToSend).Result;
+                return bytesSent > 0;
+            }
+            catch (AggregateException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"{ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                UpdateActionError($"The connection to {hostname}:{port} was lost");
+                CloseTcpConnection();
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error while sending the request as bytes {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return false;
+            }
+        }
+
+        private void SetTCPClientTimeout()
+        {
+            if (!string.IsNullOrEmpty(mAct.Timeout?.ToString()))
+            {
+                int timeoutMilliseconds = ((int)mAct.Timeout) * 1000;
+                mTcpClient.SendTimeout = timeoutMilliseconds;
+                mTcpClient.ReceiveTimeout = timeoutMilliseconds;
+            }
+        }
+
+        private bool ValidateResponse()
         {
             if (Response == null)
             {
-                UpdateActionError(act, $"Error occurred trying to process the response");
+                UpdateActionError($"Error occurred trying to process the response");
                 Reporter.ToLog(eLogLevel.ERROR, $"Failed to process response from server");
                 return false;
             }
@@ -2140,6 +2267,36 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 return false;
             }
             return true;
+        }
+
+        public bool ReceiveResponse(string hostname, string port)
+        {
+            byte[] responseDataBytes = ReceiveDiameterResponse(hostname, port);
+            if (responseDataBytes == null)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to receive Diameter response from: {hostname}:{port}");
+                UpdateActionError($"Failed to receive Diameter response from: {hostname}:{port}");
+                return false;
+            }
+
+            Response = ProcessDiameterResponse(responseDataBytes);
+
+            bool isResponseValid = ValidateResponse();
+            if (!isResponseValid)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Invalid response - error: '{mAct.Error}'");
+                return false;
+            }
+
+            return true;
+        }
+
+        public void SetTcpClient(ref TcpClient tcpClient)
+        {
+            if (tcpClient != null)
+            {
+                mTcpClient = tcpClient;
+            }
         }
     }
 }

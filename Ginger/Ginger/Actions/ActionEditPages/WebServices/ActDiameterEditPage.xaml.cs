@@ -358,7 +358,7 @@ namespace Ginger.Actions.WebServices
         {
             mAct.RequestAvpList.Add(new DiameterAVP());
         }
-        private void xViewRawRequestBtn_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void xViewRawRequestBtn_Click(object sender, RoutedEventArgs e)
         {
             if (mAct != null)
             {

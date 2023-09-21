@@ -235,6 +235,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 if (mTcpClient != null)
                 {
                     mTcpClient.Close();
+                    mTcpClient.Dispose();
                     mTcpClient = null;
                 }
             }
@@ -401,6 +402,8 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 return;
             }
 
+            DiameterUtils diameterUtils = new DiameterUtils(new DiameterMessage());
+
             if (mTcpClient == null)
             {
                 Reporter.ToLog(eLogLevel.DEBUG, $"Starting TCP client initialization");
@@ -414,7 +417,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 Reporter.ToLog(eLogLevel.DEBUG, $"TCP client Initialization ended successfully");
             }
 
-            DiameterUtils diameterUtils = new DiameterUtils(new DiameterMessage());
+            diameterUtils.SetTcpClient(ref mTcpClient);
 
             if (!diameterUtils.ConstructDiameterRequest(act))
             {
@@ -424,23 +427,33 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
             Reporter.ToLog(eLogLevel.DEBUG, $"ConstructDiameterRequest passed successfully");
 
-            diameterUtils.SaveRequestToFile(SaveRequestXML, SavedXMLDirectoryPath, act);
+            diameterUtils.SaveRequestToFile(SaveRequestXML, SavedXMLDirectoryPath);
             mRawRequest = diameterUtils.RequestFileContent;
 
-            var result = diameterUtils.SendRequest(act, mTcpClient, TcpHostname, TcpPort);
-            if (!result)
+            var isSentSuccess = diameterUtils.SendRequest(TcpHostname, TcpPort);
+            if (!isSentSuccess)
             {
-                act.Error += $"Error occurred in sending the Diameter message";
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to send the Diameter message");
+                act.Error += $"Failed to send Diameter message";
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred in sending the Diameter message");
                 return;
             }
 
             Reporter.ToLog(eLogLevel.DEBUG, $"SendRequest passed successfully");
 
-            diameterUtils.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath, act, diameterUtils.Response);
+            var isReceiveResponseSuccess = diameterUtils.ReceiveResponse(TcpHostname, TcpPort);
+            if (!isReceiveResponseSuccess)
+            {
+                act.Error += $"Failed to receive Diameter response";
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred in receiving the Diameter response");
+                return;
+            }
+
+            Reporter.ToLog(eLogLevel.DEBUG, $"ReceiveResponse passed successfully");
+
+            diameterUtils.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath, diameterUtils.Response);
             mRawResponse = diameterUtils.ResponseFileContent;
 
-            diameterUtils.ParseResponseToOutputParams(act, diameterUtils.Response);
+            diameterUtils.ParseResponseToOutputParams(diameterUtils.Response);
         }
 
         private void HandleTCPInitializationError(ActDiameter act)

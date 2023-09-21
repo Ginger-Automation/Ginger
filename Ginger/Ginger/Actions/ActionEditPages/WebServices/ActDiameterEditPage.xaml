@@ -62,12 +62,12 @@
             <StackPanel Margin="0,20,0,0" x:Name="xRequestAVPPanel">
                 <StackPanel.Resources>
                 </StackPanel.Resources>
-                <Ginger:ucGrid x:Name="xRequestAvpListGrid" Title="Request AVPS" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" MinHeight="350" SelectionMode="Single"/>
+                <Ginger:ucGrid x:Name="xRequestAvpListGrid" Title="Request AVPS" ShowEdit="Collapsed" ShowRefresh="Collapsed" MinHeight="350" SelectionMode="Single"/>
             </StackPanel>
             <StackPanel Margin="0,20,0,0" x:Name="xResponseCustomAVPPanel">
                 <StackPanel.Resources>
                 </StackPanel.Resources>
-                <Ginger:ucGrid x:Name="xCustomResponseAvpListGrid" Title="Custom Response AVPS" ShowUpDown="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" MinHeight="350" SelectionMode="Single"/>
+                <Ginger:ucGrid x:Name="xCustomResponseAvpListGrid" Title="Custom Response AVPS" ShowEdit="Collapsed" ShowRefresh="Collapsed" MinHeight="350" SelectionMode="Single"/>
             </StackPanel>
         </StackPanel>
     </Grid>

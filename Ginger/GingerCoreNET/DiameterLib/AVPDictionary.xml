@@ -54,4 +54,14 @@
 	<Avp name="User-Equipment-Info" code="458" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
 	<Avp name="User-Equipment-Info-Type" code="459" type="Enumerated" isMandatory="true" isVendorSpecific="false"/>
 	<Avp name="User-Equipment-Info-Value" code="460" type="OctetString" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Granted-Service-Unit" code="431" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="CC-Time" code="420" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="CC-Total-Octets" code="421" type="Unsigned64" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Validity-Time" code="448" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Volume-Quota-Threshold" code="869" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Quota-Holding-Time" code="871" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Reporting-Reason" code="872" type="Enumerated" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="CC-Input-Octets" code="412" type="Unsigned64" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="CC-Output-Octets" code="414" type="Unsigned64" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Used-Service-Unit" code="446" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
 </DiameterAvps>
