@@ -62,7 +62,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V113.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
@@ -265,6 +265,12 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Sample Value is 'localhost:9222'.This allows to Connect to existing browser session on specific debug port instead of Launching a new browser")]
         public string DebugAddress { get; set; }
 
+        [UserConfigured]
+        // Changed the default from ignore to Actual Default suggested by Selenium i.e. dismissAndNotify
+        [UserConfiguredDefault("dismissAndNotify")]
+        [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
+        public string UnhandledPromptBehavior { get; set; }
+
         protected IWebDriver Driver;
 
         protected eBrowserType mBrowserTpe;
@@ -460,6 +466,8 @@ namespace GingerCore.Drivers
                         FirefoxOption.AcceptInsecureCertificates = true;
                         SetCurrentPageLoadStrategy(FirefoxOption);
                         SetBrowserLogLevel(FirefoxOption);
+                        SetUnhandledPromptBehavior(FirefoxOption);
+
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
@@ -498,6 +506,7 @@ namespace GingerCore.Drivers
                         options.AddArgument("--start-maximized");
                         SetCurrentPageLoadStrategy(options);
                         SetBrowserLogLevel(options);
+                        SetUnhandledPromptBehavior(options);
 
                         if (IsUserProfileFolderPathValid())
                         {
@@ -673,7 +682,7 @@ namespace GingerCore.Drivers
                             SetBrowserLogLevel(EDOpts);
                             //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
                             //EDOpts.UseChromium = true;
-                            EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            SetUnhandledPromptBehavior(EDOpts);
                             if (IsUserProfileFolderPathValid())
                             {
                                 EDOpts.AddAdditionalEdgeOption("user-data-dir=", UserProfileFolderPath);
@@ -761,7 +770,7 @@ namespace GingerCore.Drivers
                                 edgeOptions.AddAdditionalOption(SeleniumDriver.RemoteVersionParam, RemoteVersion);
                             }
 
-                            edgeOptions.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            SetUnhandledPromptBehavior(edgeOptions);
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -1195,9 +1204,13 @@ namespace GingerCore.Drivers
             //Checking if Alert handling is asked to be performed (in that case we can't modify anything on driver before handling the Alert)
             bool isActBrowser = act is ActBrowserElement;
             ActBrowserElement actBrowserObj = isActBrowser ? (act as ActBrowserElement) : null;
-            bool runActHandlerDirect = act is ActHandleBrowserAlert || (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
-                                    || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
-                                        || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox));
+            bool runActHandlerDirect = act is ActHandleBrowserAlert ||
+                                      (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox
+                                      //Added below 2 conditions for comparision for Alert Text Box
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.GetMessageBoxText
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SetAlertBoxText));
 
             if (!runActHandlerDirect)
             {
@@ -4279,12 +4292,9 @@ namespace GingerCore.Drivers
                     var action = Task.Run(() =>
                     {
                         try
-                        {
-                        
-                            
+                        {    
                             Thread.Sleep(100);
                             count = Driver.WindowHandles.Count;
-
                         }
                         catch (System.InvalidCastException ex)
                         {
@@ -4308,7 +4318,6 @@ namespace GingerCore.Drivers
                             Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex);
                             throw;
                         }
-
                     });
 
                     //result = action.BeginInvoke(null, null);
@@ -8665,84 +8674,92 @@ namespace GingerCore.Drivers
         }
         async Task<ElementInfo> IVisualTestingDriver.GetElementAtPoint(long ptX, long ptY)
         {
-            HTMLElementInfo elemInfo = null;
-
-            string iframeXPath = string.Empty;
-            Point parentElementLocation = new Point(0, 0);
-
-            while (true)
+            try
             {
-                string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
+                HTMLElementInfo elemInfo = null;
 
-                IWebElement ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+                string iframeXPath = string.Empty;
+                Point parentElementLocation = new Point(0, 0);
 
-                if (ele == null)
+                while (true)
                 {
-                    return null;
-                }
-                else
-                {
-                    HtmlNode elemNode = null;
-                    string elemId;
-                    try
+                    string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
+
+                    IWebElement ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+
+                    if (ele == null)
                     {
-                        elemId = ele.GetDomProperty("id");
-                        if (SSPageDoc == null)
+                        return null;
+                    }
+                    else
+                    {
+                        HtmlNode elemNode = null;
+                        string elemId;
+                        try
                         {
-                            SSPageDoc = new HtmlDocument();
-                            SSPageDoc.LoadHtml(GetCurrentPageSourceString());
+                            elemId = ele.GetDomProperty("id");
+                            if (SSPageDoc == null)
+                            {
+                                SSPageDoc = new HtmlDocument();
+                                SSPageDoc.LoadHtml(GetCurrentPageSourceString());
+                            }
+                            elemNode = SSPageDoc.DocumentNode.Descendants().FirstOrDefault(x => x.Id.Equals(elemId));
                         }
-                        elemNode = SSPageDoc.DocumentNode.Descendants().FirstOrDefault(x => x.Id.Equals(elemId));
+                        catch (Exception exc)
+                        {
+                            elemId = "";
+                        }
+
+
+                        elemInfo = new HTMLElementInfo();
+
+                        var elemTypeEnum = GetElementTypeEnum(ele);
+                        elemInfo.ElementType = elemTypeEnum.Item1;
+                        elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
+                        elemInfo.ElementObject = ele;
+                        elemInfo.Path = iframeXPath;
+                        elemInfo.XPath = string.IsNullOrEmpty(elemId) ? GenerateXpathForIWebElement(ele, string.Empty) : elemNode.XPath;
+                        elemInfo.HTMLElementObject = elemNode;
+
+                        ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
                     }
-                    catch (Exception exc)
+
+                    if (elemInfo.ElementTypeEnum != eElementType.Iframe)    // ele.TagName != "frame" && ele.TagName != "iframe")
                     {
-                        elemId = "";
+                        Driver.SwitchTo().DefaultContent();
+
+                        break;
                     }
 
+                    if (string.IsNullOrEmpty(iframeXPath))
+                    {
+                        iframeXPath = elemInfo.XPath;
+                    }
+                    else
+                    {
+                        iframeXPath += "," + elemInfo.XPath;
+                    }
 
-                    elemInfo = new HTMLElementInfo();
+                    parentElementLocation.X += elemInfo.X;
+                    parentElementLocation.Y += elemInfo.Y;
 
-                    var elemTypeEnum = GetElementTypeEnum(ele);
-                    elemInfo.ElementType = elemTypeEnum.Item1;
-                    elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
-                    elemInfo.ElementObject = ele;
-                    elemInfo.Path = iframeXPath;
-                    elemInfo.XPath = string.IsNullOrEmpty(elemId) ? GenerateXpathForIWebElement(ele, string.Empty) : elemNode.XPath;
-                    elemInfo.HTMLElementObject = elemNode;
+                    Point p_Pos = GetElementPosition((RemoteWebElement)ele);
+                    ptX -= p_Pos.X;
+                    ptY -= p_Pos.Y;
 
-                    ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
+                    Driver.SwitchTo().Frame(ele);
                 }
 
-                if (elemInfo.ElementTypeEnum != eElementType.Iframe)    // ele.TagName != "frame" && ele.TagName != "iframe")
-                {
-                    Driver.SwitchTo().DefaultContent();
+                elemInfo.X += parentElementLocation.X;
+                elemInfo.Y += parentElementLocation.Y;
 
-                    break;
-                }
-
-                if (string.IsNullOrEmpty(iframeXPath))
-                {
-                    iframeXPath = elemInfo.XPath;
-                }
-                else
-                {
-                    iframeXPath += "," + elemInfo.XPath;
-                }
-
-                parentElementLocation.X += elemInfo.X;
-                parentElementLocation.Y += elemInfo.Y;
-
-                Point p_Pos = GetElementPosition((RemoteWebElement)ele);
-                ptX -= p_Pos.X;
-                ptY -= p_Pos.Y;
-
-                Driver.SwitchTo().Frame(ele);
+                return elemInfo;
             }
-
-            elemInfo.X += parentElementLocation.X;
-            elemInfo.Y += parentElementLocation.Y;
-
-            return elemInfo;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Element At Point", ex);
+                return null;
+            }
         }
 
         public RemoteWebElement GetElementFromPoint(long X, long Y)
@@ -9706,7 +9723,17 @@ namespace GingerCore.Drivers
             if (SSPageDoc == null)
             {
                 SSPageDoc = new HtmlDocument();
-                await Task.Run(() => SSPageDoc.LoadHtml(Driver.PageSource));
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        SSPageDoc.LoadHtml(Driver.PageSource);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Page Source document", ex);
+                    }
+                });
             }
 
             return SSPageDoc;
@@ -9739,6 +9766,44 @@ namespace GingerCore.Drivers
                 }
             }
 
+        }
+
+        public void SetUnhandledPromptBehavior(DriverOptions options)
+        {
+            if (UnhandledPromptBehavior == null)
+            {
+                return;
+            }
+
+            if (Enum.TryParse(UnhandledPromptBehavior, true, out UnhandledPromptBehavior unhandledPromptBehavior))
+            {
+                switch (unhandledPromptBehavior)
+                {
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Ignore:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Ignore;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Accept:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Accept;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Dismiss:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Dismiss;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify;
+                        break;
+
+                    default:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Default;
+                        break;
+                }
+            }
         }
 
         private void SetBrowserLogLevel(DriverOptions options)
@@ -9803,9 +9868,9 @@ namespace GingerCore.Drivers
             devTools = webDriver as IDevTools;
 
             //DevTool Session 
-            devToolsSession = devTools.GetDevToolsSession(113);
-            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V113.DevToolsSessionDomains>();
-            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V113.Network.EnableCommandSettings());
+            devToolsSession = devTools.GetDevToolsSession(116);
+            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains>();
+            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V116.Network.EnableCommandSettings());
 
 
         }
@@ -9870,7 +9935,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V113.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V116.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 

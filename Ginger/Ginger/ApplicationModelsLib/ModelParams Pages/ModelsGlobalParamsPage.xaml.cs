@@ -297,7 +297,14 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                         {
                             await Task.Run(() =>
                             {
-                                UpdateModelGlobalParamVeWithNameChange(PlaceholderBeforeEdit, NameAfterEdit);
+                                try
+                                {
+                                    UpdateModelGlobalParamVeWithNameChange(PlaceholderBeforeEdit, NameAfterEdit);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Model Global Param", ex);
+                                }
                             });
                         });
 

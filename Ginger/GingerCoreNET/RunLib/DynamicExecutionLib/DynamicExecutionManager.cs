@@ -19,6 +19,8 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Execution;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
@@ -26,6 +28,7 @@ using Ginger.ExecuterService.Contracts;
 using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Requests;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration.RunsetOperations;
+using Ginger.Reports;
 using Ginger.Run;
 using Ginger.Run.RunSetActions;
 using Ginger.SolutionGeneral;
@@ -42,7 +45,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using ZephyrEntStdSDK.Models;
 using static Ginger.Configurations.SealightsConfiguration;
+using static Ginger.Run.GingerRunner;
+using eReRunLevel = Ginger.ExecuterService.Contracts.eReRunLevel;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
@@ -561,7 +567,17 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             runset.RunAnalyzer = cliHelper.RunAnalyzer;
             runset.RunInParallel = runsetExecutor.RunSetConfig.RunModeParallel;
             runset.StopRunnersOnFailure = runsetExecutor.RunSetConfig.StopRunnersOnFailure;
+            ///////////////
+            ///
+            RerunConfig rerunconfiguration = new RerunConfig()
+            {
+                Active = false,
+                RerunLevel= eReRunLevel.RunSet,
+                ReferenceExecutionID= Guid.Empty,
+            };
 
+            runset.RerunConfigurations = rerunconfiguration;
+            ///////////////
             SelfHealingConfig selfHealingConfiguration = new SelfHealingConfig()
             {
                 AutoFixAnalyzerIssue = runsetExecutor.RunSetConfig.SelfHealingConfiguration.AutoFixAnalyzerIssue,
@@ -579,7 +595,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runset.Runners = new List<RunnerExecConfig>();
             }
             foreach (GingerRunner gingerRunner in runsetExecutor.RunSetConfig.GingerRunners)
-            {
+            {           
                 RunnerExecConfig runner = new RunnerExecConfig();
                 runner.Name = gingerRunner.Name;
                 runner.ID = gingerRunner.Guid;
@@ -630,7 +646,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     businessFlow.ID = businessFlowRun.BusinessFlowGuid;
                     businessFlow.InstanceID = businessFlowRun.BusinessFlowInstanceGuid;
                     businessFlow.Exist = true;
-
                     if (gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid == businessFlowRun.BusinessFlowGuid).ToList().Count > 1)
                     {
                         businessFlow.Instance = gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid == businessFlowRun.BusinessFlowGuid).ToList().IndexOf(businessFlowRun) + 1;
@@ -912,6 +927,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 {
                     runSetConfig.SealightsTestRecommendations = eSealightsTestRecommendations.No;
                 }
+            }
+
+            if(gingerExecConfig.Runset.RerunConfigurations != null && gingerExecConfig.Runset.RerunConfigurations.Active)
+            {
+                runSetConfig.ReRunConfigurations.Active = gingerExecConfig.Runset.RerunConfigurations.Active;
+                runSetConfig.ReRunConfigurations.RerunLevel = (global::Ginger.Run.eReRunLevel)gingerExecConfig.Runset.RerunConfigurations.RerunLevel;
+                runSetConfig.ReRunConfigurations.ReferenceExecutionID = gingerExecConfig.Runset.RerunConfigurations.ReferenceExecutionID;
             }
 
             if (!String.IsNullOrEmpty(gingerExecConfig.Runset.Description))
@@ -1450,7 +1472,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
                         if (publishToALMOperationExecConfig.ALMType.ToLower() == "default")
                         {
-                            publishToQCRunSetOperation.PublishALMType = gingerExecConfig.AlmsDetails.FirstOrDefault(x => x.IsDefault != null && x.IsDefault.Value == true).ALMType;
+                            publishToQCRunSetOperation.PublishALMType =gingerExecConfig.AlmsDetails != null ?  gingerExecConfig.AlmsDetails.FirstOrDefault(x => x.IsDefault != null && x.IsDefault.Value == true).ALMType : publishToALMOperationExecConfig.ALMType.ToLower();
                         }
                         else
                         {

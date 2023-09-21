@@ -158,6 +158,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             BusinessFlowReport BFR = new BusinessFlowReport(businessFlow);
             BFR.VariablesBeforeExec = businessFlow.VariablesBeforeExec;
+
             BFR.SolutionVariablesBeforeExec = businessFlow.SolutionVariablesBeforeExec;
             BFR.Seq = this.ExecutionLogBusinessFlowsCounter;
             if (!string.IsNullOrEmpty(businessFlow.RunDescription))

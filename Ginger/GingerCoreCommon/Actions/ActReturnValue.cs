@@ -56,8 +56,20 @@ namespace Amdocs.Ginger.Repository
             public static string StoreToValue = "StoreToValue";
         }
 
+        private bool mActive;
         [IsSerializedForLocalRepository]
-        public bool Active { get; set; }
+        public bool Active
+        {
+            get => mActive;
+            set
+            {
+                if (mActive != value)
+                {
+                    mActive = value;
+                    OnPropertyChanged(nameof(Fields.Active));
+                }
+            }
+        }
 
         private string mParam;
         public string ParamCalculated { get; set; }

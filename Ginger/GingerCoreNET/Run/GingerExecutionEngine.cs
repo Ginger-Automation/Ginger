@@ -46,9 +46,11 @@ using GingerCore.Variables;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.GeneralLib;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -438,14 +440,15 @@ namespace Ginger.Run
             return result;
         }
 
-
+        
 
 
         public void RunRunner(bool doContinueRun = false)
         {
-            bool runnerExecutionSkipped = false;
+            bool runnerExecutionSkipped = false;         
             try
             {
+                               
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.FirstOrDefault(x => x.Active) == null)
                 {
                     runnerExecutionSkipped = true;
@@ -500,10 +503,12 @@ namespace Ginger.Run
                 {
                     mRunSource = eRunSource.Runner;
                 }
-
-                int? flowControlIndx = null;
+                int? flowControlIndx = null;          
                 for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx))
                 {
+
+                    //need to add code here to check previous Execution Deatils and ReRunFailed check 
+
                     BusinessFlow executedBusFlow = (BusinessFlow)BusinessFlows[bfIndx];
                     ExecutionLogBusinessFlowsCounter = bfIndx;
                     //stop if needed before executing next BF
@@ -513,7 +518,7 @@ namespace Ginger.Run
                     }
 
                     //validate BF run
-                    if (!executedBusFlow.Active)
+                    if (!executedBusFlow.Active)// || (activeBusinessFlows.Count > 0 && !activeBusinessFlows.Any(x=>x.Guid == executedBusFlow.Guid)))
                     {
                         //set BF status as skipped                     
                         SetBusinessFlowActivitiesAndActionsSkipStatus(executedBusFlow);
@@ -628,6 +633,7 @@ namespace Ginger.Run
             }
         }
 
+
         private void StartPublishResultsToAlmTask(BusinessFlow executedBusFlow)
         {
             if (PublishToALMConfig != null)
@@ -635,34 +641,38 @@ namespace Ginger.Run
                 Task ExportResultTask = Task.Run(() =>
                 {
                     var runsetAction = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunSetActions.FirstOrDefault(f => f is RunSetActionPublishToQC && f.RunAt.Equals(RunSetActionBase.eRunAt.DuringExecution) && f.Active);
-                    var prevStatus = runsetAction.Status;                    
-                    bool isSuccess = false;
-                    runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Running;
-                    ObservableList<BusinessFlow> bfs = new(){executedBusFlow};
-                    string result = "";
-                    try
+
+                    if (runsetAction != null)
                     {
-                        isSuccess = TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
-                        if(!isSuccess)
+                        var prevStatus = runsetAction.Status;
+                        bool isSuccess = false;
+                        runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Running;
+                        ObservableList<BusinessFlow> bfs = new() { executedBusFlow };
+                        string result = "";
+                        try
                         {
-                            runsetAction.Errors += result + Environment.NewLine;
+                            isSuccess = TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig, eALMConnectType.Silence);
+                            if (!isSuccess)
+                            {
+                                runsetAction.Errors += result + Environment.NewLine;
+                            }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        runsetAction.Errors += ex.Message + Environment.NewLine;
-                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to publish execution result to ALM for {executedBusFlow.Name}", ex);
-                    }
-                    finally
-                    {
-                        if (!isSuccess)
+                        catch (Exception ex)
                         {
-                            runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Failed;
+                            runsetAction.Errors += ex.Message + Environment.NewLine;
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to publish execution result to ALM for {executedBusFlow.Name}", ex);
                         }
-                        else
+                        finally
                         {
-                            runsetAction.Status = prevStatus;
-                        }
+                            if (!isSuccess)
+                            {
+                                runsetAction.Status = RunSetActionBase.eRunSetActionStatus.Failed;
+                            }
+                            else
+                            {
+                                runsetAction.Status = prevStatus;
+                            }
+                        } 
                     }
                 });
 
@@ -764,8 +774,6 @@ namespace Ginger.Run
                                     virtualagent.DriverType = agent.DriverType;
                                     applicationAgent.Agent = virtualagent;
                                     virtualagent.DriverConfiguration = agent.DriverConfiguration;
-
-
                                 }
                             }
 
@@ -1471,41 +1479,47 @@ namespace Ginger.Run
 
         private ObservableList<ErrorHandler> GetErrorHandlersForCurrentActivity()
         {
-            ObservableList<ErrorHandler> errorHandlersToExecute = new ObservableList<ErrorHandler>();
-
-            eHandlerMappingType typeHandlerMapping = (eHandlerMappingType)((Activity)CurrentBusinessFlow.CurrentActivity).ErrorHandlerMappingType;
-
-            if (typeHandlerMapping == eHandlerMappingType.None)
+            switch (CurrentBusinessFlow.CurrentActivity.ErrorHandlerMappingType)
             {
-                // if set to NONE then, return an empty list. Nothing to execute!
-                return errorHandlersToExecute;
-            }
+                case eHandlerMappingType.AllAvailableHandlers:
+                    // pass all error handlers, by default
+                    return GetAllErrorHandlersByType(eHandlerType.Error_Handler);
 
-            if (typeHandlerMapping == eHandlerMappingType.SpecificErrorHandlers)
-            {
-                // fetch list of all error handlers in the current business flow
-                ObservableList<ErrorHandler> allCurrentBusinessFlowErrorHandlers = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
+                case eHandlerMappingType.SpecificErrorHandlers:
+                    // fetch list of all error handlers in the current business flow
+                    ObservableList<ErrorHandler> allCurrentBusinessFlowErrorHandlers = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
 
-                ObservableList<ErrorHandler> lstMappedErrorHandler = new ObservableList<ErrorHandler>();
-                foreach (Guid _guid in CurrentBusinessFlow.CurrentActivity.MappedErrorHandlers)
-                {
-                    // check if mapped error handlers are PRESENT in the current list of error handlers in the business flow i.e. allCurrentBusinessFlowErrorHandlers (checking for deletion, inactive etc.)
-                    if (allCurrentBusinessFlowErrorHandlers.Any(x => x.Guid == _guid)) //.ToList().Exists(x => x.Guid == _guid))
+                    ObservableList<ErrorHandler> specificErrorHandlers = new ObservableList<ErrorHandler>();
+                    foreach (Guid _guid in CurrentBusinessFlow.CurrentActivity.MappedErrorHandlers)
                     {
-                        ErrorHandler _activity = CurrentBusinessFlow.Activities.Where(x => x.Guid == _guid).Cast<ErrorHandler>().FirstOrDefault();
-                        lstMappedErrorHandler.Add(_activity);
+                        // check if mapped error handlers are PRESENT in the current list of error handlers in the business flow i.e. allCurrentBusinessFlowErrorHandlers (checking for deletion, inactive etc.)
+                        if (allCurrentBusinessFlowErrorHandlers.Any(x => x.Guid == _guid)) //.ToList().Exists(x => x.Guid == _guid))
+                        {
+                            var _activity = CurrentBusinessFlow.Activities.FirstOrDefault(x => x.Guid == _guid) as ErrorHandler;
+                            specificErrorHandlers.Add(_activity);
+                        }
                     }
-                }
-                // pass only specific mapped error handlers present the business flow
-                errorHandlersToExecute = lstMappedErrorHandler;
-            }
-            else if (typeHandlerMapping == eHandlerMappingType.AllAvailableHandlers || typeHandlerMapping == eHandlerMappingType.ErrorHandlersMatchingTrigger)
-            {
-                // pass all error handlers, by default
-                errorHandlersToExecute = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
-            }
-            return errorHandlersToExecute;
+                    // pass only specific mapped error handlers present the business flow
+                    return specificErrorHandlers;
 
+                case eHandlerMappingType.ErrorHandlersMatchingTrigger:
+                    ObservableList<ErrorHandler> errorHandlersMatchingTrigger = new ObservableList<ErrorHandler>();
+                    Act failedAction = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                    ObservableList<ErrorHandler> allErrorHandlers = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
+
+                    foreach (var errHandler in allErrorHandlers)
+                    {
+                        if (errHandler.TriggerType == eTriggerType.AnyError || errHandler.ErrorStringList.Any(er => !string.IsNullOrEmpty(failedAction.Error) && failedAction.Error.Trim().Contains(er.ErrorString.Trim())))
+                        {
+                            errorHandlersMatchingTrigger.Add(errHandler);
+                        }
+                    }
+
+                    return errorHandlersMatchingTrigger;
+
+                default:
+                    return new ObservableList<ErrorHandler>();
+            }
         }
 
         private void UpdateDSReturnValues(Act act)
@@ -3963,67 +3977,75 @@ namespace Ginger.Run
 
         public bool ContinueRun(eContinueLevel continueLevel, eContinueFrom continueFrom, BusinessFlow specificBusinessFlow = null, Activity specificActivity = null, IAct specificAction = null)
         {
-            switch (continueFrom)
+            try
             {
-                case eContinueFrom.LastStoppedAction:
-                    if (mExecutedBusinessFlowWhenStopped != null && BusinessFlows.Contains(mExecutedBusinessFlowWhenStopped))
-                    {
-                        CurrentBusinessFlow = mExecutedBusinessFlowWhenStopped;
-                    }
-                    else
-                    {
-                        return false;//can't do continue
-                    }
+                switch (continueFrom)
+                {
+                    case eContinueFrom.LastStoppedAction:
+                        if (mExecutedBusinessFlowWhenStopped != null && BusinessFlows.Contains(mExecutedBusinessFlowWhenStopped))
+                        {
+                            CurrentBusinessFlow = mExecutedBusinessFlowWhenStopped;
+                        }
+                        else
+                        {
+                            return false;//can't do continue
+                        }
 
-                    if (mExecutedActivityWhenStopped != null && mExecutedBusinessFlowWhenStopped.Activities.Contains(mExecutedActivityWhenStopped))
-                    {
-                        CurrentBusinessFlow.CurrentActivity = mExecutedActivityWhenStopped;
-                        CurrentBusinessFlow.ExecutionLogActivityCounter--;
-                    }
-                    else
-                    {
-                        return false;//can't do continue
-                    }
+                        if (mExecutedActivityWhenStopped != null && mExecutedBusinessFlowWhenStopped.Activities.Contains(mExecutedActivityWhenStopped))
+                        {
+                            CurrentBusinessFlow.CurrentActivity = mExecutedActivityWhenStopped;
+                            CurrentBusinessFlow.ExecutionLogActivityCounter--;
+                        }
+                        else
+                        {
+                            return false;//can't do continue
+                        }
 
-                    if (mExecutedActionWhenStopped != null && mExecutedActivityWhenStopped.Acts.Contains(mExecutedActionWhenStopped))
-                    {
-                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = mExecutedActionWhenStopped;
-                    }
-                    else
-                    {
-                        return false;//can't do continue
-                    }
+                        if (mExecutedActionWhenStopped != null && mExecutedActivityWhenStopped.Acts.Contains(mExecutedActionWhenStopped))
+                        {
+                            CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = mExecutedActionWhenStopped;
+                        }
+                        else
+                        {
+                            return false;//can't do continue
+                        }
 
-                    break;
+                        break;
 
-                case eContinueFrom.SpecificBusinessFlow:
-                    CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
-                    CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.FirstOrDefault();
-                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.FirstOrDefault();
-                    break;
+                    case eContinueFrom.SpecificBusinessFlow:
+                        CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
+                        CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.FirstOrDefault();
+                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.FirstOrDefault();
+                        break;
 
-                case eContinueFrom.SpecificActivity:
-                    CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
-                    CurrentBusinessFlow.CurrentActivity = specificActivity;
-                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificActivity.Acts.FirstOrDefault();
-                    break;
+                    case eContinueFrom.SpecificActivity:
+                        CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
+                        CurrentBusinessFlow.CurrentActivity = specificActivity;
+                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificActivity.Acts.FirstOrDefault();
+                        break;
 
-                case eContinueFrom.SpecificAction:
-                    CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
-                    CurrentBusinessFlow.CurrentActivity = specificActivity;
-                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificAction;
-                    break;
+                    case eContinueFrom.SpecificAction:
+                        CurrentBusinessFlow = (BusinessFlow)specificBusinessFlow;
+                        CurrentBusinessFlow.CurrentActivity = specificActivity;
+                        CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = specificAction;
+                        break;
+                }
+
+                if (continueLevel == eContinueLevel.Runner)
+                {
+                    RunRunner(true);
+                }
+                else
+                {
+                    RunBusinessFlow(null, true, true);
+                }
+                return true;
             }
-
-            if (continueLevel == eContinueLevel.Runner)
+            catch (Exception ex)
             {
-                RunRunner(true);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Continue run", ex);
+                return false;
             }
-            else
-            {
-                RunBusinessFlow(null, true, true);
-            }
-            return true;
         }
 
         public async Task<int> RunBusinessFlowAsync(BusinessFlow businessFlow, bool standaloneBfExecution = false, bool doContinueRun = false)
@@ -4352,12 +4374,21 @@ namespace Ginger.Run
                 }
 
                 BF.RunStatus = newStatus;
+                CalculateBusinessFlowActivyGroupStaus(BF);
             }
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Calculating Business flow final execution status", ex);
             }
 
+        }
+
+        public void CalculateBusinessFlowActivyGroupStaus(BusinessFlow BF)
+        {
+            foreach (ActivitiesGroup currentActivityGroup in BF.ActivitiesGroups)
+            {
+                CalculateActivitiesGroupFinalStatus(currentActivityGroup, BF);
+            }
         }
 
         public void CalculateActivitiesGroupFinalStatus(ActivitiesGroup AG, BusinessFlow BF)
@@ -4537,6 +4568,8 @@ namespace Ginger.Run
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 SetBusinessFlowActivitiesAndActionsSkipStatus(bf);
+                CalculateBusinessFlowActivyGroupStaus(bf);
+                StartPublishResultsToAlmTask(CurrentBusinessFlow);
             }
         }
 
@@ -4557,6 +4590,12 @@ namespace Ginger.Run
                 CurrentBusinessFlow.CurrentActivity = bf.Activities.FirstOrDefault();
                 CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
                 SetNextActivitiesBlockedStatus();
+                CalculateBusinessFlowActivyGroupStaus(bf);
+                //TODO: Move All code Block inside the if Loop 
+                if (bf.Active)
+                {
+                    StartPublishResultsToAlmTask(CurrentBusinessFlow);
+                }
             }
         }
 

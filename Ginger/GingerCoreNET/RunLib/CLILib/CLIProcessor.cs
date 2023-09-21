@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
 using Ginger;
@@ -96,8 +97,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         {
             return await Task.Run(() =>
              {
-                 DoOptionsHanlder.Run(opts);
-                 return 0;
+                 try
+                 {
+                     DoOptionsHanlder.Run(opts);
+                     return 0;
+                 }
+                 catch (Exception ex)
+                 {
+                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Run", ex);
+                     return -1;
+                 }
              });
 
         }
@@ -295,7 +304,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 {
                     if (!CLILoadAndPrepare(runsetConfigs: fileContent))
                     {
-                        Reporter.ToLog(eLogLevel.WARN, "Issue occured while doing CLI Load and Prepare so aborting execution");
+                        Reporter.ToLog(eLogLevel.WARN, "Issue occurred while doing CLI Load and Prepare so aborting execution");
                         Environment.ExitCode = 1;
                         return Environment.ExitCode;
                     }
@@ -307,7 +316,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while Handling File Option", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while Handling File Option", ex);
                 Environment.ExitCode = 1;
                 return 1;//error
             }
@@ -453,6 +462,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             if (verboseLevel == OptionsBase.eVerboseLevel.debug)
             {
                 Reporter.AppLoggingLevel = eAppReporterLoggingLevel.Debug;
+                GingerLog.StartCustomTraceListeners();
             }
             else
             {

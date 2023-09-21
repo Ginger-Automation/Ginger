@@ -163,7 +163,7 @@ namespace Ginger.ALM.Repository
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToUser(eUserMsgKey.ErrorInTestsetImport, testPlan.Name, ex.Message);
+                        Reporter.ToUser(eUserMsgKey.ErrorInTestsetImport, testPlan.Name, ex);
                     }
 
                     Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
