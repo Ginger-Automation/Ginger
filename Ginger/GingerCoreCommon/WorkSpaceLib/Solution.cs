@@ -477,10 +477,27 @@ namespace Ginger.SolutionGeneral
                 iteration.CategoryOptionalValues.Add(new SolutionCategoryValue("Iteration 2"));
                 SolutionCategories.Add(iteration);
 
+                SolutionCategories.Add(new SolutionCategory(eSolutionCategories.BusinessProcessTags));
+                SolutionCategories.Add(new SolutionCategory(eSolutionCategories.SubBusinessProcessTags));
+
                 SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory1));
                 SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory2));
                 SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory3));
             }
+            else if(SolutionCategories.Count < Enum.GetNames(typeof(eSolutionCategories)).Length)
+            {
+                var allSolutionCategories = SolutionCategories.Select(x =>x.Category).ToList();
+                if(!allSolutionCategories.Any(x =>x.Equals(eSolutionCategories.BusinessProcessTags)))
+                {
+                    SolutionCategories.Add(new SolutionCategory(eSolutionCategories.BusinessProcessTags));
+                }
+                if (!allSolutionCategories.Any(x => x.Equals(eSolutionCategories.SubBusinessProcessTags)))
+                {
+                    SolutionCategories.Add(new SolutionCategory(eSolutionCategories.SubBusinessProcessTags));
+                }
+            }
+
+            
         }
 
         public List<ApplicationPlatform> GetListOfPomSupportedPlatform()

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -38,6 +38,10 @@ namespace Amdocs.Ginger.CoreNET.Run.SolutionCategory
         UserCategory2,
         [DescriptionAttribute("User Category 3")]
         UserCategory3,
+        [DescriptionAttribute("Business Process Tags")]
+        BusinessProcessTags,
+        [DescriptionAttribute("Sub Business Process Tags")]
+        SubBusinessProcessTags,
     }
 
     public class SolutionCategory : RepositoryItemBase
