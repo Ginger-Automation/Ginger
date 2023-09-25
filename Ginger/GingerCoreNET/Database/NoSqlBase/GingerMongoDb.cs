@@ -240,10 +240,7 @@ namespace GingerCore.NoSqlBase
         private string GetUpdateQueryParams(string inputSQL)
         {
             int startIndex = inputSQL.IndexOf("(") + 1;
-            int endIndex = inputSQL.IndexOf(")");
-            if (inputSQL.Contains("ISODate")){
-                endIndex = endIndex + 3;
-            }
+            int endIndex = inputSQL.LastIndexOf(")");
             string updateQueryParams = inputSQL.Substring(startIndex, endIndex - startIndex);
             return updateQueryParams.Trim();
         }
