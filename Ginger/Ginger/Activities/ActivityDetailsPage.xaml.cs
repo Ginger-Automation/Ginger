@@ -21,7 +21,6 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
-using DocumentFormat.OpenXml.Packaging;
 using Ginger.Activities;
 using Ginger.UserControlsLib;
 using GingerCore;
@@ -318,7 +317,6 @@ namespace Ginger.BusinessFlowPages
                 xConsumerCB.ConsumerSource = consumerList;
                 //Binding for the consumer ComboBox & EnterPrise flag check for consumer combobox
                 BindingHandler.ObjFieldBinding(xConsumerCB, ConsumerComboBox.SelectedConsumerProperty, mActivity, nameof(mActivity.ConsumerApplications));
-                //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xConsumerStack, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
             }
         }
     }
