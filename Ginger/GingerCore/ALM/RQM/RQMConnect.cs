@@ -862,16 +862,23 @@ namespace GingerCore.ALM.RQM
                 try //skip result incase of error, defect #5164
                 {
                     XmlDocument doc = new XmlDocument();
-                    doc.LoadXml(responseData.responseText);
-                    XmlNodeList TesCaseList = doc.GetElementsByTagName("oslc_qm:testCase");
-                    foreach (XmlNode TesCase in TesCaseList)
+                    if(responseData.ErrorCode != 0)
                     {
-                        XmlNodeList innerNodes = TesCase.ChildNodes;
-                        foreach (XmlNode innerNode in innerNodes)
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - Test Case not found {responseData.ErrorCode}, {responseData.ErrorDesc}");
+                    }
+                    else
+                    {
+                        doc.LoadXml(responseData.responseText);
+                        XmlNodeList TesCaseList = doc.GetElementsByTagName("oslc_qm:testCase");
+                        foreach (XmlNode TesCase in TesCaseList)
                         {
-                            if (innerNode.Name.Equals("oslc_qm:TestCase", StringComparison.OrdinalIgnoreCase))
+                            XmlNodeList innerNodes = TesCase.ChildNodes;
+                            foreach (XmlNode innerNode in innerNodes)
                             {
-                                return innerNode.Attributes.Count > 0 ? innerNode.Attributes["rdf:about"].Value : string.Empty;
+                                if (innerNode.Name.Equals("oslc_qm:TestCase", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    return innerNode.Attributes.Count > 0 ? innerNode.Attributes["rdf:about"].Value : string.Empty;
+                                }
                             }
                         }
                     }
@@ -887,7 +894,7 @@ namespace GingerCore.ALM.RQM
                 System.Diagnostics.Debug.WriteLine($"RQMConnect GetRQMTestPlanByIdByProject :{JsonConvert.SerializeObject(ex)}");
                 Reporter.ToLog(eLogLevel.ERROR, $"Project Test Case by Id not found {ex.Message}", ex);
             }
-            return "";
+            return string.Empty;
         }
     }
 }

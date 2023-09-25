@@ -308,9 +308,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         List<RunsetHLInfoResponse> accountReportRunset = accountReportApiHandler.GetRunsetExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
                         if (accountReportRunset != null && accountReportRunset.Count > 0)
                         {
-                            if (accountReportRunset.Any(x => x.Status.Equals(eRunStatus.Passed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
+                            if (accountReportRunset.Any(x => !x.Status.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
                             {
-                                Reporter.ToLog(eLogLevel.INFO, string.Format("The Runset status is already Pass for provided reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                                Reporter.ToLog(eLogLevel.INFO, string.Format("The Runset status is already Pass or in progess for provided reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
                                 Result = false;
                             }
                         }
