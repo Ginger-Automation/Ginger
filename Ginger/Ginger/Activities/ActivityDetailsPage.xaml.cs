@@ -21,6 +21,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
+using DocumentFormat.OpenXml.Packaging;
 using Ginger.Activities;
 using Ginger.UserControlsLib;
 using GingerCore;
@@ -200,6 +201,15 @@ namespace Ginger.BusinessFlowPages
                 xHandlerTriggerOnStackPanel.Visibility = Visibility.Collapsed;
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Collapsed;
             }
+            PropertyChangedEventManager.AddHandler(WorkSpace.Instance.UserProfile, UserProfile_PropertyChanged, string.Empty);
+        }
+
+        private void UserProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if(string.Equals(e.PropertyName, nameof(UserProfile.ShowEnterpriseFeatures)))
+            {
+                TargetAppSelectedComboBox();
+            }
         }
 
         private void xErrorHandlerMappingCmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -250,11 +260,15 @@ namespace Ginger.BusinessFlowPages
             return WorkSpace.Instance.Solution.GetApplicationPlatformForTargetApp(mActivity.TargetApplication);
         }
 
-        private void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            TargetAppSelectedComboBox();
+        }
 
+        public void TargetAppSelectedComboBox()
+        {
             if (xTargetApplicationComboBox.SelectedItem != null &&
-                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+                           WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
             {
                 PrepareAndLoadConsumerComboBox();
             }
@@ -263,7 +277,6 @@ namespace Ginger.BusinessFlowPages
                 xConsumerStack.Visibility = Visibility.Collapsed;
             }
         }
-
         private void PrepareAndLoadConsumerComboBox()
         {
             if (GetCurrentActivityPlatform() != ePlatformType.WebServices)
@@ -305,7 +318,7 @@ namespace Ginger.BusinessFlowPages
                 xConsumerCB.ConsumerSource = consumerList;
                 //Binding for the consumer ComboBox & EnterPrise flag check for consumer combobox
                 BindingHandler.ObjFieldBinding(xConsumerCB, ConsumerComboBox.SelectedConsumerProperty, mActivity, nameof(mActivity.ConsumerApplications));
-                GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xConsumerStack, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
+                //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xConsumerStack, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
             }
         }
     }
