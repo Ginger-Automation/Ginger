@@ -862,9 +862,13 @@ namespace GingerCore.ALM.RQM
                 try //skip result incase of error, defect #5164
                 {
                     XmlDocument doc = new XmlDocument();
-                    if(responseData.ErrorCode != 0)
+                    if(responseData.ErrorCode == 400)
                     {
                         Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - Test Case not found {responseData.ErrorCode}, {responseData.ErrorDesc}");
+                    }
+                    else if(responseData.ErrorCode != 0)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {responseData.ErrorCode}, {responseData.ErrorDesc}");
                     }
                     else
                     {

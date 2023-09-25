@@ -310,13 +310,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         {
                             if (accountReportRunset.Any(x => !x.Status.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)))
                             {
-                                Reporter.ToLog(eLogLevel.INFO, string.Format("The Runset status is already Pass or in progess for provided reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                                Reporter.ToLog(eLogLevel.INFO, string.Format("The Runset is already Passed or In_progress for provided reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
                                 Result = false;
                             }
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.INFO, string.Format("Their is no record found to re run in reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                            Reporter.ToLog(eLogLevel.INFO, string.Format("No record found to re run for reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
                             Result = false;
                         }
                     }
@@ -342,13 +342,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                             }
                             else
                             {
-                                Reporter.ToLog(eLogLevel.INFO, string.Format("All flows are already Pass, in reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                                Reporter.ToLog(eLogLevel.INFO, string.Format("All flows are already Passed, in reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
                                 Result = false;
                             }
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.INFO, string.Format("Their is no record found to re run with reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                            Reporter.ToLog(eLogLevel.INFO, string.Format("No record found to re run for reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
                             Result = false;
                         }
                     }
