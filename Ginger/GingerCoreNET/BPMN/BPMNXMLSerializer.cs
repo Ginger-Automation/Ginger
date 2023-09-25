@@ -192,6 +192,26 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                 {
                     taskElement = CreateUserTaskElement(xmlDocument, userTask);
                 }
+                else if (task is ReceiveTask receiveTask)
+                {
+                    taskElement = CreateReceiveTaskElement(xmlDocument, receiveTask);
+                }
+                else if (task is ScriptTask scriptTask)
+                {
+                    taskElement = CreateScriptTaskElement(xmlDocument, scriptTask);
+                }
+                else if (task is SendTask sendTask)
+                {
+                    taskElement = CreateSendTaskElement(xmlDocument, sendTask);
+                }
+                else if (task is ServiceTask serviceTask)
+                {
+                    taskElement = CreateServiceTaskElement(xmlDocument, serviceTask);
+                }
+                else if (task is ManualTask manualTask)
+                {
+                    taskElement = CreateManualTaskElement(xmlDocument, manualTask);
+                }
                 else
                 {
                     taskElement = CreateTaskElement(xmlDocument, task);
@@ -249,6 +269,46 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return userTaskElement;
         }
 
+        private XmlElement CreateReceiveTaskElement(XmlDocument xmlDocument, ReceiveTask receiveTask)
+        {
+            XmlElement receiveTaskElement = CreateGenericTaskElement(xmlDocument, taskTypeName: "receiveTask", receiveTask);
+            receiveTaskElement.SetAttribute("implementation", "##WebService"); //static value
+            //TODO: BPMN - For ReceiveTask is instantiate always false
+            receiveTaskElement.SetAttribute("instantiate", "false"); //static value
+
+            return receiveTaskElement;
+        }
+
+        private XmlElement CreateScriptTaskElement(XmlDocument xmlDocument, ScriptTask scriptTask)
+        {
+            XmlElement scriptTaskElement = CreateGenericTaskElement(xmlDocument, taskTypeName: "scriptTask", scriptTask);
+
+            return scriptTaskElement;
+        }
+
+        private XmlElement CreateSendTaskElement(XmlDocument xmlDocument, SendTask sendTask)
+        {
+            XmlElement sendTaskElement = CreateGenericTaskElement(xmlDocument, taskTypeName: "sendTask", sendTask);
+            sendTaskElement.SetAttribute("implementation", "##WebService"); //static value
+
+            return sendTaskElement;
+        }
+
+        private XmlElement CreateServiceTaskElement(XmlDocument xmlDocument, ServiceTask serviceTask)
+        {
+            XmlElement serviceTaskElement = CreateGenericTaskElement(xmlDocument, taskTypeName: "serviceTask", serviceTask);
+            serviceTaskElement.SetAttribute("implementation", "##WebService"); //static value
+
+            return serviceTaskElement;
+        }
+
+        private XmlElement CreateManualTaskElement(XmlDocument xmlDocument, ManualTask manualTask)
+        {
+            XmlElement manualTaskElement = CreateGenericTaskElement(xmlDocument, taskTypeName: "manualTask", manualTask);
+
+            return manualTaskElement;
+        }
+
         private XmlElement CreateTaskElement(XmlDocument xmlDocument, Task task)
         {
             XmlElement taskElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "task", BPMN_XML_URI);
@@ -267,6 +327,32 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             }
 
             foreach(Flow flow in task.OutgoingFlows)
+            {
+                XmlElement outgoingFlowElement = CreateOutgoingFlowElement(xmlDocument, flow);
+                taskElement.AppendChild(outgoingFlowElement);
+            }
+
+            return taskElement;
+        }
+
+        private XmlElement CreateGenericTaskElement(XmlDocument xmlDocument, string taskTypeName, Task task)
+        {
+            XmlElement taskElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, taskTypeName, BPMN_XML_URI);
+
+            taskElement.SetAttribute("completionQuantity", "1"); //static value
+            taskElement.SetAttribute("id", task.Id);
+            taskElement.SetAttribute("isForCompensation", "false"); //static value
+            taskElement.SetAttribute("name", task.Name);
+            taskElement.SetAttribute("startQuantity", "1"); //static value
+            taskElement.AppendChild(CreateDocumentationElement(xmlDocument));
+
+            foreach (Flow flow in task.IncomingFlows)
+            {
+                XmlElement incomingFlowElement = CreateIncomingFlowElement(xmlDocument, flow);
+                taskElement.AppendChild(incomingFlowElement);
+            }
+
+            foreach (Flow flow in task.OutgoingFlows)
             {
                 XmlElement outgoingFlowElement = CreateOutgoingFlowElement(xmlDocument, flow);
                 taskElement.AppendChild(outgoingFlowElement);

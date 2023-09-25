@@ -31,18 +31,21 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return StartEvent;
         }
 
-        public Task AddTask(AddTaskArguments args)
+        public TTask AddTask<TTask>(string name) where TTask : Task
         {
-            Task task = new(processId: Id, guid: args.Guid, name: args.Name);
-            _tasks.Add(task);
-            return task;
+            return AddTask<TTask>(Guid.NewGuid(), name);
         }
 
-        public UserTask AddUserTask(AddTaskArguments args)
+        public TTask AddTask<TTask>(Guid guid, string name) where TTask : Task
         {
-            UserTask userTask = new(processId: Id, guid: args.Guid, name: args.Name);
-            _tasks.Add(userTask);
-            return userTask;
+            return AddTask<TTask>(guid.ToString(), name);
+        }
+
+        public TTask AddTask<TTask>(string guid, string name) where TTask : Task
+        {
+            TTask task = Task.Create<TTask>(processId: Id, guid: guid, name: name);
+            _tasks.Add(task);
+            return task;
         }
 
         public EndEvent AddEndEvent(string name)
@@ -85,23 +88,6 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             }
 
             return flows;
-        }
-
-        public sealed class AddTaskArguments
-        {
-            public string Guid { get; }
-
-            public string Name { get; }
-
-            public AddTaskArguments(string name) : this(System.Guid.NewGuid(), name) { }
-
-            public AddTaskArguments(Guid guid, string name) : this(guid.ToString(), name) { }
-
-            public AddTaskArguments(string guid, string name)
-            {
-                Guid = guid;
-                Name = name;
-            }
         }
     }
 }

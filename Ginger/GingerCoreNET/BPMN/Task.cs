@@ -31,5 +31,46 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             IncomingFlows = new();
             OutgoingFlows = new();
         }
+
+        public static TTask Create<TTask>(string processId, Guid guid, string name) where TTask : Task
+        {
+            return Create<TTask>(processId, guid.ToString(), name);
+        }
+
+        public static TTask Create<TTask>(string processId, string guid, string name) where TTask : Task
+        {
+            Type taskType = typeof(TTask);
+            Task newTask;
+            if (taskType == typeof(UserTask))
+            {
+                newTask = new UserTask(processId, guid, name);
+            }
+            else if (taskType == typeof(ReceiveTask))
+            {
+                newTask = new ReceiveTask(processId, guid, name);   
+            }
+            else if (taskType == typeof(ScriptTask))
+            {
+                newTask = new ScriptTask(processId, guid, name);
+            }
+            else if (taskType == typeof(SendTask))
+            {
+                newTask = new SendTask(processId, guid, name);
+            }
+            else if (taskType == typeof(ServiceTask))
+            {
+                newTask = new ServiceTask(processId, guid, name);
+            }
+            else if (taskType == typeof(ManualTask))
+            {
+                newTask = new ManualTask(processId, guid, name);
+            }
+            else
+            {
+                newTask = new Task(processId, guid, name);
+            }
+
+            return (TTask)newTask;
+        }
     }
 }

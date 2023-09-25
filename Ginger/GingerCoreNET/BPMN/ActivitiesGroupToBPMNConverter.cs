@@ -56,17 +56,16 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                 {
                     string consumerAppName = GetTargetAppNameFromConsumerId(activity.ConsumerApplications.First());
                     Participant consumerParticipant = GetParticipantForTargetAppName(collaboration, consumerAppName);
-                    Task requestSourceTask = consumerParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_RequestSource"));
-                    Task requestTargetTask = activityParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_RequestTarget"));
-                    Task responseSourceTask = activityParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_ResponseSource"));
-                    Task responseTargetTask = consumerParticipant.Process.AddTask(new Process.AddTaskArguments($"{activity.ActivityName}_ResponseTarget"));
+                    Task requestSourceTask = consumerParticipant.Process.AddTask<SendTask>(name: $"{activity.ActivityName}_RequestSource");
+                    Task requestTargetTask = activityParticipant.Process.AddTask<ReceiveTask>(name: $"{activity.ActivityName}_RequestTarget");
+                    Task responseSourceTask = activityParticipant.Process.AddTask<SendTask>(name: $"{activity.ActivityName}_ResponseSource");
+                    Task responseTargetTask = consumerParticipant.Process.AddTask<ReceiveTask>(name: $"{activity.ActivityName}_ResponseTarget");
                     Flow.Create(name: string.Empty, previousFlowSource, requestSourceTask);
                     Flow requestFlow = Flow.Create(name: $"{activity.ActivityName}_IN", requestSourceTask, requestTargetTask);
                     if(requestFlow is MessageFlow requestMessageFlow)
                     {
                         requestMessageFlow.MessageRef = activity.Guid.ToString().Remove(activity.Guid.ToString().Length - 2) + "aa";
                     }
-                    Flow.Create(name: string.Empty, requestTargetTask, responseSourceTask);
                     Flow responseFlow = Flow.Create(name: $"{activity.ActivityName}_OUT", responseSourceTask, responseTargetTask);
                     if(responseFlow is MessageFlow responseMessageFlow)
                     {
@@ -76,7 +75,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                 }
                 else
                 {
-                    UserTask userTask = activityParticipant.Process.AddUserTask(new Process.AddTaskArguments(activity.Guid, activity.ActivityName));
+                    UserTask userTask = activityParticipant.Process.AddTask<UserTask>(guid: activity.Guid, name: activity.ActivityName);
                     userTask.MessageRef = activity.Guid.ToString().Remove(activity.Guid.ToString().Length - 2) + "aa";
                     Flow.Create(name: string.Empty, previousFlowSource, userTask);
                     previousFlowSource = userTask;
