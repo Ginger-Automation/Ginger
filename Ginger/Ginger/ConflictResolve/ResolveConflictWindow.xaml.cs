@@ -191,10 +191,6 @@ namespace Ginger.ConflictResolve
                     Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
                     Dispatcher.Invoke(() => analyzerPage.ShowAsWindow());
                 }
-                //else
-                //{
-                //    Reporter.ToUser(eUserMsgKey.AnalyzerFoundNoIssues);
-                //}
             }
             finally
             {

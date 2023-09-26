@@ -154,7 +154,6 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     }
                     else
                     {
-                        //unselectedComparisonCount = 1;
                         unselectedComparisonCount = 0;
                     }
                 }
