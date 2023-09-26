@@ -102,6 +102,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                 MenuItem exportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
                 TreeViewUtils.AddSubMenuItem(exportMenu, "Export All to ALM", ExportToALM, null, "@ALM_16x16.png");
+                TreeViewUtils.AddSubMenuItem(exportMenu, "Export BPMN", ExportBPMN, icon: eImageType.ShareExternal);
 
                 AddSourceControlOptions(mContextMenu);
             }
@@ -110,7 +111,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
             }
 
-            TreeViewUtils.AddMenuItem(mContextMenu, "Export BPMN", ExportBPMN, imageType: eImageType.ShareExternal);
         }
 
         private void ShowUsage(object sender, RoutedEventArgs e)
