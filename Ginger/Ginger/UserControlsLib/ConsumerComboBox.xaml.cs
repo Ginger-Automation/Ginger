@@ -66,9 +66,7 @@ namespace Ginger.UserControlsLib
         public static readonly DependencyProperty DefaultTextProperty =
             DependencyProperty.Register("DefaultText", typeof(string), typeof(ConsumerComboBox), new UIPropertyMetadata(string.Empty));
 
-        public static readonly DependencyProperty OperationSelectedConsumerProperty =
-        DependencyProperty.Register("OperationSelectedConsumer", typeof(ObservableList<Consumer>), typeof(ConsumerComboBox), new PropertyMetadata(OnOperationSelectedConsumerPropertyChanged));
-
+       
         public ObservableList<Consumer> ConsumerSource
         {
             get { return (ObservableList<Consumer>)GetValue(ConsumerSourceProperty); }
@@ -85,12 +83,6 @@ namespace Ginger.UserControlsLib
             {
                 SetValue(SelectedConsumerProperty, value);
             }
-        }
-
-        public ObservableList<Consumer> OperationSelectedConsumer
-        {
-            get { return (ObservableList<Consumer>)GetValue(OperationSelectedConsumerProperty); }
-            set { SetValue(OperationSelectedConsumerProperty, value); }
         }
 
         public string Text
@@ -120,21 +112,6 @@ namespace Ginger.UserControlsLib
             control.SetText();
         }
 
-        private static void OnOperationSelectedConsumerPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            if (args.NewValue is ObservableList<Consumer> newValueAsObservableList && sender is ConsumerComboBox control)
-            {
-                control.OperationSelectedConsumerPropertyChanged(newValueAsObservableList);
-            }
-
-        }
-
-        private void OperationSelectedConsumerPropertyChanged(ObservableList<Consumer> oprationSelectedConsumer)
-        {
-            OnPropertyChanged(nameof(OperationSelectedConsumer));
-            SelectedConsumer = OperationSelectedConsumer;
-            
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
@@ -185,7 +162,7 @@ namespace Ginger.UserControlsLib
                     }
                 
             }
-            OperationSelectedConsumer = new ObservableList<Consumer>(temp);
+            SelectedConsumer = new ObservableList<Consumer>(temp);
         }
 
         private void DisplayInConsumer()
@@ -263,8 +240,8 @@ namespace Ginger.UserControlsLib
                 _consumer = consumer;
             }
 
-            public event PropertyChangedEventHandler? PropertyChanged;
-            protected void NotifyPropertyChanged(string propertyName)
+           public event PropertyChangedEventHandler? PropertyChanged;
+           protected void NotifyPropertyChanged(string propertyName)
             {
                 if (PropertyChanged != null)
                 {

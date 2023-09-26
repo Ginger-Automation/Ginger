@@ -19,14 +19,17 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.CoreNET.SourceControl;
 using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
+using Cassandra;
 using GingerCore.SourceControl;
 using GingerCoreNET.SourceControl;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Ginger.SourceControl
@@ -189,6 +192,106 @@ namespace Ginger.SourceControl
         {
             string error = string.Empty;
             return SourceControl.GetLockOwner(path, ref error);
+        }
+
+        public static RepositoryItemBase GetLocalItemFromConflict(SourceControlBase sourceControl, string path)
+        {
+            if (path.Contains("@/"))
+            {
+                path = path.Replace("@/", "\\");
+            }
+
+            string conflictedContent = File.ReadAllText(path);
+            string localContent = sourceControl.GetLocalContentFromConflicted(conflictedContent);
+            RepositoryItemBase localItem = NewRepositorySerializer.DeserializeFromText(localContent);
+
+            return localItem;
+        }
+
+        public static RepositoryItemBase GetRemoteItemFromConflict(SourceControlBase sourceControl, string path)
+        {
+            if (path.Contains("@/"))
+            {
+                path = path.Replace("@/", "\\");
+            }
+
+            string conflictedContent = File.ReadAllText(path);
+            string remoteContent = sourceControl.GetRemoteContentFromConflicted(conflictedContent);
+            RepositoryItemBase remoteItem = NewRepositorySerializer.DeserializeFromText(remoteContent);
+
+            return remoteItem;
+        }
+
+        public static Comparison CompareConflictedItems(RepositoryItemBase localItem, RepositoryItemBase remoteItem)
+        {
+            ICollection<Comparison> childComparisons = RepositoryItemBaseComparer.Compare("[0]", localItem, remoteItem);
+            Comparison.StateType state = childComparisons.All(c => c.State == Comparison.StateType.Unmodified) ? Comparison.StateType.Unmodified : Comparison.StateType.Modified;
+            return new Comparison("ROOT", state, childComparisons: childComparisons, dataType: localItem.GetType());
+        }
+
+        public static Comparison GetComparisonForConflicted(SourceControlBase sourceControl, string path)
+        {
+            if (path.Contains("@/"))
+            {
+                path = path.Replace("@/", "\\");
+            }
+
+            string conflictedContent = File.ReadAllText(path);
+            string localContent = sourceControl.GetLocalContentFromConflicted(conflictedContent);
+            RepositoryItemBase localItem = NewRepositorySerializer.DeserializeFromText(localContent);
+            string remoteContent = sourceControl.GetRemoteContentFromConflicted(conflictedContent);
+            RepositoryItemBase remoteItem = NewRepositorySerializer.DeserializeFromText(remoteContent);
+            ICollection<Comparison> childComparisons = RepositoryItemBaseComparer.Compare("[0]", localItem, remoteItem);
+            Comparison.StateType state = childComparisons.All(c => c.State == Comparison.StateType.Unmodified) ? Comparison.StateType.Unmodified : Comparison.StateType.Modified;
+            return new Comparison("ROOT", state, childComparisons: childComparisons, dataType: localItem.GetType());
+        }
+
+        public static RepositoryItemBase CreateMergedItemFromComparison(Comparison comparison)
+        {
+            RepositoryItemBase mergedRIB = RepositoryItemBaseMerger.Merge(comparison.DataType, comparison.ChildComparisons);
+            return mergedRIB;
+        }
+
+        /// <summary>
+        /// Resolve merge conflict with content that contains the resolved data of the file.
+        /// </summary>
+        /// <param name="sourceControl">Source control implementation to use</param>
+        /// <param name="path">Path of the conflicted file</param>
+        /// <param name="content">Content containing the resolved data.</param>
+        /// <returns><see langword="true"/> if the conflict was resolved successfully, <see langword="false"/> otherwise.</returns>
+        public static bool ResolveConflictWithContent(SourceControlBase sourceControl, string path, string content)
+        {
+            try
+            {
+                if (path == null)
+                {
+                    return false;
+                }
+                if (path.Contains("@/"))
+                {
+                    path = path.Replace("@/", "\\");
+                }
+
+                string error = string.Empty;
+                bool isConflictResolved = sourceControl.ResolveConflictWithContent(path, content, ref error);
+
+                if (!isConflictResolved)
+                {
+                    Reporter.ToUser(eUserMsgKey.GeneralErrorOccured, error);
+                }
+
+                return isConflictResolved;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during resolving conflicts..", ex);
+                return false;
+            }
+        }
+
+        public static List<string> GetConflictPaths(SourceControlBase sourceControl)
+        {
+            return sourceControl.GetConflictPaths();
         }
 
         public static bool ResolveConflicts(SourceControlBase SourceControl, string path, eResolveConflictsSide side)

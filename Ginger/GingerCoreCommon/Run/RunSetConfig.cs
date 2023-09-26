@@ -26,6 +26,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.SolutionCategories;
+using Amdocs.Ginger.Common.ReRunControlLib;
 using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
@@ -450,6 +451,7 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory1));
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory2));
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory3));
+
             }
         }
         private void CheckIfLazyLoadInfoNeedsUpdate()
@@ -483,5 +485,9 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
             }
             return false;
         }
+              
+
+        [IsSerializedForLocalRepository]
+        public ReRunConfig ReRunConfigurations = new ReRunConfig();
     }
 }

@@ -238,6 +238,5 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         {
             throw new System.NotImplementedException();
         }
-
     }
 }

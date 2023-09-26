@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -79,6 +79,8 @@ namespace GingerCore.ALM
         public ObservableList<ExternalItemFieldBase> AlmFields { get; set; }
         public string TestSetFolderDestination { get; set; }
         public string TestCaseFolderDestination { get; set; }
+        public string HtmlReportUrl { get; set; }
+        public string ExecutionId { get; set; }
         public void CalculateTCRunName(IValueExpression ve)
         {
             if (IsVariableInTCRunUsed && (VariableForTCRunName != null) && (VariableForTCRunName != string.Empty))

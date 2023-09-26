@@ -57,7 +57,8 @@ namespace Ginger.SourceControl
             SourceControlClassTextBox.IsReadOnly = true;
             SourceControlClassTextBox.IsEnabled = false;
 
-            SourceControlURLTextBox.Text = SourceControlIntegration.GetRepositoryURL(WorkSpace.Instance.Solution.SourceControl);
+            string repositoryURL = SourceControlIntegration.GetRepositoryURL(WorkSpace.Instance.Solution.SourceControl);
+            SourceControlURLTextBox.Text = repositoryURL;
             SourceControlURLTextBox.IsReadOnly = true;
             SourceControlURLTextBox.IsEnabled = false;
 
