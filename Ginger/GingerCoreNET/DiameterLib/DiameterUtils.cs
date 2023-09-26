@@ -200,9 +200,10 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             string avpString = "avp";
             string groupedAvp = "groupedavp";
             string identation = new string('\t', identLevel);
-            string displayValue = avp.ValueForDriver;
             if (avp != null)
             {
+                string displayValue = avp.ValueForDriver;
+
                 if (avp.DataType == eDiameterAvpDataType.Grouped)
                 {
                     stringBuilder.Append($"{identation}<{groupedAvp} name=\"{avp.Name}\" mandatory=\"{avp.IsMandatory.ToString().ToLower()}\">");
