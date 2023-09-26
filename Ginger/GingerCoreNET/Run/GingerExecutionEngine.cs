@@ -1197,6 +1197,7 @@ namespace Ginger.Run
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                     //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
                     SetDriverPreviousRunStoppedFlag(true);
+                    NotifyActionEnd(act);
                 }
                 else
                 {
