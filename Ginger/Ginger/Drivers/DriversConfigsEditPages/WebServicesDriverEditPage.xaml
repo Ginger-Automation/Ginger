@@ -28,7 +28,7 @@
                                 <Label Content="TCP Details" Style="{StaticResource $HorizontalExpanderLabelStyle}" FontWeight="Normal"/>
                             </Expander.Header>
                             <Expander.Content>
-                                <StackPanel Margin="10, 0, 0, 0">
+                                <StackPanel Margin="10, 15, 0, 0">
                                     <CheckBox x:Name="xUseTcpCheckBox" Content="Use TCP client" Style="{StaticResource $CeckBoxStyle}"/>
                                     <Grid Margin="0,5,0,0" Visibility="{Binding IsChecked, ElementName=xUseTcpCheckBox, Converter={StaticResource B2V}}">
                                         <Grid.ColumnDefinitions>
@@ -52,7 +52,7 @@
                                 <Label Content="Advanced" Style="{StaticResource $HorizontalExpanderLabelStyle}" FontWeight="Normal"/>
                             </Expander.Header>
                             <Expander.Content>
-                                <StackPanel Margin="10, 0, 0, 0">
+                                <StackPanel Margin="10, 15, 0, 0">
                                     <CheckBox x:Name="xUseProxyCheckBox" Content="Use local proxy server settings" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Checked="xUseProxyChxBox_Checked" Unchecked="xUseProxyChxBox_Unchecked"/>
                                     <Grid Margin="0,5,0,0">
                                         <Grid.ColumnDefinitions>

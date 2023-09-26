@@ -18,7 +18,6 @@ limitations under the License.
 
 using System;
 using System.Collections;
-
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -27,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
@@ -74,6 +74,7 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public string ExternalID2 { get { return mExternalID2; } set { if (mExternalID2 != value) { mExternalID2 = value; OnPropertyChanged(nameof(ExternalID2)); } } }
 
+        [XmlIgnore]
         public LiteDB.ObjectId LiteDbId { get; set; }
 
         public string ObjFolderName { get { return FolderName(this.GetType()); } }

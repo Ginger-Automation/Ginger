@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using System;
+using System.Xml.Serialization;
 using static Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums;
 
 namespace Amdocs.Ginger.CoreNET.DiameterLib
@@ -10,6 +11,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         public int Length { get; set; }
         private int mCode;
         [IsSerializedForLocalRepository]
+        [XmlAttribute("code")]
         public int Code
         {
             get
@@ -27,6 +29,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         }
         private string mName;
         [IsSerializedForLocalRepository]
+        [XmlAttribute("name")]
         public string Name
         {
             get { return mName; }
@@ -67,25 +70,9 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 }
             }
         }
-        private bool mIsGrouped;
-        [IsSerializedForLocalRepository]
-        public bool IsGrouped
-        {
-            get
-            {
-                return mIsGrouped;
-            }
-            set
-            {
-                if (mIsGrouped != value)
-                {
-                    mIsGrouped = value;
-                    OnPropertyChanged(nameof(IsGrouped));
-                }
-            }
-        }
         private bool mIsMandatory;
         [IsSerializedForLocalRepository]
+        [XmlAttribute("isMandatory")]
         public bool IsMandatory
         {
             get
@@ -103,6 +90,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         }
         private bool mIsVendorSpecific;
         [IsSerializedForLocalRepository]
+        [XmlAttribute("isVendorSpecific")]
         public bool IsVendorSpecific
         {
             get
@@ -120,6 +108,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         }
         private eDiameterAvpDataType mDataType;
         [IsSerializedForLocalRepository]
+        [XmlAttribute("type")]
         public eDiameterAvpDataType DataType
         {
             get
@@ -166,6 +155,23 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 {
                     mParentName = value;
                     OnPropertyChanged(nameof(ParentName));
+                }
+            }
+        }
+
+        private string? mAVPenumName;
+        [XmlAttribute("enumName")]
+        public string? AVPEnumName
+        {
+            get
+            {
+                return mAVPenumName ?? string.Empty;
+            }
+            set
+            {
+                if (mAVPenumName != value)
+                {
+                    mAVPenumName = value;
                 }
             }
         }

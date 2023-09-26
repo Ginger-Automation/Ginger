@@ -14,12 +14,14 @@ using System.Xml;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.IO;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace Amdocs.Ginger.CoreNET.DiameterLib
 {
     public class DiameterUtils
     {
         private const string DIAMETER_AVP_DICTIONARY_FILENAME = "AVPDictionary.xml";
+        private const string DIAMETER_AVP_ENUMS_NAMESPACE = "Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums+";
         private static ObservableList<DiameterAVP> mAvpDictionaryList;
         private static readonly object dictionaryLock = new object();
         private static readonly object fileLock = new object();
@@ -77,30 +79,18 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         public static ObservableList<DiameterAVP> LoadDictionary()
         {
             ObservableList<DiameterAVP> avpListDictionary = new ObservableList<DiameterAVP>();
-            string resourcePath = Path.Combine(Path.GetDirectoryName(typeof(DiameterUtils).Assembly.Location), "DiameterLib", DIAMETER_AVP_DICTIONARY_FILENAME);
+            string folderName = "DiameterLib";
+            string resourcePath = Path.Combine(Path.GetDirectoryName(typeof(DiameterUtils).Assembly.Location), folderName, DIAMETER_AVP_DICTIONARY_FILENAME);
             try
             {
-                using (DataSet dataSet1 = new DataSet())
+                using (FileStream fs = new FileStream(resourcePath, FileMode.Open))
                 {
-                    dataSet1.ReadXml(resourcePath);
-                    DataTable dataTable = dataSet1.Tables.Count > 0 ? dataSet1.Tables[0] : null;
-                    if (dataTable != null)
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(DiameterAvpDictionary));
+                    DiameterAvpDictionary avpList = (DiameterAvpDictionary)xmlSerializer.Deserialize(fs);
+
+                    if (avpList != null && avpList.AvpDictionaryList != null)
                     {
-                        foreach (DataRow row in dataTable.Rows)
-                        {
-                            DiameterAVP avp = new DiameterAVP()
-                            {
-                                Name = row["name"].ToString(),
-                                Code = Convert.ToInt32(row["code"]),
-                                DataType = (eDiameterAvpDataType)Enum.Parse(typeof(eDiameterAvpDataType), row["type"].ToString()),
-                                IsMandatory = Convert.ToBoolean(row["isMandatory"]),
-                                IsVendorSpecific = Convert.ToBoolean(row["isVendorSpecific"]),
-                            };
-                            avp.IsGrouped = avp.DataType == eDiameterAvpDataType.Grouped;
-                            avpListDictionary.Add(avp);
-                        }
-                        var sortedDictionary = avpListDictionary.OrderBy(a => a.Name).ToList();
-                        avpListDictionary = new ObservableList<DiameterAVP>(sortedDictionary);
+                        avpListDictionary = new ObservableList<DiameterAVP>(avpList.AvpDictionaryList);
                     }
                 }
             }
@@ -111,6 +101,10 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             catch (XmlException ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Failed to read AVPs dictionary from file '{DIAMETER_AVP_DICTIONARY_FILENAME}'. Issue: {ex.Message}{Environment.NewLine}Stack: {ex.StackTrace}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to deserialize AVPs dictionary from file '{DIAMETER_AVP_DICTIONARY_FILENAME}'. Issue: {ex.Message}{Environment.NewLine}Stack: {ex.StackTrace}");
             }
             catch (Exception ex)
             {
@@ -203,31 +197,65 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         private static string CreateAVPAsString(DiameterAVP avp, int identLevel = 1)
         {
             StringBuilder stringBuilder = new StringBuilder();
+            string avpString = "avp";
+            string groupedAvp = "groupedavp";
             string identation = new string('\t', identLevel);
+            string displayValue = avp.ValueForDriver;
             if (avp != null)
             {
                 if (avp.DataType == eDiameterAvpDataType.Grouped)
                 {
-                    stringBuilder.Append($"{identation}<grouped avp name=\"{avp.Name}\" mandatory=\"{avp.IsMandatory.ToString().ToLower()}\">");
+                    stringBuilder.Append($"{identation}<{groupedAvp} name=\"{avp.Name}\" mandatory=\"{avp.IsMandatory.ToString().ToLower()}\">");
                     if (avp.NestedAvpList != null && avp.NestedAvpList.Any())
                     {
                         foreach (DiameterAVP nestedAVP in avp.NestedAvpList)
                         {
                             stringBuilder.Append(Environment.NewLine + CreateAVPAsString(nestedAVP, identLevel + 1));
                         }
-                        stringBuilder.Append($"{Environment.NewLine}{identation}</grouped avp>");
+                        stringBuilder.Append($"{Environment.NewLine}{identation}</{groupedAvp}>");
                     }
                     else
                     {
-                        stringBuilder.Append($" </grouped avp>");
+                        stringBuilder.Append($" </{groupedAvp}>");
                     }
                 }
                 else
                 {
-                    stringBuilder.Append($"{identation}<avp name=\"{avp.Name}\" mandatory=\"{avp.IsMandatory.ToString().ToLower()}\" value=\"{avp.ValueForDriver}\" </avp>");
+                    if (avp.DataType == eDiameterAvpDataType.Enumerated)
+                    {
+                        var enumValue = TryGetAvpValueAsAvpEnumValue(avp);
+                        displayValue = !string.IsNullOrEmpty(enumValue) ? enumValue : displayValue;
+                    }
+
+                    stringBuilder.Append($"{identation}<{avpString} name=\"{avp.Name}\" mandatory=\"{avp.IsMandatory.ToString().ToLower()}\" value=\"{displayValue}\" </{avpString}>");
                 }
             }
             return stringBuilder.ToString();
+        }
+
+        private static string TryGetAvpValueAsAvpEnumValue(DiameterAVP avp)
+        {
+            try
+            {
+                string avpEnumTypeName = AvpDictionaryList.FirstOrDefault(x => x.Code == avp.Code)?.AVPEnumName;
+                if (!string.IsNullOrEmpty(avpEnumTypeName))
+                {
+                    avpEnumTypeName = $"{DIAMETER_AVP_ENUMS_NAMESPACE}{avpEnumTypeName}";
+                    Type valueEnumType = Type.GetType(avpEnumTypeName);
+
+                    if (valueEnumType != null && valueEnumType.IsEnum)
+                    {
+                        bool isEnumValueSuccess = Enum.TryParse(valueEnumType, avp.ValueForDriver, true, out object valueAsEnum);
+                        return isEnumValueSuccess ? General.GetEnumValueDescription(valueEnumType, valueAsEnum) : string.Empty;
+                    }
+                }
+                return string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error on TryGetValueAsEnumValue for Enumerated avp: {avp.Name} {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                return string.Empty;
+            }
         }
         public bool ConstructDiameterRequest(ActDiameter act)
         {
@@ -2025,20 +2053,27 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             mAct.AddOrUpdateReturnParamActual("Raw Request: ", RequestFileContent);
             mAct.AddOrUpdateReturnParamActual("Raw Response: ", ResponseFileContent);
         }
-        private void ParseResponseAvpToOutputParams(DiameterAVP avp)
+        private void ParseResponseAvpToOutputParams(DiameterAVP avp, string parentPath = "")
         {
-            mAct.AddOrUpdateReturnParamActual($"AVP({avp.Name}): ", avp.Value);
+            string paramName = $"{avp.Name}: ";
+            int avpInstanceCount = mAct.GetReturnParamCount(paramName);
+
+            string paramFullPath = string.IsNullOrEmpty(parentPath) ?
+                $"AVPs/{avp.Name}[{avpInstanceCount + 1}]"
+                : $"{parentPath}/{avp.Name}[{avpInstanceCount + 1}]";
+
+            mAct.AddOrUpdateReturnParamActualWithPath(paramName, avp.Value, paramFullPath);
+
             if (avp.DataType == eDiameterAvpDataType.Grouped)
             {
                 if (avp.NestedAvpList != null)
                 {
                     foreach (var childAVP in avp.NestedAvpList)
                     {
-                        ParseResponseAvpToOutputParams(childAVP);
+                        ParseResponseAvpToOutputParams(childAVP, parentPath: paramFullPath);
                     }
                 }
             }
-
         }
         private string SaveToFile(string fileType, string fileContent, string saveDirectory, ActDiameter act)
         {

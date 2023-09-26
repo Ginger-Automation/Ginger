@@ -36,7 +36,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action in case you want to send Diameter messages");
+            TBH.AddText($"Use this action in case you want to send messages using the Diameter protocol.{System.Environment.NewLine}");
+            TBH.AddText($"Diameter protocol is a robust and extensible protocol used primarily in telecommunications and networking contexts and is designed to provide various authentication, authorization, and accounting (AAA) services.{System.Environment.NewLine}");
         }
         public eDiameterMessageType DiameterMessageType
         {
