@@ -477,8 +477,8 @@ namespace Ginger.SolutionGeneral
                 iteration.CategoryOptionalValues.Add(new SolutionCategoryValue("Iteration 2"));
                 SolutionCategories.Add(iteration);
 
-                SolutionCategories.Add(new SolutionCategory(eSolutionCategories.BusinessProcessTags));
-                SolutionCategories.Add(new SolutionCategory(eSolutionCategories.SubBusinessProcessTags));
+                SolutionCategories.Add(GetBusinessProcessTagCategory());
+                SolutionCategories.Add(GetSubBusinessProcessTagCategory());
 
                 SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory1));
                 SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory2));
@@ -487,17 +487,38 @@ namespace Ginger.SolutionGeneral
             else if(SolutionCategories.Count < Enum.GetNames(typeof(eSolutionCategories)).Length)
             {
                 var allSolutionCategories = SolutionCategories.Select(x =>x.Category).ToList();
-                if(!allSolutionCategories.Any(x =>x.Equals(eSolutionCategories.BusinessProcessTags)))
+                if(!allSolutionCategories.Any(x =>x.Equals(eSolutionCategories.BusinessProcessTag)))
                 {
-                    SolutionCategories.Add(new SolutionCategory(eSolutionCategories.BusinessProcessTags));
+                    SolutionCategories.Add(GetBusinessProcessTagCategory());
                 }
-                if (!allSolutionCategories.Any(x => x.Equals(eSolutionCategories.SubBusinessProcessTags)))
+                if (!allSolutionCategories.Any(x => x.Equals(eSolutionCategories.SubBusinessProcessTag)))
                 {
-                    SolutionCategories.Add(new SolutionCategory(eSolutionCategories.SubBusinessProcessTags));
+                    SolutionCategories.Add(GetSubBusinessProcessTagCategory());
                 }
             }
 
             
+        }
+
+        private SolutionCategory GetSubBusinessProcessTagCategory()
+        {
+            SolutionCategory subBusinessProcessTags = new(eSolutionCategories.SubBusinessProcessTag);
+            subBusinessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Customer Payment (CP)"));
+            subBusinessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Customer Question (CHQ)"));
+            subBusinessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Order Creation (COP)"));
+
+            return subBusinessProcessTags;
+        }
+
+        private SolutionCategory GetBusinessProcessTagCategory()
+        {
+            SolutionCategory businessProcessTags = new(eSolutionCategories.BusinessProcessTag);
+            businessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Prepaid"));
+            businessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Postpaid"));
+            businessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Customer Creation"));
+            businessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Subscriber Creation"));
+            businessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Contact Creation"));
+            return businessProcessTags;
         }
 
         public List<ApplicationPlatform> GetListOfPomSupportedPlatform()

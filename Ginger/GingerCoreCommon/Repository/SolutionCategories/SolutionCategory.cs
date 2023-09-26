@@ -32,16 +32,16 @@ namespace Amdocs.Ginger.CoreNET.Run.SolutionCategory
         Release,
         [DescriptionAttribute("Iteration")]
         Iteration,
+        [DescriptionAttribute("Business Process Tag")]
+        BusinessProcessTag,
+        [DescriptionAttribute("Sub Business Process Tag")]
+        SubBusinessProcessTag,
         [DescriptionAttribute("User Category 1")]
         UserCategory1,
         [DescriptionAttribute("User Category 2")]
         UserCategory2,
         [DescriptionAttribute("User Category 3")]
-        UserCategory3,
-        [DescriptionAttribute("Business Process Tags")]
-        BusinessProcessTags,
-        [DescriptionAttribute("Sub Business Process Tags")]
-        SubBusinessProcessTags,
+        UserCategory3
     }
 
     public class SolutionCategory : RepositoryItemBase
