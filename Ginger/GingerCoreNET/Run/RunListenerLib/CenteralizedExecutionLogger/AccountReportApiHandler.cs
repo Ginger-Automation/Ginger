@@ -49,7 +49,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string EXECUTION_ID_VALIDATION = "api/AccountReport/ExecutionIdValidation/";
         private const string GET_BUSINESSFLOW_EXECUTION_DATA = "api/AccountReport/GetAccountReportBusinessflowsByExecutionId/";
         private const string GET_RUNSET_EXECUTION_DATA = "api/AccountReport/GetRunsetHLExecutionInfo/";
-        
+        private const string GET_RUNNER_EXECUTION_DATA = "api/AccountReport/GetAccountReportRunnersByExecutionId/";
+
+
 
         public AccountReportApiHandler(string apiUrl)
         {
@@ -423,6 +425,38 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Exception while validating execution id { message}", ex);
+                }
+                return accountReportrunset;
+            }
+            return accountReportrunset;
+        }
+
+        //GET_RUNNER_EXECUTION_DATA
+
+        public List<AccountReportRunner> GetRunnerExecutionDataFromCentralDB(Guid executionId)
+        {
+            List<AccountReportRunner> accountReportrunset = new List<AccountReportRunner>();
+            if (restClient != null)
+            {
+                RestRequest restRequest = (RestRequest)new RestRequest(GET_RUNNER_EXECUTION_DATA + executionId, Method.Get);
+                string message = string.Format("execution id : {0}", executionId);
+                try
+                {
+                    RestResponse response = restClient.Execute(restRequest);
+                    if (response.IsSuccessful)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Successfully validated execution id {message}");
+                        accountReportrunset = JsonConvert.DeserializeObject<List<AccountReportRunner>>(response.Content);
+                        return accountReportrunset;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to validate {message} Response: {response.Content} ");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception while validating execution id {message}", ex);
                 }
                 return accountReportrunset;
             }

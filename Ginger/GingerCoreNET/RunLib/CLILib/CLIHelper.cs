@@ -70,6 +70,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         public string SealightsEntityLevel;
         public bool SealightsTestRecommendations;
 
+        public bool ReRunFailed;
+        public string ReferenceExecutionID;
+        public string RerunLevel;
+
         public bool SelfHealingCheckInConfigured;
 
         bool mShowAutoRunWindow; // default is false except in ConfigFile which is true to keep backward compatibility        
@@ -202,6 +206,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (mRunsetExecutor.RunSetConfig == null)
                 {
                     SelectRunset();
+                    mRunSetConfig.ReRunConfigurations.Active = ReRunFailed;
+                    mRunSetConfig.ReRunConfigurations.ReferenceExecutionID = Guid.Parse(ReferenceExecutionID);
+                    mRunSetConfig.ReRunConfigurations.RerunLevel = (eReRunLevel)Enum.Parse(typeof(eReRunLevel), RerunLevel);
                 }
                 else
                 {
@@ -209,7 +216,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 }
                 SelectEnv();
                 mRunSetConfig.RunWithAnalyzer = RunAnalyzer;
-
                 if (mRunSetConfig.ReRunConfigurations != null && mRunSetConfig.ReRunConfigurations.Active)
                 {
                     if(mRunSetConfig.ReRunConfigurations.ReferenceExecutionID == null)
@@ -312,6 +318,34 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         else
                         {
                             Reporter.ToLog(eLogLevel.INFO, string.Format("Their is no record found to re run in reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                            Result = false;
+                        }
+                    }
+                    else if(mRunSetConfig.ReRunConfigurations.RerunLevel == eReRunLevel.Runner)
+                    {
+                        List<AccountReportRunner> accountReportRunnerList = accountReportApiHandler.GetRunnerExecutionDataFromCentralDB((Guid)mRunSetConfig.ReRunConfigurations.ReferenceExecutionID);
+                        if (accountReportRunnerList != null)
+                        {
+                            if(accountReportRunnerList.Any(x=> x.RunStatus.Equals(eRunStatus.Failed.ToString(),StringComparison.CurrentCultureIgnoreCase)))
+                            {
+                                var FailedRunnerGuidList = accountReportRunnerList.Where(x => x.RunStatus.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)).Select(x => x.Id).ToList();
+                                foreach (GingerRunner runner in mRunsetExecutor.RunSetConfig.GingerRunners)
+                                {
+                                    if (!FailedRunnerGuidList.Contains(runner.Guid))
+                                    {
+                                        runner.Active = false;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Reporter.ToLog(eLogLevel.INFO, string.Format("All runner are already Pass, in reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
+                                Result = false;
+                            }
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.INFO, string.Format("No record found to re run for reference execution id: {0}", mRunSetConfig.ReRunConfigurations.ReferenceExecutionID));
                             Result = false;
                         }
                     }
