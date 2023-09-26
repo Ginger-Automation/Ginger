@@ -211,7 +211,20 @@ namespace GingerCore.Actions.XML
                         JsonExtended JE = new JsonExtended(Tokenfound.ToString());
                         foreach (JsonExtended item in JE.GetEndingNodes())
                         {
-                            AddOrUpdateReturnParamActualWithPath(item.Name, item.JsonString, item.Path);
+                            JToken token = item.GetToken();
+                            string JsonResult = string.Empty;
+
+                            if (token.Type.Equals(JTokenType.Date))
+                            {
+                                JsonResult = token.Value<DateTime>().ToString("yyyy-MM-ddTHH:mm:ssZ");
+                            }
+                            else
+                            {
+                                JsonResult = item.JsonString;
+                            }
+                            AddOrUpdateReturnParamActualWithPath(item.Name, JsonResult, item.Path);
+
+
                         }
                     }
                 }
