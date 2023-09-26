@@ -1,8 +1,10 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SourceControl;
 using GingerCore;
+using GingerTest.WizardLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
@@ -15,15 +17,15 @@ namespace Ginger.ConflictResolve
 {
     public class ResolveMergeConflictWizard : WizardBase
     {
-        private readonly Conflict _conflictResolve;
+        private readonly Conflict _conflict;
 
         public override string Title => "Resolve Merge Conflict";
 
-        public Comparison Comparison => _conflictResolve.Comparison;
+        public Comparison Comparison => _conflict.Comparison;
 
-        public ResolveMergeConflictWizard(Conflict conflictResolve)
+        public ResolveMergeConflictWizard(Conflict conflict)
         {
-            _conflictResolve = conflictResolve;
+            _conflict = conflict;
             AddPages();
         }
 
@@ -42,14 +44,37 @@ namespace Ginger.ConflictResolve
                 new PreviewMergedPage());
         }
 
-        public RepositoryItemBase GetMergedItem()
+        public bool TryGetOrCreateMergedItem(out RepositoryItemBase? mergedItem)
         {
-            return _conflictResolve.GetMergedItem();
+            bool hasMergedItem = _conflict.TryGetMergedItem(out mergedItem);
+            if (hasMergedItem)
+            {
+                return true;
+            }
+            else
+            {
+                bool wasCreated = _conflict.TryCreateAndSetMergedItemFromComparison(out mergedItem);
+                return wasCreated;
+            }
         }
 
         public override void Finish()
         {
-            //no action required
+            int unselectedComparisonCount = _conflict.Comparison.UnselectedComparisonCount();
+            if (unselectedComparisonCount > 0)
+            {
+                //since the currenct state of this conflict has unhandled comparisons, discard the previously created merged item
+                _conflict.DiscardMergedItem();
+                Reporter.ToUser(eUserMsgKey.HasUnhandledConflicts, unselectedComparisonCount);
+            }
+            else
+            {
+                //if merged item is not already created, then create it
+                if (!_conflict.TryGetMergedItem(out RepositoryItemBase? _))
+                {
+                    _conflict.TryCreateAndSetMergedItemFromComparison();
+                }
+            }
         }
     }
 }

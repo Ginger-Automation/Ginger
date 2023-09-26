@@ -61,14 +61,21 @@ namespace Ginger.ConflictResolve
             }
             else if (_comparison.DataType != null && typeof(RepositoryItemBase).IsAssignableFrom(_comparison.DataType))
             {
-                RepositoryItemBase? rib = (RepositoryItemBase?)Activator.CreateInstance(_comparison.DataType);
-                if (rib != null)
+                if (_comparison.DataType.IsAbstract || _comparison.DataType.GetConstructor(Type.EmptyTypes) == null)
                 {
-                    itemImage.ImageType = rib.ItemImageType;
+                    itemImage.ImageType = eImageType.Unknown;
                 }
                 else
                 {
-                    itemImage.ImageType = eImageType.Info;
+                    RepositoryItemBase? rib = (RepositoryItemBase?)Activator.CreateInstance(_comparison.DataType);
+                    if (rib != null)
+                    {
+                        itemImage.ImageType = rib.ItemImageType;
+                    }
+                    else
+                    {
+                        itemImage.ImageType = eImageType.Info;
+                    }
                 }
             }
             else

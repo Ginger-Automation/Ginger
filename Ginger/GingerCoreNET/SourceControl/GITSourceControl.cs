@@ -24,12 +24,12 @@ using GingerCore.Drivers.Selenium.SeleniumBMP;
 using GingerCoreNET.SourceControl;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
+using NUglify.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -167,14 +167,18 @@ namespace GingerCore.SourceControl
             return conflictPaths;
         }
 
-        public override bool DeleteFile(string Path, ref string error)
+        public override bool DeleteFile(string path, ref string error)
         {
             try
             {
-                using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                using Repository repo = new(RepositoryRootFolder);
+                path = Path.GetRelativePath(RepositoryRootFolder, path).Replace(@"\", @"/");
+                Conflict conflict = repo.Index.Conflicts[path];
+                if(conflict != null)
                 {
-                    Commands.Remove(repo, Path);
+                    Stage(path);
                 }
+                Commands.Remove(repo, path);
             }
             catch (Exception e)
             {
@@ -382,11 +386,11 @@ namespace GingerCore.SourceControl
                             {
                                 SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved;
                             }
-                            if (item.State == FileStatus.NewInWorkdir)
+                            if (item.State == FileStatus.NewInWorkdir || item.State == FileStatus.NewInIndex)
                             {
                                 SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.New;
                             }
-                            if (item.State == FileStatus.DeletedFromWorkdir)
+                            if (item.State == FileStatus.DeletedFromWorkdir || item.State == FileStatus.DeletedFromIndex)
                             {
                                 SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Deleted;
                             }
@@ -556,39 +560,71 @@ namespace GingerCore.SourceControl
             return true;
         }
 
+        public override string GetLocalContentForConflict(string conflictFilePath)
+        {
+            conflictFilePath = Path.GetRelativePath(RepositoryRootFolder, conflictFilePath);
+            conflictFilePath = conflictFilePath.Replace(@"\", @"/");
+            using Repository repo = new(RepositoryRootFolder);
+            Conflict conflict = repo.Index.Conflicts[conflictFilePath]; //does this return null if no conflict for given path?
+            if(conflict.Ours == null)
+            {
+                return string.Empty;
+            }
+
+            Blob oursBlob = (Blob)repo.Lookup(conflict.Ours.Id);
+            return oursBlob.GetContentText();
+        }
+
+        public override string GetRemoteContentForConflict(string conflictFilePath)
+        {
+            conflictFilePath = Path.GetRelativePath(RepositoryRootFolder, conflictFilePath);
+            conflictFilePath = conflictFilePath.Replace(@"\", @"/");
+            using Repository repo = new(RepositoryRootFolder);
+            Conflict conflict = repo.Index.Conflicts[conflictFilePath]; //does this return null if no conflict for given path?
+            if (conflict.Theirs == null)
+            {
+                return string.Empty;
+            }
+
+            Blob theirsBlob = (Blob)repo.Lookup(conflict.Theirs.Id);
+            return theirsBlob.GetContentText();
+        }
+
         private const string ConflictStartMarker = "<<<<<<<";
         private const string ConflictPartitionMarker = "=======";
         private const string ConflictEndMarker = ">>>>>>>";
         private const string CR_LF = "\r\n";
 
-        public override string GetLocalContentFromConflicted(string conflictedContent)
+        private string GetLocalContentFromConflictedContent(string conflictedContent)
         {
+            if(!conflictedContent.Contains(ConflictStartMarker))
+            {
+                return conflictedContent;
+            }
+
             string leadingContent = GetLeadingContentFromConflicted(conflictedContent);
             string headContent = GetHeadContentFromConflicted(conflictedContent);
             string trailingContent = GetTrailingContentFromConflicted(conflictedContent);
 
             string localContent = leadingContent + headContent + trailingContent;
-
-            if (localContent.Contains(ConflictStartMarker))
-            {
-                localContent = GetLocalContentFromConflicted(localContent);
-            }
+            localContent = GetLocalContentFromConflictedContent(localContent);
 
             return localContent;
         }
 
-        public override string GetRemoteContentFromConflicted(string conflictedContent)
+        private string GetRemoteContentFromConflictedContent(string conflictedContent)
         {
+            if (!conflictedContent.Contains(ConflictStartMarker))
+            {
+                return conflictedContent;
+            }
+
             string leadingContent = GetLeadingContentFromConflicted(conflictedContent);
             string branchContent = GetBranchContentFromConflicted(conflictedContent);
             string trailingContent = GetTrailingContentFromConflicted(conflictedContent);
 
             string remoteContent = leadingContent + branchContent + trailingContent;
-
-            if (remoteContent.Contains(ConflictStartMarker))
-            {
-                remoteContent = GetRemoteContentFromConflicted(remoteContent);
-            }
+            remoteContent = GetRemoteContentFromConflictedContent(remoteContent);
 
             return remoteContent;
         }

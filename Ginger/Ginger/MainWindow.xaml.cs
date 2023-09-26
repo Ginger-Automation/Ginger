@@ -170,15 +170,6 @@ namespace Ginger
                     WorkSpace.Instance.UserProfile.NewHelpLibraryMessgeShown = true;
                 }
 
-                if(WorkSpace.Instance.BetaFeatures.AllowMergeConflict)
-                {
-                    xResolveConflictManualMenuItem.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    xResolveConflictManualMenuItem.Visibility = Visibility.Collapsed;
-                }
-
                 if (General.IsAdmin())
                 {
                     xAdminModeIcon.ImageType = eImageType.AdminUser;
@@ -770,24 +761,10 @@ namespace Ginger
             Reporter.HideStatusMessage();
         }
 
-        private void ResolveConflictsLocalMenuItem_Click(object sender, RoutedEventArgs e)
+        private void xResolveConflictsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
-            ResolveConflictWindow resolveConflictWindow = new(conflictPaths, defaultResolutionType: Conflict.ResolutionType.KeepLocal);
-            resolveConflictWindow.ShowAsWindow();
-        }
-
-        private void ResolveConflictsServerMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
-            ResolveConflictWindow resolveConflictWindow = new(conflictPaths, defaultResolutionType: Conflict.ResolutionType.AcceptServer);
-            resolveConflictWindow.ShowAsWindow();
-        }
-
-        private void ResolveConflictsManuallyMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
-            ResolveConflictWindow resolveConflictWindow = new(conflictPaths, defaultResolutionType: Conflict.ResolutionType.CherryPick);
+            ResolveConflictWindow resolveConflictWindow = new(conflictPaths);
             resolveConflictWindow.ShowAsWindow();
         }
 
