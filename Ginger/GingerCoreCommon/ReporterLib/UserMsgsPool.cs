@@ -107,7 +107,7 @@ namespace Amdocs.Ginger.Common
         AutomationTabExecResultsNotExists, FolderNamesAreTooLong, FolderSizeTooSmall, DefaultTemplateCantBeDeleted, FileNotExist, ExecutionsResultsProdIsNotOn, ExecutionsResultsNotExists, ExecutionsResultsToDelete, AllExecutionsResultsToDelete, FilterNotBeenSet, RetreivingAllElements, ClickElementAgain, CloseFilterPage,
         BusinessFlowNeedTargetApplication, HTMLReportAttachment, ImageSize,
         GherkinAskToSaveFeatureFile, GherkinScenariosGenerated, GherkinNotifyFeatureFileExists, GherkinNotifyFeatureFileSelectedFromTheSolution, GherkinNotifyBFIsNotExistForThisFeatureFile, GherkinFileNotFound, GherkinColumnNotExist, GherkinActivityNotFound, GherkinBusinessFlowNotCreated, GherkinFeatureFileImportedSuccessfully, GherkinFeatureFileImportOnlyFeatureFileAllowedErrorMessage,
-        AskIfSureWantToDeLink, AnalyzerFoundIssues, AnalyzerSaveRunSet,
+        AskIfSureWantToDeLink, AnalyzerFoundIssues, AnalyzerFoundNoIssues, AnalyzerSaveRunSet,
         AskIfSureWantToUndoChange,
         CurrentActionNotSaved,
         LoseChangesWarn,
@@ -170,7 +170,8 @@ namespace Amdocs.Ginger.Common
         EnvParamNameEmpty,
         NoPublishRepositoryInfo,
         NotAllowedForMappedRuntimeValue,
-        HasHandledConflicts,
+        HandleConflictsBeforeMovingForward,
+        HasUnhandledConflicts,
         UncommitedChangesPreventCheckout
     }
 
@@ -260,6 +261,7 @@ namespace Amdocs.Ginger.Common
 
             #region Analyzer
             Reporter.UserMsgsPool.Add(eUserMsgKey.AnalyzerFoundIssues, new UserMsg(eUserMsgType.WARN, "Issues Detected By Analyzer", "Critical/High Issues were detected, please handle them before execution.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AnalyzerFoundNoIssues, new UserMsg(eUserMsgType.INFO, "No Issues Detected By Analyzer", "No Issues were found.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AnalyzerSaveRunSet, new UserMsg(eUserMsgType.WARN, "Issues Detected By Analyzer", "Please save the " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " first", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion Analyzer
 
@@ -308,7 +310,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionToSourceControl, new UserMsg(eUserMsgType.QUESTION, "Upload Solution", "The solution was created and loaded successfully.\nPlease make a note of the encryption key provided from solution details page." + Environment.NewLine + "Do you want to upload the Solution: '{0}' to Source Control?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionFailed, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Failed to Upload Solution to Source Control" + Environment.NewLine + "'{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlBranchNameEmpty, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Branch name cannot be empty.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.HasHandledConflicts, new UserMsg(eUserMsgType.ERROR, "Unselected Conflicts", "You have {0} unhandled conflicts, please handle them before moving forward.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.HandleConflictsBeforeMovingForward, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "You have {0} unhandled conflicts, please handle them before moving forward.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.HasUnhandledConflicts, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "Cannot merge since you have {0} unhandled conflicts.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UncommitedChangesPreventCheckout, new UserMsg(eUserMsgType.ERROR, "Uncommited Changes", "Local branch has uncommited changes, check-in them before getting latest.", eUserMsgOption.OK, eUserMsgSelection.OK));
             #endregion SourceControl Messages
 

@@ -759,7 +759,7 @@ namespace Ginger.AnalyzerLib
                     }
                     else if (AI.GetType() == typeof(AnalyzeActivity))
                     {
-                        bs = ((AnalyzeActivity)AI).mBusinessFlow;
+                        bs = ((AnalyzeActivity)AI).BusinessFlow;
                     }
                     else if (AI.GetType() == typeof(AnalyzeAction))
                     {
@@ -828,21 +828,14 @@ namespace Ginger.AnalyzerLib
                 Act actionIssue = currentAnalyzeAction.mAction;
                 actionIssue.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
                 ActionEditPage actedit = new ActionEditPage(actionIssue, General.eRIPageViewMode.ChildWithSave, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
-                //setting the BusinessFlow on the Action in Order to save 
-                //actedit.mActParentBusinessFlow = ((AnalyzeAction)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
-                //actedit.ap = null;
                 actedit.ShowAsWindow(eWindowShowStyle.Dialog);
             }
 
             if (AnalyzerItemsGrid.CurrentItem is AnalyzeActivity)
             {
                 AnalyzeActivity currentAnalyzeActivity = (AnalyzeActivity)AnalyzerItemsGrid.CurrentItem;
-                Activity ActivityIssue = currentAnalyzeActivity.mActivity;
-                //ActivityIssue.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-                GingerWPF.BusinessFlowsLib.ActivityPage ActivityEdit = new GingerWPF.BusinessFlowsLib.ActivityPage(ActivityIssue, new Context() { BusinessFlow = currentAnalyzeActivity.mBusinessFlow }, General.eRIPageViewMode.ChildWithSave);
-                //setting the BusinessFlow on the Activity in Order to save
-                //ActivityEdit.mBusinessFlow = ((AnalyzeActivity)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
-                //ActivityEdit.ap = null;
+                Activity ActivityIssue = currentAnalyzeActivity.Activity;
+                GingerWPF.BusinessFlowsLib.ActivityPage ActivityEdit = new GingerWPF.BusinessFlowsLib.ActivityPage(ActivityIssue, new Context() { BusinessFlow = currentAnalyzeActivity.BusinessFlow }, General.eRIPageViewMode.ChildWithSave);
                 ActivityEdit.ShowAsWindow(eWindowShowStyle.Dialog);
 
             }

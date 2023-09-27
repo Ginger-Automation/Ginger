@@ -426,7 +426,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             if (refreshNeeded)
             {
                 //refresh source and target folder nodes
-                mTreeView.Tree.RefresTreeNodeChildrens(mNodeManipulationsSource);
+                mTreeView.Tree.RefreshTreeNodeChildrens(mNodeManipulationsSource);
                 mTreeView.Tree.RefreshSelectedTreeNodeChildrens();
             }
         }
