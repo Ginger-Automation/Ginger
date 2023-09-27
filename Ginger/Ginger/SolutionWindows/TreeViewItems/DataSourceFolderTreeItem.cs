@@ -200,7 +200,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             AddNewDataSourcePage ADSP = new AddNewDataSourcePage(mDataSourcesRepositoryFolder);
             ADSP.ShowAsWindow();
 
-            mTreeView.Tree.RefresTreeNodeChildrens(this);
+            mTreeView.Tree.RefreshTreeNodeChildrens(this);
         }
     }
 }
