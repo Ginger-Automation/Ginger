@@ -19,7 +19,7 @@
         <ComboBox.ItemTemplate>
             <DataTemplate>
                 <CheckBox Content="{Binding Title}"
-                          IsChecked="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          IsChecked="{Binding Path=IsSelected, Mode=TwoWay}"
                           Tag="{RelativeSource FindAncestor, AncestorType={x:Type ComboBox}}"
                            Click="ConsumerCheckBox_Click" />
             </DataTemplate>
@@ -27,7 +27,6 @@
         <ComboBox.Template>
             <ControlTemplate TargetType="ComboBox">
                 <Grid>
-
                     <ToggleButton 
                         Name="ToggleButton" Content="{Binding Path=Text,Mode=TwoWay,RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
                        Grid.Column="2" IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
