@@ -490,6 +490,8 @@ namespace Ginger.SolutionGeneral
                 case eSolutionCategories.UserCategory3:
                     SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory3));
                     break;
+                default:
+                    break;
             }
         }
 
