@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net7.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
@@ -612,7 +612,7 @@
       <Version>108.0.3</Version>
     </PackageReference>
     <PackageReference Include="SharpSvn" Version="1.14001.156" />
-    <PackageReference Include="SkiaSharp" Version="2.88.3" />
+    <PackageReference Include="SkiaSharp" Version="2.88.6" />
     <PackageReference Include="SkiaSharp.Views.Desktop.Common" Version="2.88.3" />
     <PackageReference Include="SSH.NET">
       <Version>2020.0.1</Version>
