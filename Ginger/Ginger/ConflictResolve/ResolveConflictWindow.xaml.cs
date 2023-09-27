@@ -41,6 +41,9 @@ using System.Threading.Tasks;
 using Amdocs.Ginger.UserControls;
 using Amdocs.Ginger.Core;
 using Amdocs.Ginger.Common.Enums;
+using OctaneRepositoryStd.BLL;
+using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Ginger.ConflictResolve
 {
@@ -51,6 +54,9 @@ namespace Ginger.ConflictResolve
     {
         private GenericWindow? _genericWindow = null;
         private readonly ObservableList<Conflict> _conflicts;
+        private ImageMakerControl _genericWindowLoaderIcon;
+        private Button _resolveButton;
+        private Button _analyzeButton;
 
         public bool IsResolved { get; private set; }
 
@@ -61,6 +67,7 @@ namespace Ginger.ConflictResolve
             InitializeComponent();
             _conflicts = CreateConflictList(conflictPaths);
             SetGridView();
+            CreateControlsForGenericWindow();
         }
 
         private ObservableList<Conflict> CreateConflictList(IEnumerable<string> conflictPaths)
@@ -78,32 +85,96 @@ namespace Ginger.ConflictResolve
             return conflicts;
         }
 
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        [MemberNotNull(nameof(_genericWindowLoaderIcon), nameof(_resolveButton), nameof(_analyzeButton))]
+        private void CreateControlsForGenericWindow()
         {
-            Button resolveBtn = new()
+            _resolveButton = new()
             {
-                Content = "Resolve"
+                Content = "Resolve",
+                ToolTip = "Resolve selected conflicts"
             };
-            resolveBtn.Click += new RoutedEventHandler(resolve_Click);
+            _resolveButton.Click += new RoutedEventHandler(resolve_Click);
 
-            Button analyzeBtn = new()
+            _analyzeButton = new()
             {
                 Content = "Analyze",
+                ToolTip = "Analyze selected conflicts"
             };
-            analyzeBtn.Click += analyzeBtn_Click;
+            _analyzeButton.Click += analyzeBtn_Click;
 
-            GingerCore.General.LoadGenericWindow(ref _genericWindow, App.MainWindow, windowStyle, "Source Control Conflicts", this, new ObservableList<Button> { resolveBtn, analyzeBtn }, true, "Do Not Resolve", CloseWindow);
+            _genericWindowLoaderIcon = new ImageMakerControl()
+            {
+                Name = "xProcessingImage",
+                Height = 30,
+                Width = 30,
+                ImageType = eImageType.Processing,
+                Visibility = Visibility.Collapsed,
+            };
         }
+
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        {
+            GingerCore.General.LoadGenericWindow(
+                ref _genericWindow, 
+                owner: App.MainWindow, 
+                windowStyle, 
+                windowTitle: "Source Control Conflicts", 
+                windowPage: this, 
+                windowBtnsList: new ObservableList<Button> { _resolveButton, _analyzeButton }, 
+                showClosebtn: true, 
+                closeBtnText: "Do Not Resolve", 
+                closeEventHandler: CloseWindow, 
+                loaderElement: _genericWindowLoaderIcon);
+        }
+        
         private void resolve_Click(object sender, EventArgs e)
         {
-            Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
-            foreach (Conflict conflict in _conflicts)
+            try
             {
-                if(!conflict.IsSelectedForResolution || !conflict.CanResolve)
+                _genericWindowLoaderIcon.Visibility = Visibility.Visible;
+                Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
+                List<Conflict> resolvedConflicts = new();
+                foreach (Conflict conflict in _conflicts)
                 {
-                    continue;
+                    bool wasConflictResolved = ResolveConflict(conflict);
+                    if(wasConflictResolved)
+                    {
+                        resolvedConflicts.Add(conflict);
+                    }
                 }
 
+                if (resolvedConflicts.Count == _conflicts.Count)
+                {
+                    IsResolved = true;
+                }
+                else
+                {
+                    IsResolved = false;
+                }
+
+                resolvedConflicts.ForEach(resolvedConflict => _conflicts.Remove(resolvedConflict));
+            }
+            finally
+            {
+                _genericWindowLoaderIcon.Visibility = Visibility.Collapsed;
+                Reporter.HideStatusMessage();
+                if (IsResolved)
+                {
+                    CloseWindow();
+                }
+            }
+        }
+
+        private bool ResolveConflict(Conflict conflict)
+        {
+            if (!conflict.IsSelectedForResolution || !conflict.CanResolve)
+            {
+                return false;
+            }
+
+            bool wasConflictResolved = false;
+            try
+            {
                 switch (conflict.Resolution)
                 {
                     case ResolutionType.AcceptServer:
@@ -115,9 +186,9 @@ namespace Ginger.ConflictResolve
                     case ResolutionType.CherryPick:
                         NewRepositorySerializer serializer = new();
                         bool hasMergedItem = conflict.TryGetMergedItem(out RepositoryItemBase? mergedItem);
-                        if(!hasMergedItem)
+                        if (!hasMergedItem)
                         {
-                            throw new InvalidOperationException($"No merged item available for file {conflict.Path}.");
+                            throw new InvalidOperationException($"Merge Conflict failed for file '{conflict.Path}', please retry again or choose other options like 'Keep Local' or 'Accept Server'.");
                         }
                         if (mergedItem != null)
                         {
@@ -133,39 +204,38 @@ namespace Ginger.ConflictResolve
                     default:
                         break;
                 }
+                wasConflictResolved = true;
             }
-            IsResolved = true;
-            Reporter.HideStatusMessage();
-            CloseWindow();
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while resolving conflict for file '{conflict.Path}'.", ex);
+            }
+
+            return wasConflictResolved;
         }
 
         private void analyzeBtn_Click(object sender, RoutedEventArgs e)
         {
-            foreach(Conflict conflict in _conflicts)
+            foreach (Conflict conflict in _conflicts)
             {
-                if(!conflict.CanResolve)
-                {
-                    continue;
-                }
+                bool isSelected = conflict.IsSelectedForResolution;
+                bool isBusinessFlow = IsBusinessFlowFile(conflict.Path);
+                bool hasCherryPickResolution = conflict.Resolution == ResolutionType.CherryPick;
+                bool canResolve = conflict.CanResolve;
 
-                AnalyzeForConflict(conflict);
+                if(isSelected && isBusinessFlow && hasCherryPickResolution && canResolve)
+                {
+                    AnalyzeForConflict(conflict);
+                }
             }
         }
 
         private void AnalyzeForConflict(Conflict conflict)
         {
-            if (!IsBusinessFlowFile(conflict.Path))
+            bool hasMergedItem = conflict.TryGetMergedItem(out RepositoryItemBase? mergedItem);
+            if (hasMergedItem && mergedItem != null && mergedItem is BusinessFlow businessFlow)
             {
-                return;
-            }
-
-            if (conflict.Resolution == ResolutionType.CherryPick)
-            {
-                bool hasMergedItem = conflict.TryGetMergedItem(out RepositoryItemBase? mergedItem);
-                if (hasMergedItem && mergedItem != null && mergedItem is BusinessFlow businessFlow)
-                {
-                    Task.Run(() => AnalyzeBusinessFlow(businessFlow));
-                }
+                Task.Run(() => AnalyzeBusinessFlow(businessFlow));
             }
         }
 
@@ -176,9 +246,10 @@ namespace Ginger.ConflictResolve
 
         private async Task AnalyzeBusinessFlow(BusinessFlow businessFlow)
         {
-            Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
             try
             {
+                Dispatcher.Invoke(() => _genericWindowLoaderIcon.Visibility = Visibility.Visible);
+                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                 AnalyzerPage analyzerPage = null!;
 
                 Dispatcher.Invoke(() => analyzerPage = new());
@@ -194,6 +265,7 @@ namespace Ginger.ConflictResolve
             }
             finally
             {
+                Dispatcher.Invoke(() => _genericWindowLoaderIcon.Visibility = Visibility.Collapsed);
                 Dispatcher.Invoke(() => Reporter.HideStatusMessage());
             }
         }
@@ -307,7 +379,10 @@ namespace Ginger.ConflictResolve
         }
         private void CloseWindow()
         {
-            _genericWindow.Close();
+            if (_genericWindow != null)
+            {
+                _genericWindow.Close();
+            }
         }
 
 

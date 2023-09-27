@@ -828,9 +828,6 @@ namespace Ginger.AnalyzerLib
                 Act actionIssue = currentAnalyzeAction.mAction;
                 actionIssue.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
                 ActionEditPage actedit = new ActionEditPage(actionIssue, General.eRIPageViewMode.ChildWithSave, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
-                //setting the BusinessFlow on the Action in Order to save 
-                //actedit.mActParentBusinessFlow = ((AnalyzeAction)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
-                //actedit.ap = null;
                 actedit.ShowAsWindow(eWindowShowStyle.Dialog);
             }
 
@@ -838,11 +835,7 @@ namespace Ginger.AnalyzerLib
             {
                 AnalyzeActivity currentAnalyzeActivity = (AnalyzeActivity)AnalyzerItemsGrid.CurrentItem;
                 Activity ActivityIssue = currentAnalyzeActivity.Activity;
-                //ActivityIssue.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
                 GingerWPF.BusinessFlowsLib.ActivityPage ActivityEdit = new GingerWPF.BusinessFlowsLib.ActivityPage(ActivityIssue, new Context() { BusinessFlow = currentAnalyzeActivity.BusinessFlow }, General.eRIPageViewMode.ChildWithSave);
-                //setting the BusinessFlow on the Activity in Order to save
-                //ActivityEdit.mBusinessFlow = ((AnalyzeActivity)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
-                //ActivityEdit.ap = null;
                 ActivityEdit.ShowAsWindow(eWindowShowStyle.Dialog);
 
             }

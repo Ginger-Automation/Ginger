@@ -52,17 +52,12 @@ namespace Ginger.ConflictResolve
             {
                 ShowLoading();
                 bool hasMergedItem = wizard.TryGetOrCreateMergedItem(out RepositoryItemBase ? mergedItem);
-                if (!hasMergedItem)
-                {
-                    HideLoading();
-                }
-                else
+                if (hasMergedItem)
                 {
                     Comparison mergedItemComparison = SourceControlIntegration.CompareConflictedItems(mergedItem, null);
                     SetTreeItems(mergedItemComparison);
-                    HideLoading();
                 }
-
+                HideLoading();
             });
         }
 

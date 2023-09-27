@@ -117,17 +117,19 @@ namespace Ginger.ConflictResolve
         {
             NextConflictFinder nextConflictFinder = new();
 
-            await xLocalItemTree.IterateTreeViewItemsAsync(nextConflictFinder.IterationConsumer, inReverseOrder: true);
+            Task findNextLocalConflictTask = xLocalItemTree.IterateTreeViewItemsAsync(nextConflictFinder.IterationConsumer, inReverseOrder: true);
             if (nextConflictFinder.NextConflictTreeViewItem != null)
             {
                 xLocalItemTree.FocusItem(nextConflictFinder.NextConflictTreeViewItem);
             }
 
-            await xRemoteItemTree.IterateTreeViewItemsAsync(nextConflictFinder.IterationConsumer, inReverseOrder: true);
+            Task findNextRemoteConflictTask = xRemoteItemTree.IterateTreeViewItemsAsync(nextConflictFinder.IterationConsumer, inReverseOrder: true);
             if (nextConflictFinder.NextConflictTreeViewItem != null)
             {
                 xRemoteItemTree.FocusItem(nextConflictFinder.NextConflictTreeViewItem);
             }
+
+            await Task.WhenAll(findNextLocalConflictTask, findNextRemoteConflictTask);
         }
 
         private void xNextConflict_Click(object sender, RoutedEventArgs e)
@@ -139,17 +141,19 @@ namespace Ginger.ConflictResolve
         {
             NextConflictFinder nextConflictFinder = new();
 
-            await xLocalItemTree.IterateTreeViewItemsAsync(nextConflictFinder.IterationConsumer);
+            Task findNextLocalConflictTask = xLocalItemTree.IterateTreeViewItemsAsync(nextConflictFinder.IterationConsumer);
             if (nextConflictFinder.NextConflictTreeViewItem != null)
             {
                 xLocalItemTree.FocusItem(nextConflictFinder.NextConflictTreeViewItem);
             }
 
-            await xRemoteItemTree.IterateTreeViewItemsAsync(nextConflictFinder.IterationConsumer);
+            Task findNextRemoteConflictTask = xRemoteItemTree.IterateTreeViewItemsAsync(nextConflictFinder.IterationConsumer);
             if (nextConflictFinder.NextConflictTreeViewItem != null)
             {
                 xRemoteItemTree.FocusItem(nextConflictFinder.NextConflictTreeViewItem);
             }
+
+            await Task.WhenAll(findNextLocalConflictTask, findNextRemoteConflictTask);
         }
 
         private sealed class NextConflictFinder

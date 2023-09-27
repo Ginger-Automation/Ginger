@@ -617,12 +617,53 @@ namespace Ginger
                     xSolutionSourceControlInitMenuItem.Visibility = Visibility.Visible;
                     xSolutionSourceControlSetMenuItem.Visibility = Visibility.Collapsed;
                 }
-
             }
             else
             {
                 xLoadedSolutionMenusPnl.Visibility = Visibility.Collapsed;
             }
+            UpdateSourceControlIndicators();
+        }
+
+        private void UpdateSourceControlIndicators()
+        {
+            if (WorkSpace.Instance.Solution != null)
+            {
+                Task.Run(() =>
+                {
+                    List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
+                    if (conflictPaths.Any())
+                    {
+                        ShowConflictIndicators();
+                    }
+                    else
+                    {
+                        HideConflictIndicators();
+                    }
+                });
+            }
+            else
+            {
+                HideConflictIndicators();
+            }
+        }
+
+        private void ShowConflictIndicators()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xSourceControlOperationsWarn.ImageType = eImageType.MediumWarn;
+                xResolveConflictsWarn.ImageType = eImageType.MediumWarn;
+            });
+        }
+
+        private void HideConflictIndicators()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xSourceControlOperationsWarn.ImageType = eImageType.Empty;
+                xResolveConflictsWarn.ImageType = eImageType.Empty;
+            });
         }
 
         private async void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -766,6 +807,10 @@ namespace Ginger
             List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
             ResolveConflictWindow resolveConflictWindow = new(conflictPaths);
             resolveConflictWindow.ShowAsWindow();
+            if(resolveConflictWindow.IsResolved)
+            {
+                HideConflictIndicators();
+            }
         }
 
         private void xHelpOptionsMenuItem_Click(object sender, RoutedEventArgs e)

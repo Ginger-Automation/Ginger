@@ -327,12 +327,12 @@ namespace GingerCore.SourceControl
             }
             catch (Exception ex)
             {
-                if(ex is AggregateException && ex.InnerException is CheckoutConflictException)
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting latest changes.", ex);
+                if (ex is AggregateException && ex.InnerException is CheckoutConflictException)
                 {
                     error = "Local branch has uncommited changes, commit them before getting latest.";
                     return false;
                 }
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting latest changes.", ex);
                 conflictsPaths = GetConflictPaths();
                 error = ex.Message + Environment.NewLine + ex.InnerException;
                 return false;

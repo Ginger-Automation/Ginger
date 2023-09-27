@@ -837,48 +837,56 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         private async Task<bool> IterateTreeViewItemsPrivateAsync(Func<TreeViewItem, bool> iterationConsumer, bool inReverseOrder, TreeViewItem root)
         {
-            bool continueIteration = true;
-
-            int index = 0;
-            Predicate<int> boundCheck = index => index < root.Items.Count;
-            int indexIncrementation = 1;
-
-            await LoadChildItems(root);
-
-            if (inReverseOrder)
+            try
             {
-                index = root.Items.Count - 1;
-                boundCheck = index => index >= 0;
-                indexIncrementation = -1;
-            }
+                bool continueIteration = true;
 
-            while (boundCheck.Invoke(index))
-            {
-                TreeViewItem currentTreeItem = (TreeViewItem)root.Items[index];
-                ITreeViewItem tvi = (ITreeViewItem)currentTreeItem.Tag;
+                int index = 0;
+                Predicate<int> boundCheck = index => index < root.Items.Count;
+                int indexIncrementation = 1;
 
-                if (tvi != null)
+                await LoadChildItems(root);
+
+                if (inReverseOrder)
                 {
-                    continueIteration = iterationConsumer.Invoke(currentTreeItem);
-                    if (!continueIteration)
-                    {
-                        break;
-                    }
+                    index = root.Items.Count - 1;
+                    boundCheck = index => index >= 0;
+                    indexIncrementation = -1;
                 }
 
-                if (currentTreeItem.Items.Count > 0)
+                while (boundCheck.Invoke(index))
                 {
-                    continueIteration = await IterateTreeViewItemsPrivateAsync(iterationConsumer, inReverseOrder, currentTreeItem);
-                    if (!continueIteration)
+                    TreeViewItem currentTreeItem = (TreeViewItem)root.Items[index];
+                    ITreeViewItem tvi = (ITreeViewItem)currentTreeItem.Tag;
+
+                    if (tvi != null)
                     {
-                        break;
+                        continueIteration = iterationConsumer.Invoke(currentTreeItem);
+                        if (!continueIteration)
+                        {
+                            break;
+                        }
                     }
+
+                    if (currentTreeItem.Items.Count > 0)
+                    {
+                        continueIteration = await IterateTreeViewItemsPrivateAsync(iterationConsumer, inReverseOrder, currentTreeItem);
+                        if (!continueIteration)
+                        {
+                            break;
+                        }
+                    }
+
+                    index += indexIncrementation;
                 }
 
-                index += indexIncrementation;
+                return continueIteration;
             }
-
-            return continueIteration;
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while iterating UCTreeView items.", e);
+                return false;
+            }
         }
 
         public void FocusItem(TreeViewItem treeViewItem)

@@ -103,7 +103,9 @@ namespace Ginger.AnalyzerLib
             //Check only when there is  target app, since the user will get no target err before
             if (!string.IsNullOrEmpty(activity.TargetApplication))
             {
-                string AppName = (from x in businessFlow.TargetApplications where x.Name == activity.TargetApplication select x.Name).FirstOrDefault();
+                string AppName = businessFlow.TargetApplications
+                    .Select(targetApp => targetApp.Name)
+                    .FirstOrDefault(targetAppName => string.Equals(targetAppName, activity.TargetApplication));
                 if (string.IsNullOrEmpty(AppName))
                 {
                     string BFApps = string.Join(";", businessFlow.TargetApplications.Select(p => p.Name).ToList());
