@@ -111,7 +111,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivity.EntityId = activity.Guid;
             accountReportActivity.AccountReportDbActivityGroupId = activity.ParentExecutionId;
             accountReportActivity.ExecutionId = (Guid)WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID;
-            accountReportActivity.Seq = context.BusinessFlow.ExecutionLogActivityCounter;
+            accountReportActivity.Seq = context.BusinessFlow.ExecutionLogActivityCounter -1;
             accountReportActivity.Name = activity.ActivityName;
             accountReportActivity.Description = activity.Description;
             accountReportActivity.RunDescription = GetCalculatedValue(context, activity.RunDescription);
