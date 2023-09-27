@@ -1,18 +1,34 @@
-﻿using NUglify;
-using OctaneStdSDK.Entities.Tasks;
-using OpenQA.Selenium.DevTools.V113.CSS;
+﻿#region License
+/*
+Copyright © 2014-2023 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Linq;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN
 {
+    /// <summary>
+    /// Serializes BPMN <see cref="Collaboration"/> to XML.
+    /// </summary>
     public sealed class BPMNXMLSerializer
     {
         private const string BPMN_XML_PREFIX = "bpmn";
@@ -20,6 +36,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         private const string IG_XML_PREFIX = "ig";
         private const string IG_XML_URI = "http://insightguard.com/schema/1.0/bpmn";
 
+        /// <summary>
+        /// Serialize BPMN <see cref="Collaboration"/> to XML.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to serialize.</param>
+        /// <returns>Serialized XML string.</returns>
         public string Serialize(Collaboration collaboration)
         {
             XmlDocument xmlDocument = new();
@@ -73,7 +94,6 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             collaborationElement.SetAttribute("id", collaboration.Id);
             collaborationElement.SetAttribute("isClosed", "false"); //static value
             collaborationElement.SetAttribute("name", collaboration.Name);
-            //collaborationElement.AppendChild(CreateDocumentationElement(xmlDocument));
             //TODO: BPMN - Why a different documentation element for Collaboration
             XmlElement documentationElement = xmlDocument.CreateElement("documentation", BPMN_XML_URI);
             documentationElement.SetAttribute("id", $"doc_{collaboration.Id}");

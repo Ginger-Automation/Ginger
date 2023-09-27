@@ -1,24 +1,45 @@
-﻿using amdocs.ginger.GingerCoreNET;
+﻿#region License
+/*
+Copyright © 2014-2023 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Repository;
-using Applitools;
 using GingerCore;
 using GingerCore.Activities;
-using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Microsoft.Graph;
 using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN
 {
     //TODO: BPMN - How to handle WithoutPlatformApps
+    /// <summary>
+    /// Converts <see cref="ActivitiesGroup"/> to a BPMN <see cref="Collaboration"/>.
+    /// </summary>
     public sealed class ActivitiesGroupToBPMNConverter
     {
+        /// <summary>
+        /// Convert <see cref="ActivitiesGroup"/> to a BPMN <see cref="Collaboration"/>.
+        /// </summary>
+        /// <param name="activityGroup"><see cref="ActivitiesGroup"/> to convert.</param>
+        /// <returns>BPMN <see cref="Collaboration"/>.</returns>
         public Collaboration Convert(ActivitiesGroup activityGroup)
         {
             IEnumerable<TargetBase> targetApps = GetTargetAppsInActivityGroup(activityGroup);
@@ -114,73 +135,45 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         private string GetTargetAppNameFromConsumerId(Consumer consumer)
         {
             IEnumerable<TargetBase> targetApps = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-            TargetBase consumerTargetApp = targetApps.First(targetApp => string.Equals(targetApp.Guid, consumer.ConsumerGuid));
+            TargetBase? consumerTargetApp = targetApps.FirstOrDefault(targetApp => string.Equals(targetApp.Guid, consumer.ConsumerGuid));
+            if (consumerTargetApp == null)
+            {
+                throw new InvalidOperationException($"No Target Application found for Consumer with Guid '{consumer.ConsumerGuid}'.");
+            }
             return consumerTargetApp.Name;
         }
 
         private Participant GetParticipantForTargetAppName(Collaboration collaboration, string targetAppName)
         {
-            return collaboration.Participants.First(participant => string.Equals(participant.Name, targetAppName));
+            Participant? participant = collaboration.Participants.FirstOrDefault(participant => string.Equals(participant.Name, targetAppName));
+            if(participant == null)
+            {
+                throw new InvalidOperationException($"No Participant found for Target Application name '{targetAppName}'.");
+            }
+            return participant;
         }
 
         private Participant GetParticipantForProcessId(Collaboration collaboration, string processId)
         {
-            return collaboration.Participants.First(participant => string.Equals(participant.Process.Id, processId));
+            Participant? participant = collaboration.Participants.FirstOrDefault(participant => string.Equals(participant.Process.Id, processId));
+            if(participant == null)
+            {
+                throw new InvalidOperationException($"No Participant found for process id '{processId}'.");
+            }
+            return participant;
         }
 
         private bool IsWebServicesActivity(Activity activity)
         {
-            ApplicationPlatform activityAppPlatform = WorkSpace.Instance.Solution
+            ApplicationPlatform? activityAppPlatform = WorkSpace.Instance.Solution
                 .ApplicationPlatforms
-                .First(platform => string.Equals(platform.AppName, activity.TargetApplication));
+                .FirstOrDefault(platform => string.Equals(platform.AppName, activity.TargetApplication));
+            if(activityAppPlatform == null)
+            {
+                throw new InvalidOperationException($"No Application Platform found for Activity with Target Application '{activity.TargetApplication}'.");
+            }
 
             return activityAppPlatform.Platform == ePlatformType.WebServices;
         }
     }
 }
-
-/*
-            IFlowSource? previousFlowSource = null;
-
-            Activity? firstActivity = activitiesInActivityGroup.FirstOrDefault();
-            if(firstActivity != null)
-            {
-                Participant participant = GetParticipantForTargetAppName(collaboration, firstActivity.TargetApplication);
-                previousFlowSource = participant.Process.AddStartEvent(name: string.Empty);
-            }
-
-            foreach (Activity activity in activitiesInActivityGroup)
-            {
-                Participant participant = GetParticipantForTargetAppName(collaboration, activity.TargetApplication);
-
-                Task task;
-                if (IsWebActivity(activity))
-                {
-                    task = participant.Process.AddUserTask(new Process.AddTaskArguments(activity.Guid, activity.ActivityName));
-                }
-                else
-                {
-                    task = participant.Process.AddTask(new Process.AddTaskArguments(activity.Guid, activity.ActivityName));
-                }
-
-                if (previousFlowSource != null)
-                {
-                    Flow.Create(name: string.Empty, previousFlowSource, task);
-                }
-
-                previousFlowSource = task;
-            }
-
-            Activity? lastActivity = activitiesInActivityGroup.LastOrDefault();
-            if(lastActivity != null)
-            {
-                Participant participant = GetParticipantForTargetAppName(collaboration, lastActivity.TargetApplication);
-                EndEvent endEvent = participant.Process.AddEndEvent(name: string.Empty);
-
-                if(previousFlowSource != null)
-                {
-                    Flow.Create(name: string.Empty, previousFlowSource, endEvent);
-                }
-            }
- 
- */
