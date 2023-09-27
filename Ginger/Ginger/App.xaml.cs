@@ -19,6 +19,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowWindows;
@@ -259,24 +260,12 @@ namespace Ginger
 
             Amdocs.Ginger.CoreNET.log4netLib.GingerLog.PrintStartUpInfo();
 
+
             if (!WorkSpace.Instance.RunningInExecutionMode)
             {
-                if (WorkSpace.Instance.UserProfile.AppLogLevel == eAppReporterLoggingLevel.Debug)
+                if(WorkSpace.Instance.UserProfile !=null &&  WorkSpace.Instance.UserProfile.AppLogLevel ==  eAppReporterLoggingLevel.Debug) 
                 {
-                    try
-                    {
-                        if (!System.Diagnostics.Trace.Listeners.Contains(CustomTraceListener.Instance))
-                        {
-                            System.Diagnostics.Trace.Listeners.Add(CustomTraceListener.Instance);
-
-                            System.Diagnostics.Trace.WriteLine("Ginger Start up", "Info");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Custom Trace listerner ", ex.InnerException);
-                    }
-
+                    GingerLog.StartCustomTraceListeners();
                 }
                 HideConsoleWindow();
                 StartGingerUI();// start regular Ginger UI
