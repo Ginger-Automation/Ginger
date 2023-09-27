@@ -136,7 +136,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivity.EndTimeStamp = activity.EndTimeStamp;
             accountReportActivity.ElapsedEndTimeStamp = activity.Elapsed;
             accountReportActivity.RunStatus = activity.Status.ToString();
-            accountReportActivity.ExternalID = activity.ExternalID;
+            accountReportActivity.ExternalID = GetCalculatedValue(context, activity.ExternalID);
             accountReportActivity.ExternalID2 = activity.ExternalID2;
             accountReportActivity.VariablesAfterExec = activity.Variables.Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description + "_:_" + a.Guid + "_:_" + a.SetAsInputValue + "_:_" + a.SetAsOutputValue + "_:_" + a.Publish).ToList();
 
@@ -183,7 +183,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportActivityGroup.EndTimeStamp = activitiesGroup.EndTimeStamp;
             accountReportActivityGroup.ElapsedEndTimeStamp = activitiesGroup.Elapsed;
             accountReportActivityGroup.RunStatus = activitiesGroup.RunStatus.ToString();
-            accountReportActivityGroup.ExternalID = activitiesGroup.ExternalID;
+            accountReportActivityGroup.ExternalID = GetCalculatedValue(context, activitiesGroup.ExternalID);
             accountReportActivityGroup.ExternalID2 = activitiesGroup.ExternalID2;
             return accountReportActivityGroup;
         }
@@ -241,7 +241,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportBusinessFlow.SolutionVariablesAfterExec = businessFlow.GetSolutionVariables().Select(a => a.Name + "_:_" + a.Value + "_:_" + a.Description).ToList(); ;
             accountReportBusinessFlow.BFFlowControlDT = businessFlow.BFFlowControls.Select(a => a.Condition + "_:_" + a.ConditionCalculated + "_:_" + a.BusinessFlowControlAction + "_:_" + a.Status).ToList(); ;
             accountReportBusinessFlow.AutomationPercent = businessFlow.AutomationPrecentage;
-            accountReportBusinessFlow.ExternalID = businessFlow.ExternalID;
+            accountReportBusinessFlow.ExternalID = GetCalculatedValue(context, businessFlow.ExternalID);
             accountReportBusinessFlow.ExternalID2 = businessFlow.ExternalID2;
             int ChildExecutableItemsCountAction = 0;
             int ChildExecutedItemsCountAction = 0;
