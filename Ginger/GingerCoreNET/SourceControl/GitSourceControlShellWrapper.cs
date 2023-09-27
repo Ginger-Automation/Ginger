@@ -240,12 +240,12 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             return false;
         }
 
-        public override string GetLocalContentFromConflicted(string conflictedFilePath)
+        public override string GetLocalContentForConflict(string conflictedFilePath)
         {
             throw new NotImplementedException();
         }
 
-        public override string GetRemoteContentFromConflicted(string conflictedFilePath)
+        public override string GetRemoteContentForConflict(string conflictedFilePath)
         {
             throw new NotImplementedException();
         }

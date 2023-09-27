@@ -21,13 +21,21 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SourceControl;
+using GingerCore.GeneralLib;
 using NPOI.OpenXmlFormats.Dml.Chart;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
 
 namespace Ginger.ConflictResolve
 {
 
-    public class Conflict
+    public class Conflict : INotifyPropertyChanged
     {
         public enum ResolutionType
         {
@@ -39,16 +47,47 @@ namespace Ginger.ConflictResolve
             CherryPick
         }
 
-        private RepositoryItemBase _localItem;
-        private RepositoryItemBase _remoteItem;
+        private RepositoryItemBase? _localItem;
+        private RepositoryItemBase? _remoteItem;
+        private RepositoryItemBase? _mergedItem;
+        private bool _isMergedItemSet = false;
         private Comparison _comparison;
         private bool _isComparisonLoaded = false;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public string Path { get; }
 
         public string RelativePath { get; }
 
-        public ResolutionType Resolution { get; set; }
+        private bool _isSelectedForResolution;
+        public bool IsSelectedForResolution 
+        {
+            get => _isSelectedForResolution; 
+            set
+            {
+                if(_isSelectedForResolution != value)
+                {
+                    _isSelectedForResolution = value;
+                    OnPropertyChanged(nameof(IsSelectedForResolution));
+                }
+            }
+        }
+
+        private ResolutionType _resolution;
+        public ResolutionType Resolution 
+        {
+            get => _resolution;
+            set
+            {
+                if(_resolution != value)
+                {
+                    _resolution = value;
+                    CanResolve = CalculateCanResolve();
+                    OnPropertyChanged(nameof(Resolution));
+                }
+            }
+        }
 
         public Comparison Comparison
         {
@@ -63,13 +102,37 @@ namespace Ginger.ConflictResolve
             }
         }
 
+        private bool _canResolve;
+        public bool CanResolve
+        {
+            get => _canResolve;
+            private set
+            {
+                if (_canResolve != value)
+                {
+                    _canResolve = value;
+                    OnPropertyChanged(nameof(CanResolve));
+                }
+            }
+        }
+
         public Conflict(string conflictPath)
         {
             Path = conflictPath;
             _localItem = null!;
             _remoteItem = null!;
             _comparison = null!;
+            _canResolve = CalculateCanResolve();
             RelativePath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(Path);
+        }
+
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler? handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         private void LoadComparison()
@@ -81,19 +144,64 @@ namespace Ginger.ConflictResolve
             _comparison = SourceControlIntegration.CompareConflictedItems(_localItem, _remoteItem);
         }
 
-        public RepositoryItemBase GetLocalItem()
+        public RepositoryItemBase? GetLocalItem()
         {
             return _localItem;
         }
 
-        public RepositoryItemBase GetRemoteItem()
+        public RepositoryItemBase? GetRemoteItem()
         {
             return _remoteItem;
         }
 
-        public RepositoryItemBase GetMergedItem()
+        public bool TryGetMergedItem(out RepositoryItemBase? mergedItem)
         {
-            return SourceControlIntegration.CreateMergedItemFromComparison(Comparison);
+            if (_isMergedItemSet)
+            {
+                mergedItem = _mergedItem;
+                return true;
+            }
+            else
+            {
+                mergedItem = null;
+                return false;
+            }
+        }
+
+        public bool TryCreateAndSetMergedItemFromComparison()
+        {
+            return TryCreateAndSetMergedItemFromComparison(out RepositoryItemBase? _);
+        }
+
+        public bool TryCreateAndSetMergedItemFromComparison(out RepositoryItemBase? mergedItem)
+        {
+            int unselectedComparisonCount = Comparison.UnselectedComparisonCount();
+            if(unselectedComparisonCount > 0)
+            {
+                mergedItem = null;
+                return false;
+            }
+
+            _mergedItem = SourceControlIntegration.CreateMergedItemFromComparison(Comparison);
+            mergedItem = _mergedItem;
+            _isMergedItemSet = true;
+            CanResolve = CalculateCanResolve();
+            return true;
+        }
+
+        public void DiscardMergedItem()
+        {
+            _mergedItem = null;
+            _isMergedItemSet = false;
+            CanResolve = CalculateCanResolve();
+        }
+
+        private bool CalculateCanResolve()
+        {
+            return
+                _resolution == ResolutionType.KeepLocal ||
+                _resolution == ResolutionType.AcceptServer ||
+                (_resolution == ResolutionType.CherryPick && _isMergedItemSet);
         }
     }
 }

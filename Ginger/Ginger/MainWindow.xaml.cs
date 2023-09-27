@@ -170,15 +170,6 @@ namespace Ginger
                     WorkSpace.Instance.UserProfile.NewHelpLibraryMessgeShown = true;
                 }
 
-                if(WorkSpace.Instance.BetaFeatures.AllowMergeConflict)
-                {
-                    xResolveConflictManualMenuItem.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    xResolveConflictManualMenuItem.Visibility = Visibility.Collapsed;
-                }
-
                 if (General.IsAdmin())
                 {
                     xAdminModeIcon.ImageType = eImageType.AdminUser;
@@ -626,12 +617,53 @@ namespace Ginger
                     xSolutionSourceControlInitMenuItem.Visibility = Visibility.Visible;
                     xSolutionSourceControlSetMenuItem.Visibility = Visibility.Collapsed;
                 }
-
             }
             else
             {
                 xLoadedSolutionMenusPnl.Visibility = Visibility.Collapsed;
             }
+            UpdateSourceControlIndicators();
+        }
+
+        private void UpdateSourceControlIndicators()
+        {
+            if (WorkSpace.Instance.Solution != null)
+            {
+                Task.Run(() =>
+                {
+                    List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
+                    if (conflictPaths.Any())
+                    {
+                        ShowConflictIndicators();
+                    }
+                    else
+                    {
+                        HideConflictIndicators();
+                    }
+                });
+            }
+            else
+            {
+                HideConflictIndicators();
+            }
+        }
+
+        private void ShowConflictIndicators()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xSourceControlOperationsWarn.ImageType = eImageType.MediumWarn;
+                xResolveConflictsWarn.ImageType = eImageType.MediumWarn;
+            });
+        }
+
+        private void HideConflictIndicators()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xSourceControlOperationsWarn.ImageType = eImageType.Empty;
+                xResolveConflictsWarn.ImageType = eImageType.Empty;
+            });
         }
 
         private async void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -770,25 +802,15 @@ namespace Ginger
             Reporter.HideStatusMessage();
         }
 
-        private void ResolveConflictsLocalMenuItem_Click(object sender, RoutedEventArgs e)
+        private void xResolveConflictsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
-            ResolveConflictWindow resolveConflictWindow = new(conflictPaths, defaultResolutionType: Conflict.ResolutionType.KeepLocal);
+            ResolveConflictWindow resolveConflictWindow = new(conflictPaths);
             resolveConflictWindow.ShowAsWindow();
-        }
-
-        private void ResolveConflictsServerMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
-            ResolveConflictWindow resolveConflictWindow = new(conflictPaths, defaultResolutionType: Conflict.ResolutionType.AcceptServer);
-            resolveConflictWindow.ShowAsWindow();
-        }
-
-        private void ResolveConflictsManuallyMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
-            ResolveConflictWindow resolveConflictWindow = new(conflictPaths, defaultResolutionType: Conflict.ResolutionType.CherryPick);
-            resolveConflictWindow.ShowAsWindow();
+            if(resolveConflictWindow.IsResolved)
+            {
+                HideConflictIndicators();
+            }
         }
 
         private void xHelpOptionsMenuItem_Click(object sender, RoutedEventArgs e)

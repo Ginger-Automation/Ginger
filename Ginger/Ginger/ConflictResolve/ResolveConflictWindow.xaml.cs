@@ -36,6 +36,14 @@ using GingerWPF.WizardLib;
 using GingerCore.GeneralLib;
 using System.Globalization;
 using System.Linq;
+using Ginger.AnalyzerLib;
+using System.Threading.Tasks;
+using Amdocs.Ginger.UserControls;
+using Amdocs.Ginger.Core;
+using Amdocs.Ginger.Common.Enums;
+using OctaneRepositoryStd.BLL;
+using System.Security.Cryptography;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Ginger.ConflictResolve
 {
@@ -44,35 +52,128 @@ namespace Ginger.ConflictResolve
     /// </summary>
     public partial class ResolveConflictWindow : Page
     {
-        GenericWindow genWin = null;
-        List<string> mConflictPaths;
-        ObservableList<Conflict> conflictResolves = new ObservableList<Conflict>();
-        private readonly ResolutionType _defaultResolutionType;
+        private GenericWindow? _genericWindow = null;
+        private readonly ObservableList<Conflict> _conflicts;
+        private ImageMakerControl _genericWindowLoaderIcon;
+        private Button _resolveButton;
+        private Button _analyzeButton;
 
-        public bool IsResolved { get; set; }
+        public bool IsResolved { get; private set; }
 
 
-        public ResolveConflictWindow(List<string> conflictPaths, ResolutionType defaultResolutionType = ResolutionType.AcceptServer)
+        public ResolveConflictWindow(List<string> conflictPaths)
         {
             IsResolved = false;
             InitializeComponent();
-            mConflictPaths = conflictPaths;
-            _defaultResolutionType = defaultResolutionType;
+            _conflicts = CreateConflictList(conflictPaths);
             SetGridView();
+            CreateControlsForGenericWindow();
         }
+
+        private ObservableList<Conflict> CreateConflictList(IEnumerable<string> conflictPaths)
+        {
+            ObservableList<Conflict> conflicts = new();
+            foreach (string conflictPath in conflictPaths)
+            {
+                Conflict conflict = new(conflictPath)
+                {
+                    IsSelectedForResolution = true,
+                    Resolution = ResolutionType.KeepLocal
+                };
+                conflicts.Add(conflict);
+            }
+            return conflicts;
+        }
+
+        [MemberNotNull(nameof(_genericWindowLoaderIcon), nameof(_resolveButton), nameof(_analyzeButton))]
+        private void CreateControlsForGenericWindow()
+        {
+            _resolveButton = new()
+            {
+                Content = "Resolve",
+                ToolTip = "Resolve selected conflicts"
+            };
+            _resolveButton.Click += new RoutedEventHandler(resolve_Click);
+
+            _analyzeButton = new()
+            {
+                Content = "Analyze",
+                ToolTip = "Analyze selected conflicts"
+            };
+            _analyzeButton.Click += analyzeBtn_Click;
+
+            _genericWindowLoaderIcon = new ImageMakerControl()
+            {
+                Name = "xProcessingImage",
+                Height = 30,
+                Width = 30,
+                ImageType = eImageType.Processing,
+                Visibility = Visibility.Collapsed,
+            };
+        }
+
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            Button resolveBtn = new Button();
-            resolveBtn.Content = "Resolve";
-            resolveBtn.Click += new RoutedEventHandler(resolve_Click);
-
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, windowStyle, "Source Control Conflicts", this, new ObservableList<Button> { resolveBtn }, true, "Do Not Resolve", CloseWindow);
+            GingerCore.General.LoadGenericWindow(
+                ref _genericWindow, 
+                owner: App.MainWindow, 
+                windowStyle, 
+                windowTitle: "Source Control Conflicts", 
+                windowPage: this, 
+                windowBtnsList: new ObservableList<Button> { _resolveButton, _analyzeButton }, 
+                showClosebtn: true, 
+                closeBtnText: "Do Not Resolve", 
+                closeEventHandler: CloseWindow, 
+                loaderElement: _genericWindowLoaderIcon);
         }
+        
         private void resolve_Click(object sender, EventArgs e)
         {
-            IsResolved = true;
-            Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
-            foreach (Conflict conflict in conflictResolves)
+            try
+            {
+                _genericWindowLoaderIcon.Visibility = Visibility.Visible;
+                Reporter.ToStatus(eStatusMsgKey.ResolveSourceControlConflicts);
+                List<Conflict> resolvedConflicts = new();
+                foreach (Conflict conflict in _conflicts)
+                {
+                    bool wasConflictResolved = ResolveConflict(conflict);
+                    if(wasConflictResolved)
+                    {
+                        resolvedConflicts.Add(conflict);
+                    }
+                }
+
+                if (resolvedConflicts.Count == _conflicts.Count)
+                {
+                    IsResolved = true;
+                }
+                else
+                {
+                    IsResolved = false;
+                }
+
+                resolvedConflicts.ForEach(resolvedConflict => _conflicts.Remove(resolvedConflict));
+            }
+            finally
+            {
+                _genericWindowLoaderIcon.Visibility = Visibility.Collapsed;
+                Reporter.HideStatusMessage();
+                if (IsResolved)
+                {
+                    CloseWindow();
+                }
+            }
+        }
+
+        private bool ResolveConflict(Conflict conflict)
+        {
+            if (!conflict.IsSelectedForResolution || !conflict.CanResolve)
+            {
+                return false;
+            }
+
+            bool wasConflictResolved = false;
+            try
             {
                 switch (conflict.Resolution)
                 {
@@ -84,37 +185,112 @@ namespace Ginger.ConflictResolve
                         break;
                     case ResolutionType.CherryPick:
                         NewRepositorySerializer serializer = new();
-                        string content = serializer.SerializeToString(conflict.GetMergedItem());
-                        SourceControlIntegration.ResolveConflictWithContent(WorkSpace.Instance.Solution.SourceControl, conflict.Path, content);
+                        bool hasMergedItem = conflict.TryGetMergedItem(out RepositoryItemBase? mergedItem);
+                        if (!hasMergedItem)
+                        {
+                            throw new InvalidOperationException($"Merge Conflict failed for file '{conflict.Path}', please retry again or choose other options like 'Keep Local' or 'Accept Server'.");
+                        }
+                        if (mergedItem != null)
+                        {
+                            string content = serializer.SerializeToString(mergedItem);
+                            SourceControlIntegration.ResolveConflictWithContent(WorkSpace.Instance.Solution.SourceControl, conflict.Path, content);
+                        }
+                        else
+                        {
+                            //in case of a Modify-Delete conflict, user might choose to not keep the modified file, so delete the file.
+                            SourceControlIntegration.DeleteFile(WorkSpace.Instance.Solution.SourceControl, conflict.Path);
+                        }
                         break;
                     default:
                         break;
                 }
+                wasConflictResolved = true;
             }
-            Reporter.HideStatusMessage();
-            CloseWindow();
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while resolving conflict for file '{conflict.Path}'.", ex);
+            }
+
+            return wasConflictResolved;
+        }
+
+        private void analyzeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (Conflict conflict in _conflicts)
+            {
+                bool isSelected = conflict.IsSelectedForResolution;
+                bool isBusinessFlow = IsBusinessFlowFile(conflict.Path);
+                bool hasCherryPickResolution = conflict.Resolution == ResolutionType.CherryPick;
+                bool canResolve = conflict.CanResolve;
+
+                if(isSelected && isBusinessFlow && hasCherryPickResolution && canResolve)
+                {
+                    AnalyzeForConflict(conflict);
+                }
+            }
+        }
+
+        private void AnalyzeForConflict(Conflict conflict)
+        {
+            bool hasMergedItem = conflict.TryGetMergedItem(out RepositoryItemBase? mergedItem);
+            if (hasMergedItem && mergedItem != null && mergedItem is BusinessFlow businessFlow)
+            {
+                Task.Run(() => AnalyzeBusinessFlow(businessFlow));
+            }
+        }
+
+        private bool IsBusinessFlowFile(string filePath)
+        {
+            return filePath.EndsWith(".BusinessFlow.xml");
+        }
+
+        private async Task AnalyzeBusinessFlow(BusinessFlow businessFlow)
+        {
+            try
+            {
+                Dispatcher.Invoke(() => _genericWindowLoaderIcon.Visibility = Visibility.Visible);
+                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                AnalyzerPage analyzerPage = null!;
+
+                Dispatcher.Invoke(() => analyzerPage = new());
+
+                analyzerPage.Init(WorkSpace.Instance.Solution, businessFlow, WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
+                await analyzerPage.AnalyzeWithoutUI();
+                Dispatcher.Invoke(() => Reporter.HideStatusMessage());
+                if (analyzerPage.TotalHighAndCriticalIssues > 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
+                    Dispatcher.Invoke(() => analyzerPage.ShowAsWindow());
+                }
+            }
+            finally
+            {
+                Dispatcher.Invoke(() => _genericWindowLoaderIcon.Visibility = Visibility.Collapsed);
+                Dispatcher.Invoke(() => Reporter.HideStatusMessage());
+            }
         }
 
         private void SetGridView()
         {
-            foreach (string conflictPath in mConflictPaths)
-            {
-                Conflict conflict = new(conflictPath)
-                {
-                    Resolution = _defaultResolutionType
-                };
-                conflictResolves.Add(conflict);
-            }
-
             GridViewDef view = new(GridViewDef.DefaultViewName)
             {
                 GridColsView = new()
                 {
                     new GridColView()
                     {
+                        Field = nameof(Conflict.IsSelectedForResolution),
+                        Header = "Selected",
+                        WidthWeight = 16,
+                        StyleType = GridColView.eGridColStyleType.Template,
+                        CellTemplate = ucGrid.GetGridCheckBoxTemplate(
+                            selectedValueField: nameof(Conflict.IsSelectedForResolution), 
+                            style: (Style)FindResource("@GridCellCheckBoxStyle"))
+                    },
+                    new GridColView()
+                    {
                         Field = nameof(Conflict.RelativePath),
                         Header = "Conflicted File",
-                        WidthWeight = 150,
+                        WidthWeight = 128,
                         AllowSorting = true,
                         BindingMode = BindingMode.OneWay,
                         ReadOnly = true
@@ -123,10 +299,19 @@ namespace Ginger.ConflictResolve
                     {
                         Field = nameof(Conflict.Resolution),
                         Header = "Operation",
-                        WidthWeight = 90,
+                        WidthWeight = 64,
                         BindingMode = BindingMode.TwoWay,
                         StyleType = GridColView.eGridColStyleType.Template,
-                        CellTemplate = CreateDataTemplateForCherryPickChangesColumn()
+                        CellTemplate = GetDataTemplateForOperationCell()
+                    },
+                    new GridColView()
+                    {
+                        Field = nameof(Conflict.CanResolve),
+                        Header = "Ready For Resolution",
+                        WidthWeight = 64,
+                        BindingMode = BindingMode.TwoWay,
+                        StyleType = GridColView.eGridColStyleType.Template,
+                        CellTemplate = GetDataTemplateForReadyForResolutionCell()
                     }
                 }
             };
@@ -134,58 +319,57 @@ namespace Ginger.ConflictResolve
             xConflictingItemsGrid.SetAllColumnsDefaultView(view);
             xConflictingItemsGrid.InitViewItems();
             xConflictingItemsGrid.SetTitleLightStyle = true;
-            xConflictingItemsGrid.DataSourceList = this.conflictResolves;
+            xConflictingItemsGrid.AddToolbarTool("@Checkbox_16x16.png", "Select/Unselect all", xConflictingItemsGrid_Toolbar_SelectUnselectAll);
+            xConflictingItemsGrid.AddToolbarTool("@DropDownList_16x16.png", "Set resolution to all", xConflictingItemsGrid_Toolbar_SetSameResolutionToAll);
+            xConflictingItemsGrid.DataSourceList = this._conflicts;
         }
 
-        private DataTemplate CreateDataTemplateForCherryPickChangesColumn()
+        private DataTemplate GetDataTemplateForOperationCell()
         {
-            DataTemplate dataTemplate = new();
-            FrameworkElementFactory operationsComboBox = new(typeof(ComboBox));
+            return (DataTemplate)ResolveConflictsGrid.Resources["xOperationCellTemplate"];
+        }
 
-            List<ComboEnumItem> operationOptions = GingerCore.General.GetEnumValuesForCombo(typeof(ResolutionType));
-            if(!WorkSpace.Instance.BetaFeatures.AllowMergeConflict)
+        public static List<ComboEnumItem> GetResolutionItemsSource()
+        {
+            //do not remove this method, it is actually called from XAML
+            List<ComboEnumItem> resolutionOptions = GingerCore.General.GetEnumValuesForCombo(typeof(ResolutionType));
+            return resolutionOptions;
+        }
+
+        private DataTemplate GetDataTemplateForReadyForResolutionCell()
+        {
+            return (DataTemplate)ResolveConflictsGrid.Resources["xReadyForResolutionCellTemplate"];
+        }
+
+        private void xConflictingItemsGrid_Toolbar_SelectUnselectAll(object? sender, RoutedEventArgs e)
+        {
+            bool isAnyUnselected = _conflicts.Any(conflict => !conflict.IsSelectedForResolution);
+
+            foreach(Conflict conflict in _conflicts)
             {
-                ComboEnumItem cherryPickOption = operationOptions.First(option => (ResolutionType)option.Value == ResolutionType.CherryPick);
-                operationOptions.Remove(cherryPickOption);
+                if (isAnyUnselected)
+                {
+                    //select all
+                    conflict.IsSelectedForResolution = true;
+                }
+                else
+                {
+                    //unselect all
+                    conflict.IsSelectedForResolution = false;
+                }
             }
+        }
 
-            operationsComboBox.SetValue(ComboBox.ItemsSourceProperty, operationOptions);
-            operationsComboBox.SetValue(ComboBox.DisplayMemberPathProperty, nameof(ComboEnumItem.text));
-            operationsComboBox.SetValue(ComboBox.SelectedValuePathProperty, nameof(ComboEnumItem.Value));
-            operationsComboBox.SetValue(ComboBox.SelectedIndexProperty, 0);
-
-            Binding operationsComboBoxSelectedValueBinding = new(path: nameof(Conflict.Resolution))
+        private void xConflictingItemsGrid_Toolbar_SetSameResolutionToAll(object? sender, RoutedEventArgs e)
+        {
+            if(xConflictingItemsGrid.CurrentItem != null && xConflictingItemsGrid.CurrentItem is Conflict selectedConflict)
             {
-                Mode = BindingMode.TwoWay,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-            };
-            
-            operationsComboBox.SetBinding(ComboBox.SelectedValueProperty, operationsComboBoxSelectedValueBinding);
-
-            FrameworkElementFactory viewChangesButton = new(typeof(Button));
-
-            viewChangesButton.SetValue(Button.ContentProperty, "View Changes");
-            viewChangesButton.SetValue(Button.StyleProperty, Application.Current.Resources["@InputImageGridCellButtonStyle"]);
-            viewChangesButton.AddHandler(Button.ClickEvent, new RoutedEventHandler(xCompareAndMergeButton_Click));
-
-            Binding viewChangesButtonVisibilityBinding = new(path: nameof(Conflict.Resolution))
-            {
-                Mode = BindingMode.OneWay,
-                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
-                Converter = new ResolveOperationToButtonVisibilityConverter()
-            };
-
-            viewChangesButton.SetBinding(Button.VisibilityProperty, viewChangesButtonVisibilityBinding);
-
-            FrameworkElementFactory stackPanel = new(typeof(StackPanel));
-            stackPanel.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
-
-            stackPanel.AppendChild(operationsComboBox);
-            stackPanel.AppendChild(viewChangesButton);
-
-            dataTemplate.VisualTree = stackPanel;
-
-            return dataTemplate;
+                Conflict.ResolutionType selectedItemResolutionType = selectedConflict.Resolution;
+                foreach(Conflict conflict in _conflicts)
+                {
+                    conflict.Resolution = selectedItemResolutionType;
+                }
+            }
         }
 
         private void CloseWindow(object sender, EventArgs e)
@@ -195,7 +379,10 @@ namespace Ginger.ConflictResolve
         }
         private void CloseWindow()
         {
-            genWin.Close();
+            if (_genericWindow != null)
+            {
+                _genericWindow.Close();
+            }
         }
 
 
@@ -204,24 +391,23 @@ namespace Ginger.ConflictResolve
             Conflict conflict = (Conflict)((FrameworkElement)sender).DataContext;
             ResolveMergeConflictWizard wizard = new(conflict);
             WizardWindow.ShowWizard(wizard);
+        }
+    }
 
+    public sealed class ResolutionToCompareVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is Conflict.ResolutionType resolveOperation && resolveOperation == Conflict.ResolutionType.CherryPick)
+            {
+                return Visibility.Visible;
+            }
+            return Visibility.Collapsed;
         }
 
-        private sealed class ResolveOperationToButtonVisibilityConverter : IValueConverter
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                if(value is Conflict.ResolutionType resolveOperation && resolveOperation == Conflict.ResolutionType.CherryPick)
-                {
-                    return Visibility.Visible;
-                }
-                return Visibility.Collapsed;
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                throw new NotImplementedException();
-            }
+            throw new NotImplementedException();
         }
     }
 }
