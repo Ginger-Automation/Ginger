@@ -33,8 +33,12 @@ jobs:
 
             - name: Create Directory for GingerRuntime
               run: | 
-                  mv ./Documents/ReadMe.txt  ./Runtime/ReadMe.txt
-                  mv ./Documents/gingerInstall.sh  ./Runtime/gingerInstall.sh
+                  mv ./Documents/ReadMe.txt ./Runtime/ReadMe.txt
+                  mv ./Documents/gingerInstall.sh ./Runtime/gingerInstall.sh
+                  chmod +x ./Runtime/gingerInstall.sh
+                  sudo apt install dos2unix
+                  dos2unix -b ./Runtime/ReadMe.txt
+                  dos2unix -b ./Runtime/gingerInstall.sh
 
             -   uses: sibiraj-s/action-archiver@v1
                 with:
