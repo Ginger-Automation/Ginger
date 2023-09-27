@@ -1,7 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using System;
-using System.Xml.Serialization;
 using static Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums;
 
 namespace Amdocs.Ginger.CoreNET.DiameterLib
