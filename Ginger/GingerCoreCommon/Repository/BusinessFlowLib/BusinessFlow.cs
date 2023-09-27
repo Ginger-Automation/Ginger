@@ -975,12 +975,41 @@ namespace GingerCore
                     }
                 }
 
-                //re-add the activities in correct order
+                //reorder activity-identifiers to match order the of activities
+                IEnumerable<Activity> groupActivities = activitiesList.Where(a => string.Equals(a.ActivitiesGroupID, group.Name));
+                List<ActivityIdentifiers> groupActivityIdentifiers = new(group.ActivitiesIdentifiers);
                 group.ActivitiesIdentifiers.Clear();
-                foreach (Activity activity in activitiesList.Where(x => x.ActivitiesGroupID == group.Name).ToList())
+                foreach (Activity activity in groupActivities)
                 {
-                    group.AddActivityToGroup(activity);
+                    ActivityIdentifiers activityIdentifier = groupActivityIdentifiers
+                        .FirstOrDefault(identifier =>
+                            identifier.ActivityGuid == activity.Guid &&
+                            string.Equals(identifier.ActivityName, activity.ActivityName));
+                    if (activityIdentifier == null)
+                    {
+                        activityIdentifier = groupActivityIdentifiers
+                            .FirstOrDefault(identifier =>
+                                identifier.ActivityGuid == activity.Guid);
+                    }
+                    if (activityIdentifier == null)
+                    {
+                        activityIdentifier = groupActivityIdentifiers
+                            .FirstOrDefault(identifier =>
+                                identifier.ActivityGuid == activity.ParentGuid);
+                    }
+                    if (activityIdentifier == null)
+                    {
+                        group.AddActivityToGroup(activity);
+                    }
+                    else
+                    {
+                        activityIdentifier.IdentifiedActivity = activity;
+                        activityIdentifier.AddDynamicly = activity.AddDynamicly;
+                        activity.ActivitiesGroupID = group.Name;
+                        group.ActivitiesIdentifiers.Add(activityIdentifier);
+                    }
                 }
+
 
                 mAttachActivitiesGroupsWasDone = true;
             }

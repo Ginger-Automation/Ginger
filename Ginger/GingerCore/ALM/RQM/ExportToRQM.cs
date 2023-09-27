@@ -28,7 +28,6 @@ using GingerCore.Environments;
 using Newtonsoft.Json;
 using RQMExportStd.ExportBLL;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -108,7 +107,7 @@ namespace GingerCore.ALM.RQM
         RQMTestPlan testPlan;
         public bool ExportExecutionDetailsToRQM(BusinessFlow businessFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
-            result = string.Empty;
+            result = string.Empty;            
             string bfExportedID = GetExportedIDString(businessFlow.ExternalIdCalCulated, "RQMID");
             if (string.IsNullOrEmpty(bfExportedID) || bfExportedID.Equals("0"))
             {
@@ -120,9 +119,8 @@ namespace GingerCore.ALM.RQM
                 result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} Must have at least one {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)}";
                 return false;
             }
-            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };
-
-            // 
+            LoginDTO loginData = new LoginDTO() { User = ALMCore.DefaultAlmConfig.ALMUserName, Password = ALMCore.DefaultAlmConfig.ALMPassword, Server = ALMCore.DefaultAlmConfig.ALMServerURL };            
+            
             // get data about execution records per current test plan - start
             GetRQMProjectListConfiguration();
             if (RQMProjectListConfig != null)
@@ -156,27 +154,41 @@ namespace GingerCore.ALM.RQM
                         List<ExecutionResult> exeResultList = new List<ExecutionResult>();
                         foreach (ActivitiesGroup activGroup in businessFlow.ActivitiesGroups)
                         {
-                            if (projEnvironment != null)
+                            if (activGroup.ActivitiesIdentifiers.Count > 0)
                             {
-                                IValueExpression mAGVE = new GingerCore.ValueExpression(projEnvironment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
-                                activGroup.CalculateExternalId(mAGVE);
+                                if (projEnvironment != null)
+                                {
+                                    IValueExpression mAGVE = new GingerCore.ValueExpression(projEnvironment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                                    activGroup.CalculateExternalId(mAGVE);
+                                }
+                                if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
+                                    || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
+                                    || publishToALMConfig.FilterStatus == FilterByStatus.All)
+                                {
+                                    testPlan.Name = !string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunNameCalculated) ? publishToALMConfig.VariableForTCRunNameCalculated : testPlan.Name;
+                                    ExecutionResult exeResult = GetExeResultforActivityGroup(businessFlow, bfExportedID, activGroup, ref result, testPlan, currentRQMProjectMapping, loginData, publishToALMConfig);
+                                    if (exeResult != null)
+                                    {
+                                        exeResultList.Add(exeResult);
+                                    }
+                                    else
+                                    {
+                                        result = $"Execution Results List not found for {businessFlow.Name} and testplan {bfExportedID}";
+                                        //return false;
+                                    }
+                                }
                             }
-                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
-                                || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
-                                || publishToALMConfig.FilterStatus == FilterByStatus.All)
+                            else
                             {
-                                testPlan.Name = !string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunNameCalculated) ? publishToALMConfig.VariableForTCRunNameCalculated : testPlan.Name;
-                                ExecutionResult exeResult = GetExeResultforActivityGroup(businessFlow, bfExportedID, activGroup, ref result, testPlan, currentRQMProjectMapping, loginData);
-                                if (exeResult != null)
-                                {
-                                    exeResultList.Add(exeResult);
-                                }
-                                else
-                                {
-                                    result = $"Execution Results List not found for {businessFlow.Name} and testplan {bfExportedID}";
-                                    //return false;
-                                }
+                                Reporter.ToLog(eLogLevel.DEBUG, $"Skippinng ALM Results Publish of '{activGroup.Name}' Group in {businessFlow.Name}' Flow as it dows not have any activities in it");
                             }
+                        }
+
+                        if (!exeResultList.Any())
+                        {
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as no valid Execution found for it");
+                            result = $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and 'testplan {bfExportedID}' as no valid Execution found for it ";
+                            return false;
                         }
 
                         ResultInfo resultInfo = new ResultInfo();
@@ -305,7 +317,7 @@ namespace GingerCore.ALM.RQM
             // get data about execution records per current test plan - finish
             return false;
         }
-        private ExecutionResult GetExeResultforActivityGroup(BusinessFlow businessFlow, string bfExportedID, ActivitiesGroup activGroup, ref string result, RQMTestPlan testPlan, RQMProject currentRQMProjectMapping, LoginDTO loginData)
+        private ExecutionResult GetExeResultforActivityGroup(BusinessFlow businessFlow, string bfExportedID, ActivitiesGroup activGroup, ref string result, RQMTestPlan testPlan, RQMProject currentRQMProjectMapping, LoginDTO loginData, PublishToALMConfig publishToALMConfig)
         {
             try
             {
@@ -449,7 +461,12 @@ namespace GingerCore.ALM.RQM
                 exeResult.ExecutionRecordExportID = exeRecordId;
                 exeResult.StartDate = businessFlow.StartTimeStamp.ToString("o");
                 exeResult.EndDate = businessFlow.EndTimeStamp.ToString("o");
-
+                if (!string.IsNullOrEmpty(publishToALMConfig.HtmlReportUrl))
+                {
+                    exeResult.HtmlReportUrl = publishToALMConfig.HtmlReportUrl;
+                    exeResult.ExecutionId = publishToALMConfig.ExecutionId;
+                    exeResult.ExecutionInstanceId = businessFlow.InstanceGuid.ToString();
+                }
                 int i = 1;
                 StringBuilder errors;
                 var relevantActivities = businessFlow.Activities.Where(x => x.ActivitiesGroupID == activGroup.FileName);
@@ -506,6 +523,36 @@ namespace GingerCore.ALM.RQM
                             exeStep.StepActualResult = "Stopped";
                             break;
                     }
+
+                    //////Update Activity Group status
+                    switch (activGroup.RunStatus)
+                    {
+                        case eActivitiesGroupRunStatus.Failed:
+                            exeResult.ExecutionResultState = ExecutoinStatus.Failed;
+                            break;
+                        case eActivitiesGroupRunStatus.Passed:
+                            exeResult.ExecutionResultState = ExecutoinStatus.Passed;
+                            break;
+                        case eActivitiesGroupRunStatus.NA:
+                            exeResult.ExecutionResultState = ExecutoinStatus.NA;
+                            break;
+                        case eActivitiesGroupRunStatus.Pending:
+                            exeResult.ExecutionResultState = ExecutoinStatus.In_Progress;
+                            break;
+                        case eActivitiesGroupRunStatus.Running:
+                            exeResult.ExecutionResultState = ExecutoinStatus.In_Progress;
+                            break;
+                        case eActivitiesGroupRunStatus.Skipped:
+                            exeResult.ExecutionResultState = ExecutoinStatus.Skipped;
+                            break;
+                        case eActivitiesGroupRunStatus.Blocked:
+                            exeResult.ExecutionResultState = ExecutoinStatus.Blocked;
+                            break;
+                        case eActivitiesGroupRunStatus.Stopped:
+                            exeResult.ExecutionResultState = ExecutoinStatus.Inconclusive;
+                            break;
+                    }
+
                     exeResult.ExecutionStep.Add(exeStep);
                 }
                 return exeResult;

@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.IO;
@@ -28,6 +29,7 @@ using Ginger.ALM;
 using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowWindows;
 using Ginger.ConfigurationsLib;
+using Ginger.ConflictResolve;
 using Ginger.Drivers.DriversWindows;
 using Ginger.Functionalities;
 using Ginger.GeneralLib;
@@ -39,13 +41,17 @@ using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using Ginger.User;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.ALM;
+using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -162,6 +168,15 @@ namespace Ginger
                 {
                     Reporter.ToStatus(eStatusMsgKey.GingerHelpLibrary);
                     WorkSpace.Instance.UserProfile.NewHelpLibraryMessgeShown = true;
+                }
+
+                if(WorkSpace.Instance.BetaFeatures.AllowMergeConflict)
+                {
+                    xResolveConflictManualMenuItem.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    xResolveConflictManualMenuItem.Visibility = Visibility.Collapsed;
                 }
 
                 if (General.IsAdmin())
@@ -757,12 +772,23 @@ namespace Ginger
 
         private void ResolveConflictsLocalMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ResolveSourceControlConflicts(eResolveConflictsSide.Local);
+            List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
+            ResolveConflictWindow resolveConflictWindow = new(conflictPaths, defaultResolutionType: Conflict.ResolutionType.KeepLocal);
+            resolveConflictWindow.ShowAsWindow();
         }
 
         private void ResolveConflictsServerMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ResolveSourceControlConflicts(eResolveConflictsSide.Server);
+            List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
+            ResolveConflictWindow resolveConflictWindow = new(conflictPaths, defaultResolutionType: Conflict.ResolutionType.AcceptServer);
+            resolveConflictWindow.ShowAsWindow();
+        }
+
+        private void ResolveConflictsManuallyMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
+            ResolveConflictWindow resolveConflictWindow = new(conflictPaths, defaultResolutionType: Conflict.ResolutionType.CherryPick);
+            resolveConflictWindow.ShowAsWindow();
         }
 
         private void xHelpOptionsMenuItem_Click(object sender, RoutedEventArgs e)

@@ -7,12 +7,35 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
-        <Style TargetType="TreeViewItem" x:Key="$UcTreeViewItemStyle">
+        <!--<Style TargetType="TreeViewItem" x:Key="$UcTreeViewItemStyle">
             <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>
+        </Style>-->
+        <Style x:Key="TreeViewToggleButton" TargetType="ToggleButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Grid>
+                            <Polygon Points="0 0, 0 1, 1 1, 1 0" Fill="Transparent" Stretch="Uniform"/>
+                            <Polygon x:Name="TreeArrow" Points="0 0, 3.5 3.5, 0 7" Fill="Transparent" StrokeThickness="1" Stroke="Gray" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="TreeArrow" Property="Points" Value="4.95 0, 4.95 4.95, 0 4.95"/>
+                                <Setter TargetName="TreeArrow" Property="Stroke" Value="Black"/>
+                                <Setter TargetName="TreeArrow" Property="Fill" Value="DimGray"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="TreeArrow" Property="Stroke" Value="DeepSkyBlue"/>
+                                <Setter TargetName="TreeArrow" Property="Fill" Value="DeepSkyBlue"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </UserControl.Resources>
     <Grid>
-        <TreeView x:Name="Tree" Background="Transparent" ItemContainerStyle="{StaticResource $UcTreeViewItemStyle}">
+        <TreeView x:Name="Tree" Background="Transparent">
             <TreeView.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
                       Color="Transparent" />
@@ -22,7 +45,74 @@
                       Color="Transparent" />
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}"
                       Color="Black" />
+                <Style TargetType="TreeViewItem">
+                    <EventSetter Event="MouseDoubleClick" Handler="TreeViewItem_MouseDoubleClick"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TreeViewItem">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <ToggleButton x:Name="Expander" IsChecked="{Binding Path=IsExpanded,
+                                      RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource TreeViewToggleButton}" Grid.Row="0" Grid.Column="0" VerticalAlignment="Stretch"  HorizontalAlignment="Stretch"/>
+                                    <ContentPresenter ContentSource="Header" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+                                    <ItemsPresenter x:Name="ItemsHost" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsExpanded" Value="False">
+                                        <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed"/>
+                                    </Trigger>
+                                    <Trigger Property="HasItems" Value="False">
+                                        <Setter TargetName="Expander" Property="Visibility" Value="Hidden"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
             </TreeView.Resources>
+            <!--<TreeViewItem>
+                <TreeViewItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Item-1"/>
+                    </StackPanel>
+                </TreeViewItem.Header>
+                <TreeViewItem>
+                    <TreeViewItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Item-1.1"/>
+                        </StackPanel>
+                    </TreeViewItem.Header>
+                </TreeViewItem>
+            </TreeViewItem>
+            <TreeViewItem>
+                <TreeViewItem.Header>
+                    <StackPanel Background="#FEFBDD" Orientation="Horizontal">
+                        <Label Content="Item-2"/>
+                    </StackPanel>
+                </TreeViewItem.Header>
+                <TreeViewItem>
+                    <TreeViewItem.Header>
+                        <StackPanel Background="#FEFAD4" HorizontalAlignment="Stretch" Orientation="Horizontal">
+                            <Label Content="Item-2.1"/>
+                        </StackPanel>
+                    </TreeViewItem.Header>
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <StackPanel Background="#FEF9CC" HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                <Label Content="Item-2.1.1"/>
+                            </StackPanel>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </TreeViewItem>
+            </TreeViewItem>-->
         </TreeView>
     </Grid>
 </UserControl>

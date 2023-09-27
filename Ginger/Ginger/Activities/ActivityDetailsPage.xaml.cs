@@ -288,43 +288,34 @@ namespace Ginger.BusinessFlowPages
         private void xConsumerStackLogic()
         {
             //logic for Consumer ComboBox for Otoma
-            ObservableList<TargetApplication>  templist = new ObservableList<TargetApplication>();
-            ObservableList<Consumer> consumerList = new ObservableList<Consumer>();
+            ObservableList<TargetBase> targetApplications;//= new ObservableList<TargetApplication>();
+            ObservableList<Consumer> consumerList = new();
             if (mContext.BusinessFlow != null)
             {
-                foreach (TargetApplication _list in mContext.BusinessFlow.TargetApplications)
-                {
-                    if (_list.AppName != xTargetApplicationComboBox.SelectedItem.ToString())
-                    {
-                        templist.Add(_list);
-                    }
-                }
+                targetApplications = mContext.BusinessFlow.TargetApplications;               
             }
             else
             {
-                foreach (TargetApplication _list in WorkSpace.Instance.Solution.GetSolutionTargetApplications())
-                {
-                    if (_list.AppName != xTargetApplicationComboBox.SelectedItem.ToString())
-                    {
-                        templist.Add(_list);
-                    }
-                }
+                targetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
             }
 
-            foreach (TargetApplication targetApp in templist)
+            foreach (TargetApplication targetApplication in targetApplications)
             {
-                
-                Consumer consumer = new Consumer
+                if (!targetApplication.AppName.Equals(xTargetApplicationComboBox.SelectedItem.ToString()))
                 {
-                    ConsumerGuid = targetApp.TargetGuid,
-                    Name = targetApp.ItemName
-                };
-                consumerList.Add(consumer);
+                    Consumer consumer = new()
+                    {
+                        ConsumerGuid = targetApplication.TargetGuid != Guid.Empty ? targetApplication.TargetGuid :
+                        targetApplication.Guid,
+                        Name = targetApplication.ItemName
+                    };
+                    consumerList.Add(consumer);
+                }
             }
 
             xConsumerCB.ConsumerSource = consumerList;
             //Binding for the consumer ComboBox & EnterPrise flag check for consumer combobox
-            BindingHandler.ObjFieldBinding(xConsumerCB, ConsumerComboBox.SelectedConsumerProperty, mActivity, nameof(Activity.ConsumerApplications));
+            BindingHandler.ObjFieldBinding(xConsumerCB, ConsumerComboBox.SelectedConsumerProperty, mActivity, nameof(mActivity.ConsumerApplications));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xConsumerStack, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
 
         }
