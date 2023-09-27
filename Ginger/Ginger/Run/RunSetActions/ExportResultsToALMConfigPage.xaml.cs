@@ -27,10 +27,12 @@ using GingerCore.ALM;
 using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static Ginger.AnalyzerLib.AnalyzerItemBase;
 using static GingerCore.ALM.PublishToALMConfig;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
@@ -72,6 +74,8 @@ namespace Ginger.Run
             xALMTypeCbx.ComboBox.SelectionChanged += xALMTypeCbx_SelectionChanged;
             xALMTestSetLevelCbx_SelectionChanged(this, null);
             xALMTypeCbx_SelectionChanged(this, null);
+            SetTestLevelComboBoxList(runSetActionPublishToQC.RunAt);
+            PropertyChangedEventManager.AddHandler(runSetActionPublishToQC, RunAt_PropertyChanged, string.Empty);
         }
 
         private ExportResultsToALMConfigPage()
@@ -102,7 +106,7 @@ namespace Ginger.Run
             }
         }
 
-        public bool Init(ObservableList<BusinessFlow> bfs, ValueExpression VE,Context Context=null)
+        public bool Init(ObservableList<BusinessFlow> bfs, ValueExpression VE, Context Context = null)
         {
             this.Title = "Export Results To ALM";
             GingerCoreNET.ALMLib.ALMConfig AlmConfig = WorkSpace.Instance.Solution.ALMConfigs.FirstOrDefault(x => x.DefaultAlm);
@@ -276,6 +280,40 @@ namespace Ginger.Run
                 return;
             }
             xSetFieldsBtn.Visibility = Visibility.Visible;
+        }
+
+        private void RunAt_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (string.Equals(e.PropertyName, nameof(RunSetActionBase.RunAt)))
+            {
+                SetTestLevelComboBoxList((sender as RunSetActionBase).RunAt);
+            }
+        }
+
+        private void SetTestLevelComboBoxList(RunSetActionBase.eRunAt runAt)
+        {
+            if (runAt == RunSetActionBase.eRunAt.DuringExecution)
+            {
+                for (int i = xALMTestSetLevelCbx.ComboBox.Items.Count - 1; i >= 0; i--)
+                {
+                    if (xALMTestSetLevelCbx.ComboBox.Items[i].ToString() == GingerCore.General.GetEnumValueDescription(typeof(eALMTestSetLevel), eALMTestSetLevel.RunSet))
+                    {
+                        xALMTestSetLevelCbx.ComboBox.Items.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                if (xALMTestSetLevelCbx.ComboBox.Items.Count < 2)
+                {
+                    xALMTestSetLevelCbx.ComboBox.Items.Add(new ComboItem()
+                    {
+                        Value = eALMTestSetLevel.RunSet.ToString(),
+                        text = GingerCore.General.GetEnumValueDescription(typeof(eALMTestSetLevel), eALMTestSetLevel.RunSet)
+                    });
+                }
+            }
         }
     }
 }

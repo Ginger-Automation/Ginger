@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net7.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
@@ -563,7 +563,7 @@
     <PackageReference Include="Freeware.Pdf2Png">
       <Version>1.0.1</Version>
     </PackageReference>
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.4.2" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.4.3" />
     <PackageReference Include="Google.Protobuf">
       <Version>3.15.0</Version>
     </PackageReference>
@@ -612,7 +612,7 @@
       <Version>108.0.3</Version>
     </PackageReference>
     <PackageReference Include="SharpSvn" Version="1.14001.156" />
-    <PackageReference Include="SkiaSharp" Version="2.88.3" />
+    <PackageReference Include="SkiaSharp" Version="2.88.6" />
     <PackageReference Include="SkiaSharp.Views.Desktop.Common" Version="2.88.3" />
     <PackageReference Include="SSH.NET">
       <Version>2020.0.1</Version>
