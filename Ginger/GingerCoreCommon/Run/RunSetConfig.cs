@@ -448,10 +448,23 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.TestType));
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Release));
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.Iteration));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.BusinessProcessTag));
+                CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.SubBusinessProcessTag));
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory1));
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory2));
                 CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.UserCategory3));
-
+            }
+            else if (CategoriesDefinitions.Count < Enum.GetNames(typeof(eSolutionCategories)).Length)
+            {
+                var allSolutionCategories = CategoriesDefinitions.Select(x => x.Category).ToList();
+                if (!allSolutionCategories.Any(x => x.Equals(eSolutionCategories.BusinessProcessTag)))
+                {
+                    CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.BusinessProcessTag));
+                }
+                if (!allSolutionCategories.Any(x => x.Equals(eSolutionCategories.SubBusinessProcessTag)))
+                {
+                    CategoriesDefinitions.Add(new SolutionCategoryDefinition(eSolutionCategories.SubBusinessProcessTag));
+                }
             }
         }
         private void CheckIfLazyLoadInfoNeedsUpdate()
