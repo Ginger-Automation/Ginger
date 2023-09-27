@@ -22,10 +22,10 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
     {
         private const string DIAMETER_AVP_DICTIONARY_FILENAME = "AVPDictionary.xml";
         private const string DIAMETER_AVP_ENUMS_NAMESPACE = "Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums+";
-        private static ObservableList<DiameterAVP> mAvpDictionaryList;
+        private static ObservableList<DiameterAvpDictionaryItem> mAvpDictionaryList;
         private static readonly object dictionaryLock = new object();
         private static readonly object fileLock = new object();
-        public static ObservableList<DiameterAVP> AvpDictionaryList
+        public static ObservableList<DiameterAvpDictionaryItem> AvpDictionaryList
         {
             get
             {
@@ -76,9 +76,9 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         {
             mMessage = message ?? new DiameterMessage();
         }
-        public static ObservableList<DiameterAVP> LoadDictionary()
+        public static ObservableList<DiameterAvpDictionaryItem> LoadDictionary()
         {
-            ObservableList<DiameterAVP> avpListDictionary = new ObservableList<DiameterAVP>();
+            ObservableList<DiameterAvpDictionaryItem> avpListDictionary = new ObservableList<DiameterAvpDictionaryItem>();
             string folderName = "DiameterLib";
             string resourcePath = Path.Combine(Path.GetDirectoryName(typeof(DiameterUtils).Assembly.Location), folderName, DIAMETER_AVP_DICTIONARY_FILENAME);
             try
@@ -90,7 +90,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
                     if (avpList != null && avpList.AvpDictionaryList != null)
                     {
-                        avpListDictionary = new ObservableList<DiameterAVP>(avpList.AvpDictionaryList);
+                        avpListDictionary = new ObservableList<DiameterAvpDictionaryItem>(avpList.AvpDictionaryList);
                     }
                 }
             }
@@ -113,7 +113,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
             return avpListDictionary;
         }
-        public static ObservableList<DiameterAVP> GetMandatoryAVPForMessage(DiameterEnums.eDiameterMessageType messageType)
+        public static ObservableList<DiameterAVP> GetMandatoryAVPForMessage(eDiameterMessageType messageType)
         {
             ObservableList<DiameterAVP> avpList = null;
             if (messageType == eDiameterMessageType.CapabilitiesExchangeRequest)
@@ -121,11 +121,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 string[] avpsNamesCER = { "Origin-Host", "Origin-Realm", "Host-IP-Address", "Vendor-Id", "Product-Name", "Origin-State-Id" };
                 if (AvpDictionaryList != null && AvpDictionaryList.Any())
                 {
-                    List<DiameterAVP> avps = AvpDictionaryList.Where(avp => avpsNamesCER.Contains(avp.Name)).ToList();
-                    if (avps.Any())
-                    {
-                        avpList = new ObservableList<DiameterAVP>(avps);
-                    }
+                    avpList = GetAvpsForMessage(avpsNamesCER);
                 }
             }
             else if (messageType == eDiameterMessageType.CreditControlRequest)
@@ -137,16 +133,25 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                     "User-Name", "3GPP-RAT-Type", "Event-Timestamp"};
                 if (AvpDictionaryList != null && AvpDictionaryList.Any())
                 {
-                    List<DiameterAVP> avps = AvpDictionaryList.Where(avp => avpsNamesCCR.Contains(avp.Name)).ToList();
-                    if (avps.Any())
-                    {
-                        avpList = new ObservableList<DiameterAVP>(avps);
-                    }
+                    avpList = GetAvpsForMessage(avpsNamesCCR);
                 }
             }
 
             return avpList;
         }
+
+        private static ObservableList<DiameterAVP> GetAvpsForMessage(string[] avpsNames)
+        {
+            ObservableList<DiameterAVP> avpList = null;
+            var mapperConfig = new AutoMapper.MapperConfiguration(cfg => cfg.AddProfile<DiameterAutoMapperProfile>());
+            var mapper = mapperConfig.CreateMapper();
+
+            List<DiameterAvpDictionaryItem> dictionaryItems = AvpDictionaryList.Where(avp => avpsNames.Contains(avp.Name)).ToList();
+            ObservableList<DiameterAVP> avps = mapper.Map<ObservableList<DiameterAVP>>(dictionaryItems);
+
+            return avps != null && avps.Any() ? avps : null;
+        }
+
         public static string GetRawRequestContentPreview(ActDiameter act)
         {
             try
@@ -238,7 +243,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         {
             try
             {
-                string avpEnumTypeName = AvpDictionaryList.FirstOrDefault(x => x.Code == avp.Code)?.AVPEnumName;
+                string avpEnumTypeName = AvpDictionaryList.FirstOrDefault(x => x.Code == avp.Code)?.AvpEnumName;
                 if (!string.IsNullOrEmpty(avpEnumTypeName))
                 {
                     avpEnumTypeName = $"{DIAMETER_AVP_ENUMS_NAMESPACE}{avpEnumTypeName}";
@@ -1574,13 +1579,13 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
                 int dataLength = avp.Length - avpHeaderLength;
 
-                DiameterAVP avpInfo = FetchAvpInfoFromDictionary(avp.Code);
+                DiameterAvpDictionaryItem avpInfo = FetchAvpInfoFromDictionary(avp.Code);
                 if (avpInfo == null)
                 {
                     UpdateActionError($"Failed to find AVP with code: {avp.Code} in action's response AVP list or in the AVP dictionary file");
                     return null;
                 }
-                avp.DataType = avpInfo.DataType;
+                avp.DataType = avpInfo.AvpDataType;
                 avp.Name = avpInfo.Name;
 
                 avp.Value = ConvertAvpValueFromBytes(binaryReader, avp.DataType, dataLength, avp);
@@ -1897,13 +1902,18 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
             return new IPAddress(ipAddressBytes);
         }
-        private DiameterAVP FetchAvpInfoFromDictionary(int avpCode)
+        private DiameterAvpDictionaryItem FetchAvpInfoFromDictionary(int avpCode)
         {
-            DiameterAVP avpInfo = null;
+            DiameterAvpDictionaryItem avpInfo = null;
             try
             {
                 // Search in the user custom response avp list
-                avpInfo = mAct.CustomResponseAvpList?.FirstOrDefault(avp => avp.Code == avpCode);
+                var avp = mAct.CustomResponseAvpList?.FirstOrDefault(avp => avp.Code == avpCode);
+
+                var mapperConfig = new AutoMapper.MapperConfiguration(cfg => cfg.AddProfile<DiameterAutoMapperProfile>());
+                var mapper = mapperConfig.CreateMapper();
+
+                avpInfo = mapper.Map<DiameterAvpDictionaryItem>(avp);
                 if (avpInfo != null)
                 {
                     return avpInfo;

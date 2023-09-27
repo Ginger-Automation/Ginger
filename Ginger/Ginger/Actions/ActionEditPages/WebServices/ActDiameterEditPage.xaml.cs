@@ -99,7 +99,7 @@ namespace Ginger.Actions.WebServices
                 Field = nameof(DiameterAVP.Name),
                 WidthWeight = 200,
                 StyleType = GridColView.eGridColStyleType.Template,
-                CellTemplate = ucGrid.GetGridComboBoxTemplate<DiameterAVP>(DiameterUtils.AvpDictionaryList,
+                CellTemplate = ucGrid.GetGridComboBoxTemplate<DiameterAvpDictionaryItem>(DiameterUtils.AvpDictionaryList,
                 displayMemberPath: nameof(DiameterAVP.Name),
                 selectedValuePath: nameof(DiameterAVP.Name),
                 selectedValueField: nameof(DiameterAVP.Name),
@@ -210,10 +210,10 @@ namespace Ginger.Actions.WebServices
         }
         private void HandleResponseGridAvpNameChanged(ComboBox avpNameCB)
         {
-            int selectedItemIndex = xRequestAvpListGrid.grdMain.SelectedIndex;
+            int selectedItemIndex = xCustomResponseAvpListGrid.grdMain.SelectedIndex;
             if (selectedItemIndex != -1)
             {
-                DiameterAVP sourceAVP = (DiameterAVP)avpNameCB.SelectedItem;
+                var sourceAVP = (DiameterAvpDictionaryItem)avpNameCB.SelectedItem;
                 DiameterAVP currentAVP = mAct.CustomResponseAvpList[selectedItemIndex];
                 UpdateAVP(currentAVP, sourceAVP);
                 UpdateResponseAvpsGridDataSource();
@@ -225,22 +225,20 @@ namespace Ginger.Actions.WebServices
             int selectedItemIndex = xRequestAvpListGrid.grdMain.SelectedIndex;
             if (selectedItemIndex != -1)
             {
-                DiameterAVP sourceAVP = (DiameterAVP)avpNameCB.SelectedItem;
+                var sourceAVP = (DiameterAvpDictionaryItem)avpNameCB.SelectedItem;
                 DiameterAVP currentAVP = mAct.RequestAvpList[selectedItemIndex];
                 UpdateAVP(currentAVP, sourceAVP);
                 UpdateRequestAvpsGridDataSource();
                 SetGroupedAvpList();
             }
         }
-        private void UpdateAVP(DiameterAVP avpToUpdate, DiameterAVP source)
+        private void UpdateAVP(DiameterAVP avpToUpdate, DiameterAvpDictionaryItem sourceAvp)
         {
-            avpToUpdate.Length = source.Length;
-            avpToUpdate.Code = source.Code;
-            avpToUpdate.Name = source.Name;
-            avpToUpdate.IsMandatory = source.IsMandatory;
-            avpToUpdate.IsVendorSpecific = source.IsVendorSpecific;
-            avpToUpdate.VendorId = source.VendorId;
-            avpToUpdate.DataType = source.DataType;
+            var mapperConfig = new AutoMapper.MapperConfiguration(cfg => cfg.AddProfile<DiameterAutoMapperProfile>());
+            var mapper = mapperConfig.CreateMapper();
+
+            avpToUpdate = mapper.Map<DiameterAVP>(sourceAvp);
+
             avpToUpdate.ParentName = null;
             avpToUpdate.ParentAvpGuid = System.Guid.Empty;
             avpToUpdate.NestedAvpList.Clear();

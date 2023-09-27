@@ -74,7 +74,6 @@ namespace Amdocs.Ginger.Repository
         [IsSerializedForLocalRepository]
         public string ExternalID2 { get { return mExternalID2; } set { if (mExternalID2 != value) { mExternalID2 = value; OnPropertyChanged(nameof(ExternalID2)); } } }
 
-        [XmlIgnore]
         public LiteDB.ObjectId LiteDbId { get; set; }
 
         public string ObjFolderName { get { return FolderName(this.GetType()); } }

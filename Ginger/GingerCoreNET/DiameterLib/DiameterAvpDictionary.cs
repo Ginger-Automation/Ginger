@@ -12,6 +12,6 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
     public class DiameterAvpDictionary
     {
         [XmlElement("Avp")]
-        public ObservableList<DiameterAVP> AvpDictionaryList { get; set; }
+        public ObservableList<DiameterAvpDictionaryItem> AvpDictionaryList { get; set; }
     }
 }
