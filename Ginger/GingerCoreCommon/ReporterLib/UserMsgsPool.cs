@@ -629,7 +629,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.LoseChangesWarn, new UserMsg(eUserMsgType.WARN, "Save Changes", "The operation may result with lost of un-saved local changes." + Environment.NewLine + "Please make sure all changes were saved before continue." + Environment.NewLine + Environment.NewLine + "To perform the operation?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.CompilationErrorOccured, new UserMsg(eUserMsgType.ERROR, "Compilation Error Occurred", "Compilation error occurred." + Environment.NewLine + "Error Details: " + Environment.NewLine + " '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-
+            
             Reporter.UserMsgsPool.Add(eUserMsgKey.CopiedVariableSuccessfully, new UserMsg(eUserMsgType.INFO, "Info Message", "'{0}'" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " Affected." + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RenameItemError, new UserMsg(eUserMsgType.ERROR, "Rename", "Failed to rename the Item. Error: '{0}'?", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfShareVaribalesInRunner, new UserMsg(eUserMsgType.QUESTION, "Share" + GingerDicser.GetTermResValue(eTermResKey.Variables), "Are you sure you want to share selected " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Values to all the similar " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " and " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " across all Runners?", eUserMsgOption.YesNo, eUserMsgSelection.No));

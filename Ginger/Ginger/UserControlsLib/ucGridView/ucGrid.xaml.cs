@@ -1666,7 +1666,43 @@ namespace Ginger
             return template;
         }
 
+        public static DataTemplate GetGridComboBoxTemplate<T>(ObservableList<T> comboValuesList, string displayMemberPath, string selectedValuePath, string selectedValueField, bool allowEdit = false, SelectionChangedEventHandler comboSelectionChangedHandler = null, string comboBoxTag = null)
+        {
+            DataTemplate template = new DataTemplate();
+            FrameworkElementFactory comboBox = new FrameworkElementFactory(typeof(ComboBox));
+            comboBox.SetValue(ComboBox.ItemsSourceProperty, comboValuesList);
+            comboBox.SetValue(ComboBox.DisplayMemberPathProperty, displayMemberPath);
+            comboBox.SetValue(ComboBox.SelectedValuePathProperty, selectedValuePath);
 
+            Binding selectedValueBinding = new Binding(selectedValueField)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            comboBox.SetBinding(ComboBox.SelectedValueProperty, selectedValueBinding);
+
+            Binding textValueBinding = new Binding(selectedValuePath)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            comboBox.SetBinding(ComboBox.TextProperty, textValueBinding);
+
+            if (allowEdit)
+            {
+                comboBox.SetValue(ComboBox.IsEditableProperty, true);
+            }
+            if (comboSelectionChangedHandler != null)
+            {
+                comboBox.AddHandler(ComboBox.SelectionChangedEvent, comboSelectionChangedHandler);
+            }
+            if (!string.IsNullOrEmpty(comboBoxTag))
+            {
+                comboBox.SetValue(ComboBox.TagProperty, comboBoxTag);
+            }
+            template.VisualTree = comboBox;
+            return template;
+        }
         public static DataTemplate GetGridComboBoxTemplate(List<ComboEnumItem> valuesList, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false, string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
         {
             DataTemplate template = new DataTemplate();
