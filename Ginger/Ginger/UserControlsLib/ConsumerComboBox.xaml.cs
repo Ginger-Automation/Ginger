@@ -190,12 +190,12 @@ namespace Ginger.UserControlsLib
                         displayText.Append(',');
                     }
                 }
-                this.Text = displayText.ToString().TrimEnd(',');
+                Text = displayText.ToString().TrimEnd(',');
             }
             // set DefaultText if nothing else selected
-            if (string.IsNullOrEmpty(this.Text))
+            if (string.IsNullOrEmpty(Text))
             {
-                this.Text = this.DefaultText;
+                Text = DefaultText;
             }
         }
 

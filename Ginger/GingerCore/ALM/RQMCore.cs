@@ -173,6 +173,7 @@ namespace GingerCore.ALM
             AlmConfig.ALMProjectKey = ALMProjectKey;
             AlmConfig.AlmType = almType;
             AlmConfig.IsTestSuite = GetIsTestSuiteValueFromDict(dic);
+            AlmConfig.PublishSkipped = GetPublishSkippedValueFromDict(dic);
             AlmConfig.DefectFieldAPI = GetDefectFieldAPIValueFromDict(dic);
             AlmConfig.ALMConfigPackageFolderPath = amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(ALMConfigPackageFolderPath);
             AlmConfig.JiraTestingALM = testingALMType;
@@ -204,11 +205,18 @@ namespace GingerCore.ALM
                         string serverURL = ServerURLNode.InnerText;
                         XmlNode IsTestSuiteNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/IsTestSuite");
                         string IsTestSuite = IsTestSuiteNode.InnerText;
+                        XmlNode PublishSkippedNode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/PublishSkipped");
+                        string PublishSkipped = "False";
+                        if (PublishSkippedNode != null)
+                        {
+                            PublishSkipped = PublishSkippedNode.InnerText;
+                        }
                         XmlNode DefectFieldAPINode = RQMSettingsXML.SelectSingleNode("RQM/GeneralData/DefectFieldAPI");
                         string DefectFieldAPI = DefectFieldAPINode.InnerText;
                         Dictionary<String, Object> dictionary = new Dictionary<string, object>();
                         dictionary.Add("ServerURL", serverURL);
                         dictionary.Add("IsTestSuite", IsTestSuite);
+                        dictionary.Add("PublishSkipped", PublishSkipped);
                         dictionary.Add("DefectFieldAPI", DefectFieldAPI);
                         return dictionary; 
                     }
@@ -304,6 +312,20 @@ namespace GingerCore.ALM
                 return "";
             }
         }
+
+        private string GetPublishSkippedValueFromDict(Dictionary<string, object> dic)
+        {
+            if (dic.ContainsKey("PublishSkipped"))
+            {
+                return (string)dic["PublishSkipped"];
+            }
+            else
+            {
+                return "False";
+            }
+        }
+
+        
         #endregion
 
         public void UpdatedRQMTestInBF(ref BusinessFlow busFlow, RQMTestPlan testPlan, List<string> TCsIDs)

@@ -232,6 +232,20 @@ namespace GingerCoreNET.ALMLib
             }
         }
 
+        private string mPublishSkipped;
+        public string PublishSkipped
+        {
+            get { return mPublishSkipped; }
+            set
+            {
+                if (mPublishSkipped != value)
+                {
+                    mPublishSkipped = value;
+                    OnPropertyChanged(nameof(PublishSkipped));
+                }
+            }
+        }
+
         private string mDefectFieldAPI;
         public string DefectFieldAPI
         {

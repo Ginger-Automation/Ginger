@@ -152,8 +152,18 @@ namespace GingerCore.ALM.RQM
                         //}
 
                         List<ExecutionResult> exeResultList = new List<ExecutionResult>();
+                        bool isFlowskipped = false;
                         foreach (ActivitiesGroup activGroup in businessFlow.ActivitiesGroups)
                         {
+
+                            if (ALMCore.DefaultAlmConfig.PublishSkipped.Equals("False",StringComparison.CurrentCultureIgnoreCase))
+                            {
+                                if(activGroup.RunStatus == eActivitiesGroupRunStatus.Skipped)
+                                {
+                                    isFlowskipped = true;   
+                                    continue;
+                                }
+                            }
                             if (activGroup.ActivitiesIdentifiers.Count > 0)
                             {
                                 if (projEnvironment != null)
@@ -174,7 +184,8 @@ namespace GingerCore.ALM.RQM
                                     else
                                     {
                                         result = $"Execution Results List not found for {businessFlow.Name} and testplan {bfExportedID}";
-                                        //return false;
+                                        Reporter.ToLog(eLogLevel.DEBUG, result);
+                                        //return false;///Need to improve for Multiple Activity Group
                                     }
                                 }
                             }
@@ -186,9 +197,17 @@ namespace GingerCore.ALM.RQM
 
                         if (!exeResultList.Any())
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as no valid Execution found for it");
-                            result = $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and 'testplan {bfExportedID}' as no valid Execution found for it ";
-                            return false;
+                            if(isFlowskipped)
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as skippedUpdate configured as {ALMCore.DefaultAlmConfig.PublishSkipped}");
+                                return false;
+                            }
+                            else
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as no valid Execution found for it");
+                                result = $"Skippinng ALM Results Publish of '{businessFlow.Name}' Flow and 'testplan {bfExportedID}' as no valid Execution found for it ";
+                                return false;
+                            }
                         }
 
                         ResultInfo resultInfo = new ResultInfo();
@@ -211,9 +230,9 @@ namespace GingerCore.ALM.RQM
                                 return false;
                             }
                         }
-                        catch
+                        catch(Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for {businessFlow.Name} and testplan {bfExportedID}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for {businessFlow.Name} and testplan {bfExportedID}",ex);
                         }
                         finally
                         {
@@ -307,9 +326,13 @@ namespace GingerCore.ALM.RQM
                         else
                         {
                             result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} Execution results failed to publist to RQM due to {resultInfo.ErrorDesc}";
-                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to export execution details to RQM/ALM due to{resultInfo.ErrorDesc}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to export execution details to RQM/ALM due to {resultInfo.ErrorDesc}");
                             return false;
                         }
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to Get Project list");
                     }
 
                 }
@@ -588,7 +611,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to create Execution Record Per Activity- {currentActivity.EntityName} in CreateExecutionRecord {ex.InnerException}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to create Execution Record Per Activity- {currentActivity.EntityName} in CreateExecutionRecord {ex.InnerException}",ex);
             }
         }
 
