@@ -425,7 +425,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 {
                     if (!Guid.TryParse(runOptions.ReferenceExecutionID, out Guid temp))
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, string.Format("The provided ExecutionID '{0}' is not valid.", runOptions.ReferenceExecutionID));
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("The provided Reference ExecutionID '{0}' is not valid.", runOptions.ReferenceExecutionID));
                         Environment.ExitCode = 1;
                         return Environment.ExitCode;
                     }
@@ -591,10 +591,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 {
                     mCLIHandler.LoadRunsetConfigurations(runsetConfigs, mCLIHelper, WorkSpace.Instance.RunsetExecutor);
                 }
-                //else if(mCLIHelper.ReRunFailed)
-                //{
-                //    mCLIHandler.LoadRunsetConfigurations()
-                //}
 
                 if (!mCLIHelper.LoadRunset(WorkSpace.Instance.RunsetExecutor))
                 {

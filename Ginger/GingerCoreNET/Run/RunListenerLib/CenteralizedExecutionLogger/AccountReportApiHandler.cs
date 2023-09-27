@@ -174,7 +174,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(SEND_ACTIVITYGROUP_EXECUTION_DATA, isUpdate ? Method.Put : Method.Post) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportActivityGroup);
+                RestRequest restRequest = new RestRequest(SEND_ACTIVITYGROUP_EXECUTION_DATA, isUpdate ? Method.Put : Method.Post) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportActivityGroup);
                 string message = string.Format("execution data to Central DB for the Activities Group:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportActivityGroup.Name, accountReportActivityGroup.Id, accountReportActivityGroup.AccountReportDbBusinessFlowId);
                 try
                 {
@@ -247,7 +247,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(EXECUTION_ID_VALIDATION + executionId, Method.Get);
+                RestRequest restRequest = new RestRequest(EXECUTION_ID_VALIDATION + executionId, Method.Get);
                 string message = string.Format("execution id : {0}", executionId);
                 try
                 {
@@ -351,7 +351,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             try
             {
                 Method method = isUpdate ? Method.Put : Method.Post;
-                RestRequest restRequest = (RestRequest)new RestRequest(api, method) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReport);
+                RestRequest restRequest = new RestRequest(api, method) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReport);
                 RestResponse response = await restClient.ExecuteAsync(restRequest);
                 if (response.IsSuccessful)
                 {
@@ -406,7 +406,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             List<RunsetHLInfoResponse> accountReportrunset = new List<RunsetHLInfoResponse>();
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(GET_RUNSET_EXECUTION_DATA + executionId, Method.Get);
+                RestRequest restRequest = new RestRequest(GET_RUNSET_EXECUTION_DATA + executionId, Method.Get);
                 string message = string.Format("execution id : {0}", executionId);
                 try
                 {
@@ -438,7 +438,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             List<AccountReportRunner> accountReportrunset = new List<AccountReportRunner>();
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(GET_RUNNER_EXECUTION_DATA + executionId, Method.Get);
+                RestRequest restRequest = new RestRequest(GET_RUNNER_EXECUTION_DATA + executionId, Method.Get);
                 string message = string.Format("execution id : {0}", executionId);
                 try
                 {

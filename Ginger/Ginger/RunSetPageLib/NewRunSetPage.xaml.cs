@@ -1875,7 +1875,7 @@ namespace Ginger.Run
                     return;
                 }
                 UpdateRunButtonIcon(true);
-
+               
                 ResetALMDefectsSuggestions();
 
 
@@ -1918,30 +1918,35 @@ namespace Ginger.Run
             finally
             {
                 UpdateRunButtonIcon();
-
-                UpdateReRunFailedButtonIcon();
+                UpdateReRunFailedButtonIcon();                
             }
         }
 
         private async void xReRunFailedRunsetBtn_Click(object sender, RoutedEventArgs e)
         {
             RunsetExecutor ReRunRunsetExecutor = new RunsetExecutor();
-            List<BusinessFlow> DeactivatedBfList = new List<BusinessFlow>();
+            List<Guid> DeactivatedBfInstanceGuidList = new List<Guid>();
             if (WorkSpace.Instance.RunsetExecutor.Runners.Any(x => x.Executor.BusinessFlows.Any(y => y.RunStatus == eRunStatus.Failed)))
             {
                 WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active = true;
-
                 foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.Runners)
                 {
-                    foreach (BusinessFlow business in runner.Executor.BusinessFlows)
+                    var FailedBFGuidList = runner.Executor.BusinessFlows.Where(x => x.RunStatus == eRunStatus.Failed).Select(x=>x.InstanceGuid);
+                    
+                    foreach (BusinessFlowRun business in runner.BusinessFlowsRunList)
                     {
-                        if (business.RunStatus != eRunStatus.Failed)
+                        if (!FailedBFGuidList.Contains(business.BusinessFlowInstanceGuid))
                         {
-                            business.Active = false;
-                            DeactivatedBfList.Add(business);
+                            business.BusinessFlowIsActive = false;
+                            DeactivatedBfInstanceGuidList.Add(business.BusinessFlowInstanceGuid);
                         }
                     }
                 }
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.INFO, string.Format("No record found to re run for current execution"));
+                return;
             }
 
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active)
@@ -1961,7 +1966,6 @@ namespace Ginger.Run
                         return;
                     }
                     UpdateReRunFailedButtonIcon();
-
                     ResetALMDefectsSuggestions();
 
 
@@ -1978,11 +1982,7 @@ namespace Ginger.Run
                     var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
 
                     // handling ALM Defects Opening
-                    foreach(BusinessFlow bf in DeactivatedBfList)
-                    {
-                        bf.Active = true;
-                    }
-
+                    
                     if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null && WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0)
                     {
                         ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
@@ -1998,10 +1998,20 @@ namespace Ginger.Run
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Runset execution failed: ", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Runset execution failed during re run failed flows ", ex);
                 }
                 finally
                 {
+                    foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.Runners)
+                    {
+                        foreach (BusinessFlowRun business in runner.BusinessFlowsRunList)
+                        {
+                            if (DeactivatedBfInstanceGuidList.Contains(business.BusinessFlowInstanceGuid))
+                            {
+                                business.BusinessFlowIsActive = true;
+                            }
+                        }
+                    }
                     UpdateReRunFailedButtonIcon();
                 }
             }
@@ -2032,7 +2042,6 @@ namespace Ginger.Run
             try
             {
                 UpdateRunButtonIcon(true);
-
                 if (RunSetConfig.GingerRunners.FirstOrDefault(x => x.Status == eRunStatus.Stopped) == null)
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "There are no Stopped Runners to Continue.");
