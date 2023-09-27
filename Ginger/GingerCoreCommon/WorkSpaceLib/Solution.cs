@@ -457,15 +457,7 @@ namespace Ginger.SolutionGeneral
                 product.CategoryOptionalValues.Add(new SolutionCategoryValue("Product 2"));
                 SolutionCategories.Add(product);
 
-                SolutionCategory testType = new SolutionCategory(eSolutionCategories.TestType);
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Regression"));
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Progression"));
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Sanity"));
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Acceptance"));
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("End to End"));
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Security"));
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Performance"));
-                SolutionCategories.Add(testType);
+                SolutionCategories.Add(GetTestTypeCategory());
 
                 SolutionCategory release = new SolutionCategory(eSolutionCategories.Release);
                 release.CategoryOptionalValues.Add(new SolutionCategoryValue("Release 1"));
@@ -495,9 +487,30 @@ namespace Ginger.SolutionGeneral
                 {
                     SolutionCategories.Add(GetSubBusinessProcessTagCategory());
                 }
+
+               var testTypeCategory =  SolutionCategories.FirstOrDefault(x => x.Category == eSolutionCategories.TestType);
+
+                if (testTypeCategory != null)
+                {
+                    testTypeCategory.CategoryOptionalValues.Add(new SolutionCategoryValue("Data Creation"));
+                }
             }
 
             
+        }
+
+        private static SolutionCategory GetTestTypeCategory()
+        {
+            SolutionCategory testType = new SolutionCategory(eSolutionCategories.TestType);
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Regression"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Progression"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Sanity"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Acceptance"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("End to End"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Security"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Performance"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Data Creation"));
+            return testType;
         }
 
         private SolutionCategory GetSubBusinessProcessTagCategory()
