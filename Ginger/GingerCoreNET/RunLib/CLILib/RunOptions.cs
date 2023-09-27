@@ -115,6 +115,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         [Option("sealightsTestRecommendations", Required = false, HelpText = "Set Sealights Test Recommendations")]
         public bool SealightsTestRecommendations { get; set; }
 
+        //pravin
+        [Option("ReRunFailed", Required = false, HelpText = "Set Rerun Configuration Enable")]
+        public bool ReRunFailed { get; set; }
+
+        [Option("ReferenceExecutionID", Required = false, HelpText = "Set Reference ExecutionID")]
+        public string ReferenceExecutionID { get; set; }
+
+        [Option("RerunLevel", Required = false, HelpText = "Set RerunLevel")]
+        public string RerunLevel { get; set; }
+
     }
 
 }

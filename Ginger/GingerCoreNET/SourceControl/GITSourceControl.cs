@@ -329,12 +329,13 @@ namespace GingerCore.SourceControl
             {
                 if(ex is AggregateException && ex.InnerException is CheckoutConflictException)
                 {
-                    error = "Local branch has uncommited changes, commit them before getting latest.";
+                    Reporter.ToUser(eUserMsgKey.UncommitedChangesPreventCheckout);
+                    error = Reporter.UserMsgsPool[eUserMsgKey.UncommitedChangesPreventCheckout].Message;
                     return false;
                 }
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting latest changes.", ex);
                 conflictsPaths = GetConflictPaths();
-                error = ex.Message + Environment.NewLine + ex.InnerException;
+                error = $"{ex.Message} {Environment.NewLine} {ex.InnerException}";
                 return false;
             }
         }
