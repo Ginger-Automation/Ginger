@@ -463,11 +463,6 @@ namespace Ginger.Run
                     else if (mRunSetConfig.IsRunning)
                     {
                         xReRunFailedRunsetBtn.ButtonText = "Running...";
-                        setAsRunning = true;
-                    }
-                    else if (RunSetConfig.GingerRunners.FirstOrDefault(x => x.Status == eRunStatus.Running) != null)
-                    {
-                        xReRunFailedRunsetBtn.ButtonText = "Running...";
                         xReRunFailedRunsetBtn.ToolTip = "Execution of at least one Runner is in progress";
                         setAsRunning = true;
                     }
