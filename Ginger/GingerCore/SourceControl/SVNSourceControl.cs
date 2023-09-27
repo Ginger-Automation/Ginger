@@ -552,8 +552,9 @@ namespace GingerCore.SourceControl
         private const string ConflictEndMarker = ">>>>>>>";
         private const string CR_LF = "\r\n";
 
-        public override string GetLocalContentFromConflicted(string conflictedContent)
+        public override string GetLocalContentForConflict(string conflictFilePath)
         {
+            string conflictedContent = File.ReadAllText(conflictFilePath);
             string localContent = GetLocalContentViaMarkers(conflictedContent);
             return localContent;
         }
@@ -587,8 +588,9 @@ namespace GingerCore.SourceControl
             return localContent;
         }
 
-        public override string GetRemoteContentFromConflicted(string conflictedContent)
+        public override string GetRemoteContentForConflict(string conflictFilePath)
         {
+            string conflictedContent = File.ReadAllText(conflictFilePath);
             string remoteContent = GetRemoteContentViaMarkers(conflictedContent);
             return remoteContent;
         }

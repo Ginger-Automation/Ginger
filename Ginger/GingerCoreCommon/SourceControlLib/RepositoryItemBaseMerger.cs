@@ -60,7 +60,8 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 
                 if (comparisonForMerge == null)
                 {
-                    throw new InvalidOperationException($"No appropriate {nameof(Comparison)} found for merging type {type.FullName}.");
+                    //in case of a Modify-Delete conflict, user might choose to not keep the modified file, so there is no comparison to merge.
+                    return null;
                 }
 
                 rib = (RepositoryItemBase?)Activator.CreateInstance(type);

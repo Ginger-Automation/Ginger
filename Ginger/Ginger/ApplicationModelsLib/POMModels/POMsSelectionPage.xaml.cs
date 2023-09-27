@@ -123,7 +123,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void UpdatePOMTree()
         {
             mApplicationPOMSelectionPage.xTreeView.Tree.SelectItem(mItemTypeRootNode);
-            mApplicationPOMSelectionPage.xTreeView.Tree.RefresTreeNodeChildrens(mItemTypeRootNode);
+            mApplicationPOMSelectionPage.xTreeView.Tree.RefreshTreeNodeChildrens(mItemTypeRootNode);
         }
 
         /// <summary>
