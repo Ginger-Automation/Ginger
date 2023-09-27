@@ -114,7 +114,6 @@ namespace Ginger.BusinessFlowPages
                 xSharedRepoInstanceUCCol.Width = new GridLength(0);
             }
 
-            xTargetApplicationComboBox.SelectionChanged += xTargetApplicationComboBox_SelectionChanged;
         }
         public void UpdateActivity(Activity activity)
         {
@@ -175,7 +174,7 @@ namespace Ginger.BusinessFlowPages
             xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
             BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
-
+            
             if (mActivity.GetType() == typeof(ErrorHandler))
             {
                 xHandlerTypeStack.Visibility = Visibility.Visible;
@@ -201,16 +200,14 @@ namespace Ginger.BusinessFlowPages
                 xHandlerTriggerOnStackPanel.Visibility = Visibility.Collapsed;
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Collapsed;
             }
+            PropertyChangedEventManager.AddHandler(WorkSpace.Instance.UserProfile, UserProfile_PropertyChanged, string.Empty);
+        }
 
-            if (GetCurrentActivityPlatform() == ePlatformType.WebServices)
+        private void UserProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if(string.Equals(e.PropertyName, nameof(UserProfile.ShowEnterpriseFeatures)))
             {
-                xConsumerStack.Visibility = Visibility.Visible;
-                xConsumerStackLogic();
-            }
-            else 
-            {
-                xConsumerStack.Visibility = Visibility.Collapsed;
-                mActivity.ConsumerApplications.Clear();
+                TargetAppSelectedComboBox();
             }
         }
 
@@ -262,62 +259,65 @@ namespace Ginger.BusinessFlowPages
             return WorkSpace.Instance.Solution.GetApplicationPlatformForTargetApp(mActivity.TargetApplication);
         }
 
-        private void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void xTargetApplicationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+            TargetAppSelectedComboBox();
+        }
+
+        public void TargetAppSelectedComboBox()
+        {
             if (xTargetApplicationComboBox.SelectedItem != null &&
-                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+                           WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
             {
-                if (GetCurrentActivityPlatform() == ePlatformType.WebServices)
-                {
-                    xConsumerStack.Visibility = Visibility.Visible;
-                    xConsumerStackLogic();
-                }
-                else
-                {
-                    xConsumerStack.Visibility = Visibility.Collapsed;
-                    mActivity.ConsumerApplications.Clear();
-                }
+                PrepareAndLoadConsumerComboBox();
             }
             else
             {
                 xConsumerStack.Visibility = Visibility.Collapsed;
             }
         }
-
-        private void xConsumerStackLogic()
+        private void PrepareAndLoadConsumerComboBox()
         {
-            //logic for Consumer ComboBox for Otoma
-            ObservableList<TargetBase> targetApplications;//= new ObservableList<TargetApplication>();
-            ObservableList<Consumer> consumerList = new();
-            if (mContext.BusinessFlow != null)
+            if (GetCurrentActivityPlatform() != ePlatformType.WebServices)
             {
-                targetApplications = mContext.BusinessFlow.TargetApplications;               
+                mActivity.ConsumerApplications.Clear();
+                xConsumerStack.Visibility = Visibility.Collapsed;
+                
             }
             else
             {
-                targetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-            }
+                xConsumerStack.Visibility = Visibility.Visible;                
 
-            foreach (TargetApplication targetApplication in targetApplications)
-            {
-                if (!targetApplication.AppName.Equals(xTargetApplicationComboBox.SelectedItem.ToString()))
+                //logic for Consumer ComboBox for Otoma
+                ObservableList<TargetBase> targetApplications;
+                ObservableList<Consumer> consumerList = new();
+                if (mContext.BusinessFlow != null)
                 {
-                    Consumer consumer = new()
-                    {
-                        ConsumerGuid = targetApplication.TargetGuid != Guid.Empty ? targetApplication.TargetGuid :
-                        targetApplication.Guid,
-                        Name = targetApplication.ItemName
-                    };
-                    consumerList.Add(consumer);
+                    targetApplications = mContext.BusinessFlow.TargetApplications;
                 }
+                else
+                {
+                    targetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+                }
+
+                foreach (var targetApplication in targetApplications.Cast<TargetApplication>())
+                {
+                    if (!targetApplication.AppName.Equals(xTargetApplicationComboBox.SelectedItem.ToString()))
+                    {
+                        Consumer consumer = new()
+                        {
+                            ConsumerGuid = targetApplication.TargetGuid != Guid.Empty ? targetApplication.TargetGuid :
+                            targetApplication.Guid,
+                            Name = targetApplication.ItemName
+                        };
+                        consumerList.Add(consumer);
+                    }
+                }
+
+                xConsumerCB.ConsumerSource = consumerList;
+                //Binding for the consumer ComboBox & EnterPrise flag check for consumer combobox
+                BindingHandler.ObjFieldBinding(xConsumerCB, ConsumerComboBox.SelectedConsumerProperty, mActivity, nameof(mActivity.ConsumerApplications));
             }
-
-            xConsumerCB.ConsumerSource = consumerList;
-            //Binding for the consumer ComboBox & EnterPrise flag check for consumer combobox
-            BindingHandler.ObjFieldBinding(xConsumerCB, ConsumerComboBox.SelectedConsumerProperty, mActivity, nameof(mActivity.ConsumerApplications));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xConsumerStack, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
-
         }
     }
 }
