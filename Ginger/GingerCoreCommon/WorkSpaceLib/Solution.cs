@@ -492,7 +492,10 @@ namespace Ginger.SolutionGeneral
 
                 if (testTypeCategory != null)
                 {
-                    testTypeCategory.CategoryOptionalValues.Add(new SolutionCategoryValue("Data Creation"));
+                    if(!testTypeCategory.CategoryOptionalValues.Contains(new SolutionCategoryValue("Data Creation")))
+                    {
+                        testTypeCategory.CategoryOptionalValues.Add(new SolutionCategoryValue("Data Creation"));
+                    }
                 }
             }
 
