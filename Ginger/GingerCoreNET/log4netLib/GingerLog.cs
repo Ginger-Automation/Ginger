@@ -46,6 +46,23 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
         }
 
+        public static void StartCustomTraceListeners()
+        {
+            try
+            {
+                if (!System.Diagnostics.Trace.Listeners.Contains(CustomTraceListener.Instance))
+                {
+                    System.Diagnostics.Trace.Listeners.Add(CustomTraceListener.Instance);
+
+                    System.Diagnostics.Trace.WriteLine("Ginger Start up", "Info");
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Custom Trace listerner ", ex.InnerException);
+            }
+        }
+
 
         public static void InitLog4Net()
         {
