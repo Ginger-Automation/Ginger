@@ -260,19 +260,20 @@ namespace Ginger.AnalyzerLib
                     }
                     else
                     {
-                        AnalyzeActivity aa = new AnalyzeActivity();
-                        aa.Status = AnalyzerItemBase.eStatus.NeedFix;
-                        aa.ItemName = var.Name;
-                        aa.Description = var + " is Unused in " + variableSourceType + ": " + activity.ActivityName;
-                        aa.Details = variableSourceType;
-                        aa.mActivity = activity;
-                        aa.ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable);
-                        //aa.mBusinessFlow = businessFlow;
-                        aa.ItemParent = variableSourceName;
-                        aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
-                        aa.IssueType = AnalyzerItemBase.eType.Error;
-                        aa.FixItHandler = DeleteUnusedVariables;
-                        aa.Severity = AnalyzerItemBase.eSeverity.Medium;
+                        AnalyzeActivity aa = new(activity)
+                        {
+                            Status = AnalyzerItemBase.eStatus.NeedFix,
+                            ItemName = var.Name,
+                            Description = var + " is Unused in " + variableSourceType + ": " + activity.ActivityName,
+                            Details = variableSourceType,
+                            ItemClass = GingerDicser.GetTermResValue(eTermResKey.Variable),
+                            //BusinessFlow = businessFlow;
+                            ItemParent = variableSourceName,
+                            CanAutoFix = AnalyzerItemBase.eCanFix.Yes,
+                            IssueType = AnalyzerItemBase.eType.Error,
+                            FixItHandler = DeleteUnusedVariables,
+                            Severity = AnalyzerItemBase.eSeverity.Medium,
+                        };
                         AddIssue(issuesList, aa);
                     }
                 }
@@ -283,7 +284,7 @@ namespace Ginger.AnalyzerLib
         {
             if (sender.GetType().Equals(typeof(AnalyzeActivity)))
             {
-                Activity activity = ((AnalyzeActivity)sender).mActivity;
+                Activity activity = ((AnalyzeActivity)sender).Activity;
                 foreach (VariableBase var in activity.Variables)
                 {
                     if (var.Name.Equals(((AnalyzeActivity)sender).ItemName))

@@ -142,7 +142,7 @@ namespace Ginger.UserControlsLib.TextEditor.Gherkin
 
             File.Copy(mFeatureFile, targetFile);
             Reporter.ToUser(eUserMsgKey.GherkinFeatureFileImportedSuccessfully, targetFile);
-            ((DocumentsFolderTreeItem)featureTargetFolder).TreeView.Tree.RefresTreeNodeChildrens(featureTargetFolder);
+            ((DocumentsFolderTreeItem)featureTargetFolder).TreeView.Tree.RefreshTreeNodeChildrens(featureTargetFolder);
 
             return targetFile;
         }

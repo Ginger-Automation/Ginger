@@ -136,7 +136,10 @@
                         <Menu x:Name="xSolutionSourceControlMenu" Background="{StaticResource $BackgroundColor_DarkBlue}" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" >
                             <MenuItem x:Name="xSolutionSourceControlSetMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Source Control Operations">
                                 <MenuItem.Icon>
-                                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="20" ImageType="SourceControl" FontWeight="Bold" Margin="-3,-10,-15,-10"/>
+                                    <Grid>
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="20" ImageType="SourceControl" FontWeight="Bold" Margin="-3, -10, -15, -10"/>
+                                        <usercontrols:ImageMakerControl x:Name="xSourceControlOperationsWarn" SetAsFontImageWithSize="10" Margin="10, 10, -10, -10" Foreground="{DynamicResource $HighlightColor_Orange}" ImageType="Empty" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                                    </Grid>
                                 </MenuItem.Icon>
                                 <MenuItem Header="Source Control Settings" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="btnSourceControlConnectionDetails_Click">
                                     <MenuItem.Icon>
@@ -158,16 +161,13 @@
                                         <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="View"  Margin="0,0,0,0"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="Resolve Conflicts" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}">
+                                <MenuItem Header="Resolve Conflicts" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" x:Name="xResolveConflictMenuItem" Click="xResolveConflictsMenuItem_Click">
                                     <MenuItem.Icon>
-                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Fix"  Margin="0,0,0,0"/>
+                                        <Grid>
+                                            <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ImageType="Fix"  Margin="0,0,0,0"/>
+                                            <usercontrols:ImageMakerControl x:Name="xResolveConflictsWarn" SetAsFontImageWithSize="9" Margin="4, 8, -4, -8" Foreground="{DynamicResource $HighlightColor_Orange}" ImageType="Empty" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                                        </Grid>
                                     </MenuItem.Icon>
-                                    <MenuItem Header="Keep Local Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ResolveConflictsLocalMenuItem_Click">
-                                    </MenuItem>
-                                    <MenuItem Header="Accept Server Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ResolveConflictsServerMenuItem_Click">
-                                    </MenuItem>
-                                    <MenuItem x:Name="xResolveConflictManualMenuItem" Header="Manually Select Changes" Style="{StaticResource $MenuItemStyle_ButtonSubMenuItem}" Click="ResolveConflictsManuallyMenuItem_Click">
-                                    </MenuItem>
                                 </MenuItem>
                             </MenuItem>
                             <MenuItem x:Name="xSolutionSourceControlInitMenuItem" Style="{StaticResource $MenuItemStyle_ButtonMenu}" ToolTip="Source Control Operations">

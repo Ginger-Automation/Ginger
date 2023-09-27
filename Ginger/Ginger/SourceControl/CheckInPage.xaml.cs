@@ -482,12 +482,6 @@ namespace Ginger.SourceControl
                             CommentsTextBox.Text = string.Empty;
                             mCheckInWasDone = true;
                         }
-                        else if (CommitSuccess && Reporter.ToUser(eUserMsgKey.SourceControlChkInSucss) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                        {
-                            Init();
-                            CommentsTextBox.Text = string.Empty;
-                            mCheckInWasDone = true;
-                        }
                         else if (!CommitSuccess)
                         {
                             Reporter.ToUser(eUserMsgKey.SourceControlChkInConflictHandledFailed);

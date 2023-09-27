@@ -48,7 +48,7 @@
 
             <StackPanel>
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Select Row(s) Where:</Label>
-                <Actions:UCValueExpression x:Name="SelectRowsWhereTextBox" Margin="0,0,105,0" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1 or [Team Name]='Ginger'."/>
+                <Actions:UCValueExpression x:Name="SelectRowsWhereTextBox" Margin="0,0,105,0" ToolTip="[Column Name]=Value to filter the rows by, like: Available='Yes' or Num=1 or [Team Name]='Ginger' or Account=XYZ or [Client Name]='Q#E' or [Client Name]=QER"/>
                 <CheckBox x:Name="SelectAllRows" ToolTip="Select all Rows" HorizontalAlignment="Right" IsChecked="False" Margin="0,-20,0,0" Style="{StaticResource @CheckBoxStyle}">Select All Rows</CheckBox>
             </StackPanel>
 
@@ -59,12 +59,12 @@
 
             <StackPanel x:Name="SetDataUsedSection" Visibility="Visible">
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Set Data Used Value:</Label>
-                <Actions:UCValueExpression x:Name="SetDataUsedTextBox" ToolTip="[Column Name1]=Value1, ColumnName2=Value2... to update after row was used, like: Used='Y', [Updated By]='Ginger'"/>
+                <Actions:UCValueExpression x:Name="SetDataUsedTextBox" ToolTip="[Column Name1]=Value1, ColumnName2=Value2... to update after row was used, like: Used='Y',User=ABC ,[Updated By]='Ginger', [Created by]='R$T' , [Created By]=YUO"/>
             </StackPanel>
 
             <StackPanel x:Name="ColMappingRulesSection" Visibility="Collapsed">
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Data To Write:</Label>
-                <Actions:UCValueExpression x:Name="ColMappingRulesTextBox" ToolTip="[Column Name1]=Value1, ColumnName2=Value2... values to write, like: FirstName='John', [Last Name]='Smith'"/>
+                <Actions:UCValueExpression x:Name="ColMappingRulesTextBox" ToolTip="[Column Name1]=Value1, ColumnName2=Value2... values to write, like: FirstName='John', [Middle Name]=Adam ,[Last Name]='Smith', [First Name]='Me#a', [First Name]=MTR"/>
             </StackPanel>                       
         </StackPanel>
 
