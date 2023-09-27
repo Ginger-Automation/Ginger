@@ -330,7 +330,6 @@ namespace GingerCore.SourceControl
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting latest changes.", ex);
                 if (ex is AggregateException && ex.InnerException is CheckoutConflictException)
                 {
-                    Reporter.ToUser(eUserMsgKey.UncommitedChangesPreventCheckout);
                     error = Reporter.UserMsgsPool[eUserMsgKey.UncommitedChangesPreventCheckout].Message;
                     return false;
                 }
