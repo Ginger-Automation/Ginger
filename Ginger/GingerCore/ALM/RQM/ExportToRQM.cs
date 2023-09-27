@@ -183,7 +183,7 @@ namespace GingerCore.ALM.RQM
                                     }
                                     else
                                     {
-                                        result += $" {Environment.NewLine} Execution Results List not found for {businessFlow.Name} and testplan {bfExportedID}";
+                                        result += $" {Environment.NewLine} Execution Result not created for {businessFlow.Name} and testplan {bfExportedID}";
                                         Reporter.ToLog(eLogLevel.DEBUG, result);
                                         //return false;///Need to improve for Multiple Activity Group
                                     }
@@ -201,8 +201,7 @@ namespace GingerCore.ALM.RQM
                             if (isFlowskipped)
                             {
                                 Reporter.ToLog(eLogLevel.DEBUG, $"Skipping ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as skippedUpdate configured as {ALMCore.DefaultAlmConfig.PublishSkipped}");
-                                result += $" {Environment.NewLine} Skipping ALM Results Publish of '{businessFlow.Name}' Flow and 'testplan {bfExportedID}' as no valid Execution found for it ";
-                                return false;
+                                return true;
                             }
                             else
                             {
