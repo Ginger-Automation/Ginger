@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.TelemetryLib;
 using Amdocs.Ginger.IO;
@@ -28,6 +29,7 @@ using Ginger.ALM;
 using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowWindows;
 using Ginger.ConfigurationsLib;
+using Ginger.ConflictResolve;
 using Ginger.Drivers.DriversWindows;
 using Ginger.Functionalities;
 using Ginger.GeneralLib;
@@ -39,17 +41,22 @@ using Ginger.SolutionWindows;
 using Ginger.SourceControl;
 using Ginger.User;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.ALM;
+using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF;
+using GingerWPF.WizardLib;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -75,7 +82,7 @@ namespace Ginger
         {
             InitializeComponent();
             mRestartApplication = false;
-            lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersion;
+            lblAppVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion;
             xVersionAndNewsIcon.Visibility = Visibility.Collapsed;
 
             mHelpLayoutList.CollectionChanged += MHelpLayoutList_CollectionChanged;
@@ -132,7 +139,7 @@ namespace Ginger
                 ((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.CollectionChanged += RecentSolutionsObjects_CollectionChanged;
 
                 //Main Menu                            
-                xGingerIconImg.ToolTip = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationName + Environment.NewLine + "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
+                xGingerIconImg.ToolTip = Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationName + Environment.NewLine + "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion;
                 SetSolutionDependedUIElements();
                 UpdateUserDetails();
                 if (((UserProfileOperations)WorkSpace.Instance.UserProfile.UserProfileOperations).RecentSolutionsAsObjects.Count > 0)
@@ -147,7 +154,7 @@ namespace Ginger
                 xProcessMsgPnl.Visibility = Visibility.Collapsed;
                 WorkSpace.Instance.BetaFeatures.PropertyChanged += BetaFeatures_PropertyChanged;
                 SetBetaFlagIconVisibility();
-                lblVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo;
+                lblVersion.Content = "Version " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion;
 
                 //Solution                  
                 if (WorkSpace.Instance.UserProfile.AutoLoadLastSolution && !WorkSpace.Instance.RunningInExecutionMode && !WorkSpace.Instance.RunningFromUnitTest)
@@ -241,7 +248,7 @@ namespace Ginger
                 if (WorkSpace.Instance.LoadingSolution)
                 {
                     xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
-                    xMainWindowFrame.Content = new LoadingPage("Loading Solution...");
+                    xMainWindowFrame.ClearAndSetContent(new LoadingPage("Loading Solution..."));
                     xMainWindowFrame.Visibility = Visibility.Visible;
                     xModifiedItemsCounter.Visibility = Visibility.Collapsed;
                     GingerCore.General.DoEvents();
@@ -260,7 +267,7 @@ namespace Ginger
                     if (WorkSpace.Instance.ReencryptingVariables)
                     {
                         xNoLoadedSolutionImg.Visibility = Visibility.Collapsed;
-                        xMainWindowFrame.Content = new LoadingPage("Re-Encrypting Password Variables...");
+                        xMainWindowFrame.ClearAndSetContent(new LoadingPage("Re-Encrypting Password Variables..."));
                         xMainWindowFrame.Visibility = Visibility.Visible;
                         GingerCore.General.DoEvents();
                     }
@@ -551,7 +558,7 @@ namespace Ginger
                     SelectedSolutionTab = eSolutionTabType.Resources;
                 }
 
-                xMainWindowFrame.Content = selectedTopListItem.Tag;
+                xMainWindowFrame.ClearAndSetContent(selectedTopListItem.Tag);
                 xMainWindowFrame.Visibility = Visibility.Visible;
             }
         }
@@ -610,12 +617,53 @@ namespace Ginger
                     xSolutionSourceControlInitMenuItem.Visibility = Visibility.Visible;
                     xSolutionSourceControlSetMenuItem.Visibility = Visibility.Collapsed;
                 }
-
             }
             else
             {
                 xLoadedSolutionMenusPnl.Visibility = Visibility.Collapsed;
             }
+            UpdateSourceControlIndicators();
+        }
+
+        private void UpdateSourceControlIndicators()
+        {
+            if (WorkSpace.Instance.Solution != null)
+            {
+                Task.Run(() =>
+                {
+                    List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
+                    if (conflictPaths.Any())
+                    {
+                        ShowConflictIndicators();
+                    }
+                    else
+                    {
+                        HideConflictIndicators();
+                    }
+                });
+            }
+            else
+            {
+                HideConflictIndicators();
+            }
+        }
+
+        private void ShowConflictIndicators()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xSourceControlOperationsWarn.ImageType = eImageType.MediumWarn;
+                xResolveConflictsWarn.ImageType = eImageType.MediumWarn;
+            });
+        }
+
+        private void HideConflictIndicators()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                xSourceControlOperationsWarn.ImageType = eImageType.Empty;
+                xResolveConflictsWarn.ImageType = eImageType.Empty;
+            });
         }
 
         private async void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -754,14 +802,15 @@ namespace Ginger
             Reporter.HideStatusMessage();
         }
 
-        private void ResolveConflictsLocalMenuItem_Click(object sender, RoutedEventArgs e)
+        private void xResolveConflictsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ResolveSourceControlConflicts(eResolveConflictsSide.Local);
-        }
-
-        private void ResolveConflictsServerMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            ResolveSourceControlConflicts(eResolveConflictsSide.Server);
+            List<string> conflictPaths = SourceControlIntegration.GetConflictPaths(WorkSpace.Instance.Solution.SourceControl);
+            ResolveConflictWindow resolveConflictWindow = new(conflictPaths);
+            resolveConflictWindow.ShowAsWindow();
+            if(resolveConflictWindow.IsResolved)
+            {
+                HideConflictIndicators();
+            }
         }
 
         private void xHelpOptionsMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1465,9 +1514,16 @@ namespace Ginger
 
         private void SaveCurrentItem()
         {
-            if (Reporter.ToUser(eUserMsgKey.SaveBusinessFlowChanges, WorkSpace.Instance.CurrentSelectedItem.ItemName) == eUserMsgSelection.Yes)
+            try
             {
-                SaveHandler.Save(WorkSpace.Instance.CurrentSelectedItem);
+                if (Reporter.ToUser(eUserMsgKey.SaveBusinessFlowChanges, WorkSpace.Instance.CurrentSelectedItem.ItemName) == eUserMsgSelection.Yes)
+                {
+                    SaveHandler.Save(WorkSpace.Instance.CurrentSelectedItem);
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {ex.Message}", ex);
             }
         }
 

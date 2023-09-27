@@ -474,32 +474,43 @@ namespace Ginger.Repository
                 Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Updating and Saving Linked Activity instanced in Businessflows...");
                 await Task.Run(() =>
                 {
-                    ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                    Parallel.ForEach(BizFlows, BF =>
+                    try
                     {
-                        try
+                        ObservableList<BusinessFlow> BizFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                        Parallel.ForEach(BizFlows, BF =>
                         {
-                            if (!BF.ActivitiesLazyLoad && BF.Guid.ToString() != ExcludeBusinessFlowGuid && BF.Activities.Any(f => f.IsLinkedItem && f.ParentGuid == mActivity.Guid))
+                            try
                             {
-                                for (int i = 0; i < BF.Activities.Count(); i++)
+                                if (!BF.ActivitiesLazyLoad && BF.Guid.ToString() != ExcludeBusinessFlowGuid && BF.Activities.Any(f => f.IsLinkedItem && f.ParentGuid == mActivity.Guid))
                                 {
-                                    if (BF.Activities[i].IsLinkedItem && BF.Activities[i].ParentGuid == mActivity.Guid)
+                                    for (int i = 0; i < BF.Activities.Count(); i++)
                                     {
-                                        mActivity.UpdateInstance(BF.Activities[i], eItemParts.All.ToString(), BF);
+                                        if (BF.Activities[i].IsLinkedItem && BF.Activities[i].ParentGuid == mActivity.Guid)
+                                        {
+                                            mActivity.UpdateInstance(BF.Activities[i], eItemParts.All.ToString(), BF);
+                                        }
+                                    }
+                                    lock (saveLock)
+                                    {
+                                        WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BF);
                                     }
                                 }
-                                lock (saveLock)
-                                {
-                                    WorkSpace.Instance.SolutionRepository.SaveRepositoryItem(BF);
-                                }
-                            }
 
-                        }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.ERROR, "Failed to update the Activity in businessFlow " + BF.Name, ex);
-                        }
-                    });
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, "Failed to update the Activity in businessFlow " + BF.Name, ex);
+                            }
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Update Linkes Instances", ex);
+                    }
+                    finally
+                    {
+                        Reporter.HideStatusMessage();
+                    }
                 });
             }
             catch (Exception ex)
@@ -522,11 +533,13 @@ namespace Ginger.Repository
             Activity sharedActivity = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<Activity>(LinkedActivity.ParentGuid);
             if (sharedActivity != null)
             {
+                var sharedActFullPath = sharedActivity.ContainingFolderFullPath;
                 WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(sharedActivity);
                 sharedActivity = (Activity)LinkedActivity.CreateInstance(true);
                 sharedActivity.Guid = LinkedActivity.ParentGuid;
                 sharedActivity.Type = eSharedItemType.Regular;
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(sharedActivity);
+                WorkSpace.Instance.SolutionRepository.MoveItem(sharedActivity, sharedActFullPath);
                 LinkedActivity.EnableEdit = false;
                 await UpdateLinkedInstances(sharedActivity, ExcludeBusinessFlowGuid);
             }

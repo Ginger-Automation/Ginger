@@ -246,7 +246,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             IExcelOperations excelOperations = new ExcelNPOIOperations();
-            DataTable dt = excelOperations.ReadData(excelPathWriteTemp, actExcel.SheetName, actExcel.SelectRowsWhere, false);
+            DataTable dt = excelOperations.ReadData(excelPathWriteTemp, actExcel.SheetName, actExcel.SelectRowsWhere, false ,actExcel.HeaderRowNum);
             Assert.AreEqual(string.Join(',', dt.Rows[0].ItemArray.Select(x => x).ToList()), "1,Marco,Cohen,2109 Fox Dr");
         }
         [TestMethod]
@@ -268,7 +268,7 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
 
             //Assert
             IExcelOperations excelOperations = new ExcelNPOIOperations();
-            DataTable dt = excelOperations.ReadData(excelPathWriteTemp, actExcel.SheetName, actExcel.SelectRowsWhere, actExcel.SelectAllRows);
+            DataTable dt = excelOperations.ReadData(excelPathWriteTemp, actExcel.SheetName, actExcel.SelectRowsWhere, actExcel.SelectAllRows, actExcel.HeaderRowNum);
             string actual = "";
             foreach (DataRow dr in dt.Rows)
             {

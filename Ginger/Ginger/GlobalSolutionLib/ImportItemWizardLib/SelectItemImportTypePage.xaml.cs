@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.GlobalSolutionLib;
 using Amdocs.Ginger.CoreNET.GlobalSolutionLib;
 using Ginger.SolutionGeneral;
 using Ginger.SourceControl;
+using GingerCore.GeneralLib;
 using GingerCoreNET.SourceControl;
 using GingerWPF.WizardLib;
 using System;
@@ -52,7 +53,7 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xGlobalSolutionFolderTextBox, TextBox.TextProperty, wiz, nameof(ImportItemWizard.SolutionFolder));
                     ((WizardWindow)wiz.mWizardWindow).ShowFinishButton(false);
                     sourceControlProjectsPage = new SourceControlProjectsPage(true);
-                    xImportFromSourceControlFrame.Content = sourceControlProjectsPage;
+                    xImportFromSourceControlFrame.ClearAndSetContent(sourceControlProjectsPage);
                     sourceControlProjectsPage.Width = 1200;
                     break;
                 case EventType.LeavingForNextPage:

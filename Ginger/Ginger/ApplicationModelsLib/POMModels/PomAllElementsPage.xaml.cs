@@ -22,6 +22,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels.POMWizardLib;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Specialized;
@@ -88,10 +89,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
 
             mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, AddSelfHealingColumn);
-            xMappedElementsFrame.Content = mappedUIElementsPage;
+            xMappedElementsFrame.ClearAndSetContent(mappedUIElementsPage);
 
             unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped, AddSelfHealingColumn);
-            xUnMappedElementsFrame.Content = unmappedUIElementsPage;
+            xUnMappedElementsFrame.ClearAndSetContent(unmappedUIElementsPage);
 
             UnMappedUIElementsUpdate();
             MappedUIElementsUpdate();
@@ -319,40 +320,47 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         private void TestAllElements(ObservableList<ElementInfo> Elements)
         {
-            int TotalElements = Elements.Count;
-            int TotalFails = 0;
-
-            bool WarnErrorOccured = false;
-            foreach (ElementInfo EI in Elements)
+            try
             {
-                EI.ElementStatus = ElementInfo.eElementStatus.Pending;
-            }
+                int TotalElements = Elements.Count;
+                int TotalFails = 0;
 
-            foreach (ElementInfo EI in Elements)
-            {
-                if (mStopProcess)
+                bool WarnErrorOccured = false;
+                foreach (ElementInfo EI in Elements)
                 {
-                    return;
+                    EI.ElementStatus = ElementInfo.eElementStatus.Pending;
                 }
 
-                if (mWinExplorer.TestElementLocators(EI, true))
+                foreach (ElementInfo EI in Elements)
                 {
-                    EI.ElementStatus = ElementInfo.eElementStatus.Passed;
-                }
-                else
-                {
-                    TotalFails++;
-                    EI.ElementStatus = ElementInfo.eElementStatus.Failed;
-                }
-
-                if (!WarnErrorOccured && ((double)TotalFails / TotalElements) > 0.2)
-                {
-                    WarnErrorOccured = true;
-                    if (Reporter.ToUser(eUserMsgKey.POMNotOnThePageWarn, TotalFails, TotalElements) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    if (mStopProcess)
                     {
                         return;
                     }
+
+                    if (mWinExplorer.TestElementLocators(EI, true))
+                    {
+                        EI.ElementStatus = ElementInfo.eElementStatus.Passed;
+                    }
+                    else
+                    {
+                        TotalFails++;
+                        EI.ElementStatus = ElementInfo.eElementStatus.Failed;
+                    }
+
+                    if (!WarnErrorOccured && ((double)TotalFails / TotalElements) > 0.2)
+                    {
+                        WarnErrorOccured = true;
+                        if (Reporter.ToUser(eUserMsgKey.POMNotOnThePageWarn, TotalFails, TotalElements) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                        {
+                            return;
+                        }
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Test All Elements",ex);
             }
         }
 

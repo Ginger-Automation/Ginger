@@ -104,44 +104,51 @@ namespace Ginger.GeneralLib
             xLogDetailsBorder.Visibility = Visibility.Collapsed;
             await Task.Run(() =>
             {
-                for (int i = start; i < logs.Length; i++)
+                try
                 {
-                    Dispatcher.Invoke(() =>
+                    for (int i = start; i < logs.Length; i++)
                     {
-                        if (logs[i] == string.Empty)
+                        Dispatcher.Invoke(() =>
                         {
-                            if (allowLogDetailsWrite)
+                            if (logs[i] == string.Empty)
                             {
-                                mTextBlockHelper.AddLineBreak();
+                                if (allowLogDetailsWrite)
+                                {
+                                    mTextBlockHelper.AddLineBreak();
+                                }
                             }
-                        }
-                        else if (logs[i].Contains("#### Application version"))
-                        {
-                            mTextBlockHelper.AddFormattedText(logs[i], Brushes.Black, true);
-                        }
-                        else if (IsLogHeader(logs[i]))
-                        {
-                            if (mLogLevel == eLogShowLevel.ALL || logs[i].Contains("| " + mLogLevel.ToString()))
+                            else if (logs[i].Contains("#### Application version"))
                             {
+                                mTextBlockHelper.AddFormattedText(logs[i], Brushes.Black, true);
+                            }
+                            else if (IsLogHeader(logs[i]))
+                            {
+                                if (mLogLevel == eLogShowLevel.ALL || logs[i].Contains("| " + mLogLevel.ToString()))
+                                {
 
-                                mTextBlockHelper.AddFormattedText(logs[i], GetProperLogTypeBrush(logs[i]), isBold: true);
-                                mTextBlockHelper.AddLineBreak();
-                                allowLogDetailsWrite = true;
+                                    mTextBlockHelper.AddFormattedText(logs[i], GetProperLogTypeBrush(logs[i]), isBold: true);
+                                    mTextBlockHelper.AddLineBreak();
+                                    allowLogDetailsWrite = true;
+                                }
+                                else
+                                {
+                                    allowLogDetailsWrite = false;
+                                }
                             }
                             else
                             {
-                                allowLogDetailsWrite = false;
+                                if (allowLogDetailsWrite)
+                                {
+                                    mTextBlockHelper.AddText(logs[i]);
+                                    mTextBlockHelper.AddLineBreak();
+                                }
                             }
-                        }
-                        else
-                        {
-                            if (allowLogDetailsWrite)
-                            {
-                                mTextBlockHelper.AddText(logs[i]);
-                                mTextBlockHelper.AddLineBreak();
-                            }
-                        }
-                    });
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to display Logs", ex);
                 }
             });
             xProcessingIcon.Visibility = Visibility.Collapsed;
@@ -274,7 +281,7 @@ namespace Ginger.GeneralLib
             html.Append(@"<table width=""100%"" border=""0"" cellpadding=""0"" cellspacing=""0"" style=""font-family:arial;"">").AppendLine();
             html.Append(@"<tr><td><p>" + "Hi," + "<br><br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "Please find my Log details below:" + "<br><br></p></td></tr>").AppendLine();
-            html.Append(@"<tr><td><p>" + "<b>Version:</b> " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationVersionWithInfo + "<br><br></p></td></tr>").AppendLine();
+            html.Append(@"<tr><td><p>" + "<b>Version:</b> " + Amdocs.Ginger.Common.GeneralLib.ApplicationInfo.ApplicationUIversion + "<br><br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "<b>Steps to Reproduce:</b> " + "<br><br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "1. " + "<br></p></td></tr>").AppendLine();
             html.Append(@"<tr><td><p>" + "2. " + "<br></p></td></tr>").AppendLine();

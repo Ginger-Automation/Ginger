@@ -240,7 +240,7 @@ namespace GingerCore.NoSqlBase
         private string GetUpdateQueryParams(string inputSQL)
         {
             int startIndex = inputSQL.IndexOf("(") + 1;
-            int endIndex = inputSQL.IndexOf(")");
+            int endIndex = inputSQL.LastIndexOf(")");
             string updateQueryParams = inputSQL.Substring(startIndex, endIndex - startIndex);
             return updateQueryParams.Trim();
         }
@@ -255,22 +255,12 @@ namespace GingerCore.NoSqlBase
                     return "{}";
                 }
 
-                int startIndex = queryParameterValue.IndexOf("{");
-                int endIndex = queryParameterValue.IndexOf("}");
-                queryParameterValue = queryParameterValue.Substring(startIndex, endIndex);
+                queryParameterValue = queryParameterValue.Trim();
             }
             if (param.Equals("project"))
             {
                 queryParameterValue = GetQueryParameterValue(inputSQL, "find");
-
-                string[] splitParameters = queryParameterValue.Split('{');
-
-                if (splitParameters.Count() < 3)
-                {
-                    return "{_id:0}";
-                }
-
-                return $"{{_id:0, {splitParameters[2]}";
+                return "{_id:0}";
             }
             if (param.Equals("sort") && string.IsNullOrEmpty(queryParameterValue))
             {

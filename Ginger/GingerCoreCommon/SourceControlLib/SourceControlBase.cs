@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -23,12 +23,13 @@ using System.Threading.Tasks;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.SourceControlLib;
 using static GingerCoreNET.SourceControl.SourceControlFileInfo;
 
 namespace GingerCoreNET.SourceControl
 {
     // Base class for Source Control types can be SVN, GIT, TFS, XtraC etc...
-    public enum eResolveConflictsSide { Local, Server }
+    public enum eResolveConflictsSide { Local, Server, Manual }
 
     public abstract class SourceControlBase : INotifyPropertyChanged, ISourceControl
     {
@@ -138,6 +139,8 @@ namespace GingerCoreNET.SourceControl
 
         public abstract string GetCurrentBranchForSolution();
 
+        public abstract List<string> GetConflictPaths();
+
         public abstract void Disconnect();
 
         public abstract bool CommitChanges(string Comments, ref string error);
@@ -151,6 +154,29 @@ namespace GingerCoreNET.SourceControl
         public abstract bool Lock(string path, string lockComment, ref string error);
         //allowing other users to commit changes to this item
         public abstract bool UnLock(string path, ref string error);
+
+        /// <summary>
+        /// Get local version content for the conflicted file.
+        /// </summary>
+        /// <param name="conflictFilePath">Conflicted file path.</param>
+        /// <returns>Local version content.</returns>
+        public abstract string GetLocalContentForConflict(string conflictFilePath);
+
+        /// <summary>
+        /// Get remote version content for the conflicted file.
+        /// </summary>
+        /// <param name="conflictFilePath">Conflicted file path.</param>
+        /// <returns>Remote version content.</returns>
+        public abstract string GetRemoteContentForConflict(string conflictFilePath);
+
+        /// <summary>
+        /// Resolve merge conflict with content that contains the resolved data of the file.
+        /// </summary>
+        /// <param name="path">Path of the conflicted file</param>
+        /// <param name="content">Content containing the resolved data.</param>
+        /// <param name="error">Error details if any.</param>
+        /// <returns><see langword="true"/> if the conflict was resolved successfully, <see langword="false"/> otherwise.</returns>
+        public abstract bool ResolveConflictWithContent(string path, string content, ref string error);
 
         //resolve conflicts automatically when getting latest updates
         public abstract bool ResolveConflicts(string path, eResolveConflictsSide side, ref string error);

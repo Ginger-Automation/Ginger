@@ -96,54 +96,61 @@ namespace Ginger.GlobalSolutionLib.ImportItemWizardLib
             wiz.ProcessStarted();
             await Task.Run(() =>
             {
-                foreach (GlobalSolutionItem item in wiz.ItemTypeListToImport.Where(x => x.Selected))
+                try
                 {
-                    string dirPath = string.Empty;
-                    string searchPattern = "*.xml";
-                    string[] filePaths = null;
-                    if (item.ItemType == GlobalSolution.eImportItemType.Documents)
+                    foreach (GlobalSolutionItem item in wiz.ItemTypeListToImport.Where(x => x.Selected))
                     {
-                        dirPath = Path.Combine(wiz.SolutionFolder, item.ItemType.ToString());
-                        searchPattern = "*";
-                    }
-                    else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup)
-                    {
-                        dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "ActivitiesGroup");
-                    }
-                    else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActivities)
-                    {
-                        dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "Activities");
-                    }
-                    else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActions)
-                    {
-                        dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "Actions");
-                    }
-                    else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryVariables)
-                    {
-                        dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "Variables");
-                    }
-                    else if (item.ItemType == GlobalSolution.eImportItemType.APIModels)
-                    {
-                        dirPath = Path.Combine(wiz.SolutionFolder, "Applications Models", "API Models");
-                    }
-                    else if (item.ItemType == GlobalSolution.eImportItemType.POMModels)
-                    {
-                        dirPath = Path.Combine(wiz.SolutionFolder, "Applications Models", "POM Models");
-                    }
-                    else
-                    {
-                        dirPath = Path.Combine(wiz.SolutionFolder, item.ItemType.ToString());
-                    }
-                    if (Directory.Exists(dirPath))
-                    {
-                        filePaths = Directory.GetFiles(dirPath, searchPattern, SearchOption.AllDirectories);
-                        foreach (string file in filePaths)
+                        string dirPath = string.Empty;
+                        string searchPattern = "*.xml";
+                        string[] filePaths = null;
+                        if (item.ItemType == GlobalSolution.eImportItemType.Documents)
                         {
-                            string itemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(file);
-                            string itemPath = GlobalSolutionUtils.Instance.ConvertToRelativePath(file);
-                            wiz.ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, itemPath, true, itemName, ""));
+                            dirPath = Path.Combine(wiz.SolutionFolder, item.ItemType.ToString());
+                            searchPattern = "*";
+                        }
+                        else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActivitiesGroup)
+                        {
+                            dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "ActivitiesGroup");
+                        }
+                        else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActivities)
+                        {
+                            dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "Activities");
+                        }
+                        else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryActions)
+                        {
+                            dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "Actions");
+                        }
+                        else if (item.ItemType == GlobalSolution.eImportItemType.SharedRepositoryVariables)
+                        {
+                            dirPath = Path.Combine(wiz.SolutionFolder, "SharedRepository", "Variables");
+                        }
+                        else if (item.ItemType == GlobalSolution.eImportItemType.APIModels)
+                        {
+                            dirPath = Path.Combine(wiz.SolutionFolder, "Applications Models", "API Models");
+                        }
+                        else if (item.ItemType == GlobalSolution.eImportItemType.POMModels)
+                        {
+                            dirPath = Path.Combine(wiz.SolutionFolder, "Applications Models", "POM Models");
+                        }
+                        else
+                        {
+                            dirPath = Path.Combine(wiz.SolutionFolder, item.ItemType.ToString());
+                        }
+                        if (Directory.Exists(dirPath))
+                        {
+                            filePaths = Directory.GetFiles(dirPath, searchPattern, SearchOption.AllDirectories);
+                            foreach (string file in filePaths)
+                            {
+                                string itemName = GlobalSolutionUtils.Instance.GetRepositoryItemName(file);
+                                string itemPath = GlobalSolutionUtils.Instance.ConvertToRelativePath(file);
+                                wiz.ItemsListToImport.Add(new GlobalSolutionItem(item.ItemType, file, itemPath, true, itemName, ""));
+                            }
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to Get Items to Import", ex);
                 }
             });
             wiz.ProcessEnded();

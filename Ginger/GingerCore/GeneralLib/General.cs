@@ -191,7 +191,7 @@ namespace GingerCore
 
             //if ((values == null) && (valuesCollView != null))
             //{
-            comboBox.SelectedItem = EnumObj;
+            comboBox.SelectedValue = EnumObj;
             //}
             //else
             //{
@@ -310,6 +310,16 @@ namespace GingerCore
                 CEI.Value = item;
                 comboBox.Items.Add(CEI);
             }
+        }
+
+        public static void FillComboFromDynamicList(ComboBox comboBox, dynamic list)
+        {
+            comboBox.Items.Clear();
+            if (list == null)
+            {
+                return;
+            }
+            comboBox.ItemsSource = list;
         }
 
         public static bool CheckComboItems(ComboBox comboBox, List<string> ls)

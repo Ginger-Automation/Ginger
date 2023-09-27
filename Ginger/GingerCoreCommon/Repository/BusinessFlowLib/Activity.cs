@@ -29,6 +29,8 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
+using GingerCore.Activities;
+using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
@@ -131,9 +133,48 @@ namespace GingerCore
             return ActivityName;
         }
 
+        private bool mLinkedActive = true;
+        [IsSerializedForLocalRepository(true)]
+        public Boolean LinkedActive
+        {
+            get
+            {
+                return mLinkedActive;
+            }
+            set
+            {
+                if (mLinkedActive != value)
+                {
+                    mLinkedActive = value;
+                }
+            }
+        }
+
         private bool mActive;
         [IsSerializedForLocalRepository]
-        public Boolean Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
+        public Boolean Active
+        {
+            get
+            {
+                if (this.IsLinkedItem)
+                {
+                    return this.LinkedActive;
+                }
+                return mActive;
+            }
+            set
+            {
+                if (this.IsLinkedItem)
+                {
+                    this.mLinkedActive = value;
+                }
+                if (mActive != value)
+                {
+                    mActive = value; 
+                    OnPropertyChanged(nameof(Active));
+                }
+            }
+        }
 
         private string mActivityName;
         [IsSerializedForLocalRepository]
@@ -461,6 +502,25 @@ namespace GingerCore
             {
                 mVariables = value;
             }
+        }
+
+
+        private ObservableList<Consumer> mConsumerApplications = new ObservableList<Consumer>();
+        [IsSerializedForLocalRepository]
+        public ObservableList<Consumer> ConsumerApplications
+        {
+            get
+            {
+                return mConsumerApplications;
+            }
+            set
+            {
+                if (mConsumerApplications != null)
+                {
+                    mConsumerApplications = value;
+                    OnPropertyChanged(nameof(ConsumerApplications));
+                }       
+             }
         }
 
         [IsSerializedForLocalRepository]

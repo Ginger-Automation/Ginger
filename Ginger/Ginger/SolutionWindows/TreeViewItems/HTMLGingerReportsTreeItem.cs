@@ -25,6 +25,7 @@ using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -77,8 +78,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
             //Add direct children's 
             List<ITreeViewItem> Childrens = new List<ITreeViewItem>();
             ObservableList<HTMLReportConfiguration> templates = Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
-            templates.CollectionChanged -= TreeFolderItems_CollectionChanged;
-            templates.CollectionChanged += TreeFolderItems_CollectionChanged;//adding event handler to add/remove tree items automatically based on folder items collection changes
+            CollectionChangedEventManager.RemoveHandler(source: templates, handler: TreeFolderItems_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: templates, handler: TreeFolderItems_CollectionChanged);//adding event handler to add/remove tree items automatically based on folder items collection changes
             foreach (HTMLReportConfiguration template in templates.OrderBy(nameof(HTMLReportConfiguration.Name)))
             {
                 HTMLGingerReportTreeItem RTTI = new HTMLGingerReportTreeItem(template);

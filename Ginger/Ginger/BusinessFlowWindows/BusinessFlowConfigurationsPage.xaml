@@ -1,4 +1,4 @@
-    <Page x:Class="GingerWPF.BusinessFlowsLib.BusinessFlowConfigurationsPage"
+<Page x:Class="GingerWPF.BusinessFlowsLib.BusinessFlowConfigurationsPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -18,36 +18,43 @@
                 <Label Style="{StaticResource $LabelStyle}" >Name:</Label>
                 <usercontrols:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
             </StackPanel>
-            
+
             <TextBox x:Name="xNameTxtBox" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" ScrollViewer.VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" FontSize="14" FontWeight="Bold" HorizontalAlignment="Stretch" Margin="0,0,0,5"/>
-            
+
             <Label Style="{StaticResource $LabelStyle}" DockPanel.Dock="Top" VerticalAlignment="Top">Description:</Label>
             <TextBox x:Name="xDescriptionTxt" DockPanel.Dock="Top" Style="{StaticResource $MultiRowsTextBoxStyle}" Height="50"></TextBox>
-            
+
             <Ginger:ucTagsViewer x:Name="xTagsViewer" DockPanel.Dock="Top" HorizontalAlignment="Left" VerticalAlignment="Center" />
-            
+
             <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}">Run Description:</Label>
             <Activities:UCValueExpression x:Name="xRunDescritpion" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Margin="0,0,0,0"/>
-            
+
             <StackPanel x:Name="xBfTargetsListPnl" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0">
-                <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}">Target Applications:</Label>
-                <Ginger:ucGrid x:Name="xAppsGrid" Width="300" ShowSearch="Collapsed" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowRefresh="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowToolsBar="Collapsed"/>
-                <Button x:Name="xAddTargetBtn" Click="AddPlatformButton_Click" Content="Edit" HorizontalAlignment="Left" Width="40" Grid.Row="1" Style="{StaticResource $InputButtonStyle}" Margin="0,5,0,0"/>
+                <Label x:Name="xAddTargetApplication" DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}" Content=""></Label>
+                <StackPanel Orientation="Horizontal">
+                    <Ginger:ucGrid x:Name="xAppsGrid" Width="320" ShowSearch="Collapsed" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowRefresh="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowToolsBar="Collapsed"/>
+                    <Button x:Name="xAddTargetBtn" Click="AddPlatformButton_Click" VerticalAlignment="Top" Content="Edit" Width="40" Grid.Row="0" Style="{StaticResource $InputButtonStyle}" Margin="5,0,0,0"/>
+                </StackPanel>
             </StackPanel>
-            
+
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Left"  Margin="-5,0,0,0" >
-                <Label Style="{StaticResource $LabelStyle}" Content="Status:" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
-                <ComboBox x:Name="xStatusComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="150" Margin="47,0,0,5" VerticalAlignment="Bottom"/>
+                <Label Style="{StaticResource $LabelStyle}" Content="Status:" Width="120" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
+                <ComboBox x:Name="xStatusComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200" Margin="5,0,0,5" VerticalAlignment="Bottom"/>
             </StackPanel>
-            
+
             <StackPanel Orientation="Horizontal" Margin="0,10,10,0" DockPanel.Dock="Top"  HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                <Label Style="{StaticResource $LabelStyle}" Content="Automation %:" VerticalAlignment="Center"/>
-                <TextBox x:Name="xAutoPrecentageTextBox" Style="{StaticResource $TextBoxStyle}" IsReadOnly="True" Width="40" Margin="5,0,0,2" Text="100%" HorizontalContentAlignment="Center"/>
+                <Label Style="{StaticResource $LabelStyle}" Content="Automation %:" Width="120" VerticalAlignment="Center"/>
+                <TextBox x:Name="xAutoPrecentageTextBox" Style="{StaticResource $TextBoxStyle}" IsReadOnly="True" Width="200" Margin="5,0,0,2" Text="100%" HorizontalContentAlignment="Center"/>
             </StackPanel>
-            
+
             <StackPanel Orientation="Horizontal" Margin="0,10,0,0" DockPanel.Dock="Top" VerticalAlignment="Top"  HorizontalAlignment="Left" >
-                <Label Style="{StaticResource $LabelStyle}" Content="Created By:" VerticalAlignment="Bottom"/>
-                <TextBox x:Name="xCreatedByTextBox" Style="{StaticResource $TextBoxStyle}" Width="150" Margin="25,0,0,0" IsReadOnly="True" />
+                <Label Style="{StaticResource $LabelStyle}" Content="Created By:" Width="120" VerticalAlignment="Bottom"/>
+                <TextBox x:Name="xCreatedByTextBox" Style="{StaticResource $TextBoxStyle}" Width="200" Margin="5,0,0,0" IsReadOnly="True" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" x:Name="xPnlExternalId" Margin="0,10,0,0" DockPanel.Dock="Top" VerticalAlignment="Top"  HorizontalAlignment="Left" >
+                <Label Style="{StaticResource $LabelStyle}" Content="ALM ID (ExternalId):" Width="120" VerticalAlignment="Bottom"/>
+                <Activities:UCValueExpression x:Name="xExternalId" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Width="230" Margin="5,0,0,0"/>
             </StackPanel>
 
             <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>

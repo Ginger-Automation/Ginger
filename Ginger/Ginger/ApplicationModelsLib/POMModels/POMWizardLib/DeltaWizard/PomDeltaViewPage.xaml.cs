@@ -404,7 +404,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     source = Ginger.General.GetImageStream(Ginger.General.Base64StringToImage(mSelectedElement.ElementInfo.ScreenShotImage.ToString()));
                 }
-                xElementScreenShotFrame.Content = new ScreenShotViewPage(mSelectedElement.ElementInfo?.ElementName, source, false);
+                xElementScreenShotFrame.ClearAndSetContent(new ScreenShotViewPage(mSelectedElement.ElementInfo?.ElementName, source, false));
 
             }
             else

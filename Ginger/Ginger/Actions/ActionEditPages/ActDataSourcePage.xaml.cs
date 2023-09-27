@@ -26,6 +26,7 @@ using GingerCore.Actions.Java;
 using GingerCore.DataSource;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
+using NPOI.OpenXmlFormats.Dml;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -555,7 +556,7 @@ namespace Ginger.Actions
                 mActDSTblElem.DSTableName = mDSTable.Name;
                 mActDSTblElem.DSName = mDSTable.DSC.Name;
                 Page pageContent = new Ginger.DataSource.DataSourceExportToExcel(mActDSTblElem);
-                ExcelSpecificFrame.Content = pageContent;
+                ExcelSpecificFrame.ClearAndSetContent(pageContent);
                 ExcelSpecificFrame.Visibility = Visibility.Visible;
             }
             else
@@ -1939,6 +1940,11 @@ namespace Ginger.Actions
 
         private void cmbDataSourceName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if(cmbDataSourceName.SelectedValue == null)
+            {
+                return;
+            }
+
             foreach (DataSourceBase ds in mDSList)
             {
                 if (ds.Name == cmbDataSourceName.SelectedValue.ToString())
@@ -1977,7 +1983,7 @@ namespace Ginger.Actions
 
         private void cmbDataSourceTableName_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cmbDataSourceTableName == null || cmbDataSourceTableName.Items.Count == 0)
+            if (cmbDataSourceTableName == null || cmbDataSourceTableName.Items.Count == 0 || cmbDataSourceTableName.SelectedValue == null)
             {
                 return;
             }

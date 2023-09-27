@@ -311,7 +311,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     mAddActionMainPage = new MainAddActionsNavigationPage(mContext);
                 }
-                xAddActionMenuFrame.Content = mAddActionMainPage;
+                xAddActionMenuFrame.ClearAndSetContent(mAddActionMainPage);
 
                 ExpandAddActionsPnl();
                 Ginger.General.DoEvents();
@@ -448,7 +448,7 @@ namespace GingerWPF.BusinessFlowsLib
                         if (mConfigurationsPage == null)
                         {
                             mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
-                            xBfConfigurationsTabFrame.Content = mConfigurationsPage;
+                            xBfConfigurationsTabFrame.ClearAndSetContent(mConfigurationsPage);
                         }
                         else
                         {
@@ -458,7 +458,7 @@ namespace GingerWPF.BusinessFlowsLib
                         if (mVariabelsPage == null)
                         {
                             mVariabelsPage = new VariabelsListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
-                            xBfVariablesTabFrame.Content = mVariabelsPage;
+                            xBfVariablesTabFrame.ClearAndSetContent(mVariabelsPage);
                         }
                         else
                         {
@@ -470,7 +470,7 @@ namespace GingerWPF.BusinessFlowsLib
                             mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
                             mActivitiesPage.ListView.List.SelectionChanged -= ActivitiesList_SelectionChanged;
                             mActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
-                            xActivitiesListFrame.Content = mActivitiesPage;
+                            xActivitiesListFrame.ClearAndSetContent(mActivitiesPage);
                         }
                         else
                         {
@@ -623,7 +623,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.MainApplication))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "You must have at least one Target Application configured, please set it up.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"You must have at least one {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} configured, please set it up.");
                         return;
                     }
                     else
@@ -1335,7 +1335,16 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     SwapLoadingPrefixText("Undoing", false);
                     Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, string.Format("Undoing changes for '{0}'...", mBusinessFlow.ItemName));
-                    await Task.Run(() => mBusinessFlow.RestoreFromBackup(true, true));
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            mBusinessFlow.RestoreFromBackup(true, true);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to Restore backup", ex);
+                        } });
 
                     mActivitiesPage.ListView.UpdateGrouping();
                     mBusinessFlow.SaveBackup();
@@ -1453,7 +1462,17 @@ namespace GingerWPF.BusinessFlowsLib
 
             ActionConversionUtils utils = new ActionConversionUtils();
 
-            await Task.Run(() => utils.RemoveLegacyActionsHandler(lstBFToConvert));
+            await Task.Run(() =>
+            {
+                try
+                {
+                    utils.RemoveLegacyActionsHandler(lstBFToConvert);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Remove Legacy Handler", ex);
+                }
+            });
         }
 
         private void xRefreshFromAlmMenuItem_Click(object sender, RoutedEventArgs e)

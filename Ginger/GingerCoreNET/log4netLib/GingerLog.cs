@@ -46,6 +46,23 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             }
         }
 
+        public static void StartCustomTraceListeners()
+        {
+            try
+            {
+                if (!System.Diagnostics.Trace.Listeners.Contains(CustomTraceListener.Instance))
+                {
+                    System.Diagnostics.Trace.Listeners.Add(CustomTraceListener.Instance);
+
+                    System.Diagnostics.Trace.WriteLine("Ginger Start up", "Info");
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Custom Trace listerner ", ex.InnerException);
+            }
+        }
+
 
         public static void InitLog4Net()
         {
@@ -109,7 +126,7 @@ namespace Amdocs.Ginger.CoreNET.log4netLib
             stringBuilder.Append(Environment.NewLine);
             stringBuilder.Append("*******************************************************************************************************************").Append(Environment.NewLine);
             stringBuilder.Append(ApplicationInfo.ApplicationName).Append(Environment.NewLine);
-            stringBuilder.Append("Version: " + ApplicationInfo.ApplicationVersionWithInfo).Append(Environment.NewLine);
+            stringBuilder.Append("Version: " + ApplicationInfo.ApplicationUIversion).Append(Environment.NewLine);
             stringBuilder.Append("Executer Path: ").Append(Assembly.GetEntryAssembly().Location).Append(Environment.NewLine);
             stringBuilder.Append("Log File Path: " + GingerLogFile).Append(Environment.NewLine);
             stringBuilder.Append("*******************************************************************************************************************").Append(Environment.NewLine);

@@ -19,6 +19,8 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Couchbase;
+using Ginger.ReporterLib;
 using Ginger.UserControls;
 using GingerCore.Actions;
 using GingerCore.Environments;
@@ -88,7 +90,7 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TablesComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Table);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(KeySpaceComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Keyspace);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ColumnComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Column);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWhere, TextBox.TextProperty, act, ActDBValidation.Fields.Where);
+
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(CommitDB, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDBValidation.Fields.CommitDB));
 
             txtInsertJson.ValueTextBox.Text = string.Empty;
@@ -114,6 +116,7 @@ namespace Ginger.Actions
             ComboAutoSelectIfOneItemOnly(ColumnComboBox);
             SetVisibleControlsForAction();
             SetQueryParamsGrid();
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWhere, TextBox.TextProperty, act, ActDBValidation.Fields.Where);
         }
 
         private async void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -236,6 +239,7 @@ namespace Ginger.Actions
             KeySpaceComboBox.Items.Clear();
             TablesComboBox.Items.Clear();
             ColumnComboBox.Items.Clear();
+            txtWhere.Clear();
 
             if ((((ComboBox)sender).SelectedItem) == null)
             {
@@ -320,7 +324,7 @@ namespace Ginger.Actions
             KeySpaceComboBox.Items.Clear();
             TablesComboBox.Items.Clear();
             ColumnComboBox.Items.Clear();
-
+            txtWhere.Clear();
             AddDBOperationTypeInsert(sender, e);
             SetVisibleControlsForAction();
         }
@@ -328,6 +332,7 @@ namespace Ginger.Actions
         private void TablesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ColumnComboBox.Items.Clear();
+            txtWhere.Clear();
         }
 
         private void KeySpaceComboBox_DropDownOpened(object sender, EventArgs e)
@@ -364,7 +369,7 @@ namespace Ginger.Actions
             }
         }
 
-        private void TablesComboBox_DropDownOpened(object sender, EventArgs e)
+        private async void TablesComboBox_DropDownOpened(object sender, EventArgs e)
         {
             try
             {
@@ -372,7 +377,15 @@ namespace Ginger.Actions
                 Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Loading Tables...");
                 TablesComboBox.Items.Clear();
                 string DBName = DBNameComboBox.Text;
-                db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
+                if (EA == null)
+                {
+                    EA = pe.Applications.FirstOrDefault(a => string.Equals(a.Name, AppNameComboBox.Text));
+                }
+                if (EA == null)
+                {
+                    return;
+                }
+                db = (Database)EA.Dbs.FirstOrDefault(db => string.Equals(db.Name, DBName));
                 if (db == null)
                 {
                     return;
@@ -383,15 +396,30 @@ namespace Ginger.Actions
                 {
                     db.DatabaseOperations = new DatabaseOperations(db);
                 }
-                List<string> Tables = db.DatabaseOperations.GetTablesList(KeySpace);
-                if (Tables == null)
+
+                await Task.Run(async () =>
                 {
-                    return;
-                }
-                foreach (string s in Tables)
-                {
-                    TablesComboBox.Items.Add(s);
-                }
+                    try
+                    {
+                        List<string> tables = await db.DatabaseOperations.GetTablesListAsync(KeySpace);
+                        if (tables != null)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                foreach (string s in tables)
+                                {
+                                    TablesComboBox.Items.Add(s);
+                                }
+                            });
+                        }
+                        Reporter.HideStatusMessage();
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"{db.DatabaseOperations.ToString()} failed to get tables", ex);
+                    }
+                });
+
             }
             finally
             {
@@ -404,6 +432,14 @@ namespace Ginger.Actions
         {
             ColumnComboBox.Items.Clear();
             string DBName = DBNameComboBox.Text;
+            if (EA == null)
+            {
+                EA = pe.Applications.FirstOrDefault(a => string.Equals(a.Name, AppNameComboBox.Text));
+            }
+            if (EA == null)
+            {
+                return;
+            }
             db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
             if (db == null)
             {
@@ -419,14 +455,24 @@ namespace Ginger.Actions
             {
                 table = TablesComboBox.Text;
             }
-            List<string> Columns = db.DatabaseOperations.GetTablesColumns(table);
-            if (Columns == null)
+            if (table != "")
             {
-                return;
+                List<string> Columns = db.DatabaseOperations.GetTablesColumns(table);
+                if (Columns == null)
+                {
+                    return;
+                }
+                else
+                {
+                    foreach (string s in Columns)
+                    {
+                        ColumnComboBox.Items.Add(s);
+                    }
+                }
             }
-            foreach (string s in Columns)
+            else
             {
-                ColumnComboBox.Items.Add(s);
+                Reporter.ToUser(eUserMsgKey.AskToSelectTable);
             }
         }
 
@@ -445,6 +491,7 @@ namespace Ginger.Actions
                 DoCommit.Visibility = Visibility.Collapsed;
                 Keyspace.Visibility = Visibility.Collapsed;
                 TableColWhereStackPanel.Visibility = Visibility.Collapsed;
+                txtWhere.Clear();
                 return;
             }
             if (pe != null)
@@ -479,6 +526,7 @@ namespace Ginger.Actions
                     RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
                     checkQueryType();
                     TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                    txtWhere.Clear();
                     FreeSQLLabel.Content = "Update DB SQL:";
                     DoCommit.Visibility = Visibility.Visible;
                     Keyspace.Visibility = Visibility.Collapsed;
@@ -548,6 +596,7 @@ namespace Ginger.Actions
                     TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                     FreeSQLLabel.Content = "Free SQL:";
                     Keyspace.Visibility = System.Windows.Visibility.Collapsed;
+                    txtWhere.Clear();
                     break;
                 case ActDBValidation.eDBValidationType.SimpleSQLOneValue:
                     checkQueryType();
@@ -609,6 +658,7 @@ namespace Ginger.Actions
                     DoUpdate.Visibility = Visibility.Collapsed;
                     SqlFile.Visibility = System.Windows.Visibility.Collapsed;
                     FreeSQLLabel.Content = @"Record count";
+                    txtWhere.Clear();
                     break;
                 case eDBValidationType.Insert:
                     DoUpdate.Visibility = Visibility.Visible;
@@ -625,6 +675,7 @@ namespace Ginger.Actions
                     TableColWhereStackPanel.Height = 40;
                     txtWhere.Visibility = Visibility.Collapsed;
                     lblWhere.Visibility = Visibility.Hidden;
+                    txtWhere.Clear();
                     DoCommit.Visibility = Visibility.Collapsed;
                     FreeSQLStackPanel.Visibility = Visibility.Collapsed;
                     RadioButtonsSection.Visibility = Visibility.Collapsed;

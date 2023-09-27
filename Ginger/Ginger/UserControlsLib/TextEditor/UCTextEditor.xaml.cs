@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Plugin.Core;
 using Ginger.UserControlsLib.TextEditor.Common;
+using GingerCore.GeneralLib;
 using GingerPlugIns.TextEditorLib;
 using GingerWPF.DragDropLib;
 using ICSharpCode.AvalonEdit.CodeCompletion;
@@ -313,7 +314,7 @@ namespace Ginger.UserControlsLib.TextEditor
             Page p = mTextEditor.GetSelectedContentPageEditor(args);
             if (p != null)
             {
-                SelectionEditorFrame.Content = p;
+                SelectionEditorFrame.ClearAndSetContent(p);
                 SelectionEditorFrame.Visibility = Visibility.Visible;
 
                 if (mLastEditPageRowHeight.Value == 0) { mLastEditPageRowHeight = new GridLength(150); }

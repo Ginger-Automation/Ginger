@@ -1127,38 +1127,46 @@ namespace GingerCore.Drivers.WindowsLib
         {
             return await Task.Run(async () =>
             {
-                if (foundElementsList == null)
+                try
                 {
-                    foundElementsList = new ObservableList<ElementInfo>();
-                }
-                List<ElementInfo> elementInfoList = await mUIAutomationHelper.GetVisibleControls();
-
-                foreach (UIAElementInfo foundElemntInfo in elementInfoList)
-                {
-                    if (StopProcess)
+                    if (foundElementsList == null)
                     {
-                        break;
+                        foundElementsList = new ObservableList<ElementInfo>();
                     }
+                    List<ElementInfo> elementInfoList = await mUIAutomationHelper.GetVisibleControls();
 
-                    ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo, pomSetting);
-
-                    bool learnElement = true;
-                    if (pomSetting.filteredElementType != null)
+                    foreach (UIAElementInfo foundElemntInfo in elementInfoList)
                     {
-                        if (!pomSetting.filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                        if (StopProcess)
                         {
-                            learnElement = false;
+                            break;
+                        }
+
+                        ((IWindowExplorer)this).LearnElementInfoDetails(foundElemntInfo, pomSetting);
+
+                        bool learnElement = true;
+                        if (pomSetting.filteredElementType != null)
+                        {
+                            if (!pomSetting.filteredElementType.Contains(foundElemntInfo.ElementTypeEnum))
+                            {
+                                learnElement = false;
+                            }
+                        }
+                        if (learnElement)
+                        {
+                            foundElemntInfo.IsAutoLearned = true;
+                            foundElementsList.Add(foundElemntInfo);
                         }
                     }
-                    if (learnElement)
-                    {
-                        foundElemntInfo.IsAutoLearned = true;
-                        foundElementsList.Add(foundElemntInfo);
-                    }
-                }
 
-                elementInfoList = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
-                return elementInfoList;
+                    elementInfoList = General.ConvertObservableListToList<ElementInfo>(foundElementsList);
+                    return elementInfoList;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Controls", ex);
+                    return new List<ElementInfo>();
+                }
             });
         }
 

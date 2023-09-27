@@ -16,16 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -230,8 +233,8 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             if (item.IsExpandable())
             {
-                TVI.Expanded += TVI_Expanded;
-                TVI.Collapsed += TVI_Collapsed;
+                WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(source: TVI, eventName: nameof(TreeViewItem.Expanded), handler: TVI_Expanded);
+                WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(source: TVI, eventName: nameof(TreeViewItem.Collapsed), handler: TVI_Collapsed);
 
                 TreeViewItem TVDummy = new TreeViewItem() { Header = "DUMMY" };
                 TVI.Items.Add(TVDummy);
@@ -244,29 +247,34 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         }
 
 
-        private void TVI_Expanded(object sender, RoutedEventArgs e)
+        private void TVI_Expanded(object? sender, RoutedEventArgs e)
         {
-            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            TreeViewItem treeViewItem = (TreeViewItem)e.Source;
+            _ = LoadChildItems(treeViewItem);
+        }
 
-            TreeViewItem TVI = (TreeViewItem)e.Source;
-            RemoveDummyNode(TVI);
-            SetRepositoryFolderIsExpanded(TVI, true);
-            SetTreeNodeItemChilds(TVI);
+        private async Task LoadChildItems(TreeViewItem treeViewItem)
+        {
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            RemoveDummyNode(treeViewItem);
+            SetRepositoryFolderIsExpanded(treeViewItem, isExpanded: true);
+            await SetTreeNodeItemChilds(treeViewItem);
             GingerCore.General.DoEvents();
             // remove the handler as expand data is cached now on tree
-            TVI.Expanded -= TVI_Expanded;
-            TVI.Expanded += TVI_ExtraExpanded;
+            WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_Expanded);
+            WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_ExtraExpanded);
 
             Mouse.OverrideCursor = null;
         }
 
-        private void TVI_Collapsed(object sender, RoutedEventArgs e)
+        private void TVI_Collapsed(object? sender, RoutedEventArgs e)
         {
             TreeViewItem tvi = (TreeViewItem)e.Source;
             SetRepositoryFolderIsExpanded(tvi, false);
         }
 
-        private void TVI_ExtraExpanded(object sender, RoutedEventArgs e)
+        private void TVI_ExtraExpanded(object? sender, RoutedEventArgs e)
         {
             TreeViewItem tvi = (TreeViewItem)e.Source;
             SetRepositoryFolderIsExpanded(tvi, true);
@@ -284,47 +292,61 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         private AutoResetEvent? mSetTreeNodeItemChildsEvent = null;
 
-        private void SetTreeNodeItemChilds(TreeViewItem TVI)
+        private readonly Dictionary<TreeViewItem, Task> tviChildNodesLoadTaskMap = new();
+
+        private Task SetTreeNodeItemChilds(TreeViewItem TVI)
         {
             // TODO: remove temp code after cleanup 
+            Task setChildItemsTask = Task.CompletedTask;
 
-            if (TVI.Tag is ITreeViewItem)
+            if (TVI.Tag is ITreeViewItem ITVI)
             {
-                ITreeViewItem ITVI = (ITreeViewItem)TVI.Tag;
-
-                List<ITreeViewItem> Childs = null;
-                Childs = ITVI.Childrens();
+                List<ITreeViewItem> Childs = ITVI.Childrens();
 
                 TVI.Items.Clear();
                 if (Childs != null)
                 {
-                    Task.Run(() =>
+                    setChildItemsTask = Task.Run(() =>
                     {
-                        mSetTreeNodeItemChildsEvent = new AutoResetEvent(false);
-                        foreach (ITreeViewItem item in Childs)
+                        try
                         {
+                            mSetTreeNodeItemChildsEvent = new AutoResetEvent(false);
+                            foreach (ITreeViewItem item in Childs)
+                            {
 
-                            if (TreeChildFolderOnly == true && item.IsExpandable() == false)
-                            {
-                                continue;
-                            }
-                            if (TreeNodesFilterByField != null)
-                            {
-                                if (IsTreeItemFitsFilter(item))
+                                if (TreeChildFolderOnly == true && item.IsExpandable() == false)
+                                {
+                                    continue;
+                                }
+                                if (TreeNodesFilterByField != null)
+                                {
+                                    if (IsTreeItemFitsFilter(item))
+                                    {
+                                        Dispatcher.Invoke(() => AddItem(item, TVI));
+                                    }
+                                }
+                                else
                                 {
                                     Dispatcher.Invoke(() => AddItem(item, TVI));
                                 }
+                                Thread.Sleep(5);
                             }
-                            else
+                            mSetTreeNodeItemChildsEvent.Set();
+                            if (tviChildNodesLoadTaskMap.ContainsKey(TVI))
                             {
-                                Dispatcher.Invoke(() => AddItem(item, TVI));
+                                tviChildNodesLoadTaskMap.Remove(TVI);
                             }
-                            Thread.Sleep(5);
                         }
-                        mSetTreeNodeItemChildsEvent.Set();
+                        catch(Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                        }
                     });
+                    tviChildNodesLoadTaskMap.Add(TVI, setChildItemsTask);
                 }
             }
+
+            return setChildItemsTask;
         }
 
         private bool IsTreeItemFitsFilter(ITreeViewItem treeItemToCheck)
@@ -413,7 +435,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             TVI.IsExpanded = true;
         }
 
-        public void RefresTreeNodeChildrens(ITreeViewItem NodeItem)
+        public void RefreshTreeNodeChildrens(ITreeViewItem NodeItem)
         {
             TreeViewItem TVI = SearchTVIRecursive((TreeViewItem)Tree.Items[0], NodeItem);
             if (TVI != null)
@@ -602,71 +624,99 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         /// <param name="txt"></param>
         public void FilterItemsByText(ItemCollection itemCollection, string txt, CancellationToken cancellationToken = new CancellationToken())
         {
-            // Filter not working for new TVI            
-            foreach (TreeViewItem tvi in itemCollection)
+            Task.Run(() =>
             {
-
-                if (cancellationToken.IsCancellationRequested)
+                try
                 {
-                    List<TreeViewItem> pathNodes = new List<TreeViewItem>();
-                    if (LastSelectedTVI != null)
+                    // Need to expand to get all lazy loading
+                    foreach (TreeViewItem tvi in itemCollection)
                     {
-                        pathNodes = getSelecetdItemPathNodes(LastSelectedTVI);
-                    }
-                    CollapseUnselectedTreeNodes(TreeItemsCollection, pathNodes);
-
-
-                    return;
-                }
-
-                // Need to expand to get all lazy loading
-                tvi.IsExpanded = true;
-
-                //ITreeViewItem ITVI = (ITreeViewItem)tvi.Tag;
-
-                // Find the label in the header, this is label child of the Header Stack Panel
-                StackPanel SP = (StackPanel)tvi.Header;
-
-                //Combine text of all label child's of the header Stack panel
-                string HeaderTXT = "";
-                foreach (var v in SP.Children)
-                {
-                    if (v.GetType() == typeof(Label))
-                    {
-                        Label l = (Label)v;
-                        if (l.Content != null)
+                        Dispatcher.Invoke(() =>
                         {
-                            HeaderTXT += l.Content.ToString();
-                        }
+                            tvi.IsExpanded = true;
+                        });
+
+                        if (tviChildNodesLoadTaskMap.TryGetValue(tvi, out Task? loadChildrenTask))
+                            loadChildrenTask.Wait();
                     }
-                }
 
-                bool bFound = HeaderTXT.ToUpper().Contains(txt.ToUpper());
-                if (bFound || txt.Length == 0)
-                {
-                    tvi.Visibility = System.Windows.Visibility.Visible;
-
-                    // go over all parents to make them visible
-                    TreeViewItem tviParent = tvi;
-                    while (tviParent.Parent is TreeViewItem)
+                    // Filter not working for new TVI            
+                    foreach (TreeViewItem tvi in itemCollection)
                     {
-                        tviParent = (TreeViewItem)tviParent.Parent;
-                        tviParent.Visibility = System.Windows.Visibility.Visible;
-                    }
-                }
-                else
-                {
-                    tvi.Visibility = System.Windows.Visibility.Collapsed;
-                }
+                        Dispatcher.Invoke(() =>
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                List<TreeViewItem> pathNodes = new List<TreeViewItem>();
+                                if (LastSelectedTVI != null)
+                                {
+                                    pathNodes = getSelecetdItemPathNodes(LastSelectedTVI);
+                                }
+                                CollapseUnselectedTreeNodes(TreeItemsCollection, pathNodes);
 
-                // Goto sub items
-                if (tvi.HasItems)
-                {
-                    FilterItemsByText(tvi.Items, txt, cancellationToken);
+
+                                return;
+                            }
+                        });
+
+                        //ITreeViewItem ITVI = (ITreeViewItem)tvi.Tag;
+
+                        Dispatcher.Invoke(() =>
+                        {
+                            // Find the label in the header, this is label child of the Header Stack Panel
+                            StackPanel SP = (StackPanel)tvi.Header;
+
+                            //Combine text of all label child's of the header Stack panel
+                            string HeaderTXT = "";
+                            foreach (var v in SP.Children)
+                            {
+                                if (v.GetType() == typeof(Label))
+                                {
+                                    Label l = (Label)v;
+                                    if (l.Content != null)
+                                    {
+                                        HeaderTXT += l.Content.ToString();
+                                    }
+                                }
+                            }
+
+                            bool bFound = HeaderTXT.ToUpper().Contains(txt.ToUpper());
+                            if (bFound || txt.Length == 0)
+                            {
+                                tvi.Visibility = System.Windows.Visibility.Visible;
+
+                                // go over all parents to make them visible
+                                TreeViewItem tviParent = tvi;
+                                while (tviParent.Parent is TreeViewItem)
+                                {
+                                    tviParent = (TreeViewItem)tviParent.Parent;
+                                    tviParent.Visibility = System.Windows.Visibility.Visible;
+                                }
+                            }
+                            else
+                            {
+                                tvi.Visibility = System.Windows.Visibility.Collapsed;
+                            }
+
+                            // Goto sub items
+                            if (tvi.HasItems)
+                            {
+                                FilterItemsByText(tvi.Items, txt, cancellationToken);
+                            }
+                        });
+                    }
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        //Show the root item
+                        ((TreeViewItem)Tree.Items[0]).Visibility = System.Windows.Visibility.Visible;
+                    });
                 }
-            }
-            //Show the root item
-                ((TreeViewItem)Tree.Items[0]).Visibility = System.Windows.Visibility.Visible;
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                }
+            }, cancellationToken);
 
         }
         public static List<TreeViewItem> getSelecetdItemPathNodes(TreeViewItem SelectedItem)
@@ -735,73 +785,119 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return (ITreeViewItem)TVIChild.Tag;
         }
 
-        public TreeViewItem FindMatchingTreeItem(ITreeViewItem item)
+        public ITreeViewItem? FindMatchingTreeItem(Predicate<object> matchPredicate)
         {
-            TreeViewItem TVI = SearchTVIRecursive((TreeViewItem)Tree.Items[0], item);
-            return TVI;
+            return FindMatchingTreeItemPrivate(matchPredicate, (TreeViewItem)Tree.Items[0]);
         }
 
-        public TreeViewItem FindMatchingTreeItemByObject(Object searchItem, TreeViewItem root = null)
+        private ITreeViewItem? FindMatchingTreeItemPrivate(Predicate<object> matchPredicate, TreeViewItem root)
         {
-            Object currentItem = null;
-
-            if (root == null)
+            foreach (TreeViewItem currentTreeItem in root.Items)
             {
-                root = (TreeViewItem)Tree.Items[0];
-            }
-
-            foreach (TreeViewItem TVI in root.Items)
-            {
-                ITreeViewItem o = (ITreeViewItem)TVI.Tag;
-                if (o != null)
+                ITreeViewItem tvi = (ITreeViewItem)currentTreeItem.Tag;
+                if (tvi != null)
                 {
-                    currentItem = o.NodeObject();
-
-                    if (currentItem.Equals(searchItem))
+                    if (matchPredicate(tvi.NodeObject()))
                     {
-                        return TVI;
+                        return tvi;
                     }
                 }
-                if (TVI.Items.Count > 0)
+                if (currentTreeItem.Items.Count > 0)
                 {
-                    TVI.IsExpanded = true;
-                    TreeViewItem vv = FindMatchingTreeItemByObject(searchItem, TVI);
-                    if (vv != null)
+                    currentTreeItem.IsExpanded = true;
+                    ITreeViewItem? matchedSubTreeItem = FindMatchingTreeItemPrivate(matchPredicate, currentTreeItem);
+                    if (matchedSubTreeItem != null)
                     {
-                        return vv;
+                        return matchedSubTreeItem;
                     }
                 }
             }
             return null;
         }
 
-        public TreeViewItem FindMatchingTreeItemByType(TreeViewItem root, Type searchItem)
+        public Task IterateTreeViewItemsAsync(Func<ITreeViewItem, bool> iterationConsumer, bool inReverseOrder)
         {
-            Object currentItem = null;
-
-            foreach (TreeViewItem TVI in root.Items)
+            return IterateTreeViewItemsAsync(treeViewItem =>
             {
-                ITreeViewItem o = (ITreeViewItem)TVI.Tag;
-                if (o != null)
+                bool continueIteration = true;
+                object treeViewItemTag = treeViewItem.Tag;
+                if (treeViewItemTag != null && treeViewItemTag is ITreeViewItem iTreeViewItem)
                 {
-                    currentItem = o.GetType();
+                    continueIteration = iterationConsumer.Invoke(iTreeViewItem);
+                }
+                return continueIteration;
+            }, inReverseOrder);
+        }
 
-                    if (currentItem.GetType() == searchItem)
-                    {
-                        return TVI;
-                    }
-                }
-                if (TVI.Items.Count > 0)
+        public Task IterateTreeViewItemsAsync(Func<TreeViewItem, bool> iterationConsumer, bool inReverseOrder = false)
+        {
+            TreeViewItem firstTreeItem = (TreeViewItem)Tree.Items[0];
+            return IterateTreeViewItemsPrivateAsync(iterationConsumer, inReverseOrder, root: firstTreeItem);
+        }
+
+        private async Task<bool> IterateTreeViewItemsPrivateAsync(Func<TreeViewItem, bool> iterationConsumer, bool inReverseOrder, TreeViewItem root)
+        {
+            try
+            {
+                bool continueIteration = true;
+
+                int index = 0;
+                Predicate<int> boundCheck = index => index < root.Items.Count;
+                int indexIncrementation = 1;
+
+                await LoadChildItems(root);
+
+                if (inReverseOrder)
                 {
-                    TVI.IsExpanded = true;
-                    TreeViewItem vv = FindMatchingTreeItemByType(TVI, searchItem);
-                    if (vv != null)
-                    {
-                        return vv;
-                    }
+                    index = root.Items.Count - 1;
+                    boundCheck = index => index >= 0;
+                    indexIncrementation = -1;
                 }
+
+                while (boundCheck.Invoke(index))
+                {
+                    TreeViewItem currentTreeItem = (TreeViewItem)root.Items[index];
+                    ITreeViewItem tvi = (ITreeViewItem)currentTreeItem.Tag;
+
+                    if (tvi != null)
+                    {
+                        continueIteration = iterationConsumer.Invoke(currentTreeItem);
+                        if (!continueIteration)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (currentTreeItem.Items.Count > 0)
+                    {
+                        continueIteration = await IterateTreeViewItemsPrivateAsync(iterationConsumer, inReverseOrder, currentTreeItem);
+                        if (!continueIteration)
+                        {
+                            break;
+                        }
+                    }
+
+                    index += indexIncrementation;
+                }
+
+                return continueIteration;
             }
-            return null;
+            catch (Exception e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while iterating UCTreeView items.", e);
+                return false;
+            }
+        }
+
+        public void FocusItem(TreeViewItem treeViewItem)
+        {
+            DependencyObject? parent = treeViewItem.Parent;
+            while (parent != null && parent is TreeViewItem parentTreeViewItem)
+            {
+                parentTreeViewItem.IsExpanded = true;
+                parent = parentTreeViewItem.Parent;
+            }
+            treeViewItem.IsSelected = true;
         }
 
         public void SelectItem(ITreeViewItem item)
@@ -1134,6 +1230,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             return validationRes;
         }
-    }
 
+        
+    }
 }

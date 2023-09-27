@@ -36,6 +36,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using static Ginger.Variables.InputVariableRule;
 using Amdocs.Ginger.CoreNET;
+using GingerCore.GeneralLib;
 
 namespace Ginger.Run
 {
@@ -98,7 +99,7 @@ namespace Ginger.Run
         {
             FlowControlFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
             BusinessFlowRunFlowControlPage BFCP = new BusinessFlowRunFlowControlPage(mGingerRunner, businessFlow);
-            FlowControlFrame.Content = BFCP;
+            FlowControlFrame.ClearAndSetContent(BFCP);
 
         }
         public BusinessFlowRunConfigurationsPage(BusinessFlowExecutionSummary businessFlowExecSummary)
@@ -124,7 +125,27 @@ namespace Ginger.Run
             view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.Value), Header = "Initial Value", WidthWeight = 20, BindingMode = BindingMode.OneWay, ReadOnly = true });
             if (mWindowMode == eWindowMode.Configuration)
             {
-                view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", StyleType = GridColView.eGridColStyleType.Template, CellTemplate = UCDataMapping.GetTemplate(nameof(VariableBase.MappedOutputType), nameof(VariableBase.MappedOutputValue), nameof(VariableBase.SupportSetValue), variabelsSourceProperty: nameof(VariableBase.PossibleVariables), outputVariabelsSourceProperty: nameof(VariableBase.PossibleOutputVariables)), WidthWeight = 40 });
+                view.GridColsView.Add(new GridColView()
+                {
+                    Field = nameof(VariableBase.MappedOutputValue),
+                    Header = "Mapped Runtime Value",
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = UCDataMapping.GetTemplate(new UCDataMapping.TemplateOptions(
+                        dataTypeProperty: nameof(VariableBase.MappedOutputType),
+                        dataValueProperty: nameof(VariableBase.MappedOutputValue))
+                        {
+                            _EnableDataMappingProperty = nameof(VariableBase.SupportSetValue),
+                            _VariabelsSourceProperty = nameof(VariableBase.PossibleVariables),
+                            _OutputVariabelsSourceProperty = nameof(VariableBase.PossibleOutputVariables),
+                            _RestrictedMappingTypes = new[]
+                            {
+                                new UCDataMapping.RestrictedMappingType(
+                                    name: nameof(UCDataMapping.eDataType.Variable), 
+                                    reason: "Variables are deprected for Mapped Runtime Value.")
+                            }
+                        }),
+                    WidthWeight = 40
+                });
             }
             else if (mWindowMode == eWindowMode.SummaryView)
             {
@@ -173,7 +194,6 @@ namespace Ginger.Run
                     ObservableList<VariableBase> optionalOutputVars = new ObservableList<VariableBase>();
                     foreach (VariableBase outputVar in ((GingerExecutionEngine)mGingerRunner.Executor).GetPossibleOutputVariables(WorkSpace.Instance.RunsetExecutor.RunSetConfig, mBusinessFlow, includeGlobalVars: false, includePrevRunnersVars: true))
                     {
-                        ;
                         optionalOutputVars.Add(outputVar);
                     }
                     //allow setting output vars options only to variables types which supports setting value
@@ -413,7 +433,8 @@ namespace Ginger.Run
         {
             if (mGingerRunner != null && mGingerRunner.Executor != null)
             {
-                mGingerRunner.Executor.UpdateBusinessFlowsRunList();
+                //commenting the below part out because causing issues with customized variables
+                //mGingerRunner.Executor.UpdateBusinessFlowsRunList();
             }
             _pageGenericWin.Close();
         }

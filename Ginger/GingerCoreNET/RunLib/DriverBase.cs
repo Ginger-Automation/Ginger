@@ -376,6 +376,29 @@ namespace GingerCore.Drivers
                 return null;
             }
         }
+
+        protected static int GetMaxTimeout(ActSmartSync act)
+        {
+            try
+            {
+                if (act.WaitTime.HasValue)
+                {
+                    return act.WaitTime.GetValueOrDefault();
+                }
+                else if (string.IsNullOrEmpty(act.GetInputParamValue("Value")))
+                {
+                    return 5;
+                }
+                else
+                {
+                    return Convert.ToInt32(act.GetInputParamCalculatedValue("Value"));
+                }
+            }
+            catch (Exception)
+            {
+                return 5;
+            }
+        }
     }
 }
 

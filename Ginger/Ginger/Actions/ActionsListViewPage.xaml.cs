@@ -113,8 +113,16 @@ namespace GingerWPF.BusinessFlowsLib
                     BindingHandler.ObjFieldBinding(xBreakPointMenuItemIcon, ImageMaker.ContentProperty, mActionBeenEdit, nameof(Act.BreakPoint), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
                 }
 
-                mActionEditPage = new ActionEditPage(mActionBeenEdit, mPageViewMode);
-                xMainFrame.SetContent(mActionEditPage);
+                if (mActionEditPage == null)
+                {
+                    mActionEditPage = new ActionEditPage(mActionBeenEdit, mPageViewMode);
+                }
+                else
+                {
+                    mActionEditPage.Init(mActionBeenEdit, mPageViewMode);
+                }
+
+                xMainFrame.ClearAndSetContent(mActionEditPage);
                 if (ShiftToActionEditEvent != null)
                 {
                     ShiftToActionEditEvent.Invoke(this, null);
@@ -126,12 +134,11 @@ namespace GingerWPF.BusinessFlowsLib
                 mActionBeenEdit = null;
                 if (mActionEditPage != null)
                 {
-                    mActionEditPage.ClearPageBindings();
-                    mActionEditPage.KeepAlive = false;
-                    mActionEditPage = null;
+                    //mActionEditPage.ClearPageBindings();
+                    mActionEditPage.Clear();
                     //GC.Collect();
                 }
-                xMainFrame.SetContent(mActionsListView);
+                xMainFrame.ClearAndSetContent(mActionsListView);
                 mActionsListView.ScrollToViewCurrentItem();
 
                 if (ShiftToActionsListEvent != null)
@@ -262,8 +269,8 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mActivity = activity;
                 SetListView();
-                ShowHideEditPage(null);
             }
+            ShowHideEditPage(null);
         }
 
         // Drag Drop handlers
@@ -450,7 +457,9 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 mActionEditPage.Width = xMainFrame.ActualWidth;
                 mActionEditPage.HorizontalAlignment = HorizontalAlignment.Stretch;
-                xMainFrame.Refresh();
+                //commenting below line for #25193 bug-fix, this line is preventing mActionsListView from showing up when user clicks on
+                //edit button for a linked-instance activity
+                //xMainFrame.Refresh();
             }
         }
     }

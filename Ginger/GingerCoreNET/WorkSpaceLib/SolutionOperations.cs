@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.OS;
+using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
 using GingerCore;
@@ -26,6 +27,7 @@ using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -136,7 +138,7 @@ namespace Ginger.SolutionGeneral
                 {
                     if (Solution.ApplicationPlatforms.Count != lastSavedSolution.ApplicationPlatforms.Count)
                     {
-                        bldExtraChangedItems.Append("Target Applications, ");
+                        bldExtraChangedItems.Append($"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}, ");
                     }
                     else
                     {
@@ -144,7 +146,7 @@ namespace Ginger.SolutionGeneral
                         {
                             if (app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified || app.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoTracked)
                             {
-                                bldExtraChangedItems.Append("Target Applications, ");
+                                bldExtraChangedItems.Append($"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}, ");
                                 break;
                             }
                         }
@@ -342,6 +344,20 @@ namespace Ginger.SolutionGeneral
             }
 
             return OperatingSystemBase.CurrentOperatingSystem.AdjustFilePath(relativePath);
+        }
+
+        public static ObservableList<SolutionCategoryValue> GetSolutionReleaseValues()
+        {
+            SolutionCategory releaseList = WorkSpace.Instance?.Solution?.SolutionCategories?.FirstOrDefault(x => x.Category == Amdocs.Ginger.CoreNET.Run.SolutionCategory.eSolutionCategories.Release);
+            if(releaseList != null)
+            {
+                return releaseList.CategoryOptionalValues;
+            }
+            else
+            {
+                return new ObservableList<SolutionCategoryValue>();
+            }
+
         }
 
     }
