@@ -1940,7 +1940,7 @@ namespace Ginger.Run
             }
             else
             {
-                Reporter.ToLog(eLogLevel.INFO, string.Format("No record found to re run for current execution"));
+                Reporter.ToLog(eLogLevel.INFO, "No record found to re run for current execution");
                 return;
             }
 
