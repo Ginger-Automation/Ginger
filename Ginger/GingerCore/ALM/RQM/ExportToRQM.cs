@@ -25,7 +25,6 @@ using Amdocs.Ginger.IO;
 using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.Environments;
-using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using Newtonsoft.Json;
 using RQMExportStd.ExportBLL;
 using System;
@@ -196,8 +195,6 @@ namespace GingerCore.ALM.RQM
                             }
                         }
 
-                        
-
                         if (!exeResultList.Any())
                         {
                             
@@ -211,7 +208,6 @@ namespace GingerCore.ALM.RQM
                             {
                                 Reporter.ToLog(eLogLevel.DEBUG, $"Skipping ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as no valid Execution found for it");
                                 result += $"  {Environment.NewLine} Skipping ALM Results Publish of '{businessFlow.Name}' Flow and 'testplan {bfExportedID}' as no valid Execution found for it ";
-                                //result = $"Error for ALM Results Publish of '{businessFlow.Name}' Flow and 'testplan {bfExportedID}' as no valid Execution found for it ";
                                 return false;
                             }
                         }
