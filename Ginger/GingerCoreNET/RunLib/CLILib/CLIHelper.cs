@@ -104,6 +104,23 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+        /// <summary>
+        /// To include Global variables used in Runset in CLI dynamic JSON configuration
+        /// </summary>
+        bool mGlobalVariableConfiguration;
+        public bool GlobalVariableConfiguration
+        {
+            get
+            {
+                return mGlobalVariableConfiguration;
+            }
+            set
+            {
+                mGlobalVariableConfiguration = value;
+                OnPropertyChanged(nameof(GlobalVariableConfiguration));
+            }
+        }
+
         bool mSetAlmConnectionDetails;
         public bool SetAlmConnectionDetails
         {
