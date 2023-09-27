@@ -39,6 +39,7 @@ using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SourceControl;
+using NUglify.Helpers;
 using RunsetOperations;
 using System;
 using System.Collections.Generic;
@@ -417,6 +418,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
         private static GingerExecConfig GetGingerExecConfigurationObject(Solution solution, RunsetExecutor runsetExecutor, CLIHelper cliHelper)
         {
             GingerExecConfig executionConfig = new GingerExecConfig();
+            var usedVars = new List<string>();
 
             if (cliHelper.DownloadUpgradeSolutionFromSourceControl == true)
             {
@@ -572,8 +574,8 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             RerunConfig rerunconfiguration = new RerunConfig()
             {
                 Active = false,
-                RerunLevel= eReRunLevel.RunSet,
-                ReferenceExecutionID= Guid.Empty,
+                RerunLevel = eReRunLevel.RunSet,
+                ReferenceExecutionID = Guid.Empty,
             };
 
             runset.RerunConfigurations = rerunconfiguration;
@@ -594,8 +596,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 runset.Runners = new List<RunnerExecConfig>();
             }
+
+            if (cliHelper.GlobalVariableConfiguration)
+            {
+                VariableBase.GetListOfUsedVariables(runsetExecutor.RunSetConfig.GingerRunners, ref usedVars);
+            }
+
             foreach (GingerRunner gingerRunner in runsetExecutor.RunSetConfig.GingerRunners)
-            {           
+            {
                 RunnerExecConfig runner = new RunnerExecConfig();
                 runner.Name = gingerRunner.Name;
                 runner.ID = gingerRunner.Guid;
@@ -610,6 +618,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         runner.EnvironmentID = env.Guid;
                     }
                 }
+
+                if (cliHelper.GlobalVariableConfiguration)
+                {
+                    VariableBase.GetListOfUsedVariables(gingerRunner, ref usedVars);
+                }
+
                 //if (gingerRunner.RunOption != GingerRunner.eRunOptions.ContinueToRunall)
                 //{
                 runner.OnFailureRunOption = (RunnerExecConfig.eOnFailureRunOption)Enum.Parse(typeof(RunnerExecConfig.eOnFailureRunOption), gingerRunner.RunOption.ToString(), true);
@@ -654,7 +668,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     {
                         businessFlow.Instance = null;
                     }
+                    if (cliHelper.GlobalVariableConfiguration)
+                    {
+                        VariableBase.GetListOfUsedVariables(businessFlowRun, ref usedVars);
+                        VariableBase.GetListOfUsedVariables(FindItemByIDAndName<BusinessFlow>(
+                                        new Tuple<string, Guid?>(nameof(BusinessFlow.Guid), businessFlowRun.BusinessFlowGuid),
+                                        new Tuple<string, string>(nameof(BusinessFlow.Name), businessFlowRun.BusinessFlowName),
+                                        WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>()), ref usedVars);
+                    }
                     businessFlow.Active = businessFlowRun.BusinessFlowIsActive;
+
                     if (businessFlowRun.BusinessFlowCustomizedRunVariables.Count > 0)
                     {
                         ObservableList<VariableBase> allInputVars = null;
@@ -722,6 +745,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 runset.Operations = new List<OperationExecConfigBase>();
             }
+
             foreach (RunSetActionBase runSetOperation in runsetExecutor.RunSetConfig.RunSetActions)
             {
                 if (runSetOperation is RunSetActionHTMLReportSendEmail)
@@ -866,6 +890,32 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     runset.Operations.Add(operationConfigPublishToALM);
                 }
             }
+
+            //Find used global variables in Runset and add it to Execution Config if GlobalVariableConfiguration is set to true
+            if (cliHelper.GlobalVariableConfiguration && usedVars.Count > 0 && WorkSpace.Instance.Solution.Variables.Count > 0)
+            {
+                var globalVarNames = WorkSpace.Instance.Solution.Variables.Select(v => v.Name);
+                var usedGlobalVars = usedVars.Where(uv => globalVarNames.Contains(uv)).Distinct();
+                if (usedGlobalVars.Any())
+                {
+                    executionConfig.GlobalVariables = new List<GlobalVariable>();
+                    usedGlobalVars.ForEach(gv =>
+                    {
+                        var tempVar = WorkSpace.Instance.Solution.Variables.FirstOrDefault(v => v.Name.Equals(gv));
+                        if (tempVar != null)
+                        {
+                            executionConfig.GlobalVariables.Add(
+                                new GlobalVariable()
+                                {
+                                    VariableName = tempVar.Name,
+                                    VariableID = tempVar.Guid,
+                                    VariableCustomizedValue = tempVar.Value
+                                });
+                        }
+                    });
+                }
+            }
+
             executionConfig.Runset = runset;
             return executionConfig;
         }
@@ -929,7 +979,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 }
             }
 
-            if(gingerExecConfig.Runset.RerunConfigurations != null && gingerExecConfig.Runset.RerunConfigurations.Active)
+            if (gingerExecConfig.Runset.RerunConfigurations != null && gingerExecConfig.Runset.RerunConfigurations.Active)
             {
                 runSetConfig.ReRunConfigurations.Active = gingerExecConfig.Runset.RerunConfigurations.Active;
                 runSetConfig.ReRunConfigurations.RerunLevel = (global::Ginger.Run.eReRunLevel)gingerExecConfig.Runset.RerunConfigurations.RerunLevel;
@@ -1472,7 +1522,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         }
                         if (publishToALMOperationExecConfig.ALMType.ToLower() == "default")
                         {
-                            publishToQCRunSetOperation.PublishALMType =gingerExecConfig.AlmsDetails != null ?  gingerExecConfig.AlmsDetails.FirstOrDefault(x => x.IsDefault != null && x.IsDefault.Value == true).ALMType : publishToALMOperationExecConfig.ALMType.ToLower();
+                            publishToQCRunSetOperation.PublishALMType = gingerExecConfig.AlmsDetails != null ? gingerExecConfig.AlmsDetails.FirstOrDefault(x => x.IsDefault != null && x.IsDefault.Value == true).ALMType : publishToALMOperationExecConfig.ALMType.ToLower();
                         }
                         else
                         {
