@@ -224,8 +224,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     SelectRunset();
                     mRunSetConfig.ReRunConfigurations.Active = ReRunFailed;
-                    mRunSetConfig.ReRunConfigurations.ReferenceExecutionID = Guid.Parse(ReferenceExecutionID);
-                    mRunSetConfig.ReRunConfigurations.RerunLevel = (eReRunLevel)Enum.Parse(typeof(eReRunLevel), RerunLevel);
+                    if (ReRunFailed)
+                    {
+                        mRunSetConfig.ReRunConfigurations.ReferenceExecutionID = Guid.Parse(ReferenceExecutionID);
+                        mRunSetConfig.ReRunConfigurations.RerunLevel = (eReRunLevel)Enum.Parse(typeof(eReRunLevel), RerunLevel);
+                    }
                 }
                 else
                 {
