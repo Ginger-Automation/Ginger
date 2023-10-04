@@ -449,7 +449,7 @@ namespace Ginger.Run
             this.Dispatcher.Invoke(() =>
             {
                 bool setAsRunning = false;
-                if (WorkSpace.Instance.RunsetExecutor.Runners.Any(x => x.Executor.BusinessFlows.Any(x => x.RunStatus == eRunStatus.Failed)))
+                if (WorkSpace.Instance.RunsetExecutor.Runners.Any(x => x.Executor != null && x.Executor.BusinessFlows.Any(x => x.RunStatus == eRunStatus.Failed)))
                 {
                     xReRunFailedRunsetBtn.Visibility = Visibility.Visible;
                     xRunRunsetBtn.Visibility = Visibility.Collapsed;
@@ -468,8 +468,8 @@ namespace Ginger.Run
                     }
                     else
                     {
-                        xReRunFailedRunsetBtn.ButtonText = "ReRunFailed";
-                        xReRunFailedRunsetBtn.ToolTip = "Run All Failed Runners";
+                        xReRunFailedRunsetBtn.ButtonText = "ReRunFailedFlows";
+                        xReRunFailedRunsetBtn.ToolTip = "Run All Failed Business flows";
                         setAsRunning = false;
                     }
 
@@ -1584,7 +1584,7 @@ namespace Ginger.Run
             try
             {
                 bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
-                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;
+                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              
                 if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
                 {
                     WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Clear();
@@ -1620,7 +1620,7 @@ namespace Ginger.Run
                 {
                     InitRunnersSection(false, ViewMode);
                 }
-
+                UpdateReRunFailedButtonIcon();
                 this.Dispatcher.Invoke(() =>
                 {
                     //Init Operations Section
@@ -1924,19 +1924,6 @@ namespace Ginger.Run
             if (WorkSpace.Instance.RunsetExecutor.Runners.Any(x => x.Executor.BusinessFlows.Any(y => y.RunStatus == eRunStatus.Failed)))
             {
                 WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active = true;
-                foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.Runners)
-                {
-                    var FailedBFGuidList = runner.Executor.BusinessFlows.Where(x => x.RunStatus == eRunStatus.Failed).Select(x=>x.InstanceGuid);
-                    
-                    foreach (BusinessFlowRun business in runner.BusinessFlowsRunList)
-                    {
-                        if (!FailedBFGuidList.Contains(business.BusinessFlowInstanceGuid))
-                        {
-                            business.BusinessFlowIsActive = false;
-                            DeactivatedBfInstanceGuidList.Add(business.BusinessFlowInstanceGuid);
-                        }
-                    }
-                }
             }
             else
             {
@@ -1997,16 +1984,6 @@ namespace Ginger.Run
                 }
                 finally
                 {
-                    foreach (GingerRunner runner in WorkSpace.Instance.RunsetExecutor.Runners)
-                    {
-                        foreach (BusinessFlowRun business in runner.BusinessFlowsRunList)
-                        {
-                            if (DeactivatedBfInstanceGuidList.Contains(business.BusinessFlowInstanceGuid))
-                            {
-                                business.BusinessFlowIsActive = true;
-                            }
-                        }
-                    }
                     UpdateReRunFailedButtonIcon();
                 }
             }

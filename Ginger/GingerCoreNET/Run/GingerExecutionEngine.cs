@@ -525,6 +525,12 @@ namespace Ginger.Run
                         CalculateBusinessFlowFinalStatus(executedBusFlow);
                         continue;
                     }
+                    if(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && executedBusFlow.RunStatus == eRunStatus.Passed)
+                    {
+                        SetBusinessFlowActivitiesAndActionsSkipStatus(executedBusFlow);
+                        CalculateBusinessFlowFinalStatus(executedBusFlow);
+                        continue;
+                    }
 
                     //Run Bf
                     if (doContinueRun && bfIndx == startingBfIndx)//this is the BF to continue from
