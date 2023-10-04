@@ -374,19 +374,32 @@ namespace GingerCore.Actions
         {
             string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
             calculatedDestinationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath);
-            DestinationFolder = Path.GetDirectoryName(calculatedDestinationPath);
-            if (!string.IsNullOrEmpty(DestinationFolder))
+            //DestinationFolder = Path.GetDirectoryName(calculatedDestinationPath);
+            if (!string.IsNullOrEmpty(calculatedDestinationPath))
             {
-                if (Directory.Exists(calculatedDestinationPath))
-                {
-                    DestinationFolder = calculatedDestinationPath;
-                    if (!Path.EndsInDirectorySeparator(DestinationFolder))
+                    if (Directory.Exists(calculatedDestinationPath))
                     {
-                        DestinationFolder += Path.DirectorySeparatorChar;
+                        DestinationFolder = calculatedDestinationPath;
+                        if (!Path.EndsInDirectorySeparator(DestinationFolder))
+                        {
+                            DestinationFolder += Path.DirectorySeparatorChar;
+                        }
+                        DestinationFile = Path.GetFileName(DestinationFolder);
                     }
-                }
+                    else
+                    {
+                        DestinationFolder = Path.GetDirectoryName(calculatedDestinationPath);
+                        DestinationFile = Path.GetFileName(calculatedDestinationPath);
+                    }
+                
             }
-            DestinationFile = Path.GetFileName(calculatedDestinationPath);
+            else
+            {
+                base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                base.ExInfo = "Please provide a valid Destination Path";
+                base.Error = "Please provide a valid Destination Path";
+                return;
+            }
         }
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
