@@ -525,7 +525,7 @@ namespace Ginger.Run
                         CalculateBusinessFlowFinalStatus(executedBusFlow);
                         continue;
                     }
-                    if(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && executedBusFlow.RunStatus == eRunStatus.Passed)
+                    if(WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && executedBusFlow.RunStatus == eRunStatus.Passed)
                     {
                         SetBusinessFlowActivitiesAndActionsSkipStatus(executedBusFlow);
                         CalculateBusinessFlowFinalStatus(executedBusFlow);
