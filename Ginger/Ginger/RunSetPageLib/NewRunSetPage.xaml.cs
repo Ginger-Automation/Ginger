@@ -468,8 +468,8 @@ namespace Ginger.Run
                     }
                     else
                     {
-                        xReRunFailedRunsetBtn.ButtonText = "ReRunFailedFlows";
-                        xReRunFailedRunsetBtn.ToolTip = "Run All Failed Business flows";
+                        xReRunFailedRunsetBtn.ButtonText = "Re-Run Failed Flows";
+                        xReRunFailedRunsetBtn.ToolTip = "Re-Run All Failed Business flows";
                         setAsRunning = false;
                     }
 

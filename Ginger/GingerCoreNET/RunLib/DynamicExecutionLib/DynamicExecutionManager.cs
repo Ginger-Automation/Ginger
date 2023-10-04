@@ -981,17 +981,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             if (gingerExecConfig.Runset.RerunConfigurations != null)
             {
-                if(gingerExecConfig.Runset.RerunConfigurations.Active)
+                runSetConfig.ReRunConfigurations.Active = gingerExecConfig.Runset.RerunConfigurations.Active;
+                if (gingerExecConfig.Runset.RerunConfigurations.Active)
                 {
-                    runSetConfig.ReRunConfigurations.Active = gingerExecConfig.Runset.RerunConfigurations.Active;
                     runSetConfig.ReRunConfigurations.RerunLevel = (global::Ginger.Run.eReRunLevel)gingerExecConfig.Runset.RerunConfigurations.RerunLevel;
                     runSetConfig.ReRunConfigurations.ReferenceExecutionID = gingerExecConfig.Runset.RerunConfigurations.ReferenceExecutionID;
                 }
-                else
-                {
-                    runSetConfig.ReRunConfigurations.Active = gingerExecConfig.Runset.RerunConfigurations.Active;
-                }
-                
             }
 
             if (!String.IsNullOrEmpty(gingerExecConfig.Runset.Description))
