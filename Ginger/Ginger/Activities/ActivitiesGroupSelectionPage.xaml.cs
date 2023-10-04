@@ -66,7 +66,7 @@ namespace Ginger.BusinessFlowPages
             }
             else
             {
-                if (businessFlow.IsSharedRepositoryInstance.Equals(false))
+                if (!businessFlow.IsSharedRepositoryInstance)
                 {
                     xRadioPanel.Visibility = Visibility.Collapsed;
                     xNoteLable.Visibility = Visibility.Collapsed;
