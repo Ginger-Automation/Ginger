@@ -66,8 +66,17 @@ namespace Ginger.BusinessFlowPages
             }
             else
             {
-                xRadioPanel.Visibility = Visibility.Visible;
-                xNoteLable.Visibility = Visibility.Visible;
+                if (businessFlow.IsSharedRepositoryInstance.Equals(false))
+                {
+                    xRadioPanel.Visibility = Visibility.Collapsed;
+                    xNoteLable.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    xRadioPanel.Visibility = Visibility.Visible;
+                    xNoteLable.Visibility = Visibility.Visible;
+                }
+                
             }
         }
 
