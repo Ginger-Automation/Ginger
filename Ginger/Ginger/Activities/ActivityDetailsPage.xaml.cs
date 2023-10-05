@@ -53,7 +53,6 @@ namespace Ginger.BusinessFlowPages
         public ActivityDetailsPage(Activity activity, Context context, General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
-
             mActivity = activity;
             mContext = context;
             mPageViewMode = pageViewMode;
@@ -137,6 +136,7 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearAllBindings(xExpectedTxt);
             BindingOperations.ClearAllBindings(xScreenTxt);
             BindingOperations.ClearAllBindings(xTargetApplicationComboBox);
+            BindingOperations.ClearAllBindings(xConsumerCB);
             BindingOperations.ClearAllBindings(xAutomationStatusCombo);
             BindingOperations.ClearAllBindings(xMandatoryActivityCB);
             BindingOperations.ClearAllBindings(xPublishcheckbox);
@@ -165,6 +165,7 @@ namespace Ginger.BusinessFlowPages
             if (mContext != null && mContext.BusinessFlow != null)
             {
                 xTargetApplicationComboBox.ItemsSource = mContext.BusinessFlow.TargetApplications;
+                
             }
             else
             {
@@ -173,6 +174,7 @@ namespace Ginger.BusinessFlowPages
             xTargetApplicationlbl.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
             xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
+            
             BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
             
             if (mActivity.GetType() == typeof(ErrorHandler))
@@ -201,6 +203,7 @@ namespace Ginger.BusinessFlowPages
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Collapsed;
             }
             PropertyChangedEventManager.AddHandler(WorkSpace.Instance.UserProfile, UserProfile_PropertyChanged, string.Empty);
+            PrepareAndLoadConsumerComboBox();
         }
 
         private void UserProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)

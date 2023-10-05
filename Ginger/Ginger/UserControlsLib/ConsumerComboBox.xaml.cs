@@ -47,7 +47,7 @@ namespace Ginger.UserControlsLib
         public ConsumerComboBox()
         {
             InitializeComponent();
-            _nodeList = new ObservableCollection<Node>();
+            this._nodeList = new ObservableCollection<Node>();
         }
 
         #region Dependency Properties
@@ -140,20 +140,24 @@ namespace Ginger.UserControlsLib
         #region Methods
         private void SelectNodes()
         {
-            foreach (Consumer consumer in SelectedConsumer)
+            if(this.SelectedConsumer !=null && this.SelectedConsumer.Count>0)
             {
-                Node? node = _nodeList.FirstOrDefault(n => n.Consumer.ConsumerGuid == consumer.ConsumerGuid);
-                if (node != null)
+                foreach (Consumer consumer in this.SelectedConsumer)
                 {
-                    node.IsSelected = true;
+                    Node? node = this._nodeList.FirstOrDefault(n => n.Consumer.ConsumerGuid == consumer.ConsumerGuid);
+                    if (node != null)
+                    {
+                        node.IsSelected = true;
+                    }
                 }
             }
+            
         }
 
         private void SetSelectedConsumer()
         {
             ObservableList<Consumer> temp = new ObservableList<Consumer>();
-            foreach (Node node in _nodeList)
+            foreach (Node node in this._nodeList)
             {
                
                     if (node.IsSelected)
@@ -167,14 +171,14 @@ namespace Ginger.UserControlsLib
 
         private void DisplayInConsumer()
         {
-            _nodeList.Clear();
+            this._nodeList.Clear();
             
             foreach (Consumer keyValue in this.ConsumerSource)
             {
-                Node node = new Node(keyValue);
-                _nodeList.Add(node);
+                Node node = new(keyValue);
+                this._nodeList.Add(node);
             }
-            ConsumerCombo.ItemsSource = _nodeList;
+            this.ConsumerCombo.ItemsSource = this._nodeList;
         }
 
         private void SetText()
@@ -182,7 +186,7 @@ namespace Ginger.UserControlsLib
             if (this.SelectedConsumer != null)
             {
                 StringBuilder displayText = new StringBuilder();
-                foreach (Node s in _nodeList)
+                foreach (Node s in this._nodeList)
                 {
                      if (s.IsSelected)
                     {
