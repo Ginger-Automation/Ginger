@@ -54,7 +54,7 @@ namespace Ginger.Actions
             {
                 TextFileNameTextBox.ValueTextBox.Text = fileName;
             }
-            if (General.SetupBrowseFolder(new System.Windows.Forms.FolderBrowserDialog()) is string folderName)
+            else if (General.SetupBrowseFolder(new System.Windows.Forms.FolderBrowserDialog()) is string folderName)
             {
                 TextFileNameTextBox.ValueTextBox.Text = folderName;
             }
