@@ -33,7 +33,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.Common;
-using GingerCore;
 using GingerCore.Activities;
 using GingerCore.Platforms;
 
@@ -44,7 +43,6 @@ namespace Ginger.UserControlsLib
     /// </summary>
     public partial class ConsumerComboBox : UserControl
     {
-        Activity mActivity;
         private ObservableCollection<Node> _nodeList;
         public ConsumerComboBox()
         {
