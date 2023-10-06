@@ -64,7 +64,7 @@ namespace GingerUtils
                 File.Move(sourceFilePath, targetFilePath);
                 return true;
             }
-            catch s
+            catch
             {
                 return false;
             }
