@@ -79,6 +79,10 @@ namespace GingerCore.Drivers
         ActBrowserElement mAct;
         private int mDriverProcessId = 0;
 
+        private const string CHROME_DRIVER_NAME = "chromedriver";
+        private const string EDGE_DRIVER_NAME = "msedgedriver";
+        private const string FIREFOX_DRIVER_NAME = "geckodriver";
+
         public enum eBrowserType
         {
             IE,
@@ -493,7 +497,7 @@ namespace GingerCore.Drivers
                             FirefoxOption.Profile = profile;
                         }
 
-                        FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService(GetDriversPathPerOS());
+                        FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService();
                         FFService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new FirefoxDriver(FFService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         this.mDriverProcessId = FFService.ProcessId;
@@ -571,7 +575,7 @@ namespace GingerCore.Drivers
                         ChromeDriverService ChService;
                         if (string.IsNullOrEmpty(DebugAddress))
                         {
-                            ChService = ChromeDriverService.CreateDefaultService(GetDriversPathPerOS());
+                            ChService = ChromeDriverService.CreateDefaultService();
                         }
                         else
                         {
@@ -581,7 +585,7 @@ namespace GingerCore.Drivers
                         if (HideConsoleWindow)
                         {
                             ChService.HideCommandPromptWindow = HideConsoleWindow;
-                        }
+                        }                        
 
                         try
                         {
@@ -671,7 +675,7 @@ namespace GingerCore.Drivers
 
                             SetCurrentPageLoadStrategy(ieOptions);
                             ieOptions.IgnoreZoomLevel = true;
-                            InternetExplorerDriverService IExplorerService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
+                            InternetExplorerDriverService IExplorerService = InternetExplorerDriverService.CreateDefaultService();
                             IExplorerService.HideCommandPromptWindow = HideConsoleWindow;
                             Driver = new InternetExplorerDriver(IExplorerService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         }
@@ -840,20 +844,25 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in start driver", ex);
                 ErrorMessageFromDriver = ex.Message;
 
-                if (RestartRetry && mBrowserTpe == eBrowserType.Chrome && (ex.Message.Contains("version") || ex.Message.Contains("chromedriver.exe does not exist")))
+                //If driver is mismatched, try renaming the existing driver and let selenium update the driver
+                if (RestartRetry && ex.Message.Contains("session not created: This version of "))
                 {
-                    GingerCore.Drivers.Updater.ChromeDriverUpdater chromeupdater = new Updater.ChromeDriverUpdater();
-
                     RestartRetry = false;
-                    if (chromeupdater.UpdateDriver())
+
+                    //Rename driver name
+                    if (mBrowserTpe == eBrowserType.Chrome)
                     {
-                        StartDriver();
+                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(CHROME_DRIVER_NAME), GetDriversPathPerOS());
                     }
-                    else
+                    else if (mBrowserTpe == eBrowserType.Edge)
                     {
-                        ErrorMessageFromDriver += " Chrome driver version mismatch. Please run Ginger as Admin to Auto update the chrome driver.";
-                        Reporter.ToLog(eLogLevel.ERROR, ErrorMessageFromDriver);
+                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(EDGE_DRIVER_NAME), GetDriversPathPerOS());
                     }
+                    else if (mBrowserTpe == eBrowserType.FireFox)
+                    {
+                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(FIREFOX_DRIVER_NAME), GetDriversPathPerOS());
+                    }                    
+                    StartDriver();
                 }
             }
         }
@@ -883,6 +892,39 @@ namespace GingerCore.Drivers
             {
                 string error = string.Format("The '{0}' OS is not supported by Ginger Selenium", RuntimeInformation.OSDescription);
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets browser driver file with path
+        /// </summary>
+        /// <param name="fileName">driver name</param>
+        /// <returns></returns>
+        private string DriverServiceFileNameWithPath(string fileName)
+        {
+            return Path.Combine(GetDriversPathPerOS(), DriverServiceFileName(fileName));
+
+        }
+
+        /// <summary>
+        /// Gets browser driver name according to running oS
+        /// </summary>
+        /// <param name="fileName">driver name</param>
+        /// <returns></returns>
+        private string DriverServiceFileName(string fileName)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return $"{fileName}.exe";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return fileName;
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("The '{0}' OS is not supported by Ginger Selenium", RuntimeInformation.OSDescription));
+                return "";
             }
         }
 
@@ -4292,7 +4334,7 @@ namespace GingerCore.Drivers
                     var action = Task.Run(() =>
                     {
                         try
-                        {    
+                        {
                             Thread.Sleep(100);
                             count = Driver.WindowHandles.Count;
                         }
@@ -7527,7 +7569,7 @@ namespace GingerCore.Drivers
                             act.Error += ex.Message;
                             Reporter.ToLog(eLogLevel.DEBUG, $"OpenNewTab {ex.Message} ", ex.InnerException);
                         }
-                        
+
                         break;
 
                     case ActBrowserElement.eControlAction.GotoURL:
@@ -7806,13 +7848,13 @@ namespace GingerCore.Drivers
                         throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 act.Status = eRunStatus.Failed;
                 act.Error += ex.Message;
                 Reporter.ToLog(eLogLevel.DEBUG, $"ActBrowserElementHandler {ex.Message} ", ex.InnerException);
             }
-            
+
         }
 
         private void OpenNewWindow()
@@ -7824,7 +7866,7 @@ namespace GingerCore.Drivers
         }
 
         private void OpenNewTab()
-        {            
+        {
             IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
             javaScriptExecutor.ExecuteScript("window.open();");
             Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
