@@ -53,7 +53,13 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         nestedChange.Selected = _selected;
                     }
                 }
-                if (_selected && HasSiblingComparison)
+
+                bool parentIsNotCollection =
+                    ParentComparison == null ||
+                    ParentComparison.DataType == null ||
+                    !ParentComparison.DataType.IsAssignableTo(typeof(System.Collections.ICollection));
+
+                if (_selected && HasSiblingComparison && parentIsNotCollection)
                 {
                     SiblingComparison.Selected = false;
                 }
