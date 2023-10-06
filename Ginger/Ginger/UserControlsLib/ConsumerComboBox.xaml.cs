@@ -47,7 +47,7 @@ namespace Ginger.UserControlsLib
         public ConsumerComboBox()
         {
             InitializeComponent();
-            this._nodeList = new ObservableCollection<Node>();
+            _nodeList = new ObservableCollection<Node>();
         }
 
         #region Dependency Properties
@@ -141,11 +141,11 @@ namespace Ginger.UserControlsLib
         #region Methods
         private void SelectNodes()
         {
-            if(this.SelectedConsumer !=null && this.SelectedConsumer.Count>0)
+            if(SelectedConsumer !=null && SelectedConsumer.Count>0)
             {
-                foreach (Consumer consumer in this.SelectedConsumer)
+                foreach (Consumer consumer in SelectedConsumer)
                 {
-                    Node? node = this._nodeList.FirstOrDefault(n => n.Consumer.ConsumerGuid == consumer.ConsumerGuid);
+                    Node? node = _nodeList.FirstOrDefault(n => n.Consumer.ConsumerGuid == consumer.ConsumerGuid);
                     if (node != null)
                     {
                         node.IsSelected = true;
@@ -158,7 +158,7 @@ namespace Ginger.UserControlsLib
         private void SetSelectedConsumer()
         {
             ObservableList<Consumer> temp = new ObservableList<Consumer>();
-            foreach (Node node in this._nodeList)
+            foreach (Node node in _nodeList)
             {
                
                     if (node.IsSelected)
@@ -172,22 +172,22 @@ namespace Ginger.UserControlsLib
 
         private void DisplayInConsumer()
         {
-            this._nodeList.Clear();
+            _nodeList.Clear();
             
-            foreach (Consumer keyValue in this.ConsumerSource)
+            foreach (Consumer keyValue in ConsumerSource)
             {
                 Node node = new(keyValue);
-                this._nodeList.Add(node);
+                _nodeList.Add(node);
             }
-            this.ConsumerCombo.ItemsSource = this._nodeList;
+            ConsumerCombo.ItemsSource = _nodeList;
         }
 
         private void SetText()
         {
-            if (this.SelectedConsumer != null)
+            if (SelectedConsumer != null)
             {
                 StringBuilder displayText = new StringBuilder();
-                foreach (Node s in this._nodeList)
+                foreach (Node s in _nodeList)
                 {
                      if (s.IsSelected)
                     {
