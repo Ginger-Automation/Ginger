@@ -330,7 +330,7 @@ namespace GingerCore.Actions
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, ex.Message + Environment.NewLine + ex.Source, ex);
-                    Error = string.Format("Error Occured while executing Sikuli Operation {0} : {1}", ActSikuliOperation, ex.Message);
+                    Error = string.Format("Error Occurred while executing Sikuli Operation {0} : {1}", ActSikuliOperation, ex.Message);
                     if (Error.Contains("No connection could be made "))
                     {
                         Error += " , please try running Ginger as Administrator";

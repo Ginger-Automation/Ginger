@@ -2601,7 +2601,7 @@ namespace Ginger.Run
                 }
                 catch (Exception ex)
                 {
-                    //Reporter.ToLog(eLogLevel.WARN, "Exception occured while performing Return Value StoreTo operation", ex);
+                    //Reporter.ToLog(eLogLevel.WARN, "Exception occurred while performing Return Value StoreTo operation", ex);
                     act.ExInfo += string.Format("Return Value StoreTo operation exception details: {0}", ex.Message);
                 }
 
@@ -4123,7 +4123,7 @@ namespace Ginger.Run
                         if (CurrentBusinessFlow.Activities[0].Acts.Any())
                         {
                             NotifyActionStart((Act)CurrentBusinessFlow.Activities[0].Acts[0]);
-                            CurrentBusinessFlow.Activities[0].Acts[0].Error = string.Format("Error occured in Input {0} values setup, please make sure all configured {1} Input {0} Mapped Values are valid", GingerDicser.GetTermResValue(eTermResKey.Variables), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                            CurrentBusinessFlow.Activities[0].Acts[0].Error = string.Format("Error occurred in Input {0} values setup, please make sure all configured {1} Input {0} Mapped Values are valid", GingerDicser.GetTermResValue(eTermResKey.Variables), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                             CurrentBusinessFlow.Activities[0].Acts[0].Status = eRunStatus.Failed;
                             NotifyActionEnd((Act)CurrentBusinessFlow.Activities[0].Acts[0]);
                         }

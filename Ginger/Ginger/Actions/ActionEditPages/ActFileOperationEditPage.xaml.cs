@@ -66,7 +66,7 @@ namespace Ginger.Actions
         }
 
         /// <summary>
-        /// Update browsertype according to selected file action. Some needs file browser and some needs folder browser
+        /// Update browser type according to selected file action. Some needs file browser and some needs folder browser
         /// </summary>
         private void UpdateBrowserTypes()
         {

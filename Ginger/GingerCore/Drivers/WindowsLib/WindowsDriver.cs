@@ -1697,7 +1697,7 @@ namespace GingerCore.Drivers.WindowsLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when LocateElementByLocator", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when LocateElementByLocator", ex);
                 if (AlwaysReturn)
                 {
                     AE = null;

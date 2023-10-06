@@ -1521,7 +1521,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"unexpected error occured: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"unexpected error occurred: {ex.Message}{Environment.NewLine}{ex.StackTrace}");
             }
             return false;
         }
@@ -2279,7 +2279,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error occured while validating the response command code {ex.Message}{Environment.NewLine}{ex.StackTrace}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error occurred while validating the response command code {ex.Message}{Environment.NewLine}{ex.StackTrace}");
                 return false;
             }
 

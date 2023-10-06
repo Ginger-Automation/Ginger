@@ -724,7 +724,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             ListItemGroupOperation publishGroup = new ListItemGroupOperation();
             publishGroup.SupportedViews = new List<General.eRIPageViewMode>() { General.eRIPageViewMode.Automation, General.eRIPageViewMode.SharedReposiotry, General.eRIPageViewMode.Child, General.eRIPageViewMode.ChildWithSave, General.eRIPageViewMode.Standalone };
             publishGroup.AutomationID = "publishGroup";
-            publishGroup.Header = string.Concat("Publish/Unpublish ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
+            publishGroup.Header = string.Concat("Publish/Unpublished ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
             publishGroup.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
             publishGroup.ToolTip = string.Format("Set if {0} is marked to be Published to third party applications", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
             publishGroup.OperationHandler = SetPublishGroupHandler;
@@ -980,7 +980,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             string newName = activitiesGroup.Name;
 
 
-            if (InputBoxWindow.GetInputWithValidation("Rename Group", "New Group Name:", ref newName))
+            if (InputBoxWindow.GetInputWithValidation($"Rename { GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) } ", $"New {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Name:", ref newName))
             {
                 if (!string.IsNullOrEmpty(newName))
                 {
@@ -991,7 +991,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Group with same name already exist, please set unique name.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} with same name already exist, please set unique name.");
                     }
                 }
             }
