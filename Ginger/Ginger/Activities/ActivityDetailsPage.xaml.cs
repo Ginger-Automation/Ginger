@@ -137,6 +137,7 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearAllBindings(xExpectedTxt);
             BindingOperations.ClearAllBindings(xScreenTxt);
             BindingOperations.ClearAllBindings(xTargetApplicationComboBox);
+            BindingOperations.ClearAllBindings(xConsumerCB);
             BindingOperations.ClearAllBindings(xAutomationStatusCombo);
             BindingOperations.ClearAllBindings(xMandatoryActivityCB);
             BindingOperations.ClearAllBindings(xPublishcheckbox);
@@ -201,6 +202,7 @@ namespace Ginger.BusinessFlowPages
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Collapsed;
             }
             PropertyChangedEventManager.AddHandler(WorkSpace.Instance.UserProfile, UserProfile_PropertyChanged, string.Empty);
+            PrepareAndLoadConsumerComboBox();
         }
 
         private void UserProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)

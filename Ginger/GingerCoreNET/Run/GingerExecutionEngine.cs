@@ -525,6 +525,12 @@ namespace Ginger.Run
                         CalculateBusinessFlowFinalStatus(executedBusFlow);
                         continue;
                     }
+                    if(WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && executedBusFlow.RunStatus == eRunStatus.Passed)
+                    {
+                        SetBusinessFlowActivitiesAndActionsSkipStatus(executedBusFlow);
+                        CalculateBusinessFlowFinalStatus(executedBusFlow);
+                        continue;
+                    }
 
                     //Run Bf
                     if (doContinueRun && bfIndx == startingBfIndx)//this is the BF to continue from
@@ -1196,7 +1202,8 @@ namespace Ginger.Run
                 {
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                     //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
-                    SetDriverPreviousRunStoppedFlag(true);                    
+                    SetDriverPreviousRunStoppedFlag(true);
+                    NotifyActionEnd(act);
                 }
                 else
                 {

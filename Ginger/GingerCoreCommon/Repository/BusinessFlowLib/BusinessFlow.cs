@@ -1353,7 +1353,7 @@ namespace GingerCore
                         messageToUser = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to selected {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}. Ginger will map the {GingerDicser.GetTermResValue(eTermResKey.Activity)}'s {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} to {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}. ";
                     }
 
-                    if (consumerApplicationsGUIDs.Any() && TargetApplications.Any(f => !consumerApplicationsGUIDs.Contains(f.Guid)))
+                    if (consumerApplicationsGUIDs.Any() && !TargetApplications.Any(f => consumerApplicationsGUIDs.Contains(f.Guid)))
                     {
                         messageToUser += $" Selected Consumers in activity is not present in the {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}, Ginger will add. ";
                         
@@ -1368,7 +1368,7 @@ namespace GingerCore
                     {
                         this.TargetApplications.Add(new TargetApplication() { AppName = appAgent.AppName, TargetGuid = appAgent.Guid });
                     }
-                    if (consumerApplicationsGUIDs.Any() && TargetApplications.Any(f => !consumerApplicationsGUIDs.Contains(f.Guid)))
+                    if (consumerApplicationsGUIDs.Any() && !TargetApplications.Any(f => consumerApplicationsGUIDs.Contains(f.Guid)))
                     {
                         MapCAToBF(activityIns, ApplicationPlatforms);
                     }
@@ -1391,13 +1391,13 @@ namespace GingerCore
                 TargetBase targetApp = GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications()
                     .FirstOrDefault(app => Guid.Equals(app.Guid, consumerPlat.ConsumerGuid));
 
-                if (targetApp != null)
+                if (targetApp != null && !TargetApplications.Any(app => app.ParentGuid == targetApp.Guid))
                 {
                     this.TargetApplications.Add(new TargetApplication() { AppName = targetApp.Name, TargetGuid = targetApp.Guid });
                 }
                 else
                 {
-                    return;
+                    continue;
                 }
             }
         }
@@ -1490,7 +1490,7 @@ namespace GingerCore
         public Activity GetActivity(Guid guidValue, string nameValue = null)
         {
             Activity foundActivity = null;
-            if (guidValue != null && guidValue != Guid.Empty)
+            if (guidValue != Guid.Empty)
                 foundActivity = GetActivityFromPossibleList(guidValue.ToString());
             if (foundActivity == null && guidValue == Guid.Empty && nameValue != null)//look by name only if do not have GUID so only old flows will still work with name mapping
                 foundActivity = GetActivityFromPossibleList(nameToLookBy: nameValue);
