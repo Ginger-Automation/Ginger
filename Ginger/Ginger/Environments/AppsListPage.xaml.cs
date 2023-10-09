@@ -142,5 +142,10 @@ namespace Ginger.Environments
         }
 
         #endregion Functions
+
+        private void EnvNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            grdApps.Title = "'" + EnvNameTextBox.Text + "' Environment Applications";
+        }
     }
 }
