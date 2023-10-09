@@ -247,8 +247,11 @@ namespace GingerCore.Drivers.PBDriver
                             }
                             else
                             {
-                                Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
-                                act.AddScreenShot(bmp);
+                                if (mUIAutomationHelper.GetCurrentWindow() != null)
+                                {
+                                    Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
+                                    act.AddScreenShot(bmp);
+                                }
                             }
                             return;
                         }
