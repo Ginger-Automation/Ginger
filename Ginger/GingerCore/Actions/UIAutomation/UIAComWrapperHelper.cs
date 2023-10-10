@@ -874,6 +874,10 @@ namespace GingerCore.Drivers
                 }
                 Thread.Sleep(100);
             }
+            if (CurrentWindow == null)
+            {
+                throw new Exception("No Window Handle Attached to locate the element.");
+            }
 
             count = 0;
             int ecount = 0;
@@ -4848,9 +4852,11 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-
-                    Bitmap tempBmp = GetCurrentWindowBitmap();
-                    act.AddScreenShot(tempBmp);
+                    if (CurrentWindow != null)
+                    {
+                        Bitmap tempBmp = GetCurrentWindowBitmap();
+                        act.AddScreenShot(tempBmp);
+                    }
                 }
                 return;
             }
@@ -4966,9 +4972,10 @@ namespace GingerCore.Drivers
                     Reporter.ToLog(eLogLevel.DEBUG, "Exception when checking IsWindowValid", e);
                     return false;
                 }
+                return true;
             }
-            return true;
 
+            return false;
         }
 
         public override string GetWindowInfo(object obj)
