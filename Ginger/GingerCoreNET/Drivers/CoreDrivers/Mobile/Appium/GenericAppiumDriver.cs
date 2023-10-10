@@ -1040,7 +1040,7 @@ namespace Amdocs.Ginger.CoreNET
                             }
                             if (!string.IsNullOrEmpty(biometricsAnswer) && biometricsAnswer != "success")
                             {
-                                act.Error = "An Error occured during biometrics simulation. Error2: " + biometricsAnswer;
+                                act.Error = "An Error occurred during biometrics simulation. Error2: " + biometricsAnswer;
                             }
                             break;
                         }
@@ -1067,7 +1067,7 @@ namespace Amdocs.Ginger.CoreNET
                 response = CameraAndBarcodeSimulationRequest(picture, ImageFormat.Png, contentType: "image", fileName: "image.png", action: action);
                 if (response != "success")
                 {
-                    return "An Error occured during " + action + " simulation. Error: " + response;
+                    return "An Error occurred during " + action + " simulation. Error: " + response;
                 }
             }
             else
@@ -1163,8 +1163,8 @@ namespace Amdocs.Ginger.CoreNET
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while taking device screen shot", ex);
-                act.Error = "Error occured while taking device screen shot, Details: " + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while taking device screen shot", ex);
+                act.Error = "Error occurred while taking device screen shot, Details: " + ex.Message;
             }
         }
 

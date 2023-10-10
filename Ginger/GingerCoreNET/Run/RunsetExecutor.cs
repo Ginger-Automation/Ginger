@@ -290,7 +290,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.WARN, "Exception occured when trying to update outputvariable mapped value ", ex);
+                Reporter.ToLog(eLogLevel.WARN, "Exception occurred when trying to update outputvariable mapped value ", ex);
             }
 
 
@@ -655,7 +655,7 @@ namespace Ginger.Run
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when trying to Run runset ", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when trying to Run runset ", ex);
             }
             finally
             {

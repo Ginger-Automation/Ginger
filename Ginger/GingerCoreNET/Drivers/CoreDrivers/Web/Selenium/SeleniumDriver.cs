@@ -1023,7 +1023,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while getting current element", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while getting current element", ex);
                 return null;
             }
         }
@@ -2361,21 +2361,21 @@ namespace GingerCore.Drivers
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDropDown operation", ex);
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SelectFromDropDown operation", ex);
                             try
                             {
                                 se.SelectByValue(act.GetInputParamCalculatedValue("Value"));
                             }
                             catch (Exception ex2)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDropDown operation", ex2);
+                                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SelectFromDropDown operation", ex2);
                                 try
                                 {
                                     se.SelectByIndex(Convert.ToInt32(act.GetInputParamCalculatedValue("Value")));
                                 }
                                 catch (Exception ex3)
                                 {
-                                    Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDropDown operation", ex3);
+                                    Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SelectFromDropDown operation", ex3);
                                 }
                             }
                         }
@@ -2399,7 +2399,7 @@ namespace GingerCore.Drivers
                         catch (Exception ex3)
                         {
                             act.Error = "Error: Failed to select the value ' + " + value + "' for the object - " + act.LocateBy + " " + act.LocateValue;
-                            Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing AsyncSelectFromDropDownByIndex operation", ex3);
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing AsyncSelectFromDropDownByIndex operation", ex3);
                             return;
                         }
                     }
@@ -2419,7 +2419,7 @@ namespace GingerCore.Drivers
                     catch (Exception ex)
                     {
                         act.Error = "Error: Failed to select value using digit from object with ID: '" + act.LocateValue + "' and Value: '" + act.GetInputParamCalculatedValue("Value") + "'";
-                        Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDijitList operation", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SelectFromDijitList operation", ex);
                         return;
                     }
                     break;
@@ -2458,7 +2458,7 @@ namespace GingerCore.Drivers
                             catch (InvalidOperationException ex)
                             {
                                 ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
-                                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SetValue operation", ex);
+                                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SetValue operation", ex);
                             }
                         }
                         else
@@ -2896,7 +2896,7 @@ namespace GingerCore.Drivers
             }
             catch (System.ArgumentException ae)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured in ActDropDownListHandler", ae);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred in ActDropDownListHandler", ae);
                 return;
             }
         }
@@ -3747,7 +3747,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception occured when LocateElementByLocator", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when LocateElementByLocator", ex);
                     if (AlwaysReturn)
                     {
                         elem = null;
@@ -4282,7 +4282,7 @@ namespace GingerCore.Drivers
                     //    }
                     //    catch (Exception ex)
                     //    {
-                    //        Reporter.ToLog(eLogLevel.DEBUG, "Exception occured in IsBrowserAlive called from IsRunning Method using handle.exe ", ex);
+                    //        Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred in IsBrowserAlive called from IsRunning Method using handle.exe ", ex);
                     //    }
                     //}
 
@@ -4300,12 +4300,12 @@ namespace GingerCore.Drivers
                         {
                             exceptioncount = 0;
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occured while casting when we are checking IsRunning", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred while casting when we are checking IsRunning", ex);
                         }
                         catch (System.NullReferenceException ex)
                         {
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.DEBUG, "Null refrence exception occured when we are checking IsRunning", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Null reference exception occurred when we are checking IsRunning", ex);
                         }
                         catch (System.ObjectDisposedException ex)
                         {
@@ -4315,7 +4315,7 @@ namespace GingerCore.Drivers
                         catch (Exception ex)
                         {
                             //throw exception to outer catch
-                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex);
                             throw;
                         }
                     });
@@ -4359,7 +4359,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.NoSuchWindowException ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                     {
@@ -4374,7 +4374,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverTimeoutException ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Timeout exception occured when we are checking IsRunning", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Timeout exception occurred when we are checking IsRunning", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                     {
@@ -4389,7 +4389,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverException ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Webdriver exception occured when we are checking IsRunning", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Webdriver exception occurred when we are checking IsRunning", ex);
 
                     if (PreviousRunStopped && ex.Message == "Unexpected error. Error 404: Not Found\r\nNot Found")
                     {
@@ -4406,7 +4406,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex2)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex2);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex2);
                     if (ex2.Message.ToString().ToUpper().Contains("DIALOG"))
                     {
                         return true;
@@ -4453,7 +4453,7 @@ namespace GingerCore.Drivers
                     catch (Exception ex)
                     {
                         string wt = Driver.Title; //if Switch window throw exception then reading current driver title to avoid exception for next window handle in loop
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetAppWindows.", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetAppWindows.", ex);
                     }
                 }
                 return list.ToList();
@@ -4787,7 +4787,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during pom learining", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during pom learning", ex);
             }
         }
 
@@ -4849,7 +4849,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured when creating relative xapth with attributes values", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred when creating relative xpath with attributes values", ex);
             }
             finally
             {
@@ -5606,7 +5606,7 @@ namespace GingerCore.Drivers
                 catch (Exception ex)
                 {
                     var wt = Driver.Title; //if Switch window throw exception then reading current driver title to avoid exception for next window handle in loop
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occured during Switchwindow", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred during Switchwindow", ex);
                 }
 
             }
@@ -6155,7 +6155,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when learn LocateElementByFriendlyLocator", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when learn LocateElementByFriendlyLocator", ex);
             }
 
             return locatorsList;
@@ -6493,7 +6493,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during InjectGingerLiveSpy", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during InjectGingerLiveSpy", ex);
             }
         }
 
@@ -6572,7 +6572,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while adding javascript to page", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while adding javascript to page", ex);
             }
         }
 
@@ -8015,7 +8015,7 @@ namespace GingerCore.Drivers
                             catch (InvalidOperationException ex)
                             {
                                 ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
-                                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when HandleActUIElement");
+                                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when HandleActUIElement");
                             }
                         }
                         else
