@@ -39,9 +39,7 @@ namespace GingerCore.Variables
         public override string VariableType
         {
             get { return "Selection List"; }
-        }
-
-        [IsSerializedForLocalRepository(true)]        
+        }            
         private bool mIsLoopEnabled = true;
         [IsSerializedForLocalRepository(true)]
         public bool IsLoopEnabled
