@@ -54,12 +54,7 @@ namespace GingerCore.Variables
                 }
             }
         }
-
-
-
-
-
-        [IsSerializedForLocalRepository(false)]
+        
         private bool mIsDynamicValueModificationEnabled;
 
         [IsSerializedForLocalRepository(false)]      
