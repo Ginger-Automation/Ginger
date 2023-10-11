@@ -33,9 +33,11 @@ using Microsoft.Graph;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -202,6 +204,7 @@ namespace Ginger.BusinessFlowPages
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Collapsed;
             }
             PropertyChangedEventManager.AddHandler(WorkSpace.Instance.UserProfile, UserProfile_PropertyChanged, string.Empty);
+            CollectionChangedEventManager.AddHandler(source: mContext.BusinessFlow.TargetApplications, handler: AutoUpdate_ConsumerList);
             PrepareAndLoadConsumerComboBox();
         }
 
@@ -211,6 +214,11 @@ namespace Ginger.BusinessFlowPages
             {
                 TargetAppSelectedComboBox();
             }
+        }
+
+        private void AutoUpdate_ConsumerList(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+             TargetAppSelectedComboBox();
         }
 
         private void xErrorHandlerMappingCmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
