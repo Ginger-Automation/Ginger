@@ -3143,7 +3143,7 @@ namespace Ginger.Run
                     if (ve.Value.Contains("{Actual}"))
                     {
                         //Replace to 
-                        if (!string.IsNullOrWhiteSpace(actReturnValue.Actual) && Ginger.Utils.StringManager.IsNumeric(actReturnValue.Actual))
+                        if ((actReturnValue.Actual != null) && Ginger.Utils.StringManager.IsNumeric(actReturnValue.Actual))
                         {
                             ve.Value = ve.Value.Replace("{Actual}", actReturnValue.Actual);
                         }
