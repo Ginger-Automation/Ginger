@@ -1,0 +1,25 @@
+{
+  "Capabilities Exchange Request": [
+    "Origin-Host",
+    "Origin-Realm",
+    "Host-IP-Address",
+    "Vendor-Id",
+    "Product-Name",
+    "Origin-State-Id"
+  ],
+  "Credit Control Request": [
+    "Session-Id",
+    "Origin-Host",
+    "Origin-Realm",
+    "Destination-Realm",
+    "Auth-Application-Id",
+    "Service-Context-Id",
+    "CC-Request-Type",
+    "CC-Request-Number",
+    "Destination-Host",
+    "Origin-State-Id",
+    "User-Name",
+    "3GPP-RAT-Type",
+    "Event-Timestamp"
+  ]
+}
