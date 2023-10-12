@@ -204,7 +204,12 @@ namespace Ginger.BusinessFlowPages
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Collapsed;
             }
             PropertyChangedEventManager.AddHandler(WorkSpace.Instance.UserProfile, UserProfile_PropertyChanged, string.Empty);
-            CollectionChangedEventManager.AddHandler(source: mContext.BusinessFlow.TargetApplications, handler: AutoUpdate_ConsumerList);
+            
+            if(mContext.BusinessFlow != null)
+            {
+             CollectionChangedEventManager.AddHandler(source: mContext.BusinessFlow.TargetApplications, handler: AutoUpdate_ConsumerList);
+            }
+
             PrepareAndLoadConsumerComboBox();
         }
 
