@@ -49,6 +49,8 @@ namespace GingerCore.SourceControl
         public override List<string> GetSourceControlmConflict { get { return null; } }
 
         private string CheckinComment { get; set; }
+        
+        private string GitIgnoreFilePath => Path.Combine(RepositoryRootFolder, ".gitignore");
 
         public override bool AddFile(string Path, ref string error)
         {
@@ -354,19 +356,24 @@ namespace GingerCore.SourceControl
                     relativePath = relativePath.Substring(1);
                 }
 
+                if (!File.Exists(GitIgnoreFilePath))
+                {
+                    CreateGitIgnoreFile();
+                }
+
                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                 {
                     foreach (var item in repo.RetrieveStatus())
                     {
-                        if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)))
-                        {
-                            continue;
-                        }
+                        //if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)))
+                        //{
+                        //    continue;
+                        //}
 
-                        if (System.IO.Path.GetExtension(item.FilePath) == ".ldb" || System.IO.Path.GetExtension(item.FilePath) == ".ignore" || System.IO.Path.GetExtension(item.FilePath) == ".db")
-                        {
-                            continue;
-                        }
+                        //if (System.IO.Path.GetExtension(item.FilePath) == ".ldb" || System.IO.Path.GetExtension(item.FilePath) == ".ignore" || System.IO.Path.GetExtension(item.FilePath) == ".db")
+                        //{
+                        //    continue;
+                        //}
 
 
                         //sometimes remote file path uses / otherwise \  our code should be path independent 
@@ -480,6 +487,33 @@ namespace GingerCore.SourceControl
         public override void Init()
         {
             Console.WriteLine("GITHub - Init");
+        }
+
+        public void CreateGitIgnoreFile()
+        {
+            try
+            {
+                if (File.Exists(GitIgnoreFilePath))
+                {
+                    File.Delete(GitIgnoreFilePath);
+                }
+
+                string gitIgnoreFileContent = WorkSpace.Instance.SolutionRepository
+                    .GetRelativePathsToAvoidFromSourceControl()
+                    .Select(path => path.Replace(oldValue: @"\", newValue: @"/"))
+                    .Aggregate((aggContent, path) => $"{aggContent}\n{path}");
+                File.WriteAllText(GitIgnoreFilePath, gitIgnoreFileContent);
+                string errorWhileAddingFile = string.Empty;
+                AddFile(GitIgnoreFilePath, ref errorWhileAddingFile);
+                if(!string.IsNullOrEmpty(errorWhileAddingFile))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while adding .gitignore file for source control tracking.\n{errorWhileAddingFile}");
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while creating .gitignore file.", ex);
+            }
         }
 
         public override bool Lock(string path, string lockComment, ref string error)
