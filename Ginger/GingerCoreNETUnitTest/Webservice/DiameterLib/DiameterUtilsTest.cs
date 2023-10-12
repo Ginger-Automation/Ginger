@@ -1,8 +1,13 @@
-﻿using Amdocs.Ginger.Common;
+﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
 using Amdocs.Ginger.CoreNET.DiameterLib;
+using Amdocs.Ginger.CoreNET.Repository;
+using Amdocs.Ginger.Repository;
 using Ginger.Run;
-using GingerCore.Actions;
+using Ginger.SolutionGeneral;
+using GingerCoreNETUnitTest.RunTestslib;
+using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -16,6 +21,24 @@ namespace GingerCoreNETUnitTest.Webservice.DiameterLib
     public class DiameterUtilsTest
     {
         private string testDirectory;
+        [ClassInitialize]
+        public static void ClassInit(TestContext context)
+        {
+            WorkSpace.Init(new WorkSpaceEventHandler());
+            WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+            // Init SR
+            SolutionRepository mSolutionRepository = WorkSpace.Instance.SolutionRepository;
+            string TempRepositoryFolder = TestResources.GetTestTempFolder(Path.Combine("Solutions", "temp"));
+            mSolutionRepository.Open(TempRepositoryFolder);
+            Solution sol = new Solution();
+            sol.ContainingFolderFullPath = TempRepositoryFolder;
+            WorkSpace.Instance.Solution = sol;
+            if (WorkSpace.Instance.Solution.SolutionOperations == null)
+            {
+                WorkSpace.Instance.Solution.SolutionOperations = new SolutionOperations(WorkSpace.Instance.Solution);
+            }
+            WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder = Path.Combine(TempRepositoryFolder, "ExecutionResults");
+        }
         [TestInitialize]
         public void TestInitialize()
         {
