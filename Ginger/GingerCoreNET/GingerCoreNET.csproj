@@ -949,6 +949,9 @@
     <None Update="Reports\Ginger-Web-Client\main-es2015.e34ae47b01aae731b7d5.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main-es2015.f6965e40fcdabf83b4c5.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main-es2015.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -968,6 +971,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main-es5.e34ae47b01aae731b7d5.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main-es5.f6965e40fcdabf83b4c5.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main-es5.js">
@@ -1127,6 +1133,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\styles.2f15af51caafc14d831e.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\styles.3702b93d5b8caa280f0d.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\styles.c77db239a1dbff874057.css">

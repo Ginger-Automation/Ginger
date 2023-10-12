@@ -463,7 +463,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             WorkSpace.Instance.RunningInExecutionMode = true;
             if (!CLILoadAndPrepare())
             {
-                Reporter.ToLog(eLogLevel.WARN, "Issue occured while doing CLI Load and Prepare so aborting execution");
+                Reporter.ToLog(eLogLevel.WARN, "Issue occurred while doing CLI Load and Prepare so aborting execution");
                 Environment.ExitCode = 1;
                 return Environment.ExitCode;
             }
@@ -616,7 +616,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while doing CLI Load And Prepare", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while doing CLI Load And Prepare", ex);
                 return false;
             }
         }

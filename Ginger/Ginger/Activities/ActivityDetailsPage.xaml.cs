@@ -33,9 +33,11 @@ using Microsoft.Graph;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -137,6 +139,7 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearAllBindings(xExpectedTxt);
             BindingOperations.ClearAllBindings(xScreenTxt);
             BindingOperations.ClearAllBindings(xTargetApplicationComboBox);
+            BindingOperations.ClearAllBindings(xConsumerCB);
             BindingOperations.ClearAllBindings(xAutomationStatusCombo);
             BindingOperations.ClearAllBindings(xMandatoryActivityCB);
             BindingOperations.ClearAllBindings(xPublishcheckbox);
@@ -201,6 +204,13 @@ namespace Ginger.BusinessFlowPages
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Collapsed;
             }
             PropertyChangedEventManager.AddHandler(WorkSpace.Instance.UserProfile, UserProfile_PropertyChanged, string.Empty);
+            
+            if(mContext.BusinessFlow != null)
+            {
+             CollectionChangedEventManager.AddHandler(source: mContext.BusinessFlow.TargetApplications, handler: AutoUpdate_ConsumerList);
+            }
+
+            PrepareAndLoadConsumerComboBox();
         }
 
         private void UserProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -209,6 +219,11 @@ namespace Ginger.BusinessFlowPages
             {
                 TargetAppSelectedComboBox();
             }
+        }
+
+        private void AutoUpdate_ConsumerList(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+             TargetAppSelectedComboBox();
         }
 
         private void xErrorHandlerMappingCmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
