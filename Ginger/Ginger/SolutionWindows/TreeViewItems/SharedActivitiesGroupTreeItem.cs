@@ -129,7 +129,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNFile);
                 string xml = CreateBPMNXMLForActivitiesGroup(mActivitiesGroup);
                 string filePath = SaveBPMNXMLFile($"{mActivitiesGroup.Name}.bpmn", xml);
-                string solutionRelativeFilePath = filePath.Replace(WorkSpace.Instance.Solution.ContainingFolderFullPath, "~");
+                string solutionRelativeFilePath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(filePath);
                 Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeFilePath);
             }
             catch (Exception ex)
