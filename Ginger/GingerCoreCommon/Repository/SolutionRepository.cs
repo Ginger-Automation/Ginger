@@ -46,22 +46,22 @@ namespace Amdocs.Ginger.Repository
         /// </summary>
         private static List<string> mSolutionPathsToAvoid = new List<string>()
         {
-             "AutoSave",
-             "Recover",
-             "RecentlyUsed.dat",
-             "Backups",
-             "ExecutionResults",
-             "HTMLReports",
+             @"AutoSave\",
+             @"Recover\",
+             @"RecentlyUsed.dat",
+             @"Backups\",
+             @"ExecutionResults\",
+             @"HTMLReports\",
 
-             @"SharedRepository\Activities\PrevVersions",
-             @"SharedRepository\Actions\PrevVersions",
-             @"SharedRepository\Variables\PrevVersions",
-             @"SharedRepository\ActivitiesGroup\PrevVersions",
+             @"SharedRepository\Activities\PrevVersions\",
+             @"SharedRepository\Actions\PrevVersions\",
+             @"SharedRepository\Variables\PrevVersions\",
+             @"SharedRepository\ActivitiesGroup\PrevVersions\",
 
-             @"SharedRepository\Activities\PrevVerions",
-             @"SharedRepository\Actions\PrevVerions",
-             @"SharedRepository\Variables\PrevVerions",
-             @"SharedRepository\ActivitiesGroup\PrevVerions"
+             @"SharedRepository\Activities\PrevVerions\",
+             @"SharedRepository\Actions\PrevVerions\",
+             @"SharedRepository\Variables\PrevVerions\",
+             @"SharedRepository\ActivitiesGroup\PrevVerions\"
         };
 
         private List<string> mCalculatedSolutionPathsToAvoid = null;
@@ -470,6 +470,11 @@ namespace Amdocs.Ginger.Repository
             return Path.GetFullPath(new Uri(path).LocalPath)
                        .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                        .ToUpperInvariant();
+        }
+
+        public IEnumerable<string> GetRelativePathsToAvoidFromSourceControl()
+        {
+            return mSolutionPathsToAvoid;
         }
 
 
