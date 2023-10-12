@@ -49,6 +49,8 @@ namespace GingerCore.SourceControl
         public override List<string> GetSourceControlmConflict { get { return null; } }
 
         private string CheckinComment { get; set; }
+        
+        private string GitIgnoreFilePath => Path.Combine(RepositoryRootFolder, ".gitignore");
 
         public override bool AddFile(string Path, ref string error)
         {
@@ -354,7 +356,7 @@ namespace GingerCore.SourceControl
                     relativePath = relativePath.Substring(1);
                 }
 
-                if (IsGitIgnoreFileMissing())
+                if (!File.Exists(GitIgnoreFilePath))
                 {
                     CreateGitIgnoreFile();
                 }
@@ -487,29 +489,22 @@ namespace GingerCore.SourceControl
             Console.WriteLine("GITHub - Init");
         }
 
-        public bool IsGitIgnoreFileMissing()
-        {
-            string gitignoreFilePath = Path.Combine(RepositoryRootFolder, ".gitignore");
-            return !File.Exists(gitignoreFilePath);
-        }
-
         public void CreateGitIgnoreFile()
         {
             try
             {
-                string gitIgnoreFilePath = Path.Combine(RepositoryRootFolder, ".gitignore");
-                if (File.Exists(gitIgnoreFilePath))
+                if (File.Exists(GitIgnoreFilePath))
                 {
-                    File.Delete(gitIgnoreFilePath);
+                    File.Delete(GitIgnoreFilePath);
                 }
 
                 string gitIgnoreFileContent = WorkSpace.Instance.SolutionRepository
                     .GetRelativePathsToAvoidFromSourceControl()
                     .Select(path => path.Replace(oldValue: @"\", newValue: @"/"))
                     .Aggregate((aggContent, path) => $"{aggContent}\n{path}");
-                File.WriteAllText(gitIgnoreFilePath, gitIgnoreFileContent);
+                File.WriteAllText(GitIgnoreFilePath, gitIgnoreFileContent);
                 string errorWhileAddingFile = string.Empty;
-                AddFile(gitIgnoreFilePath, ref errorWhileAddingFile);
+                AddFile(GitIgnoreFilePath, ref errorWhileAddingFile);
                 if(!string.IsNullOrEmpty(errorWhileAddingFile))
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while adding .gitignore file for source control tracking.\n{errorWhileAddingFile}");
