@@ -404,6 +404,11 @@ namespace Ginger.SourceControl
                         return true;
                     }
                 }
+                else
+                {
+                    //no conflicts to handle
+                    conflictHandled = true;
+                }
                 return false;
             }
             return result;
@@ -482,7 +487,7 @@ namespace Ginger.SourceControl
                             CommentsTextBox.Text = string.Empty;
                             mCheckInWasDone = true;
                         }
-                        else if (!CommitSuccess)
+                        else if (!CommitSuccess && !conflictHandled)
                         {
                             Reporter.ToUser(eUserMsgKey.SourceControlChkInConflictHandledFailed);
                             CloseWindow();
