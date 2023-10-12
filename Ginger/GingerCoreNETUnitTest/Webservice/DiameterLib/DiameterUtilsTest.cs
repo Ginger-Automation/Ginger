@@ -284,7 +284,9 @@ namespace GingerCoreNETUnitTest.Webservice.DiameterLib
         private ActDiameter CreateActDiameter()
         {
             ActDiameter actDiameter = new ActDiameter();
-            Context context = new Context { Runner = new GingerExecutionEngine(new GingerRunner()) };
+            GingerRunner gingerRunner = new GingerRunner();
+            GingerExecutionEngine gingerExecutionEngine = new GingerExecutionEngine(gingerRunner);
+            Context context = new Context { Runner = gingerExecutionEngine };
             actDiameter.Context = context;
 
             SetDiameterActionProperties(actDiameter);
