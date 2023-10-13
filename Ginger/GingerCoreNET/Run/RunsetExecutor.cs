@@ -503,7 +503,10 @@ namespace Ginger.Run
 
                 if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == eDataPublishingPhase.DuringExecution && Runners.Count > 0)
                 {
-                    await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetStart(RunSetConfig);
+                    if(((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
+                    {
+                        await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetStart(RunSetConfig);
+                    }                   
                 }
 
                 if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
@@ -514,7 +517,7 @@ namespace Ginger.Run
                         DisableTestsExecution(testsToExclude, RunSetConfig);
                     }
                 }
-
+                
                 //Start Run 
                 if (doContinueRun == false)
                 {
@@ -619,8 +622,11 @@ namespace Ginger.Run
                 Runners[0].Executor.ExecutionLoggerManager.RunSetEnd();
 
                 if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
-                {
-                    await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig);
+                {                   
+                    if (((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
+                    {
+                        await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig);
+                    }                  
                 }
 
                 if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
