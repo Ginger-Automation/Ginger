@@ -4524,6 +4524,10 @@ namespace Ginger.Run
                         {
                             currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
                         }
+                        else if(WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && currentActivityGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
+                        {
+                            currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
+                        }
                         else
                         {
                             switch (currentActivityGroup.ExecutionLoggerStatus)
