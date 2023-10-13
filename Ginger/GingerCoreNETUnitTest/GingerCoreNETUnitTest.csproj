@@ -799,6 +799,9 @@
     <None Update="TestResources\XML\XmlDoc.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Webservice\DiameterLib\AVPDictionary.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

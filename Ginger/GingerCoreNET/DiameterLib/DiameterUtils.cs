@@ -33,33 +33,34 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.IO;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using System.Text.Json;
+using DocumentFormat.OpenXml;
 
 namespace Amdocs.Ginger.CoreNET.DiameterLib
 {
     public class DiameterUtils
     {
+        private const string DIAMETER_LIB_FOLDER_NAME = "DiameterLib";
+        private const string AVPS_PER_MESSAGE_CONFIGURATION_FILENAME = "AvpsPerMessageConfiguration.json";
         private const string DIAMETER_AVP_DICTIONARY_FILENAME = "AVPDictionary.xml";
         private const string DIAMETER_AVP_ENUMS_NAMESPACE = "Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums+";
-        private static ObservableList<DiameterAvpDictionaryItem> mAvpDictionaryList;
-        private static readonly object dictionaryLock = new object();
-        private static readonly object fileLock = new object();
-        public static ObservableList<DiameterAvpDictionaryItem> AvpDictionaryList
+        private static readonly Lazy<ObservableList<DiameterAvpDictionaryItem>> lazyAvpDictionaryList = new(() => LoadAVPDictionary());
+        public static ObservableList<DiameterAvpDictionaryItem> AvpDictionaryList => lazyAvpDictionaryList.Value;
+
+        private static Dictionary<string, string[]> mAvpsPerMessageDictionary;
+        public static Dictionary<string, string[]> AvpsPerMessageDictionary
         {
             get
             {
-                if (mAvpDictionaryList == null || !mAvpDictionaryList.Any())
+                if (mAvpsPerMessageDictionary == null || !mAvpsPerMessageDictionary.Any())
                 {
-                    lock (dictionaryLock)
-                    {
-                        if (mAvpDictionaryList == null || !mAvpDictionaryList.Any())
-                        {
-                            mAvpDictionaryList = LoadDictionary();
-                        }
-                    }
+                    mAvpsPerMessageDictionary = DeserializeAvpsPerMessageConfigFile();
                 }
-                return mAvpDictionaryList;
+                return mAvpsPerMessageDictionary;
             }
         }
+
+        private static readonly object fileLock = new object();
 
         private TcpClient mTcpClient;
         private ActDiameter mAct;
@@ -94,13 +95,15 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         {
             mMessage = message ?? new DiameterMessage();
         }
-        public static ObservableList<DiameterAvpDictionaryItem> LoadDictionary()
+
+        public static ObservableList<DiameterAvpDictionaryItem> LoadAVPDictionary(string xmlPath = "")
         {
-            ObservableList<DiameterAvpDictionaryItem> avpListDictionary = new ObservableList<DiameterAvpDictionaryItem>();
-            string folderName = "DiameterLib";
-            string resourcePath = Path.Combine(Path.GetDirectoryName(typeof(DiameterUtils).Assembly.Location), folderName, DIAMETER_AVP_DICTIONARY_FILENAME);
+            ObservableList<DiameterAvpDictionaryItem> avpListDictionary = null;
             try
             {
+                string resourcePath = !string.IsNullOrEmpty(xmlPath)
+                    ? xmlPath : Path.Combine(Path.GetDirectoryName(typeof(DiameterUtils).Assembly.Location), DIAMETER_LIB_FOLDER_NAME, DIAMETER_AVP_DICTIONARY_FILENAME);
+
                 using (FileStream fs = new FileStream(resourcePath, FileMode.Open))
                 {
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(DiameterAvpDictionary));
@@ -116,13 +119,16 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"AVPs dictionary file '{DIAMETER_AVP_DICTIONARY_FILENAME}' not found. Issue: {ex.Message}{Environment.NewLine}Stack: {ex.StackTrace}");
             }
-            catch (XmlException ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to read AVPs dictionary from file '{DIAMETER_AVP_DICTIONARY_FILENAME}'. Issue: {ex.Message}{Environment.NewLine}Stack: {ex.StackTrace}");
-            }
             catch (InvalidOperationException ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to deserialize AVPs dictionary from file '{DIAMETER_AVP_DICTIONARY_FILENAME}'. Issue: {ex.Message}{Environment.NewLine}Stack: {ex.StackTrace}");
+                if (ex.InnerException is XmlException xmlEx)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to read AVPs dictionary from file '{DIAMETER_AVP_DICTIONARY_FILENAME}'. Issue: {ex.Message}{Environment.NewLine}Stack: {ex.StackTrace}");
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to deserialize AVPs dictionary from file '{DIAMETER_AVP_DICTIONARY_FILENAME}'. Issue: {ex.Message}{Environment.NewLine}Stack: {ex.StackTrace}");
+                }
             }
             catch (Exception ex)
             {
@@ -131,43 +137,68 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
             return avpListDictionary;
         }
-        public static ObservableList<DiameterAVP> GetMandatoryAVPForMessage(eDiameterMessageType messageType)
+        public static ObservableList<DiameterAVP> GetMandatoryAVPForMessage(eDiameterMessageType messageType, string configurationPath = "")
         {
-            ObservableList<DiameterAVP> avpList = null;
-            if (messageType == eDiameterMessageType.CapabilitiesExchangeRequest)
-            {
-                string[] avpsNamesCER = { "Origin-Host", "Origin-Realm", "Host-IP-Address", "Vendor-Id", "Product-Name", "Origin-State-Id" };
-                if (AvpDictionaryList != null && AvpDictionaryList.Any())
-                {
-                    avpList = GetAvpsForMessage(avpsNamesCER);
-                }
-            }
-            else if (messageType == eDiameterMessageType.CreditControlRequest)
-            {
-                string[] avpsNamesCCR = {
-                    "Session-Id", "Origin-Host", "Origin-Realm", "Destination-Realm",
-                    "Auth-Application-Id", "Service-Context-Id", "CC-Request-Type",
-                    "CC-Request-Number", "Destination-Host", "Origin-State-Id",
-                    "User-Name", "3GPP-RAT-Type", "Event-Timestamp"};
-                if (AvpDictionaryList != null && AvpDictionaryList.Any())
-                {
-                    avpList = GetAvpsForMessage(avpsNamesCCR);
-                }
-            }
+            Dictionary<string, string[]> messageAVPsDictionary = !string.IsNullOrEmpty(configurationPath)
+                ? DeserializeAvpsPerMessageConfigFile(configurationPath) : AvpsPerMessageDictionary;
+
+            string messageNameKey = GetMessageNameFromType(messageType);
+            string[] avpsNameArray = GetAVPNamesForMessage(messageAVPsDictionary, messageNameKey);
+
+            ObservableList<DiameterAVP> avpList = GetAvpsForMessage(avpsNameArray);
 
             return avpList;
         }
 
+        private static string[] GetAVPNamesForMessage(Dictionary<string, string[]> messageAVPsDictionary, string messageNameKey)
+        {
+            if (messageAVPsDictionary != null && messageAVPsDictionary.ContainsKey(messageNameKey))
+            {
+                return messageAVPsDictionary[messageNameKey];
+            }
+            return new string[0];
+        }
+
+        private static string GetMessageNameFromType(eDiameterMessageType messageType)
+        {
+            switch (messageType)
+            {
+                case eDiameterMessageType.CapabilitiesExchangeRequest:
+                case eDiameterMessageType.CreditControlRequest:
+                    return General.GetEnumValueDescription(typeof(eDiameterMessageType), messageType);
+                case eDiameterMessageType.None:
+                default:
+                    return "";
+            }
+        }
+
+        public static Dictionary<string, string[]> DeserializeAvpsPerMessageConfigFile(string configurationPath = "")
+        {
+            Dictionary<string, string[]> avpsPerMessageDictionary = new();
+            string avpNamesConfiguaritonPath = string.IsNullOrEmpty(configurationPath) ? Path.Combine(Path.GetDirectoryName(typeof(DiameterUtils).Assembly.Location), DIAMETER_LIB_FOLDER_NAME, AVPS_PER_MESSAGE_CONFIGURATION_FILENAME) : configurationPath;
+
+            try
+            {
+                string configContent = File.ReadAllText(avpNamesConfiguaritonPath);
+                avpsPerMessageDictionary = JsonSerializer.Deserialize<Dictionary<string, string[]>>(configContent);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error occurred while deserializing the AVPs per message configuartion file {ex.Message}{ex.StackTrace}");
+            }
+
+            return avpsPerMessageDictionary;
+        }
+
         private static ObservableList<DiameterAVP> GetAvpsForMessage(string[] avpsNames)
         {
-            ObservableList<DiameterAVP> avpList = null;
             var mapperConfig = new AutoMapper.MapperConfiguration(cfg => cfg.AddProfile<DiameterAutoMapperProfile>());
             var mapper = mapperConfig.CreateMapper();
 
             List<DiameterAvpDictionaryItem> dictionaryItems = AvpDictionaryList.Where(avp => avpsNames.Contains(avp.Name)).ToList();
             ObservableList<DiameterAVP> avps = mapper.Map<ObservableList<DiameterAVP>>(dictionaryItems);
 
-            return avps != null && avps.Any() ? avps : null;
+            return avps != null && avps.Any() ? avps : new ObservableList<DiameterAVP>();
         }
 
         public static string GetRawRequestContentPreview(ActDiameter act)
@@ -201,6 +232,11 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         private static string CreateMessageRawRequestResponse(ActDiameter act, DiameterMessage message)
         {
             StringBuilder stringBuilder = new StringBuilder();
+            if (message == null)
+            {
+                return stringBuilder.ToString();
+            }
+
             stringBuilder.Append("<Diameter Message ::= <" + General.GetEnumValueDescription(typeof(eDiameterMessageType), act.DiameterMessageType)
                 + $", code=\"{message.CommandCode}\""
                 + $", request=\"{message.IsRequestBitSet.ToString().ToLower()}\""
@@ -210,10 +246,14 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 + $", hopbyhop=\"{message.HopByHopIdentifier}\""
                 + $", endtoend=\"{message.EndToEndIdentifier}\""
                 + $">{Environment.NewLine}");
-            foreach (DiameterAVP avp in message?.AvpList)
+            if (message.AvpList != null)
             {
-                stringBuilder.Append(CreateAVPAsString(avp) + Environment.NewLine);
+                foreach (DiameterAVP avp in message.AvpList)
+                {
+                    stringBuilder.Append(CreateAVPAsString(avp) + Environment.NewLine);
+                }
             }
+
             stringBuilder.Append("</Diameter Message>");
             return stringBuilder.ToString();
         }
@@ -2045,29 +2085,29 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 mAct.AddOrUpdateReturnParamActual("Saved Request Filename", Path.GetFileName(fullFilePath));
             }
         }
-        public void SaveResponseToFile(bool isSaveResponse, string saveDirectory, DiameterMessage response)
+        public void SaveResponseToFile(bool isSaveResponse, string saveDirectory)
         {
             if (isSaveResponse)
             {
-                ResponseFileContent = CreateMessageRawRequestResponse(mAct, response);
+                ResponseFileContent = CreateMessageRawRequestResponse(mAct, Response);
                 string fullFilePath = SaveToFile("Response", ResponseFileContent, saveDirectory, mAct);
                 mAct.AddOrUpdateReturnParamActual("Saved Response Filename", Path.GetFileName(fullFilePath));
             }
         }
-        public void ParseResponseToOutputParams(DiameterMessage response)
+        public void ParseResponseToOutputParams()
         {
-            mAct.AddOrUpdateReturnParamActual($"Command Code: ", response.CommandCode.ToString());
-            mAct.AddOrUpdateReturnParamActual($"Application Id: ", response.ApplicationId.ToString());
-            mAct.AddOrUpdateReturnParamActual($"Hob-By-Hop: ", response.HopByHopIdentifier.ToString());
-            mAct.AddOrUpdateReturnParamActual($"End-To-End: ", response.EndToEndIdentifier.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Command Code: ", Response.CommandCode.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Application Id: ", Response.ApplicationId.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Hob-By-Hop: ", Response.HopByHopIdentifier.ToString());
+            mAct.AddOrUpdateReturnParamActual($"End-To-End: ", Response.EndToEndIdentifier.ToString());
 
-            mAct.AddOrUpdateReturnParamActual($"Request: ", response.IsRequestBitSet.ToString());
-            mAct.AddOrUpdateReturnParamActual($"Proxiable: ", response.IsProxiableBitSet.ToString());
-            mAct.AddOrUpdateReturnParamActual($"Error: ", response.IsErrorBitSet.ToString());
-            mAct.AddOrUpdateReturnParamActual($"Retransmit: ", response.IsRetransmittedBitSet.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Request: ", Response.IsRequestBitSet.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Proxiable: ", Response.IsProxiableBitSet.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Error: ", Response.IsErrorBitSet.ToString());
+            mAct.AddOrUpdateReturnParamActual($"Retransmit: ", Response.IsRetransmittedBitSet.ToString());
 
             //AVPs
-            foreach (var avp in response.AvpList)
+            foreach (var avp in Response.AvpList)
             {
                 ParseResponseAvpToOutputParams(avp);
             }

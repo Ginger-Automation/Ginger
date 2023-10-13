@@ -11,6 +11,7 @@ using Ginger.UserControlsLib.TextEditor;
 using System.Windows.Data;
 using System.Linq;
 using Ginger.Actions.ActionConversion;
+using static Amdocs.Ginger.CoreNET.DiameterLib.DiameterEnums;
 
 namespace Ginger.Actions.WebServices
 {
@@ -50,15 +51,15 @@ namespace Ginger.Actions.WebServices
             xCustomResponseAvpListGrid.DataSourceList = mAct.CustomResponseAvpList;
         }
 
-        private ObservableList<DiameterAVP> LoadAvpForMessage(DiameterEnums.eDiameterMessageType diameterMessageType)
+        private ObservableList<DiameterAVP> LoadAvpForMessage(eDiameterMessageType diameterMessageType)
         {
             return DiameterUtils.GetMandatoryAVPForMessage(diameterMessageType);
         }
 
         private void BindControls()
         {
-            ActInputValue messageType = mAct.GetOrCreateInputParam(nameof(ActDiameter.DiameterMessageType), DiameterEnums.eDiameterMessageType.None.ToString());
-            xMessageTypeComboBox.Init(messageType, typeof(DiameterEnums.eDiameterMessageType), false, xMessageTypeComboBox_SelectionChanged);
+            ActInputValue messageType = mAct.GetOrCreateInputParam(nameof(ActDiameter.DiameterMessageType), eDiameterMessageType.None.ToString());
+            xMessageTypeComboBox.Init(messageType, typeof(eDiameterMessageType), false, xMessageTypeComboBox_SelectionChanged);
             xCommandCodeTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActDiameter.CommandCode)));
             xApplicationIdTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActDiameter.ApplicationId)));
             xHopByHopIdTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(nameof(ActDiameter.HopByHopIdentifier)));
@@ -237,7 +238,7 @@ namespace Ginger.Actions.WebServices
             var mapperConfig = new AutoMapper.MapperConfiguration(cfg => cfg.AddProfile<DiameterAutoMapperProfile>());
             var mapper = mapperConfig.CreateMapper();
 
-            avpToUpdate = mapper.Map<DiameterAVP>(sourceAvp);
+            mapper.Map(sourceAvp, avpToUpdate);
 
             avpToUpdate.ParentName = null;
             avpToUpdate.ParentAvpGuid = System.Guid.Empty;
@@ -387,16 +388,17 @@ namespace Ginger.Actions.WebServices
                 }
             }
         }
-        private void SetMessageDetails(DiameterEnums.eDiameterMessageType messageType)
+        private void SetMessageDetails(eDiameterMessageType messageType)
         {
-            if (messageType == DiameterEnums.eDiameterMessageType.CapabilitiesExchangeRequest)
+            ResetMessageDetails();
+            if (messageType == eDiameterMessageType.CapabilitiesExchangeRequest)
             {
                 mAct.CommandCode = 257;
                 mAct.ApplicationId = 0;
                 mAct.IsRequestBitSet = true;
                 mAct.RequestAvpList = LoadAvpForMessage(messageType);
             }
-            else if (messageType == DiameterEnums.eDiameterMessageType.CreditControlRequest)
+            else if (messageType == eDiameterMessageType.CreditControlRequest)
             {
                 mAct.CommandCode = 272;
                 mAct.ApplicationId = 4;
@@ -407,6 +409,21 @@ namespace Ginger.Actions.WebServices
 
             UpdateRequestAvpsGridDataSource();
         }
+
+        private void ResetMessageDetails()
+        {
+            // Reset Diameter Action to default values
+            mAct.CommandCode = 0;
+            mAct.ApplicationId = 0;
+            mAct.EndToEndIdentifier = 0;
+            mAct.HopByHopIdentifier = 0;
+            mAct.IsRequestBitSet = false;
+            mAct.IsProxiableBitSet = false;
+            mAct.IsErrorBitSet = false;
+            mAct.RequestAvpList?.Clear();
+            mAct.CustomResponseAvpList?.Clear();
+        }
+
         private void UpdateRequestAvpsGridDataSource()
         {
             if (mAct != null && xRequestAvpListGrid != null)
