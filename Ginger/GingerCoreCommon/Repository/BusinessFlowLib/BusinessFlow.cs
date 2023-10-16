@@ -1353,7 +1353,7 @@ namespace GingerCore
                         messageToUser = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to selected {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}. Ginger will map the {GingerDicser.GetTermResValue(eTermResKey.Activity)}'s {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} to {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}. ";
                     }
 
-                    if (consumerApplicationsGUIDs.Any() && !TargetApplications.Any(f => consumerApplicationsGUIDs.Contains(f.ParentGuid)))
+                    if (consumerApplicationsGUIDs.Any() && !TargetApplications.Any(f => consumerApplicationsGUIDs.Contains(f.Guid)))
                     {
                         messageToUser += $" Selected Consumers in activity is not present in the {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}, Ginger will add. ";
                         
