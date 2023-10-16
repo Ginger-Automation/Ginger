@@ -396,7 +396,7 @@ namespace Ginger.Actions.WebServices
                 mAct.CommandCode = 257;
                 mAct.ApplicationId = 0;
                 mAct.IsRequestBitSet = true;
-                mAct.RequestAvpList = LoadAvpForMessage(messageType);
+                GetMessageAvpByMessageType(messageType);
             }
             else if (messageType == eDiameterMessageType.CreditControlRequest)
             {
@@ -404,10 +404,22 @@ namespace Ginger.Actions.WebServices
                 mAct.ApplicationId = 4;
                 mAct.IsRequestBitSet = true;
                 mAct.IsProxiableBitSet = true;
-                mAct.RequestAvpList = LoadAvpForMessage(messageType);
+                GetMessageAvpByMessageType(messageType);
             }
 
             UpdateRequestAvpsGridDataSource();
+        }
+
+        private void GetMessageAvpByMessageType(eDiameterMessageType messageType)
+        {
+            var avpList = LoadAvpForMessage(messageType);
+            foreach (DiameterAVP avp in avpList)
+            {
+                if (avp != null)
+                {
+                    mAct.RequestAvpList.Add(avp);
+                }
+            }
         }
 
         private void ResetMessageDetails()

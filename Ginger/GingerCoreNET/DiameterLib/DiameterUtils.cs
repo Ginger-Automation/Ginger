@@ -104,7 +104,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 string resourcePath = !string.IsNullOrEmpty(xmlPath)
                     ? xmlPath : Path.Combine(Path.GetDirectoryName(typeof(DiameterUtils).Assembly.Location), DIAMETER_LIB_FOLDER_NAME, DIAMETER_AVP_DICTIONARY_FILENAME);
 
-                using (FileStream fs = new FileStream(resourcePath, FileMode.Open))
+                using (FileStream fs = new FileStream(resourcePath, FileMode.Open, FileAccess.Read))
                 {
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(DiameterAvpDictionary));
                     DiameterAvpDictionary avpList = (DiameterAvpDictionary)xmlSerializer.Deserialize(fs);
@@ -179,8 +179,14 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
 
             try
             {
-                string configContent = File.ReadAllText(avpNamesConfiguaritonPath);
-                avpsPerMessageDictionary = JsonSerializer.Deserialize<Dictionary<string, string[]>>(configContent);
+                using(FileStream fs = new FileStream(avpNamesConfiguaritonPath, FileMode.Open, FileAccess.Read))
+                {
+                    using (StreamReader reader = new StreamReader(fs))
+                    {
+                        string configContent = reader.ReadToEnd();
+                        avpsPerMessageDictionary = JsonSerializer.Deserialize<Dictionary<string, string[]>>(configContent);
+                    }
+                }
             }
             catch (Exception ex)
             {
