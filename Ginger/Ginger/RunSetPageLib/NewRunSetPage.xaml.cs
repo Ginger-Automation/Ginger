@@ -376,6 +376,7 @@ namespace Ginger.Run
                     }
 
                     UpdateRunButtonIcon();
+                    UpdateReRunFailedButtonIcon();
                 }
             });
         }
@@ -939,6 +940,7 @@ namespace Ginger.Run
             else if (e.PropertyName == nameof(RunSetConfig.IsRunning))
             {
                 UpdateRunButtonIcon();
+                UpdateReRunFailedButtonIcon();
             }
         }
 
@@ -1947,7 +1949,7 @@ namespace Ginger.Run
                         Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"{string.Join(", ", runnerNames)} is empty, please add {GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)} to run.");
                         return;
                     }
-                    UpdateReRunFailedButtonIcon();
+                    UpdateReRunFailedButtonIcon(true);
                     ResetALMDefectsSuggestions();
 
 
