@@ -489,7 +489,7 @@ namespace Amdocs.Ginger.Repository
                 }
             }
 
-            return mCalculatedSolutionPathsToAvoid.Any(Path.GetFullPath(pathToCheck).Contains);
+            return mCalculatedSolutionPathsToAvoid.Any(Path.GetFullPath(pathToCheck).Contains) || mCalculatedSolutionPathsToAvoid.Any(Path.GetFullPath($"{pathToCheck}{Path.DirectorySeparatorChar}").Contains);
         }
 
         #endregion Public Functions
