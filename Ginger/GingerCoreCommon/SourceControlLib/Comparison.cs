@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -58,11 +58,18 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        public bool IsSelectionEnabled { get; set; } = true;
+
         public bool Selected
         {
             get => _selected;
             set
             {
+                if(!IsSelectionEnabled)
+                {
+                    return;
+                }
+
                 _selected = value;
                 if ((State == StateType.Added || State == StateType.Deleted) && HasChildComparisons)
                 {
