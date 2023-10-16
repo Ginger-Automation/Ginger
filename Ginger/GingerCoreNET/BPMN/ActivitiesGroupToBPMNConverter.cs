@@ -47,7 +47,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             Activity? firstActivity = activitiesInActivityGroup.FirstOrDefault(activity => activity.Active);
             if (firstActivity == null)
             {
-                throw new BPMNExportException("No activity found, make sure all the activities are not in-active.");
+                throw new BPMNExportException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found, make sure all the {GingerDicser.GetTermResValue(eTermResKey.Activity)} are not in-active.");
             }
 
             TargetBase? targetAppForSystemRef;
@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
             if(targetAppForSystemRef == null)
             {
-                throw new BPMNExportException("No suitable Target Application found for Collaboration System Ref.");
+                throw new BPMNExportException($"No suitable {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found for Collaboration System Ref.");
             }
 
             Collaboration collaboration = new(activityGroup.Guid, CollaborationType.SubProcess)
@@ -184,7 +184,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             TargetBase? consumerTargetApp = targetApps.FirstOrDefault(targetApp => string.Equals(targetApp.Guid, consumer.ConsumerGuid));
             if (consumerTargetApp == null)
             {
-                throw new BPMNExportException($"No Target Application found for Consumer with Guid '{consumer.ConsumerGuid}'.");
+                throw new BPMNExportException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found for Consumer with Guid '{consumer.ConsumerGuid}'.");
             }
             return consumerTargetApp;
         }
@@ -201,7 +201,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             Participant? participant = collaboration.Participants.FirstOrDefault(participant => string.Equals(participant.Name, targetAppName));
             if(participant == null)
             {
-                throw new BPMNExportException($"No Participant found for Target Application name '{targetAppName}'.");
+                throw new BPMNExportException($"No BPMN Participant({GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}) found for {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} name '{targetAppName}'.");
             }
             return participant;
         }
@@ -211,7 +211,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             Participant? participant = collaboration.Participants.FirstOrDefault(participant => string.Equals(participant.Process.Id, processId));
             if(participant == null)
             {
-                throw new BPMNExportException($"No Participant found for process id '{processId}'.");
+                throw new BPMNExportException($"No BPMN Participant({GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}) found for process id '{processId}'.");
             }
             return participant;
         }
@@ -223,7 +223,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                 .FirstOrDefault(platform => string.Equals(platform.AppName, activity.TargetApplication));
             if(activityAppPlatform == null)
             {
-                throw new BPMNExportException($"No Application Platform found for Activity with Target Application '{activity.TargetApplication}'.");
+                throw new BPMNExportException($"No Application Platform found for Activity with {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} '{activity.TargetApplication}'.");
             }
 
             return activityAppPlatform.Platform == ePlatformType.WebServices;
