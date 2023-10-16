@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using GingerCore;
 using GingerCore.Activities;
@@ -42,14 +43,37 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         /// <returns>BPMN <see cref="Collaboration"/>.</returns>
         public Collaboration Convert(ActivitiesGroup activityGroup)
         {
-            IEnumerable<TargetBase> targetApps = GetTargetAppsInActivityGroup(activityGroup);
+            IEnumerable<Activity> activitiesInActivityGroup = GetActivitiesFromActivityGroup(activityGroup);
+            Activity? firstActivity = activitiesInActivityGroup.FirstOrDefault(activity => activity.Active);
+            if (firstActivity == null)
+            {
+                throw new BPMNExportException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found, make sure all the {GingerDicser.GetTermResValue(eTermResKey.Activity)} are not in-active.");
+            }
+
+            TargetBase? targetAppForSystemRef;
+            if (IsWebServicesActivity(firstActivity))
+            {
+                targetAppForSystemRef = GetTargetAppFromConsumer(firstActivity.ConsumerApplications.First());
+            }
+            else
+            {
+                targetAppForSystemRef = GetTargetAppFromTargetAppName(firstActivity.TargetApplication);
+            }
+
+            if(targetAppForSystemRef == null)
+            {
+                throw new BPMNExportException($"No suitable {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found for Collaboration System Ref.");
+            }
 
             Collaboration collaboration = new(activityGroup.Guid, CollaborationType.SubProcess)
             {
                 Name = activityGroup.Name,
-                SystemRef = targetApps.First().Guid.ToString(),
+                SystemRef = targetAppForSystemRef.Guid.ToString(),
                 Description = activityGroup.Description
             };
+
+
+            IEnumerable<TargetBase> targetApps = GetTargetAppsInActivityGroup(activityGroup);
 
             foreach (TargetBase targetApp in targetApps)
             {
@@ -61,21 +85,33 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                 collaboration.AddParticipant(participant);
             }
 
-            IEnumerable<Activity> activitiesInActivityGroup = GetActivitiesFromActivityGroup(activityGroup);
-
             IFlowSource previousFlowSource;
-
-            Activity firstActivity = activitiesInActivityGroup.First();
-            Participant firstActivityParticipant = GetParticipantForTargetAppName(collaboration, firstActivity.TargetApplication);
-            StartEvent startEvent = firstActivityParticipant.Process.AddStartEvent(name: string.Empty);
+            
+            Participant participantForStartEvent;
+            if(!IsWebServicesActivity(firstActivity))
+            {
+                participantForStartEvent = GetParticipantForTargetAppName(collaboration, firstActivity.TargetApplication);
+            }
+            else
+            {
+                Consumer firstActivityConsumer = firstActivity.ConsumerApplications[0];
+                string targetAppName = GetTargetAppFromConsumer(firstActivityConsumer).Name;
+                participantForStartEvent = GetParticipantForTargetAppName(collaboration, targetAppName);
+            }
+            StartEvent startEvent = participantForStartEvent.Process.AddStartEvent(name: string.Empty);
             previousFlowSource = startEvent;
 
             foreach (Activity activity in activitiesInActivityGroup)
             {
+                if(!activity.Active)
+                {
+                    continue;
+                }
+
                 Participant activityParticipant = GetParticipantForTargetAppName(collaboration, activity.TargetApplication);
                 if(IsWebServicesActivity(activity))
                 {
-                    string consumerAppName = GetTargetAppNameFromConsumerId(activity.ConsumerApplications.First());
+                    string consumerAppName = GetTargetAppFromConsumer(activity.ConsumerApplications.First()).Name;
                     Participant consumerParticipant = GetParticipantForTargetAppName(collaboration, consumerAppName);
                     Task requestSourceTask = consumerParticipant.Process.AddTask<SendTask>(name: $"{activity.ActivityName}_RequestSource");
                     Task requestTargetTask = activityParticipant.Process.AddTask<ReceiveTask>(name: $"{activity.ActivityName}_RequestTarget");
@@ -87,6 +123,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                     {
                         requestMessageFlow.MessageRef = activity.Guid.ToString().Remove(activity.Guid.ToString().Length - 2) + "aa";
                     }
+                    Flow.Create(name: string.Empty, requestTargetTask, responseSourceTask);
                     Flow responseFlow = Flow.Create(name: $"{activity.ActivityName}_OUT", responseSourceTask, responseTargetTask);
                     if(responseFlow is MessageFlow responseMessageFlow)
                     {
@@ -117,11 +154,20 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                 .Select(identifier => identifier.IdentifiedActivity.TargetApplication)
                 .Distinct();
 
+            IEnumerable<Guid> consumerGuids = activityGroup
+                .ActivitiesIdentifiers
+                .SelectMany(identifier => identifier.IdentifiedActivity.ConsumerApplications)
+                .Select(consumer => consumer.ConsumerGuid);
+
             IEnumerable<TargetBase> targetApps = WorkSpace.Instance.Solution
                 .GetSolutionTargetApplications()
                 .Where(targetApp => targetAppNames.Contains(targetApp.Name.ToString()));
 
-            return targetApps;
+            IEnumerable<TargetBase> consumerTargetApps = WorkSpace.Instance.Solution
+                .GetSolutionTargetApplications()
+                .Where(targetApp => consumerGuids.Contains(targetApp.Guid));
+
+            return targetApps.Concat(consumerTargetApps);
         }
 
         private IEnumerable<Activity> GetActivitiesFromActivityGroup(ActivitiesGroup activityGroup)
@@ -132,15 +178,22 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                     .Select(identifier => identifier.IdentifiedActivity);
         }
 
-        private string GetTargetAppNameFromConsumerId(Consumer consumer)
+        private TargetBase GetTargetAppFromConsumer(Consumer consumer)
         {
             IEnumerable<TargetBase> targetApps = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
             TargetBase? consumerTargetApp = targetApps.FirstOrDefault(targetApp => string.Equals(targetApp.Guid, consumer.ConsumerGuid));
             if (consumerTargetApp == null)
             {
-                throw new InvalidOperationException($"No Target Application found for Consumer with Guid '{consumer.ConsumerGuid}'.");
+                throw new BPMNExportException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found for Consumer with Guid '{consumer.ConsumerGuid}'.");
             }
-            return consumerTargetApp.Name;
+            return consumerTargetApp;
+        }
+
+        private TargetBase? GetTargetAppFromTargetAppName(string targetAppName)
+        {
+            return WorkSpace.Instance.Solution
+                .GetSolutionTargetApplications()
+                .FirstOrDefault(targetApp => string.Equals(targetApp.Name, targetAppName));
         }
 
         private Participant GetParticipantForTargetAppName(Collaboration collaboration, string targetAppName)
@@ -148,7 +201,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             Participant? participant = collaboration.Participants.FirstOrDefault(participant => string.Equals(participant.Name, targetAppName));
             if(participant == null)
             {
-                throw new InvalidOperationException($"No Participant found for Target Application name '{targetAppName}'.");
+                throw new BPMNExportException($"No BPMN Participant({GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}) found for {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} name '{targetAppName}'.");
             }
             return participant;
         }
@@ -158,7 +211,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             Participant? participant = collaboration.Participants.FirstOrDefault(participant => string.Equals(participant.Process.Id, processId));
             if(participant == null)
             {
-                throw new InvalidOperationException($"No Participant found for process id '{processId}'.");
+                throw new BPMNExportException($"No BPMN Participant({GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}) found for process id '{processId}'.");
             }
             return participant;
         }
@@ -170,7 +223,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                 .FirstOrDefault(platform => string.Equals(platform.AppName, activity.TargetApplication));
             if(activityAppPlatform == null)
             {
-                throw new InvalidOperationException($"No Application Platform found for Activity with Target Application '{activity.TargetApplication}'.");
+                throw new BPMNExportException($"No Application Platform found for Activity with {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} '{activity.TargetApplication}'.");
             }
 
             return activityAppPlatform.Platform == ePlatformType.WebServices;
