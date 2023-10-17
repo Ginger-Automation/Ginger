@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.Reports;
+using Ginger.Run;
 using GingerCore.ALM;
 using GingerCore.Environments;
 using GingerCore.GeneralFunctions;
@@ -399,6 +400,15 @@ namespace GingerCore
 
             switch (repositoryItem.GetItemType())
             {
+                case "HTMLReportConfiguration":
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Any(x => x.Name == resultValue))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Report Template with same name: " + "'" + resultValue + "'" + " already exists.");
+                        return true;
+                    }
+
+                    break;
+
                 case "BusinessFlow":
                     ObservableList<BusinessFlow> BFList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
                     if (BFList.Any(x => x.Name == resultValue))
@@ -431,13 +441,12 @@ namespace GingerCore
                     }
 
                     break;
-                case "EnvApplication":
-                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any(x => x.Applications.Any(y=>y.Name== resultValue)))
+                case "Environment":
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any(x => x.Name == resultValue))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Application with same name: " + "'" + resultValue + "'" + " already exists.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Environment with same name: " + "'" + resultValue + "'" + " already exists.");
                         return true;
                     }
-
                     break;
                 case "HTMLReportTemplate":
                     if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>().Any(x => x.Name == resultValue))
@@ -445,6 +454,24 @@ namespace GingerCore
                         Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Report Template with same name: " + "'" + resultValue + "'" + " already exists.");
                         return true;
                     }
+                    break;
+                case "RunSetConfig":
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>().Any(x => x.Name == resultValue))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Run sets with same name: " + "'" + resultValue + "'" + " already exists.");
+                        return true;
+                    }
+
+                    break;
+
+                case "DataSource":
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSource.DataSourceBase>().Any(x => x.Name == resultValue))
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Data Source with same name: " + "'" + resultValue + "'" + " already exists.");
+                        return true;
+                    }
+
+                    break;
 
                     break;
                 default:

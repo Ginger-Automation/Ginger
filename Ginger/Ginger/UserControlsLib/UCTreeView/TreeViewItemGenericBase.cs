@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using Ginger.Repository;
+using GingerCore;
 using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -503,9 +504,13 @@ namespace GingerWPF.TreeViewItemsLib
                 string newName = ((RepositoryItemBase)itemToCopy).ItemName + "_Copy";
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Copied/Duplicated Item Name", "New Name:", ref newName))
                 {
-                    RepositoryItemBase itemCopy = ((RepositoryItemBase)itemToCopy).CreateCopy();
-                    itemCopy.ItemName = newName;
-                    return itemCopy;
+                    bool nameExit = General.IsNameAlreadyexists(itemToCopy, newName);
+                    if (nameExit != true)
+                    {
+                        RepositoryItemBase itemCopy = ((RepositoryItemBase)itemToCopy).CreateCopy();
+                        itemCopy.ItemName = newName;
+                        return itemCopy;
+                    }
                 }
             }
 
