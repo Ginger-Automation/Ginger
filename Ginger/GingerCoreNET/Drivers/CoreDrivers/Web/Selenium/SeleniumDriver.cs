@@ -147,6 +147,11 @@ namespace GingerCore.Drivers
         public bool Use64Bitbrowser { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Use specific Version of browser. Only Testing browser versions are supported.")]
+        public string BrowserVersion { get; set; }
+
+        [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Use Browser In Private/Incognito Mode (Please use 64bit Browse with Internet Explorer ")]
         public bool BrowserPrivateMode { get; set; }
@@ -471,7 +476,7 @@ namespace GingerCore.Drivers
                         SetCurrentPageLoadStrategy(FirefoxOption);
                         SetBrowserLogLevel(FirefoxOption);
                         SetUnhandledPromptBehavior(FirefoxOption);
-
+                        SetBrowserVersion(FirefoxOption);
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
@@ -511,7 +516,7 @@ namespace GingerCore.Drivers
                         SetCurrentPageLoadStrategy(options);
                         SetBrowserLogLevel(options);
                         SetUnhandledPromptBehavior(options);
-
+                        SetBrowserVersion(options);
                         if (IsUserProfileFolderPathValid())
                         {
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
@@ -552,6 +557,7 @@ namespace GingerCore.Drivers
                             }
                         }
 
+                        //options.BrowserVersion = "112";
                         if (!string.IsNullOrEmpty(EmulationDeviceName))
                         {
                             options.EnableMobileEmulation(EmulationDeviceName);
@@ -585,7 +591,7 @@ namespace GingerCore.Drivers
                         if (HideConsoleWindow)
                         {
                             ChService.HideCommandPromptWindow = HideConsoleWindow;
-                        }                        
+                        }
 
                         try
                         {
@@ -636,7 +642,7 @@ namespace GingerCore.Drivers
                             ieOptions.AttachToEdgeChrome = true;
                             ieOptions.EdgeExecutablePath = EdgeExcutablePath;
                             SetBrowserLogLevel(ieOptions);
-
+                            SetBrowserVersion(ieOptions);
                             if (EnsureCleanSession == true)
                             {
                                 ieOptions.EnsureCleanSession = true;
@@ -861,7 +867,7 @@ namespace GingerCore.Drivers
                     else if (mBrowserTpe == eBrowserType.FireFox)
                     {
                         GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(FIREFOX_DRIVER_NAME), GetDriversPathPerOS());
-                    }                    
+                    }
                     StartDriver();
                 }
             }
@@ -9808,6 +9814,21 @@ namespace GingerCore.Drivers
                 }
             }
 
+        }
+
+        private void SetBrowserVersion(DriverOptions options)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(BrowserVersion))
+                {
+                    options.BrowserVersion = BrowserVersion;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while setting browser version to driver options", ex);
+            }
         }
 
         public void SetUnhandledPromptBehavior(DriverOptions options)
