@@ -510,7 +510,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     }
                     else
                     {
-                        Comparison localComparison = new(name, Comparison.StateType.Deleted, localRIH);
+                        Comparison localComparison = new(name, Comparison.StateType.Deleted, data: localRIH);
                         Comparison remoteComparison = new(name, Comparison.StateType.Added, data: remoteRIH);
                         if (localRIH.LastUpdate > remoteRIH.LastUpdate)
                         {
