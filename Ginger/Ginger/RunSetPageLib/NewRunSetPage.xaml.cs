@@ -569,6 +569,10 @@ namespace Ginger.Run
                         return;
                     }
                     WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
+                    if (RunSetConfig.ExecutionID == null)
+                    {
+                        RunSetConfig.ExecutionID = Guid.NewGuid();
+                    }
                     switch (EventArgs.RunnerItemType)
                     {
                         case RunnerItemPage.eRunnerItemType.BusinessFlow:
