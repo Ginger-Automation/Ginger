@@ -49,7 +49,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             }
             else if(IsRepositoryItemHeader(localValue, remoteValue))
             {
-                return CompareRIBHeader(name, localValue, remoteValue);
+                return CompareRIBHeaderValue(name, localValue, remoteValue);
             }
             else
             {
@@ -440,7 +440,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             }
         }
 
-        private static ICollection<Comparison> CompareRIBHeader(string name, Value? localValue, Value? remoteValue)
+        private static ICollection<Comparison> CompareRIBHeaderValue(string name, Value? localValue, Value? remoteValue)
         {
             //both local and remote doesn't have value
             if (localValue == null && remoteValue == null)
@@ -458,8 +458,8 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 //data in local is not null
                 else
                 {
-                    RepositoryItemHeader localRIBHeader = (RepositoryItemHeader)localValue.Data!;
-                    return new Comparison[] { new(name, state: Comparison.StateType.Deleted, data: localRIBHeader) };
+                    RepositoryItemHeader localRIH = (RepositoryItemHeader)localValue.Data!;
+                    return new Comparison[] { new(name, state: Comparison.StateType.Deleted, data: localRIH) };
                 }
             }
 
@@ -474,51 +474,75 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 //data in remote is not null
                 else
                 {
-                    RepositoryItemHeader remoteRIBHeader = (RepositoryItemHeader)remoteValue.Data!;
+                    RepositoryItemHeader remoteRIH = (RepositoryItemHeader)remoteValue.Data!;
 
-                    return new Comparison[] { new(name, state: Comparison.StateType.Added, remoteRIBHeader) };
+                    return new Comparison[] { new(name, state: Comparison.StateType.Added, remoteRIH) };
                 }
             }
 
             //both local and remote have value
             else
             {
-                RepositoryItemHeader localRIBHeader = (RepositoryItemHeader)localValue.Data!;
-                RepositoryItemHeader remoteRIBHeader = (RepositoryItemHeader)remoteValue.Data!;
+                RepositoryItemHeader localRIH = (RepositoryItemHeader)localValue.Data!;
+                RepositoryItemHeader remoteRIH = (RepositoryItemHeader)remoteValue.Data!;
 
                 //data in both local and remote is null
-                if (localRIBHeader == null && remoteRIBHeader == null)
+                if (localRIH == null && remoteRIH == null)
                 {
                     return new Comparison[] { new(name, Comparison.StateType.Unmodified, data: null) };
                 }
                 //data in local is null
-                else if (localRIBHeader == null)
+                else if (localRIH == null)
                 {
                     return CompareValue(name, localValue: null, remoteValue);
                 }
                 //data in remote is null
-                else if (remoteRIBHeader == null)
+                else if (remoteRIH == null)
                 {
                     return CompareValue(name, localValue, remoteValue: null);
                 }
                 //data in both local and remote is not null
                 else
                 {
-                    Comparison localComparison = new(name, Comparison.StateType.Deleted, localRIBHeader);
-                    Comparison remoteComparison = new(name, Comparison.StateType.Added, data: remoteRIBHeader);
-                    if(localRIBHeader.LastUpdate > remoteRIBHeader.LastUpdate)
+                    if (RIBHeaderEquals(localRIH, remoteRIH))
                     {
-                        localComparison.Selected = true;
+                        return new Comparison[] { new(name, Comparison.StateType.Unmodified, data: remoteRIH) };
                     }
                     else
                     {
-                        remoteComparison.Selected = true;
+                        Comparison localComparison = new(name, Comparison.StateType.Deleted, data: localRIH);
+                        Comparison remoteComparison = new(name, Comparison.StateType.Added, data: remoteRIH);
+                        if (localRIH.LastUpdate > remoteRIH.LastUpdate)
+                        {
+                            localComparison.Selected = true;
+                        }
+                        else
+                        {
+                            remoteComparison.Selected = true;
+                        }
+                        localComparison.IsSelectionEnabled = false;
+                        remoteComparison.IsSelectionEnabled = false;
+                        return new Comparison[] { localComparison, remoteComparison };
                     }
-                    localComparison.IsSelectionEnabled = false;
-                    remoteComparison.IsSelectionEnabled = false;
-                    return new Comparison[] { localComparison, remoteComparison };
                 }
             }
+        }
+
+        private static bool RIBHeaderEquals(RepositoryItemHeader localRIH, RepositoryItemHeader remoteRIH)
+        {
+            bool areRIBHeadersEqual = true;
+            foreach (PropertyInfo property in typeof(RepositoryItemHeader).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                object? localPropertyValue = property.GetValue(localRIH);
+                object? remotePropertyValue = property.GetValue(remoteRIH);
+                if (localRIH != null && !localRIH.Equals(remoteRIH))
+                {
+                    areRIBHeadersEqual = false;
+                    break;
+                }
+            }
+
+            return areRIBHeadersEqual;
         }
 
         private static ICollection<Comparison> CompareSimpleValue(string name, Value? localValue, Value? remoteValue)
