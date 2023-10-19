@@ -25,6 +25,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 #nullable enable
@@ -43,6 +44,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         /// <returns>BPMN <see cref="Collaboration"/>.</returns>
         public Collaboration Convert(ActivitiesGroup activityGroup)
         {
+            AttachIdentifiersToActivities(activityGroup.ActivitiesIdentifiers);
             IEnumerable<Activity> activitiesInActivityGroup = GetActivitiesFromActivityGroup(activityGroup);
             Activity? firstActivity = activitiesInActivityGroup.FirstOrDefault(activity => activity.Active);
             if (firstActivity == null)
@@ -147,15 +149,32 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return collaboration;
         }
 
+        private void AttachIdentifiersToActivities(IEnumerable<ActivityIdentifiers> activityIdentifiers)
+        {
+            foreach (ActivityIdentifiers identifier in activityIdentifiers)
+            {
+                if (identifier.IdentifiedActivity == null)
+                {
+                    identifier.IdentifiedActivity = GetActivityFromSharedRepositoryByIdentifier(identifier);
+                    if (identifier.IdentifiedActivity == null)
+                    {
+                        identifier.ExistInRepository = false;
+                    }
+                }
+            }
+        }
+
         private IEnumerable<TargetBase> GetTargetAppsInActivityGroup(ActivitiesGroup activityGroup)
         {
             IEnumerable<string> targetAppNames = activityGroup
                 .ActivitiesIdentifiers
+                .Where(identifier => identifier.IdentifiedActivity != null)
                 .Select(identifier => identifier.IdentifiedActivity.TargetApplication)
                 .Distinct();
 
             IEnumerable<Guid> consumerGuids = activityGroup
                 .ActivitiesIdentifiers
+                .Where(identifier => identifier.IdentifiedActivity != null)
                 .SelectMany(identifier => identifier.IdentifiedActivity.ConsumerApplications)
                 .Select(consumer => consumer.ConsumerGuid);
 
@@ -167,15 +186,38 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                 .GetSolutionTargetApplications()
                 .Where(targetApp => consumerGuids.Contains(targetApp.Guid));
 
-            return targetApps.Concat(consumerTargetApps);
+            return consumerTargetApps.Concat(targetApps).Distinct(new TargetBaseEqualityComparer());
         }
 
         private IEnumerable<Activity> GetActivitiesFromActivityGroup(ActivitiesGroup activityGroup)
         {
-            return 
+            return
                 activityGroup
                     .ActivitiesIdentifiers
+                    .Where(identifier => identifier.IdentifiedActivity != null)
                     .Select(identifier => identifier.IdentifiedActivity);
+        }
+
+        private Activity? GetActivityFromSharedRepositoryByIdentifier(ActivityIdentifiers activityIdentifier)
+        {
+            ObservableList<Activity> activitiesInRepository = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+
+            Activity? activityInRepository = activitiesInRepository
+                .FirstOrDefault(activity => 
+                    string.Equals(activity.ActivityName, activityIdentifier.ActivityName) && 
+                    activity.Guid == activityIdentifier.ActivityGuid);
+
+            if (activityInRepository == null)
+            {
+                activityInRepository = activitiesInRepository.FirstOrDefault(x => x.Guid == activityIdentifier.ActivityGuid);
+            }
+
+            if (activityInRepository == null)
+            {
+                activityInRepository = activitiesInRepository.FirstOrDefault(x => string.Equals(x.ActivityName, activityIdentifier.ActivityName));
+            }
+
+            return activityInRepository;
         }
 
         private TargetBase GetTargetAppFromConsumer(Consumer consumer)
@@ -227,6 +269,23 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             }
 
             return activityAppPlatform.Platform == ePlatformType.WebServices;
+        }
+
+        private class TargetBaseEqualityComparer : IEqualityComparer<TargetBase>
+        {
+            public bool Equals(TargetBase? x, TargetBase? y)
+            {
+                return
+                    x == null && y == null ||
+                    x != null && y != null && x.Guid == y.Guid;
+            }
+
+            public int GetHashCode([DisallowNull] TargetBase obj)
+            {
+                HashCode hashCode = new();
+                hashCode.Add(obj.Guid);
+                return hashCode.ToHashCode();
+            }
         }
     }
 }
