@@ -142,7 +142,7 @@ namespace Ginger.ConflictResolve
             _localItem = SourceControlIntegration.GetLocalItemFromConflict(WorkSpace.Instance.SourceControl, Path);
             _remoteItem = SourceControlIntegration.GetRemoteItemFromConflict(WorkSpace.Instance.SourceControl, Path);
             _comparison = SourceControlIntegration.CompareConflictedItems(_localItem, _remoteItem);
-            _comparison.PropertyChanged += (sender, args) =>
+            _comparison.PropertyChanged += (_, args) =>
             {
                 if(string.Equals(args.PropertyName, nameof(Comparison.ChildComparisons)))
                 {
