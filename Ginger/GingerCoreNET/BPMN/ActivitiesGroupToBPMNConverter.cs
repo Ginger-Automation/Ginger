@@ -155,13 +155,10 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         {
             foreach (ActivityIdentifiers identifier in activityIdentifiers)
             {
+                identifier.IdentifiedActivity = GetActivityFromSharedRepositoryByIdentifier(identifier);
                 if (identifier.IdentifiedActivity == null)
                 {
-                    identifier.IdentifiedActivity = GetActivityFromSharedRepositoryByIdentifier(identifier);
-                    if (identifier.IdentifiedActivity == null)
-                    {
-                        identifier.ExistInRepository = false;
-                    }
+                    identifier.ExistInRepository = false;
                 }
             }
         }
