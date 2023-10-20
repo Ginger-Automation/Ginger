@@ -55,7 +55,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             TargetBase? targetAppForSystemRef;
             if (IsWebServicesActivity(firstActivity))
             {
-                targetAppForSystemRef = GetTargetAppFromConsumer(firstActivity.ConsumerApplications.First());
+                Consumer consumer = GetConsumerForActivity(firstActivity);
+                targetAppForSystemRef = GetTargetAppFromConsumer(consumer);
             }
             else
             {
@@ -113,7 +114,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                 Participant activityParticipant = GetParticipantForTargetAppName(collaboration, activity.TargetApplication);
                 if(IsWebServicesActivity(activity))
                 {
-                    string consumerAppName = GetTargetAppFromConsumer(activity.ConsumerApplications.First()).Name;
+                    Consumer consumer = GetConsumerForActivity(activity);
+                    string consumerAppName = GetTargetAppFromConsumer(consumer).Name;
                     Participant consumerParticipant = GetParticipantForTargetAppName(collaboration, consumerAppName);
                     Task requestSourceTask = consumerParticipant.Process.AddTask<SendTask>(name: $"{activity.ActivityName}_RequestSource");
                     Task requestTargetTask = activityParticipant.Process.AddTask<ReceiveTask>(name: $"{activity.ActivityName}_RequestTarget");
@@ -164,6 +166,16 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             }
         }
 
+        private Consumer GetConsumerForActivity(Activity activity)
+        {
+            Consumer? consumer = activity.ConsumerApplications.FirstOrDefault();
+            if (consumer == null)
+            {
+                throw new BPMNExportException($"Consumer not defined for {GingerDicser.GetTermResValue(eTermResKey.Activity)} '{activity.ActivityName}'.");
+            }
+            return consumer;
+        }
+
         private IEnumerable<TargetBase> GetTargetAppsInActivityGroup(ActivitiesGroup activityGroup)
         {
             IEnumerable<string> targetAppNames = activityGroup
@@ -195,7 +207,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                 activityGroup
                     .ActivitiesIdentifiers
                     .Where(identifier => identifier.IdentifiedActivity != null)
-                    .Select(identifier => identifier.IdentifiedActivity);
+                    .Select(identifier => identifier.IdentifiedActivity)
+                    .Where(activity => activity.Active);
         }
 
         private Activity? GetActivityFromSharedRepositoryByIdentifier(ActivityIdentifiers activityIdentifier)
