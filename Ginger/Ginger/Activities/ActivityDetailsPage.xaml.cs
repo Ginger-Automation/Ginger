@@ -30,6 +30,7 @@ using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.BusinessFlowsLib;
 using Microsoft.Graph;
+using MongoDB.Driver.Linq;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -316,6 +317,19 @@ namespace Ginger.BusinessFlowPages
                 if (mContext.BusinessFlow != null)
                 {
                     targetApplications = mContext.BusinessFlow.TargetApplications;
+                    // this logic is developed to support the backward compatibility where parent guids are empty
+                    if (targetApplications.Any(f => f.ParentGuid.Equals(Guid.Empty)))
+                    {
+                        var solutionTAs = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+                        foreach (var listofTA in targetApplications.Where(f => f.ParentGuid.Equals(Guid.Empty)))
+                        {
+                            var matchingApp = solutionTAs.FirstOrDefault(z => z.Name.Equals(listofTA.Name));
+                            if (matchingApp != null)
+                            {
+                                listofTA.ParentGuid = matchingApp.Guid;
+                            }
+                        }
+                    }
                 }
                 else
                 {
