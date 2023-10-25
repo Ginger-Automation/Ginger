@@ -58,10 +58,6 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         /// <param name="item"></param>
         public UploadItemToRepositoryWizard(Context context, RepositoryItemBase item, bool IsConvert = false, eActivityInstanceType ConvertType = eActivityInstanceType.LinkInstance)
         {
-            if(item.ParentGuid == item.Guid)
-            {
-                //
-            }
             UploadItemSelection.mSelectedItems.Clear();
             Context = context;
             isConvert = IsConvert;
