@@ -453,13 +453,19 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 //data in local is null
                 if (localValue!.Data == null)
                 {
-                    return new Comparison[] { new(name, Comparison.StateType.Deleted, data: null) };
+                    Comparison comparison = new(name, Comparison.StateType.Deleted, data: null);
+                    comparison.Selected = true;
+                    comparison.IsSelectionEnabled = false;
+                    return new Comparison[] {  comparison };
                 }
                 //data in local is not null
                 else
                 {
                     RepositoryItemHeader localRIH = (RepositoryItemHeader)localValue.Data!;
-                    return new Comparison[] { new(name, state: Comparison.StateType.Deleted, data: localRIH) };
+                    Comparison comparison = new(name, state: Comparison.StateType.Deleted, data: localRIH);
+                    comparison.Selected = true;
+                    comparison.IsSelectionEnabled = false;
+                    return new Comparison[] { comparison };
                 }
             }
 
@@ -469,14 +475,19 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                 //data in remote is null
                 if (remoteValue!.Data == null)
                 {
-                    return new Comparison[] { new(name, Comparison.StateType.Added, data: null) };
+                    Comparison comparison = new(name, Comparison.StateType.Added, data: null);
+                    comparison.Selected = true;
+                    comparison.IsSelectionEnabled = false;
+                    return new Comparison[] { comparison };
                 }
                 //data in remote is not null
                 else
                 {
                     RepositoryItemHeader remoteRIH = (RepositoryItemHeader)remoteValue.Data!;
-
-                    return new Comparison[] { new(name, state: Comparison.StateType.Added, remoteRIH) };
+                    Comparison comparison = new(name, state: Comparison.StateType.Added, remoteRIH);
+                    comparison.Selected = true;
+                    comparison.IsSelectionEnabled = false;
+                    return new Comparison[] { comparison };
                 }
             }
 
