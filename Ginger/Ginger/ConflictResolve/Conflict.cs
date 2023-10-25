@@ -43,7 +43,7 @@ namespace Ginger.ConflictResolve
             AcceptServer,
             [EnumValueDescription("Keep Local Changes")]
             KeepLocal,
-            [EnumValueDescription("Cherry Pick Changes")]
+            [EnumValueDescription("Merge Conflicts")]
             CherryPick
         }
 
