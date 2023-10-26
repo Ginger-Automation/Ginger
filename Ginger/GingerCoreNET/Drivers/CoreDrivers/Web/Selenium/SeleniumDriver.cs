@@ -557,7 +557,6 @@ namespace GingerCore.Drivers
                             }
                         }
 
-                        //options.BrowserVersion = "112";
                         if (!string.IsNullOrEmpty(EmulationDeviceName))
                         {
                             options.EnableMobileEmulation(EmulationDeviceName);
@@ -577,17 +576,12 @@ namespace GingerCore.Drivers
                             options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl);
                         }
 
-
-                        ChromeDriverService ChService;
-                        if (string.IsNullOrEmpty(DebugAddress))
-                        {
-                            ChService = ChromeDriverService.CreateDefaultService();
-                        }
-                        else
+                        if (!string.IsNullOrEmpty(DebugAddress))
                         {
                             options.DebuggerAddress = DebugAddress.Trim();
-                            ChService = ChromeDriverService.CreateDefaultService();
+                            
                         }
+                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
                         if (HideConsoleWindow)
                         {
                             ChService.HideCommandPromptWindow = HideConsoleWindow;
@@ -690,6 +684,7 @@ namespace GingerCore.Drivers
                         {
                             EdgeOptions EDOpts = new EdgeOptions();
                             SetBrowserLogLevel(EDOpts);
+                            SetBrowserVersion(EDOpts);
                             //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
                             //EDOpts.UseChromium = true;
                             SetUnhandledPromptBehavior(EDOpts);
