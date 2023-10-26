@@ -505,7 +505,7 @@ namespace GingerCore
         }
 
 
-        private ObservableList<Consumer> mConsumerApplications = new ObservableList<Consumer>();
+        private ObservableList<Consumer> mConsumerApplications = new();
         [IsSerializedForLocalRepository]
         public ObservableList<Consumer> ConsumerApplications
         {
@@ -515,7 +515,7 @@ namespace GingerCore
             }
             set
             {
-                if (mConsumerApplications != null)
+                if (mConsumerApplications != value)
                 {
                     mConsumerApplications = value;
                     OnPropertyChanged(nameof(ConsumerApplications));

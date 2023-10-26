@@ -174,7 +174,13 @@ namespace GingerCore.SourceControl
 
                 foreach (SvnStatusEventArgs arg in statuses)
                 {
-                    if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(arg.FullPath))
+                    string path = arg.FullPath;
+                    if(PathIsDirectory(path))
+                    {
+                        path += @"\";
+                    }
+
+                    if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(path))
                     {
                         continue;
                     }
@@ -240,6 +246,12 @@ namespace GingerCore.SourceControl
             }
 
             return files;
+        }
+
+        private bool PathIsDirectory(string path)
+        {
+            FileAttributes fileAttributes = File.GetAttributes(path);
+            return (fileAttributes & FileAttributes.Directory) == FileAttributes.Directory;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]

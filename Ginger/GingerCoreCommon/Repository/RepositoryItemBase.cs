@@ -1315,7 +1315,7 @@ namespace Amdocs.Ginger.Repository
 
         private void ItmePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (DirtyTrackingFields.Contains(e.PropertyName))
+            if (DirtyTrackingFields != null && DirtyTrackingFields.Contains(e.PropertyName))
             {
                 if (((RepositoryItemBase)sender).DirtyStatus != eDirtyStatus.Modified)
                 {

@@ -192,7 +192,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             catch (Exception exc)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured " + exc.Message, exc);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred " + exc.Message, exc);
             }
 
             return BFR;

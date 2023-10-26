@@ -2744,7 +2744,7 @@ namespace Ginger.Reports.GingerExecutionReport
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured during SetRunsetPassAndExecutionRate.", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during SetRunsetPassAndExecutionRate.", ex);
             }
         }
 
