@@ -353,7 +353,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                         {
                             if(accountReportRunnerList.Any(x=> x.RunStatus.Equals(eRunStatus.Failed.ToString(),StringComparison.CurrentCultureIgnoreCase)))
                             {
-                                var FailedRunnerGuidList = accountReportRunnerList.Where(x => x.RunStatus.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)).Select(x => x.Id);
+                                var FailedRunnerGuidList = accountReportRunnerList.Where(x => x.RunStatus.Equals(eRunStatus.Failed.ToString(), StringComparison.CurrentCultureIgnoreCase)).Select(x => x.EntityId);
                                 foreach (GingerRunner runner in mRunsetExecutor.RunSetConfig.GingerRunners)
                                 {
                                     if (!FailedRunnerGuidList.Contains(runner.Guid))

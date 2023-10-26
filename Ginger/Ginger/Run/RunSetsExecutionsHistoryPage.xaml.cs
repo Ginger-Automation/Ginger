@@ -192,7 +192,7 @@ namespace Ginger.Run
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error Occured during LoadExecutionHistory.", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error Occurred during LoadExecutionHistory.", ex);
                 }
             });
 

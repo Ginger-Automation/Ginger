@@ -1,4 +1,22 @@
-﻿using System;
+﻿#region License
+/*
+Copyright © 2014-2023 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -170,7 +188,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     }
                     else if (itemComparison.State == Comparison.StateType.Added || itemComparison.State == Comparison.StateType.Deleted)
                     {
-                        if (itemComparison.Selected)
+                        if (itemComparison.Selected && IsUniqueRIBItem(items, itemComparison.Data))
                         {
                             items.Add(itemComparison.Data);
                         }
@@ -190,6 +208,28 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 
 
             return collection;
+        }
+
+        private static bool IsUniqueRIBItem(System.Collections.IEnumerable itemCollection, object? item)
+        {
+            if(item == null || item is not RepositoryItemBase)
+            {
+                return true;
+            }
+
+            RepositoryItemBase ribItem = (RepositoryItemBase)item;
+
+            bool isUnique = true;
+            foreach(object? collectionItem in itemCollection)
+            {
+                if(collectionItem is RepositoryItemBase ribCollectionItem && ribCollectionItem.Guid == ribItem.Guid)
+                {
+                    isUnique = false;
+                    break;
+                }
+            }
+
+            return isUnique;
         }
 
         private static Type GetCollectionItemType(Type collectionType)

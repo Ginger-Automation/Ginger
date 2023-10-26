@@ -341,7 +341,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Exception occured during uploading { message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception occurred during uploading { message}", ex);
                 }
             }
         }

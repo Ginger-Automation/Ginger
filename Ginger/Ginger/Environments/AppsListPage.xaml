@@ -22,7 +22,7 @@
                     <Label Style="{StaticResource $LabelStyle}" Content="Environment Name:"/>
                     <usercontrols:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" />
                 </StackPanel>
-                <TextBox x:Name="EnvNameTextBox" Style="{StaticResource @TextBoxStyle}" HorizontalAlignment="Left" MinWidth="500px" FontSize="14" FontWeight="Bold"></TextBox>
+                <TextBox x:Name="EnvNameTextBox" Style="{StaticResource @TextBoxStyle}" HorizontalAlignment="Left" MinWidth="500px" FontSize="14" FontWeight="Bold" TextChanged="EnvNameTextBox_TextChanged"></TextBox>
                 <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="-5,0,0,0" HorizontalAlignment="Left"/>
             </StackPanel>
 
