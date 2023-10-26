@@ -291,7 +291,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error Occured while setting Global Variable Customized Value", ex);
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while setting Global Variable Customized Value", ex);
                 throw;
             }
         }

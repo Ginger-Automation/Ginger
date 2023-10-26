@@ -43,7 +43,7 @@ namespace Ginger.ConflictResolve
             AcceptServer,
             [EnumValueDescription("Keep Local Changes")]
             KeepLocal,
-            [EnumValueDescription("Cherry Pick Changes")]
+            [EnumValueDescription("Merge Conflicts")]
             CherryPick
         }
 
@@ -142,6 +142,13 @@ namespace Ginger.ConflictResolve
             _localItem = SourceControlIntegration.GetLocalItemFromConflict(WorkSpace.Instance.SourceControl, Path);
             _remoteItem = SourceControlIntegration.GetRemoteItemFromConflict(WorkSpace.Instance.SourceControl, Path);
             _comparison = SourceControlIntegration.CompareConflictedItems(_localItem, _remoteItem);
+            _comparison.PropertyChanged += (_, args) =>
+            {
+                if(string.Equals(args.PropertyName, nameof(Comparison.ChildComparisons)))
+                {
+                    DiscardMergedItem();
+                }
+            };
         }
 
         public RepositoryItemBase? GetLocalItem()

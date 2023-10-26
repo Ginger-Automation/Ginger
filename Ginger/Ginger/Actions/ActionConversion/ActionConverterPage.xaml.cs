@@ -268,7 +268,7 @@ namespace Ginger.Actions.ActionConversion
                                 // by default, set the old activity as inactive
                                 oldActivity.Active = false;
 
-                                // if the user has not chosen any target application in the combobox then, we set it as empty
+                                // if the user has not chosen any target application in the combo box then, we set it as empty
                                 if ((Boolean)chkDefaultTargetApp.IsChecked && cmbTargetApp.SelectedIndex != -1)
                                 {
                                     newActivity.TargetApplication = cmbTargetApp.SelectedValue.ToString();
@@ -307,7 +307,7 @@ namespace Ginger.Actions.ActionConversion
                                     }
                                 }
 
-                                // if the user has not chosen any target application in the combobox then, we set it as empty
+                                // if the user has not chosen any target application in the combo box then, we set it as empty
                                 if ((Boolean)chkDefaultTargetApp.IsChecked && cmbTargetApp.SelectedIndex != -1)
                                 {
                                     activity.TargetApplication = cmbTargetApp.SelectedValue.ToString();

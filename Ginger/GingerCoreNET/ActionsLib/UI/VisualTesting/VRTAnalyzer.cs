@@ -159,7 +159,7 @@ namespace GingerCore.Actions.VisualTesting
             }
             catch (AggregateException ae)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when StartVRT", ae);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when StartVRT", ae);
                 foreach (var e in ae.InnerExceptions)
                 {
                     mAct.Error += e.Message;
@@ -312,7 +312,7 @@ namespace GingerCore.Actions.VisualTesting
             }
             catch (AggregateException ae)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when TrackVRT", ae);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when TrackVRT", ae);
                 foreach (var e in ae.InnerExceptions)
                 {
                     mAct.Error += e.Message;
@@ -320,7 +320,7 @@ namespace GingerCore.Actions.VisualTesting
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when TrackVRT", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when TrackVRT", ex);
                 mAct.Error += ex.Message;
             }
         }
@@ -334,7 +334,7 @@ namespace GingerCore.Actions.VisualTesting
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when getting Tags from activity", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when getting Tags from activity", ex);
                 return null;
             }
         }
@@ -381,7 +381,7 @@ namespace GingerCore.Actions.VisualTesting
             catch (Exception ex)
             {
                 mAct.Error += "Stop VRT operation failed, Error: " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when StopVRT", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when StopVRT", ex);
             }
             finally
             {

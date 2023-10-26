@@ -980,7 +980,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             string newName = activitiesGroup.Name;
 
 
-            if (InputBoxWindow.GetInputWithValidation("Rename Group", "New Group Name:", ref newName))
+            if (InputBoxWindow.GetInputWithValidation($"Rename { GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) } ", $"New {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} Name:", ref newName))
             {
                 if (!string.IsNullOrEmpty(newName))
                 {
@@ -991,7 +991,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Group with same name already exist, please set unique name.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"{GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} with same name already exist, please set unique name.");
                     }
                 }
             }

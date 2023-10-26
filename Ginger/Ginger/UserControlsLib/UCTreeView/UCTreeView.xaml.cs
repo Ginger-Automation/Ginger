@@ -158,11 +158,15 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 Mouse.OverrideCursor = Cursors.Wait;
                 try
                 {
-                    ItemDoubleClick(Tree.SelectedItem, e);
+                    if (e.Source is TreeViewItem && (e.Source as TreeViewItem).IsSelected)
+                    {
+                        ItemDoubleClick(Tree.SelectedItem, e);
+                    }  
                 }
                 finally
                 {
                     Mouse.OverrideCursor = null;
+                    e.Handled = true;
                 }
             }
         }
@@ -277,7 +281,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         private void TVI_ExtraExpanded(object? sender, RoutedEventArgs e)
         {
             TreeViewItem tvi = (TreeViewItem)e.Source;
-            SetRepositoryFolderIsExpanded(tvi, true);
+            SetRepositoryFolderIsExpanded(tvi, true);       
         }
 
         private void SetRepositoryFolderIsExpanded(TreeViewItem tvi, bool isExpanded)
@@ -927,7 +931,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     }
 
                     TreeViewItem TVIChild = ExpandNodeByNameTVIRecursive(TVI, nodeName, true, false);
-                    TVIChild.Focus();
+                    if(TVIChild != null)
+                    {
+                        TVIChild.Focus();
+                    }                   
                 });
             });
         }
@@ -1128,16 +1135,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                     return TVI;
                 }
 
-                if (TVI.Items.Count > 0)
+                if (TVI != null && TVI.Items.Count > 0)
                 {
-                    TVI.IsExpanded = true;
+                     _= LoadChildItems(TVI);
                     TreeViewItem vv = ExpandNodeByNameTVIRecursive(TVI, NodeName, Refresh, ExpandChildren);
                     if (vv != null)
                     {
                         return vv;
                     }
-
-                    TVI.IsExpanded = false;
                 }
             }
             return null;

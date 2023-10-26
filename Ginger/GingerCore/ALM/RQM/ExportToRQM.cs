@@ -615,9 +615,9 @@ namespace GingerCore.ALM.RQM
                         atsID = string.Empty;
                     }
                     erExportID = currentActivity.ExportedTcExecutionRecId.ToString();
-                    activGroup.ExternalID = $"RQMID={txExportID}|RQMScriptID={tsExportID}|RQMRecordID={erExportID}|AtsID={atsID}";
+                    activGroup.ExternalIdCalculated = $"RQMID={txExportID}|RQMScriptID={tsExportID}|RQMRecordID={erExportID}|AtsID={atsID}";
                     Reporter.ToLog(eLogLevel.DEBUG
-                        , $"created Record id with {activGroup.ExternalID}");
+                        , $"created Record id with {activGroup.ExternalIdCalculated}");
                 }
             }
             catch (Exception ex)

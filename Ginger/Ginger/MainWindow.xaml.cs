@@ -627,7 +627,7 @@ namespace Ginger
 
         private void UpdateSourceControlIndicators()
         {
-            if (WorkSpace.Instance.Solution != null)
+            if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.SourceControl !=null)
             {
                 Task.Run(() =>
                 {
