@@ -39,6 +39,7 @@ namespace Ginger.Variables
 
         private void BindControlValue()
         {
+            variableDateTime.PauseDirtyTracking();
             if (string.IsNullOrEmpty(variableDateTime.Value))
             {
                 dtpInitialDate.Value = Convert.ToDateTime(variableDateTime.InitialDateTime);
@@ -62,6 +63,7 @@ namespace Ginger.Variables
 
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtDateFormat, ComboBox.TextProperty, variableDateTime, nameof(VariableDateTime.DateTimeFormat), System.Windows.Data.BindingMode.TwoWay);
             txtDateFormat.AddValidationRule(new DateTimeFormatValidationRule(variableDateTime));
+            variableDateTime.ResumeDirtyTracking();
         }
 
 

@@ -1,4 +1,22 @@
-﻿using System;
+﻿#region License
+/*
+Copyright © 2014-2023 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -40,12 +58,20 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        public bool IsSelectionEnabled { get; set; } = true;
+
         public bool Selected
         {
             get => _selected;
             set
             {
+                if(!IsSelectionEnabled)
+                {
+                    return;
+                }
+
                 _selected = value;
+
                 if ((State == StateType.Added || State == StateType.Deleted) && HasChildComparisons)
                 {
                     foreach (Comparison nestedChange in ChildComparisons)
@@ -53,12 +79,19 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                         nestedChange.Selected = _selected;
                     }
                 }
-                if (_selected && HasSiblingComparison)
+
+                bool parentIsNotCollection =
+                    ParentComparison == null ||
+                    ParentComparison.DataType == null ||
+                    !ParentComparison.DataType.IsAssignableTo(typeof(System.Collections.ICollection));
+
+                if (_selected && HasSiblingComparison && parentIsNotCollection)
                 {
                     SiblingComparison.Selected = false;
                 }
                 PropertyChangedEventHandler? propertyChangedEventHandler = PropertyChanged;
                 propertyChangedEventHandler?.Invoke(this, new PropertyChangedEventArgs(nameof(Selected)));
+                NotifyParentOfPropertyChange();
             }
         }
 
@@ -97,6 +130,21 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             Data = data;
             HasData = true;
             ChildComparisons = null!;
+        }
+
+        private void NotifyParentOfPropertyChange()
+        {
+            if (ParentComparison != null)
+            {
+                ParentComparison.OnChildPropertyChange();
+            }
+        }
+
+        private void OnChildPropertyChange()
+        {
+            PropertyChangedEventHandler? handler = PropertyChanged;
+            handler?.Invoke(this, new PropertyChangedEventArgs(nameof(ChildComparisons)));
+            NotifyParentOfPropertyChange();
         }
 
         public void SetSiblingComparison(Comparison siblingComparison)

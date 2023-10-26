@@ -604,7 +604,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
                         if (ResponseSwitchFrame.IsErrorPayLoad())
                         {
-                            Reporter.ToLog(eLogLevel.DEBUG, string.Concat("Error occured during switch frame :", ResponseSwitchFrame.GetErrorValue()));
+                            Reporter.ToLog(eLogLevel.DEBUG, string.Concat("Error occurred during switch frame :", ResponseSwitchFrame.GetErrorValue()));
                         }
                     }
                 }
@@ -2076,7 +2076,7 @@ namespace GingerCore.Drivers.JavaDriverLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured during widgets element learning", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during widgets element learning", ex);
             }
         }
 
@@ -2090,7 +2090,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
             if (response.IsErrorPayLoad())
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during Valid Browser Element");
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during Valid Browser Element");
                 return false;
             }
             return true;
@@ -3650,7 +3650,7 @@ namespace GingerCore.Drivers.JavaDriverLib
                 Byte[] screenShotbytes;
                 if (payLoad.Name == "ERROR")
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occured during screenshot.");
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred during screenshot.");
                     continue;
                 }
                 if (payLoad.Name == "HTMLScreenShot")

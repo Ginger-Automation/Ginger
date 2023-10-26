@@ -521,7 +521,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "exception occured while doing Solution Source Control Configurations", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "exception occurred while doing Solution Source Control Configurations", ex);
                 }
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Updating Application Functionalities to Work with Loaded Solution");

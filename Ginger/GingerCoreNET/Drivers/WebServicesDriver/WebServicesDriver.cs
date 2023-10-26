@@ -450,10 +450,10 @@ namespace GingerCore.Drivers.WebServicesDriverLib
 
             Reporter.ToLog(eLogLevel.DEBUG, $"ReceiveResponse passed successfully");
 
-            diameterUtils.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath, diameterUtils.Response);
+            diameterUtils.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath);
             mRawResponse = diameterUtils.ResponseFileContent;
 
-            diameterUtils.ParseResponseToOutputParams(diameterUtils.Response);
+            diameterUtils.ParseResponseToOutputParams();
         }
 
         private void HandleTCPInitializationError(ActDiameter act)

@@ -65,7 +65,7 @@ namespace Ginger.DataSource
         private void SetGridView()
         {
             //Set the grid name
-            grdTableList.Title = "'" + mDSDetails.Name + "' Tables List";
+            grdTableList.Title = $"'{mDSDetails.Name}' Tables List";
             //Set the Tool Bar look
 
             grdTableList.ShowUpDown = Visibility.Collapsed;
@@ -202,5 +202,10 @@ namespace Ginger.DataSource
         }
 
         #endregion Functions
+
+        private void DataSourceNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            grdTableList.Title = $"'{mDSDetails.Name}' Tables List";
+        }
     }
 }
