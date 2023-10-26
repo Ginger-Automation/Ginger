@@ -15,12 +15,12 @@
             <ObjectDataProvider x:Key="resolutionItemsSource" MethodName="GetResolutionItemsSource" ObjectType="{x:Type local:ResolveConflictWindow}"/>
             <DataTemplate x:Key="xOperationCellTemplate">
                 <StackPanel Orientation="Horizontal">
-                    <ComboBox x:Name="xResolutionComboBox" DisplayMemberPath="text" SelectedValuePath="Value" SelectedIndex="0" SelectedValue="{Binding Resolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Source={StaticResource resolutionItemsSource}}" Style="{StaticResource @InputComboBoxStyle}"/>
+                    <ComboBox x:Name="xResolutionComboBox" DisplayMemberPath="text" SelectedValuePath="Value" SelectedValue="{Binding Resolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Source={StaticResource resolutionItemsSource}}" Style="{StaticResource @InputComboBoxStyle}" Width="160"/>
                     <UserControls:ucButton ButtonType="ImageButton" ButtonImageWidth="15" ButtonImageHeight="15" Height="25" ButtonImageType="Columns" Click="xCompareAndMergeButton_Click" Visibility="{Binding Resolution, Converter={StaticResource resolutionToCompareVisibilityConverter}}"/>
                 </StackPanel>
             </DataTemplate>
             <DataTemplate x:Key="xReadyForResolutionCellTemplate">
-                <UserControls:ImageMakerControl Height="15" Width="15">
+                <UserControls:ImageMakerControl Height="15" Width="15" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30 0 0 0">
                     <UserControls:ImageMakerControl.Style>
                         <Style TargetType="UserControls:ImageMakerControl">
                             <Setter Property="ImageType" Value="HighWarn"/>

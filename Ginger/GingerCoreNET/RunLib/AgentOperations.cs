@@ -218,7 +218,7 @@ namespace GingerCore
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Error Occured! While Trying to Communicate with the {Agent.AgentType} Agent {Agent.Name}. Please try checking your Agent Configurations!", e);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error occurred! While Trying to Communicate with the {Agent.AgentType} Agent {Agent.Name}. Please try checking your Agent Configurations!", e);
                 }
                 finally
                 {
@@ -245,7 +245,7 @@ namespace GingerCore
                     }
                     catch ( Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error Occured! While Staring Driver ", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred! While Staring Driver ", ex);
                     }
                 }
             }
@@ -770,7 +770,7 @@ namespace GingerCore
                        }
                        catch (Exception ex)
                        {
-                           Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
+                           Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while closing the driver", ex);
                        }
                    });
                 }
@@ -787,7 +787,7 @@ namespace GingerCore
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while closing the driver", ex);
                         }
                     });
                 }
@@ -803,7 +803,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while closing the driver", ex);
             }
             finally
             {

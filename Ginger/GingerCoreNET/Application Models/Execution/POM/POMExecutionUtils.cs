@@ -143,7 +143,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Error occured during self healing locator position", ex);
+                Reporter.ToLog(eLogLevel.INFO, "Error occurred during self healing locator position", ex);
             }
 
             return locatorPriotize;
@@ -289,7 +289,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models.Execution.POM
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Error occured during self healing POM update operation..", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during self healing POM update operation..", ex);
                 }
             }
         }

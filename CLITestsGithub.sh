@@ -17,7 +17,7 @@ echo "**************************************************************************
 echo "run simple solution"
 echo "******************************************************************************************************************************"
 
-dotnet GingerRuntime.dll run -s "/home/runner/work/Ginger/Ginger/Ginger/GingerCoreNETUnitTest/TestResources/Solutions/CLI" -e "Default" -r "Default Run Set"
+dotnet GingerRuntime.dll run -s "/home/runner/work/Ginger/Ginger/Ginger/GingerCoreNETUnitTest/TestResources/Solutions/CLI" -e "Default" -r "Default Run Set" -v "debug"
 
 
 # echo "******************************************************************************************************************************"

@@ -58,7 +58,8 @@ namespace Amdocs.Ginger.Common
         Search, DownloadingMissingPluginPackages,
         GingerLoadingInfo,
         StaticStatusMessage, StaticStatusProcess, PasteProcess, CreatingBackupProcess,
-        NewVersionAvailable, CleaningLegacyActions, PublishingToCentralDB
+        NewVersionAvailable, CleaningLegacyActions, PublishingToCentralDB,
+        ExportingToBPMNFile
     }
 
     public static class StatusMsgsPool
@@ -121,6 +122,7 @@ namespace Amdocs.Ginger.Common
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ALMTestSetImport, new StatusMsg(eStatusMsgType.PROCESS, "Importing QC/ALM Test Set", "Importing the ALM Test Set: '{0}'"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExportItemToALM, new StatusMsg(eStatusMsgType.PROCESS, "Exporting to ALM", "Exporting the item: '{0}'"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ALMTestSetMap, new StatusMsg(eStatusMsgType.PROCESS, "Mapping To ALM Wizard upload", "Prepares 'Map To ALM' Wizard data."));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExportingToBPMNFile, new StatusMsg(eStatusMsgType.PROCESS, "Exporting BPMN", "Exporting BPMN File"));
             #endregion Import/Export Messages
 
             #region BusinessFlows Messages
