@@ -11,7 +11,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <RootNamespace>Amdocs.Ginger.Common</RootNamespace>
 
-    <AssemblyVersion>23.5.1.0</AssemblyVersion>
+    <AssemblyVersion>23.5.1.1</AssemblyVersion>
     <FileVersion>23.5.1.0</FileVersion>
 
     <PackageId>Ginger.Core.Common</PackageId>
