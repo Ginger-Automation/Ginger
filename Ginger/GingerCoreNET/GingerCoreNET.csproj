@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Globals">
     <SccProjectName>SAK</SccProjectName>
@@ -222,7 +222,7 @@
   
     <PackageReference Include="Appium.WebDriver" Version="5.0.0-beta01" />
   
-    <PackageReference Include="Azure.Identity" Version="1.8.1" />
+    <PackageReference Include="Azure.Identity" Version="1.10.2" />
   
     <PackageReference Include="CassandraCSharpDriver" Version="3.10.0" />
   
