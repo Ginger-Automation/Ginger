@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -39,14 +39,37 @@ namespace GingerCore.Variables
         public override string VariableType
         {
             get { return "Selection List"; }
-        }
-
+        }            
+        private bool mIsLoopEnabled = true;
         [IsSerializedForLocalRepository(true)]
-        public bool IsLoopEnabled { get; set; } = true;
+        public bool IsLoopEnabled
+        {
+            get { return mIsLoopEnabled; }
+            set
+            {
+                if (mIsLoopEnabled != value)
+                {
+                    mIsLoopEnabled = value;
+                    OnPropertyChanged(nameof(IsLoopEnabled));
+                }
+            }
+        }
+        
+        private bool mIsDynamicValueModificationEnabled;
 
-        [IsSerializedForLocalRepository(false)]
-        public bool IsDynamicValueModificationEnabled { get; set; } = false;
-
+        [IsSerializedForLocalRepository(false)]      
+        public bool IsDynamicValueModificationEnabled
+        {
+            get { return mIsDynamicValueModificationEnabled; }
+            set
+            {
+                if (mIsDynamicValueModificationEnabled != value)
+                {
+                    mIsDynamicValueModificationEnabled = value;
+                    OnPropertyChanged(nameof(IsDynamicValueModificationEnabled));
+                }
+            }
+        }
 
         //DO NOT REMOVE! Used for conversion of old OptionalValues which were kept in one string with delimiter
         public string OptionalValues

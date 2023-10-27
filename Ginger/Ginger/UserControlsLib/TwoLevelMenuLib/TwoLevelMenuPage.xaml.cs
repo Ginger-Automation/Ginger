@@ -85,7 +85,7 @@ namespace Ginger.GeneralWindows
             xMainNavigationListView.Items.Clear();
             foreach (TopMenuItem menu in mTwoLevelMenu.MenuList)
             {
-                if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+                if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures && WorkSpace.Instance.Solution != null)
                 {
                     if (menu.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
                     {

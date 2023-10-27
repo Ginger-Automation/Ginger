@@ -555,7 +555,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured during RunSetUpdate..", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during RunSetUpdate..", ex);
             }
 
         }

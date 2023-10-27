@@ -59,6 +59,16 @@ namespace GingerCore.Activities
             }
         }
 
-        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override string ItemName
+        {
+            get
+            {
+                return this.Name;
+            }
+            set
+            {
+                this.Name = value;
+            }
+        }
     }
 }
