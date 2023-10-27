@@ -149,8 +149,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private string CreateBPMNXMLForActivitiesGroup(ActivitiesGroup activitiesGroup)
         {
             Reporter.ToLog(eLogLevel.INFO, $"Creating BPMN XML for activities group {activitiesGroup.Name}");
-            ActivitiesGroupToBPMNConverter activitiesGroupToBPMNConverter = new();
-            Collaboration collaboration = activitiesGroupToBPMNConverter.Convert(activitiesGroup);
+            ActivitiesGroupToBPMNConverter activitiesGroupToBPMNConverter = new(activitiesGroup);
+            Collaboration collaboration = activitiesGroupToBPMNConverter.Convert();
             BPMNXMLSerializer serializer = new();
             string xml = serializer.Serialize(collaboration);
             return xml;
