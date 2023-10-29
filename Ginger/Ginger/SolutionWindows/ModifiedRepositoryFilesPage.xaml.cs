@@ -167,13 +167,20 @@ namespace Ginger.SolutionWindows
 
                 await Task.Run(() =>
                {
-                   Parallel.ForEach(selectedFiles.GroupBy(g => g.FileType), fileToSave =>
+                   try
                    {
-                       foreach (var file in fileToSave)
-                       {
-                           SaveHandler.Save(file.item);
-                       }
-                   });
+                       Parallel.ForEach(selectedFiles.GroupBy(g => g.FileType), fileToSave =>
+                                  {
+                                      foreach (var file in fileToSave)
+                                      {
+                                          SaveHandler.Save(file.item);
+                                      }
+                                  });
+                   }
+                   catch (Exception ex)
+                   {
+                       Reporter.ToLog(eLogLevel.ERROR, "Failed to Save Files", ex);
+                   }
                });
 
             }

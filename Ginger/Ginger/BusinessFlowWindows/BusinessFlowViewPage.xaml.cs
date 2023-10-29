@@ -44,8 +44,8 @@ namespace GingerWPF.BusinessFlowsLib
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
 
-        ActivitiesListViewPage mActivitiesPage;
-        VariabelsListViewPage mVariabelsPage;
+        public ActivitiesListViewPage mActivitiesPage;
+        public VariabelsListViewPage mVariabelsPage;
         BusinessFlowConfigurationsPage mConfigurationsPage;
 
         GenericWindow mGenericWin = null;

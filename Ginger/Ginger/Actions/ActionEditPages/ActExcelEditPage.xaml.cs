@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Text.RegularExpressions;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -44,6 +44,7 @@ namespace Ginger.Actions
         private ActExcel mAct;
         private IExcelOperations mExcelOperations = new ExcelNPOIOperations();
         private const int VIEW_DATA_ROW_LIMIT = 50; 
+        private List<string>? SheetsList;
         public ActExcelEditPage(ActExcel act)
         {
             InitializeComponent();
@@ -75,15 +76,11 @@ namespace Ginger.Actions
                 this.ColMappingRulesSection.Visibility = Visibility.Visible;
             }
 
-            // populate Sheet dropdown
+            EnableSheetNameComboBox();
+            // populate Sheet drop down
             if (!string.IsNullOrEmpty(mAct.ExcelFileName))
             {
                 FillSheetCombo();
-                if (mAct.SheetName != null)
-                {
-                    SheetNamComboBox.Items.Add(mAct.SheetName);
-                    SheetNamComboBox.SelectedValue = mAct.SheetName;
-                }
             }
         }
 
@@ -96,21 +93,61 @@ namespace Ginger.Actions
             }) is string fileName)
             {
                 ExcelFileNameTextBox.ValueTextBox.Text = fileName;
+                SheetsList = null;
+                // Empty the list in the UI before Creating a new list
+                GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
+                mAct.SheetName = "";
                 FillSheetCombo();
             }
         }
 
-        private void FillSheetCombo()
+        private async Task FillSheetCombo()
         {
             ContextProcessInputValueForDriver();
-            //Move code to ExcelFunction no in Act...
-            List<string> SheetsList = mExcelOperations.GetSheets(mAct.CalculatedFileName);
-            if (SheetsList == null || SheetsList.Count == 0)
+            if (SheetsList == null || !SheetsList.Any())
             {
-                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
-                return;
+                DisableSheetNameComboBox();
+                MakeLoaderVisible();
+                mExcelOperations.Dispose();
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        SheetsList = mExcelOperations.GetSheets(mAct.CalculatedFileName);
+                        Dispatcher.Invoke(() =>
+                        {
+                            GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
+                        });
+                        if (SheetsList == null || SheetsList.Count == 0)
+                        {
+                            ShowErrorResponse();
+                            return;
+                        }
+
+                    }
+                    catch (Exception)
+                    {
+                        ShowErrorResponse();
+                    }
+                    finally
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            EnableSheetNameComboBox();
+                            HideLoader();
+                        });
+                    }
+                });
             }
-            GingerCore.General.FillComboFromList(SheetNamComboBox, SheetsList);
+        }
+        private void DisableSheetNameComboBox()
+        {
+            SheetNamComboBox.DropDownOpened -= SheetNamComboBox_DropDownOpened;
+        }
+
+        private void EnableSheetNameComboBox()
+        {
+            SheetNamComboBox.DropDownOpened += SheetNamComboBox_DropDownOpened;
         }
 
         private void ContextProcessInputValueForDriver()
@@ -122,25 +159,44 @@ namespace Ginger.Actions
             }
         }
 
-        private void ViewDataButton_Click(object sender, RoutedEventArgs e)
+        private async void ViewDataButton_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                ContextProcessInputValueForDriver();
+            xViewDataLoader.Visibility = Visibility.Visible;
+            ExcelDataGrid.Visibility = Visibility.Collapsed;
 
-                DataTable excelSheetData = GetExcelSheetData(true);
-                if (excelSheetData == null)
+            await Task.Run(() =>
+            {
+                try
                 {
-                    return;
-                }
+                    ContextProcessInputValueForDriver();
+                    DataTable excelSheetData = GetExcelSheetData(true);
+                    if (excelSheetData == null)
+                    {
+                        return;
+                    }
 
-                SetExcelDataGridItemsSource(excelSheetData);
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
-            }
+                    Dispatcher.Invoke(() =>
+                    {
+                        ExcelDataGrid.Visibility = Visibility.Visible;
+
+                        SetExcelDataGridItemsSource(excelSheetData);
+
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, ex.Message);
+                    });
+                }
+                finally
+                {
+                    Dispatcher.Invoke(() => xViewDataLoader.Visibility = Visibility.Collapsed);
+                }
+            });
         }
+
 
         private void SetExcelDataGridItemsSource(DataTable excelSheetData)
         {
@@ -168,6 +224,14 @@ namespace Ginger.Actions
             }
         }
 
+        private void ShowErrorResponse()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                Reporter.ToUser(eUserMsgKey.ExcelInvalidFieldData);
+            });
+        }
+
         private Task CopyExcelSheetRowsToExcelDataGridRows(DataRowCollection excelSheetRows, ObservableCollection<object?[]> excelDataGridRows)
         {
             return Task.Run(() =>
@@ -181,36 +245,65 @@ namespace Ginger.Actions
                 }
             });
         }
-
-        private void ViewWhereButton_Click(object sender, RoutedEventArgs e)
+        private void MakeLoaderVisible()
         {
-            try
-            {
-                ContextProcessInputValueForDriver();
-
-                if (!mAct.CheckMandatoryFieldsExists(new List<string>() {
-                nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName),  nameof(mAct.SelectRowsWhere)}))
-                {
-                    return;
-                }
-                DataTable excelSheetData = GetExcelSheetData(false);
-                if (excelSheetData == null)
-                {
-                    return;
-                }
-                SetExcelDataGridItemsSource(excelSheetData);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = ex.Message;
-                if(!string.IsNullOrEmpty(ex.Message)  && ex.Message.StartsWith("Cannot find column"))
-                {
-                    errorMessage = errorMessage + " " + $"at Row Number {mAct.HeaderRowNum}";
-                }
-                
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, errorMessage);
-            }
+            xLoader.Visibility = Visibility.Visible;
         }
+
+        private void HideLoader()
+        {
+            xLoader.Visibility = Visibility.Hidden;
+
+        }
+
+        private async void ViewWhereButton_Click(object sender, RoutedEventArgs e)
+        {
+            xViewDataLoader.Visibility = Visibility.Visible;
+            ExcelDataGrid.Visibility = Visibility.Collapsed;
+
+            await Task.Run(() =>
+            {
+                try
+                {
+                    ContextProcessInputValueForDriver();
+
+                    if (!mAct.CheckMandatoryFieldsExists(new List<string>() {
+                nameof(mAct.CalculatedFileName), nameof(mAct.CalculatedSheetName),  nameof(mAct.SelectRowsWhere)}))
+                    {
+                        return;
+                    }
+                    DataTable excelSheetData = GetExcelSheetData(false);
+                    if (excelSheetData == null)
+                    {
+                        return;
+                    }
+                    Dispatcher.Invoke(() =>
+                    {
+                        ExcelDataGrid.Visibility = Visibility.Visible;
+                        SetExcelDataGridItemsSource(excelSheetData);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    string errorMessage = ex.Message;
+                    if (!string.IsNullOrEmpty(ex.Message) && ex.Message.StartsWith("Cannot find column"))
+                    {
+                        errorMessage = errorMessage + " " + $"at Row Number {mAct.HeaderRowNum}";
+                    }
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, errorMessage);
+                    });
+                }
+                finally
+                {
+                    Dispatcher.Invoke(() => xViewDataLoader.Visibility = Visibility.Collapsed);
+                }
+
+            });
+        }
+
         DataTable GetExcelSheetData(bool isViewAllData)
         {
             try

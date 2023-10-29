@@ -122,6 +122,10 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     xSaveButton.Visibility = Visibility.Visible;
                 }
+                else
+                {
+                    xSaveButton.Visibility = Visibility.Collapsed;
+                }
                 xUploadToShareRepoMenuItem.Visibility = Visibility.Visible;
 
             }

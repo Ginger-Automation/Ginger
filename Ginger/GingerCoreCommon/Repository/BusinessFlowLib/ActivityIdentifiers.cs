@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -123,6 +123,17 @@ namespace GingerCore.Activities
             set
             {
                 return;
+            }
+        }
+        public override string GetItemType()
+        {
+            return "ActivityIdentifiers";
+        }
+        public override string ItemNameField
+        {
+            get
+            {
+                return ItemName;
             }
         }
     }

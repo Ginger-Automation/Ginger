@@ -200,9 +200,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return GetAGReportData(activityGroup, businessFlow);//Returning ActivityGroupReport so we will get execution info on the console
         }
 
-        private object MapAcgToLiteDb(ActivitiesGroup activityGroup, BusinessFlow businessFlow)
+        private object MapAcgToLiteDb(Context context,ActivitiesGroup activityGroup, BusinessFlow businessFlow)
         {
             LiteDbActivityGroup AGR = new LiteDbActivityGroup();
+            context.Runner.CalculateActivitiesGroupFinalStatus(activityGroup, businessFlow);
             AGR.SetReportData(GetAGReportData(activityGroup, businessFlow));
             AGR.Seq = ++this.acgSeq;
             if (activityGroup.LiteDbId != null && ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
@@ -347,7 +348,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             activitySeq = 0;
             var bf = context.BusinessFlow;
             bf.Activities.ToList().ForEach(activity => this.MapActivityToLiteDb(activity, context, executedFrom));
-            bf.ActivitiesGroups.ToList().ForEach(acg => this.MapAcgToLiteDb(acg, bf));
+            bf.ActivitiesGroups.ToList().ForEach(acg => this.MapAcgToLiteDb(context,acg, bf));
         }
 
         public override void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
@@ -554,7 +555,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured during RunSetUpdate..", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred during RunSetUpdate..", ex);
             }
 
         }

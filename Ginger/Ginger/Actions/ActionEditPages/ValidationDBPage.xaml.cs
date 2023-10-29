@@ -62,14 +62,14 @@ namespace Ginger.Actions
             {
                 mAct.AddOrUpdateInputParamValue("SQL", mAct.GetInputParamValue("Value"));
             }
-
+             
             FillAppComboBox();
 
             //New UI Controls:
             //Query Type selection radio button :
             QueryTypeRadioButton.Init(typeof(ActDBValidation.eQueryType), SqlSelection, mAct.GetOrCreateInputParam(ActDBValidation.Fields.QueryTypeRadioButton, ActDBValidation.eQueryType.FreeSQL.ToString()), QueryType_SelectionChanged);
             checkQueryType();
-
+            
             //Free SQL
             //needs to be unmarked when fixed VE issue
             SQLUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDBValidation.Fields.SQL));
@@ -90,7 +90,7 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(TablesComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Table);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(KeySpaceComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Keyspace);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ColumnComboBox, ComboBox.TextProperty, act, ActDBValidation.Fields.Column);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWhere, TextBox.TextProperty, act, ActDBValidation.Fields.Where);
+
             GingerCore.GeneralLib.BindingHandler.ActInputValueBinding(CommitDB, CheckBox.IsCheckedProperty, mAct.GetOrCreateInputParam(ActDBValidation.Fields.CommitDB));
 
             txtInsertJson.ValueTextBox.Text = string.Empty;
@@ -116,6 +116,7 @@ namespace Ginger.Actions
             ComboAutoSelectIfOneItemOnly(ColumnComboBox);
             SetVisibleControlsForAction();
             SetQueryParamsGrid();
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(txtWhere, TextBox.TextProperty, act, ActDBValidation.Fields.Where);
         }
 
         private async void ValueTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -376,6 +377,14 @@ namespace Ginger.Actions
                 Reporter.ToStatus(eStatusMsgKey.StaticStatusProcess, null, "Loading Tables...");
                 TablesComboBox.Items.Clear();
                 string DBName = DBNameComboBox.Text;
+                if (EA == null)
+                {
+                    EA = pe.Applications.FirstOrDefault(a => string.Equals(a.Name, AppNameComboBox.Text));
+                }
+                if (EA == null)
+                {
+                    return;
+                }
                 db = (Database)EA.Dbs.FirstOrDefault(db => string.Equals(db.Name, DBName));
                 if (db == null)
                 {
@@ -423,6 +432,14 @@ namespace Ginger.Actions
         {
             ColumnComboBox.Items.Clear();
             string DBName = DBNameComboBox.Text;
+            if (EA == null)
+            {
+                EA = pe.Applications.FirstOrDefault(a => string.Equals(a.Name, AppNameComboBox.Text));
+            }
+            if (EA == null)
+            {
+                return;
+            }
             db = (Database)(from d in EA.Dbs where d.Name == DBName select d).FirstOrDefault();
             if (db == null)
             {
@@ -438,7 +455,7 @@ namespace Ginger.Actions
             {
                 table = TablesComboBox.Text;
             }
-            if(table != "")
+            if (table != "")
             {
                 List<string> Columns = db.DatabaseOperations.GetTablesColumns(table);
                 if (Columns == null)
@@ -466,14 +483,17 @@ namespace Ginger.Actions
 
         private void SetVisibleControlsForAction()
         {
+
+            // Whenever no Database Operation is selected then the Input Type and the Radio buttons related to the input type should be hidden.
             if (ValidationCfgComboBox.SelectedItem == null)
             {
-                RadioButtonsSection.Visibility = Visibility.Visible;
+                RadioButtonsSection.Visibility = Visibility.Collapsed;
                 FreeSQLStackPanel.Visibility = Visibility.Collapsed;
                 SqlFile.Visibility = Visibility.Collapsed;
                 DoCommit.Visibility = Visibility.Collapsed;
                 Keyspace.Visibility = Visibility.Collapsed;
                 TableColWhereStackPanel.Visibility = Visibility.Collapsed;
+                txtWhere.Clear();
                 return;
             }
             if (pe != null)
@@ -508,6 +528,7 @@ namespace Ginger.Actions
                     RadioButtonsSection.Visibility = System.Windows.Visibility.Visible;
                     checkQueryType();
                     TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
+                    txtWhere.Clear();
                     FreeSQLLabel.Content = "Update DB SQL:";
                     DoCommit.Visibility = Visibility.Visible;
                     Keyspace.Visibility = Visibility.Collapsed;
@@ -519,7 +540,6 @@ namespace Ginger.Actions
                         lblWhere.Visibility = Visibility.Hidden;
                         TableColWhereStackPanel.Height = 40;
                         DoCommit.Visibility = Visibility.Collapsed;
-                        FreeSQLStackPanel.Visibility = Visibility.Collapsed;
                         DoUpdate.Visibility = Visibility.Visible;
                         RadioButtonsSection.Visibility = Visibility.Collapsed;
                         UpdateDbParametersGrid.Visibility = Visibility.Visible;
@@ -530,14 +550,18 @@ namespace Ginger.Actions
                     }
                     else
                     {
-                        FreeSQLStackPanel.Visibility = Visibility.Visible;
+                        string queryTypeRadioValue = mAct.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton);
+                        if (queryTypeRadioValue == ActDBValidation.eQueryType.FreeSQL.ToString())
+                        {
+                            FreeSQLStackPanel.Visibility = Visibility.Visible;
+                            SqlFile.Visibility = Visibility.Collapsed;
+                        }
                         TableColWhereStackPanel.Visibility = Visibility.Collapsed;
                         txtWhere.Visibility = Visibility.Visible;
                         lblWhere.Visibility = Visibility.Visible;
                         TableColWhereStackPanel.Height = 244;
                         DoCommit.Visibility = Visibility.Visible;
                         DoUpdate.Visibility = Visibility.Collapsed;
-                        FreeSQLStackPanel.Visibility = Visibility.Visible;
                         RadioButtonsSection.Visibility = Visibility.Visible;
                     }
                     break;
@@ -577,6 +601,7 @@ namespace Ginger.Actions
                     TableColWhereStackPanel.Visibility = System.Windows.Visibility.Collapsed;
                     FreeSQLLabel.Content = "Free SQL:";
                     Keyspace.Visibility = System.Windows.Visibility.Collapsed;
+                    txtWhere.Clear();
                     break;
                 case ActDBValidation.eDBValidationType.SimpleSQLOneValue:
                     checkQueryType();
@@ -638,6 +663,7 @@ namespace Ginger.Actions
                     DoUpdate.Visibility = Visibility.Collapsed;
                     SqlFile.Visibility = System.Windows.Visibility.Collapsed;
                     FreeSQLLabel.Content = @"Record count";
+                    txtWhere.Clear();
                     break;
                 case eDBValidationType.Insert:
                     DoUpdate.Visibility = Visibility.Visible;
@@ -654,6 +680,7 @@ namespace Ginger.Actions
                     TableColWhereStackPanel.Height = 40;
                     txtWhere.Visibility = Visibility.Collapsed;
                     lblWhere.Visibility = Visibility.Hidden;
+                    txtWhere.Clear();
                     DoCommit.Visibility = Visibility.Collapsed;
                     FreeSQLStackPanel.Visibility = Visibility.Collapsed;
                     RadioButtonsSection.Visibility = Visibility.Collapsed;

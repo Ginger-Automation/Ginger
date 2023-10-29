@@ -73,12 +73,12 @@ namespace Ginger.AnalyzerLib
             get { return mAnalyzerCompleted; }
         }
 
-        public int TotalIssues { get; set; }    
+        public int TotalIssues { get; set; }
 
         public int TotalHighAndCriticalIssues { get; set; }
-        
+
         public int AutoFixIssues { get; set; }
-       
+
         private bool mAnalyzeDoneOnce = false;
         private bool mAnalyzeWithUI = true;
 
@@ -99,9 +99,9 @@ namespace Ginger.AnalyzerLib
         private void MIssues_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Dispatcher.Invoke(() =>
-            {               
+            {
                 if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add && e.NewItems != null)
-                {                   
+                {
                     foreach (AnalyzerItemBase item in e.NewItems)
                     {
                         TotalIssues++;
@@ -112,19 +112,19 @@ namespace Ginger.AnalyzerLib
                             CriticalAndHighIssuesLabelCounter.Content = TotalHighAndCriticalIssues;
                             if (TotalHighAndCriticalIssues == 1)
                             {
-                                CriticalAndHighIssuesLabelCounter.Foreground = _brush;                                
+                                CriticalAndHighIssuesLabelCounter.Foreground = _brush;
                             }
                         }
-                        else if(item.CanAutoFix == AnalyzerItemBase.eCanFix.Yes)
+                        else if (item.CanAutoFix == AnalyzerItemBase.eCanFix.Yes)
                         {
                             AutoFixIssues++;
-                            CanAutoFixLableCounter.Content = AutoFixIssues;                            
+                            CanAutoFixLableCounter.Content = AutoFixIssues;
                         }
-                    }                                   
+                    }
                 }
-            });            
+            });
         }
-        
+
         public void Init(Solution Solution)
         {
             mAnalyzedObject = AnalyzedObject.Solution;
@@ -283,7 +283,7 @@ namespace Ginger.AnalyzerLib
 
                         mIssues = SortedList;
                         AnalyzerItemsGrid.DataSourceList = mIssues;
-                        AnalyzerItemsGrid.Grid.SelectedItem = mIssues[0];                       
+                        AnalyzerItemsGrid.Grid.SelectedItem = mIssues[0];
                     });
                 }
             }
@@ -658,7 +658,17 @@ namespace Ginger.AnalyzerLib
                 StatusLabel.Visibility = Visibility.Visible;
                 try
                 {
-                    await Task.Run(() => FixSelectedItems());
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            FixSelectedItems();
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to fix selected item", ex);
+                        }
+                    });
                 }
                 finally
                 {
@@ -714,7 +724,17 @@ namespace Ginger.AnalyzerLib
                 StatusLabel.Visibility = Visibility.Visible;
                 try
                 {
-                    await Task.Run(() => SaveAllFixedItems());
+                    await Task.Run(() =>
+                    {
+                        try
+                        {
+                            SaveAllFixedItems();
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Failed to Save fixed item", ex);
+                        }
+                    });
                 }
                 finally
                 {
@@ -739,7 +759,7 @@ namespace Ginger.AnalyzerLib
                     }
                     else if (AI.GetType() == typeof(AnalyzeActivity))
                     {
-                        bs = ((AnalyzeActivity)AI).mBusinessFlow;
+                        bs = ((AnalyzeActivity)AI).BusinessFlow;
                     }
                     else if (AI.GetType() == typeof(AnalyzeAction))
                     {
@@ -808,21 +828,14 @@ namespace Ginger.AnalyzerLib
                 Act actionIssue = currentAnalyzeAction.mAction;
                 actionIssue.SolutionFolder = WorkSpace.Instance.Solution.Folder.ToUpper();
                 ActionEditPage actedit = new ActionEditPage(actionIssue, General.eRIPageViewMode.ChildWithSave, currentAnalyzeAction.mBusinessFlow, currentAnalyzeAction.mActivity);
-                //setting the BusinessFlow on the Action in Order to save 
-                //actedit.mActParentBusinessFlow = ((AnalyzeAction)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
-                //actedit.ap = null;
                 actedit.ShowAsWindow(eWindowShowStyle.Dialog);
             }
 
             if (AnalyzerItemsGrid.CurrentItem is AnalyzeActivity)
             {
                 AnalyzeActivity currentAnalyzeActivity = (AnalyzeActivity)AnalyzerItemsGrid.CurrentItem;
-                Activity ActivityIssue = currentAnalyzeActivity.mActivity;
-                //ActivityIssue.SolutionFolder =  WorkSpace.Instance.Solution.Folder.ToUpper();
-                GingerWPF.BusinessFlowsLib.ActivityPage ActivityEdit = new GingerWPF.BusinessFlowsLib.ActivityPage(ActivityIssue, new Context() { BusinessFlow = currentAnalyzeActivity.mBusinessFlow }, General.eRIPageViewMode.ChildWithSave);
-                //setting the BusinessFlow on the Activity in Order to save
-                //ActivityEdit.mBusinessFlow = ((AnalyzeActivity)AnalyzerItemsGrid.CurrentItem).mBusinessFlow;
-                //ActivityEdit.ap = null;
+                Activity ActivityIssue = currentAnalyzeActivity.Activity;
+                GingerWPF.BusinessFlowsLib.ActivityPage ActivityEdit = new GingerWPF.BusinessFlowsLib.ActivityPage(ActivityIssue, new Context() { BusinessFlow = currentAnalyzeActivity.BusinessFlow }, General.eRIPageViewMode.ChildWithSave);
                 ActivityEdit.ShowAsWindow(eWindowShowStyle.Dialog);
 
             }

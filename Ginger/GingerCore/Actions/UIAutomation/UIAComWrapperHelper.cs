@@ -874,6 +874,10 @@ namespace GingerCore.Drivers
                 }
                 Thread.Sleep(100);
             }
+            if (CurrentWindow == null)
+            {
+                throw new Exception("No Window Handle Attached to locate the element.");
+            }
 
             count = 0;
             int ecount = 0;
@@ -4848,9 +4852,11 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-
-                    Bitmap tempBmp = GetCurrentWindowBitmap();
-                    act.AddScreenShot(tempBmp);
+                    if (CurrentWindow != null)
+                    {
+                        Bitmap tempBmp = GetCurrentWindowBitmap();
+                        act.AddScreenShot(tempBmp);
+                    }
                 }
                 return;
             }
@@ -4966,9 +4972,10 @@ namespace GingerCore.Drivers
                     Reporter.ToLog(eLogLevel.DEBUG, "Exception when checking IsWindowValid", e);
                     return false;
                 }
+                return true;
             }
-            return true;
 
+            return false;
         }
 
         public override string GetWindowInfo(object obj)
@@ -5028,49 +5035,56 @@ namespace GingerCore.Drivers
                  List<ElementInfo> HTMLlist;
 
                  //TODO: find a better property - since if the window is off screen controls will not show            
-                 UIAuto.Condition cond = new UIAuto.PropertyCondition(UIAuto.AutomationElement.IsOffscreenProperty, false);
-                 UIAuto.AutomationElementCollection AEC = CurrentWindow.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, cond);
-                 string IEElementXpath = "";
-
-                 foreach (UIAuto.AutomationElement AE in AEC)
+                 try
                  {
-                     if (StopProcess)
-                     {
-                         break;
-                     }
+                     UIAuto.Condition cond = new UIAuto.PropertyCondition(UIAuto.AutomationElement.IsOffscreenProperty, false);
+                     UIAuto.AutomationElementCollection AEC = CurrentWindow.FindAll(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, cond);
+                     string IEElementXpath = "";
 
-                     UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
-                     if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
+                     foreach (UIAuto.AutomationElement AE in AEC)
                      {
-                         ei = (UIAElementInfo)GetElementInfoFor(AE);
-                         IEElementXpath = ei.XPath;
-                         InitializeBrowser(AE);
-                         HTMLlist = await HTMLhelperObj.GetVisibleElement();
-                         list.Add(ei);
-                         if (HTMLlist != null && HTMLlist.Count > 0)
+                         if (StopProcess)
                          {
-                             list.AddRange(HTMLlist);
+                             break;
                          }
-                         //foreach(ElementInfo e1 in HTMLlist)
-                         //{
-                         //    list.Add(e1);
-                         //}
-                     }
+
+                         UIAElementInfo ei = (UIAElementInfo)GetElementInfoFor(AE);
+                         if (AE.Current.ClassName.Equals("Internet Explorer_Server"))
+                         {
+                             ei = (UIAElementInfo)GetElementInfoFor(AE);
+                             IEElementXpath = ei.XPath;
+                             InitializeBrowser(AE);
+                             HTMLlist = await HTMLhelperObj.GetVisibleElement();
+                             list.Add(ei);
+                             if (HTMLlist != null && HTMLlist.Count > 0)
+                             {
+                                 list.AddRange(HTMLlist);
+                             }
+                             //foreach(ElementInfo e1 in HTMLlist)
+                             //{
+                             //    list.Add(e1);
+                             //}
+                         }
 
 
-                     if (String.IsNullOrEmpty(IEElementXpath))
-                     {
-                         list.Add(ei);
-                     }
-                     else if (!ei.XPath.Contains(IEElementXpath))
-                     {
-                         //TODO: Here we check if automation element is child of IE browser element 
-                         // If yes then we skip it because we already have HTML element for this
-                         // Checking it by XPath makes it slow , because xpath is calculated for this element at runtime
-                         // Need to find a better way to speed up
-                         list.Add(ei);
-                     }
+                         if (String.IsNullOrEmpty(IEElementXpath))
+                         {
+                             list.Add(ei);
+                         }
+                         else if (!ei.XPath.Contains(IEElementXpath))
+                         {
+                             //TODO: Here we check if automation element is child of IE browser element 
+                             // If yes then we skip it because we already have HTML element for this
+                             // Checking it by XPath makes it slow , because xpath is calculated for this element at runtime
+                             // Need to find a better way to speed up
+                             list.Add(ei);
+                         }
 
+                     }
+                 }
+                 catch (Exception ex)
+                 {
+                     Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Controls", ex);
                  }
 
                  return list;

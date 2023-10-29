@@ -18,7 +18,6 @@ limitations under the License.
 
 using System;
 using System.Collections;
-
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -246,13 +245,21 @@ namespace Amdocs.Ginger.Repository
 
         public bool SaveBackup()
         {
-            if (DirtyStatus != eDirtyStatus.NoChange)
+            try
             {
-                return CreateBackup();
+                if (DirtyStatus != eDirtyStatus.NoChange)
+                {
+                    return CreateBackup();
+                }
+                else
+                {
+                    return CreateBackup(true);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return CreateBackup(true);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Save backup", ex);
+                return false;
             }
         }
 
@@ -1308,7 +1315,7 @@ namespace Amdocs.Ginger.Repository
 
         private void ItmePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (DirtyTrackingFields.Contains(e.PropertyName))
+            if (DirtyTrackingFields != null && DirtyTrackingFields.Contains(e.PropertyName))
             {
                 if (((RepositoryItemBase)sender).DirtyStatus != eDirtyStatus.Modified)
                 {

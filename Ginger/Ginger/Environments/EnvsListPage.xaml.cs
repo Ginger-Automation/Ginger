@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore.Environments;
@@ -61,7 +62,10 @@ namespace Ginger.Environments
             view.GridColsView = new ObservableList<GridColView>();
 
             view.GridColsView.Add(new GridColView() { Field = ProjEnvironment.Fields.Name, WidthWeight = 200 });
-            view.GridColsView.Add(new GridColView() { Field = ProjEnvironment.Fields.ReleaseVersion, WidthWeight = 80, Header = "Release Version" });
+
+            ObservableList<SolutionCategoryValue> combList = SolutionGeneral.SolutionOperations.GetSolutionReleaseValues();
+
+            view.GridColsView.Add(new GridColView() { Field = nameof(ProjEnvironment.Fields.ReleaseVersion), Header = "Release", WidthWeight = 80, StyleType = GridColView.eGridColStyleType.ComboBox, CellValuesList = combList, ComboboxSelectedValueField = nameof(SolutionCategoryValue.Guid),ComboboxDisplayMemberField= nameof(SolutionCategoryValue.Value)  });
             view.GridColsView.Add(new GridColView() { Field = ProjEnvironment.Fields.Notes, WidthWeight = 500 });
             view.GridColsView.Add(new GridColView() { Field = nameof(RepositoryItemBase.FileName), Header = "Local File Path", WidthWeight = 250 });
 

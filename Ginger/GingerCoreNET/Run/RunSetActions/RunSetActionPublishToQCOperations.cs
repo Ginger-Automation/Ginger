@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.Execution;
 using Ginger.Reports;
 using GingerCore;
 using GingerCore.Activities;
@@ -61,7 +62,7 @@ namespace Ginger.Run.RunSetActions
             PublishToALMConfig.CalculateTCRunName(mVE);
             PublishToALMConfig.FilterStatus = RunSetActionPublishToQC.FilterStatus;
             //check ALM type logic
-            if (RunSetActionPublishToQC.PublishALMType == RunSetActionPublishToQC.AlmTypeDefault)
+            if (RunSetActionPublishToQC.PublishALMType.Equals(RunSetActionPublishToQC.AlmTypeDefault,StringComparison.CurrentCultureIgnoreCase))
             {
                 //connect as connected till now to whatever default
             }
@@ -110,9 +111,14 @@ namespace Ginger.Run.RunSetActions
             }
             else
             {
+                BusinessFlow businessFlow;
                 foreach (BusinessFlowReport BFR in ((ReportInfo)RI).BusinessFlows)
                 {
-                    bfs.Add((BusinessFlow)BFR.GetBusinessFlow());
+                    businessFlow = (BusinessFlow)BFR.GetBusinessFlow();
+                    if(businessFlow.RunStatus != eRunStatus.Pending)
+                    {
+                        bfs.Add(businessFlow);
+                    }
                 }
             }
             if (!TargetFrameworkHelper.Helper.ExportBusinessFlowsResultToALM(bfs, ref result, PublishToALMConfig))

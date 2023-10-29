@@ -244,7 +244,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     else
                     {
-                        Reporter.ToUser(eUserMsgKey.MissingActivityAppMapping);
+                        Reporter.ToUser(eUserMsgKey.MissingActivityAppMapping, GingerDicser.GetTermResValue(eTermResKey.Activity),GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
                         return null;
                     }
                 }
@@ -427,7 +427,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 List<Assembly> assemblies = new List<Assembly>();
                 assemblies.Add(typeof(Act).Assembly); // add assembly of GingerCoreCommon
                 assemblies.Add(typeof(RepositoryItem).Assembly); // add assembly of GingerCore
-                                                                 // assemblies.Add(typeof(ActAgentManipulation).Assembly); // add assembly of GingerCoreNET  -- Getting laod exception
+                                                                 // assemblies.Add(typeof(ActAgentManipulation).Assembly); // add assembly of GingerCoreNET  -- Getting load exception
 
                 var subclasses = from assembly in assemblies // not using AppDomain.CurrentDomain.GetAssemblies() because it checks in all assemblies and have load exception
                                  from type in assembly.GetTypes()

@@ -276,7 +276,18 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
             try
             {
-                await Task.Run(() => SwaggerPar.ParseDocument(AddAPIModelWizard.URL, AddAPIModelWizard.LearnedAPIModelsList));
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        SwaggerPar.ParseDocument(AddAPIModelWizard.URL, AddAPIModelWizard.LearnedAPIModelsList);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error Details: {ex.Message} Failed to Parse the Swagger file {AddAPIModelWizard.URL}");
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -302,10 +313,32 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 try
                 {
-                    AAMTempList = await Task.Run(() => WSDLP.ParseDocument(XTF.FilePath, AAMCompletedList, AddAPIModelWizard.AvoidDuplicatesNodes));
+                    AAMTempList = await Task.Run(() =>
+                    {
+                        try
+                        {
+                            return WSDLP.ParseDocument(XTF.FilePath, AAMCompletedList, AddAPIModelWizard.AvoidDuplicatesNodes);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error Details: {ex.Message} Failed to Parse the XML{XTF.FilePath}");
+                            return null;
+                        }
+                    });
                     if (!string.IsNullOrEmpty(XTF.MatchingResponseFilePath))
                     {
-                        AAMTempList.Last().ReturnValues = await Task.Run(() => APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(XTF.MatchingResponseFilePath));
+                        AAMTempList.Last().ReturnValues = await Task.Run(() =>
+                        {
+                            try
+                            {
+                                return APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(XTF.MatchingResponseFilePath);
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, $"Error Details: {ex.Message} Failed to Parse the XML{XTF.FilePath}");
+                                return null;
+                            }
+                        });
                     }
                 }
                 catch (Exception ex)
@@ -333,10 +366,32 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 try
                 {
-                    AAMTempList = await Task.Run(() => JsonTemplate.ParseDocument(XTF.FilePath, AAMCompletedList, AddAPIModelWizard.AvoidDuplicatesNodes));
+                    AAMTempList = await Task.Run(() =>
+                    {
+                        try
+                        {
+                            return JsonTemplate.ParseDocument(XTF.FilePath, AAMCompletedList, AddAPIModelWizard.AvoidDuplicatesNodes);
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error Details: {ex.Message} Failed to Parse the JSon {XTF.FilePath}");
+                            return null;
+                        }
+                    });
                     if (!string.IsNullOrEmpty(XTF.MatchingResponseFilePath))
                     {
-                        AAMTempList.Last().ReturnValues = await Task.Run(() => APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(XTF.MatchingResponseFilePath));
+                        AAMTempList.Last().ReturnValues = await Task.Run(() =>
+                        {
+                            try
+                            {
+                                return APIConfigurationsDocumentParserBase.ParseResponseSampleIntoReturnValuesPerFileType(XTF.MatchingResponseFilePath);
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, $"Error Details: {ex.Message} Failed to Parse the JSon {XTF.FilePath}");
+                                return null;
+                            }
+                        });
                     }
                 }
                 catch (Exception ex)
@@ -363,7 +418,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             try
             {
                 //ObservableList<ApplicationAPIModel> aaaModelList = GingerCore.General.ConvertListToObservableList(AddAPIModelWizard.AAMList.Select(m => m.learnedAPI).ToList());
-                await Task.Run(() => WSDLP.ParseDocument(AddAPIModelWizard.URL, AddAPIModelWizard.LearnedAPIModelsList, false));
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        WSDLP.ParseDocument(AddAPIModelWizard.URL, AddAPIModelWizard.LearnedAPIModelsList, false);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToUser(eUserMsgKey.ParsingError, "Failed to Parse the WSDL ", ex);
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -538,7 +603,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 apiModelTreeSelectionPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,
                                                                                     new System.Tuple<string, string>(nameof(ApplicationAPIModel.APIType), deltaAPI.learnedAPI.APIType.ToString()));
 
-                apiModelTreeSelectionPage.xTreeView.Tree.RefresTreeNodeChildrens(apiRoot);
+                apiModelTreeSelectionPage.xTreeView.Tree.RefreshTreeNodeChildrens(apiRoot);
 
                 List<object> selectedList = apiModelTreeSelectionPage.ShowAsWindow("Matching API Models", (Window)AddAPIModelWizard.mWizardWindow);
 

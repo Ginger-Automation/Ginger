@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 //using ALM_Common.DataContracts;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
 
@@ -215,6 +216,15 @@ namespace GingerCore.ALM
             {
                 
                 int sucesscount = 0;
+                publishToALMConfig.HtmlReportUrl = "";
+                publishToALMConfig.ExecutionId = "";
+                if (!exectutedFromAutomateTab &&
+                    WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Any(g => g.IsSelected && !string.IsNullOrEmpty(g.CentralLoggerEndPointUrl) && g.PublishLogToCentralDB == ePublishToCentralDB.Yes)
+                    && WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Any(x => x.IsSelected && !string.IsNullOrEmpty(x.CentralizedHtmlReportServiceURL)))
+                {
+                    publishToALMConfig.HtmlReportUrl = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => x.IsSelected).CentralizedHtmlReportServiceURL;
+                    publishToALMConfig.ExecutionId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString();
+                }
                 foreach (BusinessFlow BizFlow in BusinessFlows) //Here going for each businessFlow
                 {
                     ProjEnvironment projEnvironment = mContext != null ? mContext.Environment : WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment;
@@ -235,6 +245,7 @@ namespace GingerCore.ALM
                             {
                                 Ginger.Reports.GingerExecutionReport.ExtensionMethods.CreateActivitiesGroupReportsOfBusinessFlow(null, BizFlow);//need to find a way to specify the releveant environment 
                             }
+                           
                             isExportSucc = ExportExecutionDetailsToALM(BizFlow, ref result, exectutedFromAutomateTab, publishToALMConfig,projEnvironment);
                             if (isExportSucc)
                             {
@@ -255,7 +266,7 @@ namespace GingerCore.ALM
                         {
                             BizFlow.PublishStatus = BusinessFlow.ePublishStatus.NotPublished;
                             result = $"{result}{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} - {BizFlow.Name} - doesn't have ExternalID, cannot execute publish to ALM RunSet Action {Environment.NewLine}";
-                            Reporter.ToLog(eLogLevel.WARN, $"{BizFlow.Name} - doesn't have ExternalID, cannot execute publish to ALM RunSet Action");
+                            Reporter.ToLog(eLogLevel.INFO, $"{BizFlow.Name} - doesn't have ExternalID, cannot execute publish to ALM RunSet Action");
                         }
                     }
                     catch (Exception ex)

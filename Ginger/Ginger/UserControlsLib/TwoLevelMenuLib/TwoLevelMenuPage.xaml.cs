@@ -83,7 +83,19 @@ namespace Ginger.GeneralWindows
             xSelectedItemFrame.SetContent(null);
 
             xMainNavigationListView.Items.Clear();
-            LoadMenus();
+            foreach (TopMenuItem menu in mTwoLevelMenu.MenuList)
+            {
+                if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures && WorkSpace.Instance.Solution != null)
+                {
+                    if (menu.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
+                    {
+                        continue;
+                    }
+                }
+                xMainNavigationListView.Items.Add(menu);
+            }
+
+            LoadMenus();//meni to check
         }
 
         private void LoadMenus()

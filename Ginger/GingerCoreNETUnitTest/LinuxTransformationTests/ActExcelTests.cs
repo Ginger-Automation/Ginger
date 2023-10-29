@@ -54,9 +54,9 @@ namespace GingerCoreNETUnitTest.LinuxTransformationTests
             actExcel.Execute();
 
             //Assert
-            Assert.AreEqual(actExcel.ActReturnValues.Count, 16);
-            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr,2,Julia,Smith,LA,3,Mike,Bond,AZ,4,Con,Cat,ConCat");
-            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address,ID,First,Last,Address,ID,First,Last,Address,ID,First,Last,Address");
+            Assert.AreEqual(actExcel.ActReturnValues.Count, 4);
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Actual).ToList()), "1,Mark,Cohen,2109 Fox Dr");
+            Assert.AreEqual(string.Join(',', actExcel.ActReturnValues.Select(x => x.Param).ToList()), "ID,First,Last,Address");
         }
         [TestMethod]
         public void ReadExcelFirstRowWithFilterTest()

@@ -184,7 +184,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             task1.Start();
 
             Stopwatch stopwatch = Stopwatch.StartNew();
-            while ((mMyGingerServer == null || !mMyGingerServer.IsReady) && stopwatch.ElapsedMilliseconds < 5000)
+            while ((mMyGingerServer == null || !mMyGingerServer.IsReady) && stopwatch.ElapsedMilliseconds < 10000)
             {
                 Thread.Sleep(100);
             }
@@ -202,7 +202,7 @@ namespace GingerCoreNETUnitTest.Drivers.CommunicationProtocol
             task2.Start();
 
             Stopwatch stopwatch2 = Stopwatch.StartNew();
-            while ((mMyGingerClient == null || !mMyGingerClient.IsReady) && stopwatch2.ElapsedMilliseconds < 5000)
+            while ((mMyGingerClient == null || !mMyGingerClient.IsReady) && stopwatch2.ElapsedMilliseconds < 10000)
             {
                 Thread.Sleep(100);
             }

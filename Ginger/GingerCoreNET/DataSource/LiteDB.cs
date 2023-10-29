@@ -741,7 +741,7 @@ namespace GingerCoreNET.DataSource
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error occured while renaming the table {tableName}", ex);                
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while renaming the table {tableName}", ex);                
             }
         }
 
@@ -854,7 +854,6 @@ namespace GingerCoreNET.DataSource
             if (MarkUpdate)
             {
                 string[] tokens = query.Split(new[] { "where" }, StringSplitOptions.None);
-                string rowID = row[0].ToString();
                 string Newquery = "db." + DSTableName + ".update GINGER_USED = \"True\" where " + tokens[1];
                 RunQuery(Newquery);
             }

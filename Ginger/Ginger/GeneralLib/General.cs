@@ -95,6 +95,7 @@ namespace Ginger
             /// Item should be open for read only but should allow execute
             /// </summary>
             ViewAndExecute = 10
+
         }
 
         public static bool isDesignMode()

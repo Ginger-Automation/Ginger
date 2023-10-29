@@ -19,7 +19,7 @@
 
             <StackPanel Grid.Row="0" Margin="0,10,0,0">
                 <StackPanel Orientation="Horizontal" >
-                    <Label Content="Target Application:" Style="{StaticResource @LabelStyle}"/>
+                    <Label x:Name="xTAlabel" Style="{StaticResource @LabelStyle}"/>
                     <ComboBox x:Name="xTargetApplicationComboBox"  AutomationProperties.AutomationId="TargetApplication AID" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="5,0,0,0" FontWeight="Bold" SelectionChanged="XTargetApplicationComboBox_SelectionChanged" />
                 </StackPanel>
 

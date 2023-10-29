@@ -107,7 +107,7 @@ namespace Amdocs.Ginger.Common
         AutomationTabExecResultsNotExists, FolderNamesAreTooLong, FolderSizeTooSmall, DefaultTemplateCantBeDeleted, FileNotExist, ExecutionsResultsProdIsNotOn, ExecutionsResultsNotExists, ExecutionsResultsToDelete, AllExecutionsResultsToDelete, FilterNotBeenSet, RetreivingAllElements, ClickElementAgain, CloseFilterPage,
         BusinessFlowNeedTargetApplication, HTMLReportAttachment, ImageSize,
         GherkinAskToSaveFeatureFile, GherkinScenariosGenerated, GherkinNotifyFeatureFileExists, GherkinNotifyFeatureFileSelectedFromTheSolution, GherkinNotifyBFIsNotExistForThisFeatureFile, GherkinFileNotFound, GherkinColumnNotExist, GherkinActivityNotFound, GherkinBusinessFlowNotCreated, GherkinFeatureFileImportedSuccessfully, GherkinFeatureFileImportOnlyFeatureFileAllowedErrorMessage,
-        AskIfSureWantToDeLink, AnalyzerFoundIssues, AnalyzerSaveRunSet,
+        AskIfSureWantToDeLink, AnalyzerFoundIssues, AnalyzerFoundNoIssues, AnalyzerSaveRunSet,
         AskIfSureWantToUndoChange,
         CurrentActionNotSaved,
         LoseChangesWarn,
@@ -169,7 +169,12 @@ namespace Amdocs.Ginger.Common
         EnvParamNameExists,
         EnvParamNameEmpty,
         NoPublishRepositoryInfo,
-        NotAllowedForMappedRuntimeValue
+        NotAllowedForMappedRuntimeValue,
+        HandleConflictsBeforeMovingForward,
+        HasUnhandledConflicts,
+        UncommitedChangesPreventCheckout,
+        ExportToBPMNSuccessful,
+        GingerEntityToBPMNConversionError
     }
 
     public static class UserMsgsPool
@@ -220,7 +225,7 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToRestartInAdminMode, new UserMsg(eUserMsgType.QUESTION, "Ginger In Admin Mode", "Are you sure you want to launch Ginger in admin mode?" + Environment.NewLine + Environment.NewLine + "Note: Please save modified changes before launch.", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
-            Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowNeedTargetApplication, new UserMsg(eUserMsgType.WARN, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} Not Selected", $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} Not Selected! Please Select at least one {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowNeedTargetApplication, new UserMsg(eUserMsgType.WARN, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} Not Selected", "{0} Not Selected! Please Select at least one {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToUndoChange, new UserMsg(eUserMsgType.WARN, "Undo Changes", "Are you sure you want to undo all changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
@@ -258,6 +263,7 @@ namespace Amdocs.Ginger.Common
 
             #region Analyzer
             Reporter.UserMsgsPool.Add(eUserMsgKey.AnalyzerFoundIssues, new UserMsg(eUserMsgType.WARN, "Issues Detected By Analyzer", "Critical/High Issues were detected, please handle them before execution.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AnalyzerFoundNoIssues, new UserMsg(eUserMsgType.INFO, "No Issues Detected By Analyzer", "No Issues were found.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AnalyzerSaveRunSet, new UserMsg(eUserMsgType.WARN, "Issues Detected By Analyzer", "Please save the " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " first", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion Analyzer
 
@@ -306,6 +312,9 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionToSourceControl, new UserMsg(eUserMsgType.QUESTION, "Upload Solution", "The solution was created and loaded successfully.\nPlease make a note of the encryption key provided from solution details page." + Environment.NewLine + "Do you want to upload the Solution: '{0}' to Source Control?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionFailed, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Failed to Upload Solution to Source Control" + Environment.NewLine + "'{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlBranchNameEmpty, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Branch name cannot be empty.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.HandleConflictsBeforeMovingForward, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "You have {0} unhandled conflicts, please handle them before moving forward.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.HasUnhandledConflicts, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "Cannot merge since you have {0} unhandled conflicts.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.UncommitedChangesPreventCheckout, new UserMsg(eUserMsgType.ERROR, "Uncommited Changes", "Local branch has uncommited changes, check-in them before getting latest.", eUserMsgOption.OK, eUserMsgSelection.OK));
             #endregion SourceControl Messages
 
             #region Validation Messages
@@ -452,7 +461,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.DependenciesMissingActions, new UserMsg(eUserMsgType.INFO, "Missing Actions", "Actions not found." + System.Environment.NewLine + "Please add Actions to the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + ".", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DependenciesMissingVariables, new UserMsg(eUserMsgType.INFO, "Missing " + GingerDicser.GetTermResValue(eTermResKey.Variables), GingerDicser.GetTermResValue(eTermResKey.Variables) + " not found." + System.Environment.NewLine + "Please add " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " from type 'Selection List' to the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + ".", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.DuplicateVariable, new UserMsg(eUserMsgType.WARN, "Duplicated " + GingerDicser.GetTermResValue(eTermResKey.Variable), "The " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " name '{0}' and value '{1}' exist more than once." + System.Environment.NewLine + "Please make sure only one instance exist in order to set the " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " dependencies.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.MissingActivityAppMapping, new UserMsg(eUserMsgType.WARN, $"Missing {GingerDicser.GetTermResValue(eTermResKey.Activity)} -Application Mapping", $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} was not mapped to the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " so the required Actions platform is unknown." + System.Environment.NewLine + System.Environment.NewLine + "Map " + GingerDicser.GetTermResValue(eTermResKey.TargetApplication) + " to the Activity by double clicking the " + GingerDicser.GetTermResValue(eTermResKey.Activity) + " record and select the application you want to test using it.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MissingActivityAppMapping, new UserMsg(eUserMsgType.WARN, "Missing {0} -Application Mapping", "{1} was not mapped to the {0} so the required Actions platform is unknown." + System.Environment.NewLine + System.Environment.NewLine + "Map {1} to the Activity by double clicking the {0} record and select the application you want to test using it.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.LegacyActionsCleanup, new UserMsg(eUserMsgType.INFO, "Legacy Actions Cleanup", "Legacy Actions cleanup was ended." + Environment.NewLine + Environment.NewLine + "Cleanup Statistics:" + Environment.NewLine + "Number of Processed " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + ": {0}" + Environment.NewLine + "Number of Deleted " + GingerDicser.GetTermResValue(eTermResKey.Activities) + ": {1}" + Environment.NewLine + "Number of Deleted Actions: {2}", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion Activities
 
@@ -570,6 +579,10 @@ namespace Amdocs.Ginger.Common
 
             #endregion Reports
 
+            #region Otoma
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ExportToBPMNSuccessful, new UserMsg(eUserMsgType.INFO, "BPMN Export Successful", "Exported to BPMN file {0} successfully.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerEntityToBPMNConversionError, new UserMsg(eUserMsgType.ERROR, "BPMN Export Failed", "Error occurred while exporting BPMN.\n{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
+            #endregion
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed, new UserMsg(eUserMsgType.INFO, "Remote Data deletion", "Remote Execution Results will not be deleted.", eUserMsgOption.OK, eUserMsgSelection.OK));
 
@@ -622,7 +635,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.LoseChangesWarn, new UserMsg(eUserMsgType.WARN, "Save Changes", "The operation may result with lost of un-saved local changes." + Environment.NewLine + "Please make sure all changes were saved before continue." + Environment.NewLine + Environment.NewLine + "To perform the operation?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.CompilationErrorOccured, new UserMsg(eUserMsgType.ERROR, "Compilation Error Occurred", "Compilation error occurred." + Environment.NewLine + "Error Details: " + Environment.NewLine + " '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-
+            
             Reporter.UserMsgsPool.Add(eUserMsgKey.CopiedVariableSuccessfully, new UserMsg(eUserMsgType.INFO, "Info Message", "'{0}'" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " Affected." + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RenameItemError, new UserMsg(eUserMsgType.ERROR, "Rename", "Failed to rename the Item. Error: '{0}'?", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfShareVaribalesInRunner, new UserMsg(eUserMsgType.QUESTION, "Share" + GingerDicser.GetTermResValue(eTermResKey.Variables), "Are you sure you want to share selected " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Values to all the similar " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " and " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " across all Runners?", eUserMsgOption.YesNo, eUserMsgSelection.No));

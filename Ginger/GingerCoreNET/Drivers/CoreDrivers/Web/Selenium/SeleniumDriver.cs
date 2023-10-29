@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
@@ -61,7 +62,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V113.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
@@ -264,6 +265,12 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Sample Value is 'localhost:9222'.This allows to Connect to existing browser session on specific debug port instead of Launching a new browser")]
         public string DebugAddress { get; set; }
 
+        [UserConfigured]
+        // Changed the default from ignore to Actual Default suggested by Selenium i.e. dismissAndNotify
+        [UserConfiguredDefault("dismissAndNotify")]
+        [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
+        public string UnhandledPromptBehavior { get; set; }
+
         protected IWebDriver Driver;
 
         protected eBrowserType mBrowserTpe;
@@ -459,6 +466,8 @@ namespace GingerCore.Drivers
                         FirefoxOption.AcceptInsecureCertificates = true;
                         SetCurrentPageLoadStrategy(FirefoxOption);
                         SetBrowserLogLevel(FirefoxOption);
+                        SetUnhandledPromptBehavior(FirefoxOption);
+
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
@@ -497,6 +506,7 @@ namespace GingerCore.Drivers
                         options.AddArgument("--start-maximized");
                         SetCurrentPageLoadStrategy(options);
                         SetBrowserLogLevel(options);
+                        SetUnhandledPromptBehavior(options);
 
                         if (IsUserProfileFolderPathValid())
                         {
@@ -672,7 +682,7 @@ namespace GingerCore.Drivers
                             SetBrowserLogLevel(EDOpts);
                             //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
                             //EDOpts.UseChromium = true;
-                            EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            SetUnhandledPromptBehavior(EDOpts);
                             if (IsUserProfileFolderPathValid())
                             {
                                 EDOpts.AddAdditionalEdgeOption("user-data-dir=", UserProfileFolderPath);
@@ -760,7 +770,7 @@ namespace GingerCore.Drivers
                                 edgeOptions.AddAdditionalOption(SeleniumDriver.RemoteVersionParam, RemoteVersion);
                             }
 
-                            edgeOptions.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            SetUnhandledPromptBehavior(edgeOptions);
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -1013,7 +1023,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while getting current element", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while getting current element", ex);
                 return null;
             }
         }
@@ -1194,9 +1204,13 @@ namespace GingerCore.Drivers
             //Checking if Alert handling is asked to be performed (in that case we can't modify anything on driver before handling the Alert)
             bool isActBrowser = act is ActBrowserElement;
             ActBrowserElement actBrowserObj = isActBrowser ? (act as ActBrowserElement) : null;
-            bool runActHandlerDirect = act is ActHandleBrowserAlert || (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
-                                    || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
-                                        || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox));
+            bool runActHandlerDirect = act is ActHandleBrowserAlert ||
+                                      (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox
+                                      //Added below 2 conditions for comparision for Alert Text Box
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.GetMessageBoxText
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SetAlertBoxText));
 
             if (!runActHandlerDirect)
             {
@@ -2347,21 +2361,21 @@ namespace GingerCore.Drivers
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDropDown operation", ex);
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SelectFromDropDown operation", ex);
                             try
                             {
                                 se.SelectByValue(act.GetInputParamCalculatedValue("Value"));
                             }
                             catch (Exception ex2)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDropDown operation", ex2);
+                                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SelectFromDropDown operation", ex2);
                                 try
                                 {
                                     se.SelectByIndex(Convert.ToInt32(act.GetInputParamCalculatedValue("Value")));
                                 }
                                 catch (Exception ex3)
                                 {
-                                    Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDropDown operation", ex3);
+                                    Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SelectFromDropDown operation", ex3);
                                 }
                             }
                         }
@@ -2385,7 +2399,7 @@ namespace GingerCore.Drivers
                         catch (Exception ex3)
                         {
                             act.Error = "Error: Failed to select the value ' + " + value + "' for the object - " + act.LocateBy + " " + act.LocateValue;
-                            Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing AsyncSelectFromDropDownByIndex operation", ex3);
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing AsyncSelectFromDropDownByIndex operation", ex3);
                             return;
                         }
                     }
@@ -2405,7 +2419,7 @@ namespace GingerCore.Drivers
                     catch (Exception ex)
                     {
                         act.Error = "Error: Failed to select value using digit from object with ID: '" + act.LocateValue + "' and Value: '" + act.GetInputParamCalculatedValue("Value") + "'";
-                        Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDijitList operation", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SelectFromDijitList operation", ex);
                         return;
                     }
                     break;
@@ -2444,7 +2458,7 @@ namespace GingerCore.Drivers
                             catch (InvalidOperationException ex)
                             {
                                 ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
-                                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SetValue operation", ex);
+                                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SetValue operation", ex);
                             }
                         }
                         else
@@ -2882,7 +2896,7 @@ namespace GingerCore.Drivers
             }
             catch (System.ArgumentException ae)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured in ActDropDownListHandler", ae);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred in ActDropDownListHandler", ae);
                 return;
             }
         }
@@ -3733,7 +3747,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception occured when LocateElementByLocator", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when LocateElementByLocator", ex);
                     if (AlwaysReturn)
                     {
                         elem = null;
@@ -4268,7 +4282,7 @@ namespace GingerCore.Drivers
                     //    }
                     //    catch (Exception ex)
                     //    {
-                    //        Reporter.ToLog(eLogLevel.DEBUG, "Exception occured in IsBrowserAlive called from IsRunning Method using handle.exe ", ex);
+                    //        Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred in IsBrowserAlive called from IsRunning Method using handle.exe ", ex);
                     //    }
                     //}
 
@@ -4278,23 +4292,20 @@ namespace GingerCore.Drivers
                     var action = Task.Run(() =>
                     {
                         try
-                        {
-                        
-                            
+                        {    
                             Thread.Sleep(100);
                             count = Driver.WindowHandles.Count;
-
                         }
                         catch (System.InvalidCastException ex)
                         {
                             exceptioncount = 0;
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occured while casting when we are checking IsRunning", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred while casting when we are checking IsRunning", ex);
                         }
                         catch (System.NullReferenceException ex)
                         {
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.DEBUG, "Null refrence exception occured when we are checking IsRunning", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Null reference exception occurred when we are checking IsRunning", ex);
                         }
                         catch (System.ObjectDisposedException ex)
                         {
@@ -4304,10 +4315,9 @@ namespace GingerCore.Drivers
                         catch (Exception ex)
                         {
                             //throw exception to outer catch
-                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex);
                             throw;
                         }
-
                     });
 
                     //result = action.BeginInvoke(null, null);
@@ -4349,7 +4359,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.NoSuchWindowException ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                     {
@@ -4364,7 +4374,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverTimeoutException ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Timeout exception occured when we are checking IsRunning", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Timeout exception occurred when we are checking IsRunning", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                     {
@@ -4379,7 +4389,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverException ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Webdriver exception occured when we are checking IsRunning", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Webdriver exception occurred when we are checking IsRunning", ex);
 
                     if (PreviousRunStopped && ex.Message == "Unexpected error. Error 404: Not Found\r\nNot Found")
                     {
@@ -4396,7 +4406,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex2)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex2);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex2);
                     if (ex2.Message.ToString().ToUpper().Contains("DIALOG"))
                     {
                         return true;
@@ -4443,7 +4453,7 @@ namespace GingerCore.Drivers
                     catch (Exception ex)
                     {
                         string wt = Driver.Title; //if Switch window throw exception then reading current driver title to avoid exception for next window handle in loop
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetAppWindows.", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetAppWindows.", ex);
                     }
                 }
                 return list.ToList();
@@ -4777,7 +4787,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during pom learining", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during pom learning", ex);
             }
         }
 
@@ -4839,7 +4849,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured when creating relative xapth with attributes values", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred when creating relative xpath with attributes values", ex);
             }
             finally
             {
@@ -5596,7 +5606,7 @@ namespace GingerCore.Drivers
                 catch (Exception ex)
                 {
                     var wt = Driver.Title; //if Switch window throw exception then reading current driver title to avoid exception for next window handle in loop
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occured during Switchwindow", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred during Switchwindow", ex);
                 }
 
             }
@@ -6145,7 +6155,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when learn LocateElementByFriendlyLocator", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when learn LocateElementByFriendlyLocator", ex);
             }
 
             return locatorsList;
@@ -6483,7 +6493,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during InjectGingerLiveSpy", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during InjectGingerLiveSpy", ex);
             }
         }
 
@@ -6562,7 +6572,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while adding javascript to page", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while adding javascript to page", ex);
             }
         }
 
@@ -7454,316 +7464,355 @@ namespace GingerCore.Drivers
 
         public async void ActBrowserElementHandler(ActBrowserElement act)
         {
-            string AgentType = GetAgentAppName();
-            switch (act.ControlAction)
+            try
             {
-                case ActBrowserElement.eControlAction.Maximize:
-                    try
-                    {
-                        Driver.Manage().Window.Maximize();
-                    }
-                    catch(Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, ex.Message);
-                    }
-                    
-                    break;
-
-                case ActBrowserElement.eControlAction.OpenURLNewTab:
-                    string url = "";
-                    if (!string.IsNullOrEmpty(act.GetInputParamValue(ActBrowserElement.Fields.URLSrc)) && act.GetInputParamValue(ActBrowserElement.Fields.URLSrc).Equals(ActBrowserElement.eURLSrc.UrlPOM.ToString()))
-                    {
-                        string POMGuid = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.PomGUID);
-
-                        if (!string.IsNullOrEmpty(POMGuid) && Guid.TryParse(POMGuid, out Guid parsedPOMGuid))
+                string AgentType = GetAgentAppName();
+                switch (act.ControlAction)
+                {
+                    case ActBrowserElement.eControlAction.Maximize:
+                        try
                         {
-                            ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(parsedPOMGuid);
-                            if (SelectedPOM != null)
+                            Driver.Manage().Window.Maximize();
+                        }
+                        catch (Exception ex)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, ex.Message);
+                        }
+
+                        break;
+
+                    case ActBrowserElement.eControlAction.OpenURLNewTab:
+                        string url = "";
+                        if (!string.IsNullOrEmpty(act.GetInputParamValue(ActBrowserElement.Fields.URLSrc)) && act.GetInputParamValue(ActBrowserElement.Fields.URLSrc).Equals(ActBrowserElement.eURLSrc.UrlPOM.ToString()))
+                        {
+                            string POMGuid = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.PomGUID);
+
+                            if (!string.IsNullOrEmpty(POMGuid) && Guid.TryParse(POMGuid, out Guid parsedPOMGuid))
                             {
-                                url = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
-                            }
-                            else
-                            {
-                                act.Error = "Error: Selected POM not found. Please select valid POM.";
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            act.Error = "Error: Selected POM not found (Empty or Invalid POM Guid). Please select valid POM.";
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        url = act.GetInputParamCalculatedValue("Value");
-                    }
-
-                    if (string.IsNullOrEmpty(url))
-                    {
-                        act.Error = "Error: Provided URL is empty. Please provide valid URL.";
-                        return;
-                    }
-                    OpenNewTab();
-                    GotoURL(act, url);
-                    break;
-
-                case ActBrowserElement.eControlAction.GotoURL:
-                    string gotoUrl = "";
-                    if (!string.IsNullOrEmpty(act.GetInputParamValue(ActBrowserElement.Fields.URLSrc)) && act.GetInputParamValue(ActBrowserElement.Fields.URLSrc).Equals(ActBrowserElement.eURLSrc.UrlPOM.ToString()))
-                    {
-                        string POMGuid = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.PomGUID);
-
-                        if (!string.IsNullOrEmpty(POMGuid) && Guid.TryParse(POMGuid, out Guid parsedPOMGuid))
-                        {
-                            ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(parsedPOMGuid);
-                            if (SelectedPOM != null)
-                            {
-                                gotoUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
-                            }
-                            else
-                            {
-                                act.Error = "Error: Selected POM not found. Please select valid POM.";
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            act.Error = "Error: Selected POM not found (Empty or Invalid POM Guid). Please select valid POM.";
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        gotoUrl = act.GetInputParamCalculatedValue("Value");
-                    }
-
-                    if (string.IsNullOrEmpty(gotoUrl))
-                    {
-                        act.Error = "Error: Provided URL is empty. Please provide valid URL.";
-                        return;
-                    }
-
-                    if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewTab.ToString()))
-                    {
-                        OpenNewTab();
-                    }
-                    else if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewWindow.ToString()))
-                    {
-                        OpenNewWindow();
-                    }
-
-                    GotoURL(act, gotoUrl);
-                    break;
-                case ActBrowserElement.eControlAction.Close:
-                    Driver.Close();
-                    break;
-
-                case ActBrowserElement.eControlAction.InitializeBrowser:
-                    this.StartDriver();
-                    break;
-
-                case ActBrowserElement.eControlAction.SwitchFrame:
-                    HandleSwitchFrame(act);
-                    break;
-
-                case ActBrowserElement.eControlAction.SwitchToDefaultFrame:
-                    Driver.SwitchTo().DefaultContent();
-                    break;
-
-                case ActBrowserElement.eControlAction.SwitchToParentFrame:
-                    Driver.SwitchTo().ParentFrame();
-                    break;
-
-                case ActBrowserElement.eControlAction.Refresh:
-                    Driver.Navigate().Refresh();
-                    break;
-
-                case ActBrowserElement.eControlAction.SwitchWindow:
-                    SwitchWindow(act);
-                    break;
-
-                case ActBrowserElement.eControlAction.GetWindowTitle:
-                    string title = Driver.Title;
-                    if (!string.IsNullOrEmpty(title))
-                    {
-                        act.AddOrUpdateReturnParamActual("Actual", title);
-                    }
-                    else
-                    {
-                        act.AddOrUpdateReturnParamActual("Actual", "");
-                    }
-
-                    break;
-
-                case ActBrowserElement.eControlAction.DeleteAllCookies:
-                    Driver.Manage().Cookies.DeleteAllCookies();
-                    break;
-
-                case ActBrowserElement.eControlAction.GetPageSource:
-                    act.AddOrUpdateReturnParamActual("PageSource", Driver.PageSource);
-                    break;
-                case ActBrowserElement.eControlAction.SwitchToDefaultWindow:
-                    Driver.SwitchTo().Window(DefaultWindowHandler);
-                    break;
-
-                case ActBrowserElement.eControlAction.GetPageURL:
-                    act.AddOrUpdateReturnParamActual("PageURL", Driver.Url);
-                    Uri currentUrl = new Uri(Driver.Url);
-                    act.AddOrUpdateReturnParamActual("Host", currentUrl.Host);
-                    act.AddOrUpdateReturnParamActual("Path", currentUrl.LocalPath);
-                    act.AddOrUpdateReturnParamActual("PathWithQuery", currentUrl.PathAndQuery);
-                    break;
-                case ActBrowserElement.eControlAction.InjectJS:
-                    AddJavaScriptToPage(act.ActInputValues[0].Value);
-                    break;
-                case ActBrowserElement.eControlAction.RunJavaScript:
-                    string script = act.GetInputParamCalculatedValue("Value");
-                    try
-                    {
-                        object a = null;
-                        if (!script.ToUpper().StartsWith("RETURN"))
-                        {
-                            script = "return " + script;
-                        }
-                        a = ((IJavaScriptExecutor)Driver).ExecuteScript(script);
-                        if (a != null)
-                        {
-                            act.AddOrUpdateReturnParamActual("Actual", a.ToString());
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "'";
-                    }
-                    break;
-                case ActBrowserElement.eControlAction.CheckPageLoaded:
-                    CheckifPageLoaded();
-                    break;
-                case ActBrowserElement.eControlAction.CloseTabExcept:
-                    CloseAllTabsExceptOne(act);
-                    break;
-                case ActBrowserElement.eControlAction.CloseAll:
-                    Driver.Quit();
-                    break;
-                case ActBrowserElement.eControlAction.GetBrowserLog:
-
-                    String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
-                    var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
-                    act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkLogs));
-                    foreach (var item in networkLogs)
-                    {
-                        Dictionary<string, object> dict = item as Dictionary<string, object>;
-                        if (dict != null)
-                        {
-                            if (dict.ContainsKey("name"))
-                            {
-                                var urlArray = dict.FirstOrDefault(x => x.Key == "name").Value.ToString().Split('/');
-
-                                var urlString = string.Empty;
-                                if (urlArray.Length > 0)
+                                ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(parsedPOMGuid);
+                                if (SelectedPOM != null)
                                 {
-                                    urlString = urlArray[urlArray.Length - 1];
-                                    if (string.IsNullOrEmpty(urlString) && urlArray.Length > 1)
-                                    {
-                                        urlString = urlArray[urlArray.Length - 2];
-                                    }
-                                    foreach (var val in dict)
-                                    {
-                                        act.AddOrUpdateReturnParamActual(Convert.ToString(urlString + ":[" + val.Key + "]"), Convert.ToString(val.Value));
-                                    }
+                                    url = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
+                                }
+                                else
+                                {
+                                    act.Error = "Error: Selected POM not found. Please select valid POM.";
+                                    return;
                                 }
                             }
-
+                            else
+                            {
+                                act.Error = "Error: Selected POM not found (Empty or Invalid POM Guid). Please select valid POM.";
+                                return;
+                            }
                         }
-
-                    }
-
-                    break;
-                case ActBrowserElement.eControlAction.GetConsoleLog:
-                    string logs = Newtonsoft.Json.JsonConvert.SerializeObject(Driver.Manage().Logs.GetLog(OpenQA.Selenium.LogType.Browser));
-                    string filePath = act.GetInputParamCalculatedValue("Value");
-                    switch (CreateConsoleLogFile(filePath, logs, act))
-                    {
-                        case 1: // in case the file is created successfully, print a message
-                            act.ExInfo = "Created a Console Log file in the path: " + filePath;
-                            break;
-                        case 0: // in case the filePath is null or empty, output the logs in Ginger
-                            act.AddOrUpdateReturnParamActual("Console logs", logs);
-                            break;
-                    }
-                    break;
-                case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
-                    mAct = act;
-                    SetUPDevTools(Driver);
-                    StartMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
-                    break;
-                case ActBrowserElement.eControlAction.GetNetworkLog:
-                    GetNetworkLogAsync(Driver, act).GetAwaiter().GetResult();
-                    break;
-                case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
-                    StopMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
-                    break;
-                case ActBrowserElement.eControlAction.NavigateBack:
-                    Driver.Navigate().Back();
-                    break;
-
-                case ActBrowserElement.eControlAction.AcceptMessageBox:
-                    try
-                    {
-                        Driver.SwitchTo().Alert().Accept();
-                    }
-                    catch (Exception e)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error when Accepting MessageBox - " + e.Message);
-                        return;
-                    }
-                    break;
-
-                case ActBrowserElement.eControlAction.DismissMessageBox:
-                    try
-                    {
-                        Driver.SwitchTo().Alert().Dismiss();
-                    }
-                    catch (Exception e)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error when Dismiss Alert Box - " + e.Message);
-                        return;
-                    }
-                    break;
-
-                case ActBrowserElement.eControlAction.GetMessageBoxText:
-                    try
-                    {
-                        string AlertBoxText = Driver.SwitchTo().Alert().Text;
-                        act.AddOrUpdateReturnParamActual("Actual", AlertBoxText);
-                        if (act.GetReturnParam("Actual") == null)
+                        else
                         {
-                            act.AddOrUpdateReturnParamActual("Actual", AlertBoxText);
+                            url = act.GetInputParamCalculatedValue("Value");
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error to Get Text Message Box - " + e.Message);
-                        return;
-                    }
-                    break;
 
-                case ActBrowserElement.eControlAction.SetAlertBoxText:
-                    try
-                    {
-                        Driver.SwitchTo().Alert().SendKeys(act.GetInputParamCalculatedValue("Value"));
-                    }
-                    catch (Exception e)
-                    {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error to Get Text Alert Box - " + e.Message);
-                        return;
-                    }
-                    break;
+                        if (string.IsNullOrEmpty(url))
+                        {
+                            act.Error = "Error: Provided URL is empty. Please provide valid URL.";
+                            return;
+                        }
+                        try
+                        {
+                            OpenNewTab();
+                            GotoURL(act, url);
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Status = eRunStatus.Failed;
+                            act.Error += ex.Message;
+                            Reporter.ToLog(eLogLevel.DEBUG, $"OpenNewTab {ex.Message} ", ex.InnerException);
+                        }
+                        
+                        break;
 
-                default:
-                    throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
+                    case ActBrowserElement.eControlAction.GotoURL:
+                        string gotoUrl = "";
+                        if (!string.IsNullOrEmpty(act.GetInputParamValue(ActBrowserElement.Fields.URLSrc)) && act.GetInputParamValue(ActBrowserElement.Fields.URLSrc).Equals(ActBrowserElement.eURLSrc.UrlPOM.ToString()))
+                        {
+                            string POMGuid = act.GetInputParamCalculatedValue(ActBrowserElement.Fields.PomGUID);
+
+                            if (!string.IsNullOrEmpty(POMGuid) && Guid.TryParse(POMGuid, out Guid parsedPOMGuid))
+                            {
+                                ApplicationPOMModel SelectedPOM = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<ApplicationPOMModel>(parsedPOMGuid);
+                                if (SelectedPOM != null)
+                                {
+                                    gotoUrl = ValueExpression.Calculate(this.Environment, this.BusinessFlow, SelectedPOM.PageURL, null);
+                                }
+                                else
+                                {
+                                    act.Error = "Error: Selected POM not found. Please select valid POM.";
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                act.Error = "Error: Selected POM not found (Empty or Invalid POM Guid). Please select valid POM.";
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            gotoUrl = act.GetInputParamCalculatedValue("Value");
+                        }
+
+                        if (string.IsNullOrEmpty(gotoUrl))
+                        {
+                            act.Error = "Error: Provided URL is empty. Please provide valid URL.";
+                            return;
+                        }
+
+                        if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewTab.ToString()))
+                        {
+                            try
+                            {
+                                OpenNewTab();
+                            }
+                            catch (Exception ex)
+                            {
+                                act.Status = eRunStatus.Failed;
+                                act.Error += ex.Message;
+                                Reporter.ToLog(eLogLevel.DEBUG, $"OpenNewTab {ex.Message} ", ex.InnerException);
+                            }
+
+                        }
+                        else if ((act.GetInputParamValue(ActBrowserElement.Fields.GotoURLType) == ActBrowserElement.eGotoURLType.NewWindow.ToString()))
+                        {
+                            try
+                            {
+                                OpenNewWindow();
+                            }
+                            catch (Exception ex)
+                            {
+                                act.Status = eRunStatus.Failed;
+                                act.Error += ex.Message;
+                                Reporter.ToLog(eLogLevel.DEBUG, $"OpenNewWindow {ex.Message} ", ex.InnerException);
+                            }
+                        }
+
+                        GotoURL(act, gotoUrl);
+                        break;
+                    case ActBrowserElement.eControlAction.Close:
+                        Driver.Close();
+                        break;
+
+                    case ActBrowserElement.eControlAction.InitializeBrowser:
+                        this.StartDriver();
+                        break;
+
+                    case ActBrowserElement.eControlAction.SwitchFrame:
+                        HandleSwitchFrame(act);
+                        break;
+
+                    case ActBrowserElement.eControlAction.SwitchToDefaultFrame:
+                        Driver.SwitchTo().DefaultContent();
+                        break;
+
+                    case ActBrowserElement.eControlAction.SwitchToParentFrame:
+                        Driver.SwitchTo().ParentFrame();
+                        break;
+
+                    case ActBrowserElement.eControlAction.Refresh:
+                        Driver.Navigate().Refresh();
+                        break;
+
+                    case ActBrowserElement.eControlAction.SwitchWindow:
+                        SwitchWindow(act);
+                        break;
+
+                    case ActBrowserElement.eControlAction.GetWindowTitle:
+                        string title = Driver.Title;
+                        if (!string.IsNullOrEmpty(title))
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", title);
+                        }
+                        else
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", "");
+                        }
+
+                        break;
+
+                    case ActBrowserElement.eControlAction.DeleteAllCookies:
+                        Driver.Manage().Cookies.DeleteAllCookies();
+                        break;
+
+                    case ActBrowserElement.eControlAction.GetPageSource:
+                        act.AddOrUpdateReturnParamActual("PageSource", Driver.PageSource);
+                        break;
+                    case ActBrowserElement.eControlAction.SwitchToDefaultWindow:
+                        Driver.SwitchTo().Window(DefaultWindowHandler);
+                        break;
+
+                    case ActBrowserElement.eControlAction.GetPageURL:
+                        act.AddOrUpdateReturnParamActual("PageURL", Driver.Url);
+                        Uri currentUrl = new Uri(Driver.Url);
+                        act.AddOrUpdateReturnParamActual("Host", currentUrl.Host);
+                        act.AddOrUpdateReturnParamActual("Path", currentUrl.LocalPath);
+                        act.AddOrUpdateReturnParamActual("PathWithQuery", currentUrl.PathAndQuery);
+                        break;
+                    case ActBrowserElement.eControlAction.InjectJS:
+                        AddJavaScriptToPage(act.ActInputValues[0].Value);
+                        break;
+                    case ActBrowserElement.eControlAction.RunJavaScript:
+                        string script = act.GetInputParamCalculatedValue("Value");
+                        try
+                        {
+                            object a = null;
+                            if (!script.ToUpper().StartsWith("RETURN"))
+                            {
+                                script = "return " + script;
+                            }
+                            a = ((IJavaScriptExecutor)Driver).ExecuteScript(script);
+                            if (a != null)
+                            {
+                                act.AddOrUpdateReturnParamActual("Actual", a.ToString());
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            act.Error = "Error: Failed to run the JavaScript: '" + script + "', Error: '" + ex.Message + "'";
+                        }
+                        break;
+                    case ActBrowserElement.eControlAction.CheckPageLoaded:
+                        CheckifPageLoaded();
+                        break;
+                    case ActBrowserElement.eControlAction.CloseTabExcept:
+                        CloseAllTabsExceptOne(act);
+                        break;
+                    case ActBrowserElement.eControlAction.CloseAll:
+                        Driver.Quit();
+                        break;
+                    case ActBrowserElement.eControlAction.GetBrowserLog:
+
+                        String scriptToExecute = "var performance = window.performance || window.mozPerformance || window.msPerformance || window.webkitPerformance || {}; var network = performance.getEntries() || {}; return network;";
+                        var networkLogs = ((IJavaScriptExecutor)Driver).ExecuteScript(scriptToExecute) as ReadOnlyCollection<object>;
+                        act.AddOrUpdateReturnParamActual("Raw Response", Newtonsoft.Json.JsonConvert.SerializeObject(networkLogs));
+                        foreach (var item in networkLogs)
+                        {
+                            Dictionary<string, object> dict = item as Dictionary<string, object>;
+                            if (dict != null)
+                            {
+                                if (dict.ContainsKey("name"))
+                                {
+                                    var urlArray = dict.FirstOrDefault(x => x.Key == "name").Value.ToString().Split('/');
+
+                                    var urlString = string.Empty;
+                                    if (urlArray.Length > 0)
+                                    {
+                                        urlString = urlArray[urlArray.Length - 1];
+                                        if (string.IsNullOrEmpty(urlString) && urlArray.Length > 1)
+                                        {
+                                            urlString = urlArray[urlArray.Length - 2];
+                                        }
+                                        foreach (var val in dict)
+                                        {
+                                            act.AddOrUpdateReturnParamActual(Convert.ToString(urlString + ":[" + val.Key + "]"), Convert.ToString(val.Value));
+                                        }
+                                    }
+                                }
+
+                            }
+
+                        }
+
+                        break;
+                    case ActBrowserElement.eControlAction.GetConsoleLog:
+                        string logs = Newtonsoft.Json.JsonConvert.SerializeObject(Driver.Manage().Logs.GetLog(OpenQA.Selenium.LogType.Browser));
+                        string filePath = act.GetInputParamCalculatedValue("Value");
+                        switch (CreateConsoleLogFile(filePath, logs, act))
+                        {
+                            case 1: // in case the file is created successfully, print a message
+                                act.ExInfo = "Created a Console Log file in the path: " + filePath;
+                                break;
+                            case 0: // in case the filePath is null or empty, output the logs in Ginger
+                                act.AddOrUpdateReturnParamActual("Console logs", logs);
+                                break;
+                        }
+                        break;
+                    case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
+                        mAct = act;
+                        SetUPDevTools(Driver);
+                        StartMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
+                        break;
+                    case ActBrowserElement.eControlAction.GetNetworkLog:
+                        GetNetworkLogAsync(Driver, act).GetAwaiter().GetResult();
+                        break;
+                    case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
+                        StopMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
+                        break;
+                    case ActBrowserElement.eControlAction.NavigateBack:
+                        Driver.Navigate().Back();
+                        break;
+
+                    case ActBrowserElement.eControlAction.AcceptMessageBox:
+                        try
+                        {
+                            Driver.SwitchTo().Alert().Accept();
+                        }
+                        catch (Exception e)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error when Accepting MessageBox - " + e.Message);
+                            return;
+                        }
+                        break;
+
+                    case ActBrowserElement.eControlAction.DismissMessageBox:
+                        try
+                        {
+                            Driver.SwitchTo().Alert().Dismiss();
+                        }
+                        catch (Exception e)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error when Dismiss Alert Box - " + e.Message);
+                            return;
+                        }
+                        break;
+
+                    case ActBrowserElement.eControlAction.GetMessageBoxText:
+                        try
+                        {
+                            string AlertBoxText = Driver.SwitchTo().Alert().Text;
+                            act.AddOrUpdateReturnParamActual("Actual", AlertBoxText);
+                            if (act.GetReturnParam("Actual") == null)
+                            {
+                                act.AddOrUpdateReturnParamActual("Actual", AlertBoxText);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error to Get Text Message Box - " + e.Message);
+                            return;
+                        }
+                        break;
+
+                    case ActBrowserElement.eControlAction.SetAlertBoxText:
+                        try
+                        {
+                            Driver.SwitchTo().Alert().SendKeys(act.GetInputParamCalculatedValue("Value"));
+                        }
+                        catch (Exception e)
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error to Get Text Alert Box - " + e.Message);
+                            return;
+                        }
+                        break;
+
+                    default:
+                        throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
+                }
             }
+            catch(Exception ex)
+            {
+                act.Status = eRunStatus.Failed;
+                act.Error += ex.Message;
+                Reporter.ToLog(eLogLevel.DEBUG, $"ActBrowserElementHandler {ex.Message} ", ex.InnerException);
+            }
+            
         }
 
         private void OpenNewWindow()
@@ -7966,7 +8015,7 @@ namespace GingerCore.Drivers
                             catch (InvalidOperationException ex)
                             {
                                 ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
-                                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when HandleActUIElement");
+                                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when HandleActUIElement");
                             }
                         }
                         else
@@ -8625,84 +8674,92 @@ namespace GingerCore.Drivers
         }
         async Task<ElementInfo> IVisualTestingDriver.GetElementAtPoint(long ptX, long ptY)
         {
-            HTMLElementInfo elemInfo = null;
-
-            string iframeXPath = string.Empty;
-            Point parentElementLocation = new Point(0, 0);
-
-            while (true)
+            try
             {
-                string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
+                HTMLElementInfo elemInfo = null;
 
-                IWebElement ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+                string iframeXPath = string.Empty;
+                Point parentElementLocation = new Point(0, 0);
 
-                if (ele == null)
+                while (true)
                 {
-                    return null;
-                }
-                else
-                {
-                    HtmlNode elemNode = null;
-                    string elemId;
-                    try
+                    string s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
+
+                    IWebElement ele = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, ptX, ptY);
+
+                    if (ele == null)
                     {
-                        elemId = ele.GetDomProperty("id");
-                        if (SSPageDoc == null)
+                        return null;
+                    }
+                    else
+                    {
+                        HtmlNode elemNode = null;
+                        string elemId;
+                        try
                         {
-                            SSPageDoc = new HtmlDocument();
-                            SSPageDoc.LoadHtml(GetCurrentPageSourceString());
+                            elemId = ele.GetDomProperty("id");
+                            if (SSPageDoc == null)
+                            {
+                                SSPageDoc = new HtmlDocument();
+                                SSPageDoc.LoadHtml(GetCurrentPageSourceString());
+                            }
+                            elemNode = SSPageDoc.DocumentNode.Descendants().FirstOrDefault(x => x.Id.Equals(elemId));
                         }
-                        elemNode = SSPageDoc.DocumentNode.Descendants().FirstOrDefault(x => x.Id.Equals(elemId));
+                        catch (Exception exc)
+                        {
+                            elemId = "";
+                        }
+
+
+                        elemInfo = new HTMLElementInfo();
+
+                        var elemTypeEnum = GetElementTypeEnum(ele);
+                        elemInfo.ElementType = elemTypeEnum.Item1;
+                        elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
+                        elemInfo.ElementObject = ele;
+                        elemInfo.Path = iframeXPath;
+                        elemInfo.XPath = string.IsNullOrEmpty(elemId) ? GenerateXpathForIWebElement(ele, string.Empty) : elemNode.XPath;
+                        elemInfo.HTMLElementObject = elemNode;
+
+                        ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
                     }
-                    catch (Exception exc)
+
+                    if (elemInfo.ElementTypeEnum != eElementType.Iframe)    // ele.TagName != "frame" && ele.TagName != "iframe")
                     {
-                        elemId = "";
+                        Driver.SwitchTo().DefaultContent();
+
+                        break;
                     }
 
+                    if (string.IsNullOrEmpty(iframeXPath))
+                    {
+                        iframeXPath = elemInfo.XPath;
+                    }
+                    else
+                    {
+                        iframeXPath += "," + elemInfo.XPath;
+                    }
 
-                    elemInfo = new HTMLElementInfo();
+                    parentElementLocation.X += elemInfo.X;
+                    parentElementLocation.Y += elemInfo.Y;
 
-                    var elemTypeEnum = GetElementTypeEnum(ele);
-                    elemInfo.ElementType = elemTypeEnum.Item1;
-                    elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
-                    elemInfo.ElementObject = ele;
-                    elemInfo.Path = iframeXPath;
-                    elemInfo.XPath = string.IsNullOrEmpty(elemId) ? GenerateXpathForIWebElement(ele, string.Empty) : elemNode.XPath;
-                    elemInfo.HTMLElementObject = elemNode;
+                    Point p_Pos = GetElementPosition((RemoteWebElement)ele);
+                    ptX -= p_Pos.X;
+                    ptY -= p_Pos.Y;
 
-                    ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
+                    Driver.SwitchTo().Frame(ele);
                 }
 
-                if (elemInfo.ElementTypeEnum != eElementType.Iframe)    // ele.TagName != "frame" && ele.TagName != "iframe")
-                {
-                    Driver.SwitchTo().DefaultContent();
+                elemInfo.X += parentElementLocation.X;
+                elemInfo.Y += parentElementLocation.Y;
 
-                    break;
-                }
-
-                if (string.IsNullOrEmpty(iframeXPath))
-                {
-                    iframeXPath = elemInfo.XPath;
-                }
-                else
-                {
-                    iframeXPath += "," + elemInfo.XPath;
-                }
-
-                parentElementLocation.X += elemInfo.X;
-                parentElementLocation.Y += elemInfo.Y;
-
-                Point p_Pos = GetElementPosition((RemoteWebElement)ele);
-                ptX -= p_Pos.X;
-                ptY -= p_Pos.Y;
-
-                Driver.SwitchTo().Frame(ele);
+                return elemInfo;
             }
-
-            elemInfo.X += parentElementLocation.X;
-            elemInfo.Y += parentElementLocation.Y;
-
-            return elemInfo;
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Get Element At Point", ex);
+                return null;
+            }
         }
 
         public RemoteWebElement GetElementFromPoint(long X, long Y)
@@ -9666,7 +9723,17 @@ namespace GingerCore.Drivers
             if (SSPageDoc == null)
             {
                 SSPageDoc = new HtmlDocument();
-                await Task.Run(() => SSPageDoc.LoadHtml(Driver.PageSource));
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        SSPageDoc.LoadHtml(Driver.PageSource);
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to Page Source document", ex);
+                    }
+                });
             }
 
             return SSPageDoc;
@@ -9699,6 +9766,44 @@ namespace GingerCore.Drivers
                 }
             }
 
+        }
+
+        public void SetUnhandledPromptBehavior(DriverOptions options)
+        {
+            if (UnhandledPromptBehavior == null)
+            {
+                return;
+            }
+
+            if (Enum.TryParse(UnhandledPromptBehavior, true, out UnhandledPromptBehavior unhandledPromptBehavior))
+            {
+                switch (unhandledPromptBehavior)
+                {
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Ignore:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Ignore;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Accept:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Accept;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Dismiss:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Dismiss;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify;
+                        break;
+
+                    default:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Default;
+                        break;
+                }
+            }
         }
 
         private void SetBrowserLogLevel(DriverOptions options)
@@ -9763,9 +9868,9 @@ namespace GingerCore.Drivers
             devTools = webDriver as IDevTools;
 
             //DevTool Session 
-            devToolsSession = devTools.GetDevToolsSession(113);
-            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V113.DevToolsSessionDomains>();
-            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V113.Network.EnableCommandSettings());
+            devToolsSession = devTools.GetDevToolsSession(116);
+            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains>();
+            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V116.Network.EnableCommandSettings());
 
 
         }
@@ -9830,7 +9935,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V113.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V116.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 

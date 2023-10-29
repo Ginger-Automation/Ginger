@@ -121,7 +121,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"RQM connection Failed{ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"RQM connection Failed {ex.Message}" , ex);
             }
             return isUserAuthen;
         }
@@ -175,7 +175,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Project not found{ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Project not found{ex.Message}",ex);
             }
             return RQMProjects.ToDictionary(x => x, x => x);
         }
@@ -200,28 +200,32 @@ namespace GingerCore.ALM.RQM
         }
 
         RQMProjectListConfiguration RQMProjectListConfig;
+        private readonly object fileLock = new object();
         XmlReader reader;
         private void GetRQMProjectListConfiguration()
         {
             try
             {
-                if (RQMProjectListConfig != null)
-                { return; }
-                string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
-                if (File.Exists(importConfigTemplate))
-
+                lock (fileLock)
                 {
-                    XmlSerializer serializer = new XmlSerializer(typeof(RQMProjectListConfiguration));
+                    if (RQMProjectListConfig != null)
+                    { return; }
+                    string importConfigTemplate = System.IO.Path.Combine(RQMCore.ConfigPackageFolderPath, "RQM_Import", "RQM_ImportConfigs_Template.xml");
+                    if (File.Exists(importConfigTemplate))
 
-                    FileStream fs = new FileStream(importConfigTemplate, FileMode.Open);
-                    reader = XmlReader.Create(fs);
-                    RQMProjectListConfig = (RQMProjectListConfiguration)serializer.Deserialize(reader);
-                    fs.Close();
+                    {
+                        XmlSerializer serializer = new XmlSerializer(typeof(RQMProjectListConfiguration));
+
+                        FileStream fs = new FileStream(importConfigTemplate, FileMode.Open);
+                        reader = XmlReader.Create(fs);
+                        RQMProjectListConfig = (RQMProjectListConfiguration)serializer.Deserialize(reader);
+                        fs.Close();
+                    } 
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to import RQM test plans, RQM_ImportConfigs_Template.xml wasn't found {ex.Message} ");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error while trying to import RQM test plans, RQM_ImportConfigs_Template.xml wasn't found {ex.Message} ",ex);
             }
         }
 
@@ -288,7 +292,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Plan list not found {ex.Message} ");
+                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Plan list not found {ex.Message} ",ex);
             }
             return RQMTestPlanList;
         }
@@ -390,7 +394,7 @@ namespace GingerCore.ALM.RQM
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"RQMConnect GetRQMTestPlanByIdByProject :{JsonConvert.SerializeObject(ex)}");
-                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Plan by Id not found {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Plan by Id not found {ex.Message}", ex);
             }
 
             return testPlanRes;
@@ -476,7 +480,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Test Plan full data not found {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Test Plan full data not found {ex.Message}", ex);
             }
             return testPlan;
         }
@@ -602,7 +606,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Test Case list not found {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Test Case list not found {ex.Message}", ex);
             }
             return RQMTestCaseList;
         }
@@ -655,7 +659,7 @@ namespace GingerCore.ALM.RQM
                         catch (Exception ex)
                         {
                             responseDataVersionedTS = new RqmResponseData();
-                            Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Script by test plan not found {ex.Message}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Script by test plan not found {ex.Message}", ex);
                         }
                         XmlDocument docVersionedTS = new XmlDocument();
                         docVersionedTS.LoadXml(!string.IsNullOrEmpty(responseDataVersionedTS.responseText) ? responseDataVersionedTS.responseText : string.Empty);
@@ -672,13 +676,13 @@ namespace GingerCore.ALM.RQM
                     }
                     catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Case by test plan not found { ex.Message}");
+                        Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Case by test plan not found { ex.Message}", ex);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Execution Records by test plan not found {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Execution Records by test plan not found {ex.Message}", ex);
             }
             return RQMExecutionRecords;
         }
@@ -702,71 +706,81 @@ namespace GingerCore.ALM.RQM
                 RqmResponseData responseDataExecutionRecords = RQMRep.GetExecutionByTestPlanAndTestCase(loginData, currentProjPrefix, currentProjGuid, testPlanUrlVersioned, testCaseURLPathVersioned);
 
                 XmlDocument docExecutionRecords = new XmlDocument();
-
-                docExecutionRecords.LoadXml(responseDataExecutionRecords.responseText);
-
-                XmlNamespaceManager nsmgrExecutionRecords = new XmlNamespaceManager(reader.NameTable);
-
-                currentRQMProjectMapping.RQMExecutionRecordsMapping.RQMNameSpaces.RQMNameSpaceList.ForEach(y => nsmgrExecutionRecords.AddNamespace(y.RQMNameSpacePrefix, y.RQMNameSpaceName));
-
-                XmlNode responseDataNodeExecutionRecords = docExecutionRecords.DocumentElement;
-
-                XmlNodeList executionRecords = responseDataNodeExecutionRecords.SelectNodes(currentRQMProjectMapping.RQMExecutionRecordsMapping.PathXML, nsmgrExecutionRecords);
-
-                foreach (XmlNode executionRecord in executionRecords)
+                if (responseDataExecutionRecords.ErrorCode == 400)
                 {
-                    //string curentExecutionRecordUri = executionRecord.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.RelatedTestCaseUri, nsmgrExecutionRecords).Attributes[0].InnerText.ToString();
-                    //RqmResponseData responseDataVersionedTC = RQMRep.GetRqmResponse(loginData, new Uri(curentExecutionRecordUri));
-                    //XmlDocument docVersionedTC = new XmlDocument();
-                    //docVersionedTC.LoadXml(responseDataVersionedTC.responseText);
-                    //XmlNode responseDataNodeVersionedTC = docVersionedTC.DocumentElement;
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - Test Case not found {responseDataExecutionRecords.ErrorCode}, {responseDataExecutionRecords.ErrorDesc}");
+                }
+                else if (responseDataExecutionRecords.ErrorCode != 0)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {responseDataExecutionRecords.ErrorCode}, {responseDataExecutionRecords.ErrorDesc}");
+                }
+                else
+                {
+                    docExecutionRecords.LoadXml(responseDataExecutionRecords.responseText);
 
-                    //RqmResponseData responseDataVersionedTS;
+                    XmlNamespaceManager nsmgrExecutionRecords = new XmlNamespaceManager(reader.NameTable);
 
-                    //string relatedTestScriptId = "0";
-                    //try
-                    //{
-                    //    string curentExecutionRecordScriptUri = executionRecord.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.ExecutesTestScriptUri, nsmgrExecutionRecords) != null ? executionRecord.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.ExecutesTestScriptUri, nsmgrExecutionRecords).Attributes[0].InnerText.ToString() : string.Empty;
-                    //    if (!string.IsNullOrEmpty(curentExecutionRecordScriptUri))
-                    //    {
-                    //        responseDataVersionedTS = RQMRep.GetRqmResponse(loginData, new Uri(curentExecutionRecordScriptUri));
-                    //    }
-                    //    else
-                    //    {
-                    //        curentExecutionRecordScriptUri = responseDataNodeVersionedTC.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.UsesTestScriptUri, nsmgrExecutionRecords) != null ? responseDataNodeVersionedTC.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.UsesTestScriptUri, nsmgrExecutionRecords).Attributes[0].InnerText.ToString() : string.Empty;
-                    //        if (!string.IsNullOrEmpty(curentExecutionRecordScriptUri))
-                    //        {
-                    //            responseDataVersionedTS = RQMRep.GetRqmResponse(loginData, new Uri(curentExecutionRecordScriptUri));
-                    //        }
-                    //        else
-                    //        {
-                    //            responseDataVersionedTS = new RqmResponseData();
-                    //            Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Script by test Case not found");
-                    //        }
+                    currentRQMProjectMapping.RQMExecutionRecordsMapping.RQMNameSpaces.RQMNameSpaceList.ForEach(y => nsmgrExecutionRecords.AddNamespace(y.RQMNameSpacePrefix, y.RQMNameSpaceName));
 
-                    //    }
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    responseDataVersionedTS = new RqmResponseData();
-                    //    Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Script by test Case not found { ex.Message}");
-                    //}
-                    //try
-                    //{
-                    //    if (!string.IsNullOrEmpty(responseDataVersionedTS.responseText))
-                    //    {
-                    //        XmlDocument docVersionedTS = new XmlDocument();
-                    //        docVersionedTS.LoadXml(responseDataVersionedTS.responseText);
-                    //        XmlNode responseDataNodeVersionedTS = docVersionedTS.DocumentElement;
-                    //        relatedTestScriptId = responseDataNodeVersionedTS.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.VersioinedTestScriptXmlPathToID, nsmgrExecutionRecords).InnerText;
-                    //    }
-                    //}
-                    //catch { }
+                    XmlNode responseDataNodeExecutionRecords = docExecutionRecords.DocumentElement;
 
-                    erExportID = executionRecord.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.RQMID, nsmgrExecutionRecords).InnerText;
-                    if (!string.IsNullOrEmpty(erExportID) && erExportID != "0")
+                    XmlNodeList executionRecords = responseDataNodeExecutionRecords.SelectNodes(currentRQMProjectMapping.RQMExecutionRecordsMapping.PathXML, nsmgrExecutionRecords);
+
+                    foreach (XmlNode executionRecord in executionRecords)
                     {
-                        return;
+                        //string curentExecutionRecordUri = executionRecord.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.RelatedTestCaseUri, nsmgrExecutionRecords).Attributes[0].InnerText.ToString();
+                        //RqmResponseData responseDataVersionedTC = RQMRep.GetRqmResponse(loginData, new Uri(curentExecutionRecordUri));
+                        //XmlDocument docVersionedTC = new XmlDocument();
+                        //docVersionedTC.LoadXml(responseDataVersionedTC.responseText);
+                        //XmlNode responseDataNodeVersionedTC = docVersionedTC.DocumentElement;
+
+                        //RqmResponseData responseDataVersionedTS;
+
+                        //string relatedTestScriptId = "0";
+                        //try
+                        //{
+                        //    string curentExecutionRecordScriptUri = executionRecord.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.ExecutesTestScriptUri, nsmgrExecutionRecords) != null ? executionRecord.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.ExecutesTestScriptUri, nsmgrExecutionRecords).Attributes[0].InnerText.ToString() : string.Empty;
+                        //    if (!string.IsNullOrEmpty(curentExecutionRecordScriptUri))
+                        //    {
+                        //        responseDataVersionedTS = RQMRep.GetRqmResponse(loginData, new Uri(curentExecutionRecordScriptUri));
+                        //    }
+                        //    else
+                        //    {
+                        //        curentExecutionRecordScriptUri = responseDataNodeVersionedTC.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.UsesTestScriptUri, nsmgrExecutionRecords) != null ? responseDataNodeVersionedTC.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.UsesTestScriptUri, nsmgrExecutionRecords).Attributes[0].InnerText.ToString() : string.Empty;
+                        //        if (!string.IsNullOrEmpty(curentExecutionRecordScriptUri))
+                        //        {
+                        //            responseDataVersionedTS = RQMRep.GetRqmResponse(loginData, new Uri(curentExecutionRecordScriptUri));
+                        //        }
+                        //        else
+                        //        {
+                        //            responseDataVersionedTS = new RqmResponseData();
+                        //            Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Script by test Case not found");
+                        //        }
+
+                        //    }
+                        //}
+                        //catch (Exception ex)
+                        //{
+                        //    responseDataVersionedTS = new RqmResponseData();
+                        //    Reporter.ToLog(eLogLevel.ERROR, $"Execution Test Script by test Case not found { ex.Message}");
+                        //}
+                        //try
+                        //{
+                        //    if (!string.IsNullOrEmpty(responseDataVersionedTS.responseText))
+                        //    {
+                        //        XmlDocument docVersionedTS = new XmlDocument();
+                        //        docVersionedTS.LoadXml(responseDataVersionedTS.responseText);
+                        //        XmlNode responseDataNodeVersionedTS = docVersionedTS.DocumentElement;
+                        //        relatedTestScriptId = responseDataNodeVersionedTS.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.VersioinedTestScriptXmlPathToID, nsmgrExecutionRecords).InnerText;
+                        //    }
+                        //}
+                        //catch { }
+
+                        erExportID = executionRecord.SelectSingleNode(currentRQMProjectMapping.RQMExecutionRecordsMapping.RQMID, nsmgrExecutionRecords).InnerText;
+                        if (!string.IsNullOrEmpty(erExportID) && erExportID != "0")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -845,7 +859,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Test Suite result not found {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Test Suite result not found {ex.Message}", ex);
             }
             return RQMExecutionRecords;
         }
@@ -858,16 +872,27 @@ namespace GingerCore.ALM.RQM
                 try //skip result incase of error, defect #5164
                 {
                     XmlDocument doc = new XmlDocument();
-                    doc.LoadXml(responseData.responseText);
-                    XmlNodeList TesCaseList = doc.GetElementsByTagName("oslc_qm:testCase");
-                    foreach (XmlNode TesCase in TesCaseList)
+                    if(responseData.ErrorCode == 400)
                     {
-                        XmlNodeList innerNodes = TesCase.ChildNodes;
-                        foreach (XmlNode innerNode in innerNodes)
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - Test Case not found {responseData.ErrorCode}, {responseData.ErrorDesc}");
+                    }
+                    else if(responseData.ErrorCode != 0)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - {responseData.ErrorCode}, {responseData.ErrorDesc}");
+                    }
+                    else
+                    {
+                        doc.LoadXml(responseData.responseText);
+                        XmlNodeList TesCaseList = doc.GetElementsByTagName("oslc_qm:testCase");
+                        foreach (XmlNode TesCase in TesCaseList)
                         {
-                            if (innerNode.Name.Equals("oslc_qm:TestCase", StringComparison.OrdinalIgnoreCase))
+                            XmlNodeList innerNodes = TesCase.ChildNodes;
+                            foreach (XmlNode innerNode in innerNodes)
                             {
-                                return innerNode.Attributes.Count > 0 ? innerNode.Attributes["rdf:about"].Value : string.Empty;
+                                if (innerNode.Name.Equals("oslc_qm:TestCase", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    return innerNode.Attributes.Count > 0 ? innerNode.Attributes["rdf:about"].Value : string.Empty;
+                                }
                             }
                         }
                     }
@@ -881,9 +906,9 @@ namespace GingerCore.ALM.RQM
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"RQMConnect GetRQMTestPlanByIdByProject :{JsonConvert.SerializeObject(ex)}");
-                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Case by Id not found {ex.Message}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Project Test Case by Id not found {ex.Message}", ex);
             }
-            return "";
+            return string.Empty;
         }
     }
 }

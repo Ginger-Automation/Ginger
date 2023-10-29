@@ -42,7 +42,7 @@ namespace Amdocs.Ginger.CoreNET
                     var response = httpClient.GetAsync(endpoint).Result;
                     if (!response.IsSuccessStatusCode)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
                     }
                     else
                     {
@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET
                     var response = httpClient.GetAsync(endpoint).Result;
                     if (!response.IsSuccessStatusCode)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetRunsetExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetRunsetExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
                     }
                     else
                     {
@@ -104,7 +104,7 @@ namespace Amdocs.Ginger.CoreNET
                     ExecutionDurationHHMMSS = GingerCoreNET.GeneralLib.General.TimeConvert((runsetHLInfo.Duration / 1000).ToString()),
                     RunSetExecutionStatus = runStatus,
                     DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.Remote
-                });
+                }); ;
             }
 
             return runSetReports;

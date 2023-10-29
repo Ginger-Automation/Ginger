@@ -153,10 +153,7 @@ namespace GingerCore.ALM
         {
             //if (this.loginDto == null)
             //{
-            AlmResponseWithData<AlmDomainColl> domains = Task.Run(() =>
-            {
-                return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
-            }).Result;
+            AlmResponseWithData<AlmDomainColl> domains = GetAlmDomainsTask();
             AlmDomain domain = domains.DataResult.FirstOrDefault(f => f.DomainName.Equals(ALMCore.DefaultAlmConfig.ALMDomain));
             ProjectArea project = domain.Projects.FirstOrDefault(p => p.ProjectName.Equals(ALMCore.DefaultAlmConfig.ALMProjectName));
             this.loginDto = new LoginDTO()
@@ -796,23 +793,28 @@ namespace GingerCore.ALM
         {
             if (domainsProjectsData == null)
             {
-                domainsProjectsData = Task.Run(() =>
-                {
-                    return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
-                }).Result;
+                domainsProjectsData = GetAlmDomainsTask();
             }
 
             return domainsProjectsData.DataResult.FirstOrDefault(f => f.DomainName.Equals(ALMDomainName)).Projects.ToDictionary(project => project.ProjectName, project => project.ProjectName);
+        }
+
+        private AlmResponseWithData<AlmDomainColl> GetAlmDomainsTask()
+        {
+            var domainsProjectsDataTask = Task.Run(() =>
+            {
+                return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
+            });
+            Task.WaitAll(new Task[] { domainsProjectsDataTask });
+           
+            return domainsProjectsDataTask.Result;
         }
 
         public override List<string> GetALMDomains()
         {
             if (domainsProjectsData == null)
             {
-                domainsProjectsData = Task.Run(() =>
-                {
-                    return octaneRepository.GetLoginProjects(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL);
-                }).Result;
+                domainsProjectsData = GetAlmDomainsTask();
             }
 
             return domainsProjectsData.DataResult.Select(f => f.DomainName).ToList();
@@ -1590,7 +1592,14 @@ namespace GingerCore.ALM
             CrossQueryPhrase qd = new CrossQueryPhrase("test_suite", new LogicalQueryPhrase("id", testSuiteId, ComparisonOperator.Equal));
             await Task.Run(() =>
             {
-                this.octaneRepository.DeleteEntity<TestSuiteLinkToTests>(GetLoginDTO(), new List<IQueryPhrase>() { qd });
+                try
+                {
+                    this.octaneRepository.DeleteEntity<TestSuiteLinkToTests>(GetLoginDTO(), new List<IQueryPhrase>() { qd });
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to Delete Entity", ex);
+                }
             });
             LinkTestCasesToTestSuite(testSuiteId, businessFlow.ActivitiesGroups.Select(f => int.Parse(f.ExternalID)).ToList());
         }

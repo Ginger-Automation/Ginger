@@ -16,13 +16,12 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace GingerCore.Actions
 {
@@ -30,17 +29,17 @@ namespace GingerCore.Actions
     public class ActScreenShot : Act
     {
         public override string ActionDescription { get { return "Screen Shot Action"; } }
-        public override string ActionUserDescription { get { return "Takes screen shot"; } }
+        public override string ActionUserDescription { get { return "Takes a screenshot"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action in case you need to automate screen shot of page.");
+            TBH.AddText("Used to automate the capturing of a screenshot for a web page.");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
-            TBH.AddText("To use this action,select Locate By and locate value and enter folder name where you want to save the screen shot by click on browse buttons");
+            TBH.AddText("Enter the file path where you'd like to save the screenshot. Alternatively, click the browse button to choose a save location. If no filename is included, a default name will be given.");
             TBH.AddLineBreak();
             TBH.AddLineBreak();
-            TBH.AddText("To use this action, please provide the folder path where do you want to save screenshots.");
+            TBH.AddText("If including a filename in your path, make sure to provide the file with the .jpeg extension.");
         }
 
         public override string ActionEditPage { get { return "ActScreenShotEditPage"; } }
@@ -66,16 +65,13 @@ namespace GingerCore.Actions
             }
         }
 
-
-
-        public override String ActionType
+        public override string ActionType
         {
             get
             {
                 return "Take Screen Shot";
             }
         }
-
 
         public new static partial class Fields
         {
@@ -95,84 +91,116 @@ namespace GingerCore.Actions
             }
         }
 
-        public override void PostExecute()
+        private const string DEFAULT_IMAGE_EXTENSION = ".jpeg";
+
+        private const string TILDE_PATH_PREFIX = @"\";
+
+        private string ConstructFilePath(string directory, string fileName, string extension, int? index = null)
+        {
+            string baseName = index.HasValue ? $"{fileName}_{index}" : fileName;
+            return Path.Combine(directory, baseName + extension);
+        }
+
+        private bool ValidateInput()
         {
             if (string.IsNullOrEmpty(SaveToFileName))
             {
-                Error = "Missing path to save the screen shot into";
-                return;
+                Error = "File pathname for saving the screenshot was not provided.";
+                return false;
             }
 
-
-            string DirectoryPath = SaveToFileName;
-
-            if (DirectoryPath.StartsWith(@"~\"))
+            string fileExtension = Path.GetExtension(SaveToFileName);
+            if (!string.IsNullOrEmpty(fileExtension) && fileExtension != DEFAULT_IMAGE_EXTENSION)
             {
-                DirectoryPath = Path.Combine(SolutionFolder, DirectoryPath.Replace(@"~\", string.Empty));
+                Error = $"Unsupported file extension '{fileExtension}'. Only {DEFAULT_IMAGE_EXTENSION} is allowed.";
+                return false;
             }
 
-            if (!Directory.Exists(DirectoryPath))
+            if (!ScreenShots.Any())
+            {
+                Error = "No screenshots were captured for saving.";
+                return false;
+            }
+            return true;
+        }
+
+        private string ManageFilePath()
+        {
+            string directoryPath;
+
+            if (!SaveToFileName.EndsWith(DEFAULT_IMAGE_EXTENSION) && !Path.EndsInDirectorySeparator(SaveToFileName))
+            {
+                SaveToFileName += Path.DirectorySeparatorChar;
+                directoryPath = Path.GetDirectoryName(SaveToFileName + Path.DirectorySeparatorChar);
+            }
+            else
+            {
+                directoryPath = Path.GetDirectoryName(SaveToFileName);
+            }
+
+            if (directoryPath.StartsWith(TILDE_PATH_PREFIX))
+            {
+                directoryPath = Path.Combine(SolutionFolder, directoryPath.Replace(TILDE_PATH_PREFIX, string.Empty));
+            }
+
+            if (!Directory.Exists(directoryPath))
             {
                 try
                 {
-                    Directory.CreateDirectory(DirectoryPath);
+                    Directory.CreateDirectory(directoryPath);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                    Error = string.Concat("Invalid Folder Path. :", DirectoryPath);
-                    throw ex;
+                    Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                    Error = $"The provided folder path is invalid: {directoryPath}";
+                    throw;
                 }
-
             }
 
-            String FileName = this.Description;
-            String timeStamp = DateTime.Now.ToString("ddMMyyyyHHmmss");
+            return directoryPath;
+        }
+        private void SaveImages(string directoryPath)
+        {
+            string fileName = Path.GetFileNameWithoutExtension(SaveToFileName);
+            string fileExtension = Path.GetExtension(SaveToFileName);
 
-            FileName += timeStamp;
-
-
-            if (ScreenShots.Count == 0)
+            if (string.IsNullOrEmpty(fileExtension))
             {
-                Error = "Failed to capture screen shots to save";
+                fileName = $"{Description}{DateTime.Now:ddMMyyyyHHmmss}";
+                fileExtension = DEFAULT_IMAGE_EXTENSION;
+            }
+
+            Dictionary<string, object> outputFilePaths = new();
+            for (int i = 0; i < ScreenShots.Count; i++)
+            {
+                string sourceFileName = ScreenShots[i];
+                string destFileName = ConstructFilePath(directoryPath, fileName, fileExtension, i == 0 ? null : i);
+
+                // Copy files from existing screenshot directory to path provided by user 
+                File.Copy(sourceFileName, destFileName, overwrite: true);
+
+                string key = i == 0 ? "ScreenshotFilePath" : $"ScreenshotFilePath{i}";
+                outputFilePaths.Add(key, destFileName);
+            }
+
+            AddToOutputValues(outputFilePaths);
+        }
+
+        public override void PostExecute()
+        {
+            try
+            {
+                if (ValidateInput())
+                {
+                    string directoryPath = ManageFilePath();
+                    SaveImages(directoryPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Error = ex.Message;
                 return;
             }
-
-            //TODO: make it simple file copy + change var to folder to save not file name
-            ObservableList<Bitmap> Bitmp = new ObservableList<Bitmap>();
-            foreach (String path in ScreenShots)
-            {
-                Bitmap bmp = Ginger.Utils.BitmapManager.FileToBitmapImage(path);
-                Bitmp.Add(bmp);
-            }
-
-            Dictionary<string, object> outFilePath = new Dictionary<string, object>();
-
-            foreach (Bitmap Bitmap in Bitmp)
-            {
-                using (Bitmap)
-                {
-                    string filePath = "";
-                    string indexBitmp = "";
-                    if (Bitmp.IndexOf(Bitmap) == 0)
-                    {
-                        filePath += DirectoryPath + @"\" + FileName + ".jpg";
-                        Bitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
-                    }
-                    else
-                    {
-                        int i = Bitmp.IndexOf(Bitmap);
-                        indexBitmp = i.ToString();
-                        filePath += DirectoryPath + @"\" + FileName + "_" + i.ToString() + ".jpg";
-                        Bitmap.Save(filePath, System.Drawing.Imaging.ImageFormat.Jpeg);
-                    }
-
-                    outFilePath.Add("ScreenshotFilePath" + indexBitmp, filePath);
-                }
-            }
-
-            this.AddToOutputValues(outFilePath);
-
         }
     }
 }

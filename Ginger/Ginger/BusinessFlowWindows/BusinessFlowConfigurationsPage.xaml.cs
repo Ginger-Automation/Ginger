@@ -21,7 +21,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.BusinessFlowWindows;
+using Ginger.ConflictResolve;
 using Ginger.UserControls;
+using System.Collections.Generic;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
@@ -31,6 +33,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -161,7 +164,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xPublishcheckbox.IsEnabled = true;
                 xExternalId.IsEnabled = true;
             }
-            xAddTargetApplication.Content= $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} :";
+            xAddTargetApplication.Content= $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}s:";
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
             xNameTxtBox.AddValidationRule(new BusinessFlowNameValidationRule());
             xShowIDUC.Init(mBusinessFlow);
@@ -169,7 +172,7 @@ namespace GingerWPF.BusinessFlowsLib
             xTagsViewer.Init(mBusinessFlow.Tags);
             xRunDescritpion.Init(mContext, mBusinessFlow, nameof(BusinessFlow.RunDescription));
 
-            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures && !string.IsNullOrEmpty(mBusinessFlow.ExternalID))
+            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
             {
                 xExternalId.Init(mContext, mBusinessFlow, nameof(BusinessFlow.ExternalID));
             }
@@ -182,7 +185,6 @@ namespace GingerWPF.BusinessFlowsLib
             BindingHandler.ObjFieldBinding(xCreatedByTextBox, TextBox.TextProperty, mBusinessFlow.RepositoryItemHeader, nameof(RepositoryItemHeader.CreatedBy));
             BindingHandler.ObjFieldBinding(xAutoPrecentageTextBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.AutomationPrecentage), System.Windows.Data.BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mBusinessFlow, nameof(RepositoryItemBase.Publish));
-
             //// Per source we can show specific source page info
             //if (mBusinessFlow.Source == BusinessFlow.eSource.Gherkin)
             //{

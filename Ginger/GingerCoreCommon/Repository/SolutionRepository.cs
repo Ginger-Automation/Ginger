@@ -46,22 +46,22 @@ namespace Amdocs.Ginger.Repository
         /// </summary>
         private static List<string> mSolutionPathsToAvoid = new List<string>()
         {
-             "AutoSave",
-             "Recover",
-             "RecentlyUsed.dat",
-             "Backups",
-             "ExecutionResults",
-             "HTMLReports",
+             @"AutoSave\",
+             @"Recover\",
+             @"RecentlyUsed.dat",
+             @"Backups\",
+             @"ExecutionResults\",
+             @"HTMLReports\",
 
-             @"SharedRepository\Activities\PrevVersions",
-             @"SharedRepository\Actions\PrevVersions",
-             @"SharedRepository\Variables\PrevVersions",
-             @"SharedRepository\ActivitiesGroup\PrevVersions",
+             @"SharedRepository\Activities\PrevVersions\",
+             @"SharedRepository\Actions\PrevVersions\",
+             @"SharedRepository\Variables\PrevVersions\",
+             @"SharedRepository\ActivitiesGroup\PrevVersions\",
 
-             @"SharedRepository\Activities\PrevVerions",
-             @"SharedRepository\Actions\PrevVerions",
-             @"SharedRepository\Variables\PrevVerions",
-             @"SharedRepository\ActivitiesGroup\PrevVerions"
+             @"SharedRepository\Activities\PrevVerions\",
+             @"SharedRepository\Actions\PrevVerions\",
+             @"SharedRepository\Variables\PrevVerions\",
+             @"SharedRepository\ActivitiesGroup\PrevVerions\"
         };
 
         private List<string> mCalculatedSolutionPathsToAvoid = null;
@@ -150,38 +150,45 @@ namespace Amdocs.Ginger.Repository
         /// <param name="repositoryItem"></param>
         public void SaveRepositoryItem(RepositoryItemBase repositoryItem)
         {
-            if (string.IsNullOrEmpty(repositoryItem.ContainingFolder))
+            try
             {
-                throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
+                if (string.IsNullOrEmpty(repositoryItem.ContainingFolder))
+                {
+                    throw new Exception("Cannot save item, there is no containing folder defined - " + repositoryItem.GetType().FullName + ", " + repositoryItem.GetNameForFileName());
+                }
+                if (repositoryItem.PreSaveHandler())
+                {
+                    return;
+                }
+
+                repositoryItem.UpdateBeforeSave();
+
+                string txt = RepositorySerializer.SerializeToString(repositoryItem);
+
+                string filePath = CreateRepositoryItemFileName(repositoryItem);
+                RepositoryFolderBase rf = GetItemRepositoryFolder(repositoryItem);
+                rf.SaveRepositoryItem(filePath, txt);
+                repositoryItem.FileName = filePath;
+                repositoryItem.FilePath = filePath;
+                repositoryItem.RefreshSourceControlStatus();
+                RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(repositoryItem.FilePath));
+
+                if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
+                {
+                    repositoryItem.SetDirtyStatusToNoChange();
+                }
+
+                repositoryItem.CreateBackup();
+                if (ModifiedFiles.Contains(repositoryItem))
+                {
+                    ModifiedFiles.Remove(repositoryItem);
+                }
+                repositoryItem.PostSaveHandler();
             }
-            if (repositoryItem.PreSaveHandler())
+            catch (Exception ex)
             {
-                return;
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to Save Repository Item", ex);
             }
-
-            repositoryItem.UpdateBeforeSave();
-
-            string txt = RepositorySerializer.SerializeToString(repositoryItem);
-
-            string filePath = CreateRepositoryItemFileName(repositoryItem);
-            RepositoryFolderBase rf = GetItemRepositoryFolder(repositoryItem);
-            rf.SaveRepositoryItem(filePath, txt);
-            repositoryItem.FileName = filePath;
-            repositoryItem.FilePath = filePath;
-            repositoryItem.RefreshSourceControlStatus();
-            RefreshParentFoldersSoucerControlStatus(Path.GetDirectoryName(repositoryItem.FilePath));
-
-            if (repositoryItem.DirtyStatus != Common.Enums.eDirtyStatus.NoTracked)
-            {
-                repositoryItem.SetDirtyStatusToNoChange();
-            }
-
-            repositoryItem.CreateBackup();
-            if (ModifiedFiles.Contains(repositoryItem))
-            {
-                ModifiedFiles.Remove(repositoryItem);
-            }
-            repositoryItem.PostSaveHandler();
         }
 
         public void Close()
@@ -465,6 +472,11 @@ namespace Amdocs.Ginger.Repository
                        .ToUpperInvariant();
         }
 
+        public IEnumerable<string> GetRelativePathsToAvoidFromSourceControl()
+        {
+            return mSolutionPathsToAvoid;
+        }
+
 
         public bool IsSolutionPathToAvoid(string pathToCheck)
         {
@@ -477,7 +489,7 @@ namespace Amdocs.Ginger.Repository
                 }
             }
 
-            return mCalculatedSolutionPathsToAvoid.Any(Path.GetFullPath(pathToCheck).Contains);
+            return mCalculatedSolutionPathsToAvoid.Any(Path.GetFullPath(pathToCheck).Contains) || mCalculatedSolutionPathsToAvoid.Any(Path.GetFullPath($"{pathToCheck}{Path.DirectorySeparatorChar}").Contains);
         }
 
         #endregion Public Functions

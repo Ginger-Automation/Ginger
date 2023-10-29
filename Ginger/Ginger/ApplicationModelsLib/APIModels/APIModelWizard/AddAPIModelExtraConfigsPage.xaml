@@ -18,7 +18,7 @@
             <ColumnDefinition Width="200*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-            <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Target Application:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+            <Label x:Name="xTAlabel" Style="{StaticResource @InputFieldLabelStyle}" Content="" HorizontalAlignment="Left" VerticalAlignment="Center"/>
             <usercontrolslib:UCComboBox x:Name="xTargetApplicationComboBox" Width="250" HorizontalAlignment="Left" VerticalAlignment="Center"></usercontrolslib:UCComboBox>
         </StackPanel>
         <Ginger:ucTagsViewer x:Name="xTagsViewer" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" />

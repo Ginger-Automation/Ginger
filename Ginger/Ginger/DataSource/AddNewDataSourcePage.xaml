@@ -7,7 +7,7 @@
       xmlns:Actions="clr-namespace:Ginger.Actions"
       xmlns:local="clr-namespace:Ginger.DataSource"
       mc:Ignorable="d" 
-      Height="120" Width="500" MinHeight="120"
+      Height="140" Width="500" MinHeight="140"
 	Title="Config Data Source">
 
     <Grid Background="{StaticResource $BackgroundColor_White}">
@@ -19,6 +19,7 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="10"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
 
@@ -30,15 +31,17 @@
             <RadioButton VerticalAlignment="Center" x:Name="Default" Content="Default" IsChecked="True" Margin="20,0,20,0" Checked="Default_Checked"/>
             <RadioButton VerticalAlignment="Center" x:Name="New" Content="New" Checked="New_Checked"/>
         </StackPanel>
-        <Label Content="Data Source Type:" Grid.Row="1" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
-       
+        <Label Content="Data Source Type:" Grid.Row="1" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>       
         <ComboBox Height="24" x:Name="DSTypeComboBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}"/>
 
         <Label Content="Data Source Name:" Grid.Row="2" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
         <TextBox Height="24" x:Name="DSName" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" ToolTip="Data Source Name" Style="{StaticResource @TextBoxStyle}" TextChanged="DSName_TextChanged"/>
 
-        <Label Content="Input Source File:" Grid.Row="3" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
-        <Grid Height="26" Grid.Column="1" Grid.Row="3">
+      
+        
+
+        <Label Content="Input Source File:" Grid.Row="4" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
+        <Grid Height="26" Grid.Column="1" Grid.Row="4">
             <TextBox x:Name="FilePathTextBox" Style="{StaticResource @TextBoxStyle}" Height="25" VerticalAlignment="Top" Margin="1,2,50,-1"/>
             <Button x:Name="FileBrowseButton" Click="FileBrowse_Click" Content="Browse" Style="{StaticResource @InputButtonStyle}" HorizontalAlignment="Left" VerticalAlignment="Center" Width="50" Margin="320,2,0,-1" />
         </Grid>

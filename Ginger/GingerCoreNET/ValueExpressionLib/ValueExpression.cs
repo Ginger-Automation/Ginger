@@ -225,8 +225,10 @@ namespace GingerCore
 
             //Do the operation based on order
             //First replace Vars - since they can appear in other func like VBS v1+v2 or VBS mid(v1,1,4);
-            if (mValueCalculated.Contains('{'))
+            int expressionCounter = 0;
+            while (mValueCalculated.Contains('{') && expressionCounter < 10 && ContainsFormula(mValueCalculated))
             {
+                expressionCounter++;
                 ReplaceGlobalParameters();
                 //replace environment parameters which embedded into functions like VBS
                 ReplaceEnvVars();
@@ -663,7 +665,11 @@ namespace GingerCore
             p = p.Substring(p.IndexOf(" DST=")).Trim();
             if (DataSource == null)
             {
-                mValueCalculated = mValueCalculated.Replace(p, string.Format("ERROR: The Data Source Variable '{0}' was not found", DataSource));
+                // whenever error is to be displayed, do not use Replace,
+                // use only the error string otherwise the output might look anamalous
+                // eg: //*[text()="{Error: The Data Source Variable was not found }"]
+      
+                mValueCalculated = string.Format("ERROR: The Data Source Variable '{0}' was not found", DSName);
                 return;
             }
 
@@ -1061,7 +1067,9 @@ namespace GingerCore
                         // Get Value query
                         if (litedbquery.Contains(".find") || litedbquery.Contains(".select $ where"))
                         {
-                            mValueCalculated = liteDB.GetQueryOutput(litedbquery, Name[0], rowNumber, Markasdone, tableName[0]);
+                            // Use Replace because incase, if it is used with something else for example xpath (//*[text() = "<DataSource Query>"]) the whole string should be the output instead of just the result
+                            // data source query
+                            mValueCalculated = mValueCalculated.Replace(pOrg , liteDB.GetQueryOutput(litedbquery, Name[0], rowNumber, Markasdone, tableName[0]));
                         }
 
                         // Set value Query
@@ -1122,13 +1130,17 @@ namespace GingerCore
                         }
                         else
                         {
-                            mValueCalculated = liteDB.GetResut(litedbquery, col[0], Markasdone);
+                            // Use Replace because incase, if it is used with something else for example xpath (//*[text() = "<DataSource Query>"]) the whole string should be the output instead of just the result
+                            // data source query
+
+                            mValueCalculated = mValueCalculated.Replace(pOrg, liteDB.GetResut(litedbquery, col[0], Markasdone));
                         }
                     }
                 }
                 catch (Exception e)
                 {
                     mValueCalculated = e.Message.Contains("There is no row at") ? "No Row Found" : pOrg;
+                    // Is there a reason to print an error in the console? 
                     Console.WriteLine(e.StackTrace);
                 }
             }
@@ -1618,6 +1630,51 @@ namespace GingerCore
                 VarValue = "ERROR: The " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " " + a[1] + " was not found";
                 mValueCalculated = VarValue;
             }
+        }
+
+        private bool ContainsFormula(string mValueCalculated)
+        {
+            if (rxGlobalParamPattern.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rxEnvParamPattern.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rxEnvUrlPattern.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rxe.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (VBSRegex.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rNestedfunc.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rxDSPattern.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rxFDPattern.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (rxExecutionJsonDataPattern.IsMatch(mValueCalculated))
+            {
+                return true;
+            }
+            else if (mValueCalculated.Contains(@"{CS"))
+            {
+                return true;
+            }
+            return false;
         }
 
 
