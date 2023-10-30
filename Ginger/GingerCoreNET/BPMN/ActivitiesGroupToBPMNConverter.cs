@@ -38,10 +38,27 @@ namespace Amdocs.Ginger.CoreNET.BPMN
     public sealed class ActivitiesGroupToBPMNConverter
     {
         private readonly ActivitiesGroup _activityGroup;
+        private readonly ISolutionFacade _solutionFacade;
 
-        public ActivitiesGroupToBPMNConverter(ActivitiesGroup activityGroup)
+        public ActivitiesGroupToBPMNConverter(ActivitiesGroup activityGroup) : this(activityGroup, new WorkSpaceToSolutionFacadeAdapter(WorkSpace.Instance)) { }
+
+        public ActivitiesGroupToBPMNConverter(ActivitiesGroup activityGroup, ISolutionFacade solutionFacade)
         {
+            ValidateConstructorArgs(activityGroup, solutionFacade);
             _activityGroup = activityGroup;
+            _solutionFacade = solutionFacade;
+        }
+
+        private void ValidateConstructorArgs(ActivitiesGroup activityGroup, ISolutionFacade solutionFacade)
+        {
+            if(activityGroup == null)
+            {
+                throw new ArgumentNullException(nameof(activityGroup));
+            }
+            if(solutionFacade == null)
+            {
+                throw new ArgumentNullException(nameof(solutionFacade));
+            }
         }
 
         /// <summary>
@@ -85,7 +102,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         private Activity? GetActivityFromSharedRepositoryByIdentifier(ActivityIdentifiers activityIdentifier)
         {
-            ObservableList<Activity> activitiesInRepository = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<Activity> activitiesInRepository = _solutionFacade.GetActivitiesFromSharedRepository();
 
             Activity? activityInRepository = activitiesInRepository
                 .FirstOrDefault(activity =>
@@ -107,12 +124,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         private bool IsWebServicesActivity(Activity activity)
         {
-            ApplicationPlatform? activityAppPlatform = WorkSpace.Instance.Solution
-                .ApplicationPlatforms
-                .FirstOrDefault(platform => string.Equals(platform.AppName, activity.TargetApplication));
+            IEnumerable<ApplicationPlatform> applicationPlatforms = _solutionFacade.GetApplicationPlatforms();
+            ApplicationPlatform? activityAppPlatform = applicationPlatforms.FirstOrDefault(platform => string.Equals(platform.AppName, activity.TargetApplication));
             if (activityAppPlatform == null)
             {
-                throw new BPMNExportException($"No Application Platform found for Activity with {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} '{activity.TargetApplication}'.");
+                throw new BPMNConversionException($"No Application Platform found for Activity with {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} '{activity.TargetApplication}'.");
             }
 
             return activityAppPlatform.Platform == ePlatformType.WebServices;
@@ -127,7 +143,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
             if(!activities.Any())
             {
-                throw new BPMNExportException($"No valid {GingerDicser.GetTermResValue(eTermResKey.Activity)} found for creating BPMN.");
+                throw new BPMNConversionException($"No valid {GingerDicser.GetTermResValue(eTermResKey.Activity)} found for creating BPMN.");
             }
 
             return activities;
@@ -165,7 +181,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
             if(!participants.Any())
             {
-                throw new BPMNExportException($"No BPMN Participants (Ginger {GingerDicser.GetTermResValue(eTermResKey.Activity)}) found for creating BPMN");
+                throw new BPMNConversionException($"No BPMN Participants (Ginger {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}) found for creating BPMN");
             }
 
             return participants;
@@ -200,13 +216,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         private TargetBase GetTargetApplicationByName(string targetAppName)
         {
-            TargetBase? targetApp = WorkSpace.Instance.Solution
-                .GetSolutionTargetApplications()
-                .FirstOrDefault(targetApp => string.Equals(targetApp.Name, targetAppName));
+            IEnumerable<TargetBase> targetApplications = _solutionFacade.GetTargetApplications();
+            TargetBase? targetApp = targetApplications.FirstOrDefault(targetApp => string.Equals(targetApp.Name, targetAppName));
 
             if (targetApp == null)
             {
-                throw new BPMNExportException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found with name '{targetAppName}'");
+                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found with name '{targetAppName}'");
             }
 
             return targetApp;
@@ -214,13 +229,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         private TargetBase GetTargetApplicationByGuid(Guid targetAppGuid)
         {
-            TargetBase? targetApp = WorkSpace.Instance.Solution
-                .GetSolutionTargetApplications()
-                .FirstOrDefault(targetApp => targetApp.Guid == targetAppGuid);
+            IEnumerable<TargetBase> targetApplications = _solutionFacade.GetTargetApplications();
+            TargetBase? targetApp = targetApplications.FirstOrDefault(targetApp => targetApp.Guid == targetAppGuid);
 
             if (targetApp == null)
             {
-                throw new BPMNExportException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found with Guid '{targetAppGuid}'");
+                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found with Guid '{targetAppGuid}'");
             }
 
             return targetApp;
@@ -232,7 +246,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
             if (firstConsumer == null)
             {
-                throw new BPMNExportException($"No Consumer found for {GingerDicser.GetTermResValue(eTermResKey.Activity)} '{activity.ActivityName}'");
+                throw new BPMNConversionException($"No Consumer found for {GingerDicser.GetTermResValue(eTermResKey.Activity)} '{activity.ActivityName}'");
             }
 
             return firstConsumer;
@@ -274,7 +288,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
             if (participant == null)
             {
-                throw new BPMNExportException($"No BPMN Participant (Ginger {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found by Guid '{participantGuid}'");
+                throw new BPMNConversionException($"No BPMN Participant (Ginger {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found by Guid '{participantGuid}'");
             }
 
             return participant;

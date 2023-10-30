@@ -134,7 +134,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                if (ex is BPMNExportException)
+                if (ex is BPMNConversionException)
                 {
                     Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, ex.Message);
                 }
