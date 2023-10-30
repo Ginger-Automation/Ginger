@@ -238,24 +238,29 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return firstConsumer;
         }
 
+        private Participant GetConsumerParticipant(Collaboration collaboration, Activity activity)
+        {
+            Consumer consumer = GetActivityConsumer(activity);
+            Participant consumerParticipant = GetParticipantByGuid(collaboration, consumer.ConsumerGuid);
+            return consumerParticipant;
+        }
+
+        private Participant GetTargetApplicationParticipant(Collaboration collaboration, Activity activity)
+        {
+            TargetBase targetApp = GetTargetApplicationByName(activity.TargetApplication);
+            Participant targetAppParticipant = GetParticipantByGuid(collaboration, targetApp.Guid);
+            return targetAppParticipant;
+        }
+
         private IFlowSource AddTasksForActivity(Collaboration collaboration, Activity activity, IFlowSource previousFlowSource)
         {
             if (IsWebServicesActivity(activity))
             {
-                IEnumerable<Task> tasks = AddTaskForWebServicesActivity(collaboration, activity);
-
-                Task firstTask = tasks.First();
-                Flow.Create(name: string.Empty, previousFlowSource, firstTask);
-
-                Task lastTask = tasks.Last();
-                previousFlowSource = lastTask;
+                previousFlowSource = AddTaskForWebServicesActivity(collaboration, activity, previousFlowSource);
             }
             else
             {
-                Task task = AddTaskForUIActivity(collaboration, activity);
-
-                Flow.Create(name: string.Empty, previousFlowSource, task);
-                previousFlowSource = task;
+                previousFlowSource = AddTaskForUIActivity(collaboration, activity, previousFlowSource);
             }
 
             return previousFlowSource;
@@ -275,18 +280,17 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return participant;
         }
 
-        private IEnumerable<Task> AddTaskForWebServicesActivity(Collaboration collaboration, Activity activity)
+        private IFlowSource AddTaskForWebServicesActivity(Collaboration collaboration, Activity activity, IFlowSource previousFlowSource)
         {
-            Consumer consumer = GetActivityConsumer(activity);
-            TargetBase targetApp = GetTargetApplicationByName(activity.TargetApplication);
-
-            Participant consumerParticipant = GetParticipantByGuid(collaboration, consumer.ConsumerGuid);
-            Participant targetAppParticipant = GetParticipantByGuid(collaboration, targetApp.Guid);
+            Participant consumerParticipant = GetConsumerParticipant(collaboration, activity);
+            Participant targetAppParticipant = GetTargetApplicationParticipant(collaboration, activity);
 
             Task requestSourceTask = consumerParticipant.Process.AddTask<SendTask>(name: $"{activity.ActivityName}_RequestSource");
             Task requestTargetTask = targetAppParticipant.Process.AddTask<ReceiveTask>(name: $"{activity.ActivityName}_RequestTarget");
             Task responseSourceTask = targetAppParticipant.Process.AddTask<SendTask>(name: $"{activity.ActivityName}_ResponseSource");
             Task responseTargetTask = consumerParticipant.Process.AddTask<ReceiveTask>(name: $"{activity.ActivityName}_ResponseTarget");
+
+            Flow.Create(name: string.Empty, previousFlowSource, requestSourceTask);
 
             Flow requestFlow = Flow.Create(name: $"{activity.ActivityName}_IN", requestSourceTask, requestTargetTask);
 
@@ -308,23 +312,16 @@ namespace Amdocs.Ginger.CoreNET.BPMN
                 responseMessageFlow.MessageRef = messageRef;
             }
 
-            List<Task> tasks = new()
-            {
-                requestSourceTask,
-                requestTargetTask,
-                responseSourceTask,
-                responseTargetTask
-            };
-
-            return tasks;
+            return responseTargetTask;
         }
 
-        private UserTask AddTaskForUIActivity(Collaboration collaboration, Activity activity)
+        private UserTask AddTaskForUIActivity(Collaboration collaboration, Activity activity, IFlowSource previousFlowSource)
         {
-            TargetBase targetApp = GetTargetApplicationByName(activity.TargetApplication);
-            Participant participant = GetParticipantByGuid(collaboration, targetApp.Guid);
+            Participant participant = GetTargetApplicationParticipant(collaboration, activity);
 
             UserTask userTask = participant.Process.AddTask<UserTask>(guid: activity.Guid, name: activity.ActivityName);
+
+            Flow.Create(name: string.Empty, previousFlowSource, userTask);
 
             string activityGuid = activity.Guid.ToString();
             string messageRef = string.Concat(activityGuid.AsSpan(0, activityGuid.Length - 2), "aa");
