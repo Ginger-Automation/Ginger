@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.BPMN
 {
-    public sealed class WorkSpaceToSolutionFacadeAdapter : ISolutionFacade
+    public sealed class WorkSpaceToSolutionFacadeAdapter : ISolutionFacadeForBPMN
     {
         private readonly WorkSpace _workspace;
 

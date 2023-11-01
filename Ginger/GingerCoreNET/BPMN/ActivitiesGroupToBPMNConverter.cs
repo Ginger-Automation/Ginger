@@ -38,18 +38,29 @@ namespace Amdocs.Ginger.CoreNET.BPMN
     public sealed class ActivitiesGroupToBPMNConverter
     {
         private readonly ActivitiesGroup _activityGroup;
-        private readonly ISolutionFacade _solutionFacade;
+        private readonly ISolutionFacadeForBPMN _solutionFacade;
 
         public ActivitiesGroupToBPMNConverter(ActivitiesGroup activityGroup) : this(activityGroup, new WorkSpaceToSolutionFacadeAdapter(WorkSpace.Instance)) { }
 
-        public ActivitiesGroupToBPMNConverter(ActivitiesGroup activityGroup, ISolutionFacade solutionFacade)
+        /// <summary>
+        /// Create a new <see cref="ActivitiesGroupToBPMNConverter"/>.
+        /// </summary>
+        /// <param name="activityGroup"><see cref="ActivitiesGroup"/> to be converted.</param>
+        /// <param name="solutionFacade">A facade to expose solution data.</param>
+        public ActivitiesGroupToBPMNConverter(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade)
         {
             ValidateConstructorArgs(activityGroup, solutionFacade);
             _activityGroup = activityGroup;
             _solutionFacade = solutionFacade;
         }
 
-        private void ValidateConstructorArgs(ActivitiesGroup activityGroup, ISolutionFacade solutionFacade)
+        /// <summary>
+        /// Validate constructor arguments before assigning them to member variables.
+        /// </summary>
+        /// <param name="activityGroup">Constrcutor argument</param>
+        /// <param name="solutionFacade">Constructor argument</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="activityGroup"/> or <paramref name="solutionFacade"/> is null.</exception>
+        private void ValidateConstructorArgs(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade)
         {
             if(activityGroup == null)
             {

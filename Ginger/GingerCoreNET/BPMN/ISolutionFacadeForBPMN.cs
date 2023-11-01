@@ -10,7 +10,10 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.BPMN
 {
-    public interface ISolutionFacade
+    /// <summary>
+    /// A facade to expose solution data for BPMN related operations.
+    /// </summary>
+    public interface ISolutionFacadeForBPMN
     {
         /// <summary>
         /// Get all <see cref="Activity"/> from SharedRepository.

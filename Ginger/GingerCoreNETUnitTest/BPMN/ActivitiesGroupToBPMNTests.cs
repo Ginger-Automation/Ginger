@@ -26,7 +26,7 @@ namespace GingerCoreNETUnitTest.BPMN
         public void Convert_NullActivityGroup_ThrowsArgumentNullException()
         {
             ActivitiesGroup activityGroup = null;
-            ISolutionFacade solutionFacade = new Mock<ISolutionFacade>().Object;
+            ISolutionFacadeForBPMN solutionFacade = new Mock<ISolutionFacadeForBPMN>().Object;
 
             Assert.ThrowsException<ArgumentNullException>(() => new ActivitiesGroupToBPMNConverter(activityGroup, solutionFacade));
         }
@@ -35,9 +35,9 @@ namespace GingerCoreNETUnitTest.BPMN
         public void Convert_EmptyActivitesGroup_ThrowsBPMNConversionException()
         {
             ActivitiesGroup activityGroup = new();
-            Mock<ISolutionFacade> solutionFacadeMock = new();
+            Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>());
-            ISolutionFacade solutionFacade = solutionFacadeMock.Object;
+            ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
             ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
 
             Assert.ThrowsException<BPMNConversionException>(() => converter.Convert());
@@ -56,9 +56,9 @@ namespace GingerCoreNETUnitTest.BPMN
             {
                 IdentifiedActivity = inactiveActivity 
             });
-            Mock<ISolutionFacade> solutionFacadeMock = new();
+            Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { inactiveActivity });
-            ISolutionFacade solutionFacade = solutionFacadeMock.Object;
+            ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
             ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
 
             Assert.ThrowsException<BPMNConversionException>(() => converter.Convert());
@@ -72,9 +72,9 @@ namespace GingerCoreNETUnitTest.BPMN
             {
                 IdentifiedActivity = null
             });
-            Mock<ISolutionFacade> solutionFacadeMock = new();
+            Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>());
-            ISolutionFacade solutionFacade = solutionFacadeMock.Object;
+            ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
             ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
 
             Assert.ThrowsException<BPMNConversionException>(() => converter.Convert());
@@ -83,7 +83,7 @@ namespace GingerCoreNETUnitTest.BPMN
         [TestMethod]
         public void Convert_ActivityGroupWithInActiveActivities_InactiveActivitiesAreIgnored()
         {
-            CreateActivityGroupWithActiveAndInactiveActivities(out ActivitiesGroup activityGroup, out ISolutionFacade solutionFacade);
+            CreateActivityGroupWithActiveAndInactiveActivities(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             Activity inactiveActivity = activityGroup.ActivitiesIdentifiers.First(iden => iden.IdentifiedActivity.Active == false).IdentifiedActivity;
             ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
 
@@ -98,7 +98,7 @@ namespace GingerCoreNETUnitTest.BPMN
         [TestMethod]
         public void Convert_ActivityGroupWithInActiveActivities_OnlyActiveActivitiesAreConverted()
         {
-            CreateActivityGroupWithActiveAndInactiveActivities(out ActivitiesGroup activityGroup, out ISolutionFacade solutionFacade);
+            CreateActivityGroupWithActiveAndInactiveActivities(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             Activity activeActivity = activityGroup.ActivitiesIdentifiers.First(iden => iden.IdentifiedActivity.Active == true).IdentifiedActivity;
             ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
 
@@ -110,7 +110,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Assert.IsTrue(firstParticipantProcess.Tasks.Any(task => string.Equals(task.Guid, activeActivity.Guid.ToString())), $"Active {nameof(Activity)} is not converted");
         }
 
-        private void CreateActivityGroupWithActiveAndInactiveActivities(out ActivitiesGroup activityGroup, out ISolutionFacade solutionFacade)
+        private void CreateActivityGroupWithActiveAndInactiveActivities(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
             ObservableList<ApplicationPlatform> applicationPlatforms = new()
             {
@@ -140,7 +140,7 @@ namespace GingerCoreNETUnitTest.BPMN
                 Active = false
             };
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = inactiveActivity });
-            Mock<ISolutionFacade> solutionFacadeMock = new();
+            Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
             solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activeActivity, inactiveActivity });
             solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
@@ -155,7 +155,7 @@ namespace GingerCoreNETUnitTest.BPMN
         [TestMethod]
         public void Convert_ActivityWithOnlyOneWebServicesActivity_HasTargetApplicationParticipant()
         {
-            CreateActivityGroupWithOnlyOneWebServicesActivity(out ActivitiesGroup activityGroup, out ISolutionFacade solutionFacade);
+            CreateActivityGroupWithOnlyOneWebServicesActivity(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             TargetBase targetApp = solutionFacade.GetTargetApplications().First(ta => string.Equals(ta.Name, activityGroup.ActivitiesIdentifiers[0].IdentifiedActivity.TargetApplication));
             ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
 
@@ -167,7 +167,7 @@ namespace GingerCoreNETUnitTest.BPMN
         [TestMethod]
         public void Convert_ActivityWithOnlyOneWebServicesActivity_HasConsumerParticipant()
         {
-            CreateActivityGroupWithOnlyOneWebServicesActivity(out ActivitiesGroup activityGroup, out ISolutionFacade solutionFacade);
+            CreateActivityGroupWithOnlyOneWebServicesActivity(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             Consumer consumer = activityGroup.ActivitiesIdentifiers[0].IdentifiedActivity.ConsumerApplications[0];
             ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
 
@@ -176,9 +176,9 @@ namespace GingerCoreNETUnitTest.BPMN
             Assert.IsTrue(collaboration.Participants.Any(participant => string.Equals(participant.Guid, consumer.ConsumerGuid.ToString())), $"{nameof(Participant)} for {nameof(Activity)}'s {nameof(Consumer)} not found");
         }
 
-        private void CreateActivityGroupWithOnlyOneWebServicesActivity(out ActivitiesGroup activityGroup, out ISolutionFacade solutionFacade)
+        private void CreateActivityGroupWithOnlyOneWebServicesActivity(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
-            Mock<ISolutionFacade> solutionFacadeMock = new();
+            Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             ObservableList<ApplicationPlatform> applicationPlatforms = new()
             {
                 new ApplicationPlatform()
