@@ -84,7 +84,7 @@ namespace GingerCoreNETUnitTest.BPMN
         public void Convert_ActivityGroupWithInActiveActivities_InactiveActivitiesAreIgnored()
         {
             CreateActivityGroupWithActiveAndInactiveActivities(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
-            Activity inactiveActivity = activityGroup.ActivitiesIdentifiers.First(iden => iden.IdentifiedActivity.Active == false).IdentifiedActivity;
+            Activity inactiveActivity = activityGroup.ActivitiesIdentifiers.First(iden => !iden.IdentifiedActivity.Active).IdentifiedActivity;
             ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
 
             Collaboration collaboration = converter.Convert();
@@ -99,7 +99,7 @@ namespace GingerCoreNETUnitTest.BPMN
         public void Convert_ActivityGroupWithInActiveActivities_OnlyActiveActivitiesAreConverted()
         {
             CreateActivityGroupWithActiveAndInactiveActivities(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
-            Activity activeActivity = activityGroup.ActivitiesIdentifiers.First(iden => iden.IdentifiedActivity.Active == true).IdentifiedActivity;
+            Activity activeActivity = activityGroup.ActivitiesIdentifiers.First(iden => iden.IdentifiedActivity.Active).IdentifiedActivity;
             ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
 
             Collaboration collaboration = converter.Convert();
