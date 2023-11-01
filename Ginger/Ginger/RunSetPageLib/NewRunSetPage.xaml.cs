@@ -1126,7 +1126,7 @@ namespace Ginger.Run
             //highlight the selected Ginger
             GRP.xBorder.Visibility = System.Windows.Visibility.Visible;
             GRP.xRunnerInfoSplitterBorder.Background = FindResource("$amdocsLogoLinarGradientBrush") as Brush;
-            GRP.xRunnerInfoSplitterBorder.Height = 4;
+            GRP.xRunnerInfoSplitterBorder.Height = 1;
             if (!GRP.ExecutorEngine.GingerRunner.Active)
             {
                 GRP.xRunnerNameTxtBlock.Foreground = Brushes.Gray;

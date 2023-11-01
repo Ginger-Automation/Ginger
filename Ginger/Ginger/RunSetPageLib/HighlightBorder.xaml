@@ -8,7 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Border x:Name="SelectedBorder"
 	    BorderBrush="{DynamicResource $amdocsLogoLinarGradientBrush}"
-	    BorderThickness="4"	        
+	    BorderThickness="2"	        
 	    Margin="0"	        
         />
 </UserControl>

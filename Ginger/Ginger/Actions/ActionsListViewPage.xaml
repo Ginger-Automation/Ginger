@@ -64,7 +64,7 @@
                         </MenuItem>
                     </Menu>
                     <GridSplitter x:Name="xRunSpliter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="4,4,4,4" Height="18"/>
-                    <UserControls:ucButton x:Name="xRunActionBtn" ButtonType="RoundTextAndImageButton" Click="xRunActionBtn_Click" ButtonText="Run Action" ToolTip="Run Action"  ButtonFontImageSize="12" ButtonImageHeight="10" ButtonImageWidth="10" ButtonImageType="Run" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
+                    <UserControls:ucButton x:Name="xRunActionBtn" ButtonType="RoundTextAndImageButton" Click="xRunActionBtn_Click" ButtonText="Run Action" ToolTip="Run Action"  ButtonFontImageSize="12" ButtonImageHeight="10" ButtonImageWidth="10" ButtonImageType="Run" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
                 </StackPanel>
             </StackPanel>
         </Grid>

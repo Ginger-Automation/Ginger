@@ -1479,7 +1479,7 @@
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
                             <Setter  TargetName="Border"  Property="BorderBrush" Value="{DynamicResource $amdocsLogoLinarGradientBrush}" />
-                            <Setter  TargetName="Border"  Property="BorderThickness" Value="4" />
+                            <Setter  TargetName="Border"  Property="BorderThickness" Value="1" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -408,7 +408,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowClose);
                     break;
                 case eImageType.Reset:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_RedoAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Retweet);
                     break;
                 case eImageType.Undo:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UndoAlt);
