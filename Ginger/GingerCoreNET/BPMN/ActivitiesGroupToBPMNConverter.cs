@@ -87,6 +87,9 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return collaboration;
         }
 
+        /// <summary>
+        /// Attach ActivityGroup's ActivityIdentifiers to their relevant Activities from SharedRepository
+        /// </summary>
         private void AttachIdentifiersToActivities()
         {
             foreach (ActivityIdentifiers identifier in _activityGroup.ActivitiesIdentifiers)
@@ -100,40 +103,56 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             }
         }
 
+
         private Activity? GetActivityFromSharedRepositoryByIdentifier(ActivityIdentifiers activityIdentifier)
         {
             ObservableList<Activity> activitiesInRepository = _solutionFacade.GetActivitiesFromSharedRepository();
 
             Activity? activityInRepository = activitiesInRepository
                 .FirstOrDefault(activity =>
-                    string.Equals(activity.ActivityName, activityIdentifier.ActivityName) &&
-                    activity.Guid == activityIdentifier.ActivityGuid);
+                    activity.Guid == activityIdentifier.ActivityGuid && 
+                    string.Equals(activity.ActivityName, activityIdentifier.ActivityName));
 
             if (activityInRepository == null)
             {
-                activityInRepository = activitiesInRepository.FirstOrDefault(x => x.Guid == activityIdentifier.ActivityGuid);
+                activityInRepository = activitiesInRepository
+                    .FirstOrDefault(x => 
+                        x.Guid == activityIdentifier.ActivityGuid);
             }
 
             if (activityInRepository == null)
             {
-                activityInRepository = activitiesInRepository.FirstOrDefault(x => string.Equals(x.ActivityName, activityIdentifier.ActivityName));
+                activityInRepository = activitiesInRepository
+                    .FirstOrDefault(x => 
+                        string.Equals(x.ActivityName, activityIdentifier.ActivityName));
             }
 
             return activityInRepository;
         }
 
+        /// <summary>
+        /// Checks whether the given <paramref name="activity"/> is of WebServices platform or not.
+        /// </summary>
+        /// <param name="activity"><see cref="Activity"/> to check the platform of.</param>
+        /// <returns><see langword="true"/> if the given <paramref name="activity"/> is of WebServices platform, <see langword="false"/> otherwise.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="ApplicationPlatform"/> is found for the given <paramref name="activity"/> target application name.</exception>
         private bool IsWebServicesActivity(Activity activity)
         {
             IEnumerable<ApplicationPlatform> applicationPlatforms = _solutionFacade.GetApplicationPlatforms();
             ApplicationPlatform? activityAppPlatform = applicationPlatforms.FirstOrDefault(platform => string.Equals(platform.AppName, activity.TargetApplication));
             if (activityAppPlatform == null)
             {
-                throw new BPMNConversionException($"No Application Platform found for Activity with {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} '{activity.TargetApplication}'.");
+                throw new BPMNConversionException($"No Application Platform found for {GingerDicser.GetTermResValue(eTermResKey.Activity)} with {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} '{activity.TargetApplication}'.");
             }
 
             return activityAppPlatform.Platform == ePlatformType.WebServices;
         }
 
+        /// <summary>
+        /// Get list of <see cref="Activity"/> from <see cref="ActivitiesGroup"/> which are eligible for conversion.
+        /// </summary>
+        /// <returns>List of <see cref="Activity"/>.</returns>
+        /// <exception cref="BPMNConversionException">If <see cref="ActivitiesGroup"/> is empty or no <see cref="Activity"/> is eligible for conversion.</exception>
         private IEnumerable<Activity> GetActivities()
         {
             IEnumerable<Activity> activities = _activityGroup
@@ -143,12 +162,16 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
             if(!activities.Any())
             {
-                throw new BPMNConversionException($"No valid {GingerDicser.GetTermResValue(eTermResKey.Activity)} found for creating BPMN.");
+                throw new BPMNConversionException($"No eligible {GingerDicser.GetTermResValue(eTermResKey.Activity)} found for creating BPMN.");
             }
 
             return activities;
         }
 
+        /// <summary>
+        /// Create new BPMN <see cref="Collaboration"/>.
+        /// </summary>
+        /// <returns>Newly created BPMN <see cref="Collaboration"/>.</returns>
         private Collaboration CreateCollaboration()
         {
             IEnumerable<Participant> participants = CreateParticipants();
@@ -170,6 +193,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return collaboration;
         }
 
+        /// <summary>
+        /// Creates list of new <see cref="Participant"/> for all the involved systems in the <see cref="ActivitiesGroup"/>.
+        /// </summary>
+        /// <returns>List of newly created <see cref="Participant"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="Participant"/> is found.</exception>
         private IEnumerable<Participant> CreateParticipants()
         {
             List<Participant> participants = new();
@@ -187,13 +215,18 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return participants;
         }
 
+        /// <summary>
+        /// Creates list of new <see cref="Participant"/> for all the involved systems in given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="activity"><see cref="Activity"/> whose involved systems will be used for creating new <see cref="Participant"/> list.</param>
+        /// <returns>List of new <see cref="Participant"/>.</returns>
         private IEnumerable<Participant> CreateParticipantsForActivity(Activity activity)
         {
             List<Participant> participants = new();
 
             if (IsWebServicesActivity(activity))
             {
-                Consumer consumer = GetActivityConsumer(activity);
+                Consumer consumer = GetActivityFirstConsumer(activity);
                 TargetBase consumerTargetApp = GetTargetApplicationByGuid(consumer.ConsumerGuid);
                 Participant participantForConsumer = new(consumerTargetApp.Guid)
                 {
@@ -214,6 +247,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return participants;
         }
 
+        /// <summary>
+        /// Get <see cref="TargetBase"/> whose name matches the given <paramref name="targetAppName"/>.
+        /// </summary>
+        /// <param name="targetAppName">Name of the <see cref="TargetBase"/> to search for.</param>
+        /// <returns><see cref="TargetBase"/> with name matching the given <paramref name="targetAppName"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="TargetBase"/> is found with name matching the given <paramref name="targetAppName"/>.</exception>
         private TargetBase GetTargetApplicationByName(string targetAppName)
         {
             IEnumerable<TargetBase> targetApplications = _solutionFacade.GetTargetApplications();
@@ -227,6 +266,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return targetApp;
         }
 
+        /// <summary>
+        /// Get <see cref="TargetBase"/> whose Guid matches the given <paramref name="targetAppGuid"/>.
+        /// </summary>
+        /// <param name="targetAppGuid">Guid of the <see cref="TargetBase"/> to search for.</param>
+        /// <returns><see cref="TargetBase"/> with Guid matching the given <paramref name="targetAppGuid"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="TargetBase"/> is found with Guid matching the given <paramref name="targetAppGuid"/>.</exception>
         private TargetBase GetTargetApplicationByGuid(Guid targetAppGuid)
         {
             IEnumerable<TargetBase> targetApplications = _solutionFacade.GetTargetApplications();
@@ -240,7 +285,13 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return targetApp;
         }
 
-        private Consumer GetActivityConsumer(Activity activity)
+        /// <summary>
+        /// Get the first <see cref="Consumer"/> for the given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="activity"><see cref="Activity"/> to get the Consumer of.</param>
+        /// <returns>First <see cref="Consumer"/> for the given <paramref name="activity"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="Consumer"/> is found for the given <paramref name="activity"/>.</exception>
+        private Consumer GetActivityFirstConsumer(Activity activity)
         {
             Consumer? firstConsumer = activity.ConsumerApplications.FirstOrDefault();
 
@@ -252,13 +303,25 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return firstConsumer;
         }
 
+        /// <summary>
+        /// Get <see cref="Participant"/> for the first <see cref="Consumer"/> of given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to get the <see cref="Participant"/> from.</param>
+        /// <param name="activity"><see cref="Activity"/> to get the <see cref="Consumer"/> from.</param>
+        /// <returns><see cref="Participant"/> for the first <see cref="Consumer"/> of given <paramref name="activity"/>.</returns>
         private Participant GetConsumerParticipant(Collaboration collaboration, Activity activity)
         {
-            Consumer consumer = GetActivityConsumer(activity);
+            Consumer consumer = GetActivityFirstConsumer(activity);
             Participant consumerParticipant = GetParticipantByGuid(collaboration, consumer.ConsumerGuid);
             return consumerParticipant;
         }
 
+        /// <summary>
+        /// Get the <see cref="Participant"/> for the target application of given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to get the <see cref="Participant"/> from.</param>
+        /// <param name="activity"><see cref="Activity"/> to get the target application from.</param>
+        /// <returns><see cref="Participant"/> for the target application of given <paramref name="activity"/>.</returns>
         private Participant GetTargetApplicationParticipant(Collaboration collaboration, Activity activity)
         {
             TargetBase targetApp = GetTargetApplicationByName(activity.TargetApplication);
@@ -266,20 +329,34 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return targetAppParticipant;
         }
 
+        /// <summary>
+        /// Add <see cref="Task"/> for the given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to add the <see cref="Task"/> to.</param>
+        /// <param name="activity"><see cref="Activity"/> to create the <see cref="Task"/>.</param>
+        /// <param name="previousFlowSource">Previous flow source to create the link with the new <see cref="Task"/>.</param>
+        /// <returns>New <see cref="IFlowSource"/> which should be used to link with the next entitites.</returns>
         private IFlowSource AddTasksForActivity(Collaboration collaboration, Activity activity, IFlowSource previousFlowSource)
         {
             if (IsWebServicesActivity(activity))
             {
-                previousFlowSource = AddTaskForWebServicesActivity(collaboration, activity, previousFlowSource);
+                previousFlowSource = AddTasksForWebServicesActivity(collaboration, activity, previousFlowSource);
             }
             else
             {
-                previousFlowSource = AddTaskForUIActivity(collaboration, activity, previousFlowSource);
+                previousFlowSource = AddTasksForUIActivity(collaboration, activity, previousFlowSource);
             }
 
             return previousFlowSource;
         }
 
+        /// <summary>
+        /// Get <see cref="Participant"/> with Guid matching the given <paramref name="participantGuid"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to get the <see cref="Participant"/> from.</param>
+        /// <param name="participantGuid">Guid of the <see cref="Participant"/> to search.</param>
+        /// <returns><see cref="Participant"/> with Guid matching the given <paramref name="participantGuid"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="Participant"/> is found with Guid matching the <paramref name="participantGuid"/>.</exception>
         private Participant GetParticipantByGuid(Collaboration collaboration, Guid participantGuid)
         {
             Participant? participant = collaboration
@@ -294,7 +371,14 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return participant;
         }
 
-        private IFlowSource AddTaskForWebServicesActivity(Collaboration collaboration, Activity activity, IFlowSource previousFlowSource)
+        /// <summary>
+        /// Add <see cref="Task"/> for the given WebServices <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to add the <see cref="Task"/> to.</param>
+        /// <param name="activity"><see cref="Activity"/> to create the <see cref="Task"/> for.</param>
+        /// <param name="previousFlowSource">Previous flow source to create the link with the new <see cref="Task"/>.</param>
+        /// <returns>New <see cref="IFlowSource"/> which should be used to link with the next entitites.</returns>
+        private IFlowSource AddTasksForWebServicesActivity(Collaboration collaboration, Activity activity, IFlowSource previousFlowSource)
         {
             Participant consumerParticipant = GetConsumerParticipant(collaboration, activity);
             Participant targetAppParticipant = GetTargetApplicationParticipant(collaboration, activity);
@@ -329,7 +413,14 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return responseTargetTask;
         }
 
-        private UserTask AddTaskForUIActivity(Collaboration collaboration, Activity activity, IFlowSource previousFlowSource)
+        /// <summary>
+        /// Add <see cref="Task"/> for the given UI <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to add the <see cref="Task"/> to.</param>
+        /// <param name="activity"><see cref="Activity"/> to create the <see cref="Task"/> for.</param>
+        /// <param name="previousFlowSource">Previous flow source to create the link with the new <see cref="Task"/>.</param>
+        /// <returns>New <see cref="IFlowSource"/> which should be used to link with the next entitites.</returns>
+        private UserTask AddTasksForUIActivity(Collaboration collaboration, Activity activity, IFlowSource previousFlowSource)
         {
             Participant participant = GetTargetApplicationParticipant(collaboration, activity);
 
@@ -344,12 +435,18 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return userTask;
         }
 
+        /// <summary>
+        /// Add <see cref="StartEvent"/> for the the given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to add the <see cref="StartEvent"/> to.</param>
+        /// <param name="activity"><see cref="Activity"/> to create the <see cref="StartEvent"/> for.</param>
+        /// <returns>Newly added <see cref="StartEvent"/>.</returns>
         private StartEvent AddStartEventForActivity(Collaboration collaboration, Activity activity)
         {
             Participant participant;
             if (IsWebServicesActivity(activity))
             {
-                Consumer consumer = GetActivityConsumer(activity);
+                Consumer consumer = GetActivityFirstConsumer(activity);
                 participant = GetParticipantByGuid(collaboration, consumer.ConsumerGuid);
             }
             else
@@ -363,12 +460,19 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return startEvent;
         }
 
+        /// <summary>
+        /// Add <see cref="EndEvent"/> for the the given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to add the <see cref="EndEvent"/> to.</param>
+        /// <param name="activity"><see cref="Activity"/> to create the <see cref="EndEvent"/> for.</param>
+        /// <param name="previousFlowSource">Previous slow source to create the link with the new <see cref="EndEvent"/>.</param>
+        /// <returns>Newly added <see cref="EndEvent"/>.</returns>
         private EndEvent AddEndEventForActivity(Collaboration collaboration, Activity activity, IFlowSource previousFlowSource)
         {
             Participant participant;
             if(IsWebServicesActivity(activity))
             {
-                Consumer consumer = GetActivityConsumer(activity);
+                Consumer consumer = GetActivityFirstConsumer(activity);
                 participant = GetParticipantByGuid(collaboration, consumer.ConsumerGuid);
             }
             else
