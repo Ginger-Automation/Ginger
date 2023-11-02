@@ -83,6 +83,12 @@ namespace Ginger.GeneralWindows
             xSelectedItemFrame.SetContent(null);
 
             xMainNavigationListView.Items.Clear();
+
+            LoadMenus();
+        }
+
+        private void LoadMenus()
+        {
             foreach (TopMenuItem menu in mTwoLevelMenu.MenuList)
             {
                 if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures && WorkSpace.Instance.Solution != null)
@@ -93,29 +99,7 @@ namespace Ginger.GeneralWindows
                     }
                 }
                 xMainNavigationListView.Items.Add(menu);
-            }
-
-            LoadMenus();//meni to check
-        }
-
-        private void LoadMenus()
-        {
-            foreach (TopMenuItem menu in mTwoLevelMenu.MenuList)
-            {
-                if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
-                {
-                    if (menu.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
-                    {
-                        continue;
-                    }
-                }
-                xMainNavigationListView.Items.Add(menu);
             }      
-            
-            //if (mTwoLevelMenu.AutoSelectFirstMenuOption)
-            //{
-            //    SelectFirstTopMenu();
-            //}
         }
 
         public void SelectFirstTopMenu()

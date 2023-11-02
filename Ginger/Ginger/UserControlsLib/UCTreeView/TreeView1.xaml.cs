@@ -118,11 +118,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 xTreeItemHeaderPnl.Visibility = value;
                 if (value == Visibility.Collapsed)
                 {
-                    xTreeTitleRow.Height = new GridLength(40);
+                    xTreeTitleRow.Height = new GridLength(0);
                 }
                 else
                 {
-                    xTreeTitleRow.Height = new GridLength(80);
+                    xTreeTitleRow.Height = new GridLength(50);
                 }
             }
         }

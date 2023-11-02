@@ -305,7 +305,7 @@
 
     <Style TargetType="Button" x:Key="$ImageButtonStyle_Execution">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource $HighlightColor_LightBlue}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
@@ -320,7 +320,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Foreground" Value="{StaticResource $HighlightColor_LightBlue}" />
+                            <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}" /> 
                             <Setter Property="Background" Value="Transparent" />
                         </Trigger>
                     </ControlTemplate.Triggers>

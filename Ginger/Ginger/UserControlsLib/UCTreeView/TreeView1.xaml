@@ -10,7 +10,7 @@
 
     <Grid x:Name="xGrid" Background="{StaticResource $BackgroundColor_White}" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="80" x:Name="xTreeTitleRow"/>
+            <RowDefinition Height="50" x:Name="xTreeTitleRow"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="200*" />
         </Grid.RowDefinitions>

@@ -58,7 +58,7 @@
 
                 <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Left" Orientation="Horizontal" >
                     <Frame x:Name="xAppsAgentsMappingFrame" NavigationUIVisibility="Hidden"/>
-                    <StackPanel VerticalAlignment="Center" >
+                    <StackPanel VerticalAlignment="Center" Margin="0,0,0,10" >
                         <Label Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="0,0,0,0">Environment:</Label>
                         <ComboBox x:Name="xEnvironmentComboBox" ContextMenu="{x:Null}" SelectionChanged="xEnvironmentComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="2,0,0,0"></ComboBox>
                     </StackPanel>
@@ -280,12 +280,12 @@
                     </Menu>
                 </StackPanel>
 
-                <GridSplitter Width="0.5" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="5,10,5,10"/>
+                <!--<GridSplitter Width="0.5" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="5,10,5,10"/>-->
 
                 <StackPanel x:Name="xExecutionControlsPnl" HorizontalAlignment="Right" DockPanel.Dock="Right" Orientation="Horizontal" Margin="0,0,15,0">
-                    <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run Flow" FontWeight="Bold" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $BackgroundColor_White}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
+                    <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run Flow" FontWeight="Bold" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
                     <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed"/>
-                    <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" Visibility="Collapsed" ButtonImageForground="{StaticResource $BackgroundColor_Black}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
+                    <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" Visibility="Collapsed" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
                     <UserControls:ucButton x:Name="xResetFlowBtn" ButtonType="ImageButton" Click="xResetFlowBtn_Click"  ButtonFontImageSize="20" ButtonImageType="Reset" Margin="0,3,0,0" >
                         <UserControls:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Reset [BusinessFlow] Execution Details"/>

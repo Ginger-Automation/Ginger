@@ -72,17 +72,17 @@
                 </StackPanel>
                 <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="4,4,4,4"/>
                 <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
-                    <usercontrols:ucButton x:Name="xRunBtn" ButtonType="RoundTextAndImageButton" ButtonImageType="Run" ButtonText="Run Activity"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" ButtonImageForground="{StaticResource $BackgroundColor_Black}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
+                    <usercontrols:ucButton x:Name="xRunBtn" ButtonType="RoundTextAndImageButton" ButtonImageType="Run" ButtonText="Run Activity"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
                         <usercontrols:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Run [Activity]"/>
                         </usercontrols:ucButton.ToolTip>
                     </usercontrols:ucButton>
-                    <usercontrols:ucButton x:Name="xContinueRunBtn" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xContinueRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" ButtonImageForground="{StaticResource $BackgroundColor_Black}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
+                    <usercontrols:ucButton x:Name="xContinueRunBtn" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12"  Click="xContinueRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
                         <usercontrols:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Continue Run from this [Activity]"/>
                         </usercontrols:ucButton.ToolTip>
                     </usercontrols:ucButton>
-                    <usercontrols:ucButton x:Name="xRunSelectedActionBtn" ButtonType="RoundTextAndImageButton" ButtonText="Run Current Action" ToolTip="Run Selected Action" ButtonImageType="RunSingle"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunActionBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" ButtonImageForground="{StaticResource $BackgroundColor_Black}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
+                    <usercontrols:ucButton x:Name="xRunSelectedActionBtn" ButtonType="RoundTextAndImageButton" ButtonText="Run Current Action" ToolTip="Run Selected Action" ButtonImageType="RunSingle"  ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="12" Click="xRunActionBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
                     <usercontrols:ucButton x:Name="xResetBtn" ButtonType="ImageButton" Click="xResetBtn_Click"  ButtonFontImageSize="16" ButtonImageType="Reset" >
                         <usercontrols:ucButton.ToolTip>
                             <GingerCore:ucTextDicResource Text="Reset [Activity] Execution Details"/>

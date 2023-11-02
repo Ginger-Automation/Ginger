@@ -116,12 +116,12 @@
                         <GridSplitter Width="1" Height="25" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Black}" Margin="10 0 10 0"/>
 
                         <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
-                            <usercontrols:ucButton x:Name="xRunRunsetBtn"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
+                            <usercontrols:ucButton x:Name="xRunRunsetBtn"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
                                 <usercontrols:ucButton.ToolTip>
                                     <GingerCore:ucTextDicResource Text="Reset &amp; Run All Runners"/>
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xReRunFailedRunsetBtn" Visibility="Collapsed" ButtonType="RoundTextAndImageButton"  ButtonText="ReRunFailed" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xReRunFailedRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="ReRunFailedBtn_MouseEnter" MouseLeave="ReRunFailedBtn_MouseLeave">
+                            <usercontrols:ucButton x:Name="xReRunFailedRunsetBtn" Visibility="Collapsed" ButtonType="RoundTextAndImageButton"  ButtonText="ReRunFailed" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xReRunFailedRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
                                 <usercontrols:ucButton.ToolTip>
                                     <GingerCore:ucTextDicResource Text="ReRun Failed Business Flows"/>
                                 </usercontrols:ucButton.ToolTip>
@@ -131,7 +131,7 @@
                                     <GingerCore:ucTextDicResource Text="Stop All Runners"/>
                                 </usercontrols:ucButton.ToolTip>
                             </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xContinueRunsetBtn" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
+                            <usercontrols:ucButton x:Name="xContinueRunsetBtn" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
                                 <usercontrols:ucButton.ToolTip>
                                     <GingerCore:ucTextDicResource Text="Continue All Stopped Runners"/>
                                 </usercontrols:ucButton.ToolTip>

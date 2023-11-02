@@ -29,7 +29,7 @@
                 </ListView>
 
                 <!--Sub Navigation Panel-->
-                <ListView x:Name="xSubNavigationListView" DockPanel.Dock="Top" Height="30" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xSubNavigationListView_SelectionChanged" Loaded="xSubNavigationListView_Loaded" Visibility="Collapsed"  ItemContainerStyle="{StaticResource $ListMainViewItemStyle}" SelectionMode="Single">
+                <ListView x:Name="xSubNavigationListView" DockPanel.Dock="Top" Height="35" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xSubNavigationListView_SelectionChanged" Loaded="xSubNavigationListView_Loaded" Visibility="Collapsed"  ItemContainerStyle="{StaticResource $ListMainViewItemStyle}" SelectionMode="Single">
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal"></StackPanel>

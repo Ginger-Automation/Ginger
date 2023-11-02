@@ -42,7 +42,7 @@
         <DockPanel x:Name="xRunnerItemButtons" Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right" Grid.ColumnSpan="2" Margin="0 0 0 0" Visibility="Visible">
             <usercontrols:ucButton x:Name="xRunnerItemContinue" DockPanel.Dock="Right" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xRunnerItemContinue_Click" VerticalAlignment="Bottom" Visibility="Visible" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"/>
             <GridSplitter Width="1" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $BackgroundColor_Black}" Margin="0,6,0,6"    />
-            <Menu x:Name="xRunnerItemMenu" Margin="0,5,0,0" DockPanel.Dock="Right" Visibility="Visible" >
+            <Menu x:Name="xRunnerItemMenu" Margin="0,5,0,0" DockPanel.Dock="Right" Visibility="Visible" Background="Transparent" >
                 <MenuItem >
                     <MenuItem.Header>
                         <usercontrols:ImageMakerControl  ImageType="EllipsisH" SetAsFontImageWithSize="16" Height="16" Width="16" HorizontalAlignment="Center" Margin="0,0,0,0"/>
