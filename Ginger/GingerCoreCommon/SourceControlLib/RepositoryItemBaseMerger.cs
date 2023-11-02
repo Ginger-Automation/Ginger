@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -188,7 +188,7 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     }
                     else if (itemComparison.State == Comparison.StateType.Added || itemComparison.State == Comparison.StateType.Deleted)
                     {
-                        if (itemComparison.Selected)
+                        if (itemComparison.Selected && IsUniqueRIBItem(items, itemComparison.Data))
                         {
                             items.Add(itemComparison.Data);
                         }
@@ -208,6 +208,28 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 
 
             return collection;
+        }
+
+        private static bool IsUniqueRIBItem(System.Collections.IEnumerable itemCollection, object? item)
+        {
+            if(item == null || item is not RepositoryItemBase)
+            {
+                return true;
+            }
+
+            RepositoryItemBase ribItem = (RepositoryItemBase)item;
+
+            bool isUnique = true;
+            foreach(object? collectionItem in itemCollection)
+            {
+                if(collectionItem is RepositoryItemBase ribCollectionItem && ribCollectionItem.Guid == ribItem.Guid)
+                {
+                    isUnique = false;
+                    break;
+                }
+            }
+
+            return isUnique;
         }
 
         private static Type GetCollectionItemType(Type collectionType)

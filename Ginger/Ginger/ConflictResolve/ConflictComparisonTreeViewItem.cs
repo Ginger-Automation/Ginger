@@ -26,6 +26,7 @@ using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -122,7 +123,13 @@ namespace Ginger.ConflictResolve
                 dependencyProperty: CheckBox.IsCheckedProperty, 
                 obj: _comparison, 
                 property: nameof(Comparison.Selected));
+            BindingHandler.ObjFieldBinding(
+                control: itemSelectCheckbox,
+                dependencyProperty: CheckBox.IsEnabledProperty,
+                obj: _comparison,
+                property: nameof(Comparison.IsSelectionEnabled));
             itemSelectCheckbox.Tag = _comparison;
+            
             itemSelectCheckbox.Checked += CheckBox_CheckedUnchecked;
             itemSelectCheckbox.Unchecked += CheckBox_CheckedUnchecked;
 

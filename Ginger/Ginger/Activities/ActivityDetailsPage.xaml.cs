@@ -30,6 +30,7 @@ using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.BusinessFlowsLib;
 using Microsoft.Graph;
+using MongoDB.Driver.Linq;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -167,6 +168,10 @@ namespace Ginger.BusinessFlowPages
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Publish));
             if (mContext != null && mContext.BusinessFlow != null)
             {
+                //if (!mContext.BusinessFlow.TargetApplications.Any(ta => ta.Equals(mActivity.TargetApplication)))
+                //{
+                  //  mContext.BusinessFlow.MapTAToBF(eUserMsgSelection.None, mActivity, WorkSpace.Instance.Solution.ApplicationPlatforms);
+               // }
                 xTargetApplicationComboBox.ItemsSource = mContext.BusinessFlow.TargetApplications;
             }
             else
@@ -203,14 +208,16 @@ namespace Ginger.BusinessFlowPages
                 xHandlerTriggerOnStackPanel.Visibility = Visibility.Collapsed;
                 xHandlerPostExecutionActionStack.Visibility = Visibility.Collapsed;
             }
+            PropertyChangedEventManager.RemoveHandler(WorkSpace.Instance.UserProfile, UserProfile_PropertyChanged, string.Empty);
             PropertyChangedEventManager.AddHandler(WorkSpace.Instance.UserProfile, UserProfile_PropertyChanged, string.Empty);
             
             if(mContext.BusinessFlow != null)
             {
-             CollectionChangedEventManager.AddHandler(source: mContext.BusinessFlow.TargetApplications, handler: AutoUpdate_ConsumerList);
+                CollectionChangedEventManager.RemoveHandler(source: mContext.BusinessFlow.TargetApplications, handler: AutoUpdate_ConsumerList);
+                CollectionChangedEventManager.AddHandler(source: mContext.BusinessFlow.TargetApplications, handler: AutoUpdate_ConsumerList);
             }
 
-            PrepareAndLoadConsumerComboBox();
+            TargetAppSelectedComboBox();
         }
 
         private void UserProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -289,6 +296,7 @@ namespace Ginger.BusinessFlowPages
             else
             {
                 xConsumerStack.Visibility = Visibility.Collapsed;
+                BindingOperations.ClearAllBindings(xConsumerCB);
             }
         }
         private void PrepareAndLoadConsumerComboBox()
@@ -309,28 +317,45 @@ namespace Ginger.BusinessFlowPages
                 if (mContext.BusinessFlow != null)
                 {
                     targetApplications = mContext.BusinessFlow.TargetApplications;
+                    // this logic is developed to support the backward compatibility where parent guids are empty
+                    if (targetApplications.Any(f => f.ParentGuid.Equals(Guid.Empty)))
+                    {
+                        var solutionTAs = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+                        foreach (var listofTA in targetApplications.Where(f => f.ParentGuid.Equals(Guid.Empty)))
+                        {
+                            var matchingApp = solutionTAs.FirstOrDefault(z => z.Name.Equals(listofTA.Name));
+                            if (matchingApp != null)
+                            {
+                                listofTA.ParentGuid = matchingApp.Guid;
+                            }
+                        }
+                    }
                 }
                 else
                 {
                     targetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
                 }
 
-                foreach (var targetApplication in targetApplications.Cast<TargetApplication>())
+                if (xTargetApplicationComboBox.SelectedItem != null)
                 {
-                    if (!targetApplication.AppName.Equals(xTargetApplicationComboBox.SelectedItem.ToString()))
+                    foreach (var targetApplication in targetApplications.Cast<TargetApplication>())
                     {
-                        Consumer consumer = new()
+                        if (!targetApplication.AppName.Equals(xTargetApplicationComboBox.SelectedItem.ToString()))
                         {
-                            ConsumerGuid = targetApplication.TargetGuid != Guid.Empty ? targetApplication.TargetGuid :
-                            targetApplication.Guid,
-                            Name = targetApplication.ItemName
-                        };
-                        consumerList.Add(consumer);
+                            Consumer consumer = new()
+                            {
+                                ConsumerGuid = targetApplication.TargetGuid != Guid.Empty ? targetApplication.TargetGuid :
+                                targetApplication.Guid,
+                                Name = targetApplication.ItemName
+                            };
+                            consumerList.Add(consumer);
+                        }
                     }
                 }
 
                 xConsumerCB.ConsumerSource = consumerList;
                 //Binding for the consumer ComboBox & EnterPrise flag check for consumer combobox
+                BindingOperations.ClearAllBindings(xConsumerCB);
                 BindingHandler.ObjFieldBinding(xConsumerCB, ConsumerComboBox.SelectedConsumerProperty, mActivity, nameof(mActivity.ConsumerApplications));
             }
         }

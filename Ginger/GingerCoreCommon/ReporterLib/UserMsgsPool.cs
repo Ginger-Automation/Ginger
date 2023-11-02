@@ -172,7 +172,9 @@ namespace Amdocs.Ginger.Common
         NotAllowedForMappedRuntimeValue,
         HandleConflictsBeforeMovingForward,
         HasUnhandledConflicts,
-        UncommitedChangesPreventCheckout
+        UncommitedChangesPreventCheckout,
+        ExportToBPMNSuccessful,
+        GingerEntityToBPMNConversionError
     }
 
     public static class UserMsgsPool
@@ -577,6 +579,10 @@ namespace Amdocs.Ginger.Common
 
             #endregion Reports
 
+            #region Otoma
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ExportToBPMNSuccessful, new UserMsg(eUserMsgType.INFO, "BPMN Export Successful", "Exported to BPMN file {0} successfully.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerEntityToBPMNConversionError, new UserMsg(eUserMsgType.ERROR, "BPMN Export Failed", "Error occurred while exporting BPMN.\n{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
+            #endregion
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed, new UserMsg(eUserMsgType.INFO, "Remote Data deletion", "Remote Execution Results will not be deleted.", eUserMsgOption.OK, eUserMsgSelection.OK));
 

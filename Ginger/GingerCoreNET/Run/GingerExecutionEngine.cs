@@ -532,6 +532,11 @@ namespace Ginger.Run
                         continue;
                     }
 
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && executedBusFlow.RunStatus == eRunStatus.Failed)
+                    {
+                        executedBusFlow.Reset();
+                    }
+
                     //Run Bf
                     if (doContinueRun && bfIndx == startingBfIndx)//this is the BF to continue from
                     {
@@ -1242,7 +1247,7 @@ namespace Ginger.Run
                 RunActivity(CurrentBusinessFlow.CurrentActivity, resetErrorHandlerExecutedFlag: false);
             }
             else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow)
-            {
+            {                
                 RunBusinessFlow(CurrentBusinessFlow, doResetErrorHandlerExecutedFlag: false);
             }
         }
@@ -4523,7 +4528,7 @@ namespace Ginger.Run
                         if (currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Stopped)
                         {
                             currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
-                        }
+                        }                       
                         else
                         {
                             switch (currentActivityGroup.ExecutionLoggerStatus)
