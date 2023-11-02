@@ -401,78 +401,75 @@ namespace GingerCore
             switch (repositoryItem.GetItemType())
             {
                 case "HTMLReportConfiguration":
-                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Any(x => x.Name == resultValue))
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().Any(x => string.Equals(x.Name, resultValue)))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Report Template with same name: " + "'" + resultValue + "'" + " already exists.");
-                        return true;
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage,$"Report Template with same name: '{ resultValue}' already exists.");
+                        return true; 
                     }
 
                     break;
 
                 case "BusinessFlow":
                     ObservableList<BusinessFlow> BFList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
-                    if (BFList.Any(x => x.Name == resultValue))
+                    if (BFList.Any(x => string.Equals(x.Name, resultValue)))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Business flow with same name: " + "'" + resultValue + "'" + " already exists.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"Business flow with same name: '{resultValue}' already exists.");
                         return true;
                     }
                     break;
                 case "Agent":
                     ObservableList<Agent> Agentist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-                    if (Agentist.Any(x => x.Name == resultValue))
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Agent with same name: " + "'" + resultValue + "'" + " already exists.");
+                    if (Agentist.Any(x => string.Equals(x.Name, resultValue))) { 
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"Agent with same name: '{ resultValue}' already exists.");
                         return true;
                     }
                     break;
                 case "ReportTemplate":
-                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>().Any(x => x.Name == resultValue))
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ReportTemplate>().Any(x => string.Equals(x.Name, resultValue)))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Template with same name: " + "'" + resultValue + "'" + " already exists.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"Template with same name: '{ resultValue}' already exists.");
                         return true;
                     }
 
                     break;
                 case "ApplicationPOMModel":
-                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Any(x=> x.Name == resultValue))
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ApplicationPOMModel>().Any(x=> string.Equals(x.Name, resultValue)))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "POM Model with same name: " + "'" + resultValue + "'" + " already exists.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"POM Model with same name: '{resultValue}' already exists.");
                         return true;
                     }
 
                     break;
                 case "Environment":
-                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any(x => x.Name == resultValue))
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any(x => string.Equals(x.Name, resultValue)))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Environment with same name: " + "'" + resultValue + "'" + " already exists.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"Environment with same name: '{ resultValue}' already exists.");
                         return true;
                     }
                     break;
                 case "HTMLReportTemplate":
-                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>().Any(x => x.Name == resultValue))
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportTemplate>().Any(x => string.Equals(x.Name, resultValue)))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Report Template with same name: " + "'" + resultValue + "'" + " already exists.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"Report Template with same name: '{ resultValue}' already exists.");
                         return true;
                     }
                     break;
                 case "RunSetConfig":
-                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>().Any(x => x.Name == resultValue))
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<RunSetConfig>().Any(x => string.Equals(x.Name, resultValue)))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Run sets with same name: " + "'" + resultValue + "'" + " already exists.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"Run sets with same name: '{ resultValue}' already exists.");
                         return true;
                     }
 
                     break;
 
                 case "DataSource":
-                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSource.DataSourceBase>().Any(x => x.Name == resultValue))
+                    if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSource.DataSourceBase>().Any(x => string.Equals(x.Name, resultValue)))
                     {
-                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Data Source with same name: " + "'" + resultValue + "'" + " already exists.");
+                        Reporter.ToUser(eUserMsgKey.StaticWarnMessage, $"Data Source with same name: '{ resultValue}' already exists.");
                         return true;
                     }
-
-                    break;
-
+                    
                     break;
                 default:
                     return false;
