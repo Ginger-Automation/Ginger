@@ -741,7 +741,7 @@ namespace GingerCoreNET.DataSource
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Error occured while renaming the table {tableName}", ex);                
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while renaming the table {tableName}", ex);                
             }
         }
 

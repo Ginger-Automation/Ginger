@@ -537,7 +537,7 @@ namespace GingerCore.Drivers.Common
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error  occured when creating  relative xapth with attributes values", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error  occurred when creating  relative xapth with attributes values", ex);
             }
 
             return relXpath;

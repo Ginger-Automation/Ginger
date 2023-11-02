@@ -374,8 +374,8 @@ namespace GingerCore.Actions
         {
             string calculatedDestinationPath = GetInputParamCalculatedValue(Fields.DestinationFolder);
             calculatedDestinationPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(calculatedDestinationPath);
-            DestinationFolder = Path.GetDirectoryName(calculatedDestinationPath);
-            if (!string.IsNullOrEmpty(DestinationFolder))
+            //DestinationFolder = Path.GetDirectoryName(calculatedDestinationPath);
+            if (!string.IsNullOrEmpty(calculatedDestinationPath))
             {
                 if (Directory.Exists(calculatedDestinationPath))
                 {
@@ -384,9 +384,22 @@ namespace GingerCore.Actions
                     {
                         DestinationFolder += Path.DirectorySeparatorChar;
                     }
+                    DestinationFile = Path.GetFileName(DestinationFolder);
                 }
+                else
+                {
+                    DestinationFolder = Path.GetDirectoryName(calculatedDestinationPath);
+                    DestinationFile = Path.GetFileName(calculatedDestinationPath);
+                }
+
             }
-            DestinationFile = Path.GetFileName(calculatedDestinationPath);
+            else
+            {
+                base.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                base.ExInfo = "Provide a valid Destination Path";
+                base.Error = "Provide a valid Destination Path";
+                return;
+            }
         }
         public override bool SerializationError(SerializationErrorType errorType, string name, string value)
         {
