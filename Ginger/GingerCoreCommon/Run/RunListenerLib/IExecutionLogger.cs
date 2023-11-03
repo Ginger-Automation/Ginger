@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -19,6 +19,7 @@ limitations under the License.
 //using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using System;
 using System.Threading.Tasks;
+using Amdocs.Ginger.Common;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
@@ -50,7 +51,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         string SetExecutionLogFolder(string executionLogfolder, bool isCleanFile);
         //object SetReportAction(Act action, IContext context, eExecutedFrom executedFrom, bool offlineMode = false);
         //object SetReportActivity(Activity activity, IContext context, bool offlineMode = false, bool isConfEnable = false);
-        object SetReportActivityGroup(ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false);
+        object SetReportActivityGroup(IContext context, ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false);
         //object SetReportBusinessFlow(IContext context, bool offlineMode = false, eExecutedFrom executedFrom = eExecutedFrom.Run, bool isConfEnable = false);
         //void SetReportRunner(IGingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, IContext mContext, string filename, int runnerCount);
         //void SetReportRunSet(RunSetReport runSetReport, string logFolder);

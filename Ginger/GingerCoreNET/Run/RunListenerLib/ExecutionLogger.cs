@@ -182,10 +182,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         //    return JsonLib.LoadObjFromJSonString(str, t, mJsonSerializer);
         //}
 
-        public abstract object SetReportActivity(Activity activity, Context context, bool offlineMode = false, bool isConfEnable = false);
+        public abstract object SetReportActivity(Activity activity, Context context, eExecutedFrom executedFrom = eExecutedFrom.Run, bool offlineMode = false, bool isConfEnable = false);
 
-        public abstract object SetReportBusinessFlow(Context context, bool offlineMode = false, Amdocs.Ginger.Common.eExecutedFrom executedFrom = eExecutedFrom.Run, bool isConfEnable = false);
-        public abstract object SetReportActivityGroup(ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false);
+        public abstract object SetReportBusinessFlow(Context context, bool offlineMode = false, eExecutedFrom executedFrom = eExecutedFrom.Run, bool isConfEnable = false);
+        public abstract object SetReportActivityGroup(IContext context, ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false);
         public virtual void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
             if (gingerRunner == null)

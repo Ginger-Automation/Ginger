@@ -116,7 +116,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return AR;
         }
 
-        public override object SetReportActivity(Activity activity, Context context, bool offlineMode, bool isConfEnable)
+        public override object SetReportActivity(Activity activity, Context context, eExecutedFrom executedFrom, bool offlineMode, bool isConfEnable)
         {
             ActivityReport AR = GetActivityReportData(activity, context, offlineMode);
             if (isConfEnable)
@@ -133,7 +133,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return AR;
         }
 
-        public override object SetReportActivityGroup(ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode)
+        public override object SetReportActivityGroup(IContext context, ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode)
         {
             ActivityGroupReport AGR = GetAGReportData(activityGroup, businessFlow);
             //AGR.ReportMapper(activityGroup, businessFlow, ExecutionLogfolder);

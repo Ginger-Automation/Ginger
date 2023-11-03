@@ -107,7 +107,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     screenShotCountPerAction--;
                 }
             }
-
+            MapActionToLiteDb(action, context, executedFrom);
             return GetActionReportData(action, context, executedFrom);//Returning ActionReport so we will get execution info on the console
         }
 
@@ -147,9 +147,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return liteDbAction;
         }
 
-        public override object SetReportActivity(Activity activity, Context context, bool offlineMode = false, bool isConfEnable = false)
+        public override object SetReportActivity(Activity activity, Context context, eExecutedFrom executedFrom = eExecutedFrom.Run, bool offlineMode = false, bool isConfEnable = false)
         {
             //return new LiteDbActivity();
+            MapActivityToLiteDb(activity, context, executedFrom);
             return GetActivityReportData(activity, context, offlineMode);//Returning ActivityReport so we will get execution info on the console
         }
 
@@ -178,7 +179,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
             }
             activity.Acts.ToList().ForEach(action => this.MapActionToLiteDb((GingerCore.Actions.Act)action, context, executedFrom));
-            AR.ActionsColl.AddRange(liteDbActionList);
+            AR.AllActionsColl.AddRange(liteDbActionList);
 
             AR.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
             AR.ChildExecutedItemsCount = activity.Acts.Count(x => x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored);
@@ -194,9 +195,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return AR;
         }
 
-        public override object SetReportActivityGroup(ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode)
+        public override object SetReportActivityGroup(IContext context, ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false)
         {
             //return new LiteDbActivityGroup();
+            MapAcgToLiteDb((Context)context, activityGroup, businessFlow);
             return GetAGReportData(activityGroup, businessFlow);//Returning ActivityGroupReport so we will get execution info on the console
         }
 
@@ -210,7 +212,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 AGR._id = activityGroup.LiteDbId;
             }
-            AGR.ActivitiesColl = liteDbActivityList.Where(ac => ac.ActivityGroupName != null && ac.ActivityGroupName.Equals(AGR.Name)).ToList();
+            AGR.AllActivitiesColl = liteDbActivityList.Where(ac => ac.ActivityGroupName != null && ac.ActivityGroupName.Equals(AGR.Name)).ToList();
             SaveObjToReporsitory(AGR, liteDbManager.NameInDb<LiteDbActivityGroup>(), true);
             liteDbAGList.Add(AGR);
             if (ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
@@ -237,7 +239,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 BFR._id = lastBfObjId;
                 ClearSeq();
             }
-            SetBfobjects(context, executedFrom);
             context.Runner.CalculateBusinessFlowFinalStatus(context.BusinessFlow);
             BFR.SetReportData(GetBFReportData(context.BusinessFlow, context.Environment));
             BFR.Seq = ++this.bfSeq;
@@ -296,7 +297,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     {
                         context.BusinessFlow.ExecutionFullLogFolder = context.BusinessFlow.ExecutionLogFolder;
                     }
-                    BFR.ActivitiesColl.AddRange(liteDbActivityList);
+                    BFR.AllActivitiesColl.AddRange(liteDbActivityList);
                     BFR.ActivitiesGroupsColl.AddRange(liteDbAGList);
                     SaveObjToReporsitory(BFR, liteDbManager.NameInDb<LiteDbBusinessFlow>());
                     liteDbActivityList.Clear();
@@ -304,7 +305,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
                 else
                 {
-                    BFR.ActivitiesColl.AddRange(liteDbActivityList);
+                    BFR.AllActivitiesColl.AddRange(liteDbActivityList);
                     BFR.ActivitiesGroupsColl.AddRange(liteDbAGList);
                     SaveObjToReporsitory(BFR, liteDbManager.NameInDb<LiteDbBusinessFlow>());
                     this.lastBfObjId = BFR._id;
@@ -343,22 +344,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             acgSeq = 0;
         }
 
-        private void SetBfobjects(Context context, eExecutedFrom executedFrom)
-        {
-            activitySeq = 0;
-            var bf = context.BusinessFlow;
-            bf.Activities.ToList().ForEach(activity => this.MapActivityToLiteDb(activity, context, executedFrom));
-            bf.ActivitiesGroups.ToList().ForEach(acg => this.MapAcgToLiteDb(context,acg, bf));
-        }
-
         public override void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
             base.SetReportRunner(gingerRunner, gingerReport, gingerData, mContext, filename, runnerCount);
             LiteDbRunner runner = new LiteDbRunner();
-            runner.BusinessFlowsColl.AddRange(liteDbBFList);
+            runner.AllBusinessFlowsColl.AddRange(liteDbBFList);
             if (lastRunnertStatus == eRunStatus.Stopped && gingerRunner.RunsetStatus != eRunStatus.Stopped && runner.BusinessFlowsColl.Count > gingerRunner.BusinessFlows.Count)
             {
-                runner.BusinessFlowsColl.RemoveRange(0, gingerRunner.BusinessFlows.Count);
+                runner.AllBusinessFlowsColl.RemoveRange(0, gingerRunner.BusinessFlows.Count);
             }
 
             SetRunnerChildCounts(runner, gingerRunner.BusinessFlows);
@@ -513,7 +506,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             try
             {
                 LiteDbRunner runner = new LiteDbRunner();
-                runner.BusinessFlowsColl.AddRange(liteDbBFList);
+                runner.AllBusinessFlowsColl.AddRange(liteDbBFList);
                 runner._id = runnerLiteDbId;
                 runner.Seq = 1;
                 runner.Name = "Automated Runner";
