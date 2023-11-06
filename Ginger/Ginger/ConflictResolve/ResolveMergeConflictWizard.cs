@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SourceControl;
+using Ginger.WizardLib;
 using GingerCore;
 using GingerTest.WizardLib;
 using GingerWPF.WizardLib;
@@ -49,6 +50,11 @@ namespace Ginger.ConflictResolve
 
         private void AddPages()
         {
+            AddPage(
+                Name: "Introduction", 
+                Title: "Introduction", 
+                SubTitle: "Conflict Resolve Introduction", 
+                Page: new WizardIntroPage("/ConflictResolve/ConflictResolveIntro.md"));
             AddPage(
                 Name: "CompareAndSelect",
                 Title: "Compare and Select Conflicts",

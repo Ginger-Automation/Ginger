@@ -20,6 +20,8 @@ using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SourceControl;
 using GingerCore;
+using GingerCore.GeneralLib;
+using GingerWPF.BusinessFlowsLib;
 using GingerWPF.WizardLib;
 using LibGit2Sharp;
 using System;
@@ -69,11 +71,12 @@ namespace Ginger.ConflictResolve
             Task.Run(() =>
             {
                 ShowLoading();
-                bool hasMergedItem = wizard.TryGetOrCreateMergedItem(out RepositoryItemBase ? mergedItem);
-                if (hasMergedItem)
+                bool hasMergedItem = wizard.TryGetOrCreateMergedItem(out RepositoryItemBase? mergedItem);
+                if (hasMergedItem && mergedItem != null)
                 {
                     Comparison mergedItemComparison = SourceControlIntegration.CompareConflictedItems(mergedItem, null);
                     SetTreeItems(mergedItemComparison);
+                    SetPageContent(mergedItem);
                 }
                 HideLoading();
             });
@@ -108,6 +111,26 @@ namespace Ginger.ConflictResolve
                 xTree.ClearTreeItems();
                 xTree.AddItem(new ConflictMergeTreeViewItem(comparison));
             });
+        }
+
+        private void SetPageContent(RepositoryItemBase mergedItem)
+        {
+            if(mergedItem is BusinessFlow mergedBusinessFlow)
+            {
+                Dispatcher.Invoke(() => 
+                {
+                    xPageViewTabItem.IsEnabled = true;
+                    xPageFrame.ClearAndSetContent(new BusinessFlowViewPage(mergedBusinessFlow, context: null, General.eRIPageViewMode.View));
+                });
+            }
+            else
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    xPageViewTabItem.IsEnabled = false;
+                    xPageFrame.ClearAndSetContent(null);
+                });
+            }
         }
     }
 }
