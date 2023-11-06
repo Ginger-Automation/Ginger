@@ -222,9 +222,11 @@ namespace GingerCore.Drivers.WindowsLib
                         {
                             //TODO: When capturing all windows, we do showwindow. for few applications show window is causing application to minimize
                             //Disabling the capturing all windows for Windows driver until we fix show window issue
-
-                            Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
-                            act.AddScreenShot(bmp);
+                            if (mUIAutomationHelper.GetCurrentWindow() != null)
+                            {
+                                Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
+                                act.AddScreenShot(bmp);
+                            }
                             //if not running well. need to add return same as PBDrive
                         }
                         catch (Exception ex)

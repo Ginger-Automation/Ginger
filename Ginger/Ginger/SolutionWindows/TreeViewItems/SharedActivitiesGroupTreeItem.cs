@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.BPMN;
 using Ginger.Activities;
@@ -36,6 +37,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     class SharedActivitiesGroupTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
+        private const string BPMNExportPath = @"~\\Documents\BPMN";
+
         private readonly ActivitiesGroup mActivitiesGroup;
         private ActivitiesGroupPage mActivitiesGroupPage;
         private SharedActivitiesGroupsFolderTreeItem.eActivitiesGroupsItemsShowMode mShowMode;
@@ -98,17 +101,17 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 AddItemNodeBasicManipulationsOptions(mContextMenu);
 
-                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
+                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, imageType: eImageType.InstanceLink);
 
                 MenuItem exportMenu = TreeViewUtils.CreateSubMenu(mContextMenu, "Export");
-                TreeViewUtils.AddSubMenuItem(exportMenu, "Export All to ALM", ExportToALM, null, "@ALM_16x16.png");
+                TreeViewUtils.AddSubMenuItem(exportMenu, "Export All to ALM", ExportToALM, icon: "@ALM_16x16.png");
                 TreeViewUtils.AddSubMenuItem(exportMenu, "Export to BPMN file", ExportBPMN, icon: eImageType.ShareExternal);
 
                 AddSourceControlOptions(mContextMenu);
             }
             else
             {
-                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
+                TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, imageType: eImageType.InstanceLink);
             }
 
         }
@@ -121,18 +124,54 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void ExportBPMN(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNFile);
+                string xml = CreateBPMNXMLForActivitiesGroup(mActivitiesGroup);
+                string filePath = SaveBPMNXMLFile($"{mActivitiesGroup.Name}.bpmn", xml);
+                string solutionRelativeFilePath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(filePath);
+                Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeFilePath);
+            }
+            catch (Exception ex)
+            {
+                if (ex is BPMNExportException)
+                {
+                    Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, ex.Message);
+                }
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while exporting BPMN", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
+        }
+
+        private string CreateBPMNXMLForActivitiesGroup(ActivitiesGroup activitiesGroup)
+        {
+            Reporter.ToLog(eLogLevel.INFO, $"Creating BPMN XML for activities group {activitiesGroup.Name}");
             ActivitiesGroupToBPMNConverter activitiesGroupToBPMNConverter = new();
-            Collaboration collaboration = activitiesGroupToBPMNConverter.Convert(mActivitiesGroup);
+            Collaboration collaboration = activitiesGroupToBPMNConverter.Convert(activitiesGroup);
             BPMNXMLSerializer serializer = new();
             string xml = serializer.Serialize(collaboration);
+            return xml;
+        }
 
-            string directoryPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(@"~\\Documents\BPMN");
-            if(!Directory.Exists(directoryPath))
+        private string SaveBPMNXMLFile(string filename, string xml)
+        {
+            Reporter.ToLog(eLogLevel.INFO, "Saving BPMN XML file");
+            if (!filename.EndsWith(".bpmn", StringComparison.OrdinalIgnoreCase))
+            {
+                filename += ".bpmn";
+            }
+
+            string directoryPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BPMNExportPath);
+            if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath);
             }
-            string filePath = Path.Combine(directoryPath, $"{mActivitiesGroup.Name}.bpmn");
+            string filePath = Path.Combine(directoryPath, filename);
             File.WriteAllText(filePath, xml);
+            return filePath;
         }
 
         public override bool DeleteTreeItem(object item, bool deleteWithoutAsking = false, bool refreshTreeAfterDelete = true)

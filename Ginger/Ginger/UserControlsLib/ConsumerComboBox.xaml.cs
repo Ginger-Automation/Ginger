@@ -104,6 +104,7 @@ namespace Ginger.UserControlsLib
             ConsumerComboBox control = (ConsumerComboBox)d;
             control.DisplayInConsumer();
             control.SelectNodes();
+            control.SetSelectedConsumer();
         }
 
         private static void OnSelectedConsumerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

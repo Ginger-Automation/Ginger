@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -47,6 +47,10 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             {
                 return CompareCollectionValue(name, localValue, remoteValue);
             }
+            else if(IsRepositoryItemHeader(localValue, remoteValue))
+            {
+                return CompareRIBHeaderValue(name, localValue, remoteValue);
+            }
             else
             {
                 return CompareSimpleValue(name, localValue, remoteValue);
@@ -71,6 +75,16 @@ namespace Amdocs.Ginger.Common.SourceControlLib
             return
                 (localValueType != null && localValueType.IsAssignableTo(typeof(System.Collections.ICollection))) ||
                 (remoteValueType != null && remoteValueType.IsAssignableTo(typeof(System.Collections.ICollection)));
+        }
+
+        private static bool IsRepositoryItemHeader(Value? localValue, Value? remoteValue)
+        {
+            Type? localValueType = localValue?.Data?.GetType();
+            Type? remoteValueType = remoteValue?.Data?.GetType();
+
+            return
+                (localValueType != null && localValueType.IsAssignableTo(typeof(RepositoryItemHeader))) ||
+                (remoteValueType != null && remoteValueType.IsAssignableTo(typeof(RepositoryItemHeader)));
         }
 
         private static ICollection<Comparison> CompareRIBValue(string name, Value? localValue, Value? remoteValue)
@@ -296,7 +310,9 @@ namespace Amdocs.Ginger.Common.SourceControlLib
 
         private static bool IsPropertySerialized(PropertyInfo property)
         {
-            return property.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute)) != null;
+            return
+                property.GetCustomAttribute(typeof(IsSerializedForLocalRepositoryAttribute)) != null ||
+                string.Equals(property.Name, nameof(RepositoryItemBase.RepositoryItemHeader));
         }
 
         private static bool IsPropertySerialized(FieldInfo field)
@@ -422,6 +438,122 @@ namespace Amdocs.Ginger.Common.SourceControlLib
                     return new Comparison[] { new(name, state, childComparisons, dataType: GetSeniorType(localCollection.GetType(), remoteCollection.GetType())) };
                 }
             }
+        }
+
+        private static ICollection<Comparison> CompareRIBHeaderValue(string name, Value? localValue, Value? remoteValue)
+        {
+            //both local and remote doesn't have value
+            if (localValue == null && remoteValue == null)
+            {
+                return new Comparison[] { new(name, Comparison.StateType.Unmodified, data: null) };
+            }
+            //remote doesn't have value but, local does
+            else if (remoteValue == null)
+            {
+                //data in local is null
+                if (localValue!.Data == null)
+                {
+                    Comparison comparison = new(name, Comparison.StateType.Deleted, data: null);
+                    comparison.Selected = true;
+                    comparison.IsSelectionEnabled = false;
+                    return new Comparison[] {  comparison };
+                }
+                //data in local is not null
+                else
+                {
+                    RepositoryItemHeader localRIH = (RepositoryItemHeader)localValue.Data!;
+                    Comparison comparison = new(name, state: Comparison.StateType.Deleted, data: localRIH);
+                    comparison.Selected = true;
+                    comparison.IsSelectionEnabled = false;
+                    return new Comparison[] { comparison };
+                }
+            }
+
+            //local doesn't have value but, remote does
+            else if (localValue == null)
+            {
+                //data in remote is null
+                if (remoteValue!.Data == null)
+                {
+                    Comparison comparison = new(name, Comparison.StateType.Added, data: null);
+                    comparison.Selected = true;
+                    comparison.IsSelectionEnabled = false;
+                    return new Comparison[] { comparison };
+                }
+                //data in remote is not null
+                else
+                {
+                    RepositoryItemHeader remoteRIH = (RepositoryItemHeader)remoteValue.Data!;
+                    Comparison comparison = new(name, state: Comparison.StateType.Added, remoteRIH);
+                    comparison.Selected = true;
+                    comparison.IsSelectionEnabled = false;
+                    return new Comparison[] { comparison };
+                }
+            }
+
+            //both local and remote have value
+            else
+            {
+                RepositoryItemHeader localRIH = (RepositoryItemHeader)localValue.Data!;
+                RepositoryItemHeader remoteRIH = (RepositoryItemHeader)remoteValue.Data!;
+
+                //data in both local and remote is null
+                if (localRIH == null && remoteRIH == null)
+                {
+                    return new Comparison[] { new(name, Comparison.StateType.Unmodified, data: null) };
+                }
+                //data in local is null
+                else if (localRIH == null)
+                {
+                    return CompareValue(name, localValue: null, remoteValue);
+                }
+                //data in remote is null
+                else if (remoteRIH == null)
+                {
+                    return CompareValue(name, localValue, remoteValue: null);
+                }
+                //data in both local and remote is not null
+                else
+                {
+                    if (RIBHeaderEquals(localRIH, remoteRIH))
+                    {
+                        return new Comparison[] { new(name, Comparison.StateType.Unmodified, data: remoteRIH) };
+                    }
+                    else
+                    {
+                        Comparison localComparison = new(name, Comparison.StateType.Deleted, data: localRIH);
+                        Comparison remoteComparison = new(name, Comparison.StateType.Added, data: remoteRIH);
+                        if (localRIH.LastUpdate > remoteRIH.LastUpdate)
+                        {
+                            localComparison.Selected = true;
+                        }
+                        else
+                        {
+                            remoteComparison.Selected = true;
+                        }
+                        localComparison.IsSelectionEnabled = false;
+                        remoteComparison.IsSelectionEnabled = false;
+                        return new Comparison[] { localComparison, remoteComparison };
+                    }
+                }
+            }
+        }
+
+        private static bool RIBHeaderEquals(RepositoryItemHeader localRIH, RepositoryItemHeader remoteRIH)
+        {
+            bool areRIBHeadersEqual = true;
+            foreach (PropertyInfo property in typeof(RepositoryItemHeader).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                object? localPropertyValue = property.GetValue(localRIH);
+                object? remotePropertyValue = property.GetValue(remoteRIH);
+                if (localRIH != null && !localRIH.Equals(remoteRIH))
+                {
+                    areRIBHeadersEqual = false;
+                    break;
+                }
+            }
+
+            return areRIBHeadersEqual;
         }
 
         private static ICollection<Comparison> CompareSimpleValue(string name, Value? localValue, Value? remoteValue)
