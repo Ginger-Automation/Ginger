@@ -505,7 +505,7 @@ namespace GingerWPF.TreeViewItemsLib
                 if (GingerCore.GeneralLib.InputBoxWindow.GetInputWithValidation("Copied/Duplicated Item Name", "New Name:", ref newName))
                 {
                     bool nameExit = General.IsNameAlreadyexists(itemToCopy, newName);
-                    if (nameExit != true)
+                    if (!nameExit)
                     {
                         RepositoryItemBase itemCopy = ((RepositoryItemBase)itemToCopy).CreateCopy();
                         itemCopy.ItemName = newName;
