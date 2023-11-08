@@ -84,7 +84,7 @@ namespace Ginger.AnalyzerLib
                         BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(BF.Guid);
                         if (actualBf != null)
                         {
-                            RunBusinessFlowAnalyzer(actualBf, issuesList, includeMandatoryInputsAnalyze: false);
+                            RunBusinessFlowAnalyzer(actualBf, issuesList, AnalyzeBusinessFlow.Check.MissingMandatoryInputValues.ExcludedFromAll());
                         }
                     }
                 });
@@ -101,14 +101,19 @@ namespace Ginger.AnalyzerLib
             });
         }
 
-        public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList, bool includeMandatoryInputsAnalyze = true)
+        public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList)
+        {
+            return RunBusinessFlowAnalyzer(businessFlow, issuesList, AnalyzeBusinessFlow.Check.All);
+        }
+
+        public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList, AnalyzeBusinessFlow.Check checks)
         {
             List<string> usedVariablesInBF = new List<string>();
             List<string> usedVariablesInActivity = new List<string>();
             List<AnalyzerItemBase> missingVariableIssueList = new List<AnalyzerItemBase>();
 
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(WorkSpace.Instance.Solution, businessFlow, includeMandatoryInputsAnalyze: includeMandatoryInputsAnalyze))
+            foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(businessFlow, WorkSpace.Instance.Solution, checks))
             {
                 AddIssue(issuesList, issue);
             }
@@ -234,7 +239,7 @@ namespace Ginger.AnalyzerLib
                         aa.ItemName = var.Name;
                         aa.Description = var + " is Unused in " + variableSourceType + ": " + businessFlow.Name;
                         aa.Details = variableSourceType;
-                        aa.mBusinessFlow = businessFlow;
+                        aa.BusinessFlow = businessFlow;
                         aa.ItemParent = variableSourceName;
                         aa.CanAutoFix = AnalyzerItemBase.eCanFix.Yes;
                         aa.IssueType = AnalyzerItemBase.eType.Error;
@@ -298,7 +303,7 @@ namespace Ginger.AnalyzerLib
             }
             else if (sender.GetType().Equals(typeof(AnalyzeBusinessFlow)))
             {
-                BusinessFlow BFlow = ((AnalyzeBusinessFlow)sender).mBusinessFlow;
+                BusinessFlow BFlow = ((AnalyzeBusinessFlow)sender).BusinessFlow;
                 foreach (VariableBase var in BFlow.Variables)
                 {
                     if (var.Name.Equals(((AnalyzeBusinessFlow)sender).ItemName))

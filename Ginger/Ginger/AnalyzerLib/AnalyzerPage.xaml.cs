@@ -59,7 +59,7 @@ namespace Ginger.AnalyzerLib
 
         ObservableList<AnalyzerItemBase> mIssues = new ObservableList<AnalyzerItemBase>();
 
-        private Solution mSolution;
+        private Solution? mSolution;
         private BusinessFlow businessFlow;
         private RunSetConfig mRunSetConfig;
         // ObservableList<DataSourceBase> DSList;
@@ -132,10 +132,10 @@ namespace Ginger.AnalyzerLib
             AnalyzerItemsGrid.Title = "'" + mSolution.Name + "' Solution Issues";
         }
 
-        public void Init(Solution Solution, BusinessFlow BusinessFlow, bool selfHealingAutoFixIssue = false)
+        public void Init(BusinessFlow BusinessFlow, bool selfHealingAutoFixIssue = false)
         {
             mAnalyzedObject = AnalyzedObject.BusinessFlow;
-            mSolution = Solution;
+            mSolution = null;
             businessFlow = BusinessFlow;
             AnalyzerItemsGrid.Title = "'" + BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Issues";
 
@@ -174,6 +174,12 @@ namespace Ginger.AnalyzerLib
             CriticalAndHighIssuesLabelCounter.Content = "0";
             CriticalAndHighIssuesLabelCounter.Foreground = _brushDefault;   //"#20334f";
             CanAutoFixLableCounter.Content = "0";
+            await Analyze();
+        }
+
+        public async Task AnalyzeWithUI()
+        {
+            mAnalyzeWithUI = true;
             await Analyze();
         }
 
@@ -755,7 +761,7 @@ namespace Ginger.AnalyzerLib
                     BusinessFlow bs = null;
                     if (AI.GetType() == typeof(AnalyzeBusinessFlow))
                     {
-                        bs = ((AnalyzeBusinessFlow)AI).mBusinessFlow;
+                        bs = ((AnalyzeBusinessFlow)AI).BusinessFlow;
                     }
                     else if (AI.GetType() == typeof(AnalyzeActivity))
                     {

@@ -55,11 +55,18 @@ namespace Ginger.ConflictResolve
                 Title: "Introduction", 
                 SubTitle: "Conflict Resolve Introduction", 
                 Page: new WizardIntroPage("/ConflictResolve/ConflictResolveIntro.md"));
+
             AddPage(
                 Name: "CompareAndSelect",
                 Title: "Compare and Select Conflicts",
                 SubTitle: "Compare and Select Conflicts",
                 new ConflictViewPage());
+
+            AddPage(
+                Name: "Analyze",
+                Title: "Analyze",
+                SubTitle: "Analyze Merged Item",
+                Page: new AnalyeMergedPage());
 
             AddPage(
                 Name: "PreviewMergedResult",
