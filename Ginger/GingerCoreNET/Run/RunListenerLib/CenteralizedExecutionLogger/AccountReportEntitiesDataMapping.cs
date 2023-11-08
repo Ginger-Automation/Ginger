@@ -26,6 +26,7 @@ using Ginger.Run;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
+using GingerCore.DataSource;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -333,6 +334,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public static AccountReportRunSet MapRunsetStartData(RunSetConfig runSetConfig, Context context)
         {
+            GingerCore.ValueExpression valueExpression = new(context.Environment, context, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
 
             AccountReportRunSet accountReportRunSet = new AccountReportRunSet();
             accountReportRunSet.Id = (Guid)runSetConfig.ExecutionID;
@@ -356,7 +358,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             accountReportRunSet.UserCategory1 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory1));
             accountReportRunSet.UserCategory2 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory2));
             accountReportRunSet.UserCategory3 = GingerCoreNET.GeneralLib.General.GetSolutionCategoryValue(runSetConfig.CategoriesDefinitions.FirstOrDefault(x => x.Category == SolutionCategory.eSolutionCategories.UserCategory3));
-            accountReportRunSet.RunStatus = _InProgressStatus;            
+            accountReportRunSet.RunStatus = _InProgressStatus;
+            valueExpression.Value = runSetConfig.RunDescription;
+            accountReportRunSet.RunDescription = valueExpression.ValueCalculated;
             accountReportRunSet.IsPublished = runSetConfig.Publish;
             SetRunSetChildCounts(runSetConfig, accountReportRunSet, true);
             return accountReportRunSet;
