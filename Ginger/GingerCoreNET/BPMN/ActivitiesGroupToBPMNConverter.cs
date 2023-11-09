@@ -114,7 +114,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             }
         }
 
-
+        /// <summary>
+        /// Get <see cref="Activity"/> from SharedRepository based on <see cref="ActivityIdentifiers"/>.
+        /// </summary>
+        /// <param name="activityIdentifier"></param>
+        /// <returns></returns>
         private Activity? GetActivityFromSharedRepositoryByIdentifier(ActivityIdentifiers activityIdentifier)
         {
             ObservableList<Activity> activitiesInRepository = _solutionFacade.GetActivitiesFromSharedRepository();
