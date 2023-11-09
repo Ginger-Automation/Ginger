@@ -44,7 +44,7 @@ namespace Ginger.AnalyzerLib
 
         public static bool AreChecksEnabled(this Check checksEnabled, Check checksToVerify)
         {
-            return (checksEnabled & checksEnabled) == checksToVerify;
+            return (Check.All & checksEnabled) == checksToVerify;
         }
     }
 
