@@ -501,7 +501,7 @@ namespace Ginger.Run
                     WorkSpace.Instance.RunsetExecutor.ProcessRunSetActions(new List<RunSetActionBase.eRunAt> { RunSetActionBase.eRunAt.ExecutionStart, RunSetActionBase.eRunAt.DuringExecution });
                 }
 
-                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == eDataPublishingPhase.DuringExecution && Runners.Count > 0)
+                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && Runners.Count > 0)
                 {
                     if(((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
                     {
@@ -621,7 +621,7 @@ namespace Ginger.Run
                 //ExecutionLoggerManager.RunSetEnd();
                 Runners[0].Executor.ExecutionLoggerManager.RunSetEnd();
 
-                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution && Runners.Count > 0)
+                if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && Runners.Count > 0)
                 {                   
                     if (((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
                     {
@@ -653,11 +653,6 @@ namespace Ginger.Run
                 //CloseAllAgents();
                 CloseAllEnvironments();
                 Reporter.ToLog(eLogLevel.INFO, string.Format("########################## {0} Execution Ended", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-
-                if (mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.PostExecution)
-                {
-                    await Runners[0].Executor.ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
-                }
             }
             catch(Exception ex)
             {

@@ -70,16 +70,6 @@ namespace Ginger.Reports
         {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FolderTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFolderMaximumSizeTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize), bindingConvertor: new GingerCore.GeneralLib.LongStringConverter());
-
-
-            xPublishingPhaseRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDataPublishingPhase),
-                xPublishingPhasePanel, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.DataPublishingPhase));
-
-            xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
-                xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
-
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEndPointURLTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.CentralLoggerEndPointUrl));
 

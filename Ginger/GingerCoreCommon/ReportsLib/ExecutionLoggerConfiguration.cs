@@ -52,24 +52,7 @@ namespace Ginger.Reports
             Yes,
             No
         }
-
-
-        public enum eDeleteLocalDataOnPublish
-        {
-            Yes,
-            No
-        }
-
-        public enum eDataPublishingPhase
-        {
-            [EnumValueDescription("During Execution")]
-            DuringExecution,
-            [EnumValueDescription("Post Execution")]
-            PostExecution           
-        }
-
-
-
+        
         // Why we serialzie!!?
 
         [IsSerializedForLocalRepository]
@@ -153,46 +136,6 @@ namespace Ginger.Reports
                 }
             }
         }
-
-
-        private eDataPublishingPhase mDataPublishingPhase = eDataPublishingPhase.DuringExecution;
-
-        [IsSerializedForLocalRepository]
-        public eDataPublishingPhase DataPublishingPhase
-        {
-            get
-            {
-                return mDataPublishingPhase;
-            }
-            set
-            {
-                if (mDataPublishingPhase != value)
-                {
-                    mDataPublishingPhase = value;
-                    OnPropertyChanged(nameof(DataPublishingPhase));
-                }
-            }
-        }
-
-        private eDeleteLocalDataOnPublish mDeleteLocalDataOnPublish = eDeleteLocalDataOnPublish.No;
-
-        [IsSerializedForLocalRepository]
-        public eDeleteLocalDataOnPublish DeleteLocalDataOnPublish
-        {
-            get
-            {
-                return mDeleteLocalDataOnPublish;
-            }
-            set
-            {
-                if (mDeleteLocalDataOnPublish != value)
-                {
-                    mDeleteLocalDataOnPublish = value;
-                    OnPropertyChanged(nameof(DeleteLocalDataOnPublish));
-                }
-            }
-        }
-
 
         private string mCentralLoggerEndPointUrl;
         [IsSerializedForLocalRepository]

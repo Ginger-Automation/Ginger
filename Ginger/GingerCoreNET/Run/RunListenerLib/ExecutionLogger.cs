@@ -241,7 +241,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public abstract string GetLogFolder(string folder);
 
 
-        public abstract Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData);
+        public abstract Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId);
 
         public abstract string CalculateExecutionJsonData(LiteDBFolder.LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate);
     }

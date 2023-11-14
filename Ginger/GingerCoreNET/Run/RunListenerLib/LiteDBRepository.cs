@@ -610,7 +610,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return string.Empty;
         }
 
-        public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData)
+        public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId)
         {
             //Get the latest execution details from LiteDB
             LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
@@ -631,31 +631,27 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
 
             //Delete local data if configured
-            if (deleteLocalData == eDeleteLocalDataOnPublish.Yes)
+            try
+            {
+                dbManager.DeleteDocumentByLiteDbRunSet(liteDbRunSet);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error when deleting local LiteDB data after Publis", ex);
+            }
+
+
+            foreach (string screenshot in screenshotList)
             {
                 try
                 {
-                    dbManager.DeleteDocumentByLiteDbRunSet(liteDbRunSet);
+                    File.Delete(screenshot);
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error when deleting local LiteDB data after Publis", ex);
-                }
-
-
-                foreach (string screenshot in screenshotList)
-                {
-                    try
-                    {
-                        File.Delete(screenshot);
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Deleting screenshots after published to central db", ex);
-                    }
+                    Reporter.ToLog(eLogLevel.DEBUG, "Deleting screenshots after published to central db", ex);
                 }
             }
-
 
             return true;
         }

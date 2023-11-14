@@ -269,21 +269,15 @@ namespace Ginger.Run
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
 
-            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
+            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
 
-            if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
+            if (WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
-
-            //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
-            //{
-            //    RunListeners.Add(new TelemetryRunListener());
-            //}
-
         }
 
         public GingerExecutionEngine(GingerRunner GingerRunner, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
@@ -296,12 +290,12 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
-            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
+            if (ExecutedFrom != eExecutedFrom.Automation)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
 
-            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
+            if (ExecutedFrom != eExecutedFrom.Automation && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
