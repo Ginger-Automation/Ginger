@@ -26,7 +26,7 @@
             <ColumnDefinition x:Name="xDetailsCol" Width="100*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.RowSpan="2" Grid.Column="0" BorderBrush="Transparent">
+        <Border Grid.RowSpan="2" Grid.Column="0">
             <usercontrols:ucButton x:Name="xExpandCollapseBtn" ButtonType="ImageButton"  ButtonFontImageSize="7" ButtonImageWidth="5" ButtonImageHeight="5" ButtonImageType="Expand" Click="xExpandCollapseBtn_Click" VerticalAlignment="Top" HorizontalAlignment="Center" Visibility="Visible" ToolTip="Expand" Margin="-5,-13,0,0" Padding="0,0,0,0"/>
         </Border>
 
@@ -34,11 +34,12 @@
             <Border.Style>
                 <Style TargetType="Border">
                     <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
-                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_DarkGray}"/>
+                    <Setter Property="BorderThickness" Value="0.5,0,0.5,0"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
                             <Setter Property="Background" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
+                            <Setter Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
                             <Setter Property="Background" Value="Transparent"/>

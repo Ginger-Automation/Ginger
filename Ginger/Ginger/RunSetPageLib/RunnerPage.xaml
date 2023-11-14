@@ -79,7 +79,7 @@
                 <usercontrols:ucButton x:Name="xRunnerActive" ButtonFontImageSize="16" ButtonType="ImageButton" ButtonImageType="Active" ToolTip="Active" Click="xRunnerActive_Click" />
                 <usercontrols:ucButton x:Name="xremoveRunner" ToolTip="Remove Runner" ButtonType="ImageButton" ButtonFontImageSize="14" ButtonImageType="Delete" Click="xremoveRunner_Click"></usercontrols:ucButton>
                 <usercontrols:ucButton x:Name="xConfigButton" ButtonType="ImageButton" ToolTip="Configure Runner" ButtonFontImageSize="16" ButtonImageType="Config" Click="xConfigButton_Click" HorizontalAlignment="Left"></usercontrols:ucButton>
-                <Menu x:Name="xRunnerItemMenu" Margin="0,5,0,0" DockPanel.Dock="Right" Height="25">
+                <Menu x:Name="xRunnerItemMenu" Margin="0,5,0,0" DockPanel.Dock="Right" Height="25" Background="Transparent">
                     <MenuItem>
                         <MenuItem.Icon>
                             <usercontrols:ImageMakerControl  ImageType="EllipsisH" SetAsFontImageWithSize="16" Height="16" Width="16" HorizontalAlignment="Center"  Margin="0,0,0,0"/>

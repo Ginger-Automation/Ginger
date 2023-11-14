@@ -546,6 +546,7 @@ namespace Ginger
                         xRunListItem.Tag = RunMenu.MenusPage;
                     }
                     SelectedSolutionTab = eSolutionTabType.Run;
+                    RunMenu.MenusPage.SelectFirstTopMenu();
                 }
                 else if (selectedTopListItem == xConfigurationsListItem)
                 {
@@ -1119,11 +1120,11 @@ namespace Ginger
         private void SetLogOptionsMenuItems()
         {
             //delete all shown Log options sub menu items
-            for (int i = 0; i < xUserOperationsMainMenuItem.Items.Count; i++)
+            for (int i = 0; i < xExtraOperationsMainMenuItem.Items.Count; i++)
             {
-                if ((string)((MenuItem)xUserOperationsMainMenuItem.Items[i]).Tag == "Log")
+                if ((string)((MenuItem)xExtraOperationsMainMenuItem.Items[i]).Tag == "Log")
                 {
-                    xUserOperationsMainMenuItem.Items.RemoveAt(i);
+                    xExtraOperationsMainMenuItem.Items.RemoveAt(i);
                     i--;
                 }
             }
@@ -1131,12 +1132,12 @@ namespace Ginger
             if (xLogOptionsMenuItem.Tag != null)
             {
                 //Insert
-                int insertIndex = xUserOperationsMainMenuItem.Items.IndexOf(xLogOptionsMenuItem) + 1;
+                int insertIndex = xExtraOperationsMainMenuItem.Items.IndexOf(xLogOptionsMenuItem) + 1;
 
-                AddSubMenuItem(xUserOperationsMainMenuItem, "View Current Log Details", "Log", btnViewLogDetails_Click, insertIndex++, iconType: eImageType.View);
-                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Full Log File", "Log", btnViewLog_Click, insertIndex++, iconType: eImageType.File);
-                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Log File Folder", "Log", btnViewLogLocation_Click, insertIndex++, iconType: eImageType.OpenFolder);
-                AddSubMenuItem(xUserOperationsMainMenuItem, "Open Ginger Console Window", "Log", btnLaunchConsole_Click, insertIndex, iconType: eImageType.Window);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "View Current Log Details", "Log", btnViewLogDetails_Click, insertIndex++, iconType: eImageType.View);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Open Full Log File", "Log", btnViewLog_Click, insertIndex++, iconType: eImageType.File);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Open Log File Folder", "Log", btnViewLogLocation_Click, insertIndex++, iconType: eImageType.OpenFolder);
+                AddSubMenuItem(xExtraOperationsMainMenuItem, "Open Ginger Console Window", "Log", btnLaunchConsole_Click, insertIndex, iconType: eImageType.Window);
             }
         }
 

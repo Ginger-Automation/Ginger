@@ -1501,8 +1501,8 @@
                             <Setter TargetName="Border" Property="BorderThickness" Value="2"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="False">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource $BackgroundColor_Gray}"/>
-                            <Setter TargetName="Border" Property="BorderThickness" Value="2"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource $BackgroundColor_Black}"/>
+                            <Setter TargetName="Border" Property="BorderThickness" Value="1"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
