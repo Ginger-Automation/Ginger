@@ -47,7 +47,7 @@
                         </usercontrols:ucButton.ToolTip>
                     </usercontrols:ucButton>
                     <Menu x:Name="xExtraOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations">
-                        <MenuItem Cursor="Hand">
+                        <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                             <MenuItem.Header>
                                 <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
                             </MenuItem.Header>

@@ -77,7 +77,7 @@
                     </UserControls:ucButton>
 
                     <Menu x:Name="xAnalyzerOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Analyzer Options">
-                        <MenuItem Cursor="Hand">
+                        <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                             <MenuItem.Icon>
                                 <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
                             </MenuItem.Icon>
@@ -104,7 +104,7 @@
                     </Menu>
 
                     <Menu x:Name="xReportOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Report Options">
-                        <MenuItem Cursor="Hand">
+                        <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                             <MenuItem.Icon>
                                 <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
                             </MenuItem.Icon>
@@ -156,7 +156,7 @@
 
 
                     <Menu x:Name="xBDDOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Linked Feature File Options">
-                        <MenuItem Cursor="Hand">
+                        <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                             <MenuItem.Icon>
                                 <UserControls:ImageMakerControl ImageType="File" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
                             </MenuItem.Icon>
@@ -191,7 +191,7 @@
                     </Menu>
 
                     <Menu x:Name="xExtraBusinessFlowOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations">
-                        <MenuItem Cursor="Hand">
+                        <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                             <MenuItem.Header>
                                 <UserControls:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="18"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
                             </MenuItem.Header>                            

@@ -52,15 +52,16 @@
                     <Style TargetType="TextBlock">
                         <Setter Property="VerticalAlignment" Value="Center"/>
                         <Setter Property="HorizontalAlignment" Value="Center"/>
-                        <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
+                        <Setter Property="Foreground" Value="{StaticResource $PrimaryColor_Black}"/>
                         <Setter Property="FontSize" Value="12"/>
                         <Setter Property="FontWeight" Value="Bold"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
                                 <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Background" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
-                                <Setter Property="Foreground" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
+                                <Setter Property="Foreground" Value="{StaticResource $PrimaryColor_Black}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -89,8 +90,8 @@
                         <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                                <Setter Property="FontWeight" Value="Bold"/>
-                                <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
+                                <Setter Property="FontWeight" Value="Normal"/>
+                                <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}"/>
                             </DataTrigger>
                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
                                 <Setter Property="FontWeight" Value="Normal"/>

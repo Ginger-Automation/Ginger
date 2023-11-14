@@ -238,6 +238,9 @@ namespace Ginger.Run
 
         private void LoadRunSetConfigBySelection(RunSetConfig defaultRunSet)
         {
+            //hide current Run set UI
+            xRunsetPageGrid.Visibility = Visibility.Collapsed;
+
             if (mRunSetsSelectionPage == null)
             {
                 RunSetFolderTreeItem runSetsRootfolder = new RunSetFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<RunSetConfig>());
@@ -1086,6 +1089,11 @@ namespace Ginger.Run
             if (runSetToSet == null)
             {
                 runSetToSet = GetDefualtRunSetConfig();
+                if (!WorkSpace.Instance.UserProfile.AutoLoadLastRunSet)
+                {
+                    LoadRunSetConfigBySelection(runSetToSet);
+                    return;
+                }
             }
 
             if (runSetToSet != null)
@@ -1589,6 +1597,9 @@ namespace Ginger.Run
         {
             try
             {
+                //show current Run set UI
+                xRunsetPageGrid.Visibility = Visibility.Visible;
+
                 bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              
                 if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
