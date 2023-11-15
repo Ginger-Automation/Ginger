@@ -383,6 +383,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Close:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowClose);
                     break;
+                case eImageType.Close2:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Times);
+                    break;
                 case eImageType.Continue:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FastForward);
                     break;
@@ -804,11 +807,17 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Browser:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Chrome);
                     break;
+
                 case eImageType.Java:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Java);
                     break;
+
                 case eImageType.KeyboardLayout:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Keyboard);
+                    break;
+
+                case eImageType.Smile:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_SmileWink);
                     break;
 
                 case eImageType.Linux:

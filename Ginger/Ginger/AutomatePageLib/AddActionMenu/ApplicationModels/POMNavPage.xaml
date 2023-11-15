@@ -13,7 +13,7 @@
 
     <Grid Name="PageGrid">
         <Grid.RowDefinitions>
-            <RowDefinition x:Name="xPOMItems" Height="30*"/>
+            <RowDefinition x:Name="xPOMItems" Height="70*"/>
             <RowDefinition x:Name="xPOMDetails" Height="30*"/>
         </Grid.RowDefinitions>
 
@@ -21,7 +21,7 @@
             <Frame x:Name="xPOMFrame" NavigationUIVisibility="Hidden" VerticalAlignment="Top" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
         </ScrollViewer>
         
-        <GridSplitter x:Name="xPOMSplitter" ResizeDirection="Rows" Grid.Row="1" Height="1" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_Black}" IsEnabled="False" />
+        <GridSplitter x:Name="xPOMSplitter" ResizeDirection="Rows" Grid.Row="1" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_Black}" IsEnabled="True" />
 
         <TabControl x:Name="xPomTabs" Margin="0,5,0,0" Grid.Row="1" Background="{StaticResource $BackgroundColor_White}">
             <TabItem Name="xUiElementsTabItem">
