@@ -374,9 +374,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         /// <exception cref="BPMNConversionException">If no <see cref="Participant"/> is found with Guid matching the <paramref name="participantGuid"/>.</exception>
         private Participant GetParticipantByGuid(Collaboration collaboration, Guid participantGuid)
         {
-            Participant? participant = collaboration
-                .Participants
-                .FirstOrDefault(participant => string.Equals(participant.Guid, participantGuid.ToString()));
+            Participant? participant = collaboration.GetParticipantByGuid(participantGuid);
 
             if (participant == null)
             {

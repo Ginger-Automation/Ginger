@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+#nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN
 {
     public sealed class Collaboration
@@ -60,6 +61,13 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             {
                 _participants.Add(participant);
             }
+        }
+
+        public Participant? GetParticipantByGuid(Guid participantGuid)
+        {
+            Participant? participant = Participants
+                .FirstOrDefault(participant => string.Equals(participant.Guid, participantGuid.ToString()));
+            return participant;
         }
 
         public IEnumerable<MessageFlow> GetMessageFlows()
