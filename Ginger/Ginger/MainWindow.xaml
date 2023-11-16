@@ -14,7 +14,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="60"/>
                 <RowDefinition Height="200*"/>
-                <RowDefinition Height="25"/>
+                <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
 
             <!--Main Menu -->
@@ -298,7 +298,7 @@
                 </DockPanel>
             </Grid>
 
-            <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="1"/>
+            <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_White}"/>
 
             <usercontrols:ImageMakerControl x:Name="xNoLoadedSolutionImg" Grid.Row="1" ImageType="GingerLogoGray" Width="250" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
@@ -307,7 +307,7 @@
                 <Label x:Name="lblAppVersion" Content="Version 2023.4-Alpha 0.1" Style="{StaticResource $LabelStyle}" Foreground="WhiteSmoke"  FontWeight="Bold"  HorizontalAlignment="Center" Margin="0,348,0,24" Width="164"/>
             </Grid>
 
-            <Border Grid.Row="2" Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="1" >
+            <Border Grid.Row="2" BorderThickness="0,0,0,0" Margin="10,0,10,0" >
                 <DockPanel VerticalAlignment="Center">
                     <usercontrols:ImageMakerControl x:Name="xBetaFeaturesIcon" ImageType="Beta" ToolTip="Running With Beta Features" SetAsFontImageWithSize="18" Foreground="OrangeRed" DockPanel.Dock="Left" HorizontalAlignment="Left" Margin="5,0,0,0" MouseLeftButtonDown="xBetaFeaturesIcon_MouseLeftButtonDown"/>
                     <StackPanel x:Name="xLogErrorsPnl" Orientation="Horizontal" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -319,7 +319,6 @@
                         <TextBlock x:Name="xProcessMsgTxtBlock" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" Text="Showing something is running" MaxWidth="400" />
                     </StackPanel>
                     <usercontrols:ImageMakerControl x:Name="xAdminModeIcon" ImageType="NormalUser" ToolTip="Ginger Not Running In Admin Mode. Click to Launch It In Admin Mode" SetAsFontImageWithSize="12" MouseDown="xAdminModeIcon_MouseDown" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,2,0"/>
-
                     <usercontrols:ImageMakerControl x:Name="xVersionAndNewsIcon" MouseDown="XVersionAndNewsIcon_MouseDown" ImageType="Info" ToolTip="Version Info" HorizontalAlignment="Right" DockPanel.Dock="Right" SetAsFontImageWithSize="18" Margin="0,0,5,0"/>
                     <Label x:Name="lblVersion" DockPanel.Dock="Right"  Content="Version" VerticalAlignment="Center" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Right" Margin="0,-2,0,0"/>
                 </DockPanel>

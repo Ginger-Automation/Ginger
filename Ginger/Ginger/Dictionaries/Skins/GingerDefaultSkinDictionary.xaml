@@ -11,8 +11,8 @@
     <SolidColorBrush x:Key="$BackgroundColor_White" Color="#FFFFFF" />
     <SolidColorBrush x:Key="$BackgroundColor_Gray" Color="#F1F1F4" />
     <SolidColorBrush x:Key="$BackgroundColor_LightGray" Color="#E3E3E8" />
+    <SolidColorBrush x:Key="$BackgroundColor_VeryLightGray" Color="#f8f8f8" />
     <SolidColorBrush x:Key="$BackgroundColor_DarkGray" Color="#818398" />
-    
     <!--Selection Colors-->
 
     <SolidColorBrush x:Key="$SelectionColor_Pink" Color="#F05C62" />
@@ -1509,7 +1509,7 @@
     </Style>
 
     <Style TargetType="ListViewItem" x:Key="$ListViewItemStyle">
-        <Setter Property="Margin" Value="0 1 0 1"/>
+        <Setter Property="Margin" Value="0 10 0 10"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
@@ -1519,11 +1519,10 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
-                            <Setter TargetName="Border" Property="BorderThickness" Value="2"/>
+                            <Setter TargetName="Border" Property="BorderThickness" Value="0,3,0,0"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="False">
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource $BackgroundColor_Black}"/>
-                            <Setter TargetName="Border" Property="BorderThickness" Value="1"/>
+                            <Setter TargetName="Border" Property="BorderThickness" Value="0"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

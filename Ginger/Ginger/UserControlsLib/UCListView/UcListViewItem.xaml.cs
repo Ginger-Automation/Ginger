@@ -315,6 +315,7 @@ namespace Ginger.UserControlsLib.UCListView
                 ListItemUniqueIdentifier identifier = ListHelper.GetItemUniqueIdentifier(Item);
                 if (identifier != null)
                 {
+                    xIdentifierCol.Width = new GridLength(8);
                     if (!String.IsNullOrEmpty(identifier.Color))
                     {
                         BrushConverter conv = new BrushConverter();
@@ -325,6 +326,7 @@ namespace Ginger.UserControlsLib.UCListView
                 }
                 else
                 {
+                    xIdentifierCol.Width = new GridLength(0);
                     xIdentifierBorder.Background = System.Windows.Media.Brushes.Transparent;
                     xIdentifierBorder.ToolTip = string.Empty;
                     xIdentifierBorder.Visibility = Visibility.Collapsed;
