@@ -23,6 +23,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 
@@ -77,7 +78,7 @@ namespace Amdocs.Ginger.CoreNET
         }
         private static string GetReportDataServiceUrl()
         {
-            var baseURI = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).CentralizedReportDataServiceURL;
+            var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).CentralLoggerEndPointUrl;
 
             if (!string.IsNullOrEmpty(baseURI) && !baseURI.EndsWith("/"))
             {
@@ -98,13 +99,13 @@ namespace Amdocs.Ginger.CoreNET
                     GUID = runsetHLInfo.ExecutionID.ToString(),
                     Name = runsetHLInfo.RunsetName,
                     Description = "",
-                    StartTimeStamp = Convert.ToDateTime(runsetHLInfo.StartTime).ToUniversalTime(),
-                    EndTimeStamp = Convert.ToDateTime(runsetHLInfo.EndTime).ToUniversalTime(),
+                    StartTimeStamp = DateTime.Parse(runsetHLInfo.StartTime , CultureInfo.InvariantCulture).ToUniversalTime(),
+                    EndTimeStamp = DateTime.Parse(runsetHLInfo.EndTime, CultureInfo.InvariantCulture).ToUniversalTime(),
                     Elapsed = runsetHLInfo.Duration,
                     ExecutionDurationHHMMSS = GingerCoreNET.GeneralLib.General.TimeConvert((runsetHLInfo.Duration / 1000).ToString()),
                     RunSetExecutionStatus = runStatus,
                     DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.Remote
-                }); ;
+                });
             }
 
             return runSetReports;
@@ -119,12 +120,12 @@ namespace Amdocs.Ginger.CoreNET
             }
             else
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Centralized Html Report Service URL is missing in General Report Configurations.Please Configure it, to generate the report.");
+                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Centralized Html Report Service URL is missing in General Report Configurations.\nPlease go to Configurations < Reports < Execution Logger Configurations to configure the HTML Report URL");
             }
         }
         private static string GetReportHTMLServiceUrl()
         {
-            var baseURI = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).CentralizedHtmlReportServiceURL;
+            var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).CentralizedHtmlReportServiceURL;
 
             if (!string.IsNullOrEmpty(baseURI))
             {

@@ -137,6 +137,24 @@ namespace Ginger.Reports
             }
         }
 
+        private string mCentralizedHtmlReportServiceURL;
+        [IsSerializedForLocalRepository]
+        public string CentralizedHtmlReportServiceURL
+        {
+            get
+            {
+                return mCentralizedHtmlReportServiceURL;
+            }
+            set
+            {
+                if (mCentralizedHtmlReportServiceURL != value)
+                {
+                    mCentralizedHtmlReportServiceURL = value;
+                    OnPropertyChanged(nameof(CentralizedHtmlReportServiceURL));
+                }
+            }
+        }
+        
         private string mCentralLoggerEndPointUrl;
         [IsSerializedForLocalRepository]
         public string CentralLoggerEndPointUrl

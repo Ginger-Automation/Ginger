@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -123,42 +123,6 @@ namespace Ginger.Reports
                 {
                     mHTMLReportTemplatesSeq = value;
                     OnPropertyChanged(nameof(HTMLReportTemplatesSeq));
-                }
-            }
-        }
-
-        private string mCentralizedReportDataServiceURL;
-        [IsSerializedForLocalRepository]
-        public string CentralizedReportDataServiceURL
-        {
-            get
-            {
-                return mCentralizedReportDataServiceURL;
-            }
-            set
-            {
-                if (mCentralizedReportDataServiceURL != value)
-                {
-                    mCentralizedReportDataServiceURL = value;
-                    OnPropertyChanged(nameof(CentralizedReportDataServiceURL));
-                }
-            }
-        }
-
-        private string mCentralizedHtmlReportServiceURL;
-        [IsSerializedForLocalRepository]
-        public string CentralizedHtmlReportServiceURL
-        {
-            get
-            {
-                return mCentralizedHtmlReportServiceURL;
-            }
-            set
-            {
-                if (mCentralizedHtmlReportServiceURL != value)
-                {
-                    mCentralizedHtmlReportServiceURL = value;
-                    OnPropertyChanged(nameof(CentralizedHtmlReportServiceURL));
                 }
             }
         }

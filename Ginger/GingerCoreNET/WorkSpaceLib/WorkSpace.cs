@@ -402,14 +402,9 @@ namespace amdocs.ginger.GingerCoreNET
             }
 
             // General Report Configurations
-            HTMLReportsConfiguration mHTMLReportConfiguration = Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
-            if (!string.IsNullOrEmpty(mHTMLReportConfiguration?.CentralizedReportDataServiceURL))
-            {
-                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
-            }
+            ExecutionLoggerConfiguration executionLoggerConfiguration = Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
 
-            // General Report Configurations
-            if (!string.IsNullOrEmpty(mHTMLReportConfiguration?.CentralizedHtmlReportServiceURL))
+            if (!string.IsNullOrEmpty(executionLoggerConfiguration?.CentralLoggerEndPointUrl) || !string.IsNullOrEmpty(executionLoggerConfiguration?.CentralizedHtmlReportServiceURL))
             {
                 WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
             }
