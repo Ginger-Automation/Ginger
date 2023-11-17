@@ -55,7 +55,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         public void AddParticipant(Participant participant)
         {
-            _participants.Add(participant);
+            bool isUnique = _participants.All(p => !string.Equals(p.Guid, participant.Guid));
+            if (isUnique)
+            {
+                _participants.Add(participant);
+            }
         }
 
         public IEnumerable<MessageFlow> GetMessageFlows()
