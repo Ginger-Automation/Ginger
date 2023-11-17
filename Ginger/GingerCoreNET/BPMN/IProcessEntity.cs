@@ -20,7 +20,7 @@ using System;
 
 namespace Amdocs.Ginger.CoreNET.BPMN
 {
-    public interface IProcessEntitiy
+    public interface IProcessEntity
     {
         public string Id { get; }
         public string ProcessId { get; }
