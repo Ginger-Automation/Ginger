@@ -1,12 +1,12 @@
 name: Ginger Linux Build
 
 on:
-  pull_request:
-    branches: 
-      - master
-      - Features/Linux-Migration
-      - Releases/*
-      - Releases/*/*
+  # pull_request:
+  #   branches: 
+  #     - master
+  #     - Features/Linux-Migration
+  #     - Releases/*
+  #     - Releases/*/*
       
   workflow_dispatch: 
 
