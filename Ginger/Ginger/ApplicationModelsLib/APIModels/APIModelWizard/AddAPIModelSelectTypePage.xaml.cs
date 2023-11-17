@@ -178,17 +178,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                             }
                         }
                         break;
-                    case eAPIType.YAML:
-                        AddAPIModelWizard.APIType = eAPIType.YAML;
-                        WizardEventArgs.CancelEvent = true;
-                        if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
-                        {
-                            if (ValidateFile(xURLTextBox.Text))
-                            {
-                                WizardEventArgs.CancelEvent = false;
-                            }
-                        }
-                        break;
                     default:
                         throw new Exception("Selected API Type not found.");
                         break;
@@ -514,10 +503,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.XMLTemplates.ToString())
                 {
                     bIsFileValid = CheckForXmlParser(fileName);
-                }
-                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.YAML.ToString())
-                {
-                    bIsFileValid = CheckforYamlParser(fileName);
                 }
             }
             catch (Exception ex)

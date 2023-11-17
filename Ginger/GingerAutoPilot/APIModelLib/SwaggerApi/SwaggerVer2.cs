@@ -102,6 +102,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
                                         break;
                                     default:
+                                        Console.WriteLine("Content Type not supported");
                                         break;
 
                                 }
