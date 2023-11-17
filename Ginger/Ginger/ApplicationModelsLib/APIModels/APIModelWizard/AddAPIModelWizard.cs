@@ -42,9 +42,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             [EnumValueDescription("JSON Templates")]
             JsonTemplate,
             [EnumValueDescription("Swagger(Open API) Document")]
-            Swagger,
-            [EnumValueDescription("YAML")]
-            YAML
+            Swagger
         }
 
         public enum eAPITypeTemp

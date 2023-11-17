@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Repository;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 using NJsonSchema;
 using NSwag;
@@ -100,6 +101,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         }
 
                                         break;
+                                    default:
+                                        break;
 
                                 }
                             }
@@ -153,6 +156,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         AAM.Name += "-XML";
                                         AAM.Description = "Body Type is XML";
                                     }
+                                    break;
+                                default:
                                     break;
 
                             }

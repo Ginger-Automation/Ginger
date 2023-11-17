@@ -260,10 +260,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     parseSuccess = await ShowSwaggerOperations();
                 }
-                else if (AddAPIModelWizard.APIType == AddAPIModelWizard.eAPIType.YAML)
-                {
-                    parseSuccess = await ShowYamlOperations();
-                }
 
                 AddAPIModelWizard.IsParsingWasDone = parseSuccess;
                 xCompareBtnRow.Height = new GridLength(50);
@@ -296,8 +292,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.ParsingError, "Failed to Parse the Yaml File" + AddAPIModelWizard.URL);
-                Reporter.ToLog(eLogLevel.ERROR, "Error Details: " + ex.Message + " Failed to Parse the Swagger file " + AddAPIModelWizard.URL);
+                Reporter.ToUser(eUserMsgKey.ParsingError, $"Failed to Parse the Yaml File {AddAPIModelWizard.URL}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Error Details: {ex.Message} Failed to Parse the Swagger file {AddAPIModelWizard.URL}");
                 parseSuccess = false;
             }
             AddAPIModelWizard.ProcessEnded();

@@ -80,7 +80,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib
 
             foreach (var item in ymldoc.AllNodes)
             {
-
+                
             }
             return SwaggerModels;
         }

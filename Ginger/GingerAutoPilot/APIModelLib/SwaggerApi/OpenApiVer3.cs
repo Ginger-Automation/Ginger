@@ -104,6 +104,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         }
 
                                         break;
+                                    default:
+                                        break;
 
                                 }
                             }
