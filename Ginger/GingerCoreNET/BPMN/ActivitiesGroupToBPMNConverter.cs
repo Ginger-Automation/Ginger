@@ -37,125 +37,76 @@ namespace Amdocs.Ginger.CoreNET.BPMN
     /// </summary>
     public sealed class ActivitiesGroupToBPMNConverter
     {
+        private readonly ActivitiesGroup _activityGroup;
+        private readonly ISolutionFacadeForBPMN _solutionFacade;
+
+        public ActivitiesGroupToBPMNConverter(ActivitiesGroup activityGroup) : this(activityGroup, new WorkSpaceToSolutionFacadeAdapter(WorkSpace.Instance)) { }
+
+        /// <summary>
+        /// Create a new <see cref="ActivitiesGroupToBPMNConverter"/>.
+        /// </summary>
+        /// <param name="activityGroup"><see cref="ActivitiesGroup"/> to be converted.</param>
+        /// <param name="solutionFacade">A facade to expose solution data.</param>
+        public ActivitiesGroupToBPMNConverter(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade)
+        {
+            ValidateConstructorArgs(activityGroup, solutionFacade);
+            _activityGroup = activityGroup;
+            _solutionFacade = solutionFacade;
+        }
+
+        /// <summary>
+        /// Validate constructor arguments before assigning them to member variables.
+        /// </summary>
+        /// <param name="activityGroup">Constrcutor argument</param>
+        /// <param name="solutionFacade">Constructor argument</param>
+        /// <exception cref="ArgumentNullException">If <paramref name="activityGroup"/> or <paramref name="solutionFacade"/> is null.</exception>
+        private void ValidateConstructorArgs(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade)
+        {
+            if(activityGroup == null)
+            {
+                throw new ArgumentNullException(nameof(activityGroup));
+            }
+            if(solutionFacade == null)
+            {
+                throw new ArgumentNullException(nameof(solutionFacade));
+            }
+        }
+
         /// <summary>
         /// Convert <see cref="ActivitiesGroup"/> to a BPMN <see cref="Collaboration"/>.
         /// </summary>
-        /// <param name="activityGroup"><see cref="ActivitiesGroup"/> to convert.</param>
         /// <returns>BPMN <see cref="Collaboration"/>.</returns>
-        public Collaboration Convert(ActivitiesGroup activityGroup)
+        public Collaboration Convert()
         {
-            AttachIdentifiersToActivities(activityGroup.ActivitiesIdentifiers);
-            IEnumerable<Activity> activitiesInActivityGroup = GetActivitiesFromActivityGroup(activityGroup);
-            Activity? firstActivity = activitiesInActivityGroup.FirstOrDefault(activity => activity.Active);
-            if (firstActivity == null)
+            AttachIdentifiersToActivities();
+
+            Collaboration collaboration = CreateCollaboration();
+
+            IEnumerable<Activity> activities = GetActivities();
+
+            Activity firstActivity = activities.First();
+            IFlowSource previousFlowSource = AddStartEventForActivity(collaboration, firstActivity);
+
+            foreach (Activity activity in activities)
             {
-                throw new BPMNExportException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found, make sure all the {GingerDicser.GetTermResValue(eTermResKey.Activity)} are not in-active.");
+                previousFlowSource = AddTasksForActivity(collaboration, activity, previousFlowSource);
             }
 
-            TargetBase? targetAppForSystemRef;
-            if (IsWebServicesActivity(firstActivity))
-            {
-                Consumer consumer = GetConsumerForActivity(firstActivity);
-                targetAppForSystemRef = GetTargetAppFromConsumer(consumer);
-            }
-            else
-            {
-                targetAppForSystemRef = GetTargetAppFromTargetAppName(firstActivity.TargetApplication);
-            }
-
-            if(targetAppForSystemRef == null)
-            {
-                throw new BPMNExportException($"No suitable {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found for Collaboration System Ref.");
-            }
-
-            Collaboration collaboration = new(activityGroup.Guid, CollaborationType.SubProcess)
-            {
-                Name = activityGroup.Name,
-                SystemRef = targetAppForSystemRef.Guid.ToString(),
-                Description = activityGroup.Description
-            };
-
-
-            IEnumerable<TargetBase> targetApps = GetTargetAppsInActivityGroup(activityGroup);
-
-            foreach (TargetBase targetApp in targetApps)
-            {
-                Participant participant = new(targetApp.Guid)
-                {
-                    Name = targetApp.Name,
-                    SystemRef = targetApp.Guid.ToString()
-                };
-                collaboration.AddParticipant(participant);
-            }
-
-            IFlowSource previousFlowSource;
-            
-            Participant participantForStartEvent;
-            if(!IsWebServicesActivity(firstActivity))
-            {
-                participantForStartEvent = GetParticipantForTargetAppName(collaboration, firstActivity.TargetApplication);
-            }
-            else
-            {
-                Consumer firstActivityConsumer = firstActivity.ConsumerApplications[0];
-                string targetAppName = GetTargetAppFromConsumer(firstActivityConsumer).Name;
-                participantForStartEvent = GetParticipantForTargetAppName(collaboration, targetAppName);
-            }
-            StartEvent startEvent = participantForStartEvent.Process.AddStartEvent(name: string.Empty);
-            previousFlowSource = startEvent;
-
-            foreach (Activity activity in activitiesInActivityGroup)
-            {
-                if(!activity.Active)
-                {
-                    continue;
-                }
-
-                Participant activityParticipant = GetParticipantForTargetAppName(collaboration, activity.TargetApplication);
-                if(IsWebServicesActivity(activity))
-                {
-                    Consumer consumer = GetConsumerForActivity(activity);
-                    string consumerAppName = GetTargetAppFromConsumer(consumer).Name;
-                    Participant consumerParticipant = GetParticipantForTargetAppName(collaboration, consumerAppName);
-                    Task requestSourceTask = consumerParticipant.Process.AddTask<SendTask>(name: $"{activity.ActivityName}_RequestSource");
-                    Task requestTargetTask = activityParticipant.Process.AddTask<ReceiveTask>(name: $"{activity.ActivityName}_RequestTarget");
-                    Task responseSourceTask = activityParticipant.Process.AddTask<SendTask>(name: $"{activity.ActivityName}_ResponseSource");
-                    Task responseTargetTask = consumerParticipant.Process.AddTask<ReceiveTask>(name: $"{activity.ActivityName}_ResponseTarget");
-                    Flow.Create(name: string.Empty, previousFlowSource, requestSourceTask);
-                    Flow requestFlow = Flow.Create(name: $"{activity.ActivityName}_IN", requestSourceTask, requestTargetTask);
-                    if(requestFlow is MessageFlow requestMessageFlow)
-                    {
-                        requestMessageFlow.MessageRef = activity.Guid.ToString().Remove(activity.Guid.ToString().Length - 2) + "aa";
-                    }
-                    Flow.Create(name: string.Empty, requestTargetTask, responseSourceTask);
-                    Flow responseFlow = Flow.Create(name: $"{activity.ActivityName}_OUT", responseSourceTask, responseTargetTask);
-                    if(responseFlow is MessageFlow responseMessageFlow)
-                    {
-                        responseMessageFlow.MessageRef = activity.Guid.ToString().Remove(activity.Guid.ToString().Length - 2) + "bb";
-                    }
-                    previousFlowSource = responseTargetTask;
-                }
-                else
-                {
-                    UserTask userTask = activityParticipant.Process.AddTask<UserTask>(guid: activity.Guid, name: activity.ActivityName);
-                    userTask.MessageRef = activity.Guid.ToString().Remove(activity.Guid.ToString().Length - 2) + "aa";
-                    Flow.Create(name: string.Empty, previousFlowSource, userTask);
-                    previousFlowSource = userTask;
-                }
-            }
-
-            Participant lastTaskParticipant = GetParticipantForProcessId(collaboration, previousFlowSource.ProcessId);
-            EndEvent endEvent = lastTaskParticipant.Process.AddEndEvent(name: string.Empty, EndEventType.Termination);
-            Flow.Create(name: string.Empty, previousFlowSource, endEvent);
+            Activity lastActivity = activities.Last();
+            AddEndEventForActivity(collaboration, lastActivity, previousFlowSource);
 
             return collaboration;
         }
 
-        private void AttachIdentifiersToActivities(IEnumerable<ActivityIdentifiers> activityIdentifiers)
+        /// <summary>
+        /// Attach ActivityGroup's ActivityIdentifiers to their relevant Activities from SharedRepository
+        /// </summary>
+        private void AttachIdentifiersToActivities()
         {
-            foreach (ActivityIdentifiers identifier in activityIdentifiers)
+            foreach (ActivityIdentifiers identifier in _activityGroup.ActivitiesIdentifiers)
             {
                 identifier.IdentifiedActivity = GetActivityFromSharedRepositoryByIdentifier(identifier);
+
                 if (identifier.IdentifiedActivity == null)
                 {
                     identifier.ExistInRepository = false;
@@ -163,139 +114,388 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             }
         }
 
-        private Consumer GetConsumerForActivity(Activity activity)
-        {
-            Consumer? consumer = activity.ConsumerApplications.FirstOrDefault();
-            if (consumer == null)
-            {
-                throw new BPMNExportException($"Consumer not defined for {GingerDicser.GetTermResValue(eTermResKey.Activity)} '{activity.ActivityName}'.");
-            }
-            return consumer;
-        }
-
-        private IEnumerable<TargetBase> GetTargetAppsInActivityGroup(ActivitiesGroup activityGroup)
-        {
-            IEnumerable<string> targetAppNames = activityGroup
-                .ActivitiesIdentifiers
-                .Where(identifier => identifier.IdentifiedActivity != null)
-                .Select(identifier => identifier.IdentifiedActivity.TargetApplication)
-                .Distinct();
-
-            IEnumerable<Guid> consumerGuids = activityGroup
-                .ActivitiesIdentifiers
-                .Where(identifier => identifier.IdentifiedActivity != null)
-                .SelectMany(identifier => identifier.IdentifiedActivity.ConsumerApplications)
-                .Select(consumer => consumer.ConsumerGuid);
-
-            IEnumerable<TargetBase> targetApps = WorkSpace.Instance.Solution
-                .GetSolutionTargetApplications()
-                .Where(targetApp => targetAppNames.Contains(targetApp.Name.ToString()));
-
-            IEnumerable<TargetBase> consumerTargetApps = WorkSpace.Instance.Solution
-                .GetSolutionTargetApplications()
-                .Where(targetApp => consumerGuids.Contains(targetApp.Guid));
-
-            return consumerTargetApps.Concat(targetApps).Distinct(new TargetBaseEqualityComparer());
-        }
-
-        private IEnumerable<Activity> GetActivitiesFromActivityGroup(ActivitiesGroup activityGroup)
-        {
-            return
-                activityGroup
-                    .ActivitiesIdentifiers
-                    .Where(identifier => identifier.IdentifiedActivity != null)
-                    .Select(identifier => identifier.IdentifiedActivity)
-                    .Where(activity => activity.Active);
-        }
 
         private Activity? GetActivityFromSharedRepositoryByIdentifier(ActivityIdentifiers activityIdentifier)
         {
-            ObservableList<Activity> activitiesInRepository = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
+            ObservableList<Activity> activitiesInRepository = _solutionFacade.GetActivitiesFromSharedRepository();
 
             Activity? activityInRepository = activitiesInRepository
-                .FirstOrDefault(activity => 
-                    string.Equals(activity.ActivityName, activityIdentifier.ActivityName) && 
-                    activity.Guid == activityIdentifier.ActivityGuid);
+                .FirstOrDefault(activity =>
+                    activity.Guid == activityIdentifier.ActivityGuid && 
+                    string.Equals(activity.ActivityName, activityIdentifier.ActivityName));
 
             if (activityInRepository == null)
             {
-                activityInRepository = activitiesInRepository.FirstOrDefault(x => x.Guid == activityIdentifier.ActivityGuid);
+                activityInRepository = activitiesInRepository
+                    .FirstOrDefault(x => 
+                        x.Guid == activityIdentifier.ActivityGuid);
             }
 
             if (activityInRepository == null)
             {
-                activityInRepository = activitiesInRepository.FirstOrDefault(x => string.Equals(x.ActivityName, activityIdentifier.ActivityName));
+                activityInRepository = activitiesInRepository
+                    .FirstOrDefault(x => 
+                        string.Equals(x.ActivityName, activityIdentifier.ActivityName));
             }
 
             return activityInRepository;
         }
 
-        private TargetBase GetTargetAppFromConsumer(Consumer consumer)
-        {
-            IEnumerable<TargetBase> targetApps = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-            TargetBase? consumerTargetApp = targetApps.FirstOrDefault(targetApp => string.Equals(targetApp.Guid, consumer.ConsumerGuid));
-            if (consumerTargetApp == null)
-            {
-                throw new BPMNExportException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found for Consumer with Guid '{consumer.ConsumerGuid}'.");
-            }
-            return consumerTargetApp;
-        }
-
-        private TargetBase? GetTargetAppFromTargetAppName(string targetAppName)
-        {
-            return WorkSpace.Instance.Solution
-                .GetSolutionTargetApplications()
-                .FirstOrDefault(targetApp => string.Equals(targetApp.Name, targetAppName));
-        }
-
-        private Participant GetParticipantForTargetAppName(Collaboration collaboration, string targetAppName)
-        {
-            Participant? participant = collaboration.Participants.FirstOrDefault(participant => string.Equals(participant.Name, targetAppName));
-            if(participant == null)
-            {
-                throw new BPMNExportException($"No BPMN Participant({GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}) found for {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} name '{targetAppName}'.");
-            }
-            return participant;
-        }
-
-        private Participant GetParticipantForProcessId(Collaboration collaboration, string processId)
-        {
-            Participant? participant = collaboration.Participants.FirstOrDefault(participant => string.Equals(participant.Process.Id, processId));
-            if(participant == null)
-            {
-                throw new BPMNExportException($"No BPMN Participant({GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}) found for process id '{processId}'.");
-            }
-            return participant;
-        }
-
+        /// <summary>
+        /// Checks whether the given <paramref name="activity"/> is of WebServices platform or not.
+        /// </summary>
+        /// <param name="activity"><see cref="Activity"/> to check the platform of.</param>
+        /// <returns><see langword="true"/> if the given <paramref name="activity"/> is of WebServices platform, <see langword="false"/> otherwise.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="ApplicationPlatform"/> is found for the given <paramref name="activity"/> target application name.</exception>
         private bool IsWebServicesActivity(Activity activity)
         {
-            ApplicationPlatform? activityAppPlatform = WorkSpace.Instance.Solution
-                .ApplicationPlatforms
-                .FirstOrDefault(platform => string.Equals(platform.AppName, activity.TargetApplication));
-            if(activityAppPlatform == null)
+            IEnumerable<ApplicationPlatform> applicationPlatforms = _solutionFacade.GetApplicationPlatforms();
+            ApplicationPlatform? activityAppPlatform = applicationPlatforms.FirstOrDefault(platform => string.Equals(platform.AppName, activity.TargetApplication));
+            if (activityAppPlatform == null)
             {
-                throw new BPMNExportException($"No Application Platform found for Activity with {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} '{activity.TargetApplication}'.");
+                throw new BPMNConversionException($"No Application Platform found for {GingerDicser.GetTermResValue(eTermResKey.Activity)} with {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} '{activity.TargetApplication}'.");
             }
 
             return activityAppPlatform.Platform == ePlatformType.WebServices;
         }
 
-        private class TargetBaseEqualityComparer : IEqualityComparer<TargetBase>
+        /// <summary>
+        /// Get list of <see cref="Activity"/> from <see cref="ActivitiesGroup"/> which are eligible for conversion.
+        /// </summary>
+        /// <returns>List of <see cref="Activity"/>.</returns>
+        /// <exception cref="BPMNConversionException">If <see cref="ActivitiesGroup"/> is empty or no <see cref="Activity"/> is eligible for conversion.</exception>
+        private IEnumerable<Activity> GetActivities()
         {
-            public bool Equals(TargetBase? x, TargetBase? y)
+            IEnumerable<Activity> activities = _activityGroup
+                    .ActivitiesIdentifiers
+                    .Select(identifier => identifier.IdentifiedActivity)
+                    .Where(activity => activity != null && activity.Active);
+
+            if(!activities.Any())
             {
-                return
-                    x == null && y == null ||
-                    x != null && y != null && x.Guid == y.Guid;
+                throw new BPMNConversionException($"No eligible {GingerDicser.GetTermResValue(eTermResKey.Activity)} found for creating BPMN.");
             }
 
-            public int GetHashCode([DisallowNull] TargetBase obj)
+            return activities;
+        }
+
+        /// <summary>
+        /// Create new BPMN <see cref="Collaboration"/>.
+        /// </summary>
+        /// <returns>Newly created BPMN <see cref="Collaboration"/>.</returns>
+        private Collaboration CreateCollaboration()
+        {
+            IEnumerable<Participant> participants = CreateParticipants();
+
+            Participant firstParticipant = participants.First();
+
+            Collaboration collaboration = new(_activityGroup.Guid, CollaborationType.SubProcess)
             {
-                HashCode hashCode = new();
-                hashCode.Add(obj.Guid);
-                return hashCode.ToHashCode();
+                Name = _activityGroup.Name,
+                SystemRef = firstParticipant.Guid,
+                Description = _activityGroup.Description
+            };
+
+            foreach (Participant participant in participants)
+            {
+                collaboration.AddParticipant(participant);
             }
+
+            return collaboration;
+        }
+
+        /// <summary>
+        /// Creates list of new <see cref="Participant"/> for all the involved systems in the <see cref="ActivitiesGroup"/>.
+        /// </summary>
+        /// <returns>List of newly created <see cref="Participant"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="Participant"/> is found.</exception>
+        private IEnumerable<Participant> CreateParticipants()
+        {
+            List<Participant> participants = new();
+            IEnumerable<Activity> activities = GetActivities();
+            foreach (Activity activity in activities)
+            {
+                participants.AddRange(CreateParticipantsForActivity(activity));
+            }
+
+            if(!participants.Any())
+            {
+                throw new BPMNConversionException($"No BPMN Participants (Ginger {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}) found for creating BPMN");
+            }
+
+            return participants;
+        }
+
+        /// <summary>
+        /// Creates list of new <see cref="Participant"/> for all the involved systems in given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="activity"><see cref="Activity"/> whose involved systems will be used for creating new <see cref="Participant"/> list.</param>
+        /// <returns>List of new <see cref="Participant"/>.</returns>
+        private IEnumerable<Participant> CreateParticipantsForActivity(Activity activity)
+        {
+            List<Participant> participants = new();
+
+            if (IsWebServicesActivity(activity))
+            {
+                Consumer consumer = GetActivityFirstConsumer(activity);
+                TargetBase consumerTargetApp = GetTargetApplicationByGuid(consumer.ConsumerGuid);
+                Participant participantForConsumer = new(consumerTargetApp.Guid)
+                {
+                    Name = consumerTargetApp.Name,
+                    SystemRef = consumerTargetApp.Guid.ToString()
+                };
+                participants.Add(participantForConsumer);
+            }
+
+            TargetBase targetApp = GetTargetApplicationByName(activity.TargetApplication);
+            Participant participantForTargetApp = new(targetApp.Guid)
+            {
+                Name = targetApp.Name,
+                SystemRef = targetApp.Guid.ToString()
+            };
+            participants.Add(participantForTargetApp);
+
+            return participants;
+        }
+
+        /// <summary>
+        /// Get <see cref="TargetBase"/> whose name matches the given <paramref name="targetAppName"/>.
+        /// </summary>
+        /// <param name="targetAppName">Name of the <see cref="TargetBase"/> to search for.</param>
+        /// <returns><see cref="TargetBase"/> with name matching the given <paramref name="targetAppName"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="TargetBase"/> is found with name matching the given <paramref name="targetAppName"/>.</exception>
+        private TargetBase GetTargetApplicationByName(string targetAppName)
+        {
+            IEnumerable<TargetBase> targetApplications = _solutionFacade.GetTargetApplications();
+            TargetBase? targetApp = targetApplications.FirstOrDefault(targetApp => string.Equals(targetApp.Name, targetAppName));
+
+            if (targetApp == null)
+            {
+                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found with name '{targetAppName}'");
+            }
+
+            return targetApp;
+        }
+
+        /// <summary>
+        /// Get <see cref="TargetBase"/> whose Guid matches the given <paramref name="targetAppGuid"/>.
+        /// </summary>
+        /// <param name="targetAppGuid">Guid of the <see cref="TargetBase"/> to search for.</param>
+        /// <returns><see cref="TargetBase"/> with Guid matching the given <paramref name="targetAppGuid"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="TargetBase"/> is found with Guid matching the given <paramref name="targetAppGuid"/>.</exception>
+        private TargetBase GetTargetApplicationByGuid(Guid targetAppGuid)
+        {
+            IEnumerable<TargetBase> targetApplications = _solutionFacade.GetTargetApplications();
+            TargetBase? targetApp = targetApplications.FirstOrDefault(targetApp => targetApp.Guid == targetAppGuid);
+
+            if (targetApp == null)
+            {
+                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found with Guid '{targetAppGuid}'");
+            }
+
+            return targetApp;
+        }
+
+        /// <summary>
+        /// Get the first <see cref="Consumer"/> for the given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="activity"><see cref="Activity"/> to get the Consumer of.</param>
+        /// <returns>First <see cref="Consumer"/> for the given <paramref name="activity"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="Consumer"/> is found for the given <paramref name="activity"/>.</exception>
+        private Consumer GetActivityFirstConsumer(Activity activity)
+        {
+            Consumer? firstConsumer = activity.ConsumerApplications.FirstOrDefault();
+
+            if (firstConsumer == null)
+            {
+                throw new BPMNConversionException($"No Consumer found for {GingerDicser.GetTermResValue(eTermResKey.Activity)} '{activity.ActivityName}'");
+            }
+
+            return firstConsumer;
+        }
+
+        /// <summary>
+        /// Get <see cref="Participant"/> for the first <see cref="Consumer"/> of given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to get the <see cref="Participant"/> from.</param>
+        /// <param name="activity"><see cref="Activity"/> to get the <see cref="Consumer"/> from.</param>
+        /// <returns><see cref="Participant"/> for the first <see cref="Consumer"/> of given <paramref name="activity"/>.</returns>
+        private Participant GetConsumerParticipant(Collaboration collaboration, Activity activity)
+        {
+            Consumer consumer = GetActivityFirstConsumer(activity);
+            Participant consumerParticipant = GetParticipantByGuid(collaboration, consumer.ConsumerGuid);
+            return consumerParticipant;
+        }
+
+        /// <summary>
+        /// Get the <see cref="Participant"/> for the target application of given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to get the <see cref="Participant"/> from.</param>
+        /// <param name="activity"><see cref="Activity"/> to get the target application from.</param>
+        /// <returns><see cref="Participant"/> for the target application of given <paramref name="activity"/>.</returns>
+        private Participant GetTargetApplicationParticipant(Collaboration collaboration, Activity activity)
+        {
+            TargetBase targetApp = GetTargetApplicationByName(activity.TargetApplication);
+            Participant targetAppParticipant = GetParticipantByGuid(collaboration, targetApp.Guid);
+            return targetAppParticipant;
+        }
+
+        /// <summary>
+        /// Add <see cref="Task"/> for the given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to add the <see cref="Task"/> to.</param>
+        /// <param name="activity"><see cref="Activity"/> to create the <see cref="Task"/>.</param>
+        /// <param name="previousFlowSource">Previous flow source to create the link with the new <see cref="Task"/>.</param>
+        /// <returns>New <see cref="IFlowSource"/> which should be used to link with the next entitites.</returns>
+        private IFlowSource AddTasksForActivity(Collaboration collaboration, Activity activity, IFlowSource previousFlowSource)
+        {
+            if (IsWebServicesActivity(activity))
+            {
+                previousFlowSource = AddTasksForWebServicesActivity(collaboration, activity, previousFlowSource);
+            }
+            else
+            {
+                previousFlowSource = AddTasksForUIActivity(collaboration, activity, previousFlowSource);
+            }
+
+            return previousFlowSource;
+        }
+
+        /// <summary>
+        /// Get <see cref="Participant"/> with Guid matching the given <paramref name="participantGuid"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to get the <see cref="Participant"/> from.</param>
+        /// <param name="participantGuid">Guid of the <see cref="Participant"/> to search.</param>
+        /// <returns><see cref="Participant"/> with Guid matching the given <paramref name="participantGuid"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="Participant"/> is found with Guid matching the <paramref name="participantGuid"/>.</exception>
+        private Participant GetParticipantByGuid(Collaboration collaboration, Guid participantGuid)
+        {
+            Participant? participant = collaboration
+                .Participants
+                .FirstOrDefault(participant => string.Equals(participant.Guid, participantGuid.ToString()));
+
+            if (participant == null)
+            {
+                throw new BPMNConversionException($"No BPMN Participant (Ginger {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found by Guid '{participantGuid}'");
+            }
+
+            return participant;
+        }
+
+        /// <summary>
+        /// Add <see cref="Task"/> for the given WebServices <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to add the <see cref="Task"/> to.</param>
+        /// <param name="activity"><see cref="Activity"/> to create the <see cref="Task"/> for.</param>
+        /// <param name="previousFlowSource">Previous flow source to create the link with the new <see cref="Task"/>.</param>
+        /// <returns>New <see cref="IFlowSource"/> which should be used to link with the next entitites.</returns>
+        private IFlowSource AddTasksForWebServicesActivity(Collaboration collaboration, Activity activity, IFlowSource previousFlowSource)
+        {
+            Participant consumerParticipant = GetConsumerParticipant(collaboration, activity);
+            Participant targetAppParticipant = GetTargetApplicationParticipant(collaboration, activity);
+
+            Task requestSourceTask = consumerParticipant.Process.AddTask<SendTask>(name: $"{activity.ActivityName}_RequestSource");
+            Task requestTargetTask = targetAppParticipant.Process.AddTask<ReceiveTask>(name: $"{activity.ActivityName}_RequestTarget");
+            Task responseSourceTask = targetAppParticipant.Process.AddTask<SendTask>(name: $"{activity.ActivityName}_ResponseSource");
+            Task responseTargetTask = consumerParticipant.Process.AddTask<ReceiveTask>(name: $"{activity.ActivityName}_ResponseTarget");
+
+            Flow.Create(name: string.Empty, previousFlowSource, requestSourceTask);
+
+            Flow requestFlow = Flow.Create(name: $"{activity.ActivityName}_IN", requestSourceTask, requestTargetTask);
+
+            if (requestFlow is MessageFlow requestMessageFlow)
+            {
+                string activityGuid = activity.Guid.ToString();
+                string messageRef = string.Concat(activityGuid.AsSpan(0, activityGuid.Length - 2), "aa");
+                requestMessageFlow.MessageRef = messageRef;
+            }
+
+            Flow.Create(name: string.Empty, requestTargetTask, responseSourceTask);
+
+            Flow responseFlow = Flow.Create(name: $"{activity.ActivityName}_OUT", responseSourceTask, responseTargetTask);
+
+            if (responseFlow is MessageFlow responseMessageFlow)
+            {
+                string activityGuid = activity.Guid.ToString();
+                string messageRef = string.Concat(activityGuid.AsSpan(0, activityGuid.Length - 2), "bb");
+                responseMessageFlow.MessageRef = messageRef;
+            }
+
+            return responseTargetTask;
+        }
+
+        /// <summary>
+        /// Add <see cref="Task"/> for the given UI <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to add the <see cref="Task"/> to.</param>
+        /// <param name="activity"><see cref="Activity"/> to create the <see cref="Task"/> for.</param>
+        /// <param name="previousFlowSource">Previous flow source to create the link with the new <see cref="Task"/>.</param>
+        /// <returns>New <see cref="IFlowSource"/> which should be used to link with the next entitites.</returns>
+        private UserTask AddTasksForUIActivity(Collaboration collaboration, Activity activity, IFlowSource previousFlowSource)
+        {
+            Participant participant = GetTargetApplicationParticipant(collaboration, activity);
+
+            UserTask userTask = participant.Process.AddTask<UserTask>(guid: activity.Guid, name: activity.ActivityName);
+
+            Flow.Create(name: string.Empty, previousFlowSource, userTask);
+
+            string activityGuid = activity.Guid.ToString();
+            string messageRef = string.Concat(activityGuid.AsSpan(0, activityGuid.Length - 2), "aa");
+            userTask.MessageRef = messageRef;
+
+            return userTask;
+        }
+
+        /// <summary>
+        /// Add <see cref="StartEvent"/> for the the given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to add the <see cref="StartEvent"/> to.</param>
+        /// <param name="activity"><see cref="Activity"/> to create the <see cref="StartEvent"/> for.</param>
+        /// <returns>Newly added <see cref="StartEvent"/>.</returns>
+        private StartEvent AddStartEventForActivity(Collaboration collaboration, Activity activity)
+        {
+            Participant participant;
+            if (IsWebServicesActivity(activity))
+            {
+                Consumer consumer = GetActivityFirstConsumer(activity);
+                participant = GetParticipantByGuid(collaboration, consumer.ConsumerGuid);
+            }
+            else
+            {
+                TargetBase targetApp = GetTargetApplicationByName(activity.TargetApplication);
+                participant = GetParticipantByGuid(collaboration, targetApp.Guid);
+            }
+
+            StartEvent startEvent = participant.Process.AddStartEvent(name: string.Empty);
+
+            return startEvent;
+        }
+
+        /// <summary>
+        /// Add <see cref="EndEvent"/> for the the given <paramref name="activity"/>.
+        /// </summary>
+        /// <param name="collaboration"><see cref="Collaboration"/> to add the <see cref="EndEvent"/> to.</param>
+        /// <param name="activity"><see cref="Activity"/> to create the <see cref="EndEvent"/> for.</param>
+        /// <param name="previousFlowSource">Previous slow source to create the link with the new <see cref="EndEvent"/>.</param>
+        /// <returns>Newly added <see cref="EndEvent"/>.</returns>
+        private EndEvent AddEndEventForActivity(Collaboration collaboration, Activity activity, IFlowSource previousFlowSource)
+        {
+            Participant participant;
+            if(IsWebServicesActivity(activity))
+            {
+                Consumer consumer = GetActivityFirstConsumer(activity);
+                participant = GetParticipantByGuid(collaboration, consumer.ConsumerGuid);
+            }
+            else
+            {
+                TargetBase targetApp = GetTargetApplicationByName(activity.TargetApplication);
+                participant = GetParticipantByGuid(collaboration, targetApp.Guid);
+            }
+
+            EndEvent endEvent = participant.Process.AddEndEvent(name: string.Empty);
+            Flow.Create(name: string.Empty, previousFlowSource, endEvent);
+
+            return endEvent;
         }
     }
 }

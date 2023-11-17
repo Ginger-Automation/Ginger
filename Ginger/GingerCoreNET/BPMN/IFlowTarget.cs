@@ -20,7 +20,7 @@ using System;
 
 namespace Amdocs.Ginger.CoreNET.BPMN
 {
-    public interface IFlowTarget : IProcessEntitiy
+    public interface IFlowTarget : IProcessEntity
     {
         public FlowCollection IncomingFlows { get; }
     }
