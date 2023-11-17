@@ -20,12 +20,14 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
 using Amdocs.Ginger.Repository;
 using DocumentFormat.OpenXml.Drawing;
 using Ginger.UserControls;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
 using GingerWPF.WizardLib;
+using NPOI.HPSF;
 using System;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
@@ -167,6 +169,17 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                         break;
                     case eAPIType.Swagger:
                         AddAPIModelWizard.APIType = eAPIType.Swagger;
+                        WizardEventArgs.CancelEvent = true;
+                        if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
+                        {
+                            if (ValidateFile(xURLTextBox.Text))
+                            {
+                                WizardEventArgs.CancelEvent = false;
+                            }
+                        }
+                        break;
+                    case eAPIType.YAML:
+                        AddAPIModelWizard.APIType = eAPIType.YAML;
                         WizardEventArgs.CancelEvent = true;
                         if (!string.IsNullOrWhiteSpace(xURLTextBox.Text))
                         {
@@ -427,7 +440,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     System.Windows.Forms.OpenFileDialog dlg2 = new System.Windows.Forms.OpenFileDialog();
 
-                    dlg2.Filter = "JSON Files (*.json)|*.json" + "|YAML Files (*.yaml)|*.yaml;*.yml" + "|All Files (*.*)|*.*";
+                    dlg2.Filter = "JSON Files (*.json)|*.json|YAML Files (*.yaml, *.yml)|*.yaml;*.yml|All Files (*.*)|*.*";
 
                     System.Windows.Forms.DialogResult result = dlg2.ShowDialog();
 
@@ -502,6 +515,10 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     bIsFileValid = CheckForXmlParser(fileName);
                 }
+                else if (APITypeComboBox.SelectedValue.ToString() == eAPIType.YAML.ToString())
+                {
+                    bIsFileValid = CheckforYamlParser(fileName);
+                }
             }
             catch (Exception ex)
             {
@@ -535,6 +552,10 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             else if (CheckForJsonParser(fileName))
             {
                 Reporter.ToUser(eUserMsgKey.FileOperationError, "Please use JSON for this file");
+            }
+            else if(CheckforYamlParser(fileName))
+            {
+                Reporter.ToUser(eUserMsgKey.FileOperationError, "Please use YAML for this file");
             }
         }
 
@@ -586,6 +607,26 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 ObservableList<ApplicationAPIModel> jsonList = new ObservableList<ApplicationAPIModel>();
                 jsonList = jsonParser.ParseDocument(fileName, jsonList);
                 if (jsonList == null || jsonList.Count == 0)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, ex.Message, ex);
+                return false;
+            }
+        }
+
+        private bool CheckforYamlParser(string filename)
+        {
+            try
+            {
+                YamlParser yamlParser = new();
+                ObservableList<ApplicationAPIModel> yamlList = new ObservableList<ApplicationAPIModel>();
+                yamlList = yamlParser.ParseDocument(filename, yamlList);
+                if (yamlList == null || yamlList.Count == 0)
                 {
                     return false;
                 }

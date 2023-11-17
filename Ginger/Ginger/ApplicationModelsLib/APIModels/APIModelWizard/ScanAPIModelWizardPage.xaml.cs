@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
@@ -259,10 +260,49 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     parseSuccess = await ShowSwaggerOperations();
                 }
+                else if (AddAPIModelWizard.APIType == AddAPIModelWizard.eAPIType.YAML)
+                {
+                    parseSuccess = await ShowYamlOperations();
+                }
 
                 AddAPIModelWizard.IsParsingWasDone = parseSuccess;
                 xCompareBtnRow.Height = new GridLength(50);
             }
+        }
+
+        private async Task<bool> ShowYamlOperations()
+        {
+            AddAPIModelWizard.ProcessStarted();
+            bool parseSuccess = true;
+            YamlParser YamlPar = new YamlParser();
+            AddAPIModelWizard.LearnedAPIModelsList = new ObservableList<ApplicationAPIModel>();
+            xApisSelectionGrid.DataSourceList = AddAPIModelWizard.LearnedAPIModelsList;
+
+
+            try
+            {
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        YamlPar.ParseDocument(AddAPIModelWizard.URL, AddAPIModelWizard.LearnedAPIModelsList);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error Details: {ex.Message} Failed to Parse the Yaml file {AddAPIModelWizard.URL}");
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.ParsingError, "Failed to Parse the Yaml File" + AddAPIModelWizard.URL);
+                Reporter.ToLog(eLogLevel.ERROR, "Error Details: " + ex.Message + " Failed to Parse the Swagger file " + AddAPIModelWizard.URL);
+                parseSuccess = false;
+            }
+            AddAPIModelWizard.ProcessEnded();
+
+            return parseSuccess;
         }
 
         private async Task<bool> ShowSwaggerOperations()
