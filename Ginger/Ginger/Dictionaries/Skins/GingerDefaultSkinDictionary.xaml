@@ -11,7 +11,8 @@
     <SolidColorBrush x:Key="$BackgroundColor_White" Color="#FFFFFF" />
     <SolidColorBrush x:Key="$BackgroundColor_Gray" Color="#F1F1F4" />
     <SolidColorBrush x:Key="$BackgroundColor_LightGray" Color="#E3E3E8" />
-    <SolidColorBrush x:Key="$BackgroundColor_VeryLightGray" Color="#f8f8f8" />
+    <SolidColorBrush x:Key="$BackgroundColor_VeryLightGray" Color="#f8f8f8" /> 
+    <SolidColorBrush x:Key="$BackgroundColor_LightShadowGray" Color="#efeeef" /> 
     <SolidColorBrush x:Key="$BackgroundColor_DarkGray" Color="#818398" />
     <!--Selection Colors-->
 
@@ -1516,7 +1517,7 @@
                     <Border x:Name="Border">
                         <ContentPresenter />
                     </Border>
-                    <ControlTemplate.Triggers>
+                    <!--<ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
                             <Setter TargetName="Border" Property="BorderThickness" Value="0,3,0,0"/>
@@ -1524,7 +1525,7 @@
                         <Trigger Property="IsSelected" Value="False">
                             <Setter TargetName="Border" Property="BorderThickness" Value="0"/>
                         </Trigger>
-                    </ControlTemplate.Triggers>
+                    </ControlTemplate.Triggers>-->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -852,7 +852,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
             else
             {
-                return System.Windows.Media.Brushes.White;
+                return System.Windows.Media.Brushes.Transparent;
             }
         }
 

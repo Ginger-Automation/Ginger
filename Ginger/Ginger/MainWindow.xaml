@@ -298,7 +298,7 @@
                 </DockPanel>
             </Grid>
 
-            <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_White}"/>
+            <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="Transparent"/>
 
             <usercontrols:ImageMakerControl x:Name="xNoLoadedSolutionImg" Grid.Row="1" ImageType="GingerLogoGray" Width="250" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
