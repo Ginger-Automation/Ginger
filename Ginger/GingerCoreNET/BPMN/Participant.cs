@@ -22,7 +22,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 {
     public sealed class Participant
     {
-        public string Guid { get; }
+        public Guid Guid { get; }
 
         public string Id { get; }
         
@@ -32,9 +32,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         
         public Process Process { get; }
 
-        public Participant(Guid guid) : this(guid.ToString()) { }
-
-        public Participant(string guid)
+        public Participant(Guid guid)
         {
             Guid = guid;
             Id = $"participant_{Guid}";

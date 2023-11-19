@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         public void AddParticipant(Participant participant)
         {
-            bool isUnique = _participants.All(p => !string.Equals(p.Guid, participant.Guid));
+            bool isUnique = _participants.All(p => p.Guid != participant.Guid);
             if (isUnique)
             {
                 _participants.Add(participant);
@@ -66,7 +66,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         public Participant? GetParticipantByGuid(Guid participantGuid)
         {
             Participant? participant = Participants
-                .FirstOrDefault(participant => string.Equals(participant.Guid, participantGuid.ToString()));
+                .FirstOrDefault(participant => participant.Guid == participantGuid);
             return participant;
         }
 

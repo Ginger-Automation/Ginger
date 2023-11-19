@@ -15,36 +15,36 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
+#nullable enable
 namespace GingerCoreNETUnitTest.BPMN
 {
     [TestClass]
     public sealed class ActivitiesGroupToBPMNTests
     {
         [TestMethod]
-        public void Convert_NullActivityGroup_ThrowsArgumentNullException()
+        public void Create_NullActivityGroup_ThrowsArgumentNullException()
         {
             ActivitiesGroup activityGroup = null;
             ISolutionFacadeForBPMN solutionFacade = new Mock<ISolutionFacadeForBPMN>().Object;
 
-            Assert.ThrowsException<ArgumentNullException>(() => new ActivitiesGroupToBPMNConverter(activityGroup, solutionFacade));
+            Assert.ThrowsException<ArgumentNullException>(() => new CollaborationFromActivityGroupCreator(activityGroup, solutionFacade));
         }
 
         [TestMethod]
-        public void Convert_EmptyActivitesGroup_ThrowsBPMNConversionException()
+        public void Create_EmptyActivitesGroup_ThrowsBPMNConversionException()
         {
             ActivitiesGroup activityGroup = new();
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>());
             ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
-            ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
+            CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
-            Assert.ThrowsException<BPMNConversionException>(() => converter.Convert());
+            Assert.ThrowsException<BPMNConversionException>(() => converter.Create());
         }
 
         [TestMethod]
-        public void Convert_AllInactiveActivities_ThrowsBPMNConversionException()
+        public void Create_AllInactiveActivities_ThrowsBPMNConversionException()
         {
             Activity inactiveActivity = new()
             {
@@ -59,13 +59,13 @@ namespace GingerCoreNETUnitTest.BPMN
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { inactiveActivity });
             ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
-            ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
+            CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
-            Assert.ThrowsException<BPMNConversionException>(() => converter.Convert());
+            Assert.ThrowsException<BPMNConversionException>(() => converter.Create());
         }
 
         [TestMethod]
-        public void Convert_AllNonIdentifiedActivities_ThrowsBPMNConversionException()
+        public void Create_AllNonIdentifiedActivities_ThrowsBPMNConversionException()
         {
             ActivitiesGroup activityGroup = new();
             activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers()
@@ -75,39 +75,39 @@ namespace GingerCoreNETUnitTest.BPMN
             Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
             solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>());
             ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
-            ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
+            CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
-            Assert.ThrowsException<BPMNConversionException>(() => converter.Convert());
+            Assert.ThrowsException<BPMNConversionException>(() => converter.Create());
         }
 
         [TestMethod]
-        public void Convert_ActivityGroupWithInActiveActivities_InactiveActivitiesAreIgnored()
+        public void Create_ActivityGroupWithInActiveActivities_InactiveActivitiesAreIgnored()
         {
             CreateActivityGroupWithActiveAndInactiveActivities(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             Activity inactiveActivity = activityGroup.ActivitiesIdentifiers.First(iden => !iden.IdentifiedActivity.Active).IdentifiedActivity;
-            ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
+            CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
-            Collaboration collaboration = converter.Convert();
+            Collaboration collaboration = converter.Create();
 
             Assert.IsTrue(collaboration.Participants.Any(), $"{nameof(Collaboration)} has no {nameof(Participant)}");
             Process firstParticipantProcess = collaboration.Participants.ElementAt(0).Process;
-            Assert.IsTrue(firstParticipantProcess.Tasks.Any(), $"First {nameof(Participant)} {nameof(Process)} is has no {nameof(Amdocs.Ginger.CoreNET.BPMN.Task)}");
-            Assert.IsFalse(firstParticipantProcess.Tasks.Any(task => string.Equals(task.Guid, inactiveActivity.Guid.ToString())), $"InActive {nameof(Activity)} is not ignored");
+            Assert.IsTrue(firstParticipantProcess.GetChildEntitiesByType<Task>().Any(), $"First {nameof(Participant)} {nameof(Process)} is has no {nameof(Amdocs.Ginger.CoreNET.BPMN.Task)}");
+            Assert.IsFalse(firstParticipantProcess.GetChildEntitiesByType<Task>().Any(task => task.Guid == inactiveActivity.Guid), $"InActive {nameof(Activity)} is not ignored");
         }
 
         [TestMethod]
-        public void Convert_ActivityGroupWithInActiveActivities_OnlyActiveActivitiesAreConverted()
+        public void Create_ActivityGroupWithInActiveActivities_OnlyActiveActivitiesAreConverted()
         {
             CreateActivityGroupWithActiveAndInactiveActivities(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             Activity activeActivity = activityGroup.ActivitiesIdentifiers.First(iden => iden.IdentifiedActivity.Active).IdentifiedActivity;
-            ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
+            CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
-            Collaboration collaboration = converter.Convert();
+            Collaboration collaboration = converter.Create();
 
             Assert.IsTrue(collaboration.Participants.Any(), $"{nameof(Collaboration)} has no {nameof(Participant)}");
             Process firstParticipantProcess = collaboration.Participants.ElementAt(0).Process;
-            Assert.IsTrue(firstParticipantProcess.Tasks.Any(), $"First {nameof(Participant)} {nameof(Process)} is has no {nameof(Amdocs.Ginger.CoreNET.BPMN.Task)}");
-            Assert.IsTrue(firstParticipantProcess.Tasks.Any(task => string.Equals(task.Guid, activeActivity.Guid.ToString())), $"Active {nameof(Activity)} is not converted");
+            Assert.IsTrue(firstParticipantProcess.GetChildEntitiesByType<Task>().Any(), $"First {nameof(Participant)} {nameof(Process)} is has no {nameof(Amdocs.Ginger.CoreNET.BPMN.Task)}");
+            Assert.IsTrue(firstParticipantProcess.GetChildEntitiesByType<Task>().Any(task => task.Guid == activeActivity.Guid), $"Active {nameof(Activity)} is not converted");
         }
 
         private void CreateActivityGroupWithActiveAndInactiveActivities(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
@@ -153,27 +153,58 @@ namespace GingerCoreNETUnitTest.BPMN
         }
 
         [TestMethod]
-        public void Convert_ActivityWithOnlyOneWebServicesActivity_HasTargetApplicationParticipant()
+        public void Create_ActivityGroupWithOnlyOneWebServicesActivity_HasTargetApplicationParticipant()
         {
             CreateActivityGroupWithOnlyOneWebServicesActivity(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             TargetBase targetApp = solutionFacade.GetTargetApplications().First(ta => string.Equals(ta.Name, activityGroup.ActivitiesIdentifiers[0].IdentifiedActivity.TargetApplication));
-            ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
+            CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
-            Collaboration collaboration = converter.Convert();
+            Collaboration collaboration = converter.Create();
 
-            Assert.IsTrue(collaboration.Participants.Any(participant => string.Equals(participant.Guid, targetApp.Guid.ToString())), $"{nameof(Participant)} for {nameof(Activity)}'s {nameof(TargetApplication)} not found");
+            Assert.IsTrue(collaboration.Participants.Any(participant => participant.Guid == targetApp.Guid), $"{nameof(Participant)} for {nameof(Activity)}'s {nameof(TargetApplication)} not found");
         }
 
         [TestMethod]
-        public void Convert_ActivityWithOnlyOneWebServicesActivity_HasConsumerParticipant()
+        public void Create_ActivityGroupWithOnlyOneWebServicesActivity_HasConsumerParticipant()
         {
             CreateActivityGroupWithOnlyOneWebServicesActivity(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             Consumer consumer = activityGroup.ActivitiesIdentifiers[0].IdentifiedActivity.ConsumerApplications[0];
-            ActivitiesGroupToBPMNConverter converter = new(activityGroup, solutionFacade);
+            CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
-            Collaboration collaboration = converter.Convert();
+            Collaboration collaboration = converter.Create();
 
-            Assert.IsTrue(collaboration.Participants.Any(participant => string.Equals(participant.Guid, consumer.ConsumerGuid.ToString())), $"{nameof(Participant)} for {nameof(Activity)}'s {nameof(Consumer)} not found");
+            Assert.IsTrue(collaboration.Participants.Any(participant => participant.Guid == consumer.ConsumerGuid), $"{nameof(Participant)} for {nameof(Activity)}'s {nameof(Consumer)} not found");
+        }
+
+        [TestMethod]
+        public void Create_ActivityGroupWithOnlyOneWebServicesActivity_FirstConsumerGuidIsSetAsCollaborationSystemRef()
+        {
+            CreateActivityGroupWithOnlyOneWebServicesActivity(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity restActivity = activityGroup.ActivitiesIdentifiers.First().IdentifiedActivity;
+            Consumer restActivityFirstConsumer = restActivity.ConsumerApplications.First();
+
+            Collaboration collaboration = creator.Create();
+
+            Assert.AreEqual(
+                expected: restActivityFirstConsumer.ConsumerGuid.ToString(), 
+                actual: collaboration.SystemRef, 
+                message: $"{nameof(Collaboration)}'s {nameof(Collaboration.SystemRef)} is not set to REST {nameof(Activity)}'s {nameof(Activity.Guid)}.");
+        }
+
+        [TestMethod]
+        public void Create_ActivityGroupWithOnlyOneWebServicesActivity_StartEventInFirstConsumerParticipant()
+        {
+            CreateActivityGroupWithOnlyOneWebServicesActivity(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity restActivity = activityGroup.ActivitiesIdentifiers.First().IdentifiedActivity;
+            Consumer restActivityFirstConsumer = restActivity.ConsumerApplications.First();
+
+            Collaboration collaboration = creator.Create();
+
+            Participant? participantWithStartEvent = collaboration.Participants.FirstOrDefault(p => p.Process.StartEvent != null);
+            Assert.IsNotNull(participantWithStartEvent, message: $"No {nameof(Participant)} with {nameof(StartEvent)} found in {nameof(Collaboration)}.");
+            Assert.AreEqual(expected: restActivityFirstConsumer.ConsumerGuid, actual: participantWithStartEvent!.Guid, $"{nameof(Participant)} of REST {nameof(Activity)}'s first {nameof(Consumer)} doesn't contain {nameof(StartEvent)}.");
         }
 
         private void CreateActivityGroupWithOnlyOneWebServicesActivity(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)

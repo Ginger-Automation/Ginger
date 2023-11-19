@@ -35,6 +35,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         private const string BPMN_XML_URI = "http://www.omg.org/spec/BPMN/20100524/MODEL";
         private const string IG_XML_PREFIX = "ig";
         private const string IG_XML_URI = "http://insightguard.com/schema/1.0/bpmn";
+        private const string CAMUNDA_XML_PREFIX = "camunda";
+        private const string CAMUNDA_XML_URI = "http://camunda.org/schema/1.0/bpmn";
 
         /// <summary>
         /// Serialize BPMN <see cref="Collaboration"/> to XML.
@@ -81,6 +83,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         {
             XmlElement definitionsElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "definitions", BPMN_XML_URI);
             definitionsElement.SetAttribute($"xmlns:{BPMN_XML_PREFIX}", BPMN_XML_URI);
+            definitionsElement.SetAttribute($"xmlns:{CAMUNDA_XML_PREFIX}", CAMUNDA_XML_URI);
             definitionsElement.SetAttribute($"xmlns:{IG_XML_PREFIX}", IG_XML_URI);
             definitionsElement.SetAttribute("targetNamespace", "http://bpmn.io/schema/bpmn");
 
@@ -100,7 +103,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             documentationElement.SetAttribute("textFormat", "text/plain");
             collaborationElement.AppendChild(documentationElement);
 
-            XmlElement extensionElements = CreateExtensionElements(xmlDocument, collaboration);
+            XmlElement extensionElements = CreateCollaborationExtensionElements(xmlDocument, collaboration);
             collaborationElement.AppendChild(extensionElements);
 
             foreach(Participant participant in collaboration.Participants) 
@@ -118,18 +121,18 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return collaborationElement;
         }
 
-        private XmlElement CreateExtensionElements(XmlDocument xmlDocument, Collaboration collaboration)
+        private XmlElement CreateCollaborationExtensionElements(XmlDocument xmlDocument, Collaboration collaboration)
         {
             XmlElement extensionElements = xmlDocument.CreateElement(BPMN_XML_PREFIX, "extensionElements", BPMN_XML_URI);
             extensionElements.SetAttribute("xmlns", BPMN_XML_URI);
 
-            XmlElement bpmnMetadataElement = CreateBPMNMetadataElement(xmlDocument, collaboration);
+            XmlElement bpmnMetadataElement = CreateCollaborationBPMNMetadataElement(xmlDocument, collaboration);
             extensionElements.AppendChild(bpmnMetadataElement);
 
             return extensionElements;
         }
 
-        private XmlElement CreateBPMNMetadataElement(XmlDocument xmlDocument, Collaboration collaboration)
+        private XmlElement CreateCollaborationBPMNMetadataElement(XmlDocument xmlDocument, Collaboration collaboration)
         {
             //TODO: MetadataElement details shouldn't be comming from Collaboration, since Collaboration.Guid is not necessarily the Metadata.uuid. Rethink this
             XmlElement bpmnMetaDataElement = xmlDocument.CreateElement(IG_XML_PREFIX, "bpmnMetadata", IG_XML_URI);
@@ -205,39 +208,16 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             processElement.SetAttribute("isClosed", "false"); //static value
             processElement.SetAttribute("processType", "None"); //static value
             
-            foreach(Task task in process.Tasks)
+            foreach(Task task in process.GetChildEntitiesByType<Task>())
             {
-                XmlElement taskElement;
-                if(task is UserTask userTask)
-                {
-                    taskElement = CreateUserTaskElement(xmlDocument, userTask);
-                }
-                else if (task is ReceiveTask receiveTask)
-                {
-                    taskElement = CreateReceiveTaskElement(xmlDocument, receiveTask);
-                }
-                else if (task is ScriptTask scriptTask)
-                {
-                    taskElement = CreateScriptTaskElement(xmlDocument, scriptTask);
-                }
-                else if (task is SendTask sendTask)
-                {
-                    taskElement = CreateSendTaskElement(xmlDocument, sendTask);
-                }
-                else if (task is ServiceTask serviceTask)
-                {
-                    taskElement = CreateServiceTaskElement(xmlDocument, serviceTask);
-                }
-                else if (task is ManualTask manualTask)
-                {
-                    taskElement = CreateManualTaskElement(xmlDocument, manualTask);
-                }
-                else
-                {
-                    taskElement = CreateTaskElement(xmlDocument, task);
-                }
-
+                XmlElement taskElement = CreateGenericTaskElement(xmlDocument, task);
                 processElement.AppendChild(taskElement);
+            }
+
+            foreach(ExclusiveGateway exclusiveGateway in process.GetChildEntitiesByType<ExclusiveGateway>())
+            {
+                XmlElement exclusiveGatewayElement = CreateExclusiveGatewayElement(xmlDocument, exclusiveGateway);
+                processElement.AppendChild(exclusiveGatewayElement);
             }
 
             if (process.StartEvent != null)
@@ -261,101 +241,91 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             return processElement;
         }
 
+        //TODO: BPMN - Change the name of this method to something better
+        private XmlElement CreateGenericTaskElement(XmlDocument xmlDocument, Task task)
+        {
+            XmlElement taskElement;
+            if (task is UserTask userTask)
+            {
+                taskElement = CreateUserTaskElement(xmlDocument, userTask);
+            }
+            else if (task is ReceiveTask receiveTask)
+            {
+                taskElement = CreateReceiveTaskElement(xmlDocument, receiveTask);
+            }
+            else if (task is ScriptTask scriptTask)
+            {
+                taskElement = CreateScriptTaskElement(xmlDocument, scriptTask);
+            }
+            else if (task is SendTask sendTask)
+            {
+                taskElement = CreateSendTaskElement(xmlDocument, sendTask);
+            }
+            else if (task is ServiceTask serviceTask)
+            {
+                taskElement = CreateServiceTaskElement(xmlDocument, serviceTask);
+            }
+            else if (task is ManualTask manualTask)
+            {
+                taskElement = CreateManualTaskElement(xmlDocument, manualTask);
+            }
+            else
+            {
+                taskElement = CreateTaskElement(xmlDocument, task);
+            }
+            return taskElement;
+        }
+
         private XmlElement CreateUserTaskElement(XmlDocument xmlDocument, UserTask userTask)
         {
-            XmlElement userTaskElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "userTask", BPMN_XML_URI);
-
-            userTaskElement.SetAttribute("completionQuantity", "1"); //static value
-            userTaskElement.SetAttribute("id", userTask.Id);
+            XmlElement userTaskElement = CreateCommonTaskElement(xmlDocument, taskTypeName: "userTask", userTask);
             userTaskElement.SetAttribute("messageRef", IG_XML_URI, userTask.MessageRef);
             userTaskElement.SetAttribute("implementation", "##unspecified"); //static value
-            userTaskElement.SetAttribute("isForCompensation", "false"); //static value
-            userTaskElement.SetAttribute("name", userTask.Name);
-            userTaskElement.SetAttribute("startQuantity", "1"); //static value
-            userTaskElement.AppendChild(CreateDocumentationElement(xmlDocument));
-
-            foreach (Flow flow in userTask.IncomingFlows)
-            {
-                XmlElement incomingFlowElement = CreateIncomingFlowElement(xmlDocument, flow);
-                userTaskElement.AppendChild(incomingFlowElement);
-            }
-
-            foreach (Flow flow in userTask.OutgoingFlows)
-            {
-                XmlElement outgoingFlowElement = CreateOutgoingFlowElement(xmlDocument, flow);
-                userTaskElement.AppendChild(outgoingFlowElement);
-            }
-
             return userTaskElement;
         }
 
         private XmlElement CreateReceiveTaskElement(XmlDocument xmlDocument, ReceiveTask receiveTask)
         {
-            XmlElement receiveTaskElement = CreateGenericTaskElement(xmlDocument, taskTypeName: "receiveTask", receiveTask);
+            XmlElement receiveTaskElement = CreateCommonTaskElement(xmlDocument, taskTypeName: "receiveTask", receiveTask);
             receiveTaskElement.SetAttribute("implementation", "##WebService"); //static value
             //TODO: BPMN - For ReceiveTask is instantiate always false
             receiveTaskElement.SetAttribute("instantiate", "false"); //static value
-
             return receiveTaskElement;
         }
 
         private XmlElement CreateScriptTaskElement(XmlDocument xmlDocument, ScriptTask scriptTask)
         {
-            XmlElement scriptTaskElement = CreateGenericTaskElement(xmlDocument, taskTypeName: "scriptTask", scriptTask);
-
+            XmlElement scriptTaskElement = CreateCommonTaskElement(xmlDocument, taskTypeName: "scriptTask", scriptTask);
             return scriptTaskElement;
         }
 
         private XmlElement CreateSendTaskElement(XmlDocument xmlDocument, SendTask sendTask)
         {
-            XmlElement sendTaskElement = CreateGenericTaskElement(xmlDocument, taskTypeName: "sendTask", sendTask);
+            XmlElement sendTaskElement = CreateCommonTaskElement(xmlDocument, taskTypeName: "sendTask", sendTask);
             sendTaskElement.SetAttribute("implementation", "##WebService"); //static value
-
             return sendTaskElement;
         }
 
         private XmlElement CreateServiceTaskElement(XmlDocument xmlDocument, ServiceTask serviceTask)
         {
-            XmlElement serviceTaskElement = CreateGenericTaskElement(xmlDocument, taskTypeName: "serviceTask", serviceTask);
+            XmlElement serviceTaskElement = CreateCommonTaskElement(xmlDocument, taskTypeName: "serviceTask", serviceTask);
             serviceTaskElement.SetAttribute("implementation", "##WebService"); //static value
-
             return serviceTaskElement;
         }
 
         private XmlElement CreateManualTaskElement(XmlDocument xmlDocument, ManualTask manualTask)
         {
-            XmlElement manualTaskElement = CreateGenericTaskElement(xmlDocument, taskTypeName: "manualTask", manualTask);
-
+            XmlElement manualTaskElement = CreateCommonTaskElement(xmlDocument, taskTypeName: "manualTask", manualTask);
             return manualTaskElement;
         }
 
         private XmlElement CreateTaskElement(XmlDocument xmlDocument, Task task)
         {
-            XmlElement taskElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "task", BPMN_XML_URI);
-
-            taskElement.SetAttribute("completionQuantity", "1"); //static value
-            taskElement.SetAttribute("id", task.Id);
-            taskElement.SetAttribute("isForCompensation", "false"); //static value
-            taskElement.SetAttribute("name", task.Name);
-            taskElement.SetAttribute("startQuantity", "1"); //static value
-            taskElement.AppendChild(CreateDocumentationElement(xmlDocument));
-
-            foreach(Flow flow in task.IncomingFlows)
-            {
-                XmlElement incomingFlowElement = CreateIncomingFlowElement(xmlDocument, flow);
-                taskElement.AppendChild(incomingFlowElement);
-            }
-
-            foreach(Flow flow in task.OutgoingFlows)
-            {
-                XmlElement outgoingFlowElement = CreateOutgoingFlowElement(xmlDocument, flow);
-                taskElement.AppendChild(outgoingFlowElement);
-            }
-
+            XmlElement taskElement = CreateCommonTaskElement(xmlDocument, taskTypeName: "task", task);
             return taskElement;
         }
 
-        private XmlElement CreateGenericTaskElement(XmlDocument xmlDocument, string taskTypeName, Task task)
+        private XmlElement CreateCommonTaskElement(XmlDocument xmlDocument, string taskTypeName, Task task)
         {
             XmlElement taskElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, taskTypeName, BPMN_XML_URI);
 
@@ -365,20 +335,94 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             taskElement.SetAttribute("name", task.Name);
             taskElement.SetAttribute("startQuantity", "1"); //static value
             taskElement.AppendChild(CreateDocumentationElement(xmlDocument));
+            taskElement.AppendChild(CreateCommonTaskExtensionElements(xmlDocument, task));
 
-            foreach (Flow flow in task.IncomingFlows)
+            foreach (Flow incomingFlow in task.IncomingFlows)
             {
-                XmlElement incomingFlowElement = CreateIncomingFlowElement(xmlDocument, flow);
+                XmlElement incomingFlowElement = CreateIncomingFlowElement(xmlDocument, incomingFlow);
                 taskElement.AppendChild(incomingFlowElement);
             }
 
-            foreach (Flow flow in task.OutgoingFlows)
+            foreach (Flow outgoingFlow in task.OutgoingFlows)
             {
-                XmlElement outgoingFlowElement = CreateOutgoingFlowElement(xmlDocument, flow);
+                XmlElement outgoingFlowElement = CreateOutgoingFlowElement(xmlDocument, outgoingFlow);
                 taskElement.AppendChild(outgoingFlowElement);
             }
 
             return taskElement;
+        }
+
+        private XmlElement CreateCommonTaskExtensionElements(XmlDocument xmlDocument, Task task)
+        {
+            XmlElement extensionElements = xmlDocument.CreateElement(BPMN_XML_PREFIX, "extensionElements", BPMN_XML_URI);
+            //extensionElements.SetAttribute("xmlns", BPMN_XML_URI);
+
+            XmlElement? inputOutputElement = CreateCommonTaskInputOutputElement(xmlDocument, task);
+            if (inputOutputElement != null)
+            {
+                extensionElements.AppendChild(inputOutputElement);
+            }
+
+            return extensionElements;
+        }
+
+        private XmlElement? CreateCommonTaskInputOutputElement(XmlDocument xmlDocument, Task task)
+        {
+            if(!task.Conditions.Any())
+            {
+                return null;
+            }
+
+            XmlElement inputOutputElement = xmlDocument.CreateElement(CAMUNDA_XML_PREFIX, "inputOutput", CAMUNDA_XML_URI);
+
+            foreach(Task.Condition condition in task.Conditions)
+            {
+                XmlElement inputParameterElement = xmlDocument.CreateElement(CAMUNDA_XML_PREFIX, "inputParameter", CAMUNDA_XML_URI);
+                inputParameterElement.SetAttribute("name", condition.NameFieldTag);
+                XmlText inputParameterValueText;
+                if(condition is Task.FieldValueCondition fieldValueCondition)
+                {
+                    inputParameterValueText = xmlDocument.CreateTextNode($"={fieldValueCondition.ValueFieldTag}");
+                }
+                else if(condition is Task.ParameterValueCondition parameterValueCondition)
+                {
+                    string operationSymbol = Task.ParameterValueCondition.GetOperationSymbol(parameterValueCondition.Operation);
+                    inputParameterValueText = xmlDocument.CreateTextNode($"{operationSymbol}{parameterValueCondition.ValueParameterName}");
+                }
+                else
+                {
+                    throw new BPMNSerializationException($"Cannot serialize {nameof(Task.Condition)} of type {condition.GetType().FullName}.");
+                }
+                inputParameterElement.AppendChild(inputParameterValueText);
+
+                inputOutputElement.AppendChild(inputParameterElement);
+            }
+
+            return inputOutputElement;
+        }
+
+        private XmlElement CreateExclusiveGatewayElement(XmlDocument xmlDocument, ExclusiveGateway exclusiveGateway)
+        {
+            XmlElement exclusiveGatewayElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "exclusiveGateway", BPMN_XML_URI);
+
+            exclusiveGatewayElement.SetAttribute("gatewayDirection", "Unspecified"); //static value
+            exclusiveGatewayElement.SetAttribute("id", exclusiveGateway.Id);
+            exclusiveGatewayElement.SetAttribute("name", exclusiveGateway.Name);
+            exclusiveGatewayElement.AppendChild(CreateDocumentationElement(xmlDocument));
+
+            foreach(Flow incomingFlow in exclusiveGateway.IncomingFlows)
+            {
+                XmlElement incomingFlowElement = CreateIncomingFlowElement(xmlDocument, incomingFlow);
+                exclusiveGatewayElement.AppendChild(incomingFlowElement);
+            }
+
+            foreach(Flow outgoingFlow in exclusiveGateway.OutgoingFlows)
+            {
+                XmlElement outgoingFlowElement = CreateOutgoingFlowElement(xmlDocument, outgoingFlow);
+                exclusiveGatewayElement.AppendChild(outgoingFlowElement);
+            }
+
+            return exclusiveGatewayElement;
         }
 
         private XmlElement CreateIncomingFlowElement(XmlDocument xmlDocument, Flow incomingFlow)

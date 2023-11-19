@@ -17,12 +17,13 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace Amdocs.Ginger.CoreNET.BPMN
 {
     public class Task : IFlowSource, IFlowTarget
     {
-        public string Guid { get; }
+        public Guid Guid { get; }
 
         public string Id { get; }
 
@@ -30,61 +31,117 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         public string Name { get; }
 
+        public IEnumerable<Condition> Conditions { get; }
+
         public FlowCollection IncomingFlows { get; }
 
         public FlowCollection OutgoingFlows { get; }
 
-        public Task(string processId, Guid guid, string name) : this(processId, guid.ToString(), name) { }
+        public Task(string processId, Guid guid, string name) : this(processId, guid, name, conditions: Array.Empty<Condition>()) { }
 
-        public Task(string processId, string guid, string name)
+        public Task(string processId, Guid guid, string name, IEnumerable<Condition> conditions)
         {
             Guid = guid;
             Id = $"task_{Guid}";
             Name = name;
             ProcessId = processId;
+            Conditions = new List<Condition>(conditions).AsReadOnly();
             IncomingFlows = new();
             OutgoingFlows = new();
         }
 
         public static TTask Create<TTask>(string processId, Guid guid, string name) where TTask : Task
         {
-            return Create<TTask>(processId, guid.ToString(), name);
+            return Create<TTask>(processId, guid, name, conditions: Array.Empty<Condition>());
         }
 
-        public static TTask Create<TTask>(string processId, string guid, string name) where TTask : Task
-        {
-            Type taskType = typeof(TTask);
+        public static TTask Create<TTask>(string processId, Guid guid, string name, IEnumerable<Condition> conditions) where TTask : Task
+        {Type taskType = typeof(TTask);
             Task newTask;
             if (taskType == typeof(UserTask))
             {
-                newTask = new UserTask(processId, guid, name);
+                newTask = new UserTask(processId, guid, name, conditions);
             }
             else if (taskType == typeof(ReceiveTask))
             {
-                newTask = new ReceiveTask(processId, guid, name);   
+                newTask = new ReceiveTask(processId, guid, name, conditions);   
             }
             else if (taskType == typeof(ScriptTask))
             {
-                newTask = new ScriptTask(processId, guid, name);
+                newTask = new ScriptTask(processId, guid, name, conditions);
             }
             else if (taskType == typeof(SendTask))
             {
-                newTask = new SendTask(processId, guid, name);
+                newTask = new SendTask(processId, guid, name, conditions);
             }
             else if (taskType == typeof(ServiceTask))
             {
-                newTask = new ServiceTask(processId, guid, name);
+                newTask = new ServiceTask(processId, guid, name, conditions);
             }
             else if (taskType == typeof(ManualTask))
             {
-                newTask = new ManualTask(processId, guid, name);
+                newTask = new ManualTask(processId, guid, name, conditions);
             }
             else
             {
-                newTask = new Task(processId, guid, name);
+                newTask = new Task(processId, guid, name, conditions);
             }
 
             return (TTask)newTask;
+        }
+
+        public abstract class Condition
+        {
+            public string NameFieldTag { get; }
+
+            public Condition(string nameFieldTag)
+            {
+                NameFieldTag = nameFieldTag;
+            }
+        }
+
+        public sealed class FieldValueCondition : Condition
+        {
+            public string ValueFieldTag { get; }
+
+            public FieldValueCondition(string nameFieldTag, string valueFieldTag) : base(nameFieldTag)
+            {
+                ValueFieldTag = valueFieldTag;
+            }
+        }
+
+        public sealed class ParameterValueCondition : Condition
+        {
+            public enum OperationType
+            {
+                In,
+                Override,
+                NotIn
+            }
+            public string ValueParameterName { get; }
+
+            public OperationType Operation { get; }
+
+            public ParameterValueCondition(string nameFieldTag, string valueParameterName, OperationType operation) : base(nameFieldTag)
+            {
+                ValueParameterName = valueParameterName;
+                Operation = operation;
+            }
+
+            public static string GetOperationSymbol(OperationType operation)
+            {
+                switch (operation)
+                {
+                    case OperationType.In:
+                        return "";
+                    case OperationType.Override:
+                        return "!";
+                    case OperationType.NotIn:
+                        return "~";
+                    default:
+                        throw new InvalidOperationException($"No operation symbol is know for {typeof(OperationType).FullName} of type {operation}.");
+                }
+            }
         }
     }
 }

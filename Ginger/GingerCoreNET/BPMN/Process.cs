@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using MongoDB.Driver.Core.Operations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,19 +26,20 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 {
     public sealed class Process
     {
+        private readonly ICollection<IProcessEntity> _childEntities;
+
         public string Id { get; }
 
         public StartEvent? StartEvent { get; private set; }
 
-        private readonly ICollection<Task> _tasks;
-        public IEnumerable<Task> Tasks => _tasks;
+        public IEnumerable<IProcessEntity> ChildEntities => _childEntities;
 
         public EndEvent? EndEvent { get; private set; }
 
         internal Process(string participantId)
         {
             Id = $"{participantId}_process";
-            _tasks = new List<Task>();
+            _childEntities = new List<IProcessEntity>();
         }
 
         public StartEvent AddStartEvent(string name)
@@ -53,14 +55,36 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         public TTask AddTask<TTask>(Guid guid, string name) where TTask : Task
         {
-            return AddTask<TTask>(guid.ToString(), name);
+            return AddTask<TTask>(guid, name, conditions: Array.Empty<Task.Condition>());
         }
 
-        public TTask AddTask<TTask>(string guid, string name) where TTask : Task
+        public TTask AddTask<TTask>(string name, IEnumerable<Task.Condition> conditions) where TTask : Task
         {
-            TTask task = Task.Create<TTask>(processId: Id, guid: guid, name: name);
-            _tasks.Add(task);
+            return AddTask<TTask>(Guid.NewGuid(), name, conditions);
+        }
+
+        public TTask AddTask<TTask>(Guid guid, string name, IEnumerable<Task.Condition> conditions) where TTask : Task
+        {
+            TTask task = Task.Create<TTask>(processId: Id, guid, name, conditions);
+            _childEntities.Add(task);
             return task;
+        }
+
+        public ExclusiveGateway AddExclusiveGateway(string name)
+        {
+            return AddExclusiveGateway(Guid.NewGuid(), name);
+        }
+
+        public ExclusiveGateway AddExclusiveGateway(Guid guid, string name)
+        {
+            return AddExclusiveGateway(guid.ToString(), name);
+        }
+
+        public ExclusiveGateway AddExclusiveGateway(string guid, string name)
+        {
+            ExclusiveGateway exclusiveGateway = new(processId: Id, guid, name);
+            _childEntities.Add(exclusiveGateway);
+            return exclusiveGateway;
         }
 
         public EndEvent AddEndEvent(string name)
@@ -88,9 +112,9 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         {
             IEnumerable<Flow> flows = Array.Empty<Flow>();
 
-            flows = flows.Concat(Tasks.SelectMany(task => task.IncomingFlows));
+            flows = flows.Concat(GetChildEntitiesByType<Task>().SelectMany(task => task.IncomingFlows));
 
-            flows = flows.Concat(Tasks.SelectMany(task => task.OutgoingFlows));
+            flows = flows.Concat(GetChildEntitiesByType<Task>().SelectMany(task => task.OutgoingFlows));
 
             if (StartEvent != null)
             {
@@ -103,6 +127,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN
             }
 
             return flows;
+        }
+
+        public IEnumerable<TProcessEntity> GetChildEntitiesByType<TProcessEntity>() where TProcessEntity : IProcessEntity
+        {
+            return _childEntities.Where(entity => entity is TProcessEntity).Cast<TProcessEntity>();
         }
     }
 }

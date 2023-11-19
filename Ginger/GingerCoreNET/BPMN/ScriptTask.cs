@@ -17,15 +17,14 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace Amdocs.Ginger.CoreNET.BPMN
 {
     public sealed class ScriptTask : Task
     {
-        public ScriptTask(string processId, Guid guid, string name) : 
-            this(processId, guid.ToString(), name) { }
+        public ScriptTask(string processId, Guid guid, string name) : this(processId, guid, name, conditions: Array.Empty<Condition>()) { }
 
-        public ScriptTask(string processId, string guid, string name) : 
-            base(processId, guid, name) { }
+        public ScriptTask(string processId, Guid guid, string name, IEnumerable<Condition> conditions) : base(processId, guid, name, conditions) { }
     }
 }

@@ -22,7 +22,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 {
     public abstract class Flow
     {
-        public string Guid { get; }
+        public Guid Guid { get; }
 
         public string Id { get; }
 
@@ -35,10 +35,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN
         protected Flow(string name, IFlowSource source, IFlowTarget target) :
             this(System.Guid.NewGuid(), name, source, target) { }
 
-        protected Flow(Guid guid, string name, IFlowSource source, IFlowTarget target) :
-            this(guid.ToString(), name, source, target) { }
-
-        protected Flow(string guid, string name, IFlowSource source, IFlowTarget target)
+        protected Flow(Guid guid, string name, IFlowSource source, IFlowTarget target)
         {
             Guid = guid;
             Id = $"flow_{Guid}";
@@ -49,15 +46,10 @@ namespace Amdocs.Ginger.CoreNET.BPMN
 
         public static Flow Create(string name, IFlowSource source, IFlowTarget target)
         {
-            return Create(System.Guid.NewGuid(), name, source, target);
+            return Create(Guid.NewGuid(), name, source, target);
         }
 
         public static Flow Create(Guid guid, string name, IFlowSource source, IFlowTarget target)
-        {
-            return Create(guid.ToString(), name, source, target);
-        }
-
-        public static Flow Create(string guid, string name, IFlowSource source, IFlowTarget target)
         {
             Flow flow;
             if (string.Equals(source.ProcessId, target.ProcessId))
