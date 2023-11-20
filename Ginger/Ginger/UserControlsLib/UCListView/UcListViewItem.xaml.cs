@@ -218,7 +218,8 @@ namespace Ginger.UserControlsLib.UCListView
                         b.Mode = BindingMode.OneWay;
                         b.Converter = new ActiveBackgroundColorConverter();
                         b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                        xListItemGrid.SetBinding(Grid.BackgroundProperty, b);
+                        // xListItemGrid.SetBinding(Grid.BackgroundProperty, b);
+                        xItemNameTxtBlock.SetBinding(TextBlock.BackgroundProperty, b);
                     }
                 });
             }

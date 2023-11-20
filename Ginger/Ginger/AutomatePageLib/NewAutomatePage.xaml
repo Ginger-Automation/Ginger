@@ -318,7 +318,7 @@
                         </DockPanel>
                         <Grid x:Name="xActivitiesDataGrid" DockPanel.Dock="Top" Visibility="Visible" Background="{StaticResource $BackgroundColor_White}">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="382"/>
+                                <ColumnDefinition Width="510"/>
                                 <ColumnDefinition Width="300*"/>
                                 <ColumnDefinition x:Name="xAddActionsColumn" Width="5" MinWidth="5" MaxWidth="1300"/>
                             </Grid.ColumnDefinitions>

@@ -622,7 +622,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{DynamicResource $BackgroundColor_Black}" BorderThickness="1" CornerRadius="15">
+                                BorderBrush="{DynamicResource $BackgroundColor_Black}" BorderThickness="1" CornerRadius="10">
                         <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
                                 Margin="{TemplateBinding Padding}"
