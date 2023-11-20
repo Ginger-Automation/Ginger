@@ -34,12 +34,14 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
 
         public IEnumerable<IProcessEntity> ChildEntities => _childEntities;
 
-        public EndEvent? EndEvent { get; private set; }
+        private ICollection<EndEvent> _endEvents;
+        public IEnumerable<EndEvent> EndEvents => _endEvents;
 
         internal Process(string participantId)
         {
             Id = $"{participantId}_process";
             _childEntities = new List<IProcessEntity>();
+            _endEvents = new List<EndEvent>();
         }
 
         public StartEvent AddStartEvent(string name)
@@ -94,8 +96,9 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
 
         public EndEvent AddEndEvent(string name, EndEventType endEventType)
         {
-            EndEvent = new(name, endEventType, processId: Id);
-            return EndEvent;
+            EndEvent endEvent = new(name, endEventType, processId: Id);
+            _endEvents.Add(endEvent);
+            return endEvent;
         }
 
         public IEnumerable<SequenceFlow> GetSequenceFlows()
@@ -121,10 +124,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
                 flows = flows.Concat(StartEvent.OutgoingFlows);
             }
 
-            if (EndEvent != null)
-            {
-                flows = flows.Concat(EndEvent.IncomingFlows);
-            }
+            flows = flows.Concat(EndEvents.SelectMany(e => e.IncomingFlows));
 
             return flows;
         }

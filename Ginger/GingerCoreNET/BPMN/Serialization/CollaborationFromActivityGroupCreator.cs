@@ -103,10 +103,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             }
 
             HistoricalEnumerator<Activity> activitiesEnumerator = new(activities.GetEnumerator());
-            CreateProcessEntitiesForActivity(activitiesEnumerator, collaboration);
+            Dictionary<Activity, IEnumerable<Task>> activityTasksMap = new();
+            CreateProcessEntitiesForActivity(activitiesEnumerator, collaboration, activityTasksMap);
         }
 
-        private IFlowTarget CreateProcessEntitiesForActivity(HistoricalEnumerator<Activity> activitiesEnumerator, Collaboration collaboration)
+        private IFlowTarget CreateProcessEntitiesForActivity(HistoricalEnumerator<Activity> activitiesEnumerator, Collaboration collaboration, IDictionary<Activity, IEnumerable<Task>> activityTaskMap)
         {
             bool isFirstActivity = activitiesEnumerator.Current == null;
 
@@ -127,13 +128,14 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             }
 
             IEnumerable<Task> tasksForCurrentActivity = CreateTasksForActivity(currentActivity, collaboration);
+            activityTaskMap.Add(currentActivity, tasksForCurrentActivity);
 
             Task firstTaskForCurrentActivity = tasksForCurrentActivity.First();
             Task lastTaskForCurrentActivity = tasksForCurrentActivity.Last();
 
-            IFlowTarget firstEntityForNextActivity = CreateProcessEntitiesForActivity(activitiesEnumerator, collaboration);
+            IFlowTarget firstEntityForNextActivity = CreateProcessEntitiesForActivity(activitiesEnumerator, collaboration, activityTaskMap);
 
-            ExclusiveGateway? exclusiveGateway = CreateProcessEntitiesForActivityFlowControls(currentActivity, collaboration);
+            ExclusiveGateway? exclusiveGateway = CreateProcessEntitiesForActivityFlowControls(currentActivity, collaboration, activityTaskMap);
 
             if (startEvent != null)
             {
@@ -204,9 +206,9 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             return endEvent;
         }
 
-        private ExclusiveGateway? CreateProcessEntitiesForActivityFlowControls(Activity activity, Collaboration collaboration)
+        private ExclusiveGateway? CreateProcessEntitiesForActivityFlowControls(Activity activity, Collaboration collaboration, IDictionary<Activity, IEnumerable<Task>> activityTasksMap)
         {
-            ProcessEntitiesFromActivityFlowControlCreator processEntitiesFromActivityFlowControlCreator = new(activity, collaboration, _solutionFacade);
+            ProcessEntitiesFromActivityFlowControlCreator processEntitiesFromActivityFlowControlCreator = new(activity, collaboration, _solutionFacade, activityTasksMap);
             return processEntitiesFromActivityFlowControlCreator.Create();
         }
 

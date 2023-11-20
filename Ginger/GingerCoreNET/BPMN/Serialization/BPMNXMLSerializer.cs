@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
 using Amdocs.Ginger.CoreNET.BPMN.Models;
 
 #nullable enable
@@ -227,9 +228,9 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
                 processElement.AppendChild(startEventElement);
             }
 
-            if (process.EndEvent != null)
+            foreach (EndEvent endEvent in process.EndEvents)
             {
-                XmlElement endEventElement = CreateEndEventElement(xmlDocument, process.EndEvent);
+                XmlElement endEventElement = CreateEndEventElement(xmlDocument, endEvent);
                 processElement.AppendChild(endEventElement);
             }
 

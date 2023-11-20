@@ -3,12 +3,12 @@ using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
 using Amdocs.Ginger.CoreNET.BPMN.Models;
 using Amdocs.Ginger.CoreNET.BPMN.Utils;
 using GingerCore;
+using GingerCore.Activities;
 using GingerCore.FlowControlLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
@@ -28,15 +28,18 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
         private readonly Activity _activity;
         private readonly Collaboration _collaboration;
         private readonly ISolutionFacadeForBPMN _solutionFacade;
+        private readonly IDictionary<Activity, IEnumerable<Task>> _activityTasksMap;
         private readonly Participant _activityParticipant;
         private readonly IEnumerable<FlowControl> _flowControls;
 
-        internal ProcessEntitiesFromActivityFlowControlCreator(Activity activity, Collaboration collaboration, ISolutionFacadeForBPMN solutionFacade)
+        internal ProcessEntitiesFromActivityFlowControlCreator(Activity activity, Collaboration collaboration, ISolutionFacadeForBPMN solutionFacade, 
+            IDictionary<Activity, IEnumerable<Task>> activityTasksMap)
         {
             _activity = activity;
             _collaboration = collaboration;
             _solutionFacade = solutionFacade;
-            _activityParticipant = GetActivityTargetApplicationParticipant();
+            _activityTasksMap = activityTasksMap;
+            _activityParticipant = GetActivityParticipant();
             _flowControls = GetRelevantFlowControls();
         }
 
@@ -73,24 +76,28 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             switch (flowControl.FlowControlAction)
             {
                 case eFlowControlAction.GoToActivity:
-                    CreateConditionalTasksForGoToActivity(exclusiveGateway, flowControl);
+                    CreateConditionalTasksForGoToActivityByGuid(exclusiveGateway, flowControl);
                     break;
                 case eFlowControlAction.RerunActivity:
                     CreateConditionalTasksForRerunActivity(exclusiveGateway, flowControl);
                     break;
-                default:
-                    throw new NotSupportedException($"Creating conditional {nameof(Task)} for {nameof(eFlowControlAction)} of type {flowControl.FlowControlAction} is not supported.");
+                case eFlowControlAction.FailActionAndStopBusinessFlow:
+                case eFlowControlAction.StopRun:
+                case eFlowControlAction.StopBusinessFlow:
+                    CreateConditionalTasksForStopExecution(exclusiveGateway, flowControl);
+                    break;
+                case eFlowControlAction.GoToActivityByName:
+                case eFlowControlAction.RunSharedRepositoryActivity:
+                    CreateConditionalTasksForGoToActivityByName(exclusiveGateway, flowControl);
+                    break;
             }
         }
 
-        private void CreateConditionalTasksForGoToActivity(ExclusiveGateway exclusiveGateway, FlowControl flowControl)
+        private void CreateConditionalTasksForGoToActivityByGuid(ExclusiveGateway exclusiveGateway, FlowControl flowControl)
         {
             Guid targetActivityGuid = flowControl.GetGuidFromValue();
-            Task? targetActivityTask = _activityParticipant.Process.GetChildEntitiesByType<Task>().FirstOrDefault(task => task.Guid == targetActivityGuid);
-            if (targetActivityTask == null)
-            {
-                throw new BPMNConversionException($"No BPMN {nameof(Task)} found for {GingerDicser.GetTermResValue(eTermResKey.Activity)}.");
-            }
+            IEnumerable<Task> targetActivityTasks = GetTasksForActivityByGuid(targetActivityGuid);
+            Task targetActivityFirstTask = targetActivityTasks.First();
 
             string conditionalTaskName;
             if (flowControl.Operator == eFCOperator.CSharp || flowControl.Operator == eFCOperator.Legacy)
@@ -111,17 +118,56 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
                     new Task.FieldValueCondition(nameFieldTag: $"FC_{flowControl.Guid}", valueFieldTag: $"FC_PASSED_FIELD_TAG")
                 });
 
+            //TODO: BPMN - Get FlowControlAction name from EnumValueDescription attribute
+            string flowControlActionName = flowControl.FlowControlAction.ToString();
+
             Flow.Create(name: string.Empty, source: exclusiveGateway, target: conditionalTask);
-            Flow.Create(name: string.Empty, source: conditionalTask, target: targetActivityTask);
+            Flow.Create(name: flowControlActionName, source: conditionalTask, target: targetActivityFirstTask);
         }
 
         private void CreateConditionalTasksForRerunActivity(ExclusiveGateway exclusiveGateway, FlowControl flowControl)
         {
             Guid targetActivityGuid = _activity.Guid;
-            Task? targetActivityTask = _activityParticipant.Process.GetChildEntitiesByType<Task>().FirstOrDefault(task => task.Guid == targetActivityGuid);
-            if (targetActivityTask == null)
+            IEnumerable<Task> targetActivityTasks = GetTasksForActivityByGuid(targetActivityGuid);
+            Task targetActivityFirstTask = targetActivityTasks.First();
+
+            string conditionalTaskName;
+            if (flowControl.Operator == eFCOperator.CSharp || flowControl.Operator == eFCOperator.Legacy)
             {
-                throw new BPMNConversionException($"No BPMN {nameof(Task)} found for {GingerDicser.GetTermResValue(eTermResKey.Activity)}.");
+                conditionalTaskName = flowControl.Condition;
+            }
+            else
+            {
+                string operatorName = flowControl.Operator.ToString();
+                //TODO: BPMN - Get operator name from EnumValueDescription attribute
+                conditionalTaskName = $"Operator - {operatorName}";
+            }
+
+            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(
+                name: conditionalTaskName,
+                conditions: new List<Task.Condition>()
+                {
+                    new Task.FieldValueCondition(nameFieldTag: $"FC_{flowControl.Guid}", valueFieldTag: $"FC_PASSED_FIELD_TAG")
+                });
+
+            //TODO: BPMN - Get FlowControlAction name from EnumValueDescription attribute
+            string flowControlActionName = flowControl.FlowControlAction.ToString();
+
+            Flow.Create(name: string.Empty, source: exclusiveGateway, target: conditionalTask);
+            Flow.Create(flowControlActionName, source: conditionalTask, target: targetActivityFirstTask);
+        }
+
+        private void CreateConditionalTasksForStopExecution(ExclusiveGateway exclusiveGateway, FlowControl flowControl)
+        {
+            EndEvent? endEvent = null;
+            if (_activityParticipant.Process.EndEvents.Any())
+            {
+                endEvent = _activityParticipant.Process.EndEvents.FirstOrDefault(e => e.EndEventType == EndEventType.Termination);
+            }
+
+            if (endEvent == null)
+            {
+                endEvent = _activityParticipant.Process.AddEndEvent(name: string.Empty, EndEventType.Termination);
             }
 
             string conditionalTaskName;
@@ -135,6 +181,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
                 //TODO: BPMN - Get operator name from EnumValueDescription attribute
                 conditionalTaskName = $"Operator - {operatorName}";
             }
+
             Task conditionalTask = _activityParticipant.Process.AddTask<Task>(
                 name: conditionalTaskName,
                 conditions: new List<Task.Condition>()
@@ -142,19 +189,85 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
                     new Task.FieldValueCondition(nameFieldTag: $"FC_{flowControl.Guid}", valueFieldTag: $"FC_PASSED_FIELD_TAG")
                 });
 
+            //TODO: BPMN - Get FlowControlAction name from EnumValueDescription attribute
+            string flowControlActionName = flowControl.FlowControlAction.ToString();
+
             Flow.Create(name: string.Empty, source: exclusiveGateway, target: conditionalTask);
-            Flow.Create(name: string.Empty, source: exclusiveGateway, target: targetActivityTask);
+            Flow.Create(flowControlActionName, source: conditionalTask, target: endEvent);
+        }
+
+        private void CreateConditionalTasksForGoToActivityByName(ExclusiveGateway exclusiveGateway, FlowControl flowControl)
+        {
+            string targetActivityName = flowControl.GetNameFromValue();
+            IEnumerable<Task> targetActivityTasks = GetTasksForActivityByName(targetActivityName);
+            Task targetActivityFirstTask = targetActivityTasks.First();
+
+            string conditionalTaskName;
+            if (flowControl.Operator == eFCOperator.CSharp || flowControl.Operator == eFCOperator.Legacy)
+            {
+                conditionalTaskName = flowControl.Condition;
+            }
+            else
+            {
+                string operatorName = flowControl.Operator.ToString();
+                //TODO: BPMN - Get operator name from EnumValueDescription attribute
+                conditionalTaskName = $"Operator - {operatorName}";
+            }
+
+            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(
+                name: conditionalTaskName,
+                conditions: new List<Task.Condition>()
+                {
+                    new Task.FieldValueCondition(nameFieldTag: $"FC_{flowControl.Guid}", valueFieldTag: $"FC_PASSED_FIELD_TAG")
+                });
+
+            //TODO: BPMN - Get FlowControlAction name from EnumValueDescription attribute
+            string flowControlActionName = flowControl.FlowControlAction.ToString();
+
+            Flow.Create(name: string.Empty, source: exclusiveGateway, target: conditionalTask);
+            Flow.Create(name: flowControlActionName, source: conditionalTask, target: targetActivityFirstTask);
+        }
+
+        private IEnumerable<Task> GetTasksForActivityByGuid(Guid activityGuid)
+        {
+            KeyValuePair<Activity, IEnumerable<Task>> activityTasksPair = _activityTasksMap.FirstOrDefault(kv => kv.Key.Guid == activityGuid);
+            if(activityTasksPair.Value == null || !activityTasksPair.Value.Any())
+            {
+                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found by Guid '{activityGuid}'.");
+            }
+
+            return activityTasksPair.Value;
+        }
+
+        private IEnumerable<Task> GetTasksForActivityByName(string activityName)
+        {
+            KeyValuePair<Activity, IEnumerable<Task>> activityTasksPair = _activityTasksMap.FirstOrDefault(kv => string.Equals(kv.Key.ActivityName, activityName));
+            if (activityTasksPair.Value == null || !activityTasksPair.Value.Any())
+            {
+                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found by name '{ activityName}'.");
+            }
+
+            return activityTasksPair.Value;
         }
 
         /// <summary>
         /// Get the <see cref="Participant"/> for the target application of the <see cref="Activity"/>.
         /// </summary>
         /// <returns><see cref="Participant"/> for the target application of the <see cref="Activity"/>.</returns>
-        private Participant GetActivityTargetApplicationParticipant()
+        private Participant GetActivityParticipant()
         {
-            TargetBase targetApp = SolutionBPMNUtil.GetTargetApplicationByName(_activity.TargetApplication, _solutionFacade);
-            Participant targetAppParticipant = GetParticipantByGuid(targetApp.Guid);
-            return targetAppParticipant;
+            Participant activityParticipant;
+            if (ActivityBPMNUtil.IsWebServicesActivity(_activity, _solutionFacade))
+            {
+                Consumer firstConsumer = ActivityBPMNUtil.GetActivityFirstConsumer(_activity);
+                activityParticipant = GetParticipantByGuid(firstConsumer.ConsumerGuid);
+            }
+            else
+            {
+                TargetBase targetApp = SolutionBPMNUtil.GetTargetApplicationByName(_activity.TargetApplication, _solutionFacade);
+                activityParticipant = GetParticipantByGuid(targetApp.Guid);
+            }
+            return activityParticipant;
         }
 
         /// <summary>
