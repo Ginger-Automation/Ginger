@@ -24,12 +24,12 @@ using GingerCore.Drivers.Selenium.SeleniumBMP;
 using GingerCoreNET.SourceControl;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
+using NUglify.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -49,6 +49,8 @@ namespace GingerCore.SourceControl
         public override List<string> GetSourceControlmConflict { get { return null; } }
 
         private string CheckinComment { get; set; }
+        
+        private string GitIgnoreFilePath => Path.Combine(RepositoryRootFolder, ".gitignore");
 
         public override bool AddFile(string Path, ref string error)
         {
@@ -167,14 +169,18 @@ namespace GingerCore.SourceControl
             return conflictPaths;
         }
 
-        public override bool DeleteFile(string Path, ref string error)
+        public override bool DeleteFile(string path, ref string error)
         {
             try
             {
-                using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
+                using Repository repo = new(RepositoryRootFolder);
+                path = Path.GetRelativePath(RepositoryRootFolder, path).Replace(@"\", @"/");
+                Conflict conflict = repo.Index.Conflicts[path];
+                if(conflict != null)
                 {
-                    Commands.Remove(repo, Path);
+                    Stage(path);
                 }
+                Commands.Remove(repo, path);
             }
             catch (Exception e)
             {
@@ -323,13 +329,12 @@ namespace GingerCore.SourceControl
             }
             catch (Exception ex)
             {
-                if(ex is AggregateException && ex.InnerException is CheckoutConflictException)
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting latest changes.", ex);
+                if (ex is AggregateException && ex.InnerException is CheckoutConflictException)
                 {
-                    Reporter.ToUser(eUserMsgKey.UncommitedChangesPreventCheckout);
                     error = Reporter.UserMsgsPool[eUserMsgKey.UncommitedChangesPreventCheckout].Message;
                     return false;
                 }
-                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting latest changes.", ex);
                 conflictsPaths = GetConflictPaths();
                 error = $"{ex.Message} {Environment.NewLine} {ex.InnerException}";
                 return false;
@@ -351,19 +356,24 @@ namespace GingerCore.SourceControl
                     relativePath = relativePath.Substring(1);
                 }
 
+                if (!File.Exists(GitIgnoreFilePath))
+                {
+                    CreateGitIgnoreFile();
+                }
+
                 using (var repo = new LibGit2Sharp.Repository(RepositoryRootFolder))
                 {
                     foreach (var item in repo.RetrieveStatus())
                     {
-                        if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)))
-                        {
-                            continue;
-                        }
+                        //if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(System.IO.Path.Combine(RepositoryRootFolder, item.FilePath)))
+                        //{
+                        //    continue;
+                        //}
 
-                        if (System.IO.Path.GetExtension(item.FilePath) == ".ldb" || System.IO.Path.GetExtension(item.FilePath) == ".ignore" || System.IO.Path.GetExtension(item.FilePath) == ".db")
-                        {
-                            continue;
-                        }
+                        //if (System.IO.Path.GetExtension(item.FilePath) == ".ldb" || System.IO.Path.GetExtension(item.FilePath) == ".ignore" || System.IO.Path.GetExtension(item.FilePath) == ".db")
+                        //{
+                        //    continue;
+                        //}
 
 
                         //sometimes remote file path uses / otherwise \  our code should be path independent 
@@ -383,11 +393,11 @@ namespace GingerCore.SourceControl
                             {
                                 SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.ModifiedAndResolved;
                             }
-                            if (item.State == FileStatus.NewInWorkdir)
+                            if (item.State == FileStatus.NewInWorkdir || item.State == FileStatus.NewInIndex)
                             {
                                 SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.New;
                             }
-                            if (item.State == FileStatus.DeletedFromWorkdir)
+                            if (item.State == FileStatus.DeletedFromWorkdir || item.State == FileStatus.DeletedFromIndex)
                             {
                                 SCFI.Status = SourceControlFileInfo.eRepositoryItemStatus.Deleted;
                             }
@@ -479,6 +489,33 @@ namespace GingerCore.SourceControl
             Console.WriteLine("GITHub - Init");
         }
 
+        public void CreateGitIgnoreFile()
+        {
+            try
+            {
+                if (File.Exists(GitIgnoreFilePath))
+                {
+                    File.Delete(GitIgnoreFilePath);
+                }
+
+                string gitIgnoreFileContent = WorkSpace.Instance.SolutionRepository
+                    .GetRelativePathsToAvoidFromSourceControl()
+                    .Select(path => path.Replace(oldValue: @"\", newValue: @"/"))
+                    .Aggregate((aggContent, path) => $"{aggContent}\n{path}");
+                File.WriteAllText(GitIgnoreFilePath, gitIgnoreFileContent);
+                string errorWhileAddingFile = string.Empty;
+                AddFile(GitIgnoreFilePath, ref errorWhileAddingFile);
+                if(!string.IsNullOrEmpty(errorWhileAddingFile))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while adding .gitignore file for source control tracking.\n{errorWhileAddingFile}");
+                }
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while creating .gitignore file.", ex);
+            }
+        }
+
         public override bool Lock(string path, string lockComment, ref string error)
         {
             throw new NotImplementedException();
@@ -557,39 +594,71 @@ namespace GingerCore.SourceControl
             return true;
         }
 
+        public override string GetLocalContentForConflict(string conflictFilePath)
+        {
+            conflictFilePath = Path.GetRelativePath(RepositoryRootFolder, conflictFilePath);
+            conflictFilePath = conflictFilePath.Replace(@"\", @"/");
+            using Repository repo = new(RepositoryRootFolder);
+            Conflict conflict = repo.Index.Conflicts[conflictFilePath]; //does this return null if no conflict for given path?
+            if(conflict.Ours == null)
+            {
+                return string.Empty;
+            }
+
+            Blob oursBlob = (Blob)repo.Lookup(conflict.Ours.Id);
+            return oursBlob.GetContentText();
+        }
+
+        public override string GetRemoteContentForConflict(string conflictFilePath)
+        {
+            conflictFilePath = Path.GetRelativePath(RepositoryRootFolder, conflictFilePath);
+            conflictFilePath = conflictFilePath.Replace(@"\", @"/");
+            using Repository repo = new(RepositoryRootFolder);
+            Conflict conflict = repo.Index.Conflicts[conflictFilePath]; //does this return null if no conflict for given path?
+            if (conflict.Theirs == null)
+            {
+                return string.Empty;
+            }
+
+            Blob theirsBlob = (Blob)repo.Lookup(conflict.Theirs.Id);
+            return theirsBlob.GetContentText();
+        }
+
         private const string ConflictStartMarker = "<<<<<<<";
         private const string ConflictPartitionMarker = "=======";
         private const string ConflictEndMarker = ">>>>>>>";
         private const string CR_LF = "\r\n";
 
-        public override string GetLocalContentFromConflicted(string conflictedContent)
+        private string GetLocalContentFromConflictedContent(string conflictedContent)
         {
+            if(!conflictedContent.Contains(ConflictStartMarker))
+            {
+                return conflictedContent;
+            }
+
             string leadingContent = GetLeadingContentFromConflicted(conflictedContent);
             string headContent = GetHeadContentFromConflicted(conflictedContent);
             string trailingContent = GetTrailingContentFromConflicted(conflictedContent);
 
             string localContent = leadingContent + headContent + trailingContent;
-
-            if (localContent.Contains(ConflictStartMarker))
-            {
-                localContent = GetLocalContentFromConflicted(localContent);
-            }
+            localContent = GetLocalContentFromConflictedContent(localContent);
 
             return localContent;
         }
 
-        public override string GetRemoteContentFromConflicted(string conflictedContent)
+        private string GetRemoteContentFromConflictedContent(string conflictedContent)
         {
+            if (!conflictedContent.Contains(ConflictStartMarker))
+            {
+                return conflictedContent;
+            }
+
             string leadingContent = GetLeadingContentFromConflicted(conflictedContent);
             string branchContent = GetBranchContentFromConflicted(conflictedContent);
             string trailingContent = GetTrailingContentFromConflicted(conflictedContent);
 
             string remoteContent = leadingContent + branchContent + trailingContent;
-
-            if (remoteContent.Contains(ConflictStartMarker))
-            {
-                remoteContent = GetRemoteContentFromConflicted(remoteContent);
-            }
+            remoteContent = GetRemoteContentFromConflictedContent(remoteContent);
 
             return remoteContent;
         }

@@ -1319,6 +1319,14 @@ namespace GingerCore.Actions
             return ARC.Actual;
         }
 
+        public int GetReturnParamCount(string Param)
+        {
+            // check if param already exist and return the amount of instances of that param in the ReturnValues list
+            int returnParamCount = ReturnValues.Count(arc => arc.Param.Equals(Param));
+
+            return returnParamCount;
+        }
+
         public string GetDataSourceConfigParam(string OutputParam)
         {
             // check if param already exist then update as it can be saved and loaded + keep other values

@@ -9,21 +9,34 @@
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="1200"
       Height="600" Width="1200" Title="Resolve Conflict Window">
-    
-    
     <Grid x:Name="ResolveConflictsGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.Resources>
-            <DataTemplate x:Key="xCompareAndMergeTemplate">
-                <Button x:Name="xCompareAndMergeButton" Click="xCompareAndMergeButton_Click" ToolTip="Compare and Merge" Style="{StaticResource @InputImageGridCellButtonStyle}">
-                    <UserControls:ImageMakerControl ImageType="ItemModified" SetAsFontImageWithSize="16"  Width="16" Height="16" />
-                </Button>
+            <local:ResolutionToCompareVisibilityConverter x:Key="resolutionToCompareVisibilityConverter" />
+            <ObjectDataProvider x:Key="resolutionItemsSource" MethodName="GetResolutionItemsSource" ObjectType="{x:Type local:ResolveConflictWindow}"/>
+            <DataTemplate x:Key="xOperationCellTemplate">
+                <StackPanel Orientation="Horizontal">
+                    <ComboBox x:Name="xResolutionComboBox" DisplayMemberPath="text" SelectedValuePath="Value" SelectedValue="{Binding Resolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Source={StaticResource resolutionItemsSource}}" Style="{StaticResource @InputComboBoxStyle}" Width="160"/>
+                    <UserControls:ucButton ButtonType="ImageButton" ButtonImageWidth="15" ButtonImageHeight="15" Height="25" ButtonImageType="Columns" Click="xCompareAndMergeButton_Click" Visibility="{Binding Resolution, Converter={StaticResource resolutionToCompareVisibilityConverter}}"/>
+                </StackPanel>
+            </DataTemplate>
+            <DataTemplate x:Key="xReadyForResolutionCellTemplate">
+                <UserControls:ImageMakerControl Height="15" Width="15" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30 0 0 0">
+                    <UserControls:ImageMakerControl.Style>
+                        <Style TargetType="UserControls:ImageMakerControl">
+                            <Setter Property="ImageType" Value="HighWarn"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CanResolve, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                    <Setter Property="ImageType" Value="Check"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </UserControls:ImageMakerControl.Style>
+                </UserControls:ImageMakerControl>
             </DataTemplate>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
-
         <Ginger:ucGrid x:Name="xConflictingItemsGrid" Grid.Row="0" Title="Conflict Items" IsReadOnly="False" FontStyle="Normal" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" />
-
     </Grid>
 </Page>

@@ -525,6 +525,17 @@ namespace Ginger.Run
                         CalculateBusinessFlowFinalStatus(executedBusFlow);
                         continue;
                     }
+                    if(WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && executedBusFlow.RunStatus == eRunStatus.Passed)
+                    {
+                        SetBusinessFlowActivitiesAndActionsSkipStatus(executedBusFlow);
+                        CalculateBusinessFlowFinalStatus(executedBusFlow);
+                        continue;
+                    }
+
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && executedBusFlow.RunStatus == eRunStatus.Failed)
+                    {
+                        executedBusFlow.Reset();
+                    }
 
                     //Run Bf
                     if (doContinueRun && bfIndx == startingBfIndx)//this is the BF to continue from
@@ -1236,7 +1247,7 @@ namespace Ginger.Run
                 RunActivity(CurrentBusinessFlow.CurrentActivity, resetErrorHandlerExecutedFlag: false);
             }
             else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow)
-            {
+            {                
                 RunBusinessFlow(CurrentBusinessFlow, doResetErrorHandlerExecutedFlag: false);
             }
         }
@@ -2602,7 +2613,7 @@ namespace Ginger.Run
                 }
                 catch (Exception ex)
                 {
-                    //Reporter.ToLog(eLogLevel.WARN, "Exception occured while performing Return Value StoreTo operation", ex);
+                    //Reporter.ToLog(eLogLevel.WARN, "Exception occurred while performing Return Value StoreTo operation", ex);
                     act.ExInfo += string.Format("Return Value StoreTo operation exception details: {0}", ex.Message);
                 }
 
@@ -4124,7 +4135,7 @@ namespace Ginger.Run
                         if (CurrentBusinessFlow.Activities[0].Acts.Any())
                         {
                             NotifyActionStart((Act)CurrentBusinessFlow.Activities[0].Acts[0]);
-                            CurrentBusinessFlow.Activities[0].Acts[0].Error = string.Format("Error occured in Input {0} values setup, please make sure all configured {1} Input {0} Mapped Values are valid", GingerDicser.GetTermResValue(eTermResKey.Variables), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                            CurrentBusinessFlow.Activities[0].Acts[0].Error = string.Format("Error occurred in Input {0} values setup, please make sure all configured {1} Input {0} Mapped Values are valid", GingerDicser.GetTermResValue(eTermResKey.Variables), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                             CurrentBusinessFlow.Activities[0].Acts[0].Status = eRunStatus.Failed;
                             NotifyActionEnd((Act)CurrentBusinessFlow.Activities[0].Acts[0]);
                         }
@@ -4517,7 +4528,7 @@ namespace Ginger.Run
                         if (currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Stopped)
                         {
                             currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
-                        }
+                        }                       
                         else
                         {
                             switch (currentActivityGroup.ExecutionLoggerStatus)
@@ -4836,6 +4847,8 @@ namespace Ginger.Run
                 }
             }
 
+            Dictionary<string, Agent> appNameToAgentMapping = new();
+
             //Remove the non relevant ApplicationAgents
             for (int indx = 0; indx < mGingerRunner.ApplicationAgents.Count;)
             {
@@ -4843,12 +4856,18 @@ namespace Ginger.Run
 
                 bool appNotMappedInBF = bfsTargetApplications.All(x => x.Name != applicationAgent.AppName);
 
-                bool appHasPlatformButNoAgent =
+                if (!appNameToAgentMapping.TryGetValue(applicationAgent.AppName, out Agent availableAgentForApp))
+                {
+                    appNameToAgentMapping.Add(applicationAgent.AppName, GetAgentForApplication(applicationAgent.AppName));
+                }
+
+                bool appHasNonNAPlatformButNoAgent =
                     applicationAgent.Agent == null &&
                     applicationAgent.AppPlatform != null &&
-                    applicationAgent.AppPlatform.Platform != ePlatformType.NA;
+                    applicationAgent.AppPlatform.Platform != ePlatformType.NA &&
+                    availableAgentForApp != null; 
 
-                if (appNotMappedInBF || appHasPlatformButNoAgent)
+                if (appNotMappedInBF || appHasNonNAPlatformButNoAgent)
                 {
                     bTargetAppListModified = true;
                     mGingerRunner.ApplicationAgents.RemoveAt(indx);
@@ -4898,51 +4917,11 @@ namespace Ginger.Run
                 {
                     ApplicationAgent ag = new ApplicationAgent();
                     ag.AppName = TA.Name;
-
-                    //Map agent to the application
-                    ApplicationPlatform ap = null;
-                    if (CurrentSolution != null && CurrentSolution.ApplicationPlatforms != null)
+                    if (!appNameToAgentMapping.TryGetValue(ag.AppName, out Agent agentForApp))
                     {
-                        ap = CurrentSolution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == ag.AppName);
+                        appNameToAgentMapping.Add(ag.AppName, GetAgentForApplication(ag.AppName));
                     }
-                    if (ap != null)
-                    {
-                        List<Agent> platformAgents = (from p in SolutionAgents where p.Platform == ap.Platform && p.UsedForAutoMapping == false select (Agent)p).ToList();
-
-                        //Get the last used agent to this Target App if exist
-                        if (string.IsNullOrEmpty(ap.LastMappedAgentName) == false)
-                        {
-                            //check if the saved agent still valid for this application platform                          
-                            Agent mathingAgent = platformAgents.FirstOrDefault(x => x.Name == ap.LastMappedAgentName);
-                            if (mathingAgent != null)
-                            {
-                                ag.Agent = mathingAgent;
-                                ag.Agent.UsedForAutoMapping = true;
-                            }
-                        }
-
-                        if (ag.Agent == null)
-                        {
-                            //set default agent
-                            if (platformAgents.Count > 0)
-                            {
-                                if (ap.Platform == ePlatformType.Web)
-                                {
-                                    ag.Agent = platformAgents.FirstOrDefault(x => x.DriverType == Agent.eDriverType.SeleniumIE);
-                                }
-
-                                if (ag.Agent == null)
-                                {
-                                    ag.Agent = platformAgents[0];
-                                }
-
-                                if (ag.Agent != null)
-                                {
-                                    ag.Agent.UsedForAutoMapping = true;
-                                }
-                            }
-                        }
-                    }
+                    ag.Agent = agentForApp;
                     bTargetAppListModified = true;
                     mGingerRunner.ApplicationAgents.Add(ag);
                 }
@@ -4951,6 +4930,59 @@ namespace Ginger.Run
             {
                 this.GingerRunner.OnPropertyChanged(nameof(GingerRunner.ApplicationAgents));//to notify who shows this list
             }
+        }
+
+        private Agent GetAgentForApplication(string appName)
+        {
+            Agent agent = null;
+            ApplicationPlatform appPlatform = null;
+            if (CurrentSolution != null && CurrentSolution.ApplicationPlatforms != null)
+            {
+                appPlatform = CurrentSolution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == appName);
+            }
+
+            if (appPlatform != null)
+            {
+                List<Agent> platformAgents = SolutionAgents
+                    .Where(solutionAgent => solutionAgent.Platform == appPlatform.Platform && !solutionAgent.UsedForAutoMapping)
+                    .ToList();
+
+                //Get the last used agent to this Target App if exist
+                if (string.IsNullOrEmpty(appPlatform.LastMappedAgentName) == false)
+                {
+                    //check if the saved agent still valid for this application platform                          
+                    Agent matchingAgent = platformAgents.FirstOrDefault(x => string.Equals(x.Name, appPlatform.LastMappedAgentName));
+                    if (matchingAgent != null)
+                    {
+                        agent = matchingAgent;
+                        agent.UsedForAutoMapping = true;
+                    }
+                }
+
+                if (agent == null)
+                {
+                    //set default agent
+                    if (platformAgents.Count > 0)
+                    {
+                        if (appPlatform.Platform == ePlatformType.Web)
+                        {
+                            agent = platformAgents.FirstOrDefault(x => x.DriverType == Agent.eDriverType.SeleniumIE);
+                        }
+
+                        if (agent == null)
+                        {
+                            agent = platformAgents[0];
+                        }
+
+                        if (agent != null)
+                        {
+                            agent.UsedForAutoMapping = true;
+                        }
+                    }
+                }
+            }
+
+            return agent;
         }
 
         // move from here !!!!!!!!!!!!!!!!!!

@@ -77,7 +77,7 @@ namespace Ginger.Actions
             }
 
             EnableSheetNameComboBox();
-            // populate Sheet dropdown
+            // populate Sheet drop down
             if (!string.IsNullOrEmpty(mAct.ExcelFileName))
             {
                 FillSheetCombo();

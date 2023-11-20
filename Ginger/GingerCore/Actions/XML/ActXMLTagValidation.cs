@@ -303,13 +303,19 @@ namespace GingerCore.Actions.XML
             return xmlReqDoc.SelectSingleNode(valueCalculated, nameSpaceManager);
         }
 
-        private XmlAttribute GetXmlAttribute(XmlDocument xmlDocument)
+        private static XmlAttribute GetXmlAttribute(XmlDocument xmlDocument)
         {
             foreach (XmlNode node in xmlDocument.ChildNodes)
             {
-                if (node.Attributes != null && node.Attributes["xmlns"] != null)
+                if (node.Attributes != null)
                 {
-                    return node.Attributes["xmlns"];
+                    foreach (XmlAttribute attribute in node.Attributes)
+                    {
+                        if (attribute.Name != null && attribute.Name.StartsWith("xmlns"))
+                        {
+                            return attribute;
+                        }
+                    }
                 }
             }
 

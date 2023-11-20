@@ -12,8 +12,9 @@
         <Frame x:Name="xLoadingFrame" Visibility="Collapsed"/>
         <Grid x:Name="xContentGrid" Visibility="Collapsed">
             <Grid.RowDefinitions>
-                <!--<RowDefinition Height="50/>-->
                 <RowDefinition Height="0"/>
+                <!--<RowDefinition Height="50"/>-->
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -24,8 +25,10 @@
                 <Button x:Name="xPrevConflict" Content="Previous Conflict" Click="xPrevConflict_Click"/>
                 <Button x:Name="xNextConflict" Content="Next Conflict" Click="xNextConflict_Click"/>
             </StackPanel>-->
-            <UCTreeView:UCTreeView x:Name="xLocalItemTree" Grid.Row="1" Grid.Column="0" />
-            <UCTreeView:UCTreeView x:Name="xRemoteItemTree" Grid.Row="1" Grid.Column="1"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="8,0,0,0" Text="Local Changes" Style="{StaticResource $TextBlockStyle}" FontSize="14"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="8,0,0,0" Text="Remote Changes" Style="{StaticResource $TextBlockStyle}" FontSize="14"/>
+            <UCTreeView:UCTreeView x:Name="xLocalItemTree" Grid.Row="2" Grid.Column="0" />
+            <UCTreeView:UCTreeView x:Name="xRemoteItemTree" Grid.Row="2" Grid.Column="1"/>
         </Grid>
     </Grid>
 </Page>

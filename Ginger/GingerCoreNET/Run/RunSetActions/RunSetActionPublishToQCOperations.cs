@@ -62,7 +62,7 @@ namespace Ginger.Run.RunSetActions
             PublishToALMConfig.CalculateTCRunName(mVE);
             PublishToALMConfig.FilterStatus = RunSetActionPublishToQC.FilterStatus;
             //check ALM type logic
-            if (RunSetActionPublishToQC.PublishALMType == RunSetActionPublishToQC.AlmTypeDefault)
+            if (RunSetActionPublishToQC.PublishALMType.Equals(RunSetActionPublishToQC.AlmTypeDefault,StringComparison.CurrentCultureIgnoreCase))
             {
                 //connect as connected till now to whatever default
             }

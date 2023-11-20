@@ -404,6 +404,11 @@ namespace Ginger.SourceControl
                         return true;
                     }
                 }
+                else
+                {
+                    //no conflicts to handle
+                    conflictHandled = true;
+                }
                 return false;
             }
             return result;
@@ -482,13 +487,7 @@ namespace Ginger.SourceControl
                             CommentsTextBox.Text = string.Empty;
                             mCheckInWasDone = true;
                         }
-                        else if (CommitSuccess && Reporter.ToUser(eUserMsgKey.SourceControlChkInSucss) == Amdocs.Ginger.Common.eUserMsgSelection.Yes)
-                        {
-                            Init();
-                            CommentsTextBox.Text = string.Empty;
-                            mCheckInWasDone = true;
-                        }
-                        else if (!CommitSuccess)
+                        else if (!CommitSuccess && !conflictHandled)
                         {
                             Reporter.ToUser(eUserMsgKey.SourceControlChkInConflictHandledFailed);
                             CloseWindow();
@@ -504,7 +503,7 @@ namespace Ginger.SourceControl
         {
             foreach (SourceControlFileInfo SCFI in SelectedFiles)
             {
-                Object obj = null;
+                Object? obj = null;
 
                 if (SCFI.FileType == "Agent")
                 {
@@ -518,11 +517,6 @@ namespace Ginger.SourceControl
                 else if (SCFI.FileType == "Environment")
                 {
                     obj = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().FirstOrDefault(x => Path.GetFullPath(x.FileName) == Path.GetFullPath(SCFI.Path));
-                }
-                else if (SCFI.FileType == "Execution Result")
-                {
-                    throw new NotImplementedException();
-                    //FIXME                    
                 }
                 else if (SCFI.FileType == "Run Set")
                 {
