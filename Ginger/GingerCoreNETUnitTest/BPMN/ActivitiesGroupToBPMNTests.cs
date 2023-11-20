@@ -1,7 +1,9 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
-using Amdocs.Ginger.CoreNET.BPMN;
+using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
+using Amdocs.Ginger.CoreNET.BPMN.Models;
+using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using Amdocs.Ginger.Repository;
 using Applitools.Utils;
 using DocumentFormat.OpenXml.Wordprocessing;
@@ -91,7 +93,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Assert.IsTrue(collaboration.Participants.Any(), $"{nameof(Collaboration)} has no {nameof(Participant)}");
             Process firstParticipantProcess = collaboration.Participants.ElementAt(0).Process;
-            Assert.IsTrue(firstParticipantProcess.GetChildEntitiesByType<Task>().Any(), $"First {nameof(Participant)} {nameof(Process)} is has no {nameof(Amdocs.Ginger.CoreNET.BPMN.Task)}");
+            Assert.IsTrue(firstParticipantProcess.GetChildEntitiesByType<Task>().Any(), $"First {nameof(Participant)} {nameof(Process)} is has no {nameof(Task)}");
             Assert.IsFalse(firstParticipantProcess.GetChildEntitiesByType<Task>().Any(task => task.Guid == inactiveActivity.Guid), $"InActive {nameof(Activity)} is not ignored");
         }
 
@@ -106,7 +108,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Assert.IsTrue(collaboration.Participants.Any(), $"{nameof(Collaboration)} has no {nameof(Participant)}");
             Process firstParticipantProcess = collaboration.Participants.ElementAt(0).Process;
-            Assert.IsTrue(firstParticipantProcess.GetChildEntitiesByType<Task>().Any(), $"First {nameof(Participant)} {nameof(Process)} is has no {nameof(Amdocs.Ginger.CoreNET.BPMN.Task)}");
+            Assert.IsTrue(firstParticipantProcess.GetChildEntitiesByType<Task>().Any(), $"First {nameof(Participant)} {nameof(Process)} is has no {nameof(Task)}");
             Assert.IsTrue(firstParticipantProcess.GetChildEntitiesByType<Task>().Any(task => task.Guid == activeActivity.Guid), $"Active {nameof(Activity)} is not converted");
         }
 

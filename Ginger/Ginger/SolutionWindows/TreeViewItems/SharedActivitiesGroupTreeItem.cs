@@ -19,7 +19,9 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.CoreNET.BPMN;
+using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
+using Amdocs.Ginger.CoreNET.BPMN.Models;
+using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using Ginger.Activities;
 using Ginger.ALM;
 using Ginger.Repository;
