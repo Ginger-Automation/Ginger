@@ -18,10 +18,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
         internal static readonly IReadOnlySet<eFlowControlAction> SubProcessRelevantFlowControls = new HashSet<eFlowControlAction>()
         {
             eFlowControlAction.GoToActivity,
-            eFlowControlAction.StopBusinessFlow,
             eFlowControlAction.RerunActivity,
-            eFlowControlAction.StopRun,
+            eFlowControlAction.GoToActivityByName,
             eFlowControlAction.RunSharedRepositoryActivity,
+            eFlowControlAction.StopRun,
+            eFlowControlAction.StopBusinessFlow,
             eFlowControlAction.FailActionAndStopBusinessFlow
         };
 
