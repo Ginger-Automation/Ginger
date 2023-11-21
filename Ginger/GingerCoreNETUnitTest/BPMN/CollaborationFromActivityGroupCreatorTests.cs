@@ -22,12 +22,12 @@ using System.Text;
 namespace GingerCoreNETUnitTest.BPMN
 {
     [TestClass]
-    public sealed class ActivitiesGroupToBPMNTests
+    public sealed class CollaborationFromActivityGroupCreatorTests
     {
         [TestMethod]
         public void Create_NullActivityGroup_ThrowsArgumentNullException()
         {
-            ActivitiesGroup activityGroup = null;
+            ActivitiesGroup activityGroup = null!;
             ISolutionFacadeForBPMN solutionFacade = new Mock<ISolutionFacadeForBPMN>().Object;
 
             Assert.ThrowsException<ArgumentNullException>(() => new CollaborationFromActivityGroupCreator(activityGroup, solutionFacade));
