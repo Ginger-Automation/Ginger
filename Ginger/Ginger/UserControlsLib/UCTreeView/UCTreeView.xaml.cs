@@ -297,7 +297,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         private AutoResetEvent? mSetTreeNodeItemChildsEvent = null;
 
-        private readonly ConcurrentDictionary<TreeViewItem, Task> tviChildNodesLoadTaskMap = new ConcurrentDictionary<TreeViewItem, Task>();
+        private readonly Dictionary<TreeViewItem, Task> tviChildNodesLoadTaskMap = new();
 
         private Task SetTreeNodeItemChilds(TreeViewItem TVI)
         {
@@ -339,7 +339,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                             mSetTreeNodeItemChildsEvent.Set();
                             if (tviChildNodesLoadTaskMap.ContainsKey(TVI))
                             {
-                                tviChildNodesLoadTaskMap.TryRemove(TVI, out var removedtask);
+                                tviChildNodesLoadTaskMap[TVI] = setChildItemsTask;
+                            }
+                            else
+                            {
+                                tviChildNodesLoadTaskMap.Add(TVI, setChildItemsTask);
                             }
                         }
                         catch(Exception ex)
@@ -347,7 +351,6 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                             Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
                         }
                     });
-                    tviChildNodesLoadTaskMap.TryAdd(TVI, setChildItemsTask);
                 }
             }
 
@@ -446,7 +449,6 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (TVI != null)
             {
                 TVI.Items.Clear();
-                SetTreeNodeItemChilds(TVI);
                 TVI.IsExpanded = true;
             }
         }
