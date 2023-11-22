@@ -47,6 +47,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using TextCopy;
 
 namespace GingerCore
 {
@@ -1321,15 +1322,9 @@ namespace GingerCore
             return false;
         }
 
-        [SupportedOSPlatform("windows")]
         public static string GetClipboardText()
         {
-            string clipboardText = string.Empty;
-            Thread thread = new(() => clipboardText = Clipboard.GetText());
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
-            thread.Join();
-            return clipboardText;
+            return ClipboardService.GetText();
         }
         public static bool IsAdmin()
         {
