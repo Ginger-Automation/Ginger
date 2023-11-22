@@ -42,7 +42,7 @@
             </DockPanel>
         </DockPanel>
 
-        <Border Grid.Row="1" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="0.5" CornerRadius="10" Margin="10,0,10,0">
+        <Border Grid.Row="1" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="0.5" CornerRadius="5" Margin="10,0,10,0">
             <Grid >
                 <TextBox x:Name="xSearchTextBox" MinWidth="50" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderThickness="0" BorderBrush="Transparent" />
                 <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>

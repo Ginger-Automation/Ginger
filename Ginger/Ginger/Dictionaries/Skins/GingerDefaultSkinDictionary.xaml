@@ -121,6 +121,14 @@
         <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_Black}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
+                <Setter Property="BorderThickness" Value="0.5"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <Style TargetType="TextBlock"  x:Key="$TextBlockStyle" >
@@ -145,28 +153,18 @@
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Background" Value="White"/>
         <Setter Property="VerticalContentAlignment" Value="Top"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
-        <Setter Property="BorderThickness" Value="0.5"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
         <Setter Property="AcceptsReturn" Value="True"/>
         <Setter Property="IsEnabled" Value="True" />
-        <!--<Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="{x:Type TextBox}">
-                    <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="0.5" CornerRadius="10">
-                        <ContentPresenter 
-                                />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>-->
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
+                <Setter Property="BorderThickness" Value="0.5"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <Style TargetType="TextBox" x:Key="$MultiRowsTextBoxStyle_ReadOnly" >
@@ -180,6 +178,14 @@
         <Setter Property="AcceptsReturn" Value="True"/>
         <Setter Property="IsEnabled" Value="True" />
         <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
+                <Setter Property="BorderThickness" Value="0.5"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <Style TargetType="TextBlock" x:Key="$TextBlockTitle">
@@ -980,6 +986,7 @@
         <Setter Property="Height" Value="22"/>
         <Setter Property="MinHeight" Value="22"/>
         <Setter Property="MinWidth" Value="70"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ComboBox}">
@@ -989,6 +996,7 @@
                                 Template="{StaticResource $FlatComboBoxToggleButton}" 
                                 Grid.Column="2" 
                                 Focusable="false"
+                                BorderThickness="0.5"
                                 IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
                                 ClickMode="Press">
                         </ToggleButton>
@@ -1004,6 +1012,7 @@
                                 HorizontalAlignment="Left" 
                                 VerticalAlignment="Center" 
                                 Margin="4,0,4,0"
+                                BorderThickness="0.5"
                                 Focusable="False"                                 
                                 Foreground="{DynamicResource $BackgroundColor_Black}"
                                 Visibility="Hidden"
@@ -1022,7 +1031,7 @@
                                 <Border 
                                         x:Name="DropDownBorder"
                                         Background="White"
-                                        BorderThickness="1"
+                                        BorderThickness="0.5"
                                         BorderBrush="{DynamicResource $BackgroundColor_Black}"/>
                                 <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
                                     <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
@@ -1252,7 +1261,14 @@
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
         <Setter Property="Background" Value="White"/>
         <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_Black}"/>
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="2" />
+                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
+                <Setter Property="BorderThickness" Value="0.5"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <Style TargetType="MenuItem" x:Key="$MenuItemStyle">
@@ -1872,7 +1888,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{DynamicResource $BackgroundColor_Black}" BorderThickness="1">
+                                BorderBrush="{DynamicResource $BackgroundColor_Black}" BorderThickness="0.5" CornerRadius="5">
                         <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
                                 Margin="{TemplateBinding Padding}"
@@ -2647,6 +2663,14 @@
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Foreground" Value="{DynamicResource $PrimaryColor_Black}"/>
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
+                <Setter Property="BorderThickness" Value="0.5"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
 
@@ -2655,6 +2679,14 @@
         <Setter Property="FontFamily" Value="Open Sans"/>
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Foreground" Value="{DynamicResource $PrimaryColor_Black}"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="2" />
+                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
+                <Setter Property="BorderThickness" Value="0.5"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <Style TargetType="Label"  x:Key="@LabelStyle" >
@@ -2851,7 +2883,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border Background="{TemplateBinding Background}" 
-                                BorderBrush="{DynamicResource $PrimaryColor_Black}" BorderThickness="1">
+                                BorderBrush="{DynamicResource $PrimaryColor_Black}" BorderThickness="0.5" CornerRadius="5">
                         <ContentPresenter 
                                 TextElement.Foreground="{TemplateBinding Foreground}" 
                                 Margin="{TemplateBinding BorderThickness}"
@@ -3287,6 +3319,14 @@
     <Style  TargetType="CheckBox"  x:Key="@CheckBoxGridCellElemntStyle">
         <Setter Property="FrameworkElement.VerticalAlignment" Value="Center"/>
         <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="2" />
+                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
+                <Setter Property="BorderThickness" Value="0.5"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <Style  TargetType="CheckBox"  x:Key="@ReadOnlyCheckBoxGridCellElemntStyle">
@@ -3294,6 +3334,14 @@
         <Setter Property="FrameworkElement.HorizontalAlignment" Value="Center"/>
         <Setter Property="IsHitTestVisible" Value="False"/>
         <Setter Property="Focusable" Value="False"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
+                <Setter Property="BorderThickness" Value="0.5"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <Style TargetType="FrameworkElement" x:Key="@GridCellElementStyle">
@@ -3437,6 +3485,14 @@
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="BorderBrush" Value="{DynamicResource $PrimaryColor_Black}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
+                <Setter Property="BorderThickness" Value="0.5"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <Style TargetType="{x:Type ListBox}" x:Key="@ListBoxTransparntSelectedItem">
@@ -3460,6 +3516,14 @@
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
         <Setter Property="AcceptsReturn" Value="True"/>
         <Setter Property="IsEnabled" Value="True" />
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
+                <Setter Property="BorderThickness" Value="0.5"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <Style TargetType="PasswordBox" x:Key="@PasswordBoxStyle" >
@@ -3478,6 +3542,13 @@
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="BorderBrush" Value="{DynamicResource $PrimaryColor_Black}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
+                <Setter Property="BorderThickness" Value="0.5"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <Style TargetType="ListBox" x:Key="@ListBoxStyle" >
@@ -3838,6 +3909,14 @@
         <Setter Property="Background" Value="White"/>
         <Setter Property="BorderBrush" Value="{StaticResource $PrimaryColor_Black}"/>
         <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Style.Resources>
+            <Style TargetType="{x:Type Border}">
+                <Setter Property="CornerRadius" Value="2" />
+                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
+                <Setter Property="BorderThickness" Value="0.5"/>
+            </Style>
+        </Style.Resources>
     </Style>
 
     <Style TargetType="RadioButton" x:Key="@InputRadioButtonStyle" >
