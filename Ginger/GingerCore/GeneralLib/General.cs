@@ -37,8 +37,10 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Security;
 using System.Security.Principal;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -1319,9 +1321,15 @@ namespace GingerCore
             return false;
         }
 
+        [SupportedOSPlatform("windows")]
         public static string GetClipboardText()
         {
-            return Clipboard.GetText();
+            string clipboardText = string.Empty;
+            Thread thread = new(() => clipboardText = Clipboard.GetText());
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+            return clipboardText;
         }
         public static bool IsAdmin()
         {
