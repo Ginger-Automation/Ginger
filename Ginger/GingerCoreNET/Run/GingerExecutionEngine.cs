@@ -448,7 +448,6 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;         
             try
             {
-                               
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.FirstOrDefault(x => x.Active) == null)
                 {
                     runnerExecutionSkipped = true;
@@ -4917,9 +4916,11 @@ namespace Ginger.Run
                 {
                     ApplicationAgent ag = new ApplicationAgent();
                     ag.AppName = TA.Name;
-                    if (!appNameToAgentMapping.TryGetValue(ag.AppName, out Agent agentForApp))
+                    Agent agentForApp;
+                    if (!appNameToAgentMapping.TryGetValue(ag.AppName, out agentForApp))
                     {
-                        appNameToAgentMapping.Add(ag.AppName, GetAgentForApplication(ag.AppName));
+                        agentForApp = GetAgentForApplication(ag.AppName);
+                        appNameToAgentMapping.Add(ag.AppName, agentForApp);
                     }
                     ag.Agent = agentForApp;
                     bTargetAppListModified = true;
