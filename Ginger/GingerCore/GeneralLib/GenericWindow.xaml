@@ -4,6 +4,7 @@
         Title="" 
         WindowStyle="None"
         AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip"
         Background="Transparent"
         BorderThickness="0"
         BorderBrush="Transparent"     
@@ -16,7 +17,7 @@
         Closed="Window_Closed"
         >
 
-    <Border BorderBrush="Gray" CornerRadius="10" BorderThickness="2" Background="{StaticResource $BackgroundColor_White}">
+    <Border BorderBrush="Gray" CornerRadius="10,10,3,10" BorderThickness="2" Background="{StaticResource $BackgroundColor_White}">
         <!--<Border.Effect>
             <DropShadowEffect BlurRadius="10" Direction ="0" ShadowDepth ="-90" Opacity=".5" Color ="Red" RenderingBias="Quality"/>
         </Border.Effect>-->
@@ -28,30 +29,34 @@
             </Grid.RowDefinitions>
 
             <DockPanel x:Name="HeaderPanel" Grid.Row="0" Background="Transparent" MouseLeftButtonDown="HeaderPanel_MouseLeftButtonDown" >
-                <Label x:Name="winTitle" Content="Page Title" Foreground="{StaticResource $BackgroundColor_Black}" FontWeight="Bold" FontSize="18" FontFamily="Open Sans" VerticalAlignment="Center" Margin="5,0,0,0"/>
-                <Button x:Name="UpperCloseBtn" ToolTip="Close Window" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" Click="CloseBtn_Click" Background="Transparent" Width="20" BorderBrush="Transparent">
-                    <Image Source="{DynamicResource @CloseWhite_20x20.png}" />
-                </Button>
+                <Label x:Name="winTitle" Content="Page Title" Foreground="{StaticResource $BackgroundColor_Black}" FontWeight="Bold" FontSize="16" FontFamily="Open Sans" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                <Button x:Name="UpperCloseBtn" ToolTip="Close" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" Click="CloseBtn_Click" Background="Transparent" Width="20" BorderBrush="Transparent">
+                    <Image Source="{DynamicResource $Close-Window.png}" />
+                </Button>               
                 <Button x:Name="MaximizeBtn" ToolTip="Maximize Window" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,2,0" Click="MaximizeBtn_Click" Background="Transparent" Width="20" BorderBrush="Transparent">
-                    <Image Source="{DynamicResource @MaximaizeWin2_20x20.png}" />
+                    <Image Source="{DynamicResource $Expand-Window.png}" />
                 </Button>
                 <Button x:Name="RestoreBtn" ToolTip="Restore Window" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,2,0" Click="RestoreBtn_Click" Visibility="Collapsed" Background="Transparent" Width="20" BorderBrush="Transparent">
-                    <Image Source="{DynamicResource @ShrinkWinWhite_20x20.png}" />
+                    <Image Source="{DynamicResource $DeExpand-Window.png}" />
                 </Button>
                 <Button x:Name="MinimizeBtn" ToolTip="Minimize Window" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,2,0" Click="MinimizeBtn_Click" Background="Transparent" Width="20" BorderBrush="Transparent">
-                    <Image Source="{DynamicResource @MinimaizWinWhite_20x20.png}" />
+                    <Image Source="{DynamicResource $Minimize-Window.png}" />
                 </Button>
                 <Button x:Name="PinBtn" ToolTip="Un-Pin Window" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,8,0" Click="PinBtn_Click" Background="Transparent" Width="20" BorderBrush="Transparent">
-                    <Image Source="{DynamicResource @PinWhite_20x20.png}" />
+                    <Image Source="{DynamicResource $Pin-Window.png}" />
                 </Button>
             </DockPanel>
 
+            <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0" IsEnabled="False" Background="LightGray" />
+            
             <ScrollViewer x:Name="WindowScrollViewer" Grid.Row="1" VerticalScrollBarVisibility="Hidden"  HorizontalScrollBarVisibility="Hidden">
                 <Frame x:Name="PageFrame" AutomationProperties.AutomationId="PageFrame AID"  Background="Transparent" HorizontalAlignment="Stretch" NavigationUIVisibility="Hidden" ></Frame>
             </ScrollViewer>
 
+            <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0" IsEnabled="False" Background="LightGray" />
+
             <DockPanel x:Name="BottomPanel" Grid.Row="2" Background="Transparent">
-                <Button x:Name="CloseBtn" IsCancel="True" Content="Close" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" Click="CloseBtn_Click" Style="{StaticResource $RoundTextButtonStyle_Generic}" />
+                <Button x:Name="CloseBtn" IsCancel="True" Content="Close" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,10,0" Click="CloseBtn_Click" Style="{StaticResource $RoundTextButtonStyle_Generic_Highlight}" Visibility="Collapsed" />
             </DockPanel>
         </Grid>
     </Border>

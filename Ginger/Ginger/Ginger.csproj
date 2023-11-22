@@ -34,6 +34,11 @@
     <None Remove="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <None Remove="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
     <None Remove="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro.md" />
+    <None Remove="Images\%24Close-Window.png" />
+    <None Remove="Images\%24DeExpand-Window.png" />
+    <None Remove="Images\%24Expand-Window.png" />
+    <None Remove="Images\%24Minimize-Window.png" />
+    <None Remove="Images\%24Pin-Window.png" />
     <None Remove="Images\%40AccessDataSource_16x16.png" />
     <None Remove="Images\%40Action_32x32.png" />
     <None Remove="Images\%40Activities_16x16.png" />
@@ -631,6 +636,11 @@
     <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <Resource Include="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
     <Resource Include="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro.md" />
+    <Resource Include="Images\$Close-Window.png" />
+    <Resource Include="Images\$DeExpand-Window.png" />
+    <Resource Include="Images\$Expand-Window.png" />
+    <Resource Include="Images\$Minimize-Window.png" />
+    <Resource Include="Images\$Pin-Window.png" />
     <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <Resource Include="Resources\GingerDataSource.mdb">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

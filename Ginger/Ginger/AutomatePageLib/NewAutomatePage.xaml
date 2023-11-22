@@ -48,7 +48,7 @@
                                 <GingerCore:ucTextDicResource Text="Save [BusinessFlow] Changes"></GingerCore:ucTextDicResource>
                             </UserControls:ucButton.ToolTip>
                         </UserControls:ucButton>
-                        <UserControls:ucButton x:Name="xUndoChangesBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="20" ButtonImageType="Undo" Click="xUndoChangesBtn_Click" >
+                        <UserControls:ucButton x:Name="xUndoChangesBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="15" ButtonImageType="Undo" Click="xUndoChangesBtn_Click" >
                             <UserControls:ucButton.ToolTip>
                                 <GingerCore:ucTextDicResource Text="Undo [BusinessFlow] Changes"></GingerCore:ucTextDicResource>
                             </UserControls:ucButton.ToolTip>
@@ -63,27 +63,27 @@
                             <Label Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="0,0,0,0">Environment:</Label>
                             <ComboBox x:Name="xEnvironmentComboBox" ContextMenu="{x:Null}" SelectionChanged="xEnvironmentComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="2,0,0,0"></ComboBox>
                         </StackPanel>
-                        <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="19" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" ToolTip="All Execution Configurations"/>
-                        <UserControls:ucButton x:Name="xSelfHealingConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageType="SelfHealing" Click="xSelfHealingConfigBtn_Click"  ToolTip="Self Healing Configurations"/>
-                        <UserControls:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Lists items selection in sync with execution progress. Click to un-sync it" ButtonType="ImageButton" ButtonFontImageSize="20"  ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"/>
+                        <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" ToolTip="All Execution Configurations" Margin="5,0,0,0"/>
+                        <UserControls:ucButton x:Name="xSelfHealingConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="SelfHealing" Click="xSelfHealingConfigBtn_Click"  ToolTip="Self Healing Configurations" Margin="5,0,0,0"/>
+                        <UserControls:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Lists items selection in sync with execution progress. Click to un-sync it" ButtonType="ImageButton" ButtonFontImageSize="16"  ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click" Margin="5,0,0,0"/>
                     </StackPanel>
 
                     <GridSplitter Width="0.5" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="5,10,5,10"/>
 
                     <StackPanel x:Name="xBusinessFlowOperationssPnl" DockPanel.Dock="Left" Orientation="Horizontal">
-                        <UserControls:ucButton x:Name="xSearchBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageType="Search" Click="xSearchBtn_Click" >
+                        <UserControls:ucButton x:Name="xSearchBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Search" Click="xSearchBtn_Click" Margin="5,0,0,0">
                             <UserControls:ucButton.ToolTip>
                                 <GingerCore:ucTextDicResource Text="Find &amp; Replace in [BusinessFlow]"></GingerCore:ucTextDicResource>
                             </UserControls:ucButton.ToolTip>
                         </UserControls:ucButton>
 
-                        <Menu x:Name="xAnalyzerOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Analyzer Options">
+                        <Menu x:Name="xAnalyzerOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Analyzer Options" Margin="5,0,0,0">
                             <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                                 <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
+                                    <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Background="Transparent" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
-                                    <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent"/>
+                                    <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Background="Transparent" />
                                 </MenuItem.Header>
                                 <MenuItem x:Name="xAnalyzeMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAnalyzeBtn_Click">
                                     <MenuItem.Icon>
@@ -104,7 +104,7 @@
                             </MenuItem>
                         </Menu>
 
-                        <Menu x:Name="xReportOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Report Options">
+                        <Menu x:Name="xReportOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Report Options" Margin="5,0,0,0">
                             <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
@@ -156,7 +156,7 @@
                         </Menu>
 
 
-                        <Menu x:Name="xBDDOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Linked Feature File Options">
+                        <Menu x:Name="xBDDOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Linked Feature File Options" Margin="5,0,0,0">
                             <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl ImageType="File" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
@@ -191,7 +191,7 @@
                             </MenuItem>
                         </Menu>
 
-                        <Menu x:Name="xExtraBusinessFlowOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations">
+                        <Menu x:Name="xExtraBusinessFlowOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations" Margin="5,0,0,0">
                             <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                                 <MenuItem.Header>
                                     <UserControls:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="18"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
@@ -336,13 +336,13 @@
 
                             <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_White}" />
 
-                            <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="2.5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="{StaticResource $amdocsLogoLinarGradientBrush}" IsEnabled="False" Margin="0,200,0,200" />
+                            <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="White" IsEnabled="False" Margin="0,50,0,50" />
 
                             <Border Grid.Column="2" BorderThickness="5,0,0,0" CornerRadius="10" BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" Margin="5,0,0,0">
                                 <Frame Name="xAddActionMenuFrame" NavigationUIVisibility="Hidden"  Background="Transparent" Margin="0,1,0,1" />
                             </Border>
                             
-                            <UserControls:ucButton x:Name="xAddActionsBtn" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,-7,0" VerticalAlignment="Center" ToolTip="Add Actions" ButtonType="CircleImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Add" Click="XAddActionsBtn_Click" ButtonStyle="{StaticResource $AddActionsMenuBtnStyle}"/>
+                            <UserControls:ucButton x:Name="xAddActionsBtn" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,-12,0" VerticalAlignment="Center" ToolTip="Add Actions" ButtonType="CircleImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Add" Click="XAddActionsBtn_Click" ButtonStyle="{StaticResource $AddActionsMenuBtnStyle}"/>
                         </Grid>
                     </DockPanel>
                 </TabItem>

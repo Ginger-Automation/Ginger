@@ -11,7 +11,7 @@
     <Grid x:Name="xGrid" Background="{StaticResource $BackgroundColor_White}" >
         <Grid.RowDefinitions>
             <RowDefinition Height="50" x:Name="xTreeTitleRow"/>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="200*" />
         </Grid.RowDefinitions>
 
@@ -32,13 +32,15 @@
         <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0" IsEnabled="False" Background="LightGray" />
 
         <!-- Tree Tool Bar Section-->
-        <Grid Grid.Row="1" >
-            <!-- Search Text Box -->
-            <!-- overlay with hint text & Clear button-->
-            <TextBox x:Name="xSearchTextBox" Grid.Column="1" MinWidth="50" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderBrush="{StaticResource $PrimaryColor_Black}" />
-            <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
-            <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" Click="xSearchBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
-        </Grid>
+        <Border Grid.Row="1" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="0.5" CornerRadius="10" Margin="10,10,10,10">
+            <Grid >
+                <!-- Search Text Box -->
+                <!-- overlay with hint text & Clear button-->
+                <TextBox x:Name="xSearchTextBox" Grid.Column="1" MinWidth="50" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="Transparent" TextChanged="xSearchTextBox_TextChangedAsync" BorderThickness="0" BorderBrush="Transparent" />
+                <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" Click="xSearchBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
+            </Grid>
+        </Border>
 
         <!-- Tree Section-->
         <local:UCTreeView x:Name="xTreeViewTree" Grid.Row="2" Background="Transparent" EnableRightClick="True" EnableDragDrop="True"  BorderThickness="0" />
