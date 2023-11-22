@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerWPF.DragDropLib;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -296,7 +297,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
         private AutoResetEvent? mSetTreeNodeItemChildsEvent = null;
 
-        private readonly Dictionary<TreeViewItem, Task> tviChildNodesLoadTaskMap = new();
+        private readonly ConcurrentDictionary<TreeViewItem, Task> tviChildNodesLoadTaskMap = new ConcurrentDictionary<TreeViewItem, Task>();
 
         private Task SetTreeNodeItemChilds(TreeViewItem TVI)
         {
@@ -338,7 +339,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                             mSetTreeNodeItemChildsEvent.Set();
                             if (tviChildNodesLoadTaskMap.ContainsKey(TVI))
                             {
-                                tviChildNodesLoadTaskMap.Remove(TVI);
+                                tviChildNodesLoadTaskMap.TryRemove(TVI, out var removedtask);
                             }
                         }
                         catch(Exception ex)
@@ -346,7 +347,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                             Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
                         }
                     });
-                    tviChildNodesLoadTaskMap.Add(TVI, setChildItemsTask);
+                    tviChildNodesLoadTaskMap.TryAdd(TVI, setChildItemsTask);
                 }
             }
 
