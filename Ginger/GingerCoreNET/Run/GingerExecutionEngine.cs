@@ -448,7 +448,14 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;         
             try
             {
-                               
+                if (doContinueRun == false)
+                {
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID == null)
+                    {
+                        WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID = Guid.NewGuid();
+                    }
+                }
+
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.FirstOrDefault(x => x.Active) == null)
                 {
                     runnerExecutionSkipped = true;
