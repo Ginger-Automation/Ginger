@@ -448,7 +448,6 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;         
             try
             {
-                               
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.FirstOrDefault(x => x.Active) == null)
                 {
                     runnerExecutionSkipped = true;
