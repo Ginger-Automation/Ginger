@@ -123,7 +123,8 @@ namespace Amdocs.Ginger.Repository
 
         public static bool IsValidYaml(string filename)
         {
-            if(filename.ToLower().EndsWith(".yaml") || filename.ToLower().EndsWith(".yml"))
+            string extension = Path.GetExtension(filename).ToLower();
+            if(extension.Equals(".yaml") || extension.Equals(".yml"))
             {
                 return true;
             }
