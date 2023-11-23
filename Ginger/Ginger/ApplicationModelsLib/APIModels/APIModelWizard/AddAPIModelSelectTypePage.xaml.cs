@@ -538,10 +538,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
             {
                 Reporter.ToUser(eUserMsgKey.FileOperationError, "Please use JSON for this file");
             }
-            else if(CheckforYamlParser(fileName))
-            {
-                Reporter.ToUser(eUserMsgKey.FileOperationError, "Please use YAML for this file");
-            }
         }
 
         private bool CheckForXmlParser(string fileName)
@@ -592,26 +588,6 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 ObservableList<ApplicationAPIModel> jsonList = new ObservableList<ApplicationAPIModel>();
                 jsonList = jsonParser.ParseDocument(fileName, jsonList);
                 if (jsonList == null || jsonList.Count == 0)
-                {
-                    return false;
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.WARN, ex.Message, ex);
-                return false;
-            }
-        }
-
-        private bool CheckforYamlParser(string filename)
-        {
-            try
-            {
-                YamlParser yamlParser = new();
-                ObservableList<ApplicationAPIModel> yamlList = new ObservableList<ApplicationAPIModel>();
-                yamlList = yamlParser.ParseDocument(filename, yamlList);
-                if (yamlList == null || yamlList.Count == 0)
                 {
                     return false;
                 }
