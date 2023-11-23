@@ -35,7 +35,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 try
                 {
                     string fileContent = FileContentProvider(FileName);
-                    string fileConverted = ConvrtYamlToJson(fileContent);
+                    string fileConverted = ConvertYamlToJson(fileContent);
                     JToken.Parse(fileConverted); // doing the Jtoken to validate the json file
                     Swaggerdoc = SwaggerDocument.FromJsonAsync(fileConverted).Result;
                 }

@@ -152,7 +152,7 @@ namespace Amdocs.Ginger.Repository
             return orignaljson;
         }
 
-        public static string ConvrtYamlToJson(string originalYaml)
+        public static string ConvertYamlToJson(string originalYaml)
         {
                 using (var stringReader = new StringReader(originalYaml))
                 {
