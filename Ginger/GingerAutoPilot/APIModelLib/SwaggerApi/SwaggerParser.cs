@@ -16,17 +16,11 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Repository;
-using Newtonsoft.Json;
+using GingerCore;
 using Newtonsoft.Json.Linq;
-using NJsonSchema;
 using NSwag;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using YamlDotNet.Serialization;
 
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi
 {
@@ -36,42 +30,37 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
         public override ObservableList<ApplicationAPIModel> ParseDocument(string FileName, ObservableList<ApplicationAPIModel> SwaggerModels, bool avoidDuplicatesNodes = false)
         {
-            string FinalFileName = "";
-            Uri url = new Uri(FileName);
-
-            string orignaljson = "";
-            if (url.IsFile)
+            if (IsValidYaml(FileName))
             {
-                orignaljson = System.IO.File.ReadAllText(FileName);
+                try
+                {
+                    string fileContent = FileContentProvider(FileName);
+                    string fileConverted = ConvrtYamlToJson(fileContent);
+                    JToken.Parse(fileConverted); // doing the Jtoken to validate the json file
+                    Swaggerdoc = SwaggerDocument.FromJsonAsync(fileConverted).Result;
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided yaml document " , ex);
+                    Reporter.ToUser(eUserMsgKey.InvalidYAML);
+                }
+                
             }
             else
             {
-                orignaljson = GeneralLib.HttpUtilities.Download(url);
-
-            }
-            try
-            {
-
-                JToken.Parse(orignaljson);
-                FinalFileName = FileName;
-            }
-            catch
-            {
-                var r = new StringReader(orignaljson);
-                var deserializer = new Deserializer();
-                var yamlObject = deserializer.Deserialize(r);
-                StringWriter tw = new StringWriter();
-                var serializer = new Newtonsoft.Json.JsonSerializer();
-                serializer.Serialize(tw, yamlObject);
-                orignaljson = tw.ToString();
-                string tempfile = System.IO.Path.GetTempFileName();
-
-                System.IO.File.WriteAllText(tempfile, orignaljson);
-                FinalFileName = tempfile;
+                try
+                {
+                    string fileContent = FileContentProvider(FileName);
+                    JToken.Parse(fileContent);  // doing the Jtoken to validate the json file
+                    Swaggerdoc = SwaggerDocument.FromJsonAsync(FileContentProvider(FileName)).Result;
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to read provided json document ", ex);
+                    Reporter.ToUser(eUserMsgKey.InvalidJSON);
+                }
             }
 
-
-            Swaggerdoc = SwaggerDocument.FromJsonAsync(orignaljson).Result;
             if (Swaggerdoc.SchemaType.ToString() == "Swagger2")
             {
                 SwaggerVer2 s2 = new SwaggerVer2();

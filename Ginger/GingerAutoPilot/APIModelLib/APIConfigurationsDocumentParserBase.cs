@@ -21,8 +21,10 @@ using Amdocs.Ginger.Common.APIModelLib;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
+using YamlDotNet.Serialization;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -117,6 +119,53 @@ namespace Amdocs.Ginger.Repository
             {
                 return false;
             }
+        }
+
+        public static bool IsValidYaml(string filename)
+        {
+            if((filename.ToLower().EndsWith(".yaml") || filename.ToLower().EndsWith(".yml")) && filename != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static string FileContentProvider(string filename)
+        {
+            
+            Uri url = new Uri(filename);
+            
+
+            string orignaljson = "";
+            if (url.IsFile)
+            {
+                orignaljson = System.IO.File.ReadAllText(filename);
+            }
+            else
+            {
+                orignaljson = Common.GeneralLib.HttpUtilities.Download(url);
+
+            }
+            return orignaljson;
+        }
+
+        public static string ConvrtYamlToJson(string orignaljson)
+        {
+            var r = new StringReader(orignaljson);
+            var deserializer = new Deserializer();
+            var yamlObject = deserializer.Deserialize(r);
+            StringWriter tw = new StringWriter();
+            var serializer = new Newtonsoft.Json.JsonSerializer();
+            serializer.Serialize(tw, yamlObject);
+            orignaljson = tw.ToString();
+            string tempfile = System.IO.Path.GetTempFileName();
+
+            System.IO.File.WriteAllText(tempfile, orignaljson);
+            
+            return orignaljson;
         }
     }
 }
