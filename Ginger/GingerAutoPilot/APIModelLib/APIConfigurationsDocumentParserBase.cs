@@ -152,20 +152,22 @@ namespace Amdocs.Ginger.Repository
             return orignaljson;
         }
 
-        public static string ConvrtYamlToJson(string orignaljson)
+        public static string ConvrtYamlToJson(string originalYaml)
         {
-            var r = new StringReader(orignaljson);
-            var deserializer = new Deserializer();
-            var yamlObject = deserializer.Deserialize(r);
-            StringWriter tw = new StringWriter();
-            var serializer = new Newtonsoft.Json.JsonSerializer();
-            serializer.Serialize(tw, yamlObject);
-            orignaljson = tw.ToString();
-            string tempfile = System.IO.Path.GetTempFileName();
+                using (var stringReader = new StringReader(originalYaml))
+                {
+                    var deserializer = new Deserializer();
+                    var yamlObject = deserializer.Deserialize(stringReader);
 
-            System.IO.File.WriteAllText(tempfile, orignaljson);
-            
-            return orignaljson;
+                    using (var jsonStringWriter = new StringWriter())
+                    {
+                        var jsonSerializer = new Newtonsoft.Json.JsonSerializer();
+                        jsonSerializer.Serialize(jsonStringWriter, yamlObject);
+                        var resultJson = jsonStringWriter.ToString();
+
+                        return resultJson;
+                    }
+                }
         }
     }
 }
