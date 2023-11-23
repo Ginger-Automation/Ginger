@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using static Amdocs.Ginger.CoreNET.BPMN.Serialization.ProcessEntitiesFromActivityFlowControlCreator;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
@@ -135,17 +136,26 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
 
             IFlowTarget firstEntityForNextActivity = CreateProcessEntitiesForActivity(activitiesEnumerator, collaboration, activityTaskMap);
 
-            ExclusiveGateway? exclusiveGateway = CreateProcessEntitiesForActivityFlowControls(currentActivity, collaboration, activityTaskMap);
+            IEnumerable<ProcessEntityForFlowControl> processEntitiesForFlowControls = CreateProcessEntitiesForActivityFlowControls(currentActivity, collaboration, activityTaskMap);
 
             if (startEvent != null)
             {
                 Flow.Create(name: string.Empty, source: startEvent, firstTaskForCurrentActivity);
             }
 
-            if (exclusiveGateway != null)
+            if (processEntitiesForFlowControls.Any())
             {
-                Flow.Create(name: string.Empty, source: lastTaskForCurrentActivity, target: exclusiveGateway);
-                Flow.Create(name: "default", source: exclusiveGateway, target: firstEntityForNextActivity);
+                ProcessEntityForFlowControl gatewayProcessEntity = processEntitiesForFlowControls.First(pe => pe.ProcessEntity is ExclusiveGateway);
+                IEnumerable<ProcessEntityForFlowControl> conditionalTaskProcessEntities = processEntitiesForFlowControls.Where(pe => pe.ProcessEntity is IFlowSource && pe.ProcessEntity is not ExclusiveGateway);
+
+                Flow.Create(name: string.Empty, source: lastTaskForCurrentActivity, target: (ExclusiveGateway)gatewayProcessEntity.ProcessEntity);
+
+                foreach(ProcessEntityForFlowControl conditionalTaskProcessEntity in conditionalTaskProcessEntities)
+                {
+                    Flow.Create(name: conditionalTaskProcessEntity.SequenceFlowName, source: (IFlowSource)conditionalTaskProcessEntity.ProcessEntity, target: firstEntityForNextActivity);
+                }
+
+                Flow.Create(name: gatewayProcessEntity.SequenceFlowName, source: (IFlowSource)gatewayProcessEntity.ProcessEntity, target: firstEntityForNextActivity);
             }
             else
             {
@@ -206,7 +216,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             return endEvent;
         }
 
-        private ExclusiveGateway? CreateProcessEntitiesForActivityFlowControls(Activity activity, Collaboration collaboration, IDictionary<Activity, IEnumerable<Task>> activityTasksMap)
+        private IEnumerable<ProcessEntityForFlowControl> CreateProcessEntitiesForActivityFlowControls(Activity activity, Collaboration collaboration, IDictionary<Activity, IEnumerable<Task>> activityTasksMap)
         {
             ProcessEntitiesFromActivityFlowControlCreator processEntitiesFromActivityFlowControlCreator = new(activity, collaboration, _solutionFacade, activityTasksMap);
             return processEntitiesFromActivityFlowControlCreator.Create();

@@ -15,6 +15,18 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
 {
     internal sealed class ProcessEntitiesFromActivityFlowControlCreator
     {
+        internal sealed class ProcessEntityForFlowControl
+        {
+            internal string SequenceFlowName { get; }
+            internal IProcessEntity ProcessEntity { get; }
+
+            internal ProcessEntityForFlowControl(string sequenceFlowName, IProcessEntity processEntity)
+            {
+                SequenceFlowName = sequenceFlowName;
+                ProcessEntity = processEntity;
+            }
+        }
+
         internal static readonly IReadOnlySet<eFlowControlAction> SubProcessRelevantFlowControls = new HashSet<eFlowControlAction>()
         {
             eFlowControlAction.GoToActivity,
@@ -51,19 +63,25 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
                 .Where(fc => SubProcessRelevantFlowControls.Contains(fc.FlowControlAction));
         }
 
-        internal ExclusiveGateway? Create()
+        internal IEnumerable<ProcessEntityForFlowControl> Create()
         {
             if (!_flowControls.Any())
             {
-                return null;
+                return Array.Empty<ProcessEntityForFlowControl>();
             }
 
             ExclusiveGateway gateway = CreateGateway();
+            List<ProcessEntityForFlowControl> conditionalTasks = new();
             foreach (FlowControl flowControl in _flowControls)
             {
-                CreateConditionalTasks(gateway, flowControl);
+                conditionalTasks.AddRange(CreateConditionalTasks(gateway, flowControl));
             }
-            return gateway;
+
+            List<ProcessEntityForFlowControl> processEntitiesForFlowControl = new();
+            processEntitiesForFlowControl.AddRange(conditionalTasks);
+            processEntitiesForFlowControl.Add(new(sequenceFlowName: "default", gateway));
+
+            return processEntitiesForFlowControl;
         }
 
 
@@ -72,25 +90,28 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             return _activityParticipant.Process.AddExclusiveGateway(name: string.Empty);
         }
 
-        private void CreateConditionalTasks(ExclusiveGateway exclusiveGateway, FlowControl flowControl)
+        private IEnumerable<ProcessEntityForFlowControl> CreateConditionalTasks(ExclusiveGateway exclusiveGateway, FlowControl flowControl)
         {
             switch (flowControl.FlowControlAction)
             {
                 case eFlowControlAction.GoToActivity:
                     CreateConditionalTasksForGoToActivityByGuid(exclusiveGateway, flowControl);
-                    break;
+                    return Array.Empty<ProcessEntityForFlowControl>();
                 case eFlowControlAction.RerunActivity:
                     CreateConditionalTasksForRerunActivity(exclusiveGateway, flowControl);
-                    break;
+                    return Array.Empty<ProcessEntityForFlowControl>();
                 case eFlowControlAction.FailActionAndStopBusinessFlow:
                 case eFlowControlAction.StopRun:
                 case eFlowControlAction.StopBusinessFlow:
                     CreateConditionalTasksForStopExecution(exclusiveGateway, flowControl);
-                    break;
+                    return Array.Empty<ProcessEntityForFlowControl>();
                 case eFlowControlAction.GoToActivityByName:
-                case eFlowControlAction.RunSharedRepositoryActivity:
                     CreateConditionalTasksForGoToActivityByName(exclusiveGateway, flowControl);
-                    break;
+                    return Array.Empty<ProcessEntityForFlowControl>();
+                case eFlowControlAction.RunSharedRepositoryActivity:
+                    return CreateConditionalTasksForGoToSharedRepositoryActivity(exclusiveGateway, flowControl);
+                default:
+                    return Array.Empty<ProcessEntityForFlowControl>();
             }
         }
 
@@ -228,6 +249,24 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             Flow.Create(name: string.Empty, source: exclusiveGateway, target: conditionalTask);
             Flow.Create(name: flowControlActionName, source: conditionalTask, target: targetActivityFirstTask);
         }
+
+        private IEnumerable<ProcessEntityForFlowControl> CreateConditionalTasksForGoToSharedRepositoryActivity(ExclusiveGateway exclusiveGateway, FlowControl flowControl)
+        {
+            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(
+                name: "Activities from SharedRepository",
+                conditions: new List<Task.Condition>()
+                {
+                    new Task.FieldValueCondition(nameFieldTag: $"FC_{flowControl.Guid}", valueFieldTag: $"FC_PASSED_FIELD_TAG")
+                });
+
+            //TODO: BPMN - Get FlowControlAction name from EnumValueDescription attribute
+            string flowControlActionName = flowControl.FlowControlAction.ToString();
+
+            Flow.Create(name: string.Empty, source: exclusiveGateway, target: conditionalTask);
+
+            return new List<ProcessEntityForFlowControl>() { new(sequenceFlowName: flowControlActionName, conditionalTask) };
+        }
+
 
         private IEnumerable<Task> GetTasksForActivityByGuid(Guid activityGuid)
         {
