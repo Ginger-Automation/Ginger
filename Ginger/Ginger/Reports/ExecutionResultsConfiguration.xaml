@@ -94,7 +94,6 @@
                                 <RowDefinition  Height="10"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="45"/>
                                 <ColumnDefinition Width="205"/>
                                 <ColumnDefinition Width="350*"/>
                             </Grid.ColumnDefinitions>

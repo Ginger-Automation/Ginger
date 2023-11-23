@@ -78,7 +78,7 @@ namespace Amdocs.Ginger.CoreNET
         }
         private static string GetReportDataServiceUrl()
         {
-            var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).CentralLoggerEndPointUrl;
+            var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected)).CentralLoggerEndPointUrl;
 
             if (!string.IsNullOrEmpty(baseURI) && !baseURI.EndsWith("/"))
             {
@@ -125,7 +125,7 @@ namespace Amdocs.Ginger.CoreNET
         }
         private static string GetReportHTMLServiceUrl()
         {
-            var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true)).CentralizedHtmlReportServiceURL;
+            var baseURI = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected)).CentralizedHtmlReportServiceURL;
 
             if (!string.IsNullOrEmpty(baseURI))
             {
