@@ -55,6 +55,7 @@ namespace Ginger.Activities
 
             xErrorListConfigurationGrd.MarkUnMarkAllActive += XErrorListConfigurationGrd_MarkUnMarkAllActive; ;
             xErrorListConfigurationGrd.btnAdd.Click += BtnAdd_Click;
+            xErrorListConfigurationGrd.btnDelete.Click += BtnDelete_Click;
 
             xErrorListConfigurationGrd.DataSourceList = new ObservableList<ErrorDetails>(mErrorList);
         }
@@ -75,6 +76,11 @@ namespace Ginger.Activities
         {
             mErrorList.Add(new ErrorDetails() { ErrorString = string.Empty, ErrorDescription = string.Empty, IsSelected = true });
             xErrorListConfigurationGrd.DataSourceList = new ObservableList<ErrorDetails>(mErrorList);
+        }
+
+        private void BtnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            mErrorList = new List<ErrorDetails>(xErrorListConfigurationGrd.DataSourceList.Cast<ErrorDetails>());
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)
