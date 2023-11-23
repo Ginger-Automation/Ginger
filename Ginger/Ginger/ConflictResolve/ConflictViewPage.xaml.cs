@@ -133,21 +133,23 @@ namespace Ginger.ConflictResolve
 
         private async Task HighlighPrevConflictAsync()
         {
-            NextConflictFinder nextConflictFinder = new();
+            NextConflictFinder localNextConflictFinder = new();
+            Task findNextLocalConflictTask = xLocalItemTree.IterateTreeViewItemsAsync(localNextConflictFinder.IterationConsumer, inReverseOrder: true);
 
-            Task findNextLocalConflictTask = xLocalItemTree.IterateTreeViewItemsAsync(nextConflictFinder.IterationConsumer, inReverseOrder: true);
-            if (nextConflictFinder.NextConflictTreeViewItem != null)
-            {
-                xLocalItemTree.FocusItem(nextConflictFinder.NextConflictTreeViewItem);
-            }
-
-            Task findNextRemoteConflictTask = xRemoteItemTree.IterateTreeViewItemsAsync(nextConflictFinder.IterationConsumer, inReverseOrder: true);
-            if (nextConflictFinder.NextConflictTreeViewItem != null)
-            {
-                xRemoteItemTree.FocusItem(nextConflictFinder.NextConflictTreeViewItem);
-            }
+            NextConflictFinder remoteNextConflictFinder = new();
+            Task findNextRemoteConflictTask = xRemoteItemTree.IterateTreeViewItemsAsync(remoteNextConflictFinder.IterationConsumer, inReverseOrder: true);
 
             await Task.WhenAll(findNextLocalConflictTask, findNextRemoteConflictTask);
+
+            if (localNextConflictFinder.NextConflictTreeViewItem != null)
+            {
+                xLocalItemTree.FocusItem(localNextConflictFinder.NextConflictTreeViewItem);
+            }
+
+            if (remoteNextConflictFinder.NextConflictTreeViewItem != null)
+            {
+                xRemoteItemTree.FocusItem(remoteNextConflictFinder.NextConflictTreeViewItem);
+            }
         }
 
         private void xNextConflict_Click(object sender, RoutedEventArgs e)
@@ -157,21 +159,23 @@ namespace Ginger.ConflictResolve
 
         private async Task HighlightNextConflictAsync()
         {
-            NextConflictFinder nextConflictFinder = new();
+            NextConflictFinder localNextConflictFinder = new();
+            Task findNextLocalConflictTask = xLocalItemTree.IterateTreeViewItemsAsync(localNextConflictFinder.IterationConsumer);
 
-            Task findNextLocalConflictTask = xLocalItemTree.IterateTreeViewItemsAsync(nextConflictFinder.IterationConsumer);
-            if (nextConflictFinder.NextConflictTreeViewItem != null)
-            {
-                xLocalItemTree.FocusItem(nextConflictFinder.NextConflictTreeViewItem);
-            }
-
-            Task findNextRemoteConflictTask = xRemoteItemTree.IterateTreeViewItemsAsync(nextConflictFinder.IterationConsumer);
-            if (nextConflictFinder.NextConflictTreeViewItem != null)
-            {
-                xRemoteItemTree.FocusItem(nextConflictFinder.NextConflictTreeViewItem);
-            }
+            NextConflictFinder remoteNextConflictFinder = new();
+            Task findNextRemoteConflictTask = xRemoteItemTree.IterateTreeViewItemsAsync(remoteNextConflictFinder.IterationConsumer);
 
             await Task.WhenAll(findNextLocalConflictTask, findNextRemoteConflictTask);
+
+            if (localNextConflictFinder.NextConflictTreeViewItem != null)
+            {
+                xLocalItemTree.FocusItem(localNextConflictFinder.NextConflictTreeViewItem);
+            }
+
+            if (remoteNextConflictFinder.NextConflictTreeViewItem != null)
+            {
+                xRemoteItemTree.FocusItem(remoteNextConflictFinder.NextConflictTreeViewItem);
+            }
         }
 
         private sealed class NextConflictFinder
@@ -184,9 +188,10 @@ namespace Ginger.ConflictResolve
                 bool continueIteration = true;
 
                 bool IsAddedOrDeleted = comparison.State == Comparison.StateType.Added || comparison.State == Comparison.StateType.Deleted;
+                bool canBeSelected = comparison.IsSelectionEnabled;
                 bool selfAndSiblingNotSelected = !comparison.Selected && (!comparison.HasSiblingComparison || !comparison.SiblingComparison.Selected);
 
-                if (IsAddedOrDeleted && selfAndSiblingNotSelected)
+                if (IsAddedOrDeleted && canBeSelected && selfAndSiblingNotSelected)
                 {
                     NextConflictTreeViewItem = currentTreeViewItem;
                     continueIteration = false;
