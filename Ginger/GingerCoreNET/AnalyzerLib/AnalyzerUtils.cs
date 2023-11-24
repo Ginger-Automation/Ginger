@@ -101,6 +101,11 @@ namespace Ginger.AnalyzerLib
             });
         }
 
+        public List<string> RunBusinessFlowAnalyzerIndependently(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList)
+        {
+            return RunBusinessFlowAnalyzer(businessFlow, issuesList, AnalyzeBusinessFlow.Check.All, solution: null);
+        }
+
         public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList)
         {
             return RunBusinessFlowAnalyzer(businessFlow, issuesList, AnalyzeBusinessFlow.Check.All);
@@ -108,14 +113,29 @@ namespace Ginger.AnalyzerLib
 
         public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList, AnalyzeBusinessFlow.Check checks)
         {
+            return RunBusinessFlowAnalyzer(businessFlow, issuesList, checks, WorkSpace.Instance.Solution);
+        }
+
+        private List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList, AnalyzeBusinessFlow.Check checks, Solution solution)
+        {
             List<string> usedVariablesInBF = new List<string>();
             List<string> usedVariablesInActivity = new List<string>();
             List<AnalyzerItemBase> missingVariableIssueList = new List<AnalyzerItemBase>();
 
             ObservableList<DataSourceBase> DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-            foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(businessFlow, WorkSpace.Instance.Solution, checks))
+            if (solution == null)
             {
-                AddIssue(issuesList, issue);
+                foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(businessFlow, checks))
+                {
+                    AddIssue(issuesList, issue);
+                }
+            }
+            else
+            {
+                foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(businessFlow, WorkSpace.Instance.Solution, checks))
+                {
+                    AddIssue(issuesList, issue);
+                }
             }
 
             Parallel.ForEach(businessFlow.Activities, new ParallelOptions { MaxDegreeOfParallelism = 5 }, activity =>
@@ -148,13 +168,13 @@ namespace Ginger.AnalyzerLib
                         }
 
                     }
-                    
-                    MergeVariablesList(usedVariablesInActivity, AnalyzeAction.GetUsedVariableFromAction(action));                    
+
+                    MergeVariablesList(usedVariablesInActivity, AnalyzeAction.GetUsedVariableFromAction(action));
                 });
-                
+
 
                 MergeVariablesList(usedVariablesInActivity, AnalyzeActivity.GetUsedVariableFromActivity(activity));
-                
+
                 ReportUnusedVariables(activity, usedVariablesInActivity, issuesList);
                 MergeVariablesList(usedVariablesInBF, usedVariablesInActivity);
 

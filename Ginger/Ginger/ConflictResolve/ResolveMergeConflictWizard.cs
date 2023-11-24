@@ -69,9 +69,9 @@ namespace Ginger.ConflictResolve
                 Page: new AnalyeMergedPage());
 
             AddPage(
-                Name: "PreviewMergedResult",
-                Title: "Preview Merged Result",
-                SubTitle: "Preview Merged Result",
+                Name: "PreviewMergedEntity",
+                Title: "Preview Merged Entity",
+                SubTitle: "Preview Merged Entity",
                 new PreviewMergedPage());
         }
 

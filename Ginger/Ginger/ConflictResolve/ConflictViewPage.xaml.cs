@@ -32,16 +32,32 @@ namespace Ginger.ConflictResolve
     /// </summary>
     public partial class ConflictViewPage : Page, IWizardPage
     {
+        private ResolveMergeConflictWizard? _wizard;
+
         public ConflictViewPage()
         {
             InitializeComponent();
+            SetUI();
+        }
+
+        private void SetUI()
+        {
+            SetConflictButtonUI();
+        }
+
+        private void SetConflictButtonUI()
+        {
+            xPrevConflict.xButtonText.Visibility = Visibility.Collapsed;
+            xPrevConflict.xButtonImage.Margin = new Thickness(left: 5, top: 0, right: 5, bottom: 0); 
+            xNextConflict.xButtonText.Visibility = Visibility.Collapsed;
+            xNextConflict.xButtonImage.Margin = new Thickness(left: 5, top: 0, right: 5, bottom: 0);
         }
 
         public void WizardEvent(WizardEventArgs wizardEventArgs)
         {
-            ResolveMergeConflictWizard? wizard = wizardEventArgs.Wizard as ResolveMergeConflictWizard;
+            _wizard = wizardEventArgs.Wizard as ResolveMergeConflictWizard;
 
-            if (wizard == null)
+            if (_wizard == null)
             {
                 throw new InvalidOperationException($"{nameof(ConflictViewPage)} must be used with {nameof(ResolveMergeConflictWizard)}.");
             }
@@ -49,22 +65,27 @@ namespace Ginger.ConflictResolve
             switch (wizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    OnWizardPageInit(wizard);
+                    OnWizardPageInit();
                     break;
                 case EventType.LeavingForNextPage:
-                    OnWizardPageLeavingForNextPage(wizard, wizardEventArgs);
+                    OnWizardPageLeavingForNextPage(wizardEventArgs);
                     break;
                 default:
                     break;
             }
         }
 
-        private void OnWizardPageInit(ResolveMergeConflictWizard wizard)
+        private void OnWizardPageInit()
         {
+            if(_wizard == null)
+            {
+                return;
+            }
+
             Task.Run(() =>
             {
                 ShowLoading();
-                SetTreeItems(wizard.Comparison);
+                SetTreeItems(_wizard.Comparison);
                 HideLoading();
             });
         }
@@ -116,14 +137,39 @@ namespace Ginger.ConflictResolve
             });
         }
 
-        private void OnWizardPageLeavingForNextPage(ResolveMergeConflictWizard wizard, WizardEventArgs eventArgs)
+        private void OnWizardPageLeavingForNextPage(WizardEventArgs eventArgs)
         {
-            int unselectedComparisonCount = wizard.Comparison.UnselectedComparisonCount();
+            if(_wizard == null)
+            {
+                return;
+            }
+
+            int unselectedComparisonCount = _wizard.Comparison.UnselectedComparisonCount();
             if (unselectedComparisonCount > 0)
             {
                 Reporter.ToUser(eUserMsgKey.HandleConflictsBeforeMovingForward, messageArgs: unselectedComparisonCount);
                 eventArgs.CancelEvent = true;
             }
+        }
+
+        private void ShowNavigatingToConflictLoader()
+        {
+            if (_wizard == null)
+            {
+                return;
+            }
+
+            _wizard.ProcessStarted();
+        }
+
+        private void HideNavigatingToConflictLoader()
+        {
+            if(_wizard == null)
+            {
+                return;
+            }
+
+            _wizard.ProcessEnded();
         }
 
         private void xPrevConflict_Click(object sender, RoutedEventArgs e)
@@ -139,7 +185,9 @@ namespace Ginger.ConflictResolve
             NextConflictFinder remoteNextConflictFinder = new();
             Task findNextRemoteConflictTask = xRemoteItemTree.IterateTreeViewItemsAsync(remoteNextConflictFinder.IterationConsumer, inReverseOrder: true);
 
+            ShowNavigatingToConflictLoader();
             await Task.WhenAll(findNextLocalConflictTask, findNextRemoteConflictTask);
+            HideNavigatingToConflictLoader();
 
             if (localNextConflictFinder.NextConflictTreeViewItem != null)
             {
@@ -165,7 +213,9 @@ namespace Ginger.ConflictResolve
             NextConflictFinder remoteNextConflictFinder = new();
             Task findNextRemoteConflictTask = xRemoteItemTree.IterateTreeViewItemsAsync(remoteNextConflictFinder.IterationConsumer);
 
+            ShowNavigatingToConflictLoader();
             await Task.WhenAll(findNextLocalConflictTask, findNextRemoteConflictTask);
+            HideNavigatingToConflictLoader();
 
             if (localNextConflictFinder.NextConflictTreeViewItem != null)
             {
