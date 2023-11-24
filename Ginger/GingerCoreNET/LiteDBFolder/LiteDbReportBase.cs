@@ -446,6 +446,21 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         [FieldParamsIsSelected(true)]
         public List<LiteDbActivity> ActivitiesColl { get; set; }
 
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID 2")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID2 { get; set; }
+
+
         public LiteDbActivityGroup()
         {
             ActivitiesColl = new List<LiteDbActivity>();
@@ -465,6 +480,8 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             Elapsed = agReport.Elapsed;
             this.RunStatus = agReport.RunStatus;
             ExecutedActivitiesGUID = agReport.ExecutedActivitiesGUID;
+            ExternalID = agReport.ExternalID;
+            ExternalID2 = agReport.ExternalID2;
         }
     }
     public class LiteDbActivity : LiteDbReportBase
@@ -511,6 +528,21 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         [FieldParamsIsSelected(true)]
         public string ErrorDetails { get; set; }
 
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID 2")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID2 { get; set; }
+
+
         public LiteDbActivity()
         {
             ActionsColl = new List<LiteDbAction>();
@@ -529,6 +561,8 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             RunStatus = activityReport.RunStatus;
             VariablesAfterExec = activityReport.VariablesAfterExec;
             VariablesBeforeExec = activityReport.VariablesBeforeExec;
+            ExternalID = activityReport.ExternalID;
+            ExternalID2 = activityReport.ExternalID2;
         }
     }
 
