@@ -120,7 +120,7 @@ namespace Ginger.ConflictResolve
                 Dispatcher.Invoke(() => 
                 {
                     xPageViewTabItem.IsEnabled = true;
-                    xPageFrame.ClearAndSetContent(new BusinessFlowViewPage(mergedBusinessFlow, context: null, General.eRIPageViewMode.View));
+                    xPageFrame.ClearAndSetContent(new BusinessFlowViewPage(mergedBusinessFlow, context: null!, General.eRIPageViewMode.View));
                 });
             }
             else
