@@ -134,20 +134,25 @@ namespace Ginger.AnalyzerLib
 
         public void Init(BusinessFlow BusinessFlow, bool selfHealingAutoFixIssue = false)
         {
+            Init(BusinessFlow, solution: null, selfHealingAutoFixIssue);
+        }
+
+        public void Init(BusinessFlow businessFlow, Solution? solution, bool selfHealingAutoFixIssue = false)
+        {
             mAnalyzedObject = AnalyzedObject.BusinessFlow;
-            mSolution = null;
-            businessFlow = BusinessFlow;
-            AnalyzerItemsGrid.Title = "'" + BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Issues";
+            mSolution = solution;
+            this.businessFlow = businessFlow;
+            AnalyzerItemsGrid.Title = "'" + businessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Issues";
 
             mAnalyzerUtils.SelfHealingAutoFixIssue = selfHealingAutoFixIssue;
         }
 
         public void Init(RunSetConfig runSetConfig)
         {
-            Init(solution: null, runSetConfig);
+            Init(runSetConfig, solution: null);
         }
 
-        internal void Init(Solution? solution, Run.RunSetConfig RSC)
+        internal void Init(Run.RunSetConfig RSC, Solution? solution)
         {
             mRunSetConfig = RSC;
             mSolution = solution;

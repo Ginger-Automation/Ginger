@@ -1826,7 +1826,7 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.AnalyzerSaveRunSet);
                 return;
             }
-            AP.Init(WorkSpace.Instance.Solution, RSC);
+            AP.Init(RSC, WorkSpace.Instance.Solution);
             AP.ShowAsWindow();
 
         }
@@ -2054,7 +2054,7 @@ namespace Ginger.Run
                 {
                     Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                     analyzerPage = new AnalyzerPage();
-                    analyzerPage.Init(WorkSpace.Instance.Solution, mRunSetConfig);
+                    analyzerPage.Init(mRunSetConfig, WorkSpace.Instance.Solution);
                 });
 
                 await analyzerPage.AnalyzeWithoutUI();

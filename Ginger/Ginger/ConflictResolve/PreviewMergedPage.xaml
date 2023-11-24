@@ -18,7 +18,7 @@
                     </TabItem.Header>
                     <UCTreeView:UCTreeView x:Name="xTree" Grid.Row="0" Grid.Column="0"/>
                 </TabItem>
-                <TabItem x:Name="xPageViewTabItem" IsEnabled="False">
+                <TabItem x:Name="xPageViewTabItem" Background="{StaticResource $BackgroundColor_LightGray}" IsEnabled="False">
                     <TabItem.Header>
                         <Label Content="Page View"/>
                     </TabItem.Header>

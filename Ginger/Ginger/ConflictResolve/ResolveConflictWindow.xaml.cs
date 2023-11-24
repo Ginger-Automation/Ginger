@@ -44,6 +44,7 @@ using Amdocs.Ginger.Common.Enums;
 using OctaneRepositoryStd.BLL;
 using System.Security.Cryptography;
 using System.Diagnostics.CodeAnalysis;
+using Ginger.Run;
 
 namespace Ginger.ConflictResolve
 {
@@ -219,11 +220,10 @@ namespace Ginger.ConflictResolve
             foreach (Conflict conflict in _conflicts)
             {
                 bool isSelected = conflict.IsSelectedForResolution;
-                bool isBusinessFlow = IsBusinessFlowFile(conflict.Path);
                 bool hasCherryPickResolution = conflict.Resolution == ResolutionType.CherryPick;
                 bool canResolve = conflict.CanResolve;
 
-                if(isSelected && isBusinessFlow && hasCherryPickResolution && canResolve)
+                if(isSelected && hasCherryPickResolution && canResolve)
                 {
                     AnalyzeForConflict(conflict);
                 }
@@ -233,15 +233,18 @@ namespace Ginger.ConflictResolve
         private void AnalyzeForConflict(Conflict conflict)
         {
             bool hasMergedItem = conflict.TryGetMergedItem(out RepositoryItemBase? mergedItem);
-            if (hasMergedItem && mergedItem != null && mergedItem is BusinessFlow businessFlow)
+            if (hasMergedItem || mergedItem == null)
+            {
+                return;
+            }
+            if(mergedItem is BusinessFlow businessFlow)
             {
                 Task.Run(() => AnalyzeBusinessFlow(businessFlow));
             }
-        }
-
-        private bool IsBusinessFlowFile(string filePath)
-        {
-            return filePath.EndsWith(".BusinessFlow.xml");
+            else if(mergedItem is RunSetConfig runSetConfig)
+            {
+                Task.Run(() => AnalyzeRunSetConfig(runSetConfig));
+            }
         }
 
         private async Task AnalyzeBusinessFlow(BusinessFlow businessFlow)
@@ -254,7 +257,33 @@ namespace Ginger.ConflictResolve
 
                 Dispatcher.Invoke(() => analyzerPage = new());
 
-                analyzerPage.Init(businessFlow, WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
+                analyzerPage.Init(businessFlow, WorkSpace.Instance.Solution, WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
+                await analyzerPage.AnalyzeWithoutUI();
+                Dispatcher.Invoke(() => Reporter.HideStatusMessage());
+                if (analyzerPage.TotalHighAndCriticalIssues > 0)
+                {
+                    Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
+                    Dispatcher.Invoke(() => analyzerPage.ShowAsWindow());
+                }
+            }
+            finally
+            {
+                Dispatcher.Invoke(() => _genericWindowLoaderIcon.Visibility = Visibility.Collapsed);
+                Dispatcher.Invoke(() => Reporter.HideStatusMessage());
+            }
+        }
+
+        private async Task AnalyzeRunSetConfig(RunSetConfig runSetConfig)
+        {
+            try
+            {
+                Dispatcher.Invoke(() => _genericWindowLoaderIcon.Visibility = Visibility.Visible);
+                Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, runSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                AnalyzerPage analyzerPage = null!;
+
+                Dispatcher.Invoke(() => analyzerPage = new());
+
+                analyzerPage.Init(runSetConfig, WorkSpace.Instance.Solution);
                 await analyzerPage.AnalyzeWithoutUI();
                 Dispatcher.Invoke(() => Reporter.HideStatusMessage());
                 if (analyzerPage.TotalHighAndCriticalIssues > 0)
