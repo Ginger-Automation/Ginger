@@ -62,17 +62,36 @@ namespace Ginger.ConflictResolve
                 SubTitle: "Compare and Select Conflicts",
                 new ConflictViewPage());
 
-            AddPage(
+            Type? conflictedItemType = GetConflictedItemType();
+            if(conflictedItemType != null && AnalyeMergedPage.IsTypeSupportedForIsolatedAnalyzation(conflictedItemType))
+            {
+                AddPage(
                 Name: "Analyze",
                 Title: "Analyze",
                 SubTitle: "Analyze Merged Item",
                 Page: new AnalyeMergedPage());
+            }
 
             AddPage(
                 Name: "PreviewMergedEntity",
                 Title: "Preview Merged Entity",
                 SubTitle: "Preview Merged Entity",
                 new PreviewMergedPage());
+        }
+
+        private Type? GetConflictedItemType()
+        {
+            RepositoryItemBase? localItem = _conflict.GetLocalItem();
+            if (localItem != null)
+            {
+                return localItem.GetType();
+            }
+            RepositoryItemBase? remoteItem = _conflict.GetRemoteItem();
+            if(remoteItem != null)
+            {
+                return remoteItem.GetType();
+            }
+            return null;
         }
 
         public bool TryGetOrCreateMergedItem(out RepositoryItemBase? mergedItem)

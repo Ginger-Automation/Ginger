@@ -58,9 +58,14 @@ namespace Ginger.AnalyzerLib
             ReportUnusedVariables(solution, usedVariablesInSolution, issuesList);
         }
 
-        public void RunRunSetConfigAnalyzer(RunSetConfig mRunSetConfig, ObservableList<AnalyzerItemBase> issuesList)
+        public void RunRunSetConfigAnalyzer(RunSetConfig runsetConfig, ObservableList<AnalyzerItemBase> issuesList)
         {
-            foreach (AnalyzerItemBase issue in RunSetConfigAnalyzer.Analyze(mRunSetConfig))
+            RunRunSetConfigAnalyzer(runsetConfig, solution: null, issuesList);
+        }
+
+        public void RunRunSetConfigAnalyzer(RunSetConfig mRunSetConfig, Solution solution, ObservableList<AnalyzerItemBase> issuesList)
+        {
+            foreach (AnalyzerItemBase issue in RunSetConfigAnalyzer.Analyze(mRunSetConfig, solution))
             {
                 AddIssue(issuesList, issue);
             }
@@ -70,7 +75,7 @@ namespace Ginger.AnalyzerLib
             List<Guid> checkedGuidList = new List<Guid>();
             Parallel.ForEach(mRunSetConfig.GingerRunners, new ParallelOptions { MaxDegreeOfParallelism = 5 }, GR =>
             {
-                foreach (AnalyzerItemBase issue in AnalyzeGingerRunner.Analyze(GR, WorkSpace.Instance.Solution.ApplicationPlatforms))
+                foreach (AnalyzerItemBase issue in AnalyzeGingerRunner.Analyze(GR))
                 {
                     AddIssue(issuesList, issue);
                 }
@@ -84,7 +89,7 @@ namespace Ginger.AnalyzerLib
                         BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(BF.Guid);
                         if (actualBf != null)
                         {
-                            RunBusinessFlowAnalyzer(actualBf, issuesList, AnalyzeBusinessFlow.Check.MissingMandatoryInputValues.ExcludedFromAll());
+                            RunBusinessFlowAnalyzer(actualBf, solution, issuesList, AnalyzeBusinessFlow.Check.MissingMandatoryInputValues.ExcludedFromAll());
                         }
                     }
                 });
@@ -101,9 +106,9 @@ namespace Ginger.AnalyzerLib
             });
         }
 
-        public List<string> RunBusinessFlowAnalyzerIndependently(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList)
+        public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, Solution solution, ObservableList<AnalyzerItemBase> issuesList)
         {
-            return RunBusinessFlowAnalyzer(businessFlow, issuesList, AnalyzeBusinessFlow.Check.All, solution: null);
+            return RunBusinessFlowAnalyzer(businessFlow, solution, issuesList, AnalyzeBusinessFlow.Check.All);
         }
 
         public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList)
@@ -113,10 +118,10 @@ namespace Ginger.AnalyzerLib
 
         public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList, AnalyzeBusinessFlow.Check checks)
         {
-            return RunBusinessFlowAnalyzer(businessFlow, issuesList, checks, WorkSpace.Instance.Solution);
+            return RunBusinessFlowAnalyzer(businessFlow, solution: null, issuesList, checks);
         }
 
-        private List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, ObservableList<AnalyzerItemBase> issuesList, AnalyzeBusinessFlow.Check checks, Solution solution)
+        public List<string> RunBusinessFlowAnalyzer(BusinessFlow businessFlow, Solution solution, ObservableList<AnalyzerItemBase> issuesList, AnalyzeBusinessFlow.Check checks)
         {
             List<string> usedVariablesInBF = new List<string>();
             List<string> usedVariablesInActivity = new List<string>();
@@ -132,7 +137,7 @@ namespace Ginger.AnalyzerLib
             }
             else
             {
-                foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(businessFlow, WorkSpace.Instance.Solution, checks))
+                foreach (AnalyzerItemBase issue in AnalyzeBusinessFlow.Analyze(businessFlow, solution, checks))
                 {
                     AddIssue(issuesList, issue);
                 }

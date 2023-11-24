@@ -37,6 +37,13 @@ namespace Ginger.ConflictResolve
             _analyzerPage = new();
         }
 
+        public static bool IsTypeSupportedForIsolatedAnalyzation(Type type)
+        {
+            return
+                typeof(BusinessFlow).IsAssignableFrom(type) ||
+                typeof(RunSetConfig).IsAssignableFrom(type);
+        }
+
         public void WizardEvent(WizardEventArgs WizardEventArgs)
         {
             ResolveMergeConflictWizard wizard = (ResolveMergeConflictWizard)WizardEventArgs.Wizard;
@@ -65,6 +72,14 @@ namespace Ginger.ConflictResolve
                             xAnalyzerPageFrame.ClearAndSetContent(_analyzerPage);
                         });
                         _analyzerPage.AnalyzeWithUI().Wait();
+                    }
+                    else if (mergedItem is RunSetConfig mergedRunSetConfig)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            _analyzerPage.Init(mergedRunSetConfig);
+                            xAnalyzerPageFrame.ClearAndSetContent(_analyzerPage);
+                        });
                     }
                 }
                 HideLoading();

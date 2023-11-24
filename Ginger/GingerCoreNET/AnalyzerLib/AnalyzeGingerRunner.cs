@@ -31,7 +31,7 @@ namespace Ginger.AnalyzerLib
     {
         public GingerRunner GingerRunner { get; set; }
 
-        public static List<AnalyzerItemBase> Analyze(GingerRunner GR, ObservableList<ApplicationPlatform> solutionApplicationPlatforms)
+        public static List<AnalyzerItemBase> Analyze(GingerRunner GR)
         {
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
 
