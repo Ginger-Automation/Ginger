@@ -25,14 +25,14 @@
 
         <state:BorderStatus x:Name="xBorder" Grid.RowSpan="2"  Grid.ColumnSpan="2" Visibility="Collapsed"></state:BorderStatus>
 
-        <state:StatusItem x:Name="xStatus" Grid.Column="1"  Grid.Row="0" Width="60" Height="60" Margin="0 0 -2 0"></state:StatusItem>
-        <Label  Grid.Row="0" Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="15"  Width="Auto" Grid.Column="1"  Margin="0,-4,0,0">
+        <state:StatusItem x:Name="xStatus" Grid.Column="1"  Grid.Row="0" Margin="0 -2 -2 0" SetStatusIcon="True" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+        <!--<Label  Grid.Row="0" Height="Auto" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="15"  Width="Auto" Grid.Column="1"  Margin="0,-4,0,0">
             <Label.Content >
                 <StackPanel Orientation="Horizontal">
                     <usercontrols:ImageMakerControl x:Name="xStatusIcon" Foreground="White" SetAsFontImageWithSize="12" Width="15" Height="15" FontWeight="Thin"/>
                 </StackPanel>
             </Label.Content>
-        </Label>
+        </Label>-->
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal">
             <usercontrols:ucButton x:Name="xDetailView" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="15" ButtonImageHeight="11" ButtonImageType="Expand" Click="xDetailView_Click" VerticalAlignment="Bottom" Visibility="Visible" />
             <TextBlock x:Name="xItemName" FontSize="13" MaxWidth="250" Margin="0,3,0,0" Foreground="{StaticResource $BackgroundColor_Black}" TextTrimming="CharacterEllipsis"  ></TextBlock>

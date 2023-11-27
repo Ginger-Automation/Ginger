@@ -87,7 +87,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
                     }
                     else
                     {
-                        xStatusTri.Fill = xStatusTri.Stroke = FindResource("$PassedStatusColor") as Brush;
+                        xStatusIcon.ImageForeground = (SolidColorBrush)FindResource("$PassedStatusColor");
                     }
                     break;
                 case eRunStatus.Failed:
@@ -98,7 +98,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
                     }
                     else
                     {
-                        xStatusTri.Fill = xStatusTri.Stroke = FindResource("$FailedStatusColor") as Brush;
+                        xStatusIcon.ImageForeground = (SolidColorBrush)FindResource("$FailedStatusColor");
                     }
                     break;
                 case eRunStatus.Pending:
@@ -109,7 +109,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
                     }
                     else
                     {
-                        xStatusTri.Fill = xStatusTri.Stroke = FindResource("$PendingStatusColor") as Brush;
+                        xStatusIcon.ImageForeground = (SolidColorBrush)FindResource("$PendingStatusColor");
                     }
                     break;
                 case eRunStatus.Running:
@@ -120,7 +120,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
                     }
                     else
                     {
-                        xStatusTri.Fill = xStatusTri.Stroke = FindResource("$RunningStatusColor") as Brush;
+                        xStatusIcon.ImageForeground = (SolidColorBrush)FindResource("$RunningStatusColor");
                     }
                     break;
                 case eRunStatus.Stopped:
@@ -131,7 +131,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
                     }
                     else
                     {
-                        xStatusTri.Fill = xStatusTri.Stroke = FindResource("$StoppedStatusColor") as Brush;
+                        xStatusIcon.ImageForeground = (SolidColorBrush)FindResource("$StoppedStatusColor");
                     }
                     break;
                 case eRunStatus.Blocked:
@@ -142,7 +142,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
                     }
                     else
                     {
-                        xStatusTri.Fill = xStatusTri.Stroke = FindResource("$BlockedStatusColor") as Brush;
+                        xStatusIcon.ImageForeground = (SolidColorBrush)FindResource("$BlockedStatusColor");
                     }
                     break;
                 case eRunStatus.Skipped:
@@ -153,7 +153,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
                     }
                     else
                     {
-                        xStatusTri.Fill = xStatusTri.Stroke = FindResource("$SkippedStatusColor") as Brush;
+                        xStatusIcon.ImageForeground = (SolidColorBrush)FindResource("$SkippedStatusColor");
                     }
                     break;
                 default:
@@ -164,7 +164,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
                     }
                     else
                     {
-                        xStatusTri.Fill = xStatusTri.Stroke = FindResource("$PendingStatusColor") as Brush;
+                        xStatusIcon.ImageForeground = (SolidColorBrush)FindResource("$PendingStatusColor");
                     }
                     break;
             }

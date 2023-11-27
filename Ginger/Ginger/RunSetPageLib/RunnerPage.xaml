@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     h:GingerHelpProvider.HelpString="Run"
       d:DesignHeight="200" d:DesignWidth="515" 
-	Title="Runner" Background="{StaticResource $BackgroundColor_White}">
+	Title="Runner" Background="Transparent">
     <Page.Resources>
         <x:ArrayExtension Type="{x:Type Brush}" x:Key="brushes">
             <SolidColorBrush Color="#9F15C3"/>
@@ -23,7 +23,7 @@
             <SolidColorBrush Color="#000033"/>
         </x:ArrayExtension>
     </Page.Resources>
-    <Grid Name="pageGrid" >
+    <Grid Name="pageGrid" Background="Transparent" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150*"/>
             <ColumnDefinition Width="120"/>
@@ -41,8 +41,8 @@
         </Grid.RowDefinitions>
 
         <Border x:Name="NormalBorder"
-	        BorderBrush="{DynamicResource $BackgroundColor_Black}"
-	        BorderThickness="1"	    
+	        BorderBrush="Transparent"
+	        BorderThickness="1" CornerRadius="10"	    
                 Margin="0"	
             Grid.RowSpan="7" Grid.ColumnSpan="4" />
 
@@ -55,14 +55,14 @@
             <usercontrols:ucButton x:Name="xContinueRunnerBtn"  ToolTip="Continue Runner Execution from Last Stopped Action" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xContinueRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
         </DockPanel>
         <Label x:Name="xruntime" Grid.Row="0" Grid.ColumnSpan="4"  Content="00:00:00" Width="150" Height="32" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource $HighlightColor_LightBlue}"/>
-        <state:StatusItem Panel.ZIndex="-1" x:Name="xStatus" Grid.RowSpan="3" Grid.ColumnSpan="7" Margin="0 2 2 0" HorizontalAlignment="Right" ></state:StatusItem>
-        <Label Margin="0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="15"  Width="25" Grid.Row="0" Grid.ColumnSpan="4" >
+        <state:StatusItem x:Name="xStatus" Grid.RowSpan="3" Grid.ColumnSpan="7" Margin="0 2 2 0" HorizontalAlignment="Right" VerticalAlignment="Top" SetStatusIcon="True" />
+        <!--<Label Margin="0" Height="25" VerticalAlignment="Top" HorizontalAlignment="Right" FontSize="15"  Width="25" Grid.Row="0" Grid.ColumnSpan="4" >
             <Label.Content >
                 <StackPanel Orientation="Horizontal">
                     <usercontrols:ImageMakerControl x:Name="xStatusLabel" Foreground="White" SetAsFontImageWithSize="14" Width="15" Height="15" FontWeight="Thin"/>
                 </StackPanel>
             </Label.Content>
-        </Label>
+        </Label>-->
         <GridSplitter x:Name="xRunnerInfoSplitterBorder" Width="Auto" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Black}" Height="2" Margin="0" Grid.Row="1" Grid.ColumnSpan="4"/>
 
         <Grid x:Name="xRunnerConfigurationsGrid" Grid.Row="2" Grid.Column="0" Grid.RowSpan="6">
