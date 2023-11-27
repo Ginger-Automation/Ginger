@@ -154,6 +154,8 @@ namespace Ginger.ConflictResolve
                 }
 
                 resolvedConflicts.ForEach(resolvedConflict => _conflicts.Remove(resolvedConflict));
+
+                Reporter.ToUser(eUserMsgKey.ConflictsResolvedCount, resolvedConflicts.Count);
             }
             finally
             {
@@ -217,33 +219,61 @@ namespace Ginger.ConflictResolve
 
         private void analyzeBtn_Click(object sender, RoutedEventArgs e)
         {
-            foreach (Conflict conflict in _conflicts)
-            {
-                bool isSelected = conflict.IsSelectedForResolution;
-                bool hasCherryPickResolution = conflict.Resolution == ResolutionType.CherryPick;
-                bool canResolve = conflict.CanResolve;
-
-                if(isSelected && hasCherryPickResolution && canResolve)
-                {
-                    AnalyzeForConflict(conflict);
-                }
-            }
+            AnalyzeSelectedConflict();
         }
 
-        private void AnalyzeForConflict(Conflict conflict)
+        private void AnalyzeSelectedConflict()
         {
-            bool hasMergedItem = conflict.TryGetMergedItem(out RepositoryItemBase? mergedItem);
-            if (hasMergedItem || mergedItem == null)
+            Conflict selectedConflict = (Conflict)xConflictingItemsGrid.CurrentItem;
+            if (selectedConflict == null)
             {
+                Reporter.ToUser(eUserMsgKey.IssueWhileAnalyzingConflict, "No conflict found for analyzing.");
                 return;
             }
-            if(mergedItem is BusinessFlow businessFlow)
+
+            bool cannotResolve = !selectedConflict.CanResolve;
+            if (cannotResolve)
+            {
+                Reporter.ToUser(eUserMsgKey.IssueWhileAnalyzingConflict, "Conflict is not ready for resolution, hence cannot be analyzed.");
+                return;
+            }
+
+            RepositoryItemBase? itemForResolution;
+            if(selectedConflict.Resolution == ResolutionType.AcceptServer)
+            {
+                itemForResolution = selectedConflict.GetRemoteItem();
+            }
+            else if(selectedConflict.Resolution == ResolutionType.KeepLocal)
+            {
+                itemForResolution = selectedConflict.GetLocalItem();
+            }
+            else
+            {
+                selectedConflict.TryGetMergedItem(out itemForResolution);
+            }
+
+            if (itemForResolution == null)
+            {
+                Reporter.ToUser(eUserMsgKey.IssueWhileAnalyzingConflict, "No merged item available for conflict for analyzing.");
+                return;
+            }
+
+            AnalyzeRepositoryItemBase(itemForResolution);
+        }
+
+        private void AnalyzeRepositoryItemBase(RepositoryItemBase item)
+        {
+            if(item is BusinessFlow businessFlow)
             {
                 Task.Run(() => AnalyzeBusinessFlow(businessFlow));
             }
-            else if(mergedItem is RunSetConfig runSetConfig)
+            else if(item is RunSetConfig runSetConfig)
             {
                 Task.Run(() => AnalyzeRunSetConfig(runSetConfig));
+            }
+            else
+            {
+                Reporter.ToUser(eUserMsgKey.IssueWhileAnalyzingConflict, "Conflict analyzation is not available for this entity type.");
             }
         }
 
@@ -260,11 +290,7 @@ namespace Ginger.ConflictResolve
                 analyzerPage.Init(businessFlow, WorkSpace.Instance.Solution, WorkSpace.Instance.AutomateTabSelfHealingConfiguration.AutoFixAnalyzerIssue);
                 await analyzerPage.AnalyzeWithoutUI();
                 Dispatcher.Invoke(() => Reporter.HideStatusMessage());
-                if (analyzerPage.TotalHighAndCriticalIssues > 0)
-                {
-                    Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
-                    Dispatcher.Invoke(() => analyzerPage.ShowAsWindow());
-                }
+                Dispatcher.Invoke(() => analyzerPage.ShowAsWindow());
             }
             finally
             {
@@ -350,7 +376,7 @@ namespace Ginger.ConflictResolve
             xConflictingItemsGrid.SetTitleLightStyle = true;
             xConflictingItemsGrid.AddToolbarTool("@Checkbox_16x16.png", "Select/Unselect all", xConflictingItemsGrid_Toolbar_SelectUnselectAll);
             xConflictingItemsGrid.AddToolbarTool("@DropDownList_16x16.png", "Set resolution to all", xConflictingItemsGrid_Toolbar_SetSameResolutionToAll);
-            xConflictingItemsGrid.DataSourceList = this._conflicts;
+            xConflictingItemsGrid.DataSourceList = _conflicts;
         }
 
         private DataTemplate GetDataTemplateForOperationCell()
