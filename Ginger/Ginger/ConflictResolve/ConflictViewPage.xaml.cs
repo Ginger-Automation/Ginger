@@ -85,6 +85,8 @@ namespace Ginger.ConflictResolve
             Task.Run(() =>
             {
                 ShowLoading();
+                SetConflictStats(_wizard.Comparison);
+                UpdateRemainingConflictCount();
                 SetTreeItems(_wizard.Comparison);
                 HideLoading();
             });
@@ -110,6 +112,50 @@ namespace Ginger.ConflictResolve
                 xLoadingFrame.Visibility = Visibility.Collapsed;
                 xContentGrid.Visibility = Visibility.Visible;
             });
+        }
+
+        private void SetConflictStats(Comparison comparison)
+        {
+            BindComparisonSelectedProperty(comparison);
+        }
+
+        private void BindComparisonSelectedProperty(Comparison comparison)
+        {
+            if(comparison.State == Comparison.StateType.Unmodified)
+            {
+                return;
+            }
+
+            comparison.PropertyChanged += Comparison_Selected_Changed;
+            
+            if(comparison.State == Comparison.StateType.Added || comparison.State == Comparison.StateType.Deleted)
+            {
+                return;
+            }
+
+            foreach(Comparison childComparison in comparison.ChildComparisons)
+            {
+                BindComparisonSelectedProperty(childComparison);
+            }
+        }
+
+        private void Comparison_Selected_Changed(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (!string.Equals(e.PropertyName, nameof(Comparison.Selected)))
+            {
+                return;
+            }
+
+            UpdateRemainingConflictCount();
+        }
+
+        private void UpdateRemainingConflictCount()
+        {
+            if(_wizard != null)
+            {
+                int remainingComparisonCount = _wizard.Comparison.UnselectedComparisonCount();
+                Dispatcher.Invoke(() => xRemainingConflictCount.Text = remainingComparisonCount.ToString());
+            }
         }
 
         private void SetTreeItems(Comparison comparison)
