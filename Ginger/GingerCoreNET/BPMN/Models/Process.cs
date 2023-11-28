@@ -32,6 +32,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
 
         public StartEvent? StartEvent { get; private set; }
 
+        //TODO: BPMN - StartEvent and EndEvents should also be part of ChildEntities
         public IEnumerable<IProcessEntity> ChildEntities => _childEntities;
 
         private ICollection<EndEvent> _endEvents;

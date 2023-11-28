@@ -1,13 +1,9 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
+﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
 using Amdocs.Ginger.CoreNET.BPMN.Models;
 using Amdocs.Ginger.CoreNET.BPMN.Serialization;
-using Amdocs.Ginger.Repository;
-using Applitools.Utils;
-using DocumentFormat.OpenXml.Wordprocessing;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -19,7 +15,6 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 #nullable enable
 namespace GingerCoreNETUnitTest.BPMN
@@ -171,25 +166,50 @@ namespace GingerCoreNETUnitTest.BPMN
         }
 
         [TestMethod]
-        public void Create_ActivityGroupWithRerunActivityFlowControl_SequenceFlowGoesBackToSourceActivityTask()
+        public void Create_WithRerunActivityFlowControl_HasExclusiveGateway()
         {
             CreateActivityGroupWithRerunActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
-            Activity sourceActivity = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.RerunActivity);
 
             Collaboration collaboration = creator.Create();
 
-            Process firstProcess = collaboration.Participants.First().Process;
-            Task sourceActivityTask = firstProcess.GetChildEntitiesByType<Task>().First(t => t.Guid == sourceActivity.Guid);
-            ExclusiveGateway firstExclusiveGateway = firstProcess.GetChildEntitiesByType<ExclusiveGateway>().First();
-            IEnumerable<SequenceFlow> outgoingSequenceFlowsFromExclusiveGateway = firstExclusiveGateway.OutgoingFlows
-                .Where(of => of is SequenceFlow)
-                .Cast<SequenceFlow>();
-            Assert.IsTrue(outgoingSequenceFlowsFromExclusiveGateway.Any(sf => SequenceFlowReachesTargetProcessEntity(sf, sourceActivityTask)));
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway? exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().FirstOrDefault();
+            Assert.IsNotNull(exclusiveGateway, $"No {nameof(ExclusiveGateway)} found.");
         }
 
         [TestMethod]
-        public void Create_ActivityGroupWithRerunActivityFlowControl_SequenceFlowGoesToNextActivityTask()
+        public void Create_WithRerunActivityFlowControl_HasTaskForActivityWithFlowControl()
+        {
+            CreateActivityGroupWithRerunActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.RerunActivity);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == activityWithFlowControl.Guid);
+            Assert.IsNotNull(taskForActivityWithFlowControl, $"No {nameof(Task)} found for {nameof(Activity)} with {nameof(FlowControl)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithRerunActivityFlowControl_TaskOfActivityWithFlowControlDirectsToExclusiveGateway()
+        {
+            CreateActivityGroupWithRerunActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.RerunActivity);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().First(t => t.Guid == activityWithFlowControl.Guid);
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Flow? flowFromTaskToGateway = taskForActivityWithFlowControl.OutgoingFlows.FirstOrDefault(f => f.Target == exclusiveGateway);
+            Assert.IsNotNull(taskForActivityWithFlowControl, $"No outgoing {nameof(Flow)} found from {nameof(Task)} of {nameof(Activity)} with {nameof(FlowControl)} to {nameof(ExclusiveGateway)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithRerunActivityFlowControl_HasTaskForNextActivity()
         {
             CreateActivityGroupWithRerunActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
@@ -197,44 +217,116 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Collaboration collaboration = creator.Create();
 
-            Process firstProcess = collaboration.Participants.First().Process;
-            Task nextActivityTask = firstProcess.GetChildEntitiesByType<Task>().First(t => t.Guid == nextActivity.Guid);
-            ExclusiveGateway firstExclusiveGateway = firstProcess.GetChildEntitiesByType<ExclusiveGateway>().First();
-            IEnumerable<SequenceFlow> outgoingSequenceFlowsFromExclusiveGateway = firstExclusiveGateway.OutgoingFlows
-                .Where(of => of is SequenceFlow)
-                .Cast<SequenceFlow>();
-            Assert.IsTrue(outgoingSequenceFlowsFromExclusiveGateway.Any(sf => SequenceFlowReachesTargetProcessEntity(sf, nextActivityTask)));
+            Process process = collaboration.Participants.First().Process;
+            Task? nextActivityTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == nextActivity.Guid);
+            Assert.IsNotNull(nextActivityTask, $"No {nameof(Task)} found for next {nameof(Activity)}.");
         }
 
         [TestMethod]
-        public void Create_ActivityGroupWithGoToActivityFlowControl_SequenceFlowGoesToTargetActivityTask()
+        public void Create_WithRerunActivityFlowControl_ExclusiveGatewayDirectsToNextActivityTask()
         {
-            CreateActivityGroupWithGoToActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CreateActivityGroupWithRerunActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
-            Activity sourceActivity = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.GoToActivity);
-            Guid targetActivityGuid = sourceActivity
-                .Acts
-                .SelectMany(act => act.FlowControls)
-                .First(fc => fc.FlowControlAction == eFlowControlAction.GoToActivity)
-                .GetGuidFromValue();
-            Activity targetActivity = activityGroup
-                .ActivitiesIdentifiers
-                .Select(iden => iden.IdentifiedActivity)
-                .First(a => a.Guid == targetActivityGuid);
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
 
             Collaboration collaboration = creator.Create();
 
-            Process firstProcess = collaboration.Participants.First().Process;
-            Task targetActivityTask = firstProcess.GetChildEntitiesByType<Task>().First(t => t.Guid == targetActivity.Guid);
-            ExclusiveGateway firstExclusiveGateway = firstProcess.GetChildEntitiesByType<ExclusiveGateway>().First();
-            IEnumerable<SequenceFlow> outgoingSequenceFlowsFromExclusiveGateway = firstExclusiveGateway.OutgoingFlows
-                .Where(of => of is SequenceFlow)
-                .Cast<SequenceFlow>();
-            Assert.IsTrue(outgoingSequenceFlowsFromExclusiveGateway.Any(sf => SequenceFlowReachesTargetProcessEntity(sf, targetActivityTask)));
+            Process process = collaboration.Participants.First().Process;
+            Task nextActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == nextActivity.Guid);
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Flow? flowFromGatewayToNextActivityTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == nextActivityTask);
+            Assert.IsNotNull(flowFromGatewayToNextActivityTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to {nameof(Task)} of next {nameof(Activity)}.");
         }
 
         [TestMethod]
-        public void Create_ActivityGroupWithGoToActivityFlowControl_SequenceFlowGoesToNextActivityTask()
+        public void Create_WithRerunActivityFlowControl_HasConditionalTask()
+        {
+            CreateActivityGroupWithRerunActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(f => f.Conditions.Any());
+            Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
+        }
+
+        [TestMethod]
+        public void Create_WithRerunActivityFlowControl_ExclusiveGatewayDirectsToConditionalTask()
+        {
+            CreateActivityGroupWithRerunActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
+            Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithRerunActivityFlowControl_ConditionalTaskDirectsToTargetActivityTask()
+        {
+            CreateActivityGroupWithRerunActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.RerunActivity);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == activityWithFlowControl.Guid);
+            Flow? flowFromConditionalTaskToTargetActivityTask = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == targetActivityTask);
+            Assert.IsNotNull(flowFromConditionalTaskToTargetActivityTask, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to target {nameof(Activity)} {nameof(Task)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithGoToActivityFlowControl_HasExclusiveGateway()
+        {
+            CreateActivityGroupWithGoToActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway? exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().FirstOrDefault();
+            Assert.IsNotNull(exclusiveGateway, $"No {nameof(ExclusiveGateway)} found.");
+        }
+
+        [TestMethod]
+        public void Create_WithGoToActivityFlowControl_HasTaskForActivityWithFlowControl()
+        {
+            CreateActivityGroupWithGoToActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.GoToActivity);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == activityWithFlowControl.Guid);
+            Assert.IsNotNull(taskForActivityWithFlowControl, $"No {nameof(Task)} found for {nameof(Activity)} with {nameof(FlowControl)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithGoToActivityFlowControl_TaskOfActivityWithFlowControlDirectsToExclusiveGateway()
+        {
+            CreateActivityGroupWithGoToActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.GoToActivity);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().First(t => t.Guid == activityWithFlowControl.Guid);
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Flow? flowFromTaskToGateway = taskForActivityWithFlowControl.OutgoingFlows.FirstOrDefault(f => f.Target == exclusiveGateway);
+            Assert.IsNotNull(taskForActivityWithFlowControl, $"No outgoing {nameof(Flow)} found from {nameof(Task)} of {nameof(Activity)} with {nameof(FlowControl)} to {nameof(ExclusiveGateway)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithGoToActivityFlowControl_HasTaskForNextActivity()
         {
             CreateActivityGroupWithGoToActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
@@ -242,44 +334,118 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Collaboration collaboration = creator.Create();
 
-            Process firstProcess = collaboration.Participants.First().Process;
-            Task nextActivityTask = firstProcess.GetChildEntitiesByType<Task>().First(t => t.Guid == nextActivity.Guid);
-            ExclusiveGateway firstExclusiveGateway = firstProcess.GetChildEntitiesByType<ExclusiveGateway>().First();
-            IEnumerable<SequenceFlow> outgoingSequenceFlowsFromExclusiveGateway = firstExclusiveGateway.OutgoingFlows
-                .Where(of => of is SequenceFlow)
-                .Cast<SequenceFlow>();
-            Assert.IsTrue(outgoingSequenceFlowsFromExclusiveGateway.Any(sf => SequenceFlowReachesTargetProcessEntity(sf, nextActivityTask)));
+            Process process = collaboration.Participants.First().Process;
+            Task? nextActivityTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == nextActivity.Guid);
+            Assert.IsNotNull(nextActivityTask, $"No {nameof(Task)} found for next {nameof(Activity)}.");
         }
 
         [TestMethod]
-        public void Create_ActivityGroupWithGotoActivityByNameFlowControl_SequenceFlowGoesToTargetActivityTask()
+        public void Create_WithGoToActivityFlowControl_ExclusiveGatewayDirectsToNextActivityTask()
         {
-            CreateActivityGroupWithGoToActivityByNameFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CreateActivityGroupWithGoToActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
-            Activity sourceActivity = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.GoToActivityByName);
-            string targetActivityName = sourceActivity
-                .Acts
-                .SelectMany(act => act.FlowControls)
-                .First(fc => fc.FlowControlAction == eFlowControlAction.GoToActivityByName)
-                .GetNameFromValue();
-            Activity targetActivity = activityGroup
-                .ActivitiesIdentifiers
-                .Select(iden => iden.IdentifiedActivity)
-                .First(a => string.Equals(a.ActivityName, targetActivityName));
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
 
             Collaboration collaboration = creator.Create();
 
-            Process firstProcess = collaboration.Participants.First().Process;
-            Task targetActivityTask = firstProcess.GetChildEntitiesByType<Task>().First(t => t.Guid == targetActivity.Guid);
-            ExclusiveGateway firstExclusiveGateway = firstProcess.GetChildEntitiesByType<ExclusiveGateway>().First();
-            IEnumerable<SequenceFlow> outgoingSequenceFlowsFromExclusiveGateway = firstExclusiveGateway.OutgoingFlows
-                .Where(of => of is SequenceFlow)
-                .Cast<SequenceFlow>();
-            Assert.IsTrue(outgoingSequenceFlowsFromExclusiveGateway.Any(sf => SequenceFlowReachesTargetProcessEntity(sf, targetActivityTask)));
+            Process process = collaboration.Participants.First().Process;
+            Task nextActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == nextActivity.Guid);
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Flow? flowFromGatewayToNextActivityTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == nextActivityTask);
+            Assert.IsNotNull(flowFromGatewayToNextActivityTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to {nameof(Task)} of next {nameof(Activity)}.");
         }
 
         [TestMethod]
-        public void Create_ActivityGroupWithGotoActivityByNameFlowControl_SequenceFlowGoesToNextActivityTask()
+        public void Create_WithGoToActivityFlowControl_HasConditionalTask()
+        {
+            CreateActivityGroupWithGoToActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(f => f.Conditions.Any());
+            Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
+        }
+
+        [TestMethod]
+        public void Create_WithGoToActivityFlowControl_ExclusiveGatewayDirectsToConditionalTask()
+        {
+            CreateActivityGroupWithGoToActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
+            Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithGoToActivityFlowControl_ConditionalTaskDirectsToTargetActivityTask()
+        {
+            CreateActivityGroupWithGoToActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.GoToActivity);
+            FlowControl flowControl = activityWithFlowControl.Acts.SelectMany(a => a.FlowControls).First();
+            Guid targetActivityGuid = flowControl.GetGuidFromValue();
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == targetActivityGuid);
+            Flow? flowFromConditionalTaskToTargetActivityTask = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == targetActivityTask);
+            Assert.IsNotNull(flowFromConditionalTaskToTargetActivityTask, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to target {nameof(Activity)} {nameof(Task)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithGotoActivityByNameFlowControl_HasExclusiveGateway()
+        {
+            CreateActivityGroupWithGoToActivityByNameFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway? exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().FirstOrDefault();
+            Assert.IsNotNull(exclusiveGateway, $"No {nameof(ExclusiveGateway)} found.");
+        }
+
+        [TestMethod]
+        public void Create_WithGotoActivityByNameFlowControl_HasTaskForActivityWithFlowControl()
+        {
+            CreateActivityGroupWithGoToActivityByNameFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.GoToActivityByName);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == activityWithFlowControl.Guid);
+            Assert.IsNotNull(taskForActivityWithFlowControl, $"No {nameof(Task)} found for {nameof(Activity)} with {nameof(FlowControl)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithGotoActivityByNameFlowControl_TaskOfActivityWithFlowControlDirectsToExclusiveGateway()
+        {
+            CreateActivityGroupWithGoToActivityByNameFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.GoToActivityByName);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().First(t => t.Guid == activityWithFlowControl.Guid);
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Flow? flowFromTaskToGateway = taskForActivityWithFlowControl.OutgoingFlows.FirstOrDefault(f => f.Target == exclusiveGateway);
+            Assert.IsNotNull(taskForActivityWithFlowControl, $"No outgoing {nameof(Flow)} found from {nameof(Task)} of {nameof(Activity)} with {nameof(FlowControl)} to {nameof(ExclusiveGateway)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithGotoActivityByNameFlowControl_HasTaskForNextActivity()
         {
             CreateActivityGroupWithGoToActivityByNameFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
@@ -287,13 +453,605 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Collaboration collaboration = creator.Create();
 
-            Process firstProcess = collaboration.Participants.First().Process;
-            Task nextActivityTask = firstProcess.GetChildEntitiesByType<Task>().First(t => t.Guid == nextActivity.Guid);
-            ExclusiveGateway firstExclusiveGateway = firstProcess.GetChildEntitiesByType<ExclusiveGateway>().First();
-            IEnumerable<SequenceFlow> outgoingSequenceFlowsFromExclusiveGateway = firstExclusiveGateway.OutgoingFlows
-                .Where(of => of is SequenceFlow)
-                .Cast<SequenceFlow>();
-            Assert.IsTrue(outgoingSequenceFlowsFromExclusiveGateway.Any(sf => SequenceFlowReachesTargetProcessEntity(sf, nextActivityTask)));
+            Process process = collaboration.Participants.First().Process;
+            Task? nextActivityTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == nextActivity.Guid);
+            Assert.IsNotNull(nextActivityTask, $"No {nameof(Task)} found for next {nameof(Activity)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithGotoActivityByNameFlowControl_ExclusiveGatewayDirectsToNextActivityTask()
+        {
+            CreateActivityGroupWithGoToActivityByNameFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task nextActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == nextActivity.Guid);
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Flow? flowFromGatewayToNextActivityTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == nextActivityTask);
+            Assert.IsNotNull(flowFromGatewayToNextActivityTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to {nameof(Task)} of next {nameof(Activity)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithGotoActivityByNameFlowControl_HasConditionalTask()
+        {
+            CreateActivityGroupWithGoToActivityByNameFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(f => f.Conditions.Any());
+            Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
+        }
+
+        [TestMethod]
+        public void Create_WithGotoActivityByNameFlowControl_ExclusiveGatewayDirectsToConditionalTask()
+        {
+            CreateActivityGroupWithGoToActivityByNameFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
+            Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithGotoActivityByNameFlowControl_ConditionalTaskDirectsToTargetActivityTask()
+        {
+            CreateActivityGroupWithGoToActivityByNameFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.GoToActivityByName);
+            FlowControl flowControl = activityWithFlowControl.Acts.SelectMany(a => a.FlowControls).First();
+            string targetActivityName = flowControl.GetNameFromValue();
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => string.Equals(t.Name, targetActivityName));
+            Flow? flowFromConditionalTaskToTargetActivityTask = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == targetActivityTask);
+            Assert.IsNotNull(flowFromConditionalTaskToTargetActivityTask, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to target {nameof(Activity)} {nameof(Task)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithGotoActivityByNameFlowControlNoTargetActivityFoundByName_ThrowsBPMNConversionException()
+        {
+            CreateActivityGroupWithGoToActivityByNameFlowControlWithInvalidTargetName(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Assert.ThrowsException<BPMNConversionException>(() => creator.Create(), $"Expected to throw {nameof(BPMNConversionException)} because no {nameof(Activity)} was found by name in shared repository.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopBusinessFlowFlowControl_HasExclusiveGateway()
+        {
+            CreateActivityGroupWithStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.StopBusinessFlow);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway? exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().FirstOrDefault();
+            Assert.IsNotNull(exclusiveGateway, $"No {nameof(ExclusiveGateway)} found in process.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopBusinessFlowFlowControl_TaskOfActivityWithFlowControlDirectsToExclusiveGateway()
+        {
+            CreateActivityGroupWithStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.StopBusinessFlow);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Task taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().First(t => t.Guid == activityWithFlowControl.Guid);
+            Flow? flowFromFlowControlTaskToGateway = taskForActivityWithFlowControl.OutgoingFlows.FirstOrDefault(f => f.Target == exclusiveGateway);
+            Assert.IsNotNull(flowFromFlowControlTaskToGateway, $"No Outgoing {nameof(Flow)} found from {nameof(Task)} of {nameof(Activity)} with {nameof(FlowControl)} to {nameof(ExclusiveGateway)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopBusinessFlowFlowControl_ExclusiveGatewayDirectsToNextActivityTask()
+        {
+            CreateActivityGroupWithStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Task nextActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == nextActivity.Guid);
+            Flow? flowFromFlowControlTaskToGateway = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == nextActivityTask);
+            Assert.IsNotNull(flowFromFlowControlTaskToGateway, $"No Outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to {nameof(Task)} of next {nameof(Activity)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopBusinessFlowFlowControl_HasConditionalTask()
+        {
+            CreateActivityGroupWithStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Conditions.Any());
+            Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} is found.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopBusinessFlowFlowControl_ExclusiveGatewayDirectsToConditionalTask()
+        {
+            CreateActivityGroupWithStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
+            Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopBusinessFlowFlowControl_HasEndEventOfTypeTermination()
+        {
+            CreateActivityGroupWithStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            EndEvent? endEvent = process.EndEvents.FirstOrDefault(e => e.EndEventType == EndEventType.Termination);
+            Assert.IsNotNull(endEvent, $"No {nameof(EndEvent)} found with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Termination)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopBusinessFlowFlowControl_ConditionalTaskDirectsToTerminationEndEvent()
+        {
+            CreateActivityGroupWithStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            EndEvent terminationEndEvent = process.EndEvents.First(e => e.EndEventType == EndEventType.Termination);
+            Flow? flowFromConditionalTaskToEndEvent = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == terminationEndEvent);
+            Assert.IsNotNull(flowFromConditionalTaskToEndEvent, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to {nameof(EndEvent)} with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Termination)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopRunFlowControl_HasExclusiveGateway()
+        {
+            CreateActivityGroupWithStopRunFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway? exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().FirstOrDefault();
+            Assert.IsNotNull(exclusiveGateway, $"No {nameof(ExclusiveGateway)} found.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopRunFlowControl_HasTaskForActivityWithFlowControl()
+        {
+
+            CreateActivityGroupWithStopRunFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.StopRun);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == activityWithFlowControl.Guid);
+            Assert.IsNotNull(taskForActivityWithFlowControl, $"No {nameof(Task)} found for {nameof(Activity)} with {nameof(FlowControl)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopRunFlowControl_TaskOfActivityWithFlowControlDirectsToExclusiveGateway()
+        {
+            CreateActivityGroupWithStopRunFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.StopRun);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().First(t => t.Guid == activityWithFlowControl.Guid);
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Flow? flowFromTaskToGateway = taskForActivityWithFlowControl.OutgoingFlows.FirstOrDefault(f => f.Target == exclusiveGateway);
+            Assert.IsNotNull(flowFromTaskToGateway, $"No outgoing {nameof(Flow)} found from {nameof(Task)} of {nameof(Activity)} with {nameof(FlowControl)} to {nameof(ExclusiveGateway)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopRunFlowControl_HasTaskForNextActivity()
+        {
+            CreateActivityGroupWithStopRunFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? nextActivityTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == nextActivity.Guid);
+            Assert.IsNotNull(nextActivityTask, $"No {nameof(Task)} found for next {nameof(Activity)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopRunFlowControl_ExclusiveGatewayDirectsToNextActivityTask()
+        {
+            CreateActivityGroupWithStopRunFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task nextActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == nextActivity.Guid);
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Flow? flowFromTaskToGateway = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == nextActivityTask);
+            Assert.IsNotNull(flowFromTaskToGateway, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to {nameof(Task)} of next {nameof(Activity)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopRunFlowControl_HasConditionalTask()
+        {
+            CreateActivityGroupWithStopRunFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopRunFlowControl_ExclusiveGatewayDirectsToConditionalTask()
+        {
+            CreateActivityGroupWithStopRunFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.First(f => f.Target == conditionalTask);
+            Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopRunFlowControl_HasEndEventOfTypeTermination()
+        {
+            CreateActivityGroupWithStopRunFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            EndEvent? terminationEndEvent = process.EndEvents.FirstOrDefault(e => e.EndEventType == EndEventType.Termination);
+            Assert.IsNotNull(terminationEndEvent, $"No {nameof(EndEvent)} found with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Termination)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithStopRunFlowControl_ConditionalTaskDirectsToTerminationEndEvent()
+        {
+            CreateActivityGroupWithStopRunFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            EndEvent? terminationEndEvent = process.EndEvents.FirstOrDefault(e => e.EndEventType == EndEventType.Termination);
+            Flow? flowFromConditionalTaskToEndEvent = conditionalTask.OutgoingFlows.First(f => f.Target == terminationEndEvent);
+            Assert.IsNotNull(flowFromConditionalTaskToEndEvent, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to {nameof(EndEvent)} with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Termination)}.");
+        }
+
+        [TestMethod] 
+        public void Create_WithFailActionAndStopBusinessFlowFlowControl_HasExclusiveGateway()
+        {
+            CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway? exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().FirstOrDefault();
+            Assert.IsNotNull(exclusiveGateway, $"No {nameof(ExclusiveGateway)} found.");
+        }
+        
+        [TestMethod] 
+        public void Create_WithFailActionAndStopBusinessFlowFlowControl_HasTaskForActivityWithFlowControl()
+        {
+            CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.FailActionAndStopBusinessFlow);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == activityWithFlowControl.Guid);
+            Assert.IsNotNull(taskForActivityWithFlowControl, $"No {nameof(Task)} found for {nameof(Activity)} with {nameof(FlowControl)}.");
+        }
+        
+        [TestMethod] 
+        public void Create_WithFailActionAndStopBusinessFlowFlowControl_TaskOfActivityWithFlowControlDirectsToExclusiveGateway()
+        {
+            CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.FailActionAndStopBusinessFlow);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().First(t => t.Guid == activityWithFlowControl.Guid);
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Flow? flowFromTaskToGateway = taskForActivityWithFlowControl.OutgoingFlows.FirstOrDefault(f => f.Target == exclusiveGateway);
+            Assert.IsNotNull(taskForActivityWithFlowControl, $"No outgoing {nameof(Flow)} found from {nameof(Task)} of {nameof(Activity)} with {nameof(FlowControl)} to {nameof(ExclusiveGateway)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithFailActionAndStopBusinessFlowFlowControl_HasTaskForNextActivity()
+        {
+            CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? nextActivityTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == nextActivity.Guid);
+            Assert.IsNotNull(nextActivityTask, $"No {nameof(Task)} found for next {nameof(Activity)}.");
+        }
+
+        [TestMethod] 
+        public void Create_WithFailActionAndStopBusinessFlowFlowControl_ExclusiveGatewayDirectsToNextActivityTask()
+        {
+            CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task nextActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == nextActivity.Guid);
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Flow? flowFromGatewayToNextActivityTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == nextActivityTask);
+            Assert.IsNotNull(flowFromGatewayToNextActivityTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to {nameof(Task)} of next {nameof(Activity)}.");
+        }
+        
+        [TestMethod] 
+        public void Create_WithFailActionAndStopBusinessFlowFlowControl_HasConditionalTask()
+        {
+            CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(f => f.Conditions.Any());
+            Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
+        }
+        
+        [TestMethod] 
+        public void Create_WithFailActionAndStopBusinessFlowFlowControl_ExclusiveGatewayDirectsToConditionalTask()
+        {
+            CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
+            Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
+        }
+        
+        [TestMethod] 
+        public void Create_WithFailActionAndStopBusinessFlowFlowControl_HasEndEventOfTypeError()
+        {
+            CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            EndEvent? errorEndEvent = process.EndEvents.FirstOrDefault(e => e.EndEventType == EndEventType.Error);
+            Assert.IsNotNull(errorEndEvent, $"No {nameof(EndEvent)} found with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Error)}.");
+        }
+        
+        [TestMethod] 
+        public void Create_WithFailActionAndStopBusinessFlowFlowControl_ConditionalTaskDirectsToErrorEndEvent()
+        {
+            CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            EndEvent errorEndEvent = process.EndEvents.First(e => e.EndEventType == EndEventType.Error);
+            Flow? flowFromConditionalTaskToEndEvent = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == errorEndEvent);
+            Assert.IsNotNull(flowFromConditionalTaskToEndEvent, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to {nameof(EndEvent)} with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Error)}.");
+        }
+
+        [TestMethod] 
+        public void Create_WithRunSharedRepositoryActivityFlowControl_HasExclusiveGateway()
+        {
+            CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway? exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().FirstOrDefault();
+            Assert.IsNotNull(exclusiveGateway, $"No {nameof(ExclusiveGateway)} found.");
+        }
+
+        [TestMethod] 
+        public void Create_WithRunSharedRepositoryActivityFlowControl_HasTaskForActivityWithFlowControl()
+        {
+            CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.RunSharedRepositoryActivity);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == activityWithFlowControl.Guid);
+            Assert.IsNotNull(taskForActivityWithFlowControl, $"No {nameof(Task)} found for {nameof(Activity)} with {nameof(FlowControl)}.");
+        }
+
+        [TestMethod] 
+        public void Create_WithRunSharedRepositoryActivityFlowControl_TaskOfActivityWithFlowControlDirectsToExclusiveGateway()
+        {
+            CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.RunSharedRepositoryActivity);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().First(t => t.Guid == activityWithFlowControl.Guid);
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Flow? flowFromTaskToGateway = taskForActivityWithFlowControl.OutgoingFlows.FirstOrDefault(f => f.Target == exclusiveGateway);
+            Assert.IsNotNull(flowFromTaskToGateway, $"No outgoing {nameof(Flow)} found from {nameof(Task)} of {nameof(Activity)} with {nameof(FlowControl)} to {nameof(ExclusiveGateway)}.");
+        }
+
+        [TestMethod] 
+        public void Create_WithRunSharedRepositoryActivityFlowControl_HasTaskForNextActivity()
+        {
+            CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? nextActivityTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == nextActivity.Guid);
+            Assert.IsNotNull(nextActivityTask, $"No {nameof(Task)} found for next {nameof(Activity)}.");
+        }
+
+        [TestMethod] 
+        public void Create_WithRunSharedRepositoryActivityFlowControl_ExclusiveGatewayDirectsToNextActivityTask()
+        {
+            CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Task nextActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == nextActivity.Guid);
+            Flow? flowFromGatewayToNextActivityTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == nextActivityTask);
+            Assert.IsNotNull(flowFromGatewayToNextActivityTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to next {nameof(Activity)} {nameof(Task)}.");
+        }
+
+        [TestMethod] 
+        public void Create_WithRunSharedRepositoryActivityFlowControl_HasConditionalTask()
+        {
+            CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Conditions.Any());
+            Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
+        }
+
+        [TestMethod] 
+        public void Create_WithRunSharedRepositoryActivityFlowControl_ExclusiveGatewayDirectsToConditionalTask()
+        {
+            CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
+            Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
+        }
+
+        [TestMethod] 
+        public void Create_WithRunSharedRepositoryActivityFlowControl_HasTargetActivityTask()
+        {
+            CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.RunSharedRepositoryActivity);
+            FlowControl flowControl = activityWithFlowControl.Acts.SelectMany(a => a.FlowControls).First();
+            string targetActivityName = flowControl.GetNameFromValue();
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? targetActivityTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => string.Equals(t.Name, targetActivityName));
+            Assert.IsNotNull(targetActivityTask, $"No {nameof(Task)} found for target {nameof(Activity)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithRunSharedRepositoryActivityFlowControl_ConditionalTaskDirectsToTargetActivityTask()
+        {
+            CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.RunSharedRepositoryActivity);
+            FlowControl flowControl = activityWithFlowControl.Acts.SelectMany(a => a.FlowControls).First();
+            string targetActivityName = flowControl.GetNameFromValue();
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => string.Equals(t.Name, targetActivityName));
+            Flow? flowFromConditionalTaskToTargetActivityTask = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == targetActivityTask);
+            Assert.IsNotNull(flowFromConditionalTaskToTargetActivityTask, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to target {nameof(Activity)} {nameof(Task)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithRunSharedRepositoryActivityFlowControl_TargetActivityTaskDirectsToNextActivityTask()
+        {
+            CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.RunSharedRepositoryActivity);
+            FlowControl flowControl = activityWithFlowControl.Acts.SelectMany(a => a.FlowControls).First();
+            string targetActivityName = flowControl.GetNameFromValue();
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => string.Equals(t.Name, targetActivityName));
+            Task nextActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == nextActivity.Guid);
+            Flow? flowFromTargetActivityTaskToNextActivityTask = targetActivityTask.OutgoingFlows.FirstOrDefault(f => f.Target == nextActivityTask);
+            Assert.IsNotNull(flowFromTargetActivityTaskToNextActivityTask, $"No outgoing {nameof(Flow)} found from target {nameof(Activity)} {nameof(Task)} to next {nameof(Activity)} {nameof(Task)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithRunSharedRepositoryActivityFlowControlNoTargetActivityFoundByName_ThrowsBPMNConversionException()
+        {
+            CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControlWithInvalidTargetName(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Assert.ThrowsException<BPMNConversionException>(() => creator.Create(), $"Expected to throw {nameof(BPMNConversionException)} because no {nameof(Activity)} was found by name in shared repository.");
         }
 
         private void CreateActivityGroupWithRerunActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
@@ -461,6 +1219,335 @@ namespace GingerCoreNETUnitTest.BPMN
             });
             solutionFacade = solutionFacadeMock.Object;
         }
+
+        private void CreateActivityGroupWithGoToActivityByNameFlowControlWithInvalidTargetName(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
+        {
+            ObservableList<ApplicationPlatform> applicationPlatforms = new()
+            {
+                new ApplicationPlatform()
+                {
+                    AppName = "MyWebApp",
+                    Platform = ePlatformType.Web
+                }
+            };
+            activityGroup = new();
+            Activity activity1 = new()
+            {
+                ActivityName = "Activity 1",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName,
+                Acts = new ObservableList<IAct>()
+                {
+                    new ActDummy()
+                    {
+                        FlowControls = new ObservableList<FlowControl>()
+                        {
+                            new FlowControl()
+                            {
+                                FlowControlAction = eFlowControlAction.GoToActivityByName,
+                                Condition = "true",
+                                Operator = eFCOperator.CSharp,
+                                Value = "NonExistentActivityName"
+                            }
+                        }
+                    }
+                }
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
+            Activity activity2 = new()
+            {
+                ActivityName = "Activitiy 2",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity2 });
+            Activity activity3 = new()
+            {
+                ActivityName = "Activitiy 3",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity3 });
+            Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
+            solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2, activity3 });
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
+            {
+                new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
+            });
+            solutionFacade = solutionFacadeMock.Object;
+        }
+
+        private void CreateActivityGroupWithStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
+        {
+            ObservableList<ApplicationPlatform> applicationPlatforms = new()
+            {
+                new ApplicationPlatform()
+                {
+                    AppName = "MyWebApp",
+                    Platform = ePlatformType.Web
+                }
+            };
+
+            activityGroup = new();
+            Activity activity1 = new()
+            {
+                ActivityName = "Activity 1",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName,
+                Acts = new ObservableList<IAct>()
+                {
+                    new ActDummy()
+                    {
+                        FlowControls = new ObservableList<FlowControl>()
+                        {
+                            new FlowControl()
+                            {
+                                FlowControlAction = eFlowControlAction.StopBusinessFlow,
+                                Condition = "true",
+                                Operator = eFCOperator.CSharp
+                            }
+                        }
+                    }
+                }
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
+            Activity activity2 = new()
+            {
+                ActivityName = "Activitiy 2",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity2 });
+
+            Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
+            solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2 });
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
+            {
+                new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
+            });
+            solutionFacade = solutionFacadeMock.Object;
+        }
+
+        private void CreateActivityGroupWithStopRunFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
+        {
+            ObservableList<ApplicationPlatform> applicationPlatforms = new()
+            {
+                new ApplicationPlatform()
+                {
+                    AppName = "MyWebApp",
+                    Platform = ePlatformType.Web
+                }
+            };
+
+            activityGroup = new();
+            Activity activity1 = new()
+            {
+                ActivityName = "Activity 1",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName,
+                Acts = new ObservableList<IAct>()
+                {
+                    new ActDummy()
+                    {
+                        FlowControls = new ObservableList<FlowControl>()
+                        {
+                            new FlowControl()
+                            {
+                                FlowControlAction = eFlowControlAction.StopRun,
+                                Condition = "true",
+                                Operator = eFCOperator.CSharp
+                            }
+                        }
+                    }
+                }
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
+            Activity activity2 = new()
+            {
+                ActivityName = "Activitiy 2",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity2 });
+
+            Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
+            solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2 });
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
+            {
+                new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
+            });
+            solutionFacade = solutionFacadeMock.Object;
+        }
+
+        private void CreateActivityGroupWithFailActionAndStopBusinessFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
+        {
+            ObservableList<ApplicationPlatform> applicationPlatforms = new()
+            {
+                new ApplicationPlatform()
+                {
+                    AppName = "MyWebApp",
+                    Platform = ePlatformType.Web
+                }
+            };
+
+            activityGroup = new();
+            Activity activity1 = new()
+            {
+                ActivityName = "Activity 1",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName,
+                Acts = new ObservableList<IAct>()
+                {
+                    new ActDummy()
+                    {
+                        FlowControls = new ObservableList<FlowControl>()
+                        {
+                            new FlowControl()
+                            {
+                                FlowControlAction = eFlowControlAction.FailActionAndStopBusinessFlow,
+                                Condition = "true",
+                                Operator = eFCOperator.CSharp
+                            }
+                        }
+                    }
+                }
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
+            Activity activity2 = new()
+            {
+                ActivityName = "Activitiy 2",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity2 });
+
+            Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
+            solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2 });
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
+            {
+                new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
+            });
+            solutionFacade = solutionFacadeMock.Object;
+        }
+
+        private void CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
+        {
+            ObservableList<ApplicationPlatform> applicationPlatforms = new()
+            {
+                new ApplicationPlatform()
+                {
+                    AppName = "MyWebApp",
+                    Platform = ePlatformType.Web
+                }
+            };
+            Activity activityFromSharedRepository = new()
+            {
+                ActivityName = "ActivityFromSharedRepository",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName
+            };
+
+            activityGroup = new();
+            Activity activity1 = new()
+            {
+                ActivityName = "Activity 1",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName,
+                Acts = new ObservableList<IAct>()
+                {
+                    new ActDummy()
+                    {
+                        FlowControls = new ObservableList<FlowControl>()
+                        {
+                            new FlowControl()
+                            {
+                                FlowControlAction = eFlowControlAction.RunSharedRepositoryActivity,
+                                Condition = "true",
+                                Operator = eFCOperator.CSharp,
+                                Value = activityFromSharedRepository.ActivityName
+                            }
+                        }
+                    }
+                }
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
+            Activity activity2 = new()
+            {
+                ActivityName = "Activitiy 2",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity2 });
+            
+
+            Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
+            solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2, activityFromSharedRepository });
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
+            {
+                new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
+            });
+            solutionFacade = solutionFacadeMock.Object;
+        }
+
+        private void CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControlWithInvalidTargetName(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
+        {
+            ObservableList<ApplicationPlatform> applicationPlatforms = new()
+            {
+                new ApplicationPlatform()
+                {
+                    AppName = "MyWebApp",
+                    Platform = ePlatformType.Web
+                }
+            };
+
+            activityGroup = new();
+            Activity activity1 = new()
+            {
+                ActivityName = "Activity 1",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName,
+                Acts = new ObservableList<IAct>()
+                {
+                    new ActDummy()
+                    {
+                        FlowControls = new ObservableList<FlowControl>()
+                        {
+                            new FlowControl()
+                            {
+                                FlowControlAction = eFlowControlAction.RunSharedRepositoryActivity,
+                                Condition = "true",
+                                Operator = eFCOperator.CSharp,
+                                Value = "NonExistentActivityName"
+                            }
+                        }
+                    }
+                }
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
+            Activity activity2 = new()
+            {
+                ActivityName = "Activitiy 2",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity2 });
+
+
+            Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
+            solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2 });
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
+            {
+                new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
+            });
+            solutionFacade = solutionFacadeMock.Object;
+        }
+
 
         private Activity GetActivityWithFlowControlActionType(ActivitiesGroup activityGroup, eFlowControlAction flowControlAction)
         {

@@ -285,7 +285,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             Activity? targetActivity = _solutionFacade.GetActivitiesFromSharedRepository().FirstOrDefault(a => string.Equals(a.ActivityName, targetActivityName));
             if(targetActivity == null)
             {
-                throw new BPMNSerializationException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found in shared repository by name {targetActivityName}.");
+                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found in shared repository by name {targetActivityName}.");
             }
 
             Task targetActivityTask = _activityParticipant.Process.AddTask<Task>(name: targetActivityName);

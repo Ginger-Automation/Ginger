@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.BPMN.Exceptions
 {
-    public class BPMNConversionException : BPMNException
+    public class BPMNException : Exception
     {
-        public BPMNConversionException(string message) : base(message) { }
+        public BPMNException(string message) : base(message) { }
     }
 }
