@@ -48,11 +48,9 @@ namespace Ginger.ConflictResolve
         {
             ResolveMergeConflictWizard wizard = (ResolveMergeConflictWizard)WizardEventArgs.Wizard;
 
-            switch(WizardEventArgs.EventType)
+            if (WizardEventArgs.EventType == EventType.Active)
             {
-                case EventType.Active:
-                    OnWizardActivePage(wizard);
-                    break;
+                OnWizardActivePage(wizard);
             }
         }
 
