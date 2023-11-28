@@ -376,6 +376,21 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
         public Dictionary<string, int> ChildPassedItemsCount { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID 2")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID2 { get; set; }
+
         public LiteDbBusinessFlow()
         {
             ActivitiesGroupsColl = new List<LiteDbActivityGroup>();
@@ -402,6 +417,9 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             SolutionVariablesBeforeExec = bfReport.SolutionVariablesBeforeExec;
             SolutionVariablesAfterExec = bfReport.SolutionVariablesAfterExec;
             BFFlowControlDT = bfReport.BFFlowControls;
+            ExternalID = bfReport.ExternalID;
+            ExternalID2 = bfReport.ExternalID2;
+
         }
     }
 
