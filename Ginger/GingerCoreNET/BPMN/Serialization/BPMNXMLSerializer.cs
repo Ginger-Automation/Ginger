@@ -357,7 +357,6 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
         private XmlElement CreateCommonTaskExtensionElements(XmlDocument xmlDocument, Task task)
         {
             XmlElement extensionElements = xmlDocument.CreateElement(BPMN_XML_PREFIX, "extensionElements", BPMN_XML_URI);
-            //extensionElements.SetAttribute("xmlns", BPMN_XML_URI);
 
             XmlElement? inputOutputElement = CreateCommonTaskInputOutputElement(xmlDocument, task);
             if (inputOutputElement != null)

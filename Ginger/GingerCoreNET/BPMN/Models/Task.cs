@@ -95,7 +95,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
         {
             public string NameFieldTag { get; }
 
-            public Condition(string nameFieldTag)
+            protected Condition(string nameFieldTag)
             {
                 NameFieldTag = nameFieldTag;
             }
