@@ -340,7 +340,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                             mSetTreeNodeItemChildsEvent.Set();
                             if (tviChildNodesLoadTaskMap.ContainsKey(TVI))
                             {
-                                tviChildNodesLoadTaskMap.Remove(TVI);
+                                tviChildNodesLoadTaskMap[TVI] = setChildItemsTask;
+                            }
+                            else
+                            {
+                                tviChildNodesLoadTaskMap.Add(TVI, setChildItemsTask);
                             }
                         }
                         catch(Exception ex)
@@ -348,7 +352,6 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                             Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
                         }
                     });
-                    tviChildNodesLoadTaskMap.Add(TVI, setChildItemsTask);
                 }
             }
 
@@ -450,7 +453,6 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (TVI != null)
             {
                 TVI.Items.Clear();
-                SetTreeNodeItemChilds(TVI);
                 TVI.IsExpanded = true;
             }
         }

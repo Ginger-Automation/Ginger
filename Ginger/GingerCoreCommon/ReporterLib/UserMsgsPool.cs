@@ -145,7 +145,7 @@ namespace Amdocs.Ginger.Common
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, RunSetNotExecuted, OperationNotSupported, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, SaveAllModifiedItems, CopiedErrorInfo, RepositoryNameCantEmpty,
-        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
+        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, InvalidYAML, InvalidJSON,  DuplicateRunsetName,
         POMElementNotExist, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped, SavePOMChanges,
         AskIfToUndoChanges, AskIfToUndoItemChanges, AskIfToImportFile, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification, WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
@@ -756,6 +756,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.ALMDefectsUserInOtaAPI, new UserMsg(eUserMsgType.INFO, "ALM Defects Valid for Rest API only", "You are in ALM Ota API mode, Please change to Rest API", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.NoSelectedDefect, new UserMsg(eUserMsgType.INFO, "ALM Defects Opening", "Their is no selected Defect", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AllSelectedDefectAlreadyCreatedInAlm, new UserMsg(eUserMsgType.INFO, "ALM Defects Opening", "All Defect are already created in ALM", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidYAML, new UserMsg(eUserMsgType.INFO,"Invalid YAML File", "Provided YAML file has got errors, please verify the YAML document", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidJSON, new UserMsg(eUserMsgType.INFO,"Invalid JSON File", "Provided JSON file has got errors, please verify the JSON document", eUserMsgOption.OK, eUserMsgSelection.None));
 
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToDownloadPossibleValuesShortProcesss, new UserMsg(eUserMsgType.QUESTION, "ALM External Items Fields", "Would you like to download and save possible values for Categories Items? ", eUserMsgOption.YesNo, eUserMsgSelection.No));
