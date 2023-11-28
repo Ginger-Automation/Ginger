@@ -48,7 +48,7 @@
                     <ColumnDefinition x:Name="xDetailsCol" Width="100*"/>
                 </Grid.ColumnDefinitions>
 
-                <Border x:Name="xItemIndexBorder" Grid.RowSpan="1" Grid.Column="0" >
+                <Border x:Name="xItemIndexBorder"  Grid.Column="0" >
                     <Border.Style>
                         <Style TargetType="Border">
                             <Setter Property="Background" Value="Transparent"/>
@@ -89,7 +89,7 @@
                 </Border>
 
                 <Border Grid.RowSpan="2" Grid.Column="1">
-                    <usercontrols:ucButton x:Name="xExpandCollapseBtn" ButtonType="ImageButton"  ButtonFontImageSize="7" ButtonImageWidth="5" ButtonImageHeight="5" ButtonImageType="Expand" ButtonImageForground="Gray" Click="xExpandCollapseBtn_Click" VerticalAlignment="Top" HorizontalAlignment="Center" Visibility="Visible" ToolTip="Expand" Margin="-5,-13,0,0" Padding="0,0,0,0"/>
+                    <usercontrols:ucButton x:Name="xExpandCollapseBtn" ButtonType="ImageButton"  ButtonFontImageSize="7" ButtonImageWidth="5" ButtonImageHeight="5" ButtonImageType="Expand" ButtonImageForground="Gray" Click="xExpandCollapseBtn_Click" VerticalAlignment="Top" HorizontalAlignment="Right" Visibility="Visible" ToolTip="Expand" Margin="-5,-13,0,0" Padding="0,0,0,0"/>
                 </Border>
 
                 <Border x:Name="xIdentifierBorder" Grid.RowSpan="1" Grid.Column="2" BorderBrush="Transparent" Margin="0,0,0,10"/>

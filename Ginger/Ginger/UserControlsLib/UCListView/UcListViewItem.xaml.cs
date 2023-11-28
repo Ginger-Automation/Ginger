@@ -160,6 +160,12 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     ExpandItem();
                 }
+
+                if (ListHelper.ShowIndex == false)
+                {
+                    xIndexCol.Width = new GridLength(0);
+                    xExpandCollapseCol.Width = new GridLength(20);
+                }
             }
         }
 

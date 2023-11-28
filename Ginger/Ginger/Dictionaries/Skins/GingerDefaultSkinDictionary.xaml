@@ -1562,11 +1562,11 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="false">
                             <Setter  TargetName="Border"  Property="BorderBrush" Value="{StaticResource $BackgroundColor_Black}" />
-                            <Setter  TargetName="Border"  Property="BorderThickness" Value="1" />
+                            <Setter  TargetName="Border"  Property="BorderThickness" Value="0" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
                             <Setter  TargetName="Border"  Property="BorderBrush" Value="{DynamicResource $amdocsLogoLinarGradientBrush}" />
-                            <Setter  TargetName="Border"  Property="BorderThickness" Value="1" />
+                            <Setter  TargetName="Border"  Property="BorderThickness" Value="0" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1615,7 +1615,7 @@
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
-                            <Setter TargetName="Border" Property="BorderThickness" Value="1"/>
+                            <Setter TargetName="Border" Property="BorderThickness" Value="0,0,0,2"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

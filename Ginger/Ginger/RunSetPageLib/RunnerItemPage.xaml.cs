@@ -225,7 +225,7 @@ namespace Ginger.Run
                 if (ItemObject.GetType() == typeof(GingerCore.BusinessFlow))
                 {
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(BusinessFlow.RunStatus), BindingMode.OneWay);
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(BusinessFlow.RunStatus), bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
+                    //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(BusinessFlow.RunStatus), bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBusinessflowActive, ucButton.ButtonImageTypeProperty, ItemObject, nameof(BusinessFlow.Active), bindingConvertor: new ActiveIconConverter(), BindingMode.TwoWay);
                     ((BusinessFlow)ItemObject).PropertyChanged += RunnerItem_BusinessflowPropertyChanged;
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
@@ -234,7 +234,7 @@ namespace Ginger.Run
                 else if (ItemObject.GetType() == typeof(GingerCore.Activity))
                 {
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(Activity.Status), BindingMode.OneWay);
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(Activity.Status), bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
+                    //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(Activity.Status), bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
                     ((Activity)ItemObject).PropertyChanged += RunnerItem_ActivityPropertyChanged;
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     xViewRunnerItem.ToolTip = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
@@ -243,7 +243,7 @@ namespace Ginger.Run
                 else
                 {
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(Act.Status), BindingMode.OneWay);
-                    GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(Act.Status), bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
+                    //GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(Act.Status), bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
                     ((Act)ItemObject).PropertyChanged += RunnerItem_ActionPropertyChanged;
                     xRunnerItemContinue.ToolTip = "Resume Run from this Action";
                     xViewRunnerItem.ToolTip = "View Action";
@@ -484,7 +484,7 @@ namespace Ginger.Run
             BindingOperations.ClearAllBindings(xDetailView);
 
             BindingOperations.ClearAllBindings(xStatus);
-            BindingOperations.ClearAllBindings(xStatusIcon);
+            //BindingOperations.ClearAllBindings(xStatusIcon);
             BindingOperations.ClearAllBindings(xItemName);
             BindingOperations.ClearAllBindings(xItemDescription);
             BindingOperations.ClearAllBindings(xItemSeparator);

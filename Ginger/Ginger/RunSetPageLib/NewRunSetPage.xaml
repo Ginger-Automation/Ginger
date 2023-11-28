@@ -28,7 +28,7 @@
 
         <Grid Name="xRunsetPageGrid" Background="Transparent" Visibility="Visible" >
             <Grid.RowDefinitions>
-                <RowDefinition Height="115"/>
+                <RowDefinition Height="100"/>
                 <!--<RowDefinition Height="60"/>-->
                 <RowDefinition x:Name="Tabs" Height="500*"/>
             </Grid.RowDefinitions>
@@ -142,7 +142,7 @@
                             </DockPanel>
                         </DockPanel>
                         <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <TextBlock x:Name="xDescriptionTextBlock" DockPanel.Dock="Left" MaxWidth="500" MaxHeight="50"  TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Runset Description" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="13" Style="{StaticResource $TextBlockStyle}"/>
+                            <TextBlock x:Name="xDescriptionTextBlock" DockPanel.Dock="Left" MaxWidth="500" MaxHeight="40"  TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Runset Description" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="13" Style="{StaticResource $TextBlockStyle}"/>
                         </ScrollViewer>
                     </StackPanel>
                 </ScrollViewer>
@@ -195,10 +195,10 @@
                                 </DockPanel>
                             </DockPanel>
 
-                            <Border Grid.Row="1" BorderThickness="1" BorderBrush="Transparent" CornerRadius="20" Background="{StaticResource $BackgroundColor_VeryLightGray}">
-                                <DockPanel  Background="Transparent">
+                            <Border Grid.Row="1" BorderThickness="1" CornerRadius="20" Background="{StaticResource $BackgroundColor_VeryLightGray}" Margin="20,0,20,0">
+                                <DockPanel  Background="Transparent" >
                                     <ScrollViewer Name="xRunnersCanvasView" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                                        <Frame Name="xRunnersCanvasFrame" HorizontalAlignment="Stretch"  Background="Transparent"  Margin="0 0 0 0" />
+                                        <Frame Name="xRunnersCanvasFrame" HorizontalAlignment="Stretch"  Background="Transparent"  Margin="-20 0 0 0" />
                                     </ScrollViewer>
                                     <DockPanel Name="xRunnersMiniView" HorizontalAlignment="Stretch" Panel.ZIndex="1" VerticalAlignment="Stretch"  Background="Transparent" Visibility="Collapsed" >
                                         <ComboBox x:Name="xRunnersCombo" ToolTip="Runners"  Validation.ErrorTemplate="{x:Null}" Width="350" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="40,5,5,3" FontSize="20" FontWeight="Bold" Height="30" Foreground="{StaticResource $SelectionColor_Pink}"></ComboBox>
@@ -221,9 +221,9 @@
                                     <Label x:Name="xRunnerNamelbl" DockPanel.Dock="Top" Margin="40 0 0 0" Content="Runner Name"  HorizontalAlignment="Left" FontSize="20" Foreground="{StaticResource $SelectionColor_Pink}" />
                                     <Grid Name="xRunnerItemsGrid" DockPanel.Dock="Top" Margin="0,5,0,0" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="615"/>
-                                            <ColumnDefinition Width="615"/>
-                                            <ColumnDefinition Width="615"/>
+                                            <ColumnDefinition Width="615*"/>
+                                            <ColumnDefinition Width="615*"/>
+                                            <ColumnDefinition Width="615*"/>
                                         </Grid.ColumnDefinitions>
                                         <Grid x:Name="xBusinessFlowsRunnerItemsGrid" Grid.Column="0" Margin="10,0,0,0"  >
                                             <Grid.RowDefinitions>
@@ -266,7 +266,7 @@
                                                             <GingerCore:ucTextDicResource Text="Move [BusinessFlow] Down"/>
                                                         </usercontrols:ucButton.ToolTip>
                                                     </usercontrols:ucButton>
-                                                    <usercontrols:ucButton x:Name="xBusinessflowsDetailViewBtn" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="14" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="CollapseAll" Click="xBusinessflowsDetailView_Click" Visibility="Visible" >
+                                                    <usercontrols:ucButton x:Name="xBusinessflowsDetailViewBtn" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="CollapseAll" Click="xBusinessflowsDetailView_Click" Visibility="Visible" >
                                                         <usercontrols:ucButton.ToolTip>
                                                             <GingerCore:ucTextDicResource Text="Expand/Collapse All [BusinessFlows]"/>
                                                         </usercontrols:ucButton.ToolTip>
@@ -275,13 +275,15 @@
                                                 </DockPanel>
                                             </DockPanel>
                                             <usercontrols:ImageMakerControl x:Name="xBusinessflowsRunnerItemsLoadingIcon" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />
-                                            <ListView x:Name="xBusinessflowsRunnerItemsListView" MaxHeight="400" Grid.Row="1" Margin="0 0 10 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" SelectionChanged="xBusinessflowListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
-                                                <ListView.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <StackPanel Orientation="Vertical"></StackPanel>
-                                                    </ItemsPanelTemplate>
-                                                </ListView.ItemsPanel>
-                                            </ListView>
+                                            <Border Grid.Row="1" BorderThickness="1" CornerRadius="20" Background="{StaticResource $BackgroundColor_VeryLightGray}" Margin="20,10,20,10">
+                                                <ListView x:Name="xBusinessflowsRunnerItemsListView" MaxHeight="400"  Margin="10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" SelectionChanged="xBusinessflowListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
+                                                    <ListView.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Vertical"></StackPanel>
+                                                        </ItemsPanelTemplate>
+                                                    </ListView.ItemsPanel>
+                                                </ListView>
+                                            </Border>
                                         </Grid>
 
                                         <Grid x:Name="xActivitiesRunnerItemsGrid" Grid.Column="1" Margin="0,0,0,0">
@@ -307,16 +309,18 @@
                                                 </DockPanel>
                                             </DockPanel>
                                             <usercontrols:ImageMakerControl x:Name="xActivitiesRunnerItemsLoadingIcon" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />
-                                            <ListView x:Name="xActivitiesRunnerItemsListView" MaxHeight="400" Grid.Row="1" Margin="0 0 10 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" SelectionChanged="xActivitiesListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
-                                                <ListView.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <StackPanel Orientation="Vertical"></StackPanel>
-                                                    </ItemsPanelTemplate>
-                                                </ListView.ItemsPanel>
-                                            </ListView>
+                                            <Border Grid.Row="1" BorderThickness="1" CornerRadius="20" Background="{StaticResource $BackgroundColor_VeryLightGray}" Margin="20,10,20,10">
+                                                <ListView x:Name="xActivitiesRunnerItemsListView" MaxHeight="400"  Margin="10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" SelectionChanged="xActivitiesListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
+                                                    <ListView.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Vertical"></StackPanel>
+                                                        </ItemsPanelTemplate>
+                                                    </ListView.ItemsPanel>
+                                                </ListView>
+                                            </Border>
                                         </Grid>
 
-                                        <Grid x:Name="xActionsRunnerItemsGrid" Grid.Column="2" Margin="-5,0,0,0">
+                                        <Grid x:Name="xActionsRunnerItemsGrid" Grid.Column="2" Margin="0,0,0,0">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="40" />
                                                 <RowDefinition Height="300*" />
@@ -331,13 +335,15 @@
                                                 </DockPanel>
                                             </DockPanel>
                                             <usercontrols:ImageMakerControl x:Name="xActionsRunnerItemsLoadingIcon" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />
-                                            <ListView x:Name="xActionsRunnerItemsListView" MaxHeight="400" Margin="0 0 10 0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  BorderThickness="0" Background="Transparent"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" SelectionChanged="xActionsListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
-                                                <ListView.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <StackPanel Orientation="Vertical"></StackPanel>
-                                                    </ItemsPanelTemplate>
-                                                </ListView.ItemsPanel>
-                                            </ListView>
+                                            <Border Grid.Row="1" BorderThickness="1" CornerRadius="20" Background="{StaticResource $BackgroundColor_VeryLightGray}" Margin="20,10,20,10">
+                                                <ListView x:Name="xActionsRunnerItemsListView" MaxHeight="400" Margin="10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  BorderThickness="0" Background="Transparent"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" SelectionChanged="xActionsListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
+                                                    <ListView.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Vertical"></StackPanel>
+                                                        </ItemsPanelTemplate>
+                                                    </ListView.ItemsPanel>
+                                                </ListView>
+                                            </Border>
                                         </Grid>
                                     </Grid>
                                 </DockPanel>

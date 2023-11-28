@@ -40,8 +40,8 @@
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
 
-        <Border x:Name="NormalBorder"
-	        BorderBrush="Transparent"
+        <Border x:Name="NormalBorder" Background="White"
+	        BorderBrush="Gray"
 	        BorderThickness="1" CornerRadius="10"	    
                 Margin="0"	
             Grid.RowSpan="7" Grid.ColumnSpan="4" />

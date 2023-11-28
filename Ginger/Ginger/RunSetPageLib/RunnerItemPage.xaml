@@ -18,10 +18,10 @@
             <RowDefinition Height="25"/>
             <RowDefinition Height="0"/>
         </Grid.RowDefinitions>
-        <Border x:Name="NormalBorder"
-	    BorderBrush="{DynamicResource $PrimaryColor_Black}"
+        <Border x:Name="NormalBorder" Background="White"
+	    BorderBrush="Gray"
 	    BorderThickness="1"	                
-        Grid.RowSpan="2" Grid.ColumnSpan="2" Visibility="Collapsed"/>
+        Grid.RowSpan="2" Grid.ColumnSpan="2" CornerRadius="10"/>
 
         <state:BorderStatus x:Name="xBorder" Grid.RowSpan="2"  Grid.ColumnSpan="2" Visibility="Collapsed"></state:BorderStatus>
 
