@@ -625,7 +625,7 @@ namespace Ginger.Run
                 {                   
                     if (((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
                     {
-                        await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig);
+                        await Runners[0].Executor.ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
                     }                  
                 }
 
