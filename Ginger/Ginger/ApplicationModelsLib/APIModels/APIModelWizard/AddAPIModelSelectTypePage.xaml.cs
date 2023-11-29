@@ -244,6 +244,15 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
                 xURLTextBox.Text = string.Empty;
 
+                if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
+                {
+                    YamlNote.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    YamlNote.Visibility = Visibility.Collapsed;
+                }
+
                 if (URLRadioButton.IsChecked == true)
                 {
                     if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString() || (string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString()))
