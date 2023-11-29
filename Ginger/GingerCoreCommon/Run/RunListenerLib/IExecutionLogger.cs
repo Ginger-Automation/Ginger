@@ -46,7 +46,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         // void RunSetUpdate(ObjectId runSetLiteDbId, ObjectId runnerLiteDbId, GingerExecutionEngine gingerRunner);
         void SaveObjToReporsitory(object obj, string FileName = "", bool toAppend = false);
-        Task<bool> SendExecutionLogToCentralDBAsync(ObjectId runsetId, Guid executionId);
         string SetExecutionLogFolder(string executionLogfolder, bool isCleanFile);
         //object SetReportAction(Act action, IContext context, eExecutedFrom executedFrom, bool offlineMode = false);
         //object SetReportActivity(Activity activity, IContext context, bool offlineMode = false, bool isConfEnable = false);
