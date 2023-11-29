@@ -121,7 +121,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             liteDbAction.TimeOut = action.Timeout;
             if (action.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
             {
-                liteDbAction._id = action.LiteDbId;
+                //liteDbAction._id = action.LiteDbId;
+                liteDbAction._id = ObjectId.NewObjectId();
             }
 
             //change the paths to Defect suggestion list
@@ -132,13 +133,12 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
 
             liteDbAction.ScreenShots = action.ScreenShots.ToList();
-            /*
-            isActExsits = liteDbActionList.Any(x => x.GUID == liteDbAction.GUID);
-            if (isActExsits)
-            {
-                liteDbActionList.RemoveAll(x => x.GUID == liteDbAction.GUID);
-            }
-            */
+
+            //isActExsits = liteDbActionList.Any(x => x.GUID == liteDbAction.GUID);
+            //if (isActExsits)
+            //{
+            //    liteDbActionList.RemoveAll(x => x.GUID == liteDbAction.GUID);
+            //}
             liteDbActionList.Add(liteDbAction);
             SaveObjToReporsitory(liteDbAction, liteDbManager.NameInDb<LiteDbAction>());
             if (executedFrom == eExecutedFrom.Automation)
@@ -165,7 +165,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             actionSeq = 0;
             if (activity.LiteDbId != null && ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated) // missing Executed from
             {
-                AR._id = activity.LiteDbId;
+                //AR._id = activity.LiteDbId;
+                AR._id = ObjectId.NewObjectId();
                 var ARToUpdate = liteDbManager.GetActivitiesLiteData().IncludeAll().Find(x => x._id == AR._id).ToList();
                 if (ARToUpdate.Count > 0)
                 {
@@ -179,7 +180,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     liteDbActionList.AddRange((ARToUpdate[0] as LiteDbActivity).ActionsColl);
                 }
             }
-/*            activity.Acts.ToList().ForEach(action => this.MapActionToLiteDb((GingerCore.Actions.Act)action, context, executedFrom));*/
+            //activity.Acts.ToList().ForEach(action => this.MapActionToLiteDb((GingerCore.Actions.Act)action, context, executedFrom));
             AR.AllActionsColl.AddRange(liteDbActionList);
 
             AR.ChildExecutableItemsCount = activity.Acts.Count(x => x.Active && (x.Status == eRunStatus.Passed || x.Status == eRunStatus.Failed || x.Status == eRunStatus.FailIgnored || x.Status == eRunStatus.Blocked));
