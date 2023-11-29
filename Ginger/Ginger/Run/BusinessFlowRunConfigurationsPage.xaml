@@ -45,7 +45,7 @@
                     </Style>
                 </TabControl.Resources>
 
-                <TabItem x:Name="EditVariablesTab" Margin="2,0,-6,0">
+                <TabItem x:Name="EditVariablesTab" Style="{StaticResource $RoundedTab}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                             <Image Source="{StaticResource  @Outputs_32x32.png }" Height="20" Width="20" />
@@ -63,8 +63,8 @@
                         </Ginger:ucGrid.Title>
                     </Ginger:ucGrid>
                 </TabItem>
-                
-                <TabItem x:Name="FlowControlTab" Margin="8,0,-12,0" >
+
+                <TabItem x:Name="FlowControlTab" Style="{StaticResource $RoundedTab}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                             <Image Source="{StaticResource  @Flow_24x24.png }" Height="20" Width="20" />

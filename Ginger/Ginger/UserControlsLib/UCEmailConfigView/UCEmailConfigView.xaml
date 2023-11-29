@@ -34,7 +34,7 @@
             </StackPanel>
         </Grid>
         <TabControl x:Name="xSendDetailContainer" Background="{StaticResource $BackgroundColor_White}">
-            <TabItem x:Name="xMessageTab" IsSelected="True" Background="{StaticResource $BackgroundColor_White}">
+            <TabItem x:Name="xMessageTab" IsSelected="True" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <Label Content="Message"/>
                 </TabItem.Header>
@@ -129,7 +129,7 @@
                     </StackPanel>
                 </StackPanel>
             </TabItem>
-            <TabItem x:Name="xAttachmentsTab" Background="{StaticResource $BackgroundColor_White}" Visibility="Collapsed" >
+            <TabItem x:Name="xAttachmentsTab" Style="{StaticResource $RoundedTab}" Visibility="Collapsed" >
                 <TabItem.Header>
                     <Label Content="Attachments"/>
                 </TabItem.Header>
@@ -143,7 +143,7 @@
                 </TabItem.Resources>
                 <Ginger:ucGrid x:Name="xAttachmentsGrid" Title="Attachments" ShowAdd="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
             </TabItem>
-            <TabItem x:Name="xDeliveryTab" Background="{StaticResource $BackgroundColor_White}">
+            <TabItem x:Name="xDeliveryTab" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <Label Content="Configuration"/>
                 </TabItem.Header>
@@ -257,7 +257,7 @@
             </TabItem>
         </TabControl>
         <TabControl x:Name="xReadDetailContainer" Visibility="Collapsed">
-            <TabItem Background="{StaticResource $BackgroundColor_White}">
+            <TabItem Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <Label Content="Filters"/>
                 </TabItem.Header>
@@ -513,7 +513,7 @@
 
                 </StackPanel>
             </TabItem>
-            <TabItem Background="{StaticResource $BackgroundColor_White}">
+            <TabItem Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <Label Content="Configuration"/>
                 </TabItem.Header>

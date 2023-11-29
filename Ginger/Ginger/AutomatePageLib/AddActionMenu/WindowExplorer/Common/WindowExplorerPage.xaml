@@ -40,22 +40,7 @@
 
             <TabControl x:Name="xViewsTabs" Margin="0,5,0,0" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="ViewsTabs_SelectionChanged" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                         MouseEnter="xViewsTabs_MouseEnter" MouseLeave="xViewsTabs_MouseLeave">
-                <TabControl.Resources>
-                    <Style TargetType="{x:Type TabItem}">
-                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                        <Setter Property="Height" Value="25"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="False" >
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="True" >
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </TabControl.Resources>
-
-                <TabItem x:Name="xScreenShotViewTab">
+                <TabItem x:Name="xScreenShotViewTab" Style="{StaticResource $RoundedTab}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <usercontrols:ImageMakerControl ImageType="Image"  SetAsFontImageWithSize="20"  Width="20" Height="20" />
@@ -80,7 +65,7 @@
                     </Grid>
                 </TabItem>
 
-                <TabItem x:Name="xTreeViewTab">
+                <TabItem x:Name="xTreeViewTab" Style="{StaticResource $RoundedTab}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <usercontrols:ImageMakerControl ImageType="TreeView"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -97,7 +82,7 @@
                     </Grid>
                 </TabItem>
 
-                <TabItem x:Name="xGridViewTab">
+                <TabItem x:Name="xGridViewTab" Style="{StaticResource $RoundedTab}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <usercontrols:ImageMakerControl ImageType="DataTable"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -114,7 +99,7 @@
                     </Grid>
                 </TabItem>
 
-                <TabItem x:Name="xLiveSpyTab">
+                <TabItem x:Name="xLiveSpyTab" Style="{StaticResource $RoundedTab}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                             <usercontrols:ImageMakerControl ImageType="Spy"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -126,7 +111,7 @@
                     </ScrollViewer>
                 </TabItem>
 
-                <TabItem x:Name="xPageSrcTab">
+                <TabItem x:Name="xPageSrcTab" Style="{StaticResource $RoundedTab}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <usercontrols:ImageMakerControl ImageType="DataSource" SetAsFontImageWithSize="18"  Width="18" Height="18" />

@@ -68,7 +68,7 @@
                 </ToggleButton>
             </StackPanel>
             <TabControl x:Name="inspectorElementTabsControl" DockPanel.Dock="Top" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" SelectionChanged="inspectorElementTabsControl_SelectionChanged" >
-                <TabItem x:Name="DeviceActionsTab" Header="Device Actions">
+                <TabItem x:Name="DeviceActionsTab" Header="Device Actions" Style="{StaticResource $RoundedTab}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="350*"/>
@@ -83,7 +83,7 @@
                         </StackPanel>
                     </Grid>
                 </TabItem>
-                <TabItem x:Name="PageSourceTab" Header="Page Source">
+                <TabItem x:Name="PageSourceTab" Header="Page Source" Style="{StaticResource $RoundedTab}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="25"/>
@@ -98,7 +98,7 @@
                         <TextBox x:Name="pageSourceTextViewer" Grid.Row="1" Grid.Column="0" Style="{StaticResource @TextBoxStyle}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0,0,0,0"  BorderThickness="0" Text="{Binding Text, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap"/>
                     </Grid>
                 </TabItem>
-                <TabItem x:Name="ShellActionsTab" Header="Shell">
+                <TabItem x:Name="ShellActionsTab" Header="Shell" Style="{StaticResource $RoundedTab}">
                     <StackPanel Grid.Row="2">
                         <Label HorizontalAlignment="Left">Try ADB Shell Commands: i.e.: ls, ps, dumpsys</Label>
                         <StackPanel Orientation="Horizontal">
@@ -109,10 +109,10 @@
                         <TextBlock x:Name="OutputTextBlock" IsEnabled="True" FontFamily="Courier New" FontSize="10" Background="White" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ><Run Text="Output"/></TextBlock>
                     </StackPanel>
                 </TabItem>
-                <TabItem x:Name="WindowExplorerTab" Header="Window Explorer">
+                <TabItem x:Name="WindowExplorerTab" Header="Window Explorer" Style="{StaticResource $RoundedTab}">
                     <Frame x:Name="WindowExplorerFrame"></Frame>
                 </TabItem>
-                <TabItem x:Name="PhoneTab" Header="Phone">
+                <TabItem x:Name="PhoneTab" Header="Phone" Style="{StaticResource $RoundedTab}">
                     <StackPanel>                        
                         <Label>Dial</Label>                        
                         <TextBox></TextBox>

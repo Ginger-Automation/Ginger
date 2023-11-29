@@ -40,7 +40,7 @@
             <StackPanel Orientation="Vertical">
                 <Label Style="{StaticResource @LabelStyle}" x:Name="LabelBody" Content="Request Body:" />
                 <TabControl x:Name="tabRequestBody" SelectionChanged="tabRequestBody_SelectionChanged">
-                    <TabItem x:Name="tabListView">
+                    <TabItem x:Name="tabListView" Style="{StaticResource $RoundedTab}">
                         <TabItem.Header>
                             <Label Content="List View" HorizontalAlignment="Stretch"/>
                         </TabItem.Header>
@@ -53,7 +53,7 @@
                             </Grid.Resources>
                         </Grid>
                     </TabItem>
-                    <TabItem x:Name="tabJsonView" >
+                    <TabItem x:Name="tabJsonView" Style="{StaticResource $RoundedTab}">
                         <TabItem.Header>
                             <Label Content="JSON View" HorizontalAlignment="Stretch"/>
                         </TabItem.Header>

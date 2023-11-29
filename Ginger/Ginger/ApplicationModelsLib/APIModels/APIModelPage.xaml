@@ -40,22 +40,7 @@
 
 
             <TabControl x:Name="APIModelTabs" Grid.Row="1" Background="{StaticResource $BackgroundColor_White}"  HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged" Margin="5,0,10,0" >
-                <TabControl.Resources>
-                    <Style TargetType="{x:Type TabItem}">
-                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                        <Setter Property="Height" Value="25"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="False" >
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="True" >
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </TabControl.Resources>
-
-                <TabItem Margin="0,0,0,0" >
+                <TabItem Margin="0,0,0,0" Style="{StaticResource $RoundedTab}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Image Source="{StaticResource  @Config_20x20.png }" Height="20" Width="20" />
@@ -263,7 +248,7 @@
                     </ScrollViewer>
                 </TabItem>
 
-                <TabItem>
+                <TabItem Style="{StaticResource $RoundedTab}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                             <Image Source="{StaticResource  @Grid_24x24.png }" Height="20" Width="20"/>
@@ -272,7 +257,7 @@
                     </TabItem.Header>
                     <Frame x:Name="xDynamicParamsFrame" HorizontalAlignment="Stretch"/>
                 </TabItem>
-                <TabItem>
+                <TabItem Style="{StaticResource $RoundedTab}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                             <Image Source="{StaticResource  @Outputs_32x32.png }" Height="20" Width="20"/>

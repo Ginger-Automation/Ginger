@@ -940,7 +940,7 @@ namespace Ginger
             {
                 btnClearSearch.Visibility = Visibility.Visible;
                 xSearchBtn.Visibility = Visibility.Collapsed;
-                xSearchBtn.IsEnabled = true;
+                //xSearchBtn.IsEnabled = true;
 
                 //SetBtnImage(btnClearSearch, "@Clear_16x16.png");
                 //btnClearSearch.IsEnabled = true;
@@ -949,7 +949,7 @@ namespace Ginger
             {
                 btnClearSearch.Visibility = Visibility.Collapsed;
                 xSearchBtn.Visibility = Visibility.Visible;
-                xSearchBtn.IsEnabled = false;
+                //xSearchBtn.IsEnabled = false;
                 //SetBtnImage(btnClearSearch, "@DisabledClear_16x16.png");
                 //btnClearSearch.IsEnabled = false;
             }
@@ -2588,6 +2588,11 @@ namespace Ginger
                     btnDelete_Click(null, null);
                 }
             }
+        }
+
+        private void xSearchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //do nothing
         }
     }
 }

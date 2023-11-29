@@ -9,10 +9,9 @@
     <!--Background Colors-->
     <SolidColorBrush x:Key="$BackgroundColor_Black" Color="#131318" />
     <SolidColorBrush x:Key="$BackgroundColor_White" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="$BackgroundColor_Gray" Color="#F1F1F4" />
+    <SolidColorBrush x:Key="$BackgroundColor_Gray" Color="#e3e3e8" />
     <SolidColorBrush x:Key="$BackgroundColor_LightGray" Color="#E3E3E8" />
     <SolidColorBrush x:Key="$BackgroundColor_VeryLightGray" Color="#f8f8f8" /> 
-    <SolidColorBrush x:Key="$BackgroundColor_LightShadowGray" Color="#efeeef" /> 
     <SolidColorBrush x:Key="$BackgroundColor_DarkGray" Color="#818398" />
     <!--Selection Colors-->
 
@@ -1657,6 +1656,35 @@
             </Trigger>
         </Style.Triggers>
     </Style>-->
+
+    <Style TargetType="TabItem" x:Key="$RoundedTab">
+        <Setter Property="Height" Value="33"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <!--The four values of CornerRadius represent the four corners of the TabItem.-->
+                    <Border Name="Border" BorderThickness="1,1,1,0" BorderBrush="{StaticResource $BackgroundColor_DarkGray}" CornerRadius="5,5,0,0" Margin="1,0">
+                        <ContentPresenter x:Name="ContentSite"  
+                                        VerticalAlignment="Center"  
+                                        HorizontalAlignment="Center"  
+                                        ContentSource="Header"  
+                                        Margin="10,2"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="White" />
+                            <Setter Property="Foreground" Value="{StaticResource $SelectionColor_Pink}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="False">
+                            <Setter TargetName="Border" Property="Background" Value="White" />
+                            <Setter Property="Foreground" Value="{StaticResource $PrimaryColor_Black}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style TargetType="TabItem" x:Key="$CoolTab">
         <Setter Property="Template">
@@ -3467,7 +3495,7 @@
         <Setter Property="Foreground" Value="{DynamicResource $PrimaryColor_Black}"/>
         <Setter Property="FontFamily" Value="Open Sans"/>
         <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Background" Value="{DynamicResource $BackgroundColor_White}"/>
+        <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Margin" Value="-2,0,0,0"/>
     </Style>
 

@@ -74,7 +74,7 @@
                 </Style>
             </TabControl.Resources>
 
-            <TabItem Margin="0,0,0,0" >
+            <TabItem Margin="0,0,0,0" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="ListGroup"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -92,7 +92,7 @@
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" RowChangedEvent="xLocatorsGrid_RowChangedEvent"/>
             </TabItem>
-            <TabItem x:Name="xFriendlyLocatorTab">
+            <TabItem x:Name="xFriendlyLocatorTab" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="LocationPointer"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -101,7 +101,7 @@
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="xFriendlyLocatorsGrid" Title="Friendly Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" RowChangedEvent="xFriendlyLocatorsGrid_RowChangedEvent"/>
             </TabItem>
-            <TabItem x:Name="xAddActionTab">
+            <TabItem x:Name="xAddActionTab" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="Action"  SetAsFontImageWithSize="18"  Width="18" Height="18" />

@@ -86,22 +86,7 @@
         <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $PrimaryColor_Black}" BorderThickness="1" />
 
         <TabControl x:Name="xPomTabs" Margin="0,5,0,0" Grid.Row="1" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xPomTabs_SelectionChanged">
-            <TabControl.Resources>
-                <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                    <Setter Property="Height" Value="25"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="False" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="True" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </TabControl.Resources>
-
-            <TabItem >
+            <TabItem Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="Image"  SetAsFontImageWithSize="20"  Width="20" Height="20" />
@@ -119,7 +104,7 @@
                 </ScrollViewer>
             </TabItem>
 
-            <TabItem Name="xUiElementsTabItem">
+            <TabItem Name="xUiElementsTabItem" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="Elements"  SetAsFontImageWithSize="18"  Width="18" Height="18" />

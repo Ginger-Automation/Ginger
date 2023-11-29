@@ -37,13 +37,13 @@
         </StackPanel>
 
         <TabControl Grid.Row="3" Grid.ColumnSpan="2">
-            <TabItem Header="POM Mapped UIElements">
+            <TabItem Header="POM Mapped UIElements" Style="{StaticResource $RoundedTab}">
                 <Ginger:ucGrid x:Name="ElementsGrid" Title="UI Elements"/>
             </TabItem>
-            <TabItem Header="POM Activities">
+            <TabItem Header="POM Activities" Style="{StaticResource $RoundedTab}">
                 <Ginger:ucGrid x:Name="POMActivitiesGrid" Title="POM Activities"/>
             </TabItem>
-            <TabItem Header="POM Actions"></TabItem>
+            <TabItem Header="POM Actions" Style="{StaticResource $RoundedTab}"/>
         </TabControl>
 
         <Label Grid.Row="4">BF Name</Label>

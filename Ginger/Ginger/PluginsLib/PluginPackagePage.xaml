@@ -68,7 +68,7 @@
                     </Style.Triggers>
                 </Style>
             </TabControl.Resources>
-            <TabItem x:Name="ActionsTab" Margin="0,0,0,0">
+            <TabItem x:Name="ActionsTab" Margin="0,0,0,0" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal"  VerticalAlignment="Center">
                         <Image Source="{StaticResource  @GeneralAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
@@ -84,7 +84,7 @@
                     <Ginger:ucGrid x:Name="xServiceActionGrid" Grid.Row="1" Title="Service Actions" ShowUpDown="Collapsed" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowRefresh="Collapsed"/>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="TextEditorTab" Margin="2,0,-6,0">
+            <TabItem x:Name="TextEditorTab" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource @Edit_20x20}" Height="20" Width="20" Margin="-6,0,0,0"/>

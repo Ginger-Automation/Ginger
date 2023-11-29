@@ -24,23 +24,7 @@
         </StackPanel>
 
         <TabControl Grid.Row="1" x:Name="AppTab" Background="{StaticResource $BackgroundColor_White}"  HorizontalAlignment="Stretch" SelectionChanged="AppTab_SelectionChanged" Margin="0,10,0,0">
-
-            <TabControl.Resources>
-                <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                    <Setter Property="Height" Value="25"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="False" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="True" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </TabControl.Resources>
-
-            <TabItem x:Name="xParamsTab">
+            <TabItem x:Name="xParamsTab" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl x:Name="xParamsTabHeaderImage" ImageType="Parameter" Height="20" Width="20"/>
@@ -50,7 +34,7 @@
                 <Frame x:Name="ParamsFrame"/>
             </TabItem>
 
-            <TabItem x:Name="xDBsTab">
+            <TabItem x:Name="xDBsTab" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl x:Name="xDBsTabTabHeaderImage" ImageType="DataSource" Height="20" Width="20"/>
@@ -60,7 +44,7 @@
                 <Frame x:Name="DBsFrame"/>
             </TabItem>
 
-            <TabItem x:Name="xUsersTab">
+            <TabItem x:Name="xUsersTab" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl x:Name="xUsersTabTabHeaderImage" ImageType="Agent" Height="20" Width="20"/>

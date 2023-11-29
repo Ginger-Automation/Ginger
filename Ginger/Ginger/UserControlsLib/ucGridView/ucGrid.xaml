@@ -11,7 +11,7 @@
         <Image x:Key="Mark" Source="{StaticResource @CheckAllColumn_16x16.png}"></Image>
         <Image x:Key="UnMark" Source="{StaticResource @UnCheckAllColumn_16x16.png}"></Image>
     </UserControl.Resources>
-    <DockPanel x:Name="mainDockPanel"  HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}">
+    <DockPanel x:Name="mainDockPanel" HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}">
         <!-- Grid Title -->
         <Border x:Name="xSimpleHeader" DockPanel.Dock="Top" Visibility="{Binding  ElementName=lblTitle, Path=Visibility}" Background="{Binding ElementName=lblTitle, Path=Background}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Black}"  >
             <Label x:Name="xSimpleHeaderTitle" Style="{DynamicResource $ucGridTitleLightStyle}" Margin="0,1,0,1">Grid Title</Label>
@@ -78,9 +78,9 @@
                         <Image Source= "{StaticResource @ArrowDown_16x16}"/>
                     </Button>
 
-                    <TextBox x:Name="txtSearch" MinWidth="120" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="txtSearch_TextChanged" BorderBrush="White" />
-                    <usercontrols:ucButton x:Name="btnClearSearch" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="btnClearSearchText_Click" BorderBrush="Transparent" Background="Transparent" Margin="-3,0,6,0" ></usercontrols:ucButton>
-                    <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" IsEnabled="False"  VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" BorderBrush="Transparent" Background="Transparent" Margin="-3,0,6,0" ></usercontrols:ucButton>
+                    <TextBox x:Name="txtSearch" MinWidth="150" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="txtSearch_TextChanged" BorderBrush="{StaticResource $BackgroundColor_DarkGray}" />
+                    <usercontrols:ucButton x:Name="btnClearSearch" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close2" Visibility="Collapsed" Click="btnClearSearchText_Click" BorderBrush="Transparent" Background="Transparent" Margin="-30,0,6,0" ></usercontrols:ucButton>
+                    <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" IsEnabled="True" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" BorderBrush="Transparent" Background="Transparent" Margin="-30,0,6,0" Click="xSearchBtn_Click" ></usercontrols:ucButton>
 
                     <!--<Label x:Name="lblSearch" Style="{DynamicResource @LabelStyle}">Search:</Label>-->
                     <!--<TextBox x:Name="txtSearch" Width="100" TextChanged="txtSearch_TextChanged" Style="{DynamicResource @ToolBarTextBoxStyle}" ></TextBox>-->

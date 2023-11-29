@@ -16,7 +16,7 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TabControl Grid.RowSpan="2">
-            <TabItem Name="xMessage">
+            <TabItem Name="xMessage" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <Label Content="Message" 
                 MouseLeftButtonDown="TabItem_MouseLeftButtonDown" 
@@ -65,7 +65,7 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Attachments" Background="{StaticResource $BackgroundColor_White}">
+            <TabItem Header="Attachments" Style="{StaticResource $RoundedTab}">
                 <Grid Background="{StaticResource $BackgroundColor_White}" x:Name="GridAttachment">
                     <Grid.Resources>
                         <DataTemplate x:Key="ReportAttachment">
@@ -82,7 +82,7 @@
             </TabItem>
 
 
-            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_White}">
+            <TabItem Header="Delivery Method" Style="{StaticResource $RoundedTab}">
                 <Frame x:Name="RunsetActionDeliveryMethodConfigPageFrame"></Frame>
             </TabItem>
         </TabControl>

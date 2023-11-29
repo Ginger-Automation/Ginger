@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
 
         <TabControl Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
-            <TabItem Header="Compile">
+            <TabItem Header="Compile" Style="{StaticResource $RoundedTab}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40"/>
@@ -48,7 +48,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Optimization Results">
+            <TabItem Header="Optimization Results" Style="{StaticResource $RoundedTab}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40"/>
@@ -65,7 +65,7 @@
                 </Grid>
 
             </TabItem>
-            <TabItem Header="Shared Repository">
+            <TabItem Header="Shared Repository" Style="{StaticResource $RoundedTab}">
                 <Frame x:Name="SharedActivitiesFrame" Content="Frame" NavigationUIVisibility="Hidden"/>
             </TabItem>
         </TabControl>

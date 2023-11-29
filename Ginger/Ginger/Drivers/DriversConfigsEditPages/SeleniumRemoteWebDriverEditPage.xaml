@@ -8,7 +8,7 @@
 	Title="SeleniumDriverEditPage">
 
     <TabControl x:Name="ActionTab" HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged">
-        <TabItem Header="Configuration" >
+        <TabItem Header="Configuration" Style="{StaticResource $RoundedTab}">
 
         <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_White}" >
         <Grid.ColumnDefinitions>
@@ -72,8 +72,8 @@
             </Grid>
         </TabItem>
 
-        
-        <TabItem x:Name="ConsoleTab" Header="Console" >
+
+        <TabItem x:Name="ConsoleTab" Header="Console" Style="{StaticResource $RoundedTab}">
             <Grid Background="{StaticResource $BackgroundColor_White}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40"/>

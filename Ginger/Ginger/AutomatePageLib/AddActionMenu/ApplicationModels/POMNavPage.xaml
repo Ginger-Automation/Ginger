@@ -24,7 +24,7 @@
         <GridSplitter x:Name="xPOMSplitter" ResizeDirection="Rows" Grid.Row="1" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_Black}" IsEnabled="True" />
 
         <TabControl x:Name="xPomTabs" Margin="0,5,0,0" Grid.Row="1" Background="{StaticResource $BackgroundColor_White}">
-            <TabItem Name="xUiElementsTabItem">
+            <TabItem Name="xUiElementsTabItem" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="Elements"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -33,7 +33,7 @@
                 </TabItem.Header>
                 <userControlsLib1:UcListView x:Name="xPomElementsListView" AllowDrop="True"/>
             </TabItem>
-            <TabItem x:Name="xSuggestedActivitiesTabItem">
+            <TabItem x:Name="xSuggestedActivitiesTabItem" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="Activity" SetAsFontImageWithSize="18"  Width="18" Height="18" />

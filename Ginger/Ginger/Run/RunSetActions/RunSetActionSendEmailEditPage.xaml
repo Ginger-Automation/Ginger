@@ -9,7 +9,7 @@
 	Title="RunSetActionEmailReportEditPage">
     <Grid Background="{StaticResource $BackgroundColor_White}">
         <TabControl Grid.RowSpan="2">
-            <TabItem Header="Message">
+            <TabItem Header="Message" Style="{StaticResource $RoundedTab}">
                 <Grid Background="{StaticResource $BackgroundColor_White}">
 
                     <Grid.RowDefinitions>
@@ -51,7 +51,7 @@
                     <TextBox Grid.Row="1" x:Name="BodyTextBox" TextWrapping="Wrap" AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Auto" Style="{StaticResource @MultiRowsTextBoxStyle}" />
                 </Grid>
             </TabItem>
-            <TabItem Header="Attachments" Background="{StaticResource $BackgroundColor_White}">
+            <TabItem Header="Attachments" Style="{StaticResource $RoundedTab}">
                 <Grid Background="{StaticResource $BackgroundColor_White}">
                     <StackPanel>
                         <Ginger:ucGrid x:Name="AttachmentsGrid" Title="Attachments" ShowAdd="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
@@ -60,7 +60,7 @@
             </TabItem>
 
 
-            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_White}">
+            <TabItem Header="Delivery Method" Style="{StaticResource $RoundedTab}">
                 <Grid Background="{StaticResource $BackgroundColor_White}">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">

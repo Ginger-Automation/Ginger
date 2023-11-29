@@ -1303,9 +1303,9 @@ namespace Ginger.Run
             if (mFlowDiagram == null)
             {
                 mFlowDiagram = new FlowDiagramPage();
-                mFlowDiagram.SetView(Brushes.White, false, false);
+                mFlowDiagram.SetView(Brushes.Transparent, false, false);
                 mFlowDiagram.SetHighLight = false;
-                mFlowDiagram.BackGround = Brushes.White;
+                mFlowDiagram.BackGround = Brushes.Transparent;
                 mFlowDiagram.ZoomPanelContainer.Visibility = Visibility.Collapsed;
                 mFlowDiagram.ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
                 mFlowDiagram.Height = 300;

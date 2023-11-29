@@ -9,7 +9,7 @@
 	Title="RunSetActionSendSMSEditPage">
     <Grid Background="{StaticResource $BackgroundColor_White}">      
         <TabControl>
-            <TabItem Header="Message">
+            <TabItem Header="Message" Style="{StaticResource $RoundedTab}">
                 <Grid Background="{StaticResource $BackgroundColor_White}">
                     
                     <StackPanel>
@@ -42,8 +42,8 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-           
-            <TabItem Header="Delivery Method">
+
+            <TabItem Header="Delivery Method" Style="{StaticResource $RoundedTab}">
                <Frame x:Name="RunsetActionDeliveryMethodConfigPageFrame"></Frame>
             </TabItem>
         </TabControl>

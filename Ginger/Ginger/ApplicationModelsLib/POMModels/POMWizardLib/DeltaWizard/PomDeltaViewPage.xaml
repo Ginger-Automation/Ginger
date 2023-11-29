@@ -92,22 +92,7 @@
                         <ColumnDefinition Width="250"/>
                     </Grid.ColumnDefinitions>
                     <TabControl x:Name="xElementDetailsTabs" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" SelectionChanged="xElementDetailsTabs_SelectionChanged" >
-                        <TabControl.Resources>
-                            <Style TargetType="{x:Type TabItem}">
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                                <Setter Property="Height" Value="25"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsSelected" Value="False" >
-                                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                                    </Trigger>
-                                    <Trigger Property="IsSelected" Value="True" >
-                                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TabControl.Resources>
-
-                        <TabItem Margin="0,0,0,0" >
+                        <TabItem Margin="0,0,0,0" Style="{StaticResource $RoundedTab}">
                             <TabItem.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <UserControls:ImageMakerControl ImageType="ListGroup"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -116,7 +101,7 @@
                             </TabItem.Header>
                             <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
                         </TabItem>
-                        <TabItem>
+                        <TabItem Style="{StaticResource $RoundedTab}">
                             <TabItem.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                                     <UserControls:ImageMakerControl ImageType="LocationPointer"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -125,7 +110,7 @@
                             </TabItem.Header>
                             <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed"/>
                         </TabItem>
-                        <TabItem x:Name="xFriendlyLocatorTab">
+                        <TabItem x:Name="xFriendlyLocatorTab" Style="{StaticResource $RoundedTab}">
                             <TabItem.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                                     <UserControls:ImageMakerControl ImageType="LocationPointer"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
