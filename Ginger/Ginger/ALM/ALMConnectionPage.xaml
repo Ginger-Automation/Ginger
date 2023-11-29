@@ -108,17 +108,17 @@
 
                             <StackPanel x:Name="ALMDomainSelectionPanel" Grid.Row="0">
                                 <Label x:Name="ALMDomainLabel" Style="{StaticResource @InputFieldLabelStyle}">Domain:</Label>
-                                <ComboBox x:Name="DomainComboBox" SelectionChanged="DomainComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                                <ComboBox x:Name="DomainComboBox" SelectionChanged="DomainComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
                             </StackPanel>
 
                             <StackPanel Grid.Row="1">
                                 <Label Style="{StaticResource @InputFieldLabelStyle}">Project:</Label>
-                                <ComboBox x:Name="ProjectComboBox" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="ProjectComboBox_SelectionChanged" SelectedValuePath = "Key" DisplayMemberPath = "Value"></ComboBox>
+                                <ComboBox x:Name="ProjectComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ProjectComboBox_SelectionChanged" SelectedValuePath = "Key" DisplayMemberPath = "Value"></ComboBox>
                             </StackPanel>
 
                             <StackPanel x:Name="JiraTestingALMSelectionPanel" Grid.Row="2" Visibility="Hidden">
                                 <Label x:Name="JiraTestingALMLabel" Style="{StaticResource @InputFieldLabelStyle}">Jira Testing ALM:</Label>
-                                <ComboBox x:Name="JiraTestingALMComboBox" SelectionChanged="JiraTestingALMComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                                <ComboBox x:Name="JiraTestingALMComboBox" SelectionChanged="JiraTestingALMComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
                             </StackPanel>
                         </Grid>
 

@@ -1119,7 +1119,7 @@ namespace Ginger
             GingerCore.General.FillComboFromEnumType(cmb, eType);
 
             cmb.AddHandler(ComboBox.SelectionChangedEvent, handler);
-            cmb.Style = this.FindResource("@InputComboBoxStyle") as Style;
+            cmb.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
 
             if (label.Trim() != "")
             {

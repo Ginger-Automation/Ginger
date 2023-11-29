@@ -22,9 +22,9 @@
         <TextBox x:Name="AgentNameTextBox" Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" Text="" Style="{StaticResource @TextBoxStyle}" FontWeight="Bold"/>
 
         <Label Content="Platform Type:" Grid.Row="1" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
-        <ComboBox x:Name="PlatformTypeComboBox" Grid.Column="1" Grid.Row="1" Style="{StaticResource @InputComboBoxStyle}"/>
+        <ComboBox x:Name="PlatformTypeComboBox" Grid.Column="1" Grid.Row="1" Style="{StaticResource $FlatInputComboBoxStyle}"/>
         
         <Label Content="Driver Type:" Grid.Row="2" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>        
-        <ComboBox x:Name="DriverTypeComboBox" Grid.Column="1" Grid.Row="2" Style="{StaticResource @InputComboBoxStyle}"/>        
+        <ComboBox x:Name="DriverTypeComboBox" Grid.Column="1" Grid.Row="2" Style="{StaticResource $FlatInputComboBoxStyle}"/>        
     </Grid>
 </Page>

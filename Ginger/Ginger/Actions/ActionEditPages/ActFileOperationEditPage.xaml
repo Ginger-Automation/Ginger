@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
         <StackPanel  Grid.Row="0">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Operation Type:</Label>            
-            <ComboBox x:Name="FileActionMode" SelectionChanged="FileActionMode_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+            <ComboBox x:Name="FileActionMode" SelectionChanged="FileActionMode_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
             
         </StackPanel>
         <StackPanel Grid.Row="1" >

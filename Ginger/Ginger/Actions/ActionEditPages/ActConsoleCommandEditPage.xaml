@@ -10,11 +10,11 @@
     <Grid Background="{StaticResource $BackgroundColor_White}">                        
         <StackPanel>            
             <Label Style="{StaticResource @InputFieldLabelStyle}">Console Action Type:</Label>
-            <ComboBox x:Name="ConsoleActionComboBox" SelectionChanged="ConsoleActionComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+            <ComboBox x:Name="ConsoleActionComboBox" SelectionChanged="ConsoleActionComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
             
             <StackPanel x:Name="ScriptStackPanel">
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Script Name (located in Solution~\Documents\sh\):</Label>
-                <ComboBox x:Name="ScriptNameComboBox" SelectionChanged="ScriptNameComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                <ComboBox x:Name="ScriptNameComboBox" SelectionChanged="ScriptNameComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
                 <Label x:Name="ScriptDescriptionLabel" HorizontalAlignment="Left">Script Description</Label>
             </StackPanel>
 

@@ -19,10 +19,10 @@
         </Grid.RowDefinitions>
 
         <Label Content="Data Source Name:" Grid.Row="0" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
-        <ComboBox Height="24" x:Name="cmbDataSourceName" Grid.Row="0" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="cmbDataSourceName_SelectionChanged"/>
+        <ComboBox Height="24" x:Name="cmbDataSourceName" Grid.Row="0" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="cmbDataSourceName_SelectionChanged"/>
 
         <Label Content="Data Source Table:" Grid.Row="1" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
-        <ComboBox Height="24" x:Name="cmbDataSourceTableName" Grid.Row="1" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="cmbDataSourceTableName_SelectionChanged"/>
+        <ComboBox Height="24" x:Name="cmbDataSourceTableName" Grid.Row="1" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="cmbDataSourceTableName_SelectionChanged"/>
 
     </Grid>
 </Page>

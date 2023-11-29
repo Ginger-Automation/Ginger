@@ -58,7 +58,7 @@
                                     <ColumnDefinition Width="22"/>
                                 </Grid.ColumnDefinitions>
                                 <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0"  VerticalAlignment="Center" Margin="0,0,0,0">TestSuite:</Label>
-                                <ComboBox x:Name="TestSuiteComboBox" Grid.Column="1"  VerticalAlignment="Center"  SelectionChanged="TestSuiteComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" ToolTip="The TestSuite to run, used to narrow down the tests to run" IsEditable="true" />
+                                <ComboBox x:Name="TestSuiteComboBox" Grid.Column="1"  VerticalAlignment="Center"  SelectionChanged="TestSuiteComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" ToolTip="The TestSuite to run, used to narrow down the tests to run" IsEditable="true" />
                                 <Button x:Name="TestSuiteVEButton" Grid.Column="2"  VerticalAlignment="Center"  Content="..." Click="TestSuiteVEButton_Click" HorizontalAlignment="Left" Style="{StaticResource @InputButtonStyle}"  />
                                 <Button x:Name="RefreshComboBoxes" Grid.Column="3" usercontrols:ImageMaker.Content="Refresh" Width="16" VerticalAlignment="Center"  Click="RefreshComboBoxButton" HorizontalAlignment="Left" Style="{StaticResource @InputButtonStyle}"  >                                    
                                 </Button>
@@ -74,7 +74,7 @@
                                     <ColumnDefinition Width="22"/>
                                 </Grid.ColumnDefinitions>
                                 <Label Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0"  VerticalAlignment="Center">TestCase:</Label>
-                                <ComboBox x:Name="TestCaseComboBox" Grid.Column="1"  VerticalAlignment="Center" SelectionChanged="TestCaseComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" ToolTip="The TestCase to run, used to narrow down the tests to run" IsEditable="true"  />
+                                <ComboBox x:Name="TestCaseComboBox" Grid.Column="1"  VerticalAlignment="Center" SelectionChanged="TestCaseComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" ToolTip="The TestCase to run, used to narrow down the tests to run" IsEditable="true"  />
                                 <Button x:Name="TestCaseVEButton" Grid.Column="2"  VerticalAlignment="Center" Content="..." Click="TestCaseVEButton_Click" HorizontalAlignment="Left" DockPanel.Dock="Left" Style="{StaticResource @InputButtonStyle}"/>
                             </Grid>
                         </StackPanel>

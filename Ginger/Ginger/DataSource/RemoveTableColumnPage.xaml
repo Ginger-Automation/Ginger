@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
                
         <Label Content="Column Name:" Grid.Row="0" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
-        <ComboBox Height="24" x:Name="DSColNameComboBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}"/>
+        <ComboBox Height="24" x:Name="DSColNameComboBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}"/>
         
     </Grid>
 </Page>

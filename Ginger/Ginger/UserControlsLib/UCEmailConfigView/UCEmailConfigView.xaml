@@ -154,7 +154,7 @@
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Grid.Row="1" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Method:"/>
-                        <ComboBox x:Name="xEmailMethod" SelectionChanged="xEmailMethod_SelectionChanged" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}">
+                        <ComboBox x:Name="xEmailMethod" SelectionChanged="xEmailMethod_SelectionChanged" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}">
                             <ComboBoxItem x:Name="xEmailMethodSMTP" Content="SMTP" Tag="SMTP"/>
                             <ComboBoxItem x:Name="xEmailMethodOutlook" Content="Outlook" Tag="OUTLOOK"/>
                         </ComboBox>
@@ -434,7 +434,7 @@
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Has Attachments:"/>
-                        <ComboBox x:Name="xHasAttachmentsComboBox" Style="{StaticResource @InputComboBoxStyle}" Grid.Column="1"/>
+                        <ComboBox x:Name="xHasAttachmentsComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.Style>
@@ -524,7 +524,7 @@
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Method:"/>
-                        <ComboBox x:Name="xEmailReadMethod" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}">
+                        <ComboBox x:Name="xEmailReadMethod" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}">
                             <ComboBoxItem x:Name="xEmailReadMethodMSGraph" Content="MS Graph API" Tag="MSGraphAPI" IsSelected="True" />
                             <ComboBoxItem x:Name="xEmailReadMethodIMAP" Content="IMAP" Tag="IMAP"  IsSelected="True"/>
                         </ComboBox>

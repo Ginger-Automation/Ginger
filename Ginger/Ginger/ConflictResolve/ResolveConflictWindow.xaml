@@ -15,7 +15,7 @@
             <ObjectDataProvider x:Key="resolutionItemsSource" MethodName="GetResolutionItemsSource" ObjectType="{x:Type local:ResolveConflictWindow}"/>
             <DataTemplate x:Key="xOperationCellTemplate">
                 <StackPanel Orientation="Horizontal">
-                    <ComboBox x:Name="xResolutionComboBox" DisplayMemberPath="text" SelectedValuePath="Value" SelectedValue="{Binding Resolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Source={StaticResource resolutionItemsSource}}" Style="{StaticResource @InputComboBoxStyle}" Width="160"/>
+                    <ComboBox x:Name="xResolutionComboBox" DisplayMemberPath="text" SelectedValuePath="Value" SelectedValue="{Binding Resolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Source={StaticResource resolutionItemsSource}}" Style="{StaticResource $FlatInputComboBoxStyle}" Width="160"/>
                     <UserControls:ucButton ButtonType="ImageButton" ButtonImageWidth="15" ButtonImageHeight="15" Height="25" ButtonImageType="Columns" Click="xCompareAndMergeButton_Click" Visibility="{Binding Resolution, Converter={StaticResource resolutionToCompareVisibilityConverter}}"/>
                 </StackPanel>
             </DataTemplate>

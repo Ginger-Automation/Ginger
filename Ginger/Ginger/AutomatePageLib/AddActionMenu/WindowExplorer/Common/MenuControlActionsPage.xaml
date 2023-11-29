@@ -19,7 +19,7 @@
         
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
             <Label x:Name="MenuLable" Content="Available Menu's: " HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}" VerticalAlignment="Center"/>
-            <ComboBox x:Name="MenuItemComboBox"  SelectionChanged="MenuItemComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150"/>
+            <ComboBox x:Name="MenuItemComboBox"  SelectionChanged="MenuItemComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="150"/>
                        
             <Button x:Name="TestButton" Click="TestButton_Click" ToolTip="Test Selected Action" Width="24" Height="24" Style="{StaticResource @InputImageButtonStyle_NoBorder}" Margin="20,0,0,0">
                 <Image Source="{StaticResource @Run_24x24.png}"/>

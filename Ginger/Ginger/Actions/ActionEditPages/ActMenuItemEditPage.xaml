@@ -10,7 +10,7 @@
     <Grid>
         <StackPanel Background="{StaticResource $BackgroundColor_White}">
             <Label HorizontalAlignment="Left">Action Type</Label>
-            <ComboBox x:Name="ActionNameComboBox" Width="300"  Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+            <ComboBox x:Name="ActionNameComboBox" Width="300"  Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
         </StackPanel>
     </Grid>
 </Page>

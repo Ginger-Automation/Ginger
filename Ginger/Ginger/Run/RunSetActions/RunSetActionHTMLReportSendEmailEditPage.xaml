@@ -57,7 +57,7 @@
                         </DockPanel>
                         <StackPanel x:Name="comment">
                             <Label Style="{StaticResource @LabelStyle}" Content="Email Body Report Template:" Margin="0,6,0,0"  />
-                            <ComboBox x:Name="DefaultTemplatePickerCbx"  ContextMenu="{x:Null}" Width="250" Style="{DynamicResource @InputComboBoxStyle}" HorizontalAlignment="Left" SelectionChanged="DefaultTemplatePickerCbx_SelectionChanged" ></ComboBox>
+                            <ComboBox x:Name="DefaultTemplatePickerCbx"  ContextMenu="{x:Null}" Width="250" Style="{DynamicResource $FlatInputComboBoxStyle}" HorizontalAlignment="Left" SelectionChanged="DefaultTemplatePickerCbx_SelectionChanged" ></ComboBox>
                             <Label Style="{StaticResource @LabelStyle}" Content="Comments:" Margin="0,6,0,0"  />
                             <Actions:UCValueExpression x:Name="CommentTextBox"   ToolTip="Subject"/>
                         </StackPanel>

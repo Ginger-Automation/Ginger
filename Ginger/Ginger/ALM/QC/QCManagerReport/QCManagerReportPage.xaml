@@ -36,16 +36,16 @@
             <TextBox x:Name="QCTestSetsPathTextBox" Style="{StaticResource @MultiRowsTextBoxStyle}" Grid.Column="0" HorizontalAlignment="Stretch" DockPanel.Dock="Top" Height="25" FontWeight="Bold" IsReadOnly="True"/>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                 <Label Content="View Type:" Style="{StaticResource @LabelStyle}" Margin="0,10,0,0"/>
-                <ComboBox x:Name="ViewComboBox" Margin="10" SelectionChanged="ViewComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}" Width="150"/>
+                <ComboBox x:Name="ViewComboBox" Margin="10" SelectionChanged="ViewComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}" Width="150"/>
             </StackPanel>
             <StackPanel x:Name="ExecutionFilters" Orientation="Horizontal" DockPanel.Dock="Top" Margin="75,0,0,0">                
                 <StackPanel x:Name="ExecutionTesterFilter" Orientation="Horizontal">
                     <Label Content="Filter by Tester:" Style="{StaticResource @LabelStyle}" Margin="0,10,0,0"/>
-                    <ComboBox x:Name="ExecutionTesterFilterComboBox" Margin="10" Style="{StaticResource @InputComboBoxStyle}" Width="150"/>
+                    <ComboBox x:Name="ExecutionTesterFilterComboBox" Margin="10" Style="{StaticResource $FlatInputComboBoxStyle}" Width="150"/>
                 </StackPanel>
                 <StackPanel x:Name="ExecutionPeriodFilter" Orientation="Horizontal">
                     <Label Content="Filter by Execution Period:" Style="{StaticResource @LabelStyle}" Margin="0,10,0,0"/>
-                    <ComboBox x:Name="ExecutionPeriodFilterComboBox" Margin="10" Style="{StaticResource @InputComboBoxStyle}" Width="150"/>
+                    <ComboBox x:Name="ExecutionPeriodFilterComboBox" Margin="10" Style="{StaticResource $FlatInputComboBoxStyle}" Width="150"/>
                 </StackPanel>
             </StackPanel>
         </DockPanel>

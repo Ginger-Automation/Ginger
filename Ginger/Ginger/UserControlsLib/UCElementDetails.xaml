@@ -83,7 +83,7 @@
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
             </TabItem>
-            <TabItem>
+            <TabItem Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="LocationPointer"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
@@ -151,6 +151,6 @@
             </TabItem>
         </TabControl>
 
-        <Frame x:Name="xElementScreenShotFrame" Grid.Column="1" Grid.Row="1" Margin="5,25,5,0" Height="200" VerticalAlignment="Top"></Frame>
+        <Frame x:Name="xElementScreenShotFrame" Grid.Column="1" Grid.Row="1" Margin="5,40,5,0" Height="200" VerticalAlignment="Top"></Frame>
     </Grid>
 </UserControl>

@@ -10,7 +10,7 @@
     <Grid>
      <StackPanel  Grid.Row="1" Grid.ColumnSpan="5" x:Name="SendKeyPanel">
         <Label Style="{StaticResource @InputFieldLabelStyle}">Send Key</Label>
-        <ComboBox x:Name="KeyToSend"  Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+        <ComboBox x:Name="KeyToSend"  Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
 
         </StackPanel>
     </Grid>

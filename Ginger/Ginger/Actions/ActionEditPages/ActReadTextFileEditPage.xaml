@@ -22,12 +22,12 @@
         </Grid.RowDefinitions>
         <StackPanel  Grid.Row="0">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Operation Type:</Label>
-            <ComboBox x:Name="FileActionMode" SelectionChanged="FileActionMode_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+            <ComboBox x:Name="FileActionMode" SelectionChanged="FileActionMode_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
 
         </StackPanel>
         <StackPanel  Grid.Row="1">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Encoding Type:</Label>
-            <ComboBox x:Name="TextFileEncoding" SelectionChanged="FileActionMode_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+            <ComboBox x:Name="TextFileEncoding" SelectionChanged="FileActionMode_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
 
         </StackPanel>
         <StackPanel Grid.Row="2" >
@@ -42,7 +42,7 @@
         </StackPanel>
         <StackPanel  Grid.Row="4" x:Name="PanelAppendAt">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Append At:</Label>
-            <ComboBox x:Name="TextFileAppendType" SelectionChanged="TextFileAppendType_SelectionChanged"  Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+            <ComboBox x:Name="TextFileAppendType" SelectionChanged="TextFileAppendType_SelectionChanged"  Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
         </StackPanel>
         <StackPanel Grid.Row="5" x:Name="PanelAppendLine" Visibility="Collapsed" >
             <Label Style="{StaticResource @InputFieldLabelStyle}">Line Number:</Label>

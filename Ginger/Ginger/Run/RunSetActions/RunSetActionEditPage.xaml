@@ -37,7 +37,7 @@
                         </StackPanel>
                         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
                             <Label Style="{StaticResource @LabelStyle}" VerticalAlignment="Center">Condition:</Label>
-                            <ComboBox x:Name="ConditionComboBox" Margin="10,0,0,0" Width="300" Style="{StaticResource @InputComboBoxStyle}"/>
+                            <ComboBox x:Name="ConditionComboBox" Margin="10,0,0,0" Width="300" Style="{StaticResource $FlatInputComboBoxStyle}"/>
                         </StackPanel>
 
                         <Frame x:Name="ActionEditPageFrame" Grid.Row="2"></Frame>

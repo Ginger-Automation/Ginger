@@ -20,7 +20,7 @@
         <StackPanel>
             <StackPanel Orientation="Vertical">
                 <Label Style="{StaticResource @LabelStyle}" Content="Select Report Template:"/>
-                <ComboBox x:Name="CurrentTemplatePickerCbx"  ContextMenu="{x:Null}" Style="{DynamicResource @InputComboBoxStyle}" SelectionChanged="CurrentTemplatePickerCbx_SelectionChanged" ></ComboBox>
+                <ComboBox x:Name="CurrentTemplatePickerCbx"  ContextMenu="{x:Null}" Style="{DynamicResource $FlatInputComboBoxStyle}" SelectionChanged="CurrentTemplatePickerCbx_SelectionChanged" ></ComboBox>
                 <Label Style="{StaticResource @LabelStyle}" x:Name="LabelEndPoint" Content="End Point URL:" />
                 <Actions:UCValueExpression x:Name="xEndPointURLTextBox" ToolTip="EndPoint" />
                 

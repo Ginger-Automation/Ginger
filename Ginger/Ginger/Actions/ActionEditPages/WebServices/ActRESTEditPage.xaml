@@ -55,28 +55,28 @@
         <StackPanel Grid.Row="2" Orientation="Horizontal" >
             <StackPanel Width="100" Margin="0,0,10,0">
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Request Type:</Label>
-                <ComboBox x:Name="RequestTypeComboBox" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                <ComboBox x:Name="RequestTypeComboBox" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
             </StackPanel>
             <StackPanel Width="100" Margin="0,0,10,0">
                 <Label Style="{StaticResource @InputFieldLabelStyle}">HTTP Version</Label>
-                <ComboBox x:Name="HttpVersioncombobox" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                <ComboBox x:Name="HttpVersioncombobox" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
             </StackPanel>
 
             <StackPanel Width="200"  Margin="0,0,10,0">
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Request Content Type:</Label>
-                <ComboBox x:Name="ContentTypeComboBox" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                <ComboBox x:Name="ContentTypeComboBox" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
             </StackPanel>
             <StackPanel Width="200" Margin="0,0,10,0">
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Response Content Type:</Label>
-                <ComboBox x:Name="ResponseTypeComboBox" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                <ComboBox x:Name="ResponseTypeComboBox" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
             </StackPanel>
             <StackPanel Width="150">
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Cookies</Label>
-                <ComboBox x:Name="CookieMode" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                <ComboBox x:Name="CookieMode" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
             </StackPanel>
             <StackPanel Width="150">
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Security Type</Label>
-                <ComboBox x:Name="SecurityTypeComboBox" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                <ComboBox x:Name="SecurityTypeComboBox" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
             </StackPanel>
         </StackPanel>
 
