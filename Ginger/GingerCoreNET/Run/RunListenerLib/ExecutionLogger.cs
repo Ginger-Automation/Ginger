@@ -45,7 +45,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
         // uint meventtime;
-        public IValueExpression mVE;
         public ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
         ProjEnvironment mExecutionEnvironment = null;
 
@@ -120,12 +119,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             if ((action.RunDescription != null) && (action.RunDescription != string.Empty))
             {
-                if (mVE == null)
-                {
-                    mVE = new GingerCore.ValueExpression(context.Environment, context.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
-                }
-                mVE.Value = action.RunDescription;
-                AR.RunDescription = mVE.ValueCalculated;
+
+                AR.RunDescription = ConvertValueExpressionToString(context.Environment , context.BusinessFlow , action.RunDescription);
             }
             return AR;
         }
@@ -137,13 +132,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
             if ((activity.RunDescription != null) && (activity.RunDescription != string.Empty))
             {
-                if (mVE == null)
-                {
-                    mVE = new GingerCore.ValueExpression(context.Environment, context.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
-
-                }
-                mVE.Value = activity.RunDescription;
-                AR.RunDescription = mVE.ValueCalculated;
+                AR.RunDescription = ConvertValueExpressionToString(context.Environment , context.BusinessFlow, activity.RunDescription);
             }
             return AR;
         }
@@ -163,12 +152,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             BFR.Seq = this.ExecutionLogBusinessFlowsCounter;
             if (!string.IsNullOrEmpty(businessFlow.RunDescription))
             {
-                if (mVE == null)
-                {
-                    mVE = new GingerCore.ValueExpression(environment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
-                }
-                mVE.Value = businessFlow.RunDescription;
-                BFR.RunDescription = mVE.ValueCalculated;
+                BFR.RunDescription = ConvertValueExpressionToString(environment, businessFlow , businessFlow.RunDescription);
             }
             return BFR;
         }
@@ -244,5 +228,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public abstract Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData);
 
         public abstract string CalculateExecutionJsonData(LiteDBFolder.LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate);
+
+        private string ConvertValueExpressionToString(ProjEnvironment environment, BusinessFlow businessFlow , string ValueExpresionString)
+        {
+            IValueExpression mVE = new GingerCore.ValueExpression(environment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false)
+            {
+                Value = ValueExpresionString
+            };
+
+            return mVE.ValueCalculated;
+        }
     }
 }
