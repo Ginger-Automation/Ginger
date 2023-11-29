@@ -625,10 +625,10 @@ namespace Ginger.Run
                 {                   
                     if (((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
                     {
-                        await Runners[0].Executor.ExecutionLoggerManager.PublishToCentralDBAsync(RunSetConfig.LiteDbId, RunSetConfig.ExecutionID ?? Guid.Empty);
+                        await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig);
+
                     }                  
                 }
-
                 if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes && Runners.Count > 0)
                 {
                     if (deactivatedBF != null && deactivatedBF.Count > 0)

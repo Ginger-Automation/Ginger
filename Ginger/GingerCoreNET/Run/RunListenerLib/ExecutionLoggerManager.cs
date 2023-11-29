@@ -841,30 +841,8 @@ namespace Ginger.Run
         {
             throw new NotImplementedException();
         }
-        public async System.Threading.Tasks.Task PublishToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId)
-        {
-            if (Configuration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
-            {
-                try
-                {
-                    Reporter.ToLog(eLogLevel.INFO, string.Format("######## Publishing {0} Execution details to central DB", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                    Configuration.IsPublishToCentralDBRunning = true;
+     
 
-                    await mExecutionLogger.SendExecutionLogToCentralDBAsync(runsetId, executionId);
-
-                    Reporter.ToLog(eLogLevel.INFO, string.Format("########################## Execution details Publish to Central DB Completed", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception during Send exeuction data to central DB", ex);
-                }
-                finally
-                {
-                    Configuration.IsPublishToCentralDBRunning = false;
-                }
-
-            }
-        }
 
     }
 }

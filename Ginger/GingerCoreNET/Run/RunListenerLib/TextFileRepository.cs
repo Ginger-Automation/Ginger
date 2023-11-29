@@ -257,11 +257,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             return;
         }
-
-        public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId)
-        {
-            throw new NotImplementedException();
-        }
         public override string CalculateExecutionJsonData(LiteDBFolder.LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate)
         {
             throw new NotImplementedException();

@@ -35,7 +35,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -610,30 +609,15 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return string.Empty;
         }
 
-        public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId)
+        public void DeleteLiteDbAndScreenShotData(LiteDB.ObjectId runsetId, Guid executionId)
         {
-            //Get the latest execution details from LiteDB
-            LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
-            LiteDbRunSet liteDbRunSet = dbManager.GetLatestExecutionRunsetData(runsetId?.ToString());
+            LiteDbRunSet liteDbRunSet = this.liteDbManager.GetLatestExecutionRunsetData(runsetId?.ToString());      
             List<string> screenshotList = PopulateMissingFieldsAndGetScreenshotsList(liteDbRunSet, executionId);
-
-            AccountReportApiHandler centralExecutionLogger = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
-
-            //Map the data to AccountReportRunset Object
-            AccountReportRunSet accountReportRunSet = centralExecutionLogger.MapDataToAccountReportObject(liteDbRunSet);
-            SetExecutionId(accountReportRunSet, executionId);
-            accountReportRunSet.EntityId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid;
-            accountReportRunSet.GingerSolutionGuid = WorkSpace.Instance.Solution.Guid;
-
-            //Publish the Data and screenshots to Central DB
-            await centralExecutionLogger.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
-            await centralExecutionLogger.SendScreenShotsToCentralDBAsync(executionId, screenshotList);
-
-
-            //Delete local data if configured
+            
             try
             {
-                dbManager.DeleteDocumentByLiteDbRunSet(liteDbRunSet);
+
+                this.liteDbManager.DeleteDocumentByLiteDbRunSet(liteDbRunSet);
             }
             catch (Exception ex)
             {
@@ -652,10 +636,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     Reporter.ToLog(eLogLevel.DEBUG, "Deleting screenshots after published to central db", ex);
                 }
             }
-
-            return true;
         }
-
+        /*
+         * THIS FUNCTION HAS NOT BEING USED ANYWHERE
         private void SetExecutionId(AccountReportRunSet accountReportRunSet, Guid executionId)
         {
             accountReportRunSet.ExecutionId = executionId;
@@ -686,7 +669,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
             }
         }
-
+        */
         private List<string> PopulateMissingFieldsAndGetScreenshotsList(LiteDbRunSet liteDbRunSet, Guid executionId)
         {
             List<string> allScreenshots = new List<string>();

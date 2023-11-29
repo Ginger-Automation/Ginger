@@ -56,7 +56,6 @@ namespace Ginger.Run
 
         ParentGingerData GingerData { get; }
 
-        Task PublishToCentralDBAsync(ObjectId runsetId, Guid executionId);
         //void RunnerRunEnd(uint eventTime, IGingerExecutionEngine gingerRunner, string filename = null, int runnerCount = 0, bool offlineMode = false);
         //void RunnerRunStart(uint eventTime, IGingerExecutionEngine gingerRunner, bool offlineMode = false);
         //void RunnerRunUpdate(ObjectId RunnerLiteDbId);
