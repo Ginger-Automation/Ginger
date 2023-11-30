@@ -140,7 +140,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
                     case OperationType.NotIn:
                         return "~";
                     default:
-                        throw new InvalidOperationException($"No operation symbol is know for {typeof(OperationType).FullName} of type {operation}.");
+                        throw new InvalidOperationException($"No operation symbol is known for {typeof(OperationType).FullName} of type {operation}.");
                 }
             }
         }
