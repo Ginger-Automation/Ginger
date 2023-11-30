@@ -16,9 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
@@ -29,7 +31,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -264,6 +265,33 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public override void ResetLastRunSetDetails()
         {
             return;
+        }
+
+        public override async Task SendToCentralDbAndDeleteLocalData(RunSetConfig runSetConfig)
+        {
+            AccountReportApiHandler centralExecutionLogger = new(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+            AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runSetConfig);
+            bool isDataUploadedOnCentralDb = await centralExecutionLogger.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
+
+            if (isDataUploadedOnCentralDb)
+            {
+                DeleteLocalData(runSetConfig.LastRunsetLoggerFolder);
+            }
+        }
+
+        public static void DeleteLocalData(string logFolder)
+        {
+
+            try
+            {
+                DirectoryInfo di = new (logFolder);
+                di.Delete(true);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Clean the Folder '{0}', Issue:'{1}'", logFolder, ex.Message));
+            }
+
         }
     }
 }

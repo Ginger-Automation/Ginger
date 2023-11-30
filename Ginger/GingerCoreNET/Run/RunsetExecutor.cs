@@ -623,9 +623,9 @@ namespace Ginger.Run
 
                 if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && Runners.Count > 0)
                 {                   
-                    if (((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger != null)
+                    if (((GingerExecutionEngine)Runners[0].Executor).ExecutionLoggerManager.mExecutionLogger != null)
                     {
-                        await ((GingerExecutionEngine)Runners[0].Executor).Centeralized_Logger.RunSetEnd(RunSetConfig);
+                        await ((GingerExecutionEngine)Runners[0].Executor).ExecutionLoggerManager.mExecutionLogger.SendToCentralDbAndDeleteLocalData(RunSetConfig);
 
                     }                  
                 }

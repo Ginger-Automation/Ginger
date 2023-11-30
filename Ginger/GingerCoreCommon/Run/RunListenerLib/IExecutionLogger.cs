@@ -19,12 +19,10 @@ limitations under the License.
 //using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using System;
 using System.Threading.Tasks;
-using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.Environments;
-using LiteDB;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -54,5 +52,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         //void SetReportRunner(IGingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, IContext mContext, string filename, int runnerCount);
         //void SetReportRunSet(RunSetReport runSetReport, string logFolder);
         void StartRunSet();
+        Task SendToCentralDbAndDeleteLocalData(RunSetConfig runSetConfig);
     }
 }

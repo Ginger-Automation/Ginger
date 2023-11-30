@@ -26,7 +26,6 @@ using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Activities;
-using GingerCore.Environments;
 using LiteDB;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -941,6 +940,22 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             lastBfStatus = eRunStatus.Pending;
             liteDbBFList.Clear();
+        }
+
+
+        /// <summary>
+        /// Saves Data to the central database and deletes the local data as well as screenshots if the data is saved successfully on the central db
+        /// </summary>
+        public override async Task SendToCentralDbAndDeleteLocalData(RunSetConfig runSetConfig)
+        {
+            AccountReportApiHandler centralExecutionLogger = new (WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+            AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runSetConfig);
+            bool isDataUploadedOnCentralDb = await centralExecutionLogger.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
+
+            if (isDataUploadedOnCentralDb)
+            {
+                this.DeleteLiteDbAndScreenShotData(runSetConfig.LiteDbId, runSetConfig.ExecutionID ?? Guid.Empty);
+            }
         }
     }
 }

@@ -79,7 +79,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public async Task SendRunsetEndDataToCentralDbTaskAsync(RunSetConfig runsetConfig)
         {
-            AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runsetConfig, mContext);
+            AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runsetConfig);
             bool isDataUploadedOnCentralDb = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
 
             LiteDBRepository liteDB = new();
