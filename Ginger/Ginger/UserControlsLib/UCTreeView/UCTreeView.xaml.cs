@@ -21,6 +21,8 @@ using Amdocs.Ginger.Repository;
 using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -253,22 +255,23 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         private void TVI_Expanded(object? sender, RoutedEventArgs e)
         {
             TreeViewItem treeViewItem = (TreeViewItem)e.Source;
+            Mouse.OverrideCursor = Cursors.Wait;
             _ = LoadChildItems(treeViewItem);
+            Mouse.OverrideCursor = null;
         }
 
         private async Task LoadChildItems(TreeViewItem treeViewItem)
         {
-            Mouse.OverrideCursor = Cursors.Wait;
-
-            RemoveDummyNode(treeViewItem);
-            SetRepositoryFolderIsExpanded(treeViewItem, isExpanded: true);
-            await SetTreeNodeItemChilds(treeViewItem);
-            GingerCore.General.DoEvents();
-            // remove the handler as expand data is cached now on tree
-            WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_Expanded);
-            WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_ExtraExpanded);
-
-            Mouse.OverrideCursor = null;
+            bool hadDummyNode = TryRemoveDummyNode(treeViewItem);
+            if (hadDummyNode)
+            {
+                SetRepositoryFolderIsExpanded(treeViewItem, isExpanded: true);
+                await SetTreeNodeItemChilds(treeViewItem);
+                GingerCore.General.DoEvents();
+                // remove the handler as expand data is cached now on tree
+                WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_Expanded);
+                WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_ExtraExpanded);
+            }
         }
 
         private void TVI_Collapsed(object? sender, RoutedEventArgs e)
@@ -402,15 +405,18 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return false;
         }
 
-        private void RemoveDummyNode(TreeViewItem node)
+        private bool TryRemoveDummyNode(TreeViewItem node)
         {
             if (node.Items.Count > 0)
             {
-                if (((TreeViewItem)node.Items[0]).Header.ToString().IndexOf("DUMMY") >= 0)
+                string? header = ((TreeViewItem)node.Items[0]).Header.ToString();
+                if (header != null && header.IndexOf("DUMMY") >= 0)
                 {
                     node.Items.Clear();
+                    return true;
                 }
             }
+            return false;
         }
 
         public void RefreshSelectedTreeNodeChildrens(object sender, System.Windows.RoutedEventArgs e)
