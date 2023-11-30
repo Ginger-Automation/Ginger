@@ -132,7 +132,7 @@ namespace UnitTests.NonUITests
             };
             DummyAction.ReturnValues.Add(ARV5);
 
-            ABF = (AnalyzeBusinessFlow)AnalyzeBusinessFlow.Analyze(Solution, BF).First(x => x.Description.Equals(AnalyzeBusinessFlow.LegacyOutPutValidationDescription));
+            ABF = (AnalyzeBusinessFlow)AnalyzeBusinessFlow.Analyze(BF, Solution).First(x => x.Description.Equals(AnalyzeBusinessFlow.LegacyOutPutValidationDescription));
         }
 
 
@@ -163,14 +163,9 @@ namespace UnitTests.NonUITests
         [TestMethod]
         public void ValidateMandatoryInputValuesAnalayzing()
         {
-            //Arrange
-            List<AnalyzerItemBase> issuesList = new List<AnalyzerItemBase>();
+            AnalyzeBusinessFlow.HasMissingMandatoryInputValues(BF, out List<AnalyzeBusinessFlow> issuesList);
 
-            //Act
-            issuesList.AddRange(AnalyzeBusinessFlow.AnalyzeForMissingMandatoryInputValues(BF));
-
-            //Assert
-            List<AnalyzerItemBase> valIssuesList = issuesList.Where(x => x.UTDescription == "MissingMandatoryInputValue").ToList();
+            List<AnalyzeBusinessFlow> valIssuesList = issuesList.Where(x => x.UTDescription == "MissingMandatoryInputValue").ToList();
             Assert.AreEqual(valIssuesList.Count, 3);
             Assert.AreEqual(valIssuesList[0].ItemName, "BF_VarString");
             Assert.AreEqual(valIssuesList[1].ItemName, "BF_VarList");

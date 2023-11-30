@@ -19,7 +19,9 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.CoreNET.BPMN;
+using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
+using Amdocs.Ginger.CoreNET.BPMN.Models;
+using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using Ginger.Activities;
 using Ginger.ALM;
 using Ginger.Repository;
@@ -134,7 +136,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
             catch (Exception ex)
             {
-                if (ex is BPMNConversionException)
+                if (ex is BPMNException)
                 {
                     Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, ex.Message);
                 }
@@ -153,8 +155,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private string CreateBPMNXMLForActivitiesGroup(ActivitiesGroup activitiesGroup)
         {
             Reporter.ToLog(eLogLevel.INFO, $"Creating BPMN XML for activities group {activitiesGroup.Name}");
-            ActivitiesGroupToBPMNConverter activitiesGroupToBPMNConverter = new(activitiesGroup);
-            Collaboration collaboration = activitiesGroupToBPMNConverter.Convert();
+            CollaborationFromActivityGroupCreator activitiesGroupToBPMNConverter = new(activitiesGroup);
+            Collaboration collaboration = activitiesGroupToBPMNConverter.Create();
             BPMNXMLSerializer serializer = new();
             string xml = serializer.Serialize(collaboration);
             return xml;
