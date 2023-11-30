@@ -26,6 +26,7 @@ using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Activities;
+using GingerCore.Environments;
 using LiteDB;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -204,13 +205,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             LiteDbActivityGroup AGR = new LiteDbActivityGroup();
             context.Runner.CalculateActivitiesGroupFinalStatus(activityGroup, businessFlow);
-            AGR.SetReportData(GetAGReportData(activityGroup, businessFlow));
+            ActivityGroupReport activityGroupReport = GetAGReportData(activityGroup, businessFlow);
+            activityGroupReport.ExternalID = CalculateValueExpression(activityGroup.ExternalID, context.Environment , businessFlow);
+            AGR.SetReportData(activityGroupReport);
             AGR.Seq = ++this.acgSeq;
+            
+            
             if (activityGroup.LiteDbId != null && ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
             {
                 AGR._id = activityGroup.LiteDbId;
             }
             AGR.ActivitiesColl = liteDbActivityList.Where(ac => ac.ActivityGroupName != null && ac.ActivityGroupName.Equals(AGR.Name)).ToList();
+            
             SaveObjToReporsitory(AGR, liteDbManager.NameInDb<LiteDbActivityGroup>(), true);
             liteDbAGList.Add(AGR);
             if (ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
