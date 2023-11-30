@@ -450,7 +450,7 @@ namespace GingerCore.ALM.RQM
 
                     }
                 }
-                else if (string.IsNullOrEmpty(exeRecordId) || exeRecordId.Equals("0"))
+                else
                 {
                     string TestCaseVersionUrl = RQMConnect.Instance.GetTestCaseVersionURLByIdByProject(loginData, testPlan.PreFix, testCaseId);
 
@@ -467,11 +467,7 @@ namespace GingerCore.ALM.RQM
                        result = CreateExecutionRecord(bfExportedID, activGroup, testPlan, loginData, testCaseId, testScriptId, ref exeRecordId);
                     }
                 }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, $"Record id not found for {businessFlow.Name}, creating new record");
-                    result = CreateExecutionRecord(bfExportedID, activGroup, testPlan, loginData, testCaseId, testScriptId, ref exeRecordId);
-                }
+                
                 if(!string.IsNullOrEmpty(result))
                 {
                     return null;
