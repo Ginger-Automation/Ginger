@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger;
 using Amdocs.Ginger.Common;

@@ -201,13 +201,14 @@ namespace Ginger.Reports
             get { return mBusinessFlow.RunStatus.ToString(); }
             set { mBusinessFlow.RunStatus = (Amdocs.Ginger.CoreNET.Execution.eRunStatus)Enum.Parse(typeof(Amdocs.Ginger.CoreNET.Execution.eRunStatus), value); }
         }
+        private string mExternalID;
         [JsonProperty]
         [FieldParams]
         [FieldParamsNameCaption("Mapped ALM Entity ID")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(false)]
         [FieldParamsIsSelected(true)]
-        public string ExternalID { get { return mBusinessFlow.ExternalID; } }
+        public string ExternalID { get { return mExternalID; } set { mExternalID = value; } }
 
         [JsonProperty]
         [FieldParams]
