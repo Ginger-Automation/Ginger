@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;

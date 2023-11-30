@@ -20,12 +20,14 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
 using Amdocs.Ginger.Repository;
 using DocumentFormat.OpenXml.Drawing;
 using Ginger.UserControls;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
 using GingerWPF.WizardLib;
+using NPOI.HPSF;
 using System;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
@@ -427,7 +429,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     System.Windows.Forms.OpenFileDialog dlg2 = new System.Windows.Forms.OpenFileDialog();
 
-                    dlg2.Filter = "JSON Files (*.json)|*.json" + "|YAML Files (*.yaml)|*.yaml;*.yml" + "|All Files (*.*)|*.*";
+                    dlg2.Filter = "JSON Files (*.json)|*.json|YAML Files (*.yaml, *.yml)|*.yaml;*.yml|All Files (*.*)|*.*";
 
                     System.Windows.Forms.DialogResult result = dlg2.ShowDialog();
 

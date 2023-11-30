@@ -145,7 +145,7 @@ namespace Amdocs.Ginger.Common
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, RunSetNotExecuted, OperationNotSupported, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, SaveAllModifiedItems, CopiedErrorInfo, RepositoryNameCantEmpty,
-        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
+        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, InvalidYAML, InvalidJSON,  DuplicateRunsetName,
         POMElementNotExist, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped, SavePOMChanges,
         AskIfToUndoChanges, AskIfToUndoItemChanges, AskIfToImportFile, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification, WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
@@ -174,7 +174,9 @@ namespace Amdocs.Ginger.Common
         HasUnhandledConflicts,
         UncommitedChangesPreventCheckout,
         ExportToBPMNSuccessful,
-        GingerEntityToBPMNConversionError
+        GingerEntityToBPMNConversionError,
+        IssueWhileAnalyzingConflict,
+        ConflictsResolvedCount
     }
 
     public static class UserMsgsPool
@@ -315,6 +317,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.HandleConflictsBeforeMovingForward, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "You have {0} unhandled conflicts, please handle them before moving forward.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.HasUnhandledConflicts, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "Cannot merge since you have {0} unhandled conflicts.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UncommitedChangesPreventCheckout, new UserMsg(eUserMsgType.ERROR, "Uncommited Changes", "Local branch has uncommited changes, check-in them before getting latest.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.IssueWhileAnalyzingConflict, new UserMsg(eUserMsgType.INFO, "Issues with Analyzer", "{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ConflictsResolvedCount, new UserMsg(eUserMsgType.INFO, "Conflicts Resolved", "{0} conflicts was resolved", eUserMsgOption.OK, eUserMsgSelection.OK));
             #endregion SourceControl Messages
 
             #region Validation Messages
@@ -752,6 +756,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.ALMDefectsUserInOtaAPI, new UserMsg(eUserMsgType.INFO, "ALM Defects Valid for Rest API only", "You are in ALM Ota API mode, Please change to Rest API", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.NoSelectedDefect, new UserMsg(eUserMsgType.INFO, "ALM Defects Opening", "Their is no selected Defect", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AllSelectedDefectAlreadyCreatedInAlm, new UserMsg(eUserMsgType.INFO, "ALM Defects Opening", "All Defect are already created in ALM", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidYAML, new UserMsg(eUserMsgType.INFO,"Invalid YAML File", "Provided YAML file has got errors, please verify the YAML document", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidJSON, new UserMsg(eUserMsgType.INFO,"Invalid JSON File", "Provided JSON file has got errors, please verify the JSON document", eUserMsgOption.OK, eUserMsgSelection.None));
 
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToDownloadPossibleValuesShortProcesss, new UserMsg(eUserMsgType.QUESTION, "ALM External Items Fields", "Would you like to download and save possible values for Categories Items? ", eUserMsgOption.YesNo, eUserMsgSelection.No));

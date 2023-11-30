@@ -147,6 +147,7 @@ namespace Ginger.BusinessFlowPages
             BindingOperations.ClearAllBindings(xHandlerTypeCombo);
             BindingOperations.ClearAllBindings(xErrorHandlerMappingCmb);
             BindingOperations.ClearAllBindings(xHandlerPostExecutionCombo);
+            BindingOperations.ClearAllBindings(xHandlerTriggerOnCombo);
         }
 
         private void BindControls()

@@ -83,7 +83,7 @@ namespace Ginger.AnalyzerLib
                                 ABF.Details = "'" + GoToBusinessFlow + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " does not exist in the '" + GR.GingerRunner.Name + " ' " + GingerDicser.GetTermResValue(eTermResKey.RunSet);
                                 ABF.HowToFix = "Remap the Flow Control Action";
                                 ABF.IssueType = eType.Error;
-                                ABF.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                                ABF.CanAutoFix = eCanFix.No;
                                 ABF.Impact = "Flow Control will fail on run time";
                                 ABF.Severity = eSeverity.High;
                             }
@@ -100,7 +100,7 @@ namespace Ginger.AnalyzerLib
                                     ABF.Description = "Flow control mapped to " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " which does not exist"; ;
                                     ABF.Details = "'" + vals[0].Trim() + "' " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " does not exist in parent items";
                                     ABF.HowToFix = "Remap the Flow Control Action";
-                                    ABF.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                                    ABF.CanAutoFix = eCanFix.No;
                                     ABF.IssueType = eType.Error;
                                     ABF.Impact = "Flow Control will fail on run time";
                                     ABF.Severity = eSeverity.High;
@@ -111,7 +111,8 @@ namespace Ginger.AnalyzerLib
                 }
             }
 
-            IssuesList.AddRange(AnalyzeBusinessFlow.AnalyzeForMissingMandatoryInputValues(BusinessFlow));
+            AnalyzeBusinessFlow.HasMissingMandatoryInputValues(BusinessFlow, out List<AnalyzeBusinessFlow> missingMandatoryInputValuesIssues);
+            IssuesList.AddRange(missingMandatoryInputValuesIssues);
 
             return IssuesList;
         }
