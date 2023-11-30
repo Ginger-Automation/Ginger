@@ -16,7 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using System.Linq;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
+using Microsoft.CodeAnalysis;
 
 namespace Ginger.Reports
 {
@@ -144,5 +147,22 @@ namespace Ginger.Reports
                 }
             }
         }
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType.Equals(SerializationErrorType.PropertyNotFound))
+            {
+                if (name == "CentralizedHtmlReportServiceURL" && GingerCoreCommonWorkSpace.Instance.Solution!=null )
+                {
+                    GingerCoreCommonWorkSpace.Instance.Solution.
+                        ExecutionLoggerConfigurationSetList.FirstOrDefault((executionLogger)=>executionLogger.IsSelected).CentralizedHtmlReportServiceURL = value;
+
+                    return true;
+                }
+
+            }
+
+            return false;
+        }
+
     }
 }

@@ -30,6 +30,7 @@ using System.Xml.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Ginger.Reports;
 
 namespace Amdocs.Ginger.Repository
 {

@@ -524,6 +524,11 @@ namespace amdocs.ginger.GingerCoreNET
                 BusinessFlow.SolutionVariables = solution.Variables;
                 solution.SolutionOperations.SetReportsConfigurations();
                 Solution = solution;
+                
+                string txt = File.ReadAllText(solutionFile);
+                NewRepositorySerializer.DeserializeFromText(txt);
+
+
                 UserProfile.UserProfileOperations.LoadRecentAppAgentMapping();
 
                 if (!RunningInExecutionMode)
@@ -533,7 +538,6 @@ namespace amdocs.ginger.GingerCoreNET
 
                 //Solution items upgrade
                 SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
-
                 if (!RunningInExecutionMode && mSolution.NeedVariablesReEncryption && !WorkSpace.Instance.UserProfile.IsSharedUserProfile)
                 {
                     string msg = "Going forward each solution needs to have its own key for encrypting password values\n"
