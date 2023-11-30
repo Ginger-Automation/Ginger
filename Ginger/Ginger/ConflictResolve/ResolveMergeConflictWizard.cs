@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SourceControl;
+using Ginger.WizardLib;
 using GingerCore;
 using GingerTest.WizardLib;
 using GingerWPF.WizardLib;
@@ -50,16 +51,47 @@ namespace Ginger.ConflictResolve
         private void AddPages()
         {
             AddPage(
+                Name: "Introduction", 
+                Title: "Introduction", 
+                SubTitle: "Conflict Resolve Introduction", 
+                Page: new WizardIntroPage("/ConflictResolve/ConflictResolveIntro.md"));
+
+            AddPage(
                 Name: "CompareAndSelect",
                 Title: "Compare and Select Conflicts",
                 SubTitle: "Compare and Select Conflicts",
                 new ConflictViewPage());
 
+            Type? conflictedItemType = GetConflictedItemType();
+            if(conflictedItemType != null && AnalyeMergedPage.IsTypeSupportedForIsolatedAnalyzation(conflictedItemType))
+            {
+                AddPage(
+                Name: "Analyze",
+                Title: "Analyze",
+                SubTitle: "Analyze Merged Item",
+                Page: new AnalyeMergedPage());
+            }
+
             AddPage(
-                Name: "PreviewMergedResult",
-                Title: "Preview Merged Result",
-                SubTitle: "Preview Merged Result",
+                Name: "PreviewMergedEntity",
+                Title: "Preview Merged Entity",
+                SubTitle: "Preview Merged Entity",
                 new PreviewMergedPage());
+        }
+
+        private Type? GetConflictedItemType()
+        {
+            RepositoryItemBase? localItem = _conflict.GetLocalItem();
+            if (localItem != null)
+            {
+                return localItem.GetType();
+            }
+            RepositoryItemBase? remoteItem = _conflict.GetRemoteItem();
+            if(remoteItem != null)
+            {
+                return remoteItem.GetType();
+            }
+            return null;
         }
 
         public bool TryGetOrCreateMergedItem(out RepositoryItemBase? mergedItem)
