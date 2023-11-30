@@ -64,7 +64,7 @@ namespace UnitTests.NonUITests.AutoPilot
         
         [TestMethod]
         [Timeout(60000)]
-        public void SwaggerParseCheckHeaderAndParamsCount()
+        public void Swagger2JsonCheckHeaderAndParamsCount()
         {
             //Arrange
             SwaggerParser parserForBillingAccount = new SwaggerParser();
@@ -152,7 +152,7 @@ namespace UnitTests.NonUITests.AutoPilot
 
         [TestMethod]
         [Timeout(60000)]
-        public void SwaggerTwoYamlCheckHeaderAndParamsCount()
+        public void Swagger2YamlCheckHeaderAndParamsCount()
         {
             //Arrange
             SwaggerParser parserForBillingAccount = new SwaggerParser();

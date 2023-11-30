@@ -246,11 +246,11 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
                 if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
                 {
-                    YamlNote.Visibility = Visibility.Visible;
+                    SupportNote.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    YamlNote.Visibility = Visibility.Collapsed;
+                    SupportNote.Visibility = Visibility.Collapsed;
                 }
 
                 if (URLRadioButton.IsChecked == true)
@@ -285,7 +285,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 xBrowseLoadButton.Visibility = Visibility.Collapsed;
                 xPreviewButton.Visibility = Visibility.Collapsed;
                 XMLTemplatesLable.Visibility = Visibility.Visible;
-                YamlNote.Visibility = Visibility.Collapsed;
+                SupportNote.Visibility = Visibility.Collapsed;
                 BrowseButtonClicked(new object(), new RoutedEventArgs());
 
                 xURLTextBox.ClearValidations(TextBox.TextProperty);
