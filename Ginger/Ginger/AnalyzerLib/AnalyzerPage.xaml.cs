@@ -142,7 +142,7 @@ namespace Ginger.AnalyzerLib
             mAnalyzedObject = AnalyzedObject.BusinessFlow;
             mSolution = solution;
             this.businessFlow = businessFlow;
-            AnalyzerItemsGrid.Title = "'" + businessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Issues";
+            AnalyzerItemsGrid.Title = $"'{businessFlow.Name}' {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} Issues";
 
             mAnalyzerUtils.SelfHealingAutoFixIssue = selfHealingAutoFixIssue;
         }
@@ -157,7 +157,7 @@ namespace Ginger.AnalyzerLib
             mRunSetConfig = RSC;
             mSolution = solution;
             mAnalyzedObject = AnalyzedObject.RunSetConfig;
-            AnalyzerItemsGrid.Title = "'" + RSC.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " Issues";
+            AnalyzerItemsGrid.Title = $"'{RSC.Name}' {GingerDicser.GetTermResValue(eTermResKey.RunSet)} Issues";
 
             mAnalyzerUtils.SelfHealingAutoFixIssue = RSC.SelfHealingConfiguration.AutoFixAnalyzerIssue;
 
@@ -257,12 +257,12 @@ namespace Ginger.AnalyzerLib
 
                 BusyInProcess = false;
                 mAnalyzerCompleted = true;
-                SetAnalayzeProcessAsCompleted();
+                SetAnalyzeProcessAsCompleted();
             }
 
         }
 
-        private void SetAnalayzeProcessAsCompleted()
+        private void SetAnalyzeProcessAsCompleted()
         {
             if (mAnalyzeWithUI)
             {
