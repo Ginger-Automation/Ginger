@@ -285,6 +285,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 xBrowseLoadButton.Visibility = Visibility.Collapsed;
                 xPreviewButton.Visibility = Visibility.Collapsed;
                 XMLTemplatesLable.Visibility = Visibility.Visible;
+                YamlNote.Visibility = Visibility.Collapsed;
                 BrowseButtonClicked(new object(), new RoutedEventArgs());
 
                 xURLTextBox.ClearValidations(TextBox.TextProperty);
