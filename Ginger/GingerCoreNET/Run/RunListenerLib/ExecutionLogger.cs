@@ -24,6 +24,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -134,17 +135,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             ActivityReport AR = new ActivityReport(activity);
             AR.Seq = context.BusinessFlow.ExecutionLogActivityCounter;
             AR.VariablesBeforeExec = activity.VariablesBeforeExec;
-
-            if ((activity.RunDescription != null) && (activity.RunDescription != string.Empty))
-            {
-                if (mVE == null)
-                {
-                    mVE = new GingerCore.ValueExpression(context.Environment, context.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
-
-                }
-                mVE.Value = activity.RunDescription;
-                AR.RunDescription = mVE.ValueCalculated;
-            }
+            AR.RunDescription = CalculateValueExpression(activity.RunDescription, context.Environment, context.BusinessFlow);
             return AR;
         }
         internal ActivityGroupReport GetAGReportData(ActivitiesGroup activityGroup, BusinessFlow businessFlow)
@@ -161,16 +152,24 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
             BFR.SolutionVariablesBeforeExec = businessFlow.SolutionVariablesBeforeExec;
             BFR.Seq = this.ExecutionLogBusinessFlowsCounter;
-            if (!string.IsNullOrEmpty(businessFlow.RunDescription))
+            BFR.RunDescription = CalculateValueExpression(businessFlow.RunDescription , environment, businessFlow);
+            BFR.ExternalID = CalculateValueExpression(businessFlow.ExternalID, environment, businessFlow);
+            return BFR;
+        }
+
+        protected string CalculateValueExpression(string value , ProjEnvironment environment , BusinessFlow businessFlow)
+        {
+            if (!string.IsNullOrEmpty(value))
             {
                 if (mVE == null)
                 {
                     mVE = new GingerCore.ValueExpression(environment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
                 }
-                mVE.Value = businessFlow.RunDescription;
-                BFR.RunDescription = mVE.ValueCalculated;
+                mVE.Value = value;
+                return mVE.ValueCalculated;
             }
-            return BFR;
+
+            return string.Empty;
         }
         //public static object LoadObjFromJSonFile(string FileName, Type t)
         //{

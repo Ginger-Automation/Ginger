@@ -36,7 +36,6 @@ using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-
 namespace GingerCore
 {
     public class BusinessFlow : RepositoryItemBase
@@ -1913,6 +1912,5 @@ namespace GingerCore
                 ExternalIdCalCulated = ve.ValueCalculated;
             }
         }
-
     }
 }

@@ -180,6 +180,21 @@ namespace Ginger.Reports
             }
         }
 
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID { get { return mActivity.ExternalID; } }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID 2")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID2 { get { return mActivity.ExternalID2; } }
+
+
         public int TotalActionsPassed
         {
             get
