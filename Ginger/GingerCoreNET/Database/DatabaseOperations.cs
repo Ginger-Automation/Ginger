@@ -202,7 +202,15 @@ namespace GingerCore.Environments
             {
                 Database.ConnectionString = string.Format("AccountEndpoint={0};AccountKey={1}", Database.User, Database.Pass);
             }
-            return ConnectionStringCalculated;
+            else if (Database.DBType == eDBTypes.Hbase)
+            {
+                string[] host = TNSCalculated.Split(':');
+                if (host.Length == 2)
+                {
+                    Database.ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
+                }
+            }
+                return ConnectionStringCalculated;
         }
 
         private DateTime LastConnectionUsedTime;
@@ -210,13 +218,7 @@ namespace GingerCore.Environments
 
         public bool MakeSureConnectionIsOpen()
         {
-            Boolean isCoonected = true;
-            ///////////////////////////////////////////////Need to write proper code for this. This is for testing purpose
-            if(Database.DBType == eDBTypes.Hbase)
-            {
-                return true;
-            }
-            //////////////////////////////////////////////////
+            Boolean isCoonected = true;            
             if ((oConn == null) || (oConn.State != ConnectionState.Open))
             {
                 isCoonected = Connect();
@@ -245,7 +247,7 @@ namespace GingerCore.Environments
         {
             DbProviderFactory factory;
             string connectConnectionString = string.Empty;
-            if (Database.DBType != eDBTypes.Cassandra && Database.DBType != eDBTypes.Couchbase && Database.DBType != eDBTypes.MongoDb)
+            if (Database.DBType != eDBTypes.Cassandra && Database.DBType != eDBTypes.Couchbase && Database.DBType != eDBTypes.MongoDb && Database.DBType != eDBTypes.Hbase)
             {
                 connectConnectionString = GetConnectionString();
             }
@@ -390,12 +392,22 @@ namespace GingerCore.Environments
                             return false;
                         }
                     
-                    case eDBTypes.Hbase: //string Operation = "GetColumnList"/ "GetTableList"/"DBOperation"/"RowCount";
-                        GingerHbase ghbase = new GingerHbase();
-                        ghbase.Connect_HB("DBOperation", "Employee");
-                        //ghbase.PerformDBAction();
-                        return true;
+                    case eDBTypes.Hbase: 
                         
+                        Database.ConnectionString = GetConnectionString();
+
+                        GingerHbase ghbase = new GingerHbase(Database.TNS, Database.User, Database.Pass);
+                        ghbase.Db = Database;
+                        if (ghbase.Connect())
+                        {
+                            LastConnectionUsedTime = DateTime.Now;
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }                                               
+                                            
                     default:
                         //not implemented
                         break;
@@ -486,7 +498,10 @@ namespace GingerCore.Environments
                 try
                 {
                     DataTable table = null;
-                    //if (oConn == null || oConn.State == ConnectionState.Closed) Connect();
+                    if (oConn == null || oConn.State == ConnectionState.Closed)
+                    {
+                        Connect();
+                    }
                     switch (Database.DBType) 
                     {
                         case eDBTypes.Cassandra:
@@ -512,9 +527,9 @@ namespace GingerCore.Environments
                             databaseTableNames = objGingerCosmos.GetTableList(Keyspace);
                         break;
                         case eDBTypes.Hbase:
-                            GingerHbase ghbase = new GingerHbase();
+                            GingerHbase ghbase = new GingerHbase(Database.TNS, Database.User, Database.Pass);
                             ghbase.GetTableList().Wait();
-                            databaseTableNames = ghbase.TableList;
+                            databaseTableNames = ghbase.HBTableList;
                             //databaseTableNames = ghbase.GetTableList();
                             break;
 
@@ -565,34 +580,38 @@ namespace GingerCore.Environments
                 return command.ExecuteScalar().ToString(); 
             } 
         }
+        public List<string> databaseColumnNames;
 
-
-        public List<string> GetTablesColumns(string table)
+        public async Task<List<string>> GetTablesColumns(string table)
         {
             DbDataReader reader = null;
-            List<string> databaseColumnNames = new List<string>() { "" };
-            //if ((oConn == null || string.IsNullOrEmpty(table)) && (Database.DBType != Database.eDBTypes.Cassandra) && (Database.DBType != Database.eDBTypes.MongoDb)
-            //    && (Database.DBType != Database.eDBTypes.CosmosDb))
-            //{
-            //    return databaseColumnNames;
-            //}
+            databaseColumnNames = new List<string>() { "" };
+            if ((oConn == null || string.IsNullOrEmpty(table)) && (Database.DBType != Database.eDBTypes.Cassandra) && (Database.DBType != Database.eDBTypes.MongoDb)
+                && (Database.DBType != Database.eDBTypes.CosmosDb) && (Database.DBType != Database.eDBTypes.Hbase))
+            {
+                return databaseColumnNames;
+            }
             if (Database.DBType == Database.eDBTypes.Cassandra)
             {
+
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCassandra(Database);
-                databaseColumnNames = NoSqlDriver.GetColumnList(table);
+                databaseColumnNames = await NoSqlDriver.GetColumnList(table);
             }
             else if (Database.DBType == Database.eDBTypes.Couchbase)
             {
+
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerCouchbase(Database);
-                databaseColumnNames = NoSqlDriver.GetColumnList(table);
+                databaseColumnNames = await NoSqlDriver.GetColumnList(table);
+                
             }
             else if (Database.DBType == Database.eDBTypes.MongoDb)
-            {
+            {           
+
                 NoSqlBase.NoSqlBase NoSqlDriver = null;
                 NoSqlDriver = new GingerMongoDb(Database);
-                databaseColumnNames = NoSqlDriver.GetColumnList(table);
+                databaseColumnNames = await NoSqlDriver.GetColumnList(table);
             }
             else if (Database.DBType == Database.eDBTypes.CosmosDb)
             {
@@ -600,21 +619,15 @@ namespace GingerCore.Environments
                 NoSqlDriver = new GingerCosmos();
                 Database.ConnectionString = GetConnectionString();
                 NoSqlDriver.Db = Database;
-                databaseColumnNames = NoSqlDriver.GetColumnList(table);
+                databaseColumnNames = await NoSqlDriver.GetColumnList(table);
             }
             else if (Database.DBType == Database.eDBTypes.Hbase)
             {
-                //// NoSqlBase.NoSqlBase NoSqlDriver = null;
-                //// NoSqlDriver = new GingerHbase();
-                GingerHbase ghbase = new GingerHbase();
-                ghbase.GetColumnList(table);
-
-                List<string> templist = ghbase.ColumnList;
-                for (int i = 0;i < templist.Count; i++)
-                {
-                    databaseColumnNames.Add(templist[i]);
-                }
-               
+                NoSqlBase.NoSqlBase NoSqlDriver = null;
+                NoSqlDriver = new GingerHbase(Database.TNS, Database.User, Database.Pass);
+                Database.ConnectionString = GetConnectionString();
+                NoSqlDriver.Db = Database;               
+                databaseColumnNames = await NoSqlDriver.GetColumnList(table);                              
             }
             else
             {
@@ -660,7 +673,7 @@ namespace GingerCore.Environments
         public string fUpdateDB(string updateCmd, bool commit)
         {
             string result = "";
-            //if (oConn == null) Connect();
+            if (oConn == null) Connect();
             if (MakeSureConnectionIsOpen())
             {
                 using (DbCommand command = oConn.CreateCommand())

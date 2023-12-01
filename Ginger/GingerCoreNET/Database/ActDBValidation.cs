@@ -198,7 +198,7 @@ namespace GingerCore.Actions
             {
                 try
                 {
-                    if (DB != null && (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase || DB.DBType == Database.eDBTypes.MongoDb || DB.DBType == Database.eDBTypes.CosmosDb))
+                    if (DB != null && (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase || DB.DBType == Database.eDBTypes.MongoDb || DB.DBType == Database.eDBTypes.CosmosDb || DB.DBType == Database.eDBTypes.Hbase))
                     {
                         return eDatabaseTye.NoSQL;
                     }
@@ -331,11 +331,11 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateInputParamValue("SQL", GetInputParamValue("Value"));
             }
-            // Temporarily commenting the below  3 lines for hbase. need to be uncommented
-            //if (SetDBConnection() == false)
-            //{
-            //    return ;//Failed to find the DB in the Environment
-            //}
+           
+            if (SetDBConnection() == false)
+            {
+                return;//Failed to find the DB in the Environment
+            }
 
             switch (DatabaseType)
             {
@@ -403,6 +403,12 @@ namespace GingerCore.Actions
                     if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerCosmos))
                     {
                         NoSqlDriver = new GingerCosmos(DBValidationType, DB, this);
+                    }
+                    break;
+                case Database.eDBTypes.Hbase:
+                    if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerCosmos))
+                    {
+                        NoSqlDriver = new GingerHbase(DBValidationType, DB, this);
                     }
                     break;
             }

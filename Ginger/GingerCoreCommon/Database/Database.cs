@@ -39,7 +39,8 @@ namespace GingerCore.Environments
             MySQL,
             Couchbase,
             MongoDb,
-            CosmosDb,Hbase
+            CosmosDb,
+            Hbase
         }
 
         public enum eConfigType

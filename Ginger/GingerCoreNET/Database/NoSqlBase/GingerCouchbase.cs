@@ -25,6 +25,7 @@ using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace GingerCore.NoSqlBase
 {
@@ -118,7 +119,7 @@ namespace GingerCore.NoSqlBase
             return null;
         }
 
-        public override List<string> GetColumnList(string tablename)
+        public override Task<List<string>> GetColumnList(string tablename)
         {
             return null;
         }
