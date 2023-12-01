@@ -374,7 +374,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             return accountReportRunSet;
         }
 
-        public static AccountReportRunSet MapRunsetEndData(RunSetConfig runSetConfig, Context context)
+        public static AccountReportRunSet MapRunsetEndData(RunSetConfig runSetConfig)
         {
             AccountReportRunSet accountReportRunSet = new AccountReportRunSet();
             accountReportRunSet.Id = (Guid)runSetConfig.ExecutionID;

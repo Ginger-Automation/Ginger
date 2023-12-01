@@ -45,30 +45,6 @@
                     <RadioButton x:Name="htmlReportAutoProdOffRadioBtn" Content="Off" Padding="5,0,0,0" IsChecked="True" Checked="htmlReportAutoProdOffRadioBtn_Checked"/>
                 </StackPanel>
             </StackPanel>
-            <Grid x:Name="xCentralizedReportSettingsGrid" Margin="10,20,10,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="30*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="700"/>
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Orientation="Horizontal" Grid.Row="0">
-                    <Label  Content="Centralized Report Data Settings" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
-                    <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
-                </StackPanel>
-
-                <DockPanel Grid.Row="1" Margin="5 0 5 5">
-                    <Label  Style="{StaticResource @LabelStyle}" Content="Centralized Report Data Service URL:  "/>
-                    <TextBox x:Name="xCentralizedReportDataServiceURLTextBox" Style="{StaticResource @TextBoxStyle}"  />
-                </DockPanel>
-                <DockPanel Grid.Row="2" Margin="5 0 5 5">
-                    <Label  Style="{StaticResource @LabelStyle}" Content="Centralized HTML Report Service URL:"/>
-                    <TextBox x:Name="xCentralizedHtmlReportServiceURLTextBox" Style="{StaticResource @TextBoxStyle}"  />
-                </DockPanel>
-            </Grid>
         </StackPanel>
     </Grid>
 </UserControlsLib:GingerUIPage>

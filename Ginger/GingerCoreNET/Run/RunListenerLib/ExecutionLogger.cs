@@ -18,7 +18,6 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
-using DocumentFormat.OpenXml.Math;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
@@ -27,9 +26,6 @@ using GingerCore.Activities;
 using GingerCore.Environments;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
-using static Ginger.ExecuterService.Contracts.V1.GingerParser.ParserApiRoutes;
-using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -220,7 +216,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public abstract string GetLogFolder(string folder);
 
 
-        public abstract Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData);
 
         public abstract string CalculateExecutionJsonData(LiteDBFolder.LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate);
 
