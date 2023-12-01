@@ -227,7 +227,7 @@ namespace GingerCore.ALM.RQM
                             resultInfo = RQMConnect.Instance.RQMRep.ExportExecutionResult(loginData, exeResultList, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName);
                             if (!resultInfo.IsSuccess)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for  {businessFlow.Name} and testplan {bfExportedID}, execution record id {exeResultList.FirstOrDefault().TestCaseExportID} Error: {resultInfo.ErrorDesc}");
+                                Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for  {businessFlow.Name} and testplan {bfExportedID}, execution record id {exeResultList.FirstOrDefault().ExecutionRecordExportID} Error: {resultInfo.ErrorDesc}");
                                 return false;
                             }
                         }
