@@ -23,6 +23,7 @@ using GingerCore.Actions;
 using GingerCore.GeneralLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -57,7 +58,7 @@ namespace Ginger.UserControlsLib
             InitializeComponent();
 
             this.DataContextChanged += UCComboBox_DataContextChanged;
-
+            
         }
 
         private void UCComboBox_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

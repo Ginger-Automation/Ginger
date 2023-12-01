@@ -23,6 +23,7 @@ using GingerCore;
 using GingerWPF.WizardLib;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.Actions.ActionConversion

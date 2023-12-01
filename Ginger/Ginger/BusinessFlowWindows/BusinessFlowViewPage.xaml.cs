@@ -30,8 +30,11 @@ using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -77,23 +80,24 @@ namespace GingerWPF.BusinessFlowsLib
                 xOperationsPnl.Visibility = Visibility.Collapsed;
             }
         }
+        string allProperties = string.Empty;
 
         private void BindControlsToBusinessFlow()
         {
             //General Info Section Bindings
             BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
             BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.ToolTipProperty, mBusinessFlow, nameof(BusinessFlow.Name));
-            mBusinessFlow.PropertyChanged -= mBusinessFlow_PropertyChanged;
-            mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
-            mBusinessFlow.Tags.CollectionChanged -= Tags_CollectionChanged;
-            mBusinessFlow.Tags.CollectionChanged += Tags_CollectionChanged;
-            mBusinessFlow.TargetApplications.CollectionChanged -= TargetApplications_CollectionChanged;
-            mBusinessFlow.TargetApplications.CollectionChanged += TargetApplications_CollectionChanged;
+            PropertyChangedEventManager.RemoveHandler(source: mBusinessFlow, handler: mBusinessFlow_PropertyChanged, propertyName: allProperties);
+            PropertyChangedEventManager.AddHandler(source: mBusinessFlow, handler: mBusinessFlow_PropertyChanged, propertyName: allProperties);
+            CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.Tags, handler: Tags_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mBusinessFlow.Tags, handler: Tags_CollectionChanged);
+            CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mBusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
             UpdateInfoSection();
 
             //Activities Tab Bindings
-            mBusinessFlow.Activities.CollectionChanged -= Activities_CollectionChanged;
-            mBusinessFlow.Activities.CollectionChanged += Activities_CollectionChanged;
+            CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.Activities, handler: Activities_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mBusinessFlow.Activities, handler: Activities_CollectionChanged);
             UpdateActivitiesTabHeader();
             if (mActivitiesPage != null && xActivitisTab.IsSelected)
             {
@@ -101,8 +105,8 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             //Variables Tab Bindings      
-            mBusinessFlow.Variables.CollectionChanged -= Variables_CollectionChanged;
-            mBusinessFlow.Variables.CollectionChanged += Variables_CollectionChanged;
+            CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.Variables, handler: Variables_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mBusinessFlow.Variables, handler: Variables_CollectionChanged);
             UpdateVariabelsTabHeader();
             if (mVariabelsPage != null && xVariablesTab.IsSelected)
             {
@@ -193,9 +197,9 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void ClearBusinessFlowBindings()
         {
-            mBusinessFlow.PropertyChanged -= mBusinessFlow_PropertyChanged;
-            mBusinessFlow.Activities.CollectionChanged -= Activities_CollectionChanged;
-            mBusinessFlow.Variables.CollectionChanged -= Variables_CollectionChanged;
+            PropertyChangedEventManager.RemoveHandler(source: mBusinessFlow, handler: mBusinessFlow_PropertyChanged, propertyName: allProperties);
+            CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.Activities, handler: Activities_CollectionChanged);
+            CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.Variables, handler: Variables_CollectionChanged);
         }
 
         public void UpdateBusinessFlow(BusinessFlow businessFlow)
@@ -351,10 +355,10 @@ namespace GingerWPF.BusinessFlowsLib
                     title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     Button saveBtn = new Button();
                     saveBtn.Content = "Save";
-                    saveBtn.Click += new RoutedEventHandler(SaveBtn_Click);
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveBtn, eventName: nameof(ButtonBase.Click), handler: SaveBtn_Click);
                     Button undoBtnSr = new Button();
                     undoBtnSr.Content = "Undo & Close";
-                    undoBtnSr.Click += new RoutedEventHandler(UndoAndCloseBtn_Click);
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtnSr, eventName: nameof(ButtonBase.Click), handler: UndoAndCloseBtn_Click);
                     winButtons.Add(undoBtnSr);
                     winButtons.Add(saveBtn);
                     break;
@@ -364,7 +368,7 @@ namespace GingerWPF.BusinessFlowsLib
                     title = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     Button okBtnView = new Button();
                     okBtnView.Content = "Ok";
-                    okBtnView.Click += new RoutedEventHandler(okBtn_Click);
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtnView, eventName: nameof(ButtonBase.Click), handler: okBtn_Click);
                     winButtons.Add(okBtnView);
                     CloseHandler = new RoutedEventHandler(okBtn_Click);
                     closeContent = okBtnView.Content.ToString();

@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -84,9 +85,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
             {
                 xReLearnElements.Visibility = Visibility.Collapsed;
             }
-
-            mPOM.MappedUIElements.CollectionChanged += MappedUIElements_CollectionChanged;
-            mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
+            CollectionChangedEventManager.AddHandler(source: mPOM.MappedUIElements, handler: MappedUIElements_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mPOM.UnMappedUIElements, handler: UnMappedUIElements_CollectionChanged);
+            
 
             mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, AddSelfHealingColumn);
             xMappedElementsFrame.ClearAndSetContent(mappedUIElementsPage);

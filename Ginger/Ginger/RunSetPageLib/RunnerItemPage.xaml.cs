@@ -27,9 +27,11 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.DataSource;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace Ginger.Run
 {
@@ -227,7 +229,7 @@ namespace Ginger.Run
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(BusinessFlow.RunStatus), BindingMode.OneWay);
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(BusinessFlow.RunStatus), bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBusinessflowActive, ucButton.ButtonImageTypeProperty, ItemObject, nameof(BusinessFlow.Active), bindingConvertor: new ActiveIconConverter(), BindingMode.TwoWay);
-                    ((BusinessFlow)ItemObject).PropertyChanged += RunnerItem_BusinessflowPropertyChanged;
+                    PropertyChangedEventManager.AddHandler(source: ((BusinessFlow)ItemObject), handler: RunnerItem_BusinessflowPropertyChanged, propertyName: allProperties);
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                     xViewRunnerItem.ToolTip = "View " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow);
                 }
@@ -235,7 +237,7 @@ namespace Ginger.Run
                 {
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(Activity.Status), BindingMode.OneWay);
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(Activity.Status), bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
-                    ((Activity)ItemObject).PropertyChanged += RunnerItem_ActivityPropertyChanged;
+                    PropertyChangedEventManager.AddHandler(source: ((Activity)ItemObject), handler: RunnerItem_ActivityPropertyChanged, propertyName: allProperties);
                     xRunnerItemContinue.ToolTip = "Resume Run from this " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     xViewRunnerItem.ToolTip = "View " + GingerDicser.GetTermResValue(eTermResKey.Activity);
                     xRunnerItemMenu.Visibility = Visibility.Collapsed;
@@ -244,7 +246,7 @@ namespace Ginger.Run
                 {
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, ItemObject, nameof(Act.Status), BindingMode.OneWay);
                     GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusIcon, ImageMakerControl.ImageTypeProperty, ItemObject, nameof(Act.Status), bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
-                    ((Act)ItemObject).PropertyChanged += RunnerItem_ActionPropertyChanged;
+                    PropertyChangedEventManager.AddHandler(source: ((Act)ItemObject), handler: RunnerItem_ActionPropertyChanged, propertyName: allProperties);
                     xRunnerItemContinue.ToolTip = "Resume Run from this Action";
                     xViewRunnerItem.ToolTip = "View Action";
                     xRunnerItemMenu.Visibility = Visibility.Collapsed;
@@ -443,41 +445,44 @@ namespace Ginger.Run
                 ResetBusinessFlowStatus(this, e);
             }
         }
+        string allProperties = string.Empty;
         public void ClearBindings()
         {
             if (ItemObject is BusinessFlow)
             {
-                ((BusinessFlow)ItemObject).PropertyChanged -= RunnerItem_BusinessflowPropertyChanged;
+                PropertyChangedEventManager.RemoveHandler(source: ((BusinessFlow)ItemObject), handler: RunnerItem_BusinessflowPropertyChanged, propertyName: allProperties);
             }
             else if (ItemObject is Activity)
             {
-                ((Activity)ItemObject).PropertyChanged -= RunnerItem_ActivityPropertyChanged;
+                PropertyChangedEventManager.RemoveHandler(source: ((Activity)ItemObject), handler: RunnerItem_ActivityPropertyChanged, propertyName: allProperties);
             }
             else
             {
-                ((Act)ItemObject).PropertyChanged -= RunnerItem_ActionPropertyChanged;
+                PropertyChangedEventManager.RemoveHandler(source: ((Act)ItemObject), handler: RunnerItem_ActionPropertyChanged, propertyName: allProperties);
             }
-            this.xDetailView.Click -= xDetailView_Click;
-            this.MouseDoubleClick -= UserControl_MouseDoubleClick;
-            this.xRunnerItemContinue.Click -= xRunnerItemContinue_Click;
-            this.xDuplicateBusinessflow.Click -= xDuplicateBusinessflow_Click;
-            this.xautomateBusinessflow.Click -= xautomateBusinessflow_Click;
-            this.xGenerateReport.Click -= xGenerateReport_Click;
-            this.xExportToAlm.Click -= xExportToAlm_Click;
-            this.xResetStatus_Buss_Flow_Actions.Click -= xResetStatus_Buss_Flow_Actions_Click;
-            this.xViewRunnerItem.Click -= xViewRunnerItem_Click;
-            this.xconfig.Click -= xconfig_Click;
-            this.xremoveBusinessflow.Click -= xremoveBusinessflow_Click;
-            this.xBusinessflowActive.Click -= xBusinessflowActive_Click;
+            
 
+            WeakEventManager<ucButton, RoutedEventArgs>.RemoveHandler(source: this.xDetailView, eventName: nameof(ucButton.Click), handler: xDetailView_Click);
+            WeakEventManager<Control, MouseButtonEventArgs>.RemoveHandler(source: this, eventName: nameof(ucButton.MouseDoubleClick), handler: UserControl_MouseDoubleClick);
+            WeakEventManager<ucButton, RoutedEventArgs>.RemoveHandler(source: this.xRunnerItemContinue, eventName: nameof(ucButton.Click), handler: xRunnerItemContinue_Click);
+            WeakEventManager<MenuItem, RoutedEventArgs>.RemoveHandler(source: this.xDuplicateBusinessflow, eventName: nameof(MenuItem.Click), handler: xDuplicateBusinessflow_Click);
+            WeakEventManager<MenuItem, RoutedEventArgs>.RemoveHandler(source: this.xautomateBusinessflow, eventName: nameof(MenuItem.Click), handler: xautomateBusinessflow_Click);
+            WeakEventManager<MenuItem, RoutedEventArgs>.RemoveHandler(source: this.xGenerateReport, eventName: nameof(MenuItem.Click), handler: xGenerateReport_Click);
+            WeakEventManager<MenuItem, RoutedEventArgs>.RemoveHandler(source: this.xExportToAlm, eventName: nameof(MenuItem.Click), handler: xExportToAlm_Click);
+            WeakEventManager<MenuItem, RoutedEventArgs>.RemoveHandler(source: this.xResetStatus_Buss_Flow_Actions, eventName: nameof(MenuItem.Click), handler: xResetStatus_Buss_Flow_Actions_Click);
+            WeakEventManager<ucButton, RoutedEventArgs>.RemoveHandler(source: this.xViewRunnerItem, eventName: nameof(ucButton.Click), handler: xViewRunnerItem_Click);
+            WeakEventManager<ucButton, RoutedEventArgs>.RemoveHandler(source: this.xconfig, eventName: nameof(ucButton.Click), handler: xconfig_Click);
+            WeakEventManager<ucButton, RoutedEventArgs>.RemoveHandler(source: this.xremoveBusinessflow, eventName: nameof(ucButton.Click), handler: xremoveBusinessflow_Click);
+            WeakEventManager<ucButton, RoutedEventArgs>.RemoveHandler(source: this.xBusinessflowActive, eventName: nameof(ucButton.Click), handler: xBusinessflowActive_Click);
+            WeakEventManager<ucButton, RoutedEventArgs>.RemoveHandler(source: this.xremoveBusinessflow, eventName: nameof(ucButton.Click), handler: xremoveBusinessflow_Click);
+            WeakEventManager<RunnerItemPage, RoutedEventArgs>.RemoveHandler(source: this, eventName: nameof(RunnerItemPage.DuplicateClick), handler: xDuplicateBusinessflow_Click);
+            WeakEventManager<RunnerItemPage, RoutedEventArgs>.RemoveHandler(source: this, eventName: nameof(RunnerItemPage.ClickAutomate), handler: xautomateBusinessflow_Click);
+            WeakEventManager<RunnerItemPage, RoutedEventArgs>.RemoveHandler(source: this, eventName: nameof(RunnerItemPage.ClickGenerateReport), handler: xGenerateReport_Click);
+            WeakEventManager<RunnerItemPage, RoutedEventArgs>.RemoveHandler(source: this, eventName: nameof(RunnerItemPage.ResetBusinessFlowStatus), handler: xResetStatus_Buss_Flow_Actions_Click);
+            WeakEventManager<RunnerItemPage, RoutedEventArgs>.RemoveHandler(source: this, eventName: nameof(RunnerItemPage.Click), handler: xconfig_Click);
+            WeakEventManager<RunnerItemPage, RoutedEventArgs>.RemoveHandler(source: this, eventName: nameof(RunnerItemPage.RemoveClick), handler: xremoveBusinessflow_Click);
+            WeakEventManager<RunnerItemPage, RoutedEventArgs>.RemoveHandler(source: this, eventName: nameof(RunnerItemPage.ClickActive), handler: xBusinessflowActive_Click);
 
-            this.DuplicateClick -= xDuplicateBusinessflow_Click;
-            this.ClickAutomate -= xautomateBusinessflow_Click;
-            this.ClickGenerateReport -= xGenerateReport_Click;
-            this.ResetBusinessFlowStatus -= xResetStatus_Buss_Flow_Actions_Click;
-            this.Click -= xconfig_Click;
-            this.RemoveClick -= xremoveBusinessflow_Click;
-            this.ClickActive -= xBusinessflowActive_Click;
 
 
             BindingOperations.ClearAllBindings(NormalBorder);

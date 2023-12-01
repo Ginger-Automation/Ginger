@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger;
@@ -62,12 +63,14 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             Button selectBtn = new Button();
             selectBtn.Content = "Select";
             selectBtn.Click += new RoutedEventHandler(selectBtn_Click);
+
             ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(selectBtn);
 
             xModelParamSelectionGrid.ShowToolsBar = Visibility.Collapsed;
             xModelParamSelectionGrid.Grid.IsReadOnly = true;
-            xModelParamSelectionGrid.Grid.MouseDoubleClick += selectBtn_Click;
+            WeakEventManager<Control, RoutedEventArgs>.AddHandler(source: xModelParamSelectionGrid, eventName: nameof(Control.MouseDoubleClick), handler: selectBtn_Click);
+            
 
             GenericWindow.LoadGenericWindow(ref mGenericWindow, null, windowStyle, "Expected Value Parameter Selection", this, winButtons, true, "Cancel", CloseWinClicked);
             return SelectedParameter;
