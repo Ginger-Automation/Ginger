@@ -59,7 +59,7 @@ namespace Ginger.AnalyzerLib
 
         ObservableList<AnalyzerItemBase> mIssues = new ObservableList<AnalyzerItemBase>();
 
-        private Solution mSolution;
+        private Solution? mSolution;
         private BusinessFlow businessFlow;
         private RunSetConfig mRunSetConfig;
         // ObservableList<DataSourceBase> DSList;
@@ -132,22 +132,32 @@ namespace Ginger.AnalyzerLib
             AnalyzerItemsGrid.Title = "'" + mSolution.Name + "' Solution Issues";
         }
 
-        public void Init(Solution Solution, BusinessFlow BusinessFlow, bool selfHealingAutoFixIssue = false)
+        public void Init(BusinessFlow BusinessFlow, bool selfHealingAutoFixIssue = false)
+        {
+            Init(BusinessFlow, solution: null, selfHealingAutoFixIssue);
+        }
+
+        public void Init(BusinessFlow businessFlow, Solution? solution, bool selfHealingAutoFixIssue = false)
         {
             mAnalyzedObject = AnalyzedObject.BusinessFlow;
-            mSolution = Solution;
-            businessFlow = BusinessFlow;
-            AnalyzerItemsGrid.Title = "'" + BusinessFlow.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Issues";
+            mSolution = solution;
+            this.businessFlow = businessFlow;
+            AnalyzerItemsGrid.Title = $"'{businessFlow.Name}' {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} Issues";
 
             mAnalyzerUtils.SelfHealingAutoFixIssue = selfHealingAutoFixIssue;
         }
 
-        internal void Init(Solution solution, Run.RunSetConfig RSC)
+        public void Init(RunSetConfig runSetConfig)
+        {
+            Init(runSetConfig, solution: null);
+        }
+
+        internal void Init(Run.RunSetConfig RSC, Solution? solution)
         {
             mRunSetConfig = RSC;
             mSolution = solution;
             mAnalyzedObject = AnalyzedObject.RunSetConfig;
-            AnalyzerItemsGrid.Title = "'" + RSC.Name + "' " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " Issues";
+            AnalyzerItemsGrid.Title = $"'{RSC.Name}' {GingerDicser.GetTermResValue(eTermResKey.RunSet)} Issues";
 
             mAnalyzerUtils.SelfHealingAutoFixIssue = RSC.SelfHealingConfiguration.AutoFixAnalyzerIssue;
 
@@ -174,6 +184,12 @@ namespace Ginger.AnalyzerLib
             CriticalAndHighIssuesLabelCounter.Content = "0";
             CriticalAndHighIssuesLabelCounter.Foreground = _brushDefault;   //"#20334f";
             CanAutoFixLableCounter.Content = "0";
+            await Analyze();
+        }
+
+        public async Task AnalyzeWithUI()
+        {
+            mAnalyzeWithUI = true;
             await Analyze();
         }
 
@@ -212,12 +228,12 @@ namespace Ginger.AnalyzerLib
 
                         case AnalyzedObject.BusinessFlow:
                             SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow, suffixString: ":  ") + businessFlow.Name + "...");
-                            mAnalyzerUtils.RunBusinessFlowAnalyzer(businessFlow, mIssues);
+                            mAnalyzerUtils.RunBusinessFlowAnalyzer(businessFlow, mSolution, mIssues);
                             break;
 
                         case AnalyzedObject.RunSetConfig:
                             SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + "...");
-                            mAnalyzerUtils.RunRunSetConfigAnalyzer(mRunSetConfig, mIssues);
+                            mAnalyzerUtils.RunRunSetConfigAnalyzer(mRunSetConfig, mSolution, mIssues);
                             break;
                     }
                 });
@@ -241,12 +257,12 @@ namespace Ginger.AnalyzerLib
 
                 BusyInProcess = false;
                 mAnalyzerCompleted = true;
-                SetAnalayzeProceesAsCompleted();
+                SetAnalyzeProcessAsCompleted();
             }
 
         }
 
-        private void SetAnalayzeProceesAsCompleted()
+        private void SetAnalyzeProcessAsCompleted()
         {
             if (mAnalyzeWithUI)
             {
@@ -270,6 +286,11 @@ namespace Ginger.AnalyzerLib
 
                 if (mIssues.Count > 0)
                 {
+                    Dispatcher.Invoke(() =>
+                    {
+                        AnalyzerItemsGrid.Visibility = Visibility.Visible;
+                        xNoIssueTextBlock.Visibility = Visibility.Collapsed;
+                    });
 
                     //sort- placing Critical & High on top
                     Dispatcher.Invoke(() =>
@@ -284,6 +305,14 @@ namespace Ginger.AnalyzerLib
                         mIssues = SortedList;
                         AnalyzerItemsGrid.DataSourceList = mIssues;
                         AnalyzerItemsGrid.Grid.SelectedItem = mIssues[0];
+                    });
+                }
+                else
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        AnalyzerItemsGrid.Visibility = Visibility.Collapsed;
+                        xNoIssueTextBlock.Visibility = Visibility.Visible;
                     });
                 }
             }
@@ -755,7 +784,7 @@ namespace Ginger.AnalyzerLib
                     BusinessFlow bs = null;
                     if (AI.GetType() == typeof(AnalyzeBusinessFlow))
                     {
-                        bs = ((AnalyzeBusinessFlow)AI).mBusinessFlow;
+                        bs = ((AnalyzeBusinessFlow)AI).BusinessFlow;
                     }
                     else if (AI.GetType() == typeof(AnalyzeActivity))
                     {

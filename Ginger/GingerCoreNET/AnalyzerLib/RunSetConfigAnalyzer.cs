@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Platforms;
 using GingerCore.Variables;
@@ -32,7 +33,12 @@ namespace Ginger.AnalyzerLib
     {
         public RunSetConfig RunSetConfig { get; set; }
 
-        public static List<AnalyzerItemBase> Analyze(RunSetConfig RSC)
+        public static List<AnalyzerItemBase> Analyze(RunSetConfig runSetConfig)
+        {
+            return Analyze(runSetConfig, solution: null);
+        }
+
+        public static List<AnalyzerItemBase> Analyze(RunSetConfig RSC, Solution solution)
         {
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
             // check that we have Runners
@@ -124,8 +130,11 @@ namespace Ginger.AnalyzerLib
                                 issueExist = optionalOutputVariables.FirstOrDefault(x => x.VariableInstanceInfo == inputVar.MappedOutputValue) == null;
                                 break;
                             case VariableBase.eOutputType.GlobalVariable:
-                                Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
-                                issueExist = WorkSpace.Instance.Solution.Variables.FirstOrDefault(x => x.Guid == mappedGuid) == null;
+                                if (solution != null)
+                                {
+                                    Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
+                                    issueExist = solution.Variables.FirstOrDefault(x => x.Guid == mappedGuid) == null;
+                                }
                                 break;
                             case VariableBase.eOutputType.ApplicationModelParameter:
                                 Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);

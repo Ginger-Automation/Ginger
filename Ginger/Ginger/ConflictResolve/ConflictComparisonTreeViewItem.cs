@@ -64,8 +64,10 @@ namespace Ginger.ConflictResolve
 
         public StackPanel Header()
         {
-            StackPanel headerStackPanel = new();
-            headerStackPanel.Orientation = Orientation.Horizontal;
+            StackPanel headerStackPanel = new()
+            {
+                Orientation = Orientation.Horizontal,
+            };
 
             SolidColorBrush itemColor = GetItemColor();
             headerStackPanel.Background = itemColor;
