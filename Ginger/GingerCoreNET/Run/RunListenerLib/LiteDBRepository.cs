@@ -643,7 +643,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
         }
         /*
-         * THIS FUNCTION HAS NOT BEING USED ANYWHERE
+         * THIS FUNCTION IS NOT USED ANYWHERE
         private void SetExecutionId(AccountReportRunSet accountReportRunSet, Guid executionId)
         {
             accountReportRunSet.ExecutionId = executionId;
@@ -942,20 +942,5 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             liteDbBFList.Clear();
         }
 
-
-        /// <summary>
-        /// Saves Data to the central database and deletes the local data as well as screenshots if the data is saved successfully on the central db
-        /// </summary>
-        public override async Task SendToCentralDbAndDeleteLocalData(RunSetConfig runSetConfig)
-        {
-            AccountReportApiHandler centralExecutionLogger = new (WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
-            AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runSetConfig);
-            bool isDataUploadedOnCentralDb = await centralExecutionLogger.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
-
-            if (isDataUploadedOnCentralDb)
-            {
-                this.DeleteLiteDbAndScreenShotData(runSetConfig.LiteDbId, runSetConfig.ExecutionID ?? Guid.Empty);
-            }
-        }
     }
 }

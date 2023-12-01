@@ -80,14 +80,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         public async Task SendRunsetEndDataToCentralDbTaskAsync(RunSetConfig runsetConfig)
         {
             AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runsetConfig);
-            bool isDataUploadedOnCentralDb = await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
-
-            LiteDBRepository liteDB = new();
-            // Lite DB and ScreenShots are only deleted when the data is successfully uploaded on the Central DB
-            if (isDataUploadedOnCentralDb)
-            {
-                liteDB.DeleteLiteDbAndScreenShotData(runsetConfig.LiteDbId, runsetConfig.ExecutionID ?? Guid.Empty);
-            }
+            await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
         }
         #endregion RunSet   
 

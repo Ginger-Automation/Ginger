@@ -524,10 +524,6 @@ namespace amdocs.ginger.GingerCoreNET
                 BusinessFlow.SolutionVariables = solution.Variables;
                 solution.SolutionOperations.SetReportsConfigurations();
                 Solution = solution;
-                
-                string txt = File.ReadAllText(solutionFile);
-                NewRepositorySerializer.DeserializeFromText(txt);
-
 
                 UserProfile.UserProfileOperations.LoadRecentAppAgentMapping();
 

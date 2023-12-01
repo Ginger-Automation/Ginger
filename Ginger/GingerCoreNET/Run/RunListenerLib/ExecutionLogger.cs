@@ -239,6 +239,5 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
 
         public abstract string CalculateExecutionJsonData(LiteDBFolder.LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate);
-        public abstract Task SendToCentralDbAndDeleteLocalData(RunSetConfig runSetConfig);
     }
 }

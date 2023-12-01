@@ -267,17 +267,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return;
         }
 
-        public override async Task SendToCentralDbAndDeleteLocalData(RunSetConfig runSetConfig)
-        {
-            AccountReportApiHandler centralExecutionLogger = new(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
-            AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runSetConfig);
-            bool isDataUploadedOnCentralDb = await centralExecutionLogger.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
-
-            if (isDataUploadedOnCentralDb)
-            {
-                DeleteLocalData(runSetConfig.LastRunsetLoggerFolder);
-            }
-        }
 
         public static void DeleteLocalData(string logFolder)
         {
