@@ -202,7 +202,7 @@ namespace GingerCore
             this.Obj = obj;
             this.ObjAttr = attr;
         }
-
+        public ValueExpression() { }
         //[IsSerializedForLocalRepository] // why we are serializing this
         public GingerCore.Actions.ActDSTableElement actDSTableElement { get; set; }
 

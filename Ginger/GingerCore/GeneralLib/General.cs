@@ -37,14 +37,17 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Security;
 using System.Security.Principal;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using TextCopy;
 
 namespace GingerCore
 {
@@ -1321,7 +1324,7 @@ namespace GingerCore
 
         public static string GetClipboardText()
         {
-            return Clipboard.GetText();
+            return ClipboardService.GetText();
         }
         public static bool IsAdmin()
         {
