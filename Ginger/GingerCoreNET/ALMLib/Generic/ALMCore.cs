@@ -218,11 +218,15 @@ namespace GingerCore.ALM
                 int sucesscount = 0;
                 publishToALMConfig.HtmlReportUrl = "";
                 publishToALMConfig.ExecutionId = "";
-                if (!exectutedFromAutomateTab &&
-                    WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Any(g => g.IsSelected && !string.IsNullOrEmpty(g.CentralLoggerEndPointUrl) && g.PublishLogToCentralDB == ePublishToCentralDB.Yes)
-                    && WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.Any(x => x.IsSelected && !string.IsNullOrEmpty(x.CentralizedHtmlReportServiceURL)))
+
+                bool check = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.Any(g => g.IsSelected &&
+                !string.IsNullOrEmpty(g.CentralLoggerEndPointUrl) &&
+                g.PublishLogToCentralDB == ePublishToCentralDB.Yes &&
+                !string.IsNullOrEmpty(g.CentralizedHtmlReportServiceURL));
+
+                if (!exectutedFromAutomateTab && check)
                 {
-                    publishToALMConfig.HtmlReportUrl = WorkSpace.Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => x.IsSelected).CentralizedHtmlReportServiceURL;
+                    publishToALMConfig.HtmlReportUrl = WorkSpace.Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => x.IsSelected).CentralizedHtmlReportServiceURL;
                     publishToALMConfig.ExecutionId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID.ToString();
                 }
                 foreach (BusinessFlow BizFlow in BusinessFlows) //Here going for each businessFlow

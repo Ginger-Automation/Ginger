@@ -24,12 +24,9 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
-using Org.BouncyCastle.Bcpg.OpenPgp;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using static Ginger.Reports.ExecutionLoggerConfiguration;
-
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
     // Each ExecutionLogger instance should be added to GingerRunner Listeneres
@@ -240,7 +237,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public abstract string GetLogFolder(string folder);
 
 
-        public abstract Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData);
 
         public abstract string CalculateExecutionJsonData(LiteDBFolder.LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate);
     }
