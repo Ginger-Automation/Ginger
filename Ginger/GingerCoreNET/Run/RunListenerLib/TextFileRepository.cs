@@ -135,7 +135,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public override object SetReportActivityGroup(IContext context, ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode)
         {
-            ActivityGroupReport AGR = GetAGReportData(activityGroup, businessFlow);
+            ActivityGroupReport AGR = GetAGReportData(activityGroup, context);
             //AGR.ReportMapper(activityGroup, businessFlow, ExecutionLogfolder);
             if (offlineMode && activityGroup.ExecutionLogFolder != null)
             {

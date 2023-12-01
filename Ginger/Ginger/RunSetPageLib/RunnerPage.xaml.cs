@@ -726,6 +726,10 @@ namespace Ginger.Run
             }
             CheckIfRunsetDirty?.Invoke(null, null);
             mExecutorEngine.RunLevel = eRunLevel.Runner;
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID == null)
+            {
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.ExecutionID = Guid.NewGuid();
+            }
             RunRunner();
         }
         public async void RunRunner()

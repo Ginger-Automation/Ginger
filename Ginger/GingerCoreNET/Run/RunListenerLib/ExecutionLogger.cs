@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using DocumentFormat.OpenXml.Math;
 using Ginger.Reports;
 using Ginger.Run;
 using GingerCore;
@@ -27,6 +28,7 @@ using GingerCore.Environments;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using static Ginger.ExecuterService.Contracts.V1.GingerParser.ParserApiRoutes;
 using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
@@ -117,11 +119,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 AR.Seq = context.Activity.ExecutionLogActionCounter;
             }
-            if ((action.RunDescription != null) && (action.RunDescription != string.Empty))
-            {
 
-                AR.RunDescription = ConvertValueExpressionToString(context.Environment , context.BusinessFlow , action.RunDescription);
-            }
+            AR.RunDescription = ConvertValueExpressionToString(context.Environment , context.BusinessFlow , action.RunDescription);
             return AR;
         }
         internal ActivityReport GetActivityReportData(Activity activity, Context context, bool offlineMode)
@@ -129,33 +128,29 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             ActivityReport AR = new ActivityReport(activity);
             AR.Seq = context.BusinessFlow.ExecutionLogActivityCounter;
             AR.VariablesBeforeExec = activity.VariablesBeforeExec;
-
-            if ((activity.RunDescription != null) && (activity.RunDescription != string.Empty))
-            {
-                AR.RunDescription = ConvertValueExpressionToString(context.Environment , context.BusinessFlow, activity.RunDescription);
-            }
+            AR.RunDescription = ConvertValueExpressionToString(context.Environment , context.BusinessFlow, activity.RunDescription);
             return AR;
         }
-        internal ActivityGroupReport GetAGReportData(ActivitiesGroup activityGroup, BusinessFlow businessFlow)
+        internal ActivityGroupReport GetAGReportData(ActivitiesGroup activityGroup, IContext context)
         {
-            ActivityGroupReport AGR = new ActivityGroupReport(activityGroup, businessFlow);
-            AGR.Seq = businessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1;
-            AGR.ExecutionLogFolder = ExecutionLogfolder + businessFlow.ExecutionLogFolder;
+            ActivityGroupReport AGR = new (activityGroup, context.BusinessFlow);
+            AGR.Seq = context.BusinessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1;
+            AGR.ExecutionLogFolder = ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder;
+            AGR.ExternalID = ConvertValueExpressionToString(context.Environment, context.BusinessFlow, activityGroup.ExternalID);
+
             return AGR;
         }
         internal BusinessFlowReport GetBFReportData(BusinessFlow businessFlow, ProjEnvironment environment)
         {
             BusinessFlowReport BFR = new BusinessFlowReport(businessFlow);
             BFR.VariablesBeforeExec = businessFlow.VariablesBeforeExec;
-
             BFR.SolutionVariablesBeforeExec = businessFlow.SolutionVariablesBeforeExec;
             BFR.Seq = this.ExecutionLogBusinessFlowsCounter;
-            if (!string.IsNullOrEmpty(businessFlow.RunDescription))
-            {
-                BFR.RunDescription = ConvertValueExpressionToString(environment, businessFlow , businessFlow.RunDescription);
-            }
+            BFR.RunDescription = ConvertValueExpressionToString(environment, businessFlow, businessFlow.RunDescription );
+            BFR.ExternalID = ConvertValueExpressionToString( environment, businessFlow , businessFlow.ExternalID);
             return BFR;
         }
+
         //public static object LoadObjFromJSonFile(string FileName, Type t)
         //{
         //    return JsonLib.LoadObjFromJSonFile(FileName, t, mJsonSerializer);
@@ -229,14 +224,20 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         public abstract string CalculateExecutionJsonData(LiteDBFolder.LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate);
 
-        private string ConvertValueExpressionToString(ProjEnvironment environment, BusinessFlow businessFlow , string ValueExpresionString)
+        protected static string ConvertValueExpressionToString(ProjEnvironment environment, BusinessFlow businessFlow , string ValueExpresionString)
         {
-            IValueExpression mVE = new GingerCore.ValueExpression(environment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false)
+            if (string.IsNullOrEmpty(ValueExpresionString))
             {
-                Value = ValueExpresionString
-            };
+                IValueExpression mVE = new GingerCore.ValueExpression(environment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false)
+                {
+                    Value = ValueExpresionString
+                };
 
-            return mVE.ValueCalculated;
+                return mVE.ValueCalculated;
+            }
+
+
+            return string.Empty;
         }
     }
 }
