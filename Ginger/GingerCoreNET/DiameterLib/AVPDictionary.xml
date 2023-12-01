@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<DiameterAvps>
+	<Avp name="Origin-Host" code="264" type="DiamIdent" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Origin-Realm" code="296" type="DiamIdent" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Host-IP-Address" code="257" type="Address" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Vendor-Id" code="266" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Product-Name" code="269" type="UTF8String" isMandatory="false" isVendorSpecific="false"/>
+	<Avp name="Origin-State-Id" code="278" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Supported-Vendor-Id" code="265" type="Unsigned32" isMandatory="false" isVendorSpecific="false"/>
+	<Avp name="Auth-Application-Id" code="258" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Acct-Application-Id" code="259" type="Unsigned32" isMandatory="false" isVendorSpecific="false"/>
+	<Avp name="Inband-Security-Id" code="299" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Vendor-Specific-Application-Id" code="260" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Firmware-Revision" code="267" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Error-Message" code="281" type="UTF8String" isMandatory="false" isVendorSpecific="false"/>
+	<Avp name="Result-Code" code="268" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Session-Id" code="263" type="UTF8String" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Destination-Realm" code="283" type="DiamIdent" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Destination-Host" code="293" type="DiamIdent" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Service-Context-Id" code="461" type="UTF8String" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="CC-Request-Type" code="416" type="Enumerated" isMandatory="true" isVendorSpecific="false" enumName="eCCRequestType"/>
+	<Avp name="CC-Request-Number" code="415" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="User-Name" code="1" type="UTF8String" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="3GPP-RAT-Type" code="21" type="OctetString" isMandatory="false" isVendorSpecific="true"/>
+	<Avp name="Event-Timestamp" code="55" type="Time" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Subscription-Id" code="443" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Subscription-Id-Type" code="450" type="Enumerated" isMandatory="true" isVendorSpecific="false" enumName="eSubscriptionIdType"/>
+	<Avp name="Subscription-Id-Data" code="444" type="UTF8String" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Service-Identifier" code="439" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Multiple-Services-Indicator" code="455" type="Enumerated" isMandatory="true" isVendorSpecific="false" enumName="eMultipleServicesIndicator"/>
+	<Avp name="Multiple-Services-Credit-Control" code="456" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Requested-Service-Unit" code="437" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Rating-Group" code="432" type="Integer32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Service-Information" code="873" type="Grouped" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="PS-Information" code="874" type="Grouped" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="3GPP-GPRS-Negotiated-QoS-Profile" code="5" type="UTF8String" isMandatory="false" isVendorSpecific="true"/>
+	<Avp name="PDN-Connection-Charging-Id" code="2050" type="Unsigned32" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="PDP-Address-Prefix-Length" code="2606" type="Unsigned32" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="TWAN-User-Location-Info" code="2714" type="Grouped" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="TWAN-SSID" code="2715" type="UTF8String" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="TWAN-BSSID" code="2716" type="UTF8String" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="3GPP-Charging-Id" code="2" type="Unsigned32" isMandatory="false" isVendorSpecific="true"/>
+	<Avp name="Node-Id" code="2064" type="UTF8String" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="3GPP-PDP-Type" code="3" type="Enumerated" isMandatory="false" isVendorSpecific="true" enumName=""/>
+	<Avp name="PDP-Address" code="1227" type="Address" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="Dynamic-Address-Flag" code="2051" type="Enumerated" isMandatory="true" isVendorSpecific="true" enumName="eDynamicAddressFlag"/>
+	<Avp name="SGSN-Address" code="1228" type="Address" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="GGSN-Address" code="847" type="Address" isMandatory="true" isVendorSpecific="true"/>
+	<Avp name="Serving-Node-Type" code="2047" type="Enumerated" isMandatory="true" isVendorSpecific="true" enumName="eServingNodeType"/>
+	<Avp name="3GPP-SGSN-MCC-MNC" code="18" type="UTF8String" isMandatory="false" isVendorSpecific="true"/>
+	<Avp name="Called-Station-Id" code="30" type="UTF8String" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="3GPP-MS-Timezone" code="23" type="UTF8String" isMandatory="false" isVendorSpecific="true"/>
+	<Avp name="3GPP-User-Location-Info" code="22" type="OctetString" isMandatory="false" isVendorSpecific="true"/>
+	<Avp name="User-Equipment-Info" code="458" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="User-Equipment-Info-Type" code="459" type="Enumerated" isMandatory="true" isVendorSpecific="false" enumName="eUserEquipmentInfoType"/>
+	<Avp name="User-Equipment-Info-Value" code="460" type="OctetString" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Granted-Service-Unit" code="431" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="CC-Time" code="420" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="CC-Total-Octets" code="421" type="Unsigned64" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Validity-Time" code="448" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Volume-Quota-Threshold" code="869" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Quota-Holding-Time" code="871" type="Unsigned32" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Reporting-Reason" code="872" type="Enumerated" isMandatory="true" isVendorSpecific="true" enumName=""/>
+	<Avp name="CC-Input-Octets" code="412" type="Unsigned64" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="CC-Output-Octets" code="414" type="Unsigned64" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="Used-Service-Unit" code="446" type="Grouped" isMandatory="true" isVendorSpecific="false"/>
+	<Avp name="CC-Session-Failover" code="418" type="Enumerated" isMandatory="true" isVendorSpecific="false" enumName="eCCSessionFailover"/>
+	<Avp name="CC-Unit-Type" code="454" type="Enumerated" isMandatory="true" isVendorSpecific="false" enumName="eCCUnitType"/>
+	<Avp name="Check-Balance-Result" code="422" type="Enumerated" isMandatory="true" isVendorSpecific="false" enumName="eCheckBalanceResult"/>
+	<Avp name="Credit-Control" code="426" type="Enumerated" isMandatory="true" isVendorSpecific="false" enumName="eCreditControl"/>
+	<Avp name="Credit-Control-Failure-Handling" code="427" type="Enumerated" isMandatory="true" isVendorSpecific="false" enumName="eCreditControlFailureHandling"/>
+	<Avp name="Direct-Debiting-Failure-Handling" code="428" type="Enumerated" isMandatory="true" isVendorSpecific="false" enumName="eDirectDebitingFailureHandling"/>
+	<Avp name="Final-Unit-Action" code="449" type="Enumerated" isMandatory="true" isVendorSpecific="false" enumName="eFinalUnitAction"/>
+</DiameterAvps>

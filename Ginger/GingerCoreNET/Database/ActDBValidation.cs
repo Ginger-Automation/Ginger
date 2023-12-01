@@ -412,7 +412,7 @@ namespace GingerCore.Actions
                     }
                     break;
             }
-            GetSqlValueFromFilePath();
+            SQL = GetSqlValueFromFilePath();
             NoSqlDriver.MakeSureConnectionIsOpen();
             NoSqlDriver.PerformDBAction();
         }
@@ -514,7 +514,7 @@ namespace GingerCore.Actions
             this.AddOrUpdateReturnParamActual(Column, val);
         }
 
-        private void GetSqlValueFromFilePath()
+        private string GetSqlValueFromFilePath()
         {
             if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
             {
@@ -522,7 +522,11 @@ namespace GingerCore.Actions
                 string filePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(GetInputParamCalculatedValue(ActDBValidation.Fields.QueryFile));
 
                 FileInfo scriptFile = new FileInfo(filePath);
-                SQL = scriptFile.OpenText().ReadToEnd();
+                return scriptFile.OpenText().ReadToEnd();
+            }
+            else
+            {
+                return string.Empty;
             }
         }
 
@@ -533,7 +537,7 @@ namespace GingerCore.Actions
             string ErrorString = string.Empty;
             try
             {
-                GetSqlValueFromFilePath();
+                calcSQL = GetSqlValueFromFilePath();
                 if (string.IsNullOrEmpty(calcSQL))
                 {
                     this.Error = "Fail to run Free SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= Missing SQL Query.";

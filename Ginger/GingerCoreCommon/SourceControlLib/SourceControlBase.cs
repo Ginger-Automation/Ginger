@@ -156,18 +156,18 @@ namespace GingerCoreNET.SourceControl
         public abstract bool UnLock(string path, ref string error);
 
         /// <summary>
-        /// Get local version content from the conflicted content.
+        /// Get local version content for the conflicted file.
         /// </summary>
-        /// <param name="conflictedContent">Content of conflicted file.</param>
+        /// <param name="conflictFilePath">Conflicted file path.</param>
         /// <returns>Local version content.</returns>
-        public abstract string GetLocalContentFromConflicted(string conflictedContent);
+        public abstract string GetLocalContentForConflict(string conflictFilePath);
 
         /// <summary>
-        /// Get remote version content from the conflicted content.
+        /// Get remote version content for the conflicted file.
         /// </summary>
-        /// <param name="conflictedContent">Content of conflicted file.</param>
+        /// <param name="conflictFilePath">Conflicted file path.</param>
         /// <returns>Remote version content.</returns>
-        public abstract string GetRemoteContentFromConflicted(string conflictedContent);
+        public abstract string GetRemoteContentForConflict(string conflictFilePath);
 
         /// <summary>
         /// Resolve merge conflict with content that contains the resolved data of the file.

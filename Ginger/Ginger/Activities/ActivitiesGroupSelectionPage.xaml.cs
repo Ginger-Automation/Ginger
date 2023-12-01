@@ -70,6 +70,7 @@ namespace Ginger.BusinessFlowPages
                 xNoteLable.Visibility = Visibility.Visible;
             }
         }
+        
 
         private void XAddGroupBtn_Click(object sender, RoutedEventArgs e)
         {

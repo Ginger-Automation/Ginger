@@ -218,7 +218,7 @@ namespace GingerCore
                 }
                 catch (Exception e)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Error Occured! While Trying to Communicate with the {Agent.AgentType} Agent {Agent.Name}. Please try checking your Agent Configurations!", e);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error occurred! While Trying to Communicate with the {Agent.AgentType} Agent {Agent.Name}. Please try checking your Agent Configurations!", e);
                 }
                 finally
                 {
@@ -243,9 +243,9 @@ namespace GingerCore
                             Agent.OnPropertyChanged(nameof(IsWindowExplorerSupportReady));
                         }
                     }
-                    catch ( Exception ex)
+                    catch (Exception ex)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error Occured! While Staring Driver ", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred! While Staring Driver ", ex);
                     }
                 }
             }
@@ -683,11 +683,11 @@ namespace GingerCore
                             {
                                 Driver.RunAction(act);
                             }
-                            catch(Exception ex) 
+                            catch (Exception ex)
                             {
                                 Reporter.ToLog(eLogLevel.ERROR, ex.Message);
                             }
-                            
+
                         });
                     }
                     else
@@ -770,7 +770,7 @@ namespace GingerCore
                        }
                        catch (Exception ex)
                        {
-                           Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
+                           Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while closing the driver", ex);
                        }
                    });
                 }
@@ -787,7 +787,7 @@ namespace GingerCore
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while closing the driver", ex);
                         }
                     });
                 }
@@ -803,7 +803,7 @@ namespace GingerCore
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while closing the driver", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while closing the driver", ex);
             }
             finally
             {
@@ -895,9 +895,9 @@ namespace GingerCore
                 {
                     Reporter.ToUser(eUserMsgKey.TestagentSucceed);
                 }
-                else if (Driver.ErrorMessageFromDriver != null && Driver.ErrorMessageFromDriver.Contains("Chrome driver version mismatch"))
+                else if (Driver.ErrorMessageFromDriver != null && Driver.ErrorMessageFromDriver.Contains("session not created: This version of "))
                 {
-                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Chrome driver version mismatch. Please run Ginger as Admin to Auto update the chrome driver.");
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Browser driver version mismatch. Configure the right proxy settings for auto-download in the Agent configuration, or manually download and place the driver in the Ginger installation directory.");
                 }
                 else
                 {

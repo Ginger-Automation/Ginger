@@ -49,7 +49,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string EXECUTION_ID_VALIDATION = "api/AccountReport/ExecutionIdValidation/";
         private const string GET_BUSINESSFLOW_EXECUTION_DATA = "api/AccountReport/GetAccountReportBusinessflowsByExecutionId/";
         private const string GET_RUNSET_EXECUTION_DATA = "api/AccountReport/GetRunsetHLExecutionInfo/";
-        
+        private const string GET_RUNNER_EXECUTION_DATA = "api/AccountReport/GetAccountReportRunnersByExecutionId/";
+
+
 
         public AccountReportApiHandler(string apiUrl)
         {
@@ -97,8 +99,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             var destination = iMapper.Map<LiteDbRunSet, AccountReportRunSet>(runSet);
             return destination;
         }
-
-        public async Task SendRunsetExecutionDataToCentralDBAsync(AccountReportRunSet accountReportRunSet, bool isUpdate = false)
+        public async Task<bool> SendRunsetExecutionDataToCentralDBAsync(AccountReportRunSet accountReportRunSet, bool isUpdate = false)
         {
             if (restClient != null)
             {
@@ -111,8 +112,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Finishing to publish execution data to central DB for Runset- '{0}'", accountReportRunSet.Name));
                 }
                 string message = string.Format("execution data to Central DB for the Runset:'{0}' (Execution Id:'{1}')", accountReportRunSet.Name, accountReportRunSet.ExecutionId);
-                bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).ConfigureAwait(false);
-                if (responseIsSuccess)
+                bool isResponseSuccessful = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).ConfigureAwait(false);
+                if (isResponseSuccessful)
                 {
                     Reporter.ToLog(eLogLevel.INFO, $"Successfully sent { message}");
                 }
@@ -120,11 +121,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Failed to send { message}");
                 }
+                return isResponseSuccessful;
             }
             else
             {
                 Reporter.ToLog(eLogLevel.WARN, "Rest Client is null as endpoint url is not provided");
             }
+
+            return false;
         }
 
         public async Task SendRunnerExecutionDataToCentralDBAsync(AccountReportRunner accountReportRunner, bool isUpdate = false)
@@ -172,7 +176,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(SEND_ACTIVITYGROUP_EXECUTION_DATA, isUpdate ? Method.Put : Method.Post) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportActivityGroup);
+                RestRequest restRequest = new RestRequest(SEND_ACTIVITYGROUP_EXECUTION_DATA, isUpdate ? Method.Put : Method.Post) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReportActivityGroup);
                 string message = string.Format("execution data to Central DB for the Activities Group:'{0}' (Execution Id:'{1}', Parent Execution Id:'{2}')", accountReportActivityGroup.Name, accountReportActivityGroup.Id, accountReportActivityGroup.AccountReportDbBusinessFlowId);
                 try
                 {
@@ -245,7 +249,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(EXECUTION_ID_VALIDATION + executionId, Method.Get);
+                RestRequest restRequest = new RestRequest(EXECUTION_ID_VALIDATION + executionId, Method.Get);
                 string message = string.Format("execution id : {0}", executionId);
                 try
                 {
@@ -339,7 +343,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Exception occured during uploading { message}", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception occurred during uploading { message}", ex);
                 }
             }
         }
@@ -349,7 +353,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             try
             {
                 Method method = isUpdate ? Method.Put : Method.Post;
-                RestRequest restRequest = (RestRequest)new RestRequest(api, method) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReport);
+                RestRequest restRequest = new RestRequest(api, method) { RequestFormat = RestSharp.DataFormat.Json }.AddJsonBody(accountReport);
                 RestResponse response = await restClient.ExecuteAsync(restRequest);
                 if (response.IsSuccessful)
                 {
@@ -404,7 +408,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             List<RunsetHLInfoResponse> accountReportrunset = new List<RunsetHLInfoResponse>();
             if (restClient != null)
             {
-                RestRequest restRequest = (RestRequest)new RestRequest(GET_RUNSET_EXECUTION_DATA + executionId, Method.Get);
+                RestRequest restRequest = new RestRequest(GET_RUNSET_EXECUTION_DATA + executionId, Method.Get);
                 string message = string.Format("execution id : {0}", executionId);
                 try
                 {
@@ -423,6 +427,38 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Exception while validating execution id { message}", ex);
+                }
+                return accountReportrunset;
+            }
+            return accountReportrunset;
+        }
+
+        //GET_RUNNER_EXECUTION_DATA
+
+        public List<AccountReportRunner> GetRunnerExecutionDataFromCentralDB(Guid executionId)
+        {
+            List<AccountReportRunner> accountReportrunset = new List<AccountReportRunner>();
+            if (restClient != null)
+            {
+                RestRequest restRequest = new RestRequest(GET_RUNNER_EXECUTION_DATA + executionId, Method.Get);
+                string message = string.Format("execution id : {0}", executionId);
+                try
+                {
+                    RestResponse response = restClient.Execute(restRequest);
+                    if (response.IsSuccessful)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, $"Successfully validated execution id {message}");
+                        accountReportrunset = JsonConvert.DeserializeObject<List<AccountReportRunner>>(response.Content);
+                        return accountReportrunset;
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to validate {message} Response: {response.Content} ");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Exception while validating execution id {message}", ex);
                 }
                 return accountReportrunset;
             }

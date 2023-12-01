@@ -1105,7 +1105,7 @@ namespace GingerCore.Actions
             }
             catch(Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG,"Error occured while fectching process by id.", ex);
+                Reporter.ToLog(eLogLevel.DEBUG,"Error occurred while fetching process by id.", ex);
             }
             return false;
         }

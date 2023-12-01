@@ -242,7 +242,7 @@ namespace GingerCore.NoSqlBase
         private string GetUpdateQueryParams(string inputSQL)
         {
             int startIndex = inputSQL.IndexOf("(") + 1;
-            int endIndex = inputSQL.IndexOf(")");
+            int endIndex = inputSQL.LastIndexOf(")");
             string updateQueryParams = inputSQL.Substring(startIndex, endIndex - startIndex);
             return updateQueryParams.Trim();
         }
