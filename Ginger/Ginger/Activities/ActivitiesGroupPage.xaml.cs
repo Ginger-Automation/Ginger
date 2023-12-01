@@ -229,7 +229,7 @@ namespace Ginger.Activities
                 case ActivitiesGroupPage.eEditMode.SharedRepository:
                     title = "Edit Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
                     Button saveBtn = new Button();
-                    saveBtn.Content = "Save"; if (WorkSpace.Instance.RunningforTest)
+                    saveBtn.Content = "Save";
                     WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveBtn, eventName: nameof(ButtonBase.Click), handler: saveBtn_Click);
                     
                     
@@ -242,7 +242,7 @@ namespace Ginger.Activities
             }
 
             Button undoBtn = new Button();
-            undoBtn.Content = "Undo & Close"; if (WorkSpace.Instance.RunningforTest)
+            undoBtn.Content = "Undo & Close";
             WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtn, eventName: nameof(ButtonBase.Click), handler: undoBtn_Click);
             
             
