@@ -99,7 +99,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             var destination = iMapper.Map<LiteDbRunSet, AccountReportRunSet>(runSet);
             return destination;
         }
-        public async Task SendRunsetExecutionDataToCentralDBAsync(AccountReportRunSet accountReportRunSet, bool isUpdate = false)
+        public async Task<bool> SendRunsetExecutionDataToCentralDBAsync(AccountReportRunSet accountReportRunSet, bool isUpdate = false)
         {
             if (restClient != null)
             {
@@ -121,12 +121,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Failed to send { message}");
                 }
+                return isResponseSuccessful;
             }
             else
             {
                 Reporter.ToLog(eLogLevel.WARN, "Rest Client is null as endpoint url is not provided");
             }
 
+            return false;
         }
 
         public async Task SendRunnerExecutionDataToCentralDBAsync(AccountReportRunner accountReportRunner, bool isUpdate = false)

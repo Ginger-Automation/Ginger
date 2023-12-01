@@ -69,18 +69,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
         }
 
-        public async Task RunSetEnd(RunSetConfig runsetConfig)
+        public async Task<bool> RunSetEnd(RunSetConfig runsetConfig)
         {
 
-            await SendRunsetEndDataToCentralDbTaskAsync(runsetConfig);
-
+            bool isDataUploadedSuccessfully = await SendRunsetEndDataToCentralDbTaskAsync(runsetConfig);
             Reporter.HideStatusMessage();
+            return isDataUploadedSuccessfully;
         }
 
-        public async Task SendRunsetEndDataToCentralDbTaskAsync(RunSetConfig runsetConfig)
+        public async Task<bool> SendRunsetEndDataToCentralDbTaskAsync(RunSetConfig runsetConfig)
         {
             AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runsetConfig);
-            await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
+            return await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
         }
         #endregion RunSet   
 
