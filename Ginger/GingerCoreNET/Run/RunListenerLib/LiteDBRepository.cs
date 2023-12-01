@@ -355,21 +355,25 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             activitySeq = 0;
             var bf = context.BusinessFlow;
-            bf.Activities.ToList().ForEach(activity =>
-            {
-                if (activity is ErrorHandler)
-                {
-                    this.MapActivityToLiteDb(activity, context, executedFrom);
-                }
-            });
             List<ActivitiesGroup> activityGroupsWithOnlyErrorHandlerActivities = new();
             foreach(ActivitiesGroup activityGroup in bf.ActivitiesGroups)
             {
-                bool hasOnlyErrorHandlerActivities = activityGroup
-                    .ActivitiesIdentifiers
-                    .Select(ai => ai.IdentifiedActivity)
-                    .All(activity => activity != null && activity is ErrorHandler);
-                activityGroupsWithOnlyErrorHandlerActivities.Add(activityGroup);
+                bool allActivitiesAreErrorHandlers = true;
+                foreach(Activity activity in activityGroup.ActivitiesIdentifiers.Select(ai => ai.IdentifiedActivity))
+                {
+                    if(activity != null && activity.Status == null)
+                    {
+                        MapActivityToLiteDb(activity, context, executedFrom);
+                    }
+                    if(activity is not ErrorHandler)
+                    {
+                        allActivitiesAreErrorHandlers = false;
+                    }
+                }
+                if(allActivitiesAreErrorHandlers)
+                {
+                    activityGroupsWithOnlyErrorHandlerActivities.Add(activityGroup);
+                }
             }
             activityGroupsWithOnlyErrorHandlerActivities.ToList().ForEach(acg => this.MapAcgToLiteDb(context, acg, bf));
         }
