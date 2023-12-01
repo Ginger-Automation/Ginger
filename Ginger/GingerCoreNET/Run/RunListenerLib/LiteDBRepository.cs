@@ -19,6 +19,7 @@ limitations under the License.
 using AccountReport.Contracts;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.BusinessFlowLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
@@ -243,6 +244,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 BFR._id = lastBfObjId;
                 ClearSeq();
             }
+
+            SetBfobjects(context, executedFrom);
             context.Runner.CalculateBusinessFlowFinalStatus(context.BusinessFlow);
             BFR.SetReportData(GetBFReportData(context.BusinessFlow, context.Environment));
             BFR.Seq = ++this.bfSeq;
@@ -346,6 +349,29 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             bfSeq = 0;
             // runsetSeq = 0;
             acgSeq = 0;
+        }
+
+        private void SetBfobjects(Context context, eExecutedFrom executedFrom)
+        {
+            activitySeq = 0;
+            var bf = context.BusinessFlow;
+            bf.Activities.ToList().ForEach(activity =>
+            {
+                if (activity is ErrorHandler)
+                {
+                    this.MapActivityToLiteDb(activity, context, executedFrom);
+                }
+            });
+            List<ActivitiesGroup> activityGroupsWithOnlyErrorHandlerActivities = new();
+            foreach(ActivitiesGroup activityGroup in bf.ActivitiesGroups)
+            {
+                bool hasOnlyErrorHandlerActivities = activityGroup
+                    .ActivitiesIdentifiers
+                    .Select(ai => ai.IdentifiedActivity)
+                    .All(activity => activity != null && activity is ErrorHandler);
+                activityGroupsWithOnlyErrorHandlerActivities.Add(activityGroup);
+            }
+            activityGroupsWithOnlyErrorHandlerActivities.ToList().ForEach(acg => this.MapAcgToLiteDb(context, acg, bf));
         }
 
         public override void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
