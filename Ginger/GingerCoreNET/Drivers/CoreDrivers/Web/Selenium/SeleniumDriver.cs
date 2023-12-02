@@ -117,10 +117,12 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Auto Detect Proxy Setting?")]
         public bool AutoDetect { get; set; }
+
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Path to extension to be enabled")]
-        public string ExtensionPath { get; set; }
+        [UserConfiguredDescription("Path of extensions to be enabled | Use a semi-colon to separate multiple extensions.")]
+        public string ExtensionPaths { get; set; }
+
         [UserConfigured]
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Disable Chrome Extension. This feature is not available anymore")]
@@ -135,7 +137,6 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Ignore Internet Explorer protected mode")]
         public bool IgnoreIEProtectedMode { get; set; }
-
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
@@ -167,7 +168,6 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Only for Edge: Open Edge browser in IE Mode")]
         public bool OpenIEModeInEdge { get; set; }
 
-
         [UserConfigured]
         [UserConfiguredDefault("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")]
         [UserConfiguredDescription("Only if OpenEdgeInIEMode is set to true: location of Edge.exe file in local computer")]
@@ -181,7 +181,7 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Only For Chrome : Use a valid device name from the DevTools Emulation panel.")]
+        [UserConfiguredDescription("Only For Chrome : Use a valid device name from the DevTools Emulation panel.")]
         public string EmulationDeviceName { get; set; }
 
         [UserConfigured]
@@ -227,7 +227,7 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("normal")]
-        [UserConfiguredDescription("Defines the current session’s page loading strategy.you can change from the default parameter of normal to eager or none")]
+        [UserConfiguredDescription("Defines the current session's page loading strategy.you can change from the default parameter of normal to eager or none")]
         public string PageLoadStrategy { get; set; }
 
         [UserConfigured]
@@ -503,9 +503,10 @@ namespace GingerCore.Drivers
                         {
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
                         }
-                        else if (!string.IsNullOrEmpty(ExtensionPath))
+                        else if (!string.IsNullOrEmpty(ExtensionPaths))
                         {
-                            options.AddExtension(Path.GetFullPath(ExtensionPath));
+                            string[] extensionPaths = ExtensionPaths.Split(';'); 
+                            options.AddExtensions(extensionPaths);                            
                         }
 
                         //setting proxy
