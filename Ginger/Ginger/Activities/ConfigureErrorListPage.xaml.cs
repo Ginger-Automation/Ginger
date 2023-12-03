@@ -33,12 +33,12 @@ namespace Ginger.Activities
         GenericWindow _pageGenericWin = null;
         ErrorHandler mErrorHandler;
 
-        List<ErrorDetails> mErrorList = new List<ErrorDetails>();
+        ObservableList<ErrorDetails> mErrorList = new ObservableList<ErrorDetails>();
         public ConfigureErrorListPage(ErrorHandler errorHandler)
         {
             InitializeComponent();
             mErrorHandler = errorHandler;
-            mErrorList = mErrorHandler.ErrorStringList.ToList();
+            mErrorList = new ObservableList<ErrorDetails>(mErrorHandler.ErrorStringList);
             SetGridsView();
         }
         private void SetGridsView()
@@ -56,7 +56,7 @@ namespace Ginger.Activities
             xErrorListConfigurationGrd.MarkUnMarkAllActive += XErrorListConfigurationGrd_MarkUnMarkAllActive; ;
             xErrorListConfigurationGrd.btnAdd.Click += BtnAdd_Click;
 
-            xErrorListConfigurationGrd.DataSourceList = new ObservableList<ErrorDetails>(mErrorList);
+            xErrorListConfigurationGrd.DataSourceList = mErrorList;
         }
 
         private void XErrorListConfigurationGrd_MarkUnMarkAllActive(bool Status)
@@ -74,7 +74,6 @@ namespace Ginger.Activities
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
             mErrorList.Add(new ErrorDetails() { ErrorString = string.Empty, ErrorDescription = string.Empty, IsSelected = true });
-            xErrorListConfigurationGrd.DataSourceList = new ObservableList<ErrorDetails>(mErrorList);
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Free)

@@ -4786,6 +4786,7 @@ namespace GingerCore.Drivers
 
                 if (!foundElementsList.Contains(matchingOriginalElement))
                 {
+                    foundElemntInfo.IsAutoLearned = true;
                     foundElementsList.Add(foundElemntInfo);
                     foundElemntInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.Sequence, Value = foundElementsList.Count.ToString(), ShowOnUI = false });
                     matchingOriginalElement = ((IWindowExplorer)this).GetMatchingElement(foundElemntInfo, foundElementsList);

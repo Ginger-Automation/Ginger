@@ -27,8 +27,10 @@
                 <RowDefinition Height="100*"/>
                 <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
-            
-            <Ginger:ucGrid x:Name="AnalyzerItemsGrid"  RowChangedEvent="AnalyzerItemsGrid_RowChangedEvent" IsReadOnly="True" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed"/>
+
+            <TextBlock x:Name="xNoIssueTextBlock" Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" Text="No Issues Found" Foreground="DarkGray" FontSize="20" FontWeight="SemiBold" Visibility="Collapsed"/>
+
+            <Ginger:ucGrid x:Name="AnalyzerItemsGrid"  Grid.Row="0" RowChangedEvent="AnalyzerItemsGrid_RowChangedEvent" IsReadOnly="True" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed"/>
 
             <Grid x:Name="AnalyzerIssueSection" Grid.Row="1">
                 <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">

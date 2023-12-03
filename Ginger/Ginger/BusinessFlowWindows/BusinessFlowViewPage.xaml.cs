@@ -311,7 +311,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void xAnalyzeBtn_Click(object sender, RoutedEventArgs e)
         {
             AnalyzerPage AP = new AnalyzerPage();
-            AP.Init(WorkSpace.Instance.Solution, mBusinessFlow);
+            AP.Init(mBusinessFlow);
             AP.ShowAsWindow();
         }
 

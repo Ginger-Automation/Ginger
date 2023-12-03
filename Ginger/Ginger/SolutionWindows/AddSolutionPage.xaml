@@ -32,7 +32,7 @@
             </Grid>
             <StackPanel>
                 <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Main Application Platform:" />
-                <ComboBox x:Name="MainPlatformComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200" HorizontalAlignment="Left" />
+                <ComboBox x:Name="MainPlatformComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200" HorizontalAlignment="Left"/>
             </StackPanel>
             <usercontrols1:UCEncryptionKey x:Name="UCEncryptionKey"></usercontrols1:UCEncryptionKey>
         </StackPanel>

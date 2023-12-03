@@ -32,6 +32,7 @@
     <None Remove="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiActionsConversionIntro.md" />
     <None Remove="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
     <None Remove="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
+    <None Remove="ConflictResolve\ConflictResolveIntro.md" />
     <None Remove="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
     <None Remove="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro.md" />
     <None Remove="Images\%24Close-Window.png" />
@@ -625,6 +626,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="ConflictResolve\ConflictResolveIntro.md" />
     <Resource Include="GingerIconNew.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
