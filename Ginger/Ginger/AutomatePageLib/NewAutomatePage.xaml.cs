@@ -90,7 +90,7 @@ namespace GingerWPF.BusinessFlowsLib
         bool mExecutionIsInProgress = false;
         bool mSyncSelectedItemWithExecution = true;
 
-        GridLength mLastAddActionsColumnWidth = new GridLength(300);
+        GridLength mLastAddActionsColumnWidth = new GridLength(350);
 
         ObjectId mRunnerLiteDbId;
         ObjectId mRunSetLiteDbId;

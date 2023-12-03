@@ -13,7 +13,7 @@
         <local1:ListItemIndexConverter x:Key="ListItemIndexConverter" />
     </UserControl.Resources>
 
-    <Border>
+    <Border >
         <Border.Style>
             <Style TargetType="Border">
                 <Style.Triggers>
@@ -31,7 +31,7 @@
             </Style>
         </Border.Style>
 
-        <Border BorderThickness="1,0,1,1" CornerRadius="10,10,10,10" BorderBrush="LightGray" Background="White">
+        <Border x:Name="xMainBorder" BorderThickness="1,0,1,1" CornerRadius="10,10,10,10" BorderBrush="LightGray" Background="White">
             <!--<Border.Effect>
                 <DropShadowEffect BlurRadius="5" Direction ="180" ShadowDepth ="1" Color ="LightGray"/>
             </Border.Effect>-->
