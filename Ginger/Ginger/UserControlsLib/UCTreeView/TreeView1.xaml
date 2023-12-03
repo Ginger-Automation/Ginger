@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 
-    <Grid x:Name="xGrid" Background="{StaticResource $BackgroundColor_White}" >
+    <Grid x:Name="xGrid" Background="Transparent" >
         <Grid.RowDefinitions>
             <RowDefinition Height="50" x:Name="xTreeTitleRow"/>
             <RowDefinition Height="50"/>

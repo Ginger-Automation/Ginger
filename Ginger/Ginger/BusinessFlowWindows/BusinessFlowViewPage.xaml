@@ -12,7 +12,7 @@
       d:DesignHeight="300" d:DesignWidth="800" 
       Title="BusinessFlowViewPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_White}">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="80"/>
@@ -97,7 +97,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xDetailsTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_White}">
+                <Frame x:Name="xDetailsTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="Transparent">
                     <Frame.Content>
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
                             <UserControls:ImageMakerControl  ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" />
@@ -116,7 +116,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xActivitiesTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_White}">
+                <Frame x:Name="xActivitiesTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="Transparent">
                     <Frame.Content>
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
                             <UserControls:ImageMakerControl  ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" />
@@ -135,7 +135,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xVariabelsTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_White}">
+                <Frame x:Name="xVariabelsTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="Transparent">
                     <Frame.Content>
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
                             <UserControls:ImageMakerControl  ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" />

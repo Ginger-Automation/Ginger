@@ -13,7 +13,7 @@
       d:DesignHeight="1000" d:DesignWidth="1000"
       Title="ActivityPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_White}">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="30"/>

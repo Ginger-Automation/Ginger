@@ -53,8 +53,8 @@
 
 
         <!--Selected Item Page-->
-        <Border Margin="5,10,5,5" CornerRadius="15" DockPanel.Dock="Top" BorderBrush="White" BorderThickness="0,15,0,0" Background="{StaticResource $BackgroundColor_White}" >
-            <Frame x:Name="xSelectedItemFrame" Background="Transparent"  NavigationUIVisibility="Hidden" />
+        <Border Margin="5" CornerRadius="15" DockPanel.Dock="Top" BorderBrush="Transparent" BorderThickness="5" Background="{StaticResource $BackgroundColor_White}" >
+            <Frame x:Name="xSelectedItemFrame" Background="Transparent"  NavigationUIVisibility="Hidden" Margin="5" />
             <Border.Effect>
                 <DropShadowEffect BlurRadius="15" Direction ="-90" RenderingBias ="Quality" ShadowDepth ="2" Color ="Gray"/>
             </Border.Effect>

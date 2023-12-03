@@ -26,7 +26,7 @@
         <!--Top Row displaying Business Flow level controls-->
         <Border Grid.Row="0" BorderThickness="0,0,0,15" >
             <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-                <DockPanel x:Name="xBusinessFlowControlsPnl"  Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <DockPanel x:Name="xBusinessFlowControlsPnl"  Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <!--<UserControls:ucButton x:Name="xGoToBFsTreeBtn" DockPanel.Dock="Left" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="GoBack"  Click="xGoToBFsTreeBtn_Click" Foreground="{StaticResource $HighlightColor_LightBlue}" >
                     <UserControls:ucButton.ToolTip>
                         <GingerCore:ucTextDicResource Text="Back to [BusinessFlows] Tree"></GingerCore:ucTextDicResource>
@@ -304,11 +304,11 @@
             </Border.BorderBrush>
         </Border>
         
-        <Border x:Name="xItemsTabsSection" Grid.Row="2" Background="White" BorderThickness="0">
-            <TabControl x:Name="xItemsTabs"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Background="White" Margin="0,0,0,0">
+        <Border x:Name="xItemsTabsSection" Grid.Row="2" Background="Transparent" BorderThickness="0">
+            <TabControl x:Name="xItemsTabs"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Background="Transparent" Margin="0,0,0,0">
                 <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1" >
-                    <DockPanel Background="{StaticResource $BackgroundColor_White}">
-                        <DockPanel x:Name="xActivitiesLoadingPnl" Visibility="Collapsed"  DockPanel.Dock="Top" Margin="0,100,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="{StaticResource $BackgroundColor_White}" >
+                    <DockPanel Background="Transparent">
+                        <DockPanel x:Name="xActivitiesLoadingPnl" Visibility="Collapsed"  DockPanel.Dock="Top" Margin="0,100,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="Transparent" >
                             <UserControls:ImageMakerControl DockPanel.Dock="Top" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
                             <Label DockPanel.Dock="Bottom" HorizontalAlignment="Center" FontSize="15" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal">
                                 <Label.Content>
@@ -316,14 +316,14 @@
                                 </Label.Content>
                             </Label>
                         </DockPanel>
-                        <Grid x:Name="xActivitiesDataGrid" DockPanel.Dock="Top" Visibility="Visible" Background="{StaticResource $BackgroundColor_White}">
+                        <Grid x:Name="xActivitiesDataGrid" DockPanel.Dock="Top" Visibility="Visible" Background="Transparent">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="525"/>
                                 <ColumnDefinition Width="300*"/>
                                 <ColumnDefinition x:Name="xAddActionsColumn" Width="5" MinWidth="5" MaxWidth="1300"/>
                             </Grid.ColumnDefinitions>
 
-                            <Border Grid.Column="0" Background="{StaticResource $BackgroundColor_White}" Margin="0,0,0,0">
+                            <Border Grid.Column="0" Background="Transparent" Margin="0,0,0,0">
                                 <Frame x:Name="xActivitiesListFrame"  Content="Activities List Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden"  />
                             </Border>
 
@@ -334,7 +334,7 @@
                                 <Label Content="Loading..." HorizontalAlignment="Center" FontSize="15" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal"/>
                             </StackPanel>
 
-                            <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_White}" />
+                            <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="Transparent" />
 
                             <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="White" IsEnabled="False" Margin="0,50,0,50" />
 

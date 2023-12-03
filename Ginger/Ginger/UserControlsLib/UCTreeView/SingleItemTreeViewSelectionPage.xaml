@@ -8,7 +8,7 @@
       Height="600" Width="400"
       Title="SingleItemTreeViewSelectionPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_White}">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="200*"/>
             <RowDefinition Height="28"/>

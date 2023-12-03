@@ -8,7 +8,7 @@
       d:DesignHeight="500" d:DesignWidth="500"
       Title="SingleItemTreeViewExplorerPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_White}">
+    <Grid Background="Transparent">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300"/>
             <ColumnDefinition Width="275*"/>
