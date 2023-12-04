@@ -75,7 +75,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             return filterData.Last();
         }
 
-        public List<T> FilterCollection<T>(LiteCollection<T> baseColl, Query query)
+        public List<T> FilterCollection<T>(ILiteCollection<T> baseColl, Query query)
         {
             return dbConnector.FilterCollection(baseColl, query);
         }

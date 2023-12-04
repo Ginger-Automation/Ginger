@@ -534,13 +534,13 @@ namespace GingerCoreNET.DataSource
                         // If we need to run a direct query
                         try
                         {
-                            var resultdxs = new LiteEngine.Run(query);
+                            //var result = new LiteEngine(query);
 
                             // Converting BSON to JSON 
-                            JArray array = new JArray();
-                            foreach (BsonValue bs in db.Engine.Run(query))
+                            JArray array = new ();
+                            foreach (BsonValue bs in db.Execute(query).ToArray())
                             {
-                                string js = LiteDB.JsonSerializer.Serialize(bs, true, true);
+                                string js = LiteDB.JsonSerializer.Serialize(bs);
                                 if (js == "0")
                                 {
                                     return dataTable;
@@ -750,7 +750,7 @@ namespace GingerCoreNET.DataSource
         {
             using (LiteDatabase db = new LiteDatabase(FileFullPath))
             {
-                var result = db.Engine.Run(query);
+                var result = db.Execute(query);
             }
 
             return true;
@@ -818,7 +818,7 @@ namespace GingerCoreNET.DataSource
             string result = null;
             using (LiteDatabase db = new LiteDatabase(FileFullPath))
             {
-                var resultdxs = db.Engine.Run(query);
+                var resultdxs = db.Execute(query).ToArray();
                 foreach (BsonValue bs in resultdxs)
                 {
                     BsonDocument aa = bs.AsDocument;
@@ -836,7 +836,7 @@ namespace GingerCoreNET.DataSource
             object result = null;
             using (LiteDatabase db = new LiteDatabase(FileFullPath))
             {
-                var resultdxs = db.Engine.Run(query);
+                var resultdxs = db.Execute(query).ToArray();
                 foreach (BsonValue bs in resultdxs)
                 {
                     result = bs.AsString;
@@ -882,7 +882,9 @@ namespace GingerCoreNET.DataSource
                 {
                     return;
                 }
-                table.Delete(Query.All());
+                
+                table.DeleteAll();
+
                 List<BsonDocument> batch = new List<BsonDocument>();
                 if ((dtChange != null))
                 {
@@ -1275,7 +1277,9 @@ namespace GingerCoreNET.DataSource
             {
                 var table = db.GetCollection(TName);
                 List<string> ColumnList = GetColumnList(TName);
-                table.Delete(Query.All());
+                //table.Delete(Query.All());
+
+                table.DeleteAll();
                 List<BsonDocument> batch = new List<BsonDocument>();
 
                 //bool b = ColumnList.Any(s => s.Contains("GINGER_USED"));

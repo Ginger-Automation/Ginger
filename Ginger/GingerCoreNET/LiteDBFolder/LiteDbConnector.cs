@@ -54,7 +54,9 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             return collection;
         }
 
-        public bool DeleteCollectionItems<T>(LiteCollection<T> baseColl, Query query)
+/*        
+ *        This function is not used anywhere
+ *        public bool DeleteCollectionItems<T>(LiteCollection<T> baseColl, Query query)
         {
             bool result = false;
             try
@@ -70,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             }
             return result;
         }
-        public bool DeleteDocumentByLiteDbRunSet(LiteDbRunSet liteDbRunSet, eExecutedFrom executedFrom = eExecutedFrom.Run)
+*/        public bool DeleteDocumentByLiteDbRunSet(LiteDbRunSet liteDbRunSet, eExecutedFrom executedFrom = eExecutedFrom.Run)
         {
             bool result = true;
             var runSetLiteColl = GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
@@ -113,9 +115,13 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             var name = typeof(T).Name + "s";
             return name;
         }
-        public List<T> FilterCollection<T>(LiteCollection<T> baseColl, Query query)
+        public List<T> FilterCollection<T>(ILiteCollection<T> baseColl, Query query)
         {
-            return baseColl.IncludeAll().Find(query).ToList();
+            return baseColl.Find(query).ToList();
+        }
+        public List<T> FilterCollection<T>(ILiteCollection<T> baseColl , BsonExpression expression)
+        {
+            return baseColl.Find(expression).ToList();
         }
 
         public void SetCollection<T>(ILiteCollection<T> baseColl, List<T> updateData)

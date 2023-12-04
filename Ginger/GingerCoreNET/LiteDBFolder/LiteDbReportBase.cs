@@ -255,7 +255,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         }
         public static ILiteCollection<LiteDbRunSet> IncludeAllReferences(ILiteCollection<LiteDbRunSet> liteCollection)
         {
-            return liteCollection.Include((runset => runset.RunnersColl));
+            return liteCollection.Include(runset => runset.RunnersColl);
         }
     }
     public class LiteDbRunner : LiteDbReportBase
