@@ -65,12 +65,12 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             List<LiteDbRunSet> filterData = null;
             if (!string.IsNullOrEmpty(runsetId))
             {
-                filterData = result.IncludeAll().Find(a => a._id.ToString() == runsetId).ToList();
+                filterData = LiteDbRunSet.IncludeAllReferences(result).Find(a => a._id.ToString() == runsetId).ToList();
             }
             else
             {
-                runsetId = result.IncludeAll().Max(x => x._id).AsString;
-                filterData = result.IncludeAll().Find(a => a._id.ToString() == runsetId).ToList();
+                runsetId = LiteDbRunSet.IncludeAllReferences(result).Max(x => x._id).ToString();
+                filterData = LiteDbRunSet.IncludeAllReferences(result).Find(a => a._id.ToString() == runsetId).ToList();
             }
             return filterData.Last();
         }
@@ -85,32 +85,32 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             return dbConnector.DeleteDocumentByLiteDbRunSet(liteDbRunSet);
         }
 
-        public LiteCollection<LiteDbReportBase> GetObjectLiteData(string reportLevelName)
+        public ILiteCollection<LiteDbReportBase> GetObjectLiteData(string reportLevelName)
         {
             return dbConnector.GetCollection<LiteDbReportBase>(reportLevelName);
         }
-        public LiteCollection<LiteDbRunSet> GetRunSetLiteData()
+        public ILiteCollection<LiteDbRunSet> GetRunSetLiteData()
         {
             return dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
         }
-        public LiteCollection<LiteDbRunner> GetRunnerLiteData()
+        public ILiteCollection<LiteDbRunner> GetRunnerLiteData()
         {
             return dbConnector.GetCollection<LiteDbRunner>(NameInDb<LiteDbRunner>());
         }
-        public LiteCollection<LiteDbBusinessFlow> GetBfLiteData()
+        public ILiteCollection<LiteDbBusinessFlow> GetBfLiteData()
         {
             return dbConnector.GetCollection<LiteDbBusinessFlow>(NameInDb<LiteDbBusinessFlow>());
         }
 
-        private LiteCollection<LiteDbActivityGroup> GetActGrLiteData()
+        private ILiteCollection<LiteDbActivityGroup> GetActGrLiteData()
         {
             return dbConnector.GetCollection<LiteDbActivityGroup>(NameInDb<LiteDbActivityGroup>());
         }
-        public LiteCollection<LiteDbActivity> GetActivitiesLiteData()
+        public ILiteCollection<LiteDbActivity> GetActivitiesLiteData()
         {
             return dbConnector.GetCollection<LiteDbActivity>(NameInDb<LiteDbActivity>());
         }
-        public LiteCollection<LiteDbAction> GetActionsLiteData()
+        public ILiteCollection<LiteDbAction> GetActionsLiteData()
         {
             return dbConnector.GetCollection<LiteDbAction>(NameInDb<LiteDbAction>());
         }

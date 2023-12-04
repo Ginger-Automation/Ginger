@@ -39,6 +39,7 @@ using System.Reflection;
 using System.Text;
 using static GingerCore.ALM.PublishToALMConfig;
 using Activity = GingerCore.Activity;
+using JsonWriter = Newtonsoft.Json.JsonWriter;
 
 namespace Ginger.Run
 {

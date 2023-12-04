@@ -37,9 +37,9 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             return BsonMapper.Global.Entity<T>();
         }
-        public LiteCollection<T> GetCollection<T>(string collectionName)
+        public ILiteCollection<T> GetCollection<T>(string collectionName)
         {
-            LiteCollection<T> collection = null;
+            ILiteCollection<T> collection = null;
             try
             {
                 using (var db = new LiteDatabase(this.ConnectionString))
@@ -118,7 +118,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             return baseColl.IncludeAll().Find(query).ToList();
         }
 
-        public void SetCollection<T>(LiteCollection<T> baseColl, List<T> updateData)
+        public void SetCollection<T>(ILiteCollection<T> baseColl, List<T> updateData)
         {
             try
             {

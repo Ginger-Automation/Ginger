@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using GingerCore.Actions;
 using GingerCore.DataSource;
 using LiteDB;
+using LiteDB.Engine;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -533,7 +534,7 @@ namespace GingerCoreNET.DataSource
                         // If we need to run a direct query
                         try
                         {
-                            var resultdxs = db.Engine.Run(query);
+                            var resultdxs = new LiteEngine.Run(query);
 
                             // Converting BSON to JSON 
                             JArray array = new JArray();
