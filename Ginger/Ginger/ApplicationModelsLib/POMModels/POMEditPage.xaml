@@ -26,7 +26,7 @@
                     <Label x:Name="xFirstRowExpanderLabel" Content="Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" />
                 </Expander.Header>
                 <Expander.Content>
-                    <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Vertical" x:Name="xDetailsStackPanel">
                         <Grid>
                             <Grid.Resources>
                                 <local:BooleanToVisiblityCollapsedConverter x:Key="visibilityConverter" />

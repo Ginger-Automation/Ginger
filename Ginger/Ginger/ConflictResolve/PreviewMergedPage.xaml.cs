@@ -143,7 +143,7 @@ namespace Ginger.ConflictResolve
                 Dispatcher.Invoke(() =>
                 {
                     xPageViewTabItem.IsEnabled = true;
-                    xPageFrame.ClearAndSetContent(new AgentEditPage(mergedAgent, isReadOnly: true, ignoreValidationRules: true));
+                    xPageFrame.ClearAndSetContent(new AgentEditPage(mergedAgent, isReadOnly: true, ignoreValidationRules: true, General.eRIPageViewMode.View));
                 });
             }
             else if (mergedItem is Activity mergedActivity)
@@ -151,7 +151,7 @@ namespace Ginger.ConflictResolve
                 Dispatcher.Invoke(() =>
                 {
                     xPageViewTabItem.IsEnabled = true;
-                    xPageFrame.ClearAndSetContent(new ActivityPage(mergedActivity, context: null!, General.eRIPageViewMode.View));
+                    xPageFrame.ClearAndSetContent(new ActivityPage(mergedActivity, new Amdocs.Ginger.Common.Context() { Activity = mergedActivity }, General.eRIPageViewMode.View));
                 });
             }
             else if (mergedItem is Act mergedAction)
