@@ -7781,13 +7781,13 @@ namespace GingerCore.Drivers
                     case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
                         mAct = act;
                         SetUPDevTools(Driver);
-                        StartMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
+                        StartMonitoringNetworkLog(Driver).GetAwaiter().GetResult();
                         break;
                     case ActBrowserElement.eControlAction.GetNetworkLog:
-                        GetNetworkLogAsync(Driver, act).GetAwaiter().GetResult();
+                        GetNetworkLogAsync(act).GetAwaiter().GetResult();
                         break;
                     case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
-                        StopMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
+                        StopMonitoringNetworkLog(act).GetAwaiter().GetResult();
                         break;
                     case ActBrowserElement.eControlAction.NavigateBack:
                         Driver.Navigate().Back();
@@ -9933,7 +9933,7 @@ namespace GingerCore.Drivers
 
 
         }
-        public async Task GetNetworkLogAsync(IWebDriver webDriver, ActBrowserElement act)
+        public async Task GetNetworkLogAsync(ActBrowserElement act)
         {
             if (isNetworkLogMonitoringStarted)
             {
@@ -9957,12 +9957,18 @@ namespace GingerCore.Drivers
 
         }
 
-        public async Task StartMonitoringNetworkLog(IWebDriver webDriver, ActBrowserElement act)
+        public async Task StartMonitoringNetworkLog(IWebDriver webDriver)
         {
-
             networkRequestLogList = new List<Tuple<string, object>>();
             networkResponseLogList = new List<Tuple<string, object>>();
             interceptor = webDriver.Manage().Network;
+            ValueExpression VE = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, BusinessFlow);
+
+            foreach (ActInputValue item in mAct.UpdateOperationInputValues)
+            {
+                item.Value = item.Param;
+                item.ValueForDriver = VE.Calculate(item.Param);
+            }
 
             interceptor.NetworkRequestSent += OnNetworkRequestSent;
             interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
@@ -9971,7 +9977,7 @@ namespace GingerCore.Drivers
             isNetworkLogMonitoringStarted = true;
         }
 
-        public async Task StopMonitoringNetworkLog(IWebDriver webDriver, ActBrowserElement act)
+        public async Task StopMonitoringNetworkLog(ActBrowserElement act)
         {
             try
             {
@@ -10079,7 +10085,8 @@ namespace GingerCore.Drivers
         {
             try
             {
-                if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.RequestUrl.ToLower().Equals(x.Param.ToLower())))
+                if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() &&
+                    mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.RequestUrl.ToLower().Contains(x.ValueForDriver.ToLower())))
                 {
                     networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
                 }
@@ -10098,7 +10105,8 @@ namespace GingerCore.Drivers
         {
             try
             {
-                if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.ResponseUrl.ToLower().Equals(x.Param.ToLower())))
+                if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() &&
+                    mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.ResponseUrl.ToLower().Contains(x.ValueForDriver.ToLower())))
                 {
                     if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
                     {
