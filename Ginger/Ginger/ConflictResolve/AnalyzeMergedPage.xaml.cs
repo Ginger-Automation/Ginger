@@ -75,9 +75,10 @@ namespace Ginger.ConflictResolve
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            _analyzerPage.Init(mergedRunSetConfig);
+                            _analyzerPage.Init(mergedRunSetConfig, RunSetConfigAnalyzer.Check.BusinessFlowVariablesAreValid.ExcludedFromAll(), AnalyzeGingerRunner.Check.None);
                             xAnalyzerPageFrame.ClearAndSetContent(_analyzerPage);
                         });
+                        _analyzerPage.AnalyzeWithUI().Wait();
                     }
                 }
                 HideLoading();

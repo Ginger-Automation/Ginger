@@ -53,6 +53,7 @@ namespace Ginger.AnalyzerLib
         public enum Check : uint
         {
             All = ~0u,
+            None = 0u,
             MissingTargetApplications = 1 << 0,
             NoActivities = 1 << 1,
             MissingMandatoryInputValues = 1 << 2,
@@ -103,7 +104,7 @@ namespace Ginger.AnalyzerLib
         {
             List<AnalyzerItemBase> issues = new();
 
-            if (HasMissingTargetApplications(businessFlow, solution, out AnalyzeBusinessFlow issue))
+            if (checks.AreChecksEnabled(Check.MissingTargetApplications) && HasMissingTargetApplications(businessFlow, solution, out AnalyzeBusinessFlow issue))
             {
                 issues.Add(issue);
             }
@@ -115,7 +116,7 @@ namespace Ginger.AnalyzerLib
         {
             List<AnalyzerItemBase> issues = new();
 
-            if (HasNoActivities(businessFlow, out AnalyzeBusinessFlow issue))
+            if (checks.AreChecksEnabled(Check.NoActivities) && HasNoActivities(businessFlow, out AnalyzeBusinessFlow issue))
             {
                 issues.Add(issue);
             }
@@ -125,7 +126,7 @@ namespace Ginger.AnalyzerLib
                 issues.AddRange(issueList);
             }
 
-            if (HasLegacyOutputValidations(businessFlow, out issue))
+            if (checks.AreChecksEnabled(Check.LegacyOutputValidation) && HasLegacyOutputValidations(businessFlow, out issue))
             {
                 issues.Add(issue);
             }

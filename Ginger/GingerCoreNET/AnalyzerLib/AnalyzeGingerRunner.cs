@@ -24,19 +24,41 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Ginger.AnalyzerLib.AnalyzeGingerRunner;
 
 namespace Ginger.AnalyzerLib
 {
-    class AnalyzeGingerRunner : AnalyzerItemBase
+    public static class AnalyzeGingerRunnerCheckExtensions
     {
+        public static Check ExcludedFromAll(this Check exclusions)
+        {
+            return Check.All ^ exclusions;
+        }
+
+        public static bool AreChecksEnabled(this Check checksEnabled, Check checksToVerify)
+        {
+            return (Check.All & checksEnabled) == checksToVerify;
+        }
+    }
+    
+    public class AnalyzeGingerRunner : AnalyzerItemBase
+    {
+        public enum Check : uint
+        {
+            All = ~0u,
+            None = 0u,
+            NoBusinessFlows = 1 << 0,
+            AgentsAreConfigured = 1 << 2,
+        }
+
         public GingerRunner GingerRunner { get; set; }
 
-        public static List<AnalyzerItemBase> Analyze(GingerRunner GR)
+        public static List<AnalyzerItemBase> Analyze(GingerRunner GR, Check checks = Check.All)
         {
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
 
             // check that we have BFs
-            if (!GR.Executor.BusinessFlows.Any())
+            if (checks.AreChecksEnabled(Check.NoBusinessFlows) && !GR.Executor.BusinessFlows.Any())
             {
                 AnalyzeGingerRunner AGR = CreateNewIssue(IssuesList, GR);
                 AGR.Description = "Runner is missing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
@@ -49,26 +71,29 @@ namespace Ginger.AnalyzerLib
                 AGR.Selected = false;
             }
 
-            //check all Agents are configured            
-            foreach (ApplicationAgent AA in GR.ApplicationAgents)
+            if (checks.AreChecksEnabled(Check.AgentsAreConfigured))
             {
-                if (string.IsNullOrEmpty(AA.AgentName))
+                //check all Agents are configured            
+                foreach (ApplicationAgent AA in GR.ApplicationAgents)
                 {
-                    if (GR.Executor.SolutionApplications.FirstOrDefault(x => (x.AppName == AA.AppName && x.Platform == ePlatformType.NA)) != null)
+                    if (string.IsNullOrEmpty(AA.AgentName))
                     {
-                        continue;
+                        if (GR.Executor.SolutionApplications.FirstOrDefault(x => (x.AppName == AA.AppName && x.Platform == ePlatformType.NA)) != null)
+                        {
+                            continue;
+                        }
+                        //create error
+                        AnalyzeGingerRunner AGR = CreateNewIssue(IssuesList, GR);
+                        AGR.ItemParent = GR.Name;
+                        AGR.Description = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to an Agent";
+                        AGR.Details = $"The '{GR.Name}' Runner '{AA.AppName}' {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to any Agent";
+                        AGR.HowToFix = $"Map the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} to an Agent";
+                        AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                        AGR.IssueType = eType.Error;
+                        AGR.Impact = "Execution will fail.";
+                        AGR.Severity = eSeverity.Critical;
+                        AGR.Selected = false;
                     }
-                    //create error
-                    AnalyzeGingerRunner AGR = CreateNewIssue(IssuesList, GR);
-                    AGR.ItemParent = GR.Name;
-                    AGR.Description = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to an Agent";
-                    AGR.Details = $"The '{GR.Name}' Runner '{AA.AppName}' {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} is not mapped to any Agent";
-                    AGR.HowToFix = $"Map the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} to an Agent";
-                    AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;
-                    AGR.IssueType = eType.Error;
-                    AGR.Impact = "Execution will fail.";
-                    AGR.Severity = eSeverity.Critical;
-                    AGR.Selected = false;
                 }
             }
             return IssuesList;
