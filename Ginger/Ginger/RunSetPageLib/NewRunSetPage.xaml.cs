@@ -1601,7 +1601,7 @@ namespace Ginger.Run
         {
             try
             {
-                bool isSolutionSame = mRunSetConfig != null && mRunSetConfig.ContainingFolderFullPath != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
+                bool isSolutionSame = mRunSetConfig != null && mRunSetConfig.ContainingFolderFullPath != null && mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName);
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              
                 if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
                 {
