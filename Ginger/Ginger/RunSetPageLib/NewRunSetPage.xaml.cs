@@ -3000,11 +3000,11 @@ namespace Ginger.Run
                     bf.Active = SetBusinessflowActive;
                     if (SetBusinessflowActive)
                     {
-                        ((RunnerItemPage)ri).xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
+                        ri.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                     }
                     else
                     {
-                        ((RunnerItemPage)ri).xItemName.Foreground = Brushes.Gray;
+                        ri.xItemName.Foreground = Brushes.Gray;
                     }
                 }
             }

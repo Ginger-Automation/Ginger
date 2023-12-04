@@ -161,7 +161,7 @@ namespace Ginger.UserControlsLib.UCListView
                     ExpandItem();
                 }
 
-                if (ListHelper.ShowIndex == false)
+                if (!ListHelper.ShowIndex)
                 {
                     xIndexCol.Width = new GridLength(0);
                     xExpandCollapseCol.Width = new GridLength(20);
@@ -412,11 +412,7 @@ namespace Ginger.UserControlsLib.UCListView
                         operationBtn.ButtonFontImageSize = operation.ImageSize;
                         operationBtn.IsEnabled = operation.IsEnabeled;
 
-                        if (operation.ImageForeground == null)
-                        {
-                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_Black");
-                        }
-                        else
+                        if (operation.ImageForeground != null)
                         {
                             operationBtn.ButtonImageForground = operation.ImageForeground;
                         }
@@ -472,11 +468,7 @@ namespace Ginger.UserControlsLib.UCListView
                         menuitem.Header = operation.Header;
                         menuitem.ToolTip = operation.ToolTip;
 
-                        if (operation.ImageForeground == null)
-                        {
-                            //iconImage.ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_Black");
-                        }
-                        else
+                        if (operation.ImageForeground != null)
                         {
                             iconImage.ImageForeground = operation.ImageForeground;
                         }

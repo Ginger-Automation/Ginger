@@ -102,15 +102,6 @@ namespace Ginger.BusinessFlowWindows
             {
                 SwitchLegend(s);
             }
-
-            //{
-            //    stck.Children.Add(Ginger.General.makeImgFromControl(ActivityChart, totalActivity.ToString(), 1));
-            //    stck.Children.Add(Ginger.General.makeImgFromControl(ActionChart, totalAction.ToString(), 2));
-            //}
-            //{
-            //    //App.RunsetActivityTextbox.Text = totalActivity.ToString();
-            //    //App.RunsetActionTextbox.Text = totalAction.ToString();
-            //}
         }
         public void HideAllLegend()
         {

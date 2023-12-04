@@ -940,18 +940,11 @@ namespace Ginger
             {
                 btnClearSearch.Visibility = Visibility.Visible;
                 xSearchBtn.Visibility = Visibility.Collapsed;
-                //xSearchBtn.IsEnabled = true;
-
-                //SetBtnImage(btnClearSearch, "@Clear_16x16.png");
-                //btnClearSearch.IsEnabled = true;
             }
             else
             {
                 btnClearSearch.Visibility = Visibility.Collapsed;
                 xSearchBtn.Visibility = Visibility.Visible;
-                //xSearchBtn.IsEnabled = false;
-                //SetBtnImage(btnClearSearch, "@DisabledClear_16x16.png");
-                //btnClearSearch.IsEnabled = false;
             }
 
             string search = txtSearch.Text.ToUpper();

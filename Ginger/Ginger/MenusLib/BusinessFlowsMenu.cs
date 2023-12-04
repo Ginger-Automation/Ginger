@@ -35,7 +35,7 @@ namespace Ginger.MenusLib
 {
     public static class BusinessFlowsMenu
     {
-        public static TwoLevelMenu twoLevelMenu;
+        private static TwoLevelMenu twoLevelMenu;
         private static TwoLevelMenuPage mMenusPage = null;
 
         static SingleItemTreeViewExplorerPage mBusFlowsPage;
