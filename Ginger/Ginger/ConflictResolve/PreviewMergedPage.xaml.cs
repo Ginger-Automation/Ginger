@@ -18,9 +18,16 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
+using Ginger.Actions;
+using Ginger.Agents;
+using Ginger.ApplicationModelsLib.POMModels;
+using Ginger.BusinessFlowWindows;
+using Ginger.Run;
 using Ginger.SourceControl;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.GeneralLib;
+using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.BusinessFlowsLib;
 using GingerWPF.WizardLib;
 using LibGit2Sharp;
@@ -120,7 +127,7 @@ namespace Ginger.ConflictResolve
                 Dispatcher.Invoke(() => 
                 {
                     xPageViewTabItem.IsEnabled = true;
-                    xPageFrame.ClearAndSetContent(new BusinessFlowViewPage(mergedBusinessFlow, context: null!, General.eRIPageViewMode.View));
+                    xPageFrame.ClearAndSetContent(new BusinessFlowViewPage(mergedBusinessFlow, context: null!, General.eRIPageViewMode.View, ignoreValidationRules: true));
                 });
             }
             else

@@ -43,6 +43,7 @@ namespace GingerWPF.BusinessFlowsLib
         BusinessFlow mBusinessFlow;
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
+        private readonly bool _ignoreValidationRules;
 
         public ActivitiesListViewPage mActivitiesPage;
         public VariabelsListViewPage mVariabelsPage;
@@ -50,13 +51,14 @@ namespace GingerWPF.BusinessFlowsLib
 
         GenericWindow mGenericWin = null;
 
-        public BusinessFlowViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode)
+        public BusinessFlowViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode, bool ignoreValidationRules = false)
         {
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
             CurrentItemToSave = mBusinessFlow;
             mContext = context;
+            _ignoreValidationRules = ignoreValidationRules;
             if (mContext == null)
             {
                 mContext = new Context();
@@ -178,7 +180,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mConfigurationsPage == null)
                     {
-                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, childPagesMode);
+                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, childPagesMode, _ignoreValidationRules);
                         xDetailsTabFrame.SetContent(mConfigurationsPage);
                     }
                     else
