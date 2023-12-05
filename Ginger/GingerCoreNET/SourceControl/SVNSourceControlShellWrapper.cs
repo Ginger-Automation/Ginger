@@ -90,6 +90,11 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
             ;
         }
 
+        public override List<string> GetConflictPaths()
+        {
+            throw new NotImplementedException();
+        }
+
         public override List<string> GetBranches()
         {
             throw new NotImplementedException();
@@ -221,6 +226,21 @@ namespace Amdocs.Ginger.CoreNET.SourceControl
         public override bool IsRepositoryPublic()
         {
             return false;
+        }
+
+        public override string GetLocalContentForConflict(string conflictedFilePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GetRemoteContentForConflict(string conflictedFilePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ResolveConflictWithContent(string path, string content, ref string error)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -192,7 +192,7 @@ namespace Ginger.Run
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error Occured during LoadExecutionHistory.", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error Occurred during LoadExecutionHistory.", ex);
                 }
             });
 
@@ -262,10 +262,7 @@ namespace Ginger.Run
                 else if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                 {
                     string runSetFolder = executionLoggerHelper.GetLoggerDirectory(runSetReport.LogFolder);
-
-                    var fi = new DirectoryInfo(runSetFolder);
-                    CleanDirectory(fi.FullName);
-                    fi.Delete();
+                    TextFileRepository.DeleteLocalData(runSetFolder);
                 }
                 else if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote && !remoteDeletionFlag)
                 {
@@ -277,27 +274,6 @@ namespace Ginger.Run
             if (grdExecutionsHistory.Grid.SelectedItems.Count > 0)
             {
                 LoadExecutionsHistoryData();
-            }
-        }
-
-        private static void CleanDirectory(string folderName)
-        {
-            try
-            {
-                System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(folderName);
-
-                foreach (System.IO.FileInfo file in di.GetFiles())
-                {
-                    file.Delete();
-                }
-                foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
-                {
-                    dir.Delete(true);
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Clean the Folder '{0}', Issue:'{1}'", folderName, ex.Message));
             }
         }
 

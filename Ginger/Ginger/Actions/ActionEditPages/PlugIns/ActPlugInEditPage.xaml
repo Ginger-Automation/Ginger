@@ -8,7 +8,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="ActPlugInEditPage">
 
-    <DockPanel Background="{StaticResource $BackgroundColor_LightGray}"  >
+    <DockPanel Background="{StaticResource $BackgroundColor_White}"  >
 
         <DockPanel x:Name="xActionInputControlsPnl" DockPanel.Dock="Top" Margin="0,0,20,10"/>
         

@@ -149,7 +149,7 @@
         </Popup>
 
         <Popup x:Name="puEmenu" AllowsTransparency="true" Placement="top" IsOpen="False" PlacementTarget="{Binding ElementName=IB_Ribbon}">
-            <Border x:Name="bdrEmenu" CornerRadius="10" BorderBrush="{StaticResource $Color_DarkBlue}" Background="{StaticResource $BackgroundColor_LightGray}" Height="150" BorderThickness="2" Margin="0,120" Width="170" >
+            <Border x:Name="bdrEmenu" CornerRadius="10" BorderBrush="{StaticResource $PrimaryColor_Black}" Background="{StaticResource $BackgroundColor_LightGray}" Height="150" BorderThickness="2" Margin="0,120" Width="170" >
                 <StackPanel>
                     <Label x:Name="eTagName" Style="{StaticResource @InputFieldLabelStyle}" Width="160" FontWeight="Bold" HorizontalAlignment="Center">TagName</Label>
                     <Button x:Name="btnAction1" FontSize="11" Content="Action 1"  Width="160" Click="btnAction1_Click" Style="{StaticResource @WindowButtonStyle}" Margin="0,2,0,2"/>

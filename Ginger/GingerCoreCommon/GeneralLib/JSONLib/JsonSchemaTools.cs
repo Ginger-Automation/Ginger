@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -35,6 +35,11 @@ namespace Amdocs.Ginger.Common
         private static Dictionary<object, object> CachedValues = new Dictionary<object, object>();
         public static string JsonSchemaFaker(JsonSchema4 schema, List<object> ReferenceStack, bool UseXMlNames = false)
         {
+            if (schema is null)
+            {
+                schema = new JsonSchema4();
+            }
+
             if (ReferenceStack == null)
             {
                 ReferenceStack = new List<object>();
@@ -81,7 +86,7 @@ namespace Amdocs.Ginger.Common
                     {
                         key = jkp.Value.Xml.Name;
                     }
-                    if (jkp.Value.HasReference && !ReferenceStack.Contains(jkp.Value.Reference))
+                    if (jkp.Value != null && jkp.Value.HasReference && jkp.Value.Reference != null)
                     {
                         if (jkp.Value.Reference.HasReference == false && jkp.Value.Reference.Properties.Count == 0)
                         {

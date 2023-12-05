@@ -52,24 +52,7 @@ namespace Ginger.Reports
             Yes,
             No
         }
-
-
-        public enum eDeleteLocalDataOnPublish
-        {
-            Yes,
-            No
-        }
-
-        public enum eDataPublishingPhase
-        {
-            [EnumValueDescription("During Execution")]
-            DuringExecution,
-            [EnumValueDescription("Post Execution")]
-            PostExecution           
-        }
-
-
-
+        
         // Why we serialzie!!?
 
         [IsSerializedForLocalRepository]
@@ -154,46 +137,24 @@ namespace Ginger.Reports
             }
         }
 
-
-        private eDataPublishingPhase mDataPublishingPhase = eDataPublishingPhase.DuringExecution;
-
+        private string mCentralizedHtmlReportServiceURL;
         [IsSerializedForLocalRepository]
-        public eDataPublishingPhase DataPublishingPhase
+        public string CentralizedHtmlReportServiceURL
         {
             get
             {
-                return mDataPublishingPhase;
+                return mCentralizedHtmlReportServiceURL;
             }
             set
             {
-                if (mDataPublishingPhase != value)
+                if (mCentralizedHtmlReportServiceURL != value)
                 {
-                    mDataPublishingPhase = value;
-                    OnPropertyChanged(nameof(DataPublishingPhase));
+                    mCentralizedHtmlReportServiceURL = value;
+                    OnPropertyChanged(nameof(CentralizedHtmlReportServiceURL));
                 }
             }
         }
-
-        private eDeleteLocalDataOnPublish mDeleteLocalDataOnPublish = eDeleteLocalDataOnPublish.No;
-
-        [IsSerializedForLocalRepository]
-        public eDeleteLocalDataOnPublish DeleteLocalDataOnPublish
-        {
-            get
-            {
-                return mDeleteLocalDataOnPublish;
-            }
-            set
-            {
-                if (mDeleteLocalDataOnPublish != value)
-                {
-                    mDeleteLocalDataOnPublish = value;
-                    OnPropertyChanged(nameof(DeleteLocalDataOnPublish));
-                }
-            }
-        }
-
-
+        
         private string mCentralLoggerEndPointUrl;
         [IsSerializedForLocalRepository]
         public string CentralLoggerEndPointUrl

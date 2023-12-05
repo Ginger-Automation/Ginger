@@ -273,7 +273,7 @@ namespace GingerWPF.TreeViewItemsLib
                     }
 
                     //refresh tree
-                    mTreeView.Tree.RefresTreeNodeChildrens((ITreeViewItem)this);
+                    mTreeView.Tree.RefreshTreeNodeChildrens((ITreeViewItem)this);
 
                     mBulkOperationIsInProcess = false;
                 }
@@ -385,7 +385,7 @@ namespace GingerWPF.TreeViewItemsLib
                 case System.Collections.Specialized.NotifyCollectionChangedAction.Reset:
                     mTreeView.Tree.Dispatcher.Invoke(() =>
                     {
-                        mTreeView.Tree.RefresTreeNodeChildrens((ITreeViewItem)this);
+                        mTreeView.Tree.RefreshTreeNodeChildrens((ITreeViewItem)this);
                     });
                     break;
             }

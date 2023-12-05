@@ -1,0 +1,156 @@
+﻿<Page x:Class="Ginger.Drivers.DriversConfigsEditPages.WebServicesDriverEditPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Actions="clr-namespace:Ginger.Activities"
+        xmlns:local="clr-namespace:Ginger.Actions.ActionConversion"
+        mc:Ignorable="d"
+        d:DesignHeight="600" d:DesignWidth="800"
+        Title="WebServicesDriverEditPage">
+
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="B2V" />
+        <local:MultiBooleanToVisibilityConverter x:Key="MultiB2V"/>
+    </Page.Resources>
+
+
+    <Grid x:Name="xPageGrid" Grid.IsSharedSizeScope="True">
+        <DockPanel>
+            <Expander x:Name="xSettingsExpander" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,0" BorderThickness="0">
+                <Expander.Header>
+                    <Label Content="Connection Configurations" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel>
+                        <Expander x:Name="xTcpSettingsExpander" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" BorderThickness="0" Margin="5, 10, 0, 0">
+                            <Expander.Header>
+                                <Label Content="TCP Details" Style="{StaticResource $HorizontalExpanderLabelStyle}" FontWeight="Normal"/>
+                            </Expander.Header>
+                            <Expander.Content>
+                                <StackPanel Margin="10, 15, 0, 0">
+                                    <CheckBox x:Name="xUseTcpCheckBox" Content="Use TCP client" Style="{StaticResource $CeckBoxStyle}"/>
+                                    <Grid Margin="0,5,0,0" Visibility="{Binding IsChecked, ElementName=xUseTcpCheckBox, Converter={StaticResource B2V}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="TextBoxColumn"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Label Content="Hostname:" Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left"/>
+                                        <Actions:UCValueExpression x:Name="xTcpHostnameTextBox" Width="250" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"/>
+                                        <Label Content="Port:" Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left"/>
+                                        <Actions:UCValueExpression x:Name="xTcpPortTextBox" Width="150" Grid.Column="1" Grid.Row="1" Margin="0,5,0,0" HorizontalAlignment="Left"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
+                        <Expander x:Name="xAdvancedSettingsExpander" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" BorderThickness="0" Margin="5, 10, 0, 0">
+                            <Expander.Header>
+                                <Label Content="Advanced" Style="{StaticResource $HorizontalExpanderLabelStyle}" FontWeight="Normal"/>
+                            </Expander.Header>
+                            <Expander.Content>
+                                <StackPanel Margin="10, 15, 0, 0">
+                                    <CheckBox x:Name="xUseProxyCheckBox" Content="Use local proxy server settings" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Checked="xUseProxyChxBox_Checked" Unchecked="xUseProxyChxBox_Unchecked"/>
+                                    <Grid Margin="0,5,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
+                                            <ColumnDefinition Width="Auto" SharedSizeGroup="TextBoxColumn"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Label Content="Customized proxy settings:" Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left"/>
+                                        <Actions:UCValueExpression x:Name="xProxyTextBox" Width="250" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"/>
+                                        <Label Content="Timeout (seconds):" Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left"/>
+                                        <Actions:UCValueExpression x:Name="xTimeoutTextBox" Width="150" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Margin="0,5,0,0"/>
+                                        <Label Content="Security type" Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left"/>
+                                        <ComboBox x:Name="xSecurityTypeComboBox" IsEditable="False" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Column="1" Grid.Row="2" Width="120" HorizontalAlignment="Left"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Expander.Content>
+                        </Expander>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+            <Expander x:Name="xSaveRequestResponseExpander" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" BorderThickness="0" Margin="0,10,0,0">
+                <Expander.Header>
+                    <Label Content="Save Request/Response" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel Margin="15, 10, 0, 0">
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="xSaveRequestCheckBox" Content="Save request" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center"/>
+                            <CheckBox x:Name="xSaveResponseCheckBox" Content="Save response" Style="{StaticResource $CeckBoxStyle}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </StackPanel>
+                        <StackPanel x:Name="xSavePathStackPanel" Orientation="Horizontal" Margin="0,10,0,0">
+                            <StackPanel.Visibility>
+                                <MultiBinding Converter="{StaticResource MultiB2V}"> 
+                                    <Binding ElementName="xSaveRequestCheckBox" Path="IsChecked" Mode="OneWay"/>
+                                    <Binding ElementName="xSaveResponseCheckBox" Path="IsChecked" Mode="OneWay"/>
+                                </MultiBinding>
+                            </StackPanel.Visibility>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="TextBoxColumn"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Label Content="Save path:" Style="{StaticResource $LabelStyle}" Grid.Column="0" HorizontalAlignment="Left"/>
+                                <Actions:UCValueExpression x:Name="xSaveRequestResponsePathTextBox" Width="250" Margin="0,10,0,0" Grid.Column="1" HorizontalAlignment="Left"/>
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+            <Expander x:Name="xSoapUIOrchestrationSettingsExpander" ExpandDirection="Down" IsExpanded="False" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" BorderThickness="0" Margin="0,10,0,0">
+                <Expander.Header>
+                    <Label Content="SoapUI Orchestration Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel Margin="15, 10, 0, 0">
+                        <Grid HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn"/>
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="TextBoxColumn"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Label Content="Directory path:" Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <Actions:UCValueExpression x:Name="xSoapUIDirectoryPathTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250"/>
+                            <Label Content="Execution outputs directory path:" Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <Actions:UCValueExpression x:Name="xSoapUIOutputsDirectoryPathTextBox" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" Margin="0,10,0,0"/>
+                            <Label Content="Settings file:" Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <Actions:UCValueExpression x:Name="xSoapUISettingsFile" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" Margin="0,10,0,0"/>
+                            <Label Content="Settings file password:" Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <Actions:UCValueExpression x:Name="xSoapUISettingsFilePassword" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" Margin="0,10,0,0"/>
+                            <Label Content="Project password:" Style="{StaticResource $LabelStyle}" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <Actions:UCValueExpression x:Name="xSoapUIProjectPassword" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="250" Margin="0,10,0,0"/>
+                            <CheckBox x:Name="xSoapUIRunAsAdminCheckBox" Content="Run SoapUI process as admin" Style="{StaticResource $CeckBoxStyle}" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <CheckBox x:Name="xSoapUIUseShellCheckBox" Content="Use system shell to start SoapUI process" Style="{StaticResource $CeckBoxStyle}" Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,10,0,0"/>
+                            <CheckBox x:Name="xSoapUIWindowStyleCheckBox" Content="Hide SoapUI process window" Style="{StaticResource $CeckBoxStyle}" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,15,0,0"/>
+                            <CheckBox x:Name="xSoapUINoWindowCheckBox" Content="SoapUI process create no window" Style="{StaticResource $CeckBoxStyle}" Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,15,0,0"/>
+                            <CheckBox x:Name="xSoapUIRedirectOutputCheckBox" Content="SoapUI process redirect standard output" Style="{StaticResource $CeckBoxStyle}" Grid.Row="7" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,15,5,0"/>
+                            <CheckBox x:Name="xSoapUIRedirectErrorCheckBox" Content="SoapUI process redirect standard error" Style="{StaticResource $CeckBoxStyle}" Grid.Row="7" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,15,0,0"/>
+                        </Grid>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
+        </DockPanel>
+    </Grid>
+</Page>

@@ -247,7 +247,7 @@ namespace GingerCore.Platforms
         {
             get
             {
-                return ApplicationAgentOperations.PossibleAgents;
+                return ApplicationAgentOperations?.PossibleAgents;
             }
         }
     }

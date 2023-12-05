@@ -46,22 +46,22 @@ namespace Amdocs.Ginger.Repository
         /// </summary>
         private static List<string> mSolutionPathsToAvoid = new List<string>()
         {
-             "AutoSave",
-             "Recover",
-             "RecentlyUsed.dat",
-             "Backups",
-             "ExecutionResults",
-             "HTMLReports",
+             @"AutoSave\",
+             @"Recover\",
+             @"RecentlyUsed.dat",
+             @"Backups\",
+             @"ExecutionResults\",
+             @"HTMLReports\",
 
-             @"SharedRepository\Activities\PrevVersions",
-             @"SharedRepository\Actions\PrevVersions",
-             @"SharedRepository\Variables\PrevVersions",
-             @"SharedRepository\ActivitiesGroup\PrevVersions",
+             @"SharedRepository\Activities\PrevVersions\",
+             @"SharedRepository\Actions\PrevVersions\",
+             @"SharedRepository\Variables\PrevVersions\",
+             @"SharedRepository\ActivitiesGroup\PrevVersions\",
 
-             @"SharedRepository\Activities\PrevVerions",
-             @"SharedRepository\Actions\PrevVerions",
-             @"SharedRepository\Variables\PrevVerions",
-             @"SharedRepository\ActivitiesGroup\PrevVerions"
+             @"SharedRepository\Activities\PrevVerions\",
+             @"SharedRepository\Actions\PrevVerions\",
+             @"SharedRepository\Variables\PrevVerions\",
+             @"SharedRepository\ActivitiesGroup\PrevVerions\"
         };
 
         private List<string> mCalculatedSolutionPathsToAvoid = null;
@@ -472,6 +472,11 @@ namespace Amdocs.Ginger.Repository
                        .ToUpperInvariant();
         }
 
+        public IEnumerable<string> GetRelativePathsToAvoidFromSourceControl()
+        {
+            return mSolutionPathsToAvoid;
+        }
+
 
         public bool IsSolutionPathToAvoid(string pathToCheck)
         {
@@ -484,7 +489,7 @@ namespace Amdocs.Ginger.Repository
                 }
             }
 
-            return mCalculatedSolutionPathsToAvoid.Any(Path.GetFullPath(pathToCheck).Contains);
+            return mCalculatedSolutionPathsToAvoid.Any(Path.GetFullPath(pathToCheck).Contains) || mCalculatedSolutionPathsToAvoid.Any(Path.GetFullPath($"{pathToCheck}{Path.DirectorySeparatorChar}").Contains);
         }
 
         #endregion Public Functions

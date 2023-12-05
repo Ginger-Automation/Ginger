@@ -11,7 +11,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="AppsListPage">
 
-    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="145"/>
             <RowDefinition Height="30*"/>
@@ -22,7 +22,7 @@
                     <Label Style="{StaticResource $LabelStyle}" Content="Environment Name:"/>
                     <usercontrols:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" />
                 </StackPanel>
-                <TextBox x:Name="EnvNameTextBox" Style="{StaticResource @TextBoxStyle}" HorizontalAlignment="Left" MinWidth="500px" FontSize="14" FontWeight="Bold"></TextBox>
+                <TextBox x:Name="EnvNameTextBox" Style="{StaticResource @TextBoxStyle}" HorizontalAlignment="Left" MinWidth="500px" FontSize="14" FontWeight="Bold" TextChanged="EnvNameTextBox_TextChanged"></TextBox>
                 <Ginger:ucTagsViewer x:Name="TagsViewer" Margin="-5,0,0,0" HorizontalAlignment="Left"/>
             </StackPanel>
 

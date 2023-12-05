@@ -39,6 +39,7 @@ using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCoreNET.RunLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerCoreNET.SolutionRepositoryLib.UpgradeLib;
 using GingerCoreNET.SourceControl;
 using System;
@@ -401,14 +402,9 @@ namespace amdocs.ginger.GingerCoreNET
             }
 
             // General Report Configurations
-            HTMLReportsConfiguration mHTMLReportConfiguration = Instance.Solution.HTMLReportsConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
-            if (!string.IsNullOrEmpty(mHTMLReportConfiguration?.CentralizedReportDataServiceURL))
-            {
-                WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
-            }
+            ExecutionLoggerConfiguration executionLoggerConfiguration = Instance.Solution.ExecutionLoggerConfigurationSetList.FirstOrDefault(x => (x.IsSelected == true));
 
-            // General Report Configurations
-            if (!string.IsNullOrEmpty(mHTMLReportConfiguration?.CentralizedHtmlReportServiceURL))
+            if (!string.IsNullOrEmpty(executionLoggerConfiguration?.CentralLoggerEndPointUrl) || !string.IsNullOrEmpty(executionLoggerConfiguration?.CentralizedHtmlReportServiceURL))
             {
                 WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures = true;
             }
@@ -520,7 +516,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "exception occured while doing Solution Source Control Configurations", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "exception occurred while doing Solution Source Control Configurations", ex);
                 }
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Updating Application Functionalities to Work with Loaded Solution");
@@ -528,6 +524,7 @@ namespace amdocs.ginger.GingerCoreNET
                 BusinessFlow.SolutionVariables = solution.Variables;
                 solution.SolutionOperations.SetReportsConfigurations();
                 Solution = solution;
+
                 UserProfile.UserProfileOperations.LoadRecentAppAgentMapping();
 
                 if (!RunningInExecutionMode)
@@ -537,7 +534,6 @@ namespace amdocs.ginger.GingerCoreNET
 
                 //Solution items upgrade
                 SolutionUpgrade.CheckSolutionItemsUpgrade(solutionFolder, solution.Name, solutionFiles.ToList());
-
                 if (!RunningInExecutionMode && mSolution.NeedVariablesReEncryption && !WorkSpace.Instance.UserProfile.IsSharedUserProfile)
                 {
                     string msg = "Going forward each solution needs to have its own key for encrypting password values\n"
@@ -894,7 +890,13 @@ namespace amdocs.ginger.GingerCoreNET
 
             if (setTargetApp == true && WorkSpace.Instance.Solution.ApplicationPlatforms.Count > 0)
             {
-                newBF.TargetApplications.Add(new TargetApplication() { AppName = WorkSpace.Instance.Solution.MainApplication });
+                string mainAppName = WorkSpace.Instance.Solution.MainApplication;
+                ApplicationPlatform mainApp = WorkSpace.Instance.Solution.ApplicationPlatforms.First(ap => string.Equals(ap.AppName, mainAppName));
+                newBF.TargetApplications.Add(new TargetApplication() 
+                { 
+                    AppName = mainAppName, 
+                    ParentGuid =  mainApp.Guid
+                });
                 newBF.CurrentActivity.TargetApplication = newBF.TargetApplications[0].Name;
             }
 

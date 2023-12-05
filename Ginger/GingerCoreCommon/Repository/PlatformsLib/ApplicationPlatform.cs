@@ -173,5 +173,16 @@ namespace GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib
             return eImageType.Empty;
         }
 
+        public override string GetItemType()
+        {
+            return "ApplicationPlatform";
+        }
+        public override string ItemNameField
+        {
+            get
+            {
+                return ItemName;
+            }
+        }
     }
 }

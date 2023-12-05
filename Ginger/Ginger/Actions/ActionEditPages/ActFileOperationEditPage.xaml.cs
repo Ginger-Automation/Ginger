@@ -54,7 +54,7 @@ namespace Ginger.Actions
             {
                 TextFileNameTextBox.ValueTextBox.Text = fileName;
             }
-            if (General.SetupBrowseFolder(new System.Windows.Forms.FolderBrowserDialog()) is string folderName)
+            else if (General.SetupBrowseFolder(new System.Windows.Forms.FolderBrowserDialog()) is string folderName)
             {
                 TextFileNameTextBox.ValueTextBox.Text = folderName;
             }
@@ -66,7 +66,7 @@ namespace Ginger.Actions
         }
 
         /// <summary>
-        /// Update browsertype according to selected file action. Some needs file browser and some needs folder browser
+        /// Update browser type according to selected file action. Some needs file browser and some needs folder browser
         /// </summary>
         private void UpdateBrowserTypes()
         {

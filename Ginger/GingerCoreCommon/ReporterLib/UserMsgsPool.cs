@@ -107,7 +107,7 @@ namespace Amdocs.Ginger.Common
         AutomationTabExecResultsNotExists, FolderNamesAreTooLong, FolderSizeTooSmall, DefaultTemplateCantBeDeleted, FileNotExist, ExecutionsResultsProdIsNotOn, ExecutionsResultsNotExists, ExecutionsResultsToDelete, AllExecutionsResultsToDelete, FilterNotBeenSet, RetreivingAllElements, ClickElementAgain, CloseFilterPage,
         BusinessFlowNeedTargetApplication, HTMLReportAttachment, ImageSize,
         GherkinAskToSaveFeatureFile, GherkinScenariosGenerated, GherkinNotifyFeatureFileExists, GherkinNotifyFeatureFileSelectedFromTheSolution, GherkinNotifyBFIsNotExistForThisFeatureFile, GherkinFileNotFound, GherkinColumnNotExist, GherkinActivityNotFound, GherkinBusinessFlowNotCreated, GherkinFeatureFileImportedSuccessfully, GherkinFeatureFileImportOnlyFeatureFileAllowedErrorMessage,
-        AskIfSureWantToDeLink, AnalyzerFoundIssues, AnalyzerSaveRunSet,
+        AskIfSureWantToDeLink, AnalyzerFoundIssues, AnalyzerFoundNoIssues, AnalyzerSaveRunSet,
         AskIfSureWantToUndoChange,
         CurrentActionNotSaved,
         LoseChangesWarn,
@@ -145,7 +145,7 @@ namespace Amdocs.Ginger.Common
         InvalidIndexValue, FileOperationError, FolderOperationError, ObjectUnavailable, PatternNotHandled, LostConnection, AskToSelectBusinessflow,
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, RunSetNotExecuted, OperationNotSupported, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, SaveAllModifiedItems, CopiedErrorInfo, RepositoryNameCantEmpty,
-        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, DuplicateRunsetName,
+        ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, InvalidYAML, InvalidJSON,  DuplicateRunsetName,
         POMElementNotExist, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped, SavePOMChanges,
         AskIfToUndoChanges, AskIfToUndoItemChanges, AskIfToImportFile, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification, WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
@@ -169,7 +169,14 @@ namespace Amdocs.Ginger.Common
         EnvParamNameExists,
         EnvParamNameEmpty,
         NoPublishRepositoryInfo,
-        NotAllowedForMappedRuntimeValue
+        NotAllowedForMappedRuntimeValue,
+        HandleConflictsBeforeMovingForward,
+        HasUnhandledConflicts,
+        UncommitedChangesPreventCheckout,
+        ExportToBPMNSuccessful,
+        GingerEntityToBPMNConversionError,
+        IssueWhileAnalyzingConflict,
+        ConflictsResolvedCount
     }
 
     public static class UserMsgsPool
@@ -258,6 +265,7 @@ namespace Amdocs.Ginger.Common
 
             #region Analyzer
             Reporter.UserMsgsPool.Add(eUserMsgKey.AnalyzerFoundIssues, new UserMsg(eUserMsgType.WARN, "Issues Detected By Analyzer", "Critical/High Issues were detected, please handle them before execution.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AnalyzerFoundNoIssues, new UserMsg(eUserMsgType.INFO, "No Issues Detected By Analyzer", "No Issues were found.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AnalyzerSaveRunSet, new UserMsg(eUserMsgType.WARN, "Issues Detected By Analyzer", "Please save the " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + " first", eUserMsgOption.OK, eUserMsgSelection.None));
             #endregion Analyzer
 
@@ -306,6 +314,11 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionToSourceControl, new UserMsg(eUserMsgType.QUESTION, "Upload Solution", "The solution was created and loaded successfully.\nPlease make a note of the encryption key provided from solution details page." + Environment.NewLine + "Do you want to upload the Solution: '{0}' to Source Control?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UploadSolutionFailed, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Failed to Upload Solution to Source Control" + Environment.NewLine + "'{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlBranchNameEmpty, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Branch name cannot be empty.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.HandleConflictsBeforeMovingForward, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "You have {0} unhandled conflicts, please handle them before moving forward.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.HasUnhandledConflicts, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "Cannot merge since you have {0} unhandled conflicts.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.UncommitedChangesPreventCheckout, new UserMsg(eUserMsgType.ERROR, "Uncommited Changes", "Local branch has uncommited changes, check-in them before getting latest.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.IssueWhileAnalyzingConflict, new UserMsg(eUserMsgType.INFO, "Issues with Analyzer", "{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ConflictsResolvedCount, new UserMsg(eUserMsgType.INFO, "Conflicts Resolved", "{0} conflicts was resolved", eUserMsgOption.OK, eUserMsgSelection.OK));
             #endregion SourceControl Messages
 
             #region Validation Messages
@@ -570,6 +583,10 @@ namespace Amdocs.Ginger.Common
 
             #endregion Reports
 
+            #region Otoma
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ExportToBPMNSuccessful, new UserMsg(eUserMsgType.INFO, "BPMN Export Successful", "Exported to BPMN file {0} successfully.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.GingerEntityToBPMNConversionError, new UserMsg(eUserMsgType.ERROR, "BPMN Export Failed", "Error occurred while exporting BPMN.\n{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
+            #endregion
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed, new UserMsg(eUserMsgType.INFO, "Remote Data deletion", "Remote Execution Results will not be deleted.", eUserMsgOption.OK, eUserMsgSelection.OK));
 
@@ -622,7 +639,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.LoseChangesWarn, new UserMsg(eUserMsgType.WARN, "Save Changes", "The operation may result with lost of un-saved local changes." + Environment.NewLine + "Please make sure all changes were saved before continue." + Environment.NewLine + Environment.NewLine + "To perform the operation?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.CompilationErrorOccured, new UserMsg(eUserMsgType.ERROR, "Compilation Error Occurred", "Compilation error occurred." + Environment.NewLine + "Error Details: " + Environment.NewLine + " '{0}'.", eUserMsgOption.OK, eUserMsgSelection.None));
-
+            
             Reporter.UserMsgsPool.Add(eUserMsgKey.CopiedVariableSuccessfully, new UserMsg(eUserMsgType.INFO, "Info Message", "'{0}'" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " Affected." + Environment.NewLine + Environment.NewLine + "Notice: Un-saved changes won't be saved.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RenameItemError, new UserMsg(eUserMsgType.ERROR, "Rename", "Failed to rename the Item. Error: '{0}'?", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfShareVaribalesInRunner, new UserMsg(eUserMsgType.QUESTION, "Share" + GingerDicser.GetTermResValue(eTermResKey.Variables), "Are you sure you want to share selected " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Values to all the similar " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows) + " and " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " across all Runners?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -739,6 +756,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.ALMDefectsUserInOtaAPI, new UserMsg(eUserMsgType.INFO, "ALM Defects Valid for Rest API only", "You are in ALM Ota API mode, Please change to Rest API", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.NoSelectedDefect, new UserMsg(eUserMsgType.INFO, "ALM Defects Opening", "Their is no selected Defect", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AllSelectedDefectAlreadyCreatedInAlm, new UserMsg(eUserMsgType.INFO, "ALM Defects Opening", "All Defect are already created in ALM", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidYAML, new UserMsg(eUserMsgType.INFO,"Invalid YAML File", "Provided YAML file has got errors, please verify the YAML document", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.InvalidJSON, new UserMsg(eUserMsgType.INFO,"Invalid JSON File", "Provided JSON file has got errors, please verify the JSON document", eUserMsgOption.OK, eUserMsgSelection.None));
 
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToDownloadPossibleValuesShortProcesss, new UserMsg(eUserMsgType.QUESTION, "ALM External Items Fields", "Would you like to download and save possible values for Categories Items? ", eUserMsgOption.YesNo, eUserMsgSelection.No));

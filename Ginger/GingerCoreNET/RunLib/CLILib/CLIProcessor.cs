@@ -18,9 +18,11 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.log4netLib;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using CommandLine;
 using Ginger;
+using Ginger.Run;
 using GingerCore;
 using GingerCoreNET.RunLib;
 using System;
@@ -303,7 +305,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                 {
                     if (!CLILoadAndPrepare(runsetConfigs: fileContent))
                     {
-                        Reporter.ToLog(eLogLevel.WARN, "Issue occured while doing CLI Load and Prepare so aborting execution");
+                        Reporter.ToLog(eLogLevel.WARN, "Issue occurred while doing CLI Load and Prepare so aborting execution");
                         Environment.ExitCode = 1;
                         return Environment.ExitCode;
                     }
@@ -315,7 +317,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while Handling File Option", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while Handling File Option", ex);
                 Environment.ExitCode = 1;
                 return 1;//error
             }
@@ -401,7 +403,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             mCLIHelper.SealightsTestStage = runOptions.SealightsTestStage;
             mCLIHelper.SealightsEntityLevel = runOptions.SealightsEntityLevel?.ToString() == "None" ? null : runOptions.SealightsEntityLevel?.ToString();
             mCLIHelper.SealightsTestRecommendations = runOptions.SealightsTestRecommendations;
-
+            
             if (!string.IsNullOrEmpty(runOptions.RunSetExecutionId))
             {
                 if (!Guid.TryParse(runOptions.RunSetExecutionId, out Guid temp))
@@ -415,6 +417,25 @@ namespace Amdocs.Ginger.CoreNET.RunLib
                     mCLIHelper.ExecutionId = runOptions.RunSetExecutionId;
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Using provided ExecutionID '{0}'.", mCLIHelper.ExecutionId.ToString()));
                 }
+            }
+            mCLIHelper.ReRunFailed = runOptions.ReRunFailed;
+            if (runOptions.ReRunFailed)
+            {
+                if(!string.IsNullOrEmpty(runOptions.ReferenceExecutionID))
+                {
+                    if (!Guid.TryParse(runOptions.ReferenceExecutionID, out Guid temp))
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, string.Format("The provided Reference ExecutionID '{0}' is not valid.", runOptions.ReferenceExecutionID));
+                        Environment.ExitCode = 1;
+                        return Environment.ExitCode;
+                    }
+                    else
+                    {
+                        mCLIHelper.ReferenceExecutionID = runOptions.ReferenceExecutionID;
+                        Reporter.ToLog(eLogLevel.INFO, string.Format("Using provided ExecutionID '{0}'.", mCLIHelper.ReferenceExecutionID.ToString()));
+                    }
+                }
+                mCLIHelper.RerunLevel = runOptions.RerunLevel;
             }
 
             if (WorkSpace.Instance.UserProfile == null)
@@ -442,7 +463,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             WorkSpace.Instance.RunningInExecutionMode = true;
             if (!CLILoadAndPrepare())
             {
-                Reporter.ToLog(eLogLevel.WARN, "Issue occured while doing CLI Load and Prepare so aborting execution");
+                Reporter.ToLog(eLogLevel.WARN, "Issue occurred while doing CLI Load and Prepare so aborting execution");
                 Environment.ExitCode = 1;
                 return Environment.ExitCode;
             }
@@ -461,6 +482,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             if (verboseLevel == OptionsBase.eVerboseLevel.debug)
             {
                 Reporter.AppLoggingLevel = eAppReporterLoggingLevel.Debug;
+                GingerLog.StartCustomTraceListeners();
             }
             else
             {
@@ -594,7 +616,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Error occured while doing CLI Load And Prepare", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while doing CLI Load And Prepare", ex);
                 return false;
             }
         }

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository;
@@ -49,7 +50,6 @@ namespace Ginger.BusinessFlowPages
         public ActivitiesListViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode)
         {
             InitializeComponent();
-
             mBusinessFlow = businessFlow;
             mContext = context;
             mPageViewMode = pageViewMode;
@@ -59,7 +59,7 @@ namespace Ginger.BusinessFlowPages
         }
 
         /// <summary>
-        ///             CanContentScroll = true ===> Scrolling Mode = Items and it supports Virtugalization
+        ///             CanContentScroll = true ===> Scrolling Mode = Items and it supports Virtualization
         ///             CanContentScroll = false ===> Scrolling Mode = Pixels but disables Virtualization
         ///             As we're grouping the Activities based on Activity Groups, scrolling is thus effected and ScrollingMode being Items produces messy scrolling experience
         ///             Thus, we're disabling the ListView's ScrollViewer.CanContentScroll property as false for smooth scrolling

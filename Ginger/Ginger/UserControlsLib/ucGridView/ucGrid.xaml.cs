@@ -940,18 +940,11 @@ namespace Ginger
             {
                 btnClearSearch.Visibility = Visibility.Visible;
                 xSearchBtn.Visibility = Visibility.Collapsed;
-                xSearchBtn.IsEnabled = true;
-
-                //SetBtnImage(btnClearSearch, "@Clear_16x16.png");
-                //btnClearSearch.IsEnabled = true;
             }
             else
             {
                 btnClearSearch.Visibility = Visibility.Collapsed;
                 xSearchBtn.Visibility = Visibility.Visible;
-                xSearchBtn.IsEnabled = false;
-                //SetBtnImage(btnClearSearch, "@DisabledClear_16x16.png");
-                //btnClearSearch.IsEnabled = false;
             }
 
             string search = txtSearch.Text.ToUpper();
@@ -1119,7 +1112,7 @@ namespace Ginger
             GingerCore.General.FillComboFromEnumType(cmb, eType);
 
             cmb.AddHandler(ComboBox.SelectionChangedEvent, handler);
-            cmb.Style = this.FindResource("@InputComboBoxStyle") as Style;
+            cmb.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
 
             if (label.Trim() != "")
             {
@@ -1666,7 +1659,43 @@ namespace Ginger
             return template;
         }
 
+        public static DataTemplate GetGridComboBoxTemplate<T>(ObservableList<T> comboValuesList, string displayMemberPath, string selectedValuePath, string selectedValueField, bool allowEdit = false, SelectionChangedEventHandler comboSelectionChangedHandler = null, string comboBoxTag = null)
+        {
+            DataTemplate template = new DataTemplate();
+            FrameworkElementFactory comboBox = new FrameworkElementFactory(typeof(ComboBox));
+            comboBox.SetValue(ComboBox.ItemsSourceProperty, comboValuesList);
+            comboBox.SetValue(ComboBox.DisplayMemberPathProperty, displayMemberPath);
+            comboBox.SetValue(ComboBox.SelectedValuePathProperty, selectedValuePath);
 
+            Binding selectedValueBinding = new Binding(selectedValueField)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            comboBox.SetBinding(ComboBox.SelectedValueProperty, selectedValueBinding);
+
+            Binding textValueBinding = new Binding(selectedValuePath)
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
+            };
+            comboBox.SetBinding(ComboBox.TextProperty, textValueBinding);
+
+            if (allowEdit)
+            {
+                comboBox.SetValue(ComboBox.IsEditableProperty, true);
+            }
+            if (comboSelectionChangedHandler != null)
+            {
+                comboBox.AddHandler(ComboBox.SelectionChangedEvent, comboSelectionChangedHandler);
+            }
+            if (!string.IsNullOrEmpty(comboBoxTag))
+            {
+                comboBox.SetValue(ComboBox.TagProperty, comboBoxTag);
+            }
+            template.VisualTree = comboBox;
+            return template;
+        }
         public static DataTemplate GetGridComboBoxTemplate(List<ComboEnumItem> valuesList, string selectedValueField, bool allowEdit = false, bool selectedByDefault = false, string readonlyfield = "", bool isreadonly = false, SelectionChangedEventHandler comboSelectionChangedHandler = null)
         {
             DataTemplate template = new DataTemplate();
@@ -2471,7 +2500,7 @@ namespace Ginger
             }
             else
             {
-                Grid.BorderBrush = FindResource("$Color_DarkBlue") as Brush;
+                Grid.BorderBrush = FindResource("$PrimaryColor_Black") as Brush;
             }
 
             return validationRes;
@@ -2552,6 +2581,11 @@ namespace Ginger
                     btnDelete_Click(null, null);
                 }
             }
+        }
+
+        private void xSearchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //do nothing
         }
     }
 }
