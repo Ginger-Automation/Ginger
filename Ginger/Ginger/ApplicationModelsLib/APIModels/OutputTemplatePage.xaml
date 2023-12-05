@@ -8,7 +8,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="OutputTemplatePage">
 
-    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.Resources>
             <DataTemplate x:Key="ValueExpressionButton">
                 <Button x:Name="GridVEButton" Content="..." Click="GridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>

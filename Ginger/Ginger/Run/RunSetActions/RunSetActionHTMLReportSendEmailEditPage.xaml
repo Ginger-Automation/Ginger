@@ -10,19 +10,19 @@
 	Title="RunSetActionHTMLReportEmailEditPage">
 
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="399*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <TabControl Grid.RowSpan="2">
-            <TabItem Name="xMessage">
+            <TabItem Name="xMessage" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <Label Content="Message" 
                 MouseLeftButtonDown="TabItem_MouseLeftButtonDown" 
                 HorizontalAlignment="Stretch"/>
                 </TabItem.Header>
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="57*"/>
                         <ColumnDefinition Width="238*"/>
@@ -57,7 +57,7 @@
                         </DockPanel>
                         <StackPanel x:Name="comment">
                             <Label Style="{StaticResource @LabelStyle}" Content="Email Body Report Template:" Margin="0,6,0,0"  />
-                            <ComboBox x:Name="DefaultTemplatePickerCbx"  ContextMenu="{x:Null}" Width="250" Style="{DynamicResource @InputComboBoxStyle}" HorizontalAlignment="Left" SelectionChanged="DefaultTemplatePickerCbx_SelectionChanged" ></ComboBox>
+                            <ComboBox x:Name="DefaultTemplatePickerCbx"  ContextMenu="{x:Null}" Width="250" Style="{DynamicResource $FlatInputComboBoxStyle}" HorizontalAlignment="Left" SelectionChanged="DefaultTemplatePickerCbx_SelectionChanged" ></ComboBox>
                             <Label Style="{StaticResource @LabelStyle}" Content="Comments:" Margin="0,6,0,0"  />
                             <Actions:UCValueExpression x:Name="CommentTextBox"   ToolTip="Subject"/>
                         </StackPanel>
@@ -65,8 +65,8 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-            <TabItem Header="Attachments" Background="{StaticResource $BackgroundColor_LightGray}">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="GridAttachment">
+            <TabItem Header="Attachments" Style="{StaticResource $RoundedTab}">
+                <Grid Background="{StaticResource $BackgroundColor_White}" x:Name="GridAttachment">
                     <Grid.Resources>
                         <DataTemplate x:Key="ReportAttachment">
                             <CheckBox x:Name="AttachmentsGrid_TemplateIsReport" Style="{StaticResource @CheckBoxStyle}" IsEnabled="{Binding IsReport}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="{Binding ZipIt,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
@@ -82,7 +82,7 @@
             </TabItem>
 
 
-            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem Header="Delivery Method" Style="{StaticResource $RoundedTab}">
                 <Frame x:Name="RunsetActionDeliveryMethodConfigPageFrame"></Frame>
             </TabItem>
         </TabControl>

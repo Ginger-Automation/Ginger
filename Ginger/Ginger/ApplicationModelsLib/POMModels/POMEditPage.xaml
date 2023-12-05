@@ -14,7 +14,7 @@
       d:DesignHeight="1000" d:DesignWidth="1000"
       Title="POMEditPage">
 
-    <Grid Background="{DynamicResource $BackgroundColor_LightGray}">
+    <Grid Background="{DynamicResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Name="FirstRow" Height="280"/>
             <RowDefinition Name="SecondRow" Height="100*"/>
@@ -83,29 +83,14 @@
             </Expander>
         </ScrollViewer>
 
-        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" BorderThickness="1" />
+        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows" Height="5" Width="Auto" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $PrimaryColor_Black}" BorderThickness="1" />
 
-        <TabControl x:Name="xPomTabs" Margin="0,5,0,0" Grid.Row="1" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="xPomTabs_SelectionChanged">
-            <TabControl.Resources>
-                <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                    <Setter Property="Height" Value="25"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="False" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="True" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </TabControl.Resources>
-
-            <TabItem >
+        <TabControl x:Name="xPomTabs" Margin="0,5,0,0" Grid.Row="1" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="xPomTabs_SelectionChanged">
+            <TabItem Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="Image"  SetAsFontImageWithSize="20"  Width="20" Height="20" />
-                        <TextBlock VerticalAlignment="Center" Text="Screenshot"  Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock VerticalAlignment="Center" Text="Screenshot"  Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <ScrollViewer>
@@ -119,11 +104,11 @@
                 </ScrollViewer>
             </TabItem>
 
-            <TabItem Name="xUiElementsTabItem">
+            <TabItem Name="xUiElementsTabItem" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="Elements"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xUIElementTabTextBlock" VerticalAlignment="Center" Text="UI Elements"  Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xUIElementTabTextBlock" VerticalAlignment="Center" Text="UI Elements"  Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="xUIElementsFrame"></Frame>

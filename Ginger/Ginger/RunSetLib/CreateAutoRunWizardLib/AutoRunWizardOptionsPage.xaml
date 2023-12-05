@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="CLIOptionsPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <StackPanel Margin="10">
             <Label HorizontalAlignment="Left" Style="{StaticResource $SectionHeaderLabelStyle}">General Options:</Label>
 
@@ -32,7 +32,7 @@
                 <CheckBox.Content>
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <GingerCore:ucTextDicResource Text="Set ALM connection details"/>
-                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
+                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
                     </StackPanel>
                 </CheckBox.Content>
             </CheckBox>
@@ -41,7 +41,7 @@
                 <CheckBox.Content>
                     <StackPanel Orientation="Horizontal" Grid.Row="0">
                         <GingerCore:ucTextDicResource Text="Set Sealights settings"/>
-                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
+                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
                     </StackPanel>
                 </CheckBox.Content>
             </CheckBox>

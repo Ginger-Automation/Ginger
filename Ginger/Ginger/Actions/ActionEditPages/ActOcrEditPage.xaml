@@ -10,7 +10,7 @@
       d:DesignHeight="556.717" d:DesignWidth="728.358"
 	Title="ActOcrEditPage" >
 
-    <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition MaxHeight="50"/>
             <RowDefinition MaxHeight="60"/>
@@ -20,7 +20,7 @@
             <RowDefinition Height="50*"/>
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,10,10,10">
-            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_White}">
                 <Grid.RowDefinitions>
                     <RowDefinition MaxHeight="50"></RowDefinition>
                 </Grid.RowDefinitions>
@@ -35,7 +35,7 @@
             </Grid>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,10,10,10">
-            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_White}">
                 <Grid.RowDefinitions>
                     <RowDefinition MaxHeight="50"></RowDefinition>
                 </Grid.RowDefinitions>
@@ -50,7 +50,7 @@
             </Grid>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,10,10,10">
-            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_White}">
                 <Grid.RowDefinitions>
                     <RowDefinition MaxHeight="50"></RowDefinition>
                 </Grid.RowDefinitions>
@@ -71,7 +71,7 @@
             </Grid>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="3" Margin="0,10,10,10">
-            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_White}">
                 <Grid.RowDefinitions>
                     <RowDefinition MaxHeight="50"></RowDefinition>
                 </Grid.RowDefinitions>
@@ -89,7 +89,7 @@
         </StackPanel>
 
         <StackPanel x:Name="xTableWhereStack" Orientation="Horizontal" Grid.Row="4" Margin="0,10,10,10">
-            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_LightGray}">
+            <Grid VerticalAlignment="Top" Background="{StaticResource $BackgroundColor_White}">
                 <Grid.RowDefinitions>
                     <RowDefinition MaxHeight="190"></RowDefinition>
                 </Grid.RowDefinitions>

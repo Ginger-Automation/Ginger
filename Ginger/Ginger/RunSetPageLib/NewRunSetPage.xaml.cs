@@ -237,6 +237,9 @@ namespace Ginger.Run
 
         private void LoadRunSetConfigBySelection(RunSetConfig defaultRunSet)
         {
+            //hide current Run set UI
+            xRunsetPageGrid.Visibility = Visibility.Collapsed;
+
             if (mRunSetsSelectionPage == null)
             {
                 RunSetFolderTreeItem runSetsRootfolder = new RunSetFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<RunSetConfig>());
@@ -414,7 +417,7 @@ namespace Ginger.Run
                 {
                     xRunRunsetBtn.ButtonImageType = eImageType.Running;
                     xRunRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
-                    xRunRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+                    xRunRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
                     xRunRunsetBtn.IsEnabled = false;
                     if (RunSetConfig.GingerRunners.Any(x => x.Executor.IsRunning == true))
                     {
@@ -898,7 +901,7 @@ namespace Ginger.Run
             {
                 xDescriptionTextBlock.Text = string.Empty;
                 TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
-                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
+                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$PrimaryColor_Black")).ToString());
 
                 //description
                 if (!string.IsNullOrEmpty(mRunSetConfig.Description))
@@ -1085,6 +1088,11 @@ namespace Ginger.Run
             if (runSetToSet == null)
             {
                 runSetToSet = GetDefualtRunSetConfig();
+                if (!WorkSpace.Instance.UserProfile.AutoLoadLastRunSet)
+                {
+                    LoadRunSetConfigBySelection(runSetToSet);
+                    return;
+                }
             }
 
             if (runSetToSet != null)
@@ -1110,7 +1118,7 @@ namespace Ginger.Run
             if (mCurrentSelectedRunner != null)
             {
                 mCurrentSelectedRunner.xBorder.Visibility = System.Windows.Visibility.Collapsed;
-                mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_Black") as Brush;
                 mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Height = 1;
                 if (!mCurrentSelectedRunner.ExecutorEngine.GingerRunner.Active)
                 {
@@ -1118,14 +1126,14 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    mCurrentSelectedRunner.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                    mCurrentSelectedRunner.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                 }
             }
 
             //highlight the selected Ginger
             GRP.xBorder.Visibility = System.Windows.Visibility.Visible;
             GRP.xRunnerInfoSplitterBorder.Background = FindResource("$amdocsLogoLinarGradientBrush") as Brush;
-            GRP.xRunnerInfoSplitterBorder.Height = 4;
+            GRP.xRunnerInfoSplitterBorder.Height = 1;
             if (!GRP.ExecutorEngine.GingerRunner.Active)
             {
                 GRP.xRunnerNameTxtBlock.Foreground = Brushes.Gray;
@@ -1294,9 +1302,9 @@ namespace Ginger.Run
             if (mFlowDiagram == null)
             {
                 mFlowDiagram = new FlowDiagramPage();
-                mFlowDiagram.SetView(Brushes.White, false, false);
+                mFlowDiagram.SetView(Brushes.Transparent, false, false);
                 mFlowDiagram.SetHighLight = false;
-                mFlowDiagram.BackGround = Brushes.White;
+                mFlowDiagram.BackGround = Brushes.Transparent;
                 mFlowDiagram.ZoomPanelContainer.Visibility = Visibility.Collapsed;
                 mFlowDiagram.ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
                 mFlowDiagram.Height = 300;
@@ -1336,8 +1344,8 @@ namespace Ginger.Run
 
             GRP.xBorder.Visibility = System.Windows.Visibility.Collapsed;
             GRP.xRunnerInfoSplitterBorder.Height = 1;
-            GRP.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_DarkBlue") as Brush;
-            GRP.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+            GRP.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_Black") as Brush;
+            GRP.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             mFlowX = mFlowX + 610;
         }
 
@@ -1588,6 +1596,9 @@ namespace Ginger.Run
         {
             try
             {
+                //show current Run set UI
+                xRunsetPageGrid.Visibility = Visibility.Visible;
+
                 bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              
                 if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
@@ -2412,7 +2423,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                    currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                 }
             }
 
@@ -2478,7 +2489,7 @@ namespace Ginger.Run
 
             foreach (RunnerItemPage currentitem in xActivitiesRunnerItemsListView.Items)
             {
-                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             }
             if (mCurrentActivityRunnerItem != null)
             {
@@ -2519,7 +2530,7 @@ namespace Ginger.Run
 
             foreach (RunnerItemPage currentitem in xActionsRunnerItemsListView.Items)
             {
-                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             }
             //Need it for first time.
             if (xActionsRunnerItemsListView.SelectedItem == null)
@@ -2989,11 +3000,11 @@ namespace Ginger.Run
                     bf.Active = SetBusinessflowActive;
                     if (SetBusinessflowActive)
                     {
-                        ((RunnerItemPage)ri).xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                        ri.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                     }
                     else
                     {
-                        ((RunnerItemPage)ri).xItemName.Foreground = Brushes.Gray;
+                        ri.xItemName.Foreground = Brushes.Gray;
                     }
                 }
             }
@@ -3095,7 +3106,7 @@ namespace Ginger.Run
                 gr.GingerRunner.Active = SetRunnerActive;
                 if (SetRunnerActive)
                 {
-                    ((RunnerPage)rp.GetCustomeShape().Content).xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                    ((RunnerPage)rp.GetCustomeShape().Content).xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                 }
                 else
                 {
@@ -3198,22 +3209,12 @@ namespace Ginger.Run
 
         private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
 
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-        }
-
-        private void ReRunFailedBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
-        }
-
-        private void ReRunFailedBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
         }
 
         private void xSelfHealingConfigBtn_Click(object sender, RoutedEventArgs e)
