@@ -229,7 +229,7 @@ namespace GingerCoreNET.DataSource
                                         dr[property.Key] = property.Value.AsDateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
                                         break;
                                     case BsonType.String:
-                                        dr[property.Key] = property.Value.AsString;
+                                        dr[property.Key] = property.Value.ToString();
                                         break;
                                     case BsonType.Int32:
                                     case BsonType.Int64:
@@ -246,7 +246,7 @@ namespace GingerCoreNET.DataSource
                                 string ads = property.Key.ToString();
                                 if (ads == "GINGER_ID")
                                 {
-                                    if (property.Value.AsString == "")
+                                    if (property.Value.ToString() == "")
                                     {
                                         dr[property.Key] = count.ToString();
                                         count++;
@@ -254,11 +254,11 @@ namespace GingerCoreNET.DataSource
                                 }
                                 else
                                 {
-                                    dr[property.Key] = property.Value.AsString;
+                                    dr[property.Key] = property.Value.ToString();
                                 }
                                 if (ads == "GINGER_USED")
                                 {
-                                    if (property.Value.AsString == "")
+                                    if (property.Value.ToString() == "")
                                     {
                                         dr[property.Key] = "False";
                                     }
@@ -388,7 +388,7 @@ namespace GingerCoreNET.DataSource
                                 string ads = property.Key.ToString();
                                 if (ads == "GINGER_ID")
                                 {
-                                    if (property.Value.AsString == "")
+                                    if (property.Value.ToString() == "")
                                     {
                                         dr[property.Key] = count.ToString();
                                         count++;
@@ -397,7 +397,7 @@ namespace GingerCoreNET.DataSource
                                 }
                                 else
                                 {
-                                    dr[property.Key] = property.Value.AsString;
+                                    dr[property.Key] = property.Value.ToString();
                                 }
                             }
                         }
@@ -485,7 +485,7 @@ namespace GingerCoreNET.DataSource
                                         }
                                         else
                                         {
-                                            dr[property.Key] = property.Value.AsString;
+                                            dr[property.Key] = property.Value.ToString();
                                         }
                                     }
                                 }
@@ -676,7 +676,7 @@ namespace GingerCoreNET.DataSource
                                     {
                                         dt.Columns.Add(property.Key, typeof(string));
                                     }
-                                    dr[property.Key] = property.Value.AsString;
+                                    dr[property.Key] = property.Value.ToString();
                                 }
                             }
                             dt.Rows.Add(dr);
