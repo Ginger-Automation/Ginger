@@ -14,61 +14,46 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="59*" />
+            <RowDefinition Height="79*" />
             <RowDefinition Height="5" />
-            <RowDefinition Height="39*" />
+            <RowDefinition Height="19*" />
         </Grid.RowDefinitions>
 
-        <TabControl x:Name="ActionsTabs" Grid.Row="0" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="ActionsTabs_SelectionChanged" Loaded="Tab_GotFocus" >
-            <TabControl.Resources>
-                <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                    <Setter Property="Height" Value="25"/>
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="False" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                        </Trigger>
-                        <Trigger Property="IsSelected" Value="True" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-
-            </TabControl.Resources>
-            <TabItem x:Name="PlatformActionsTab"  Margin="0,0,0,0" GotFocus="Tab_GotFocus">
+        <TabControl x:Name="ActionsTabs" Grid.Row="0" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}" SelectionChanged="ActionsTabs_SelectionChanged" Loaded="Tab_GotFocus" >
+            <TabItem x:Name="PlatformActionsTab"  Margin="0,0,0,0" GotFocus="Tab_GotFocus" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource @PlatformAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
-                        <TextBlock Text="Platform Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock Text="Platform Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
 
                 <userControlsLib1:UcListView x:Name="xPlatformActionsListView" AllowDrop="True"/>
 
             </TabItem>
-            <TabItem x:Name="GeneralActionsTab"  Margin="2,0,-6,0" GotFocus="Tab_GotFocus">
+            <TabItem x:Name="GeneralActionsTab"  GotFocus="Tab_GotFocus" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource @GeneralAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
-                        <TextBlock Text="General Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock Text="General Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 
                 <userControlsLib1:UcListView x:Name="xPlatformGenericActionsListView" AllowDrop="True"/>
 
             </TabItem>
-            <TabItem x:Name="PlugInsActionsTab" Margin="8,0,-12,0"  GotFocus="Tab_GotFocus">
+            <TabItem x:Name="PlugInsActionsTab"  GotFocus="Tab_GotFocus" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <Image Source="{StaticResource @PluginAction_24x24}" Height="20" Width="20"  Margin="-6,0,0,0" />
-                        <TextBlock Text="PlugIns Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock Text="PlugIns Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 
                 <userControlsLib1:UcListView x:Name="xPlatformPlugInsActionsListView" AllowDrop="True"/>
                 
             </TabItem>
-            <TabItem x:Name="LegacyActionsTab"  Margin="15,0,-18,0" GotFocus="Tab_GotFocus" >
+            <TabItem x:Name="LegacyActionsTab"  GotFocus="Tab_GotFocus" Style="{StaticResource $RoundedTab}">
                 <TabItem.Resources>
                     <Style TargetType="{x:Type TabItem}">
                         <Setter Property="Background" Value="LightGray"/>
@@ -85,7 +70,7 @@
                 </TabItem.Resources>
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="Legacy Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="SemiBold" />
+                        <TextBlock Text="Legacy Actions" VerticalAlignment="Center" Margin="4,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="SemiBold" />
                     </StackPanel>
                 </TabItem.Header>
                
@@ -94,9 +79,9 @@
             </TabItem>
         </TabControl>
 
-        <GridSplitter ResizeDirection="Rows" Grid.Row="1" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" />
+        <GridSplitter ResizeDirection="Rows" Grid.Row="1" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Center" Background="{StaticResource $PrimaryColor_Black}" IsEnabled="True" />
 
-        <Frame x:Name="ActDescriptionFrm" Content="Action Description" Grid.Row="2" Margin="0,0,0,0"
+        <Frame x:Name="ActDescriptionFrm" Content="Action Description" Grid.Row="2" Margin="5,0,0,0"
                NavigationUIVisibility="Hidden"                                  
                ScrollViewer.VerticalScrollBarVisibility="Auto"
                ScrollViewer.HorizontalScrollBarVisibility="Auto"

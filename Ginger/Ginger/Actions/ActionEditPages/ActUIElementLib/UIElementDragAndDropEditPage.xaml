@@ -23,13 +23,13 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Style="{StaticResource @InputFieldLabelStyle}" Width="160">Target Element Type:</Label>
-                    <ComboBox x:Name="TargetElement"  Style="{StaticResource @InputComboBoxStyle}"
+                    <ComboBox x:Name="TargetElement"  Style="{StaticResource $FlatInputComboBoxStyle}"
                             
                               ToolTip="How to Locate the Element on the screen"  Width="160"></ComboBox>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Style="{StaticResource @InputFieldLabelStyle}" Width="160">Target Locate By:</Label>
-                    <ComboBox x:Name="TargetLocateByComboBox"  Style="{StaticResource @InputComboBoxStyle}" ToolTip="How to Locate the Target Element on the screen" Width="160" SelectionChanged="TargetLocateByComboBox_SelectionChanged"/>
+                    <ComboBox x:Name="TargetLocateByComboBox"  Style="{StaticResource $FlatInputComboBoxStyle}" ToolTip="How to Locate the Target Element on the screen" Width="160" SelectionChanged="TargetLocateByComboBox_SelectionChanged"/>
                    
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">

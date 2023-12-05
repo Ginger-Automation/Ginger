@@ -8,7 +8,7 @@
         xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         mc:Ignorable="d" 
         Title="SpecificErrorHandler" Height="600" Width="700">
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="600"/>
         </Grid.RowDefinitions>

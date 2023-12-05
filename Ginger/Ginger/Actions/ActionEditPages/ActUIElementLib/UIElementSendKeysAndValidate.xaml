@@ -22,7 +22,7 @@
                 <StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Style="{StaticResource @InputFieldLabelStyle}" Width="250">Handle Element Type:</Label>
-                        <ComboBox x:Name="HandleElementType" Width="250" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="HandleElement_SelectionChanged"></ComboBox>
+                        <ComboBox x:Name="HandleElementType" Width="250" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="HandleElement_SelectionChanged"></ComboBox>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Style="{StaticResource @InputFieldLabelStyle}" Width="250">Handle Element Locate By:</Label>
@@ -35,7 +35,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <Label Style="{StaticResource @InputFieldLabelStyle}" Width="250">Handle Action Type:</Label>
-                    <ComboBox x:Name="HandleActionType" Width="250" Style="{StaticResource @InputComboBoxStyle}" ></ComboBox>
+                    <ComboBox x:Name="HandleActionType" Width="250" Style="{StaticResource $FlatInputComboBoxStyle}" ></ComboBox>
                 </StackPanel>
             </StackPanel>
             <StackPanel Visibility="Visible" Orientation="Vertical">

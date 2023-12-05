@@ -10,7 +10,7 @@
       d:DesignHeight="450" d:DesignWidth="700"
       Title="SelectActivityWzardPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Ginger:ucGrid x:Name="xGrdGroups" Grid.Row="0" ShowTagsFilter="Collapsed" IsReadOnly="True" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed"  ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed">
             <Ginger:ucGrid.Title>
                 <GingerCore:ucTextDicResource Text="List of [Activities]"/>

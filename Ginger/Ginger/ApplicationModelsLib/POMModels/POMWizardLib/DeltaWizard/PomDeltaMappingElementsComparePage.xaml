@@ -8,7 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="910"
       Title="PomDeltaUpdateElementsComparePage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="2"/>
@@ -20,13 +20,13 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0" Margin="0,5,0,5">
             <UserControls:ImageMakerControl ImageType="Tag"  SetAsFontImageWithSize="18"  Width="18" Height="18" Margin="5,5,0,0" VerticalAlignment="Center" />
-            <TextBlock Text="Deleted Element" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" FontSize="15" />
+            <TextBlock Text="Deleted Element" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" FontSize="15" />
         </StackPanel>
         <Ginger:UCElementDetails x:Name="xDeletedElementDetails" Grid.Column="0" Grid.Row="1" ShowActionTab="False" ScrollViewer.HorizontalScrollBarVisibility="Visible" />
-        <GridSplitter x:Name="ColumnSplitter" Grid.Column="1" ResizeDirection="Columns" Width="2" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" />
+        <GridSplitter x:Name="ColumnSplitter" Grid.Column="1" ResizeDirection="Columns" Width="2" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{StaticResource $PrimaryColor_Black}" />
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="0" Grid.Column="2" Margin="0,5,0,5">
             <UserControls:ImageMakerControl ImageType="Tag"  SetAsFontImageWithSize="18"  Width="18" Height="18" Margin="5,5,0,0" VerticalAlignment="Center" />
-            <TextBlock Text="New Added Element" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" FontSize="15" />
+            <TextBlock Text="New Added Element" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" FontSize="15" />
         </StackPanel>
         <Ginger:UCElementDetails x:Name="xAddedElementDetails" Grid.Column="2" Grid.Row="1" ShowActionTab="False"  ScrollViewer.HorizontalScrollBarVisibility="Visible"/>
     </Grid>

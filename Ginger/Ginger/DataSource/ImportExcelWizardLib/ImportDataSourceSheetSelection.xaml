@@ -11,7 +11,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
 	Title="Import DataSource from Excel">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -37,7 +37,7 @@
                 <DockPanel Grid.Row="0" Grid.ColumnSpan="3">
                     <StackPanel >
                         <Label Name="xSheetLable"   HorizontalAlignment="Left" Content="Sheet:" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}" Margin="10,10,0,0" />
-                        <ComboBox x:Name="xSheetNameComboBox" SelectionChanged="xSheetNameComboBox_SelectionChanged"  Margin="15,0,0,5"  VerticalAlignment="Center" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" Width="250" HorizontalAlignment="Left" ></ComboBox>
+                        <ComboBox x:Name="xSheetNameComboBox" SelectionChanged="xSheetNameComboBox_SelectionChanged"  Margin="15,0,0,5"  VerticalAlignment="Center" Style="{StaticResource $FlatInputComboBoxStyle}" IsEditable="True" Width="250" HorizontalAlignment="Left" ></ComboBox>
                     </StackPanel>
                 </DockPanel>
 

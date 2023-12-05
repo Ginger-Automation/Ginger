@@ -90,7 +90,7 @@ namespace GingerWPF.BusinessFlowsLib
         bool mExecutionIsInProgress = false;
         bool mSyncSelectedItemWithExecution = true;
 
-        GridLength mLastAddActionsColumnWidth = new GridLength(400);
+        GridLength mLastAddActionsColumnWidth = new GridLength(350);
 
         ObjectId mRunnerLiteDbId;
         ObjectId mRunSetLiteDbId;
@@ -586,7 +586,7 @@ namespace GingerWPF.BusinessFlowsLib
                     if (mActivityPage == null)
                     {
                         var pageViewMode = mContext.Activity.Type == Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation : Ginger.General.eRIPageViewMode.ViewAndExecute;
-                        mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode);
+                        mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode, highlightActivityName:true);
                     }
                     else
                     {
@@ -703,7 +703,7 @@ namespace GingerWPF.BusinessFlowsLib
                     xRunFlowBtn.ToolTip = "Execution is in progress";
                     xRunFlowBtn.IsEnabled = false;
                     xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
-                    xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+                    xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
 
                     xStopRunBtn.ButtonImageType = eImageType.Stop;
                     xStopRunBtn.ButtonText = "Stop";
@@ -778,7 +778,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xRunFlowBtn.ToolTip = "Analyzing in progress";
                 xRunFlowBtn.IsEnabled = false;
                 xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
-                xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+                xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
             });
         }
 
@@ -1786,12 +1786,12 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
 
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue"); 
         }
 
         private void xExportToCSVMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1807,7 +1807,6 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             //Help Layouts            
-            App.MainWindow.AddHelpLayoutToShow("AutomatePage_GoBackToBFsHelp", xGoToBFsTreeBtn, string.Format("Click here to go back to {0} tree", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_BusinessFlowLayerHelp", xBusinessFlowItemComboBox, string.Format("Select here which layer of {0} you want to configure: {1}, {2} or Details", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables)));
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_AppsAgentsMappingHelp", xAppsAgentsMappingFrame, "Here you should match between the Application and the Agent which will be used for communicating and automating it");
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_EnvironmentSelectionHelp", xEnvironmentComboBox, "Environments should be used for storing environment level parameters, DB connection details and more, go to “Resources-> Environments” to configure all environments you need and select here which environment data to use in execution time");

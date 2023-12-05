@@ -10,7 +10,7 @@
       Title="VariableDateTimePage">
 
     <Grid>
-        <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
+        <StackPanel Background="{StaticResource $BackgroundColor_White}">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Initial DateTime:</Label>
             <window:WindowsFormsHost Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}">
                 <wf:DateTimePicker  TextChanged="dtpInitialDate_TextChanged"  x:Name="dtpInitialDate" Format="Custom" ></wf:DateTimePicker>
@@ -21,7 +21,7 @@
                     <Label Content="Date Time Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                 </Expander.Header>
                 <Expander.Content>
-                    <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
+                    <StackPanel Background="{StaticResource $BackgroundColor_White}">
                         <DockPanel>
                             <Label Style="{StaticResource @InputFieldLabelStyle}">DateTime Format :</Label>
                             <ComboBox  x:Name="txtDateFormat"  Style="{StaticResource $FlatEditInputComboBoxStyle}" HorizontalAlignment="Left"  Width="215" Margin="0,0,0,20" IsEditable="True" SelectionChanged="txtDateFormat_TextChanged" IsSynchronizedWithCurrentItem="True">

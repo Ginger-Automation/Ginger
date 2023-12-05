@@ -10,6 +10,6 @@
       Title="AddActivityConfigsPage">
     
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <Frame x:Name="xFrame" Background="{StaticResource $BackgroundColor_LightGray}" NavigationUIVisibility="Hidden" Margin="5"/>
+        <Frame x:Name="xFrame" Background="{StaticResource $BackgroundColor_White}" NavigationUIVisibility="Hidden" Margin="5"/>
     </ScrollViewer>
 </Page>

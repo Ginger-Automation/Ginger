@@ -8,9 +8,9 @@
 	Title="SeleniumDriverEditPage">
 
     <TabControl x:Name="ActionTab" HorizontalAlignment="Stretch" SelectionChanged="ActionTab_SelectionChanged">
-        <TabItem Header="Configuration" >
+        <TabItem Header="Configuration" Style="{StaticResource $RoundedTab}">
 
-        <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}" >
+        <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_White}" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="140"/>
             <ColumnDefinition Width="300"/>
@@ -33,9 +33,9 @@
         <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Orientation="Vertical">
             <TextBox x:Name="GridHostTextBox" Width="300"  HorizontalAlignment="Left"  Style="{StaticResource @TextBoxStyle}" Margin="0,12,0,0" />
             <Label FontSize="10" HorizontalAlignment="Left" Content="(i.e.: http://10.122.113.32:4444)" />
-            <ComboBox x:Name="BrowserNameComboBox" Style="{StaticResource @InputComboBoxStyle}" Loaded="BrowserComboBox_Loaded" Margin="0,3,0,0" />
+            <ComboBox x:Name="BrowserNameComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Loaded="BrowserComboBox_Loaded" Margin="0,3,0,0" />
             <TextBox x:Name="VersionTextBox" HorizontalAlignment="Left"  Style="{StaticResource @TextBoxStyle}" Width="100" Height="22" Margin="0,15,0,0"/>
-            <ComboBox x:Name="PlatformComboBox" Style="{StaticResource @InputComboBoxStyle}" Loaded="PlatformComboBox_Loaded" Margin="0,15,0,0"  />
+            <ComboBox x:Name="PlatformComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Loaded="PlatformComboBox_Loaded" Margin="0,15,0,0"  />
         </StackPanel>
                 <StackPanel Grid.Row="0" Grid.Column="2">
                     <Grid>
@@ -72,9 +72,9 @@
             </Grid>
         </TabItem>
 
-        
-        <TabItem x:Name="ConsoleTab" Header="Console" >
-            <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+
+        <TabItem x:Name="ConsoleTab" Header="Console" Style="{StaticResource $RoundedTab}">
+            <Grid Background="{StaticResource $BackgroundColor_White}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40"/>
                     <RowDefinition Height="500"/>
