@@ -25,6 +25,7 @@ using GingerCore.Actions.Common;
 using GingerCore.Environments;
 using GingerCore.NoSqlBase;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -406,7 +407,7 @@ namespace GingerCore.Actions
                     }
                     break;
             }
-            SQL = GetSqlValueFromFilePath();
+            SQL = GetSQLQuery();
             NoSqlDriver.MakeSureConnectionIsOpen();
             NoSqlDriver.PerformDBAction();
         }
@@ -508,7 +509,7 @@ namespace GingerCore.Actions
             this.AddOrUpdateReturnParamActual(Column, val);
         }
 
-        private string GetSqlValueFromFilePath()
+        private string GetSQLQuery()
         {
             if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
             {
@@ -520,18 +521,17 @@ namespace GingerCore.Actions
             }
             else
             {
-                return string.Empty;
+                return GetInputParamCalculatedValue(Fields.SQL);
             }
         }
 
         private void FreeSQLHandler()
         {
             int? queryTimeout = Timeout;
-            string calcSQL = GetInputParamCalculatedValue("SQL");
+            string calcSQL = GetSQLQuery();
             string ErrorString = string.Empty;
             try
             {
-                calcSQL = GetSqlValueFromFilePath();
                 if (string.IsNullOrEmpty(calcSQL))
                 {
                     this.Error = "Fail to run Free SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= Missing SQL Query.";
