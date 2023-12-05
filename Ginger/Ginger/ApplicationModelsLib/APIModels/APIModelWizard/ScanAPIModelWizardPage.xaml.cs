@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
@@ -603,7 +604,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
                 apiModelTreeSelectionPage = new SingleItemTreeViewSelectionPage("API Models", eImageType.APIModel, apiRoot, SingleItemTreeViewSelectionPage.eItemSelectionType.Single, true,
                                                                                     new System.Tuple<string, string>(nameof(ApplicationAPIModel.APIType), deltaAPI.learnedAPI.APIType.ToString()));
 
-                apiModelTreeSelectionPage.xTreeView.Tree.RefresTreeNodeChildrens(apiRoot);
+                apiModelTreeSelectionPage.xTreeView.Tree.RefreshTreeNodeChildrens(apiRoot);
 
                 List<object> selectedList = apiModelTreeSelectionPage.ShowAsWindow("Matching API Models", (Window)AddAPIModelWizard.mWizardWindow);
 

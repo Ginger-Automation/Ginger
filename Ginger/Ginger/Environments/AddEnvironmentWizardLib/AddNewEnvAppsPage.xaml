@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AddNewEnvAppsPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <StackPanel>
             <Button x:Name="xAddAppBtn" Content="Add" ToolTip="Add New Environment Application" Style="{StaticResource @InputButtonStyle}" Width="50" HorizontalAlignment="Right" Margin="0,20,20,0" Click="xAddAppBtn_Click"/>
             <ListBox x:Name="xAppsListBox" Margin="0,10,0,0" Grid.Row="1">

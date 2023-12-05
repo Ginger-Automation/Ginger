@@ -9,7 +9,7 @@
 	Title="ActVisualTestingEditPage">
 
     <!--Container Grid-->
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="50*"/>
             <RowDefinition Height="50*"/>

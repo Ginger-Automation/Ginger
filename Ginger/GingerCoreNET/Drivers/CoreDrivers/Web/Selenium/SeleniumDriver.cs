@@ -62,7 +62,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V113.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
@@ -78,6 +78,10 @@ namespace GingerCore.Drivers
         public bool isNetworkLogMonitoringStarted = false;
         ActBrowserElement mAct;
         private int mDriverProcessId = 0;
+
+        private const string CHROME_DRIVER_NAME = "chromedriver";
+        private const string EDGE_DRIVER_NAME = "msedgedriver";
+        private const string FIREFOX_DRIVER_NAME = "geckodriver";
 
         public enum eBrowserType
         {
@@ -142,6 +146,11 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Only for Internet Explorer & Firefox | Set \"true\" for using 64Bit Browser")]
         public bool Use64Bitbrowser { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Use specific Version of browser. Only Testing browser versions are supported.")]
+        public string BrowserVersion { get; set; }
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
@@ -264,6 +273,12 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Sample Value is 'localhost:9222'.This allows to Connect to existing browser session on specific debug port instead of Launching a new browser")]
         public string DebugAddress { get; set; }
+
+        [UserConfigured]
+        // Changed the default from ignore to Actual Default suggested by Selenium i.e. dismissAndNotify
+        [UserConfiguredDefault("dismissAndNotify")]
+        [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
+        public string UnhandledPromptBehavior { get; set; }
 
         protected IWebDriver Driver;
 
@@ -460,6 +475,8 @@ namespace GingerCore.Drivers
                         FirefoxOption.AcceptInsecureCertificates = true;
                         SetCurrentPageLoadStrategy(FirefoxOption);
                         SetBrowserLogLevel(FirefoxOption);
+                        SetUnhandledPromptBehavior(FirefoxOption);
+                        SetBrowserVersion(FirefoxOption);
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
@@ -485,7 +502,7 @@ namespace GingerCore.Drivers
                             FirefoxOption.Profile = profile;
                         }
 
-                        FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService(GetDriversPathPerOS());
+                        FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService();
                         FFService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new FirefoxDriver(FFService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         this.mDriverProcessId = FFService.ProcessId;
@@ -498,7 +515,8 @@ namespace GingerCore.Drivers
                         options.AddArgument("--start-maximized");
                         SetCurrentPageLoadStrategy(options);
                         SetBrowserLogLevel(options);
-
+                        SetUnhandledPromptBehavior(options);
+                        SetBrowserVersion(options);
                         if (IsUserProfileFolderPathValid())
                         {
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
@@ -559,17 +577,12 @@ namespace GingerCore.Drivers
                             options.AddArgument(WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl);
                         }
 
-
-                        ChromeDriverService ChService;
-                        if (string.IsNullOrEmpty(DebugAddress))
-                        {
-                            ChService = ChromeDriverService.CreateDefaultService(GetDriversPathPerOS());
-                        }
-                        else
+                        if (!string.IsNullOrEmpty(DebugAddress))
                         {
                             options.DebuggerAddress = DebugAddress.Trim();
-                            ChService = ChromeDriverService.CreateDefaultService();
+                            
                         }
+                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
                         if (HideConsoleWindow)
                         {
                             ChService.HideCommandPromptWindow = HideConsoleWindow;
@@ -624,7 +637,7 @@ namespace GingerCore.Drivers
                             ieOptions.AttachToEdgeChrome = true;
                             ieOptions.EdgeExecutablePath = EdgeExcutablePath;
                             SetBrowserLogLevel(ieOptions);
-
+                            SetBrowserVersion(ieOptions);
                             if (EnsureCleanSession == true)
                             {
                                 ieOptions.EnsureCleanSession = true;
@@ -663,7 +676,7 @@ namespace GingerCore.Drivers
 
                             SetCurrentPageLoadStrategy(ieOptions);
                             ieOptions.IgnoreZoomLevel = true;
-                            InternetExplorerDriverService IExplorerService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
+                            InternetExplorerDriverService IExplorerService = InternetExplorerDriverService.CreateDefaultService();
                             IExplorerService.HideCommandPromptWindow = HideConsoleWindow;
                             Driver = new InternetExplorerDriver(IExplorerService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         }
@@ -672,9 +685,10 @@ namespace GingerCore.Drivers
                         {
                             EdgeOptions EDOpts = new EdgeOptions();
                             SetBrowserLogLevel(EDOpts);
+                            SetBrowserVersion(EDOpts);
                             //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
                             //EDOpts.UseChromium = true;
-                            EDOpts.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            SetUnhandledPromptBehavior(EDOpts);
                             if (IsUserProfileFolderPathValid())
                             {
                                 EDOpts.AddAdditionalEdgeOption("user-data-dir=", UserProfileFolderPath);
@@ -762,7 +776,7 @@ namespace GingerCore.Drivers
                                 edgeOptions.AddAdditionalOption(SeleniumDriver.RemoteVersionParam, RemoteVersion);
                             }
 
-                            edgeOptions.UnhandledPromptBehavior = UnhandledPromptBehavior.Default;
+                            SetUnhandledPromptBehavior(edgeOptions);
                             if (Convert.ToInt32(HttpServerTimeOut) > 60)
                             {
                                 Driver = new RemoteWebDriver(new Uri(RemoteGridHub + "/wd/hub"), edgeOptions.ToCapabilities(), TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
@@ -832,20 +846,25 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in start driver", ex);
                 ErrorMessageFromDriver = ex.Message;
 
-                if (RestartRetry && mBrowserTpe == eBrowserType.Chrome && (ex.Message.Contains("version") || ex.Message.Contains("chromedriver.exe does not exist")))
+                //If driver is mismatched, try renaming the existing driver and let selenium update the driver
+                if (RestartRetry && ex.Message.Contains("session not created: This version of "))
                 {
-                    GingerCore.Drivers.Updater.ChromeDriverUpdater chromeupdater = new Updater.ChromeDriverUpdater();
-
                     RestartRetry = false;
-                    if (chromeupdater.UpdateDriver())
+
+                    //Rename driver name
+                    if (mBrowserTpe == eBrowserType.Chrome)
                     {
-                        StartDriver();
+                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(CHROME_DRIVER_NAME), GetDriversPathPerOS());
                     }
-                    else
+                    else if (mBrowserTpe == eBrowserType.Edge)
                     {
-                        ErrorMessageFromDriver += " Chrome driver version mismatch. Please run Ginger as Admin to Auto update the chrome driver.";
-                        Reporter.ToLog(eLogLevel.ERROR, ErrorMessageFromDriver);
+                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(EDGE_DRIVER_NAME), GetDriversPathPerOS());
                     }
+                    else if (mBrowserTpe == eBrowserType.FireFox)
+                    {
+                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(FIREFOX_DRIVER_NAME), GetDriversPathPerOS());
+                    }
+                    StartDriver();
                 }
             }
         }
@@ -875,6 +894,39 @@ namespace GingerCore.Drivers
             {
                 string error = string.Format("The '{0}' OS is not supported by Ginger Selenium", RuntimeInformation.OSDescription);
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Gets browser driver file with path
+        /// </summary>
+        /// <param name="fileName">driver name</param>
+        /// <returns></returns>
+        private string DriverServiceFileNameWithPath(string fileName)
+        {
+            return Path.Combine(GetDriversPathPerOS(), DriverServiceFileName(fileName));
+
+        }
+
+        /// <summary>
+        /// Gets browser driver name according to running oS
+        /// </summary>
+        /// <param name="fileName">driver name</param>
+        /// <returns></returns>
+        private string DriverServiceFileName(string fileName)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return $"{fileName}.exe";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return fileName;
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR, string.Format("The '{0}' OS is not supported by Ginger Selenium", RuntimeInformation.OSDescription));
+                return "";
             }
         }
 
@@ -1015,7 +1067,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while getting current element", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while getting current element", ex);
                 return null;
             }
         }
@@ -1196,9 +1248,13 @@ namespace GingerCore.Drivers
             //Checking if Alert handling is asked to be performed (in that case we can't modify anything on driver before handling the Alert)
             bool isActBrowser = act is ActBrowserElement;
             ActBrowserElement actBrowserObj = isActBrowser ? (act as ActBrowserElement) : null;
-            bool runActHandlerDirect = act is ActHandleBrowserAlert || (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
-                                    || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
-                                        || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox));
+            bool runActHandlerDirect = act is ActHandleBrowserAlert ||
+                                      (isActBrowser && (actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SwitchToDefaultWindow
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.AcceptMessageBox
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.DismissMessageBox
+                                      //Added below 2 conditions for comparision for Alert Text Box
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.GetMessageBoxText
+                                      || actBrowserObj.ControlAction == ActBrowserElement.eControlAction.SetAlertBoxText));
 
             if (!runActHandlerDirect)
             {
@@ -2349,21 +2405,21 @@ namespace GingerCore.Drivers
                         }
                         catch (Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDropDown operation", ex);
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SelectFromDropDown operation", ex);
                             try
                             {
                                 se.SelectByValue(act.GetInputParamCalculatedValue("Value"));
                             }
                             catch (Exception ex2)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDropDown operation", ex2);
+                                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SelectFromDropDown operation", ex2);
                                 try
                                 {
                                     se.SelectByIndex(Convert.ToInt32(act.GetInputParamCalculatedValue("Value")));
                                 }
                                 catch (Exception ex3)
                                 {
-                                    Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDropDown operation", ex3);
+                                    Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SelectFromDropDown operation", ex3);
                                 }
                             }
                         }
@@ -2387,7 +2443,7 @@ namespace GingerCore.Drivers
                         catch (Exception ex3)
                         {
                             act.Error = "Error: Failed to select the value ' + " + value + "' for the object - " + act.LocateBy + " " + act.LocateValue;
-                            Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing AsyncSelectFromDropDownByIndex operation", ex3);
+                            Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing AsyncSelectFromDropDownByIndex operation", ex3);
                             return;
                         }
                     }
@@ -2407,7 +2463,7 @@ namespace GingerCore.Drivers
                     catch (Exception ex)
                     {
                         act.Error = "Error: Failed to select value using digit from object with ID: '" + act.LocateValue + "' and Value: '" + act.GetInputParamCalculatedValue("Value") + "'";
-                        Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SelectFromDijitList operation", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SelectFromDijitList operation", ex);
                         return;
                     }
                     break;
@@ -2446,7 +2502,7 @@ namespace GingerCore.Drivers
                             catch (InvalidOperationException ex)
                             {
                                 ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
-                                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while performing SetValue operation", ex);
+                                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while performing SetValue operation", ex);
                             }
                         }
                         else
@@ -2884,7 +2940,7 @@ namespace GingerCore.Drivers
             }
             catch (System.ArgumentException ae)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured in ActDropDownListHandler", ae);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred in ActDropDownListHandler", ae);
                 return;
             }
         }
@@ -3735,7 +3791,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception occured when LocateElementByLocator", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when LocateElementByLocator", ex);
                     if (AlwaysReturn)
                     {
                         elem = null;
@@ -4270,7 +4326,7 @@ namespace GingerCore.Drivers
                     //    }
                     //    catch (Exception ex)
                     //    {
-                    //        Reporter.ToLog(eLogLevel.DEBUG, "Exception occured in IsBrowserAlive called from IsRunning Method using handle.exe ", ex);
+                    //        Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred in IsBrowserAlive called from IsRunning Method using handle.exe ", ex);
                     //    }
                     //}
 
@@ -4281,22 +4337,19 @@ namespace GingerCore.Drivers
                     {
                         try
                         {
-                        
-                            
                             Thread.Sleep(100);
                             count = Driver.WindowHandles.Count;
-
                         }
                         catch (System.InvalidCastException ex)
                         {
                             exceptioncount = 0;
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occured while casting when we are checking IsRunning", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred while casting when we are checking IsRunning", ex);
                         }
                         catch (System.NullReferenceException ex)
                         {
                             count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.DEBUG, "Null refrence exception occured when we are checking IsRunning", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Null reference exception occurred when we are checking IsRunning", ex);
                         }
                         catch (System.ObjectDisposedException ex)
                         {
@@ -4306,10 +4359,9 @@ namespace GingerCore.Drivers
                         catch (Exception ex)
                         {
                             //throw exception to outer catch
-                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex);
+                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex);
                             throw;
                         }
-
                     });
 
                     //result = action.BeginInvoke(null, null);
@@ -4351,7 +4403,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.NoSuchWindowException ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                     {
@@ -4366,7 +4418,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverTimeoutException ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Timeout exception occured when we are checking IsRunning", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Timeout exception occurred when we are checking IsRunning", ex);
                     var currentWindow = Driver.CurrentWindowHandle;
                     if (!string.IsNullOrEmpty(currentWindow))
                     {
@@ -4381,7 +4433,7 @@ namespace GingerCore.Drivers
                 }
                 catch (OpenQA.Selenium.WebDriverException ex)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Webdriver exception occured when we are checking IsRunning", ex);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Webdriver exception occurred when we are checking IsRunning", ex);
 
                     if (PreviousRunStopped && ex.Message == "Unexpected error. Error 404: Not Found\r\nNot Found")
                     {
@@ -4398,7 +4450,7 @@ namespace GingerCore.Drivers
                 }
                 catch (Exception ex2)
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occured when we are checking IsRunning", ex2);
+                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex2);
                     if (ex2.Message.ToString().ToUpper().Contains("DIALOG"))
                     {
                         return true;
@@ -4445,7 +4497,7 @@ namespace GingerCore.Drivers
                     catch (Exception ex)
                     {
                         string wt = Driver.Title; //if Switch window throw exception then reading current driver title to avoid exception for next window handle in loop
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occured during GetAppWindows.", ex);
+                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetAppWindows.", ex);
                     }
                 }
                 return list.ToList();
@@ -4735,6 +4787,7 @@ namespace GingerCore.Drivers
 
                 if (!foundElementsList.Contains(matchingOriginalElement))
                 {
+                    foundElemntInfo.IsAutoLearned = true;
                     foundElementsList.Add(foundElemntInfo);
                     foundElemntInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.Sequence, Value = foundElementsList.Count.ToString(), ShowOnUI = false });
                     matchingOriginalElement = ((IWindowExplorer)this).GetMatchingElement(foundElemntInfo, foundElementsList);
@@ -4779,7 +4832,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during pom learining", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during pom learning", ex);
             }
         }
 
@@ -4841,7 +4894,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured when creating relative xapth with attributes values", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred when creating relative xpath with attributes values", ex);
             }
             finally
             {
@@ -5598,7 +5651,7 @@ namespace GingerCore.Drivers
                 catch (Exception ex)
                 {
                     var wt = Driver.Title; //if Switch window throw exception then reading current driver title to avoid exception for next window handle in loop
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occured during Switchwindow", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred during Switchwindow", ex);
                 }
 
             }
@@ -6147,7 +6200,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when learn LocateElementByFriendlyLocator", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when learn LocateElementByFriendlyLocator", ex);
             }
 
             return locatorsList;
@@ -6485,7 +6538,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during InjectGingerLiveSpy", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during InjectGingerLiveSpy", ex);
             }
         }
 
@@ -6564,7 +6617,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Exception occured while adding javascript to page", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while adding javascript to page", ex);
             }
         }
 
@@ -7519,7 +7572,7 @@ namespace GingerCore.Drivers
                             act.Error += ex.Message;
                             Reporter.ToLog(eLogLevel.DEBUG, $"OpenNewTab {ex.Message} ", ex.InnerException);
                         }
-                        
+
                         break;
 
                     case ActBrowserElement.eControlAction.GotoURL:
@@ -7798,13 +7851,13 @@ namespace GingerCore.Drivers
                         throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 act.Status = eRunStatus.Failed;
                 act.Error += ex.Message;
                 Reporter.ToLog(eLogLevel.DEBUG, $"ActBrowserElementHandler {ex.Message} ", ex.InnerException);
             }
-            
+
         }
 
         private void OpenNewWindow()
@@ -7816,7 +7869,7 @@ namespace GingerCore.Drivers
         }
 
         private void OpenNewTab()
-        {            
+        {
             IJavaScriptExecutor javaScriptExecutor = (IJavaScriptExecutor)Driver;
             javaScriptExecutor.ExecuteScript("window.open();");
             Driver.SwitchTo().Window(Driver.WindowHandles[Driver.WindowHandles.Count - 1]);
@@ -8007,7 +8060,7 @@ namespace GingerCore.Drivers
                             catch (InvalidOperationException ex)
                             {
                                 ((IJavaScriptExecutor)Driver).ExecuteScript("arguments[0].setAttribute('value',arguments[1])", e, act.GetInputParamCalculatedValue("Value"));
-                                Reporter.ToLog(eLogLevel.ERROR, "Exception occured when HandleActUIElement");
+                                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when HandleActUIElement");
                             }
                         }
                         else
@@ -9760,6 +9813,59 @@ namespace GingerCore.Drivers
 
         }
 
+        private void SetBrowserVersion(DriverOptions options)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(BrowserVersion))
+                {
+                    options.BrowserVersion = BrowserVersion;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while setting browser version to driver options", ex);
+            }
+        }
+
+        public void SetUnhandledPromptBehavior(DriverOptions options)
+        {
+            if (UnhandledPromptBehavior == null)
+            {
+                return;
+            }
+
+            if (Enum.TryParse(UnhandledPromptBehavior, true, out UnhandledPromptBehavior unhandledPromptBehavior))
+            {
+                switch (unhandledPromptBehavior)
+                {
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Ignore:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Ignore;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Accept:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Accept;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.Dismiss:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Dismiss;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.AcceptAndNotify;
+                        break;
+
+                    case OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.DismissAndNotify;
+                        break;
+
+                    default:
+                        options.UnhandledPromptBehavior = OpenQA.Selenium.UnhandledPromptBehavior.Default;
+                        break;
+                }
+            }
+        }
+
         private void SetBrowserLogLevel(DriverOptions options)
         {
             if (!BrowserLogLevel.Equals("3"))
@@ -9822,9 +9928,9 @@ namespace GingerCore.Drivers
             devTools = webDriver as IDevTools;
 
             //DevTool Session 
-            devToolsSession = devTools.GetDevToolsSession(113);
-            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V113.DevToolsSessionDomains>();
-            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V113.Network.EnableCommandSettings());
+            devToolsSession = devTools.GetDevToolsSession(116);
+            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains>();
+            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V116.Network.EnableCommandSettings());
 
 
         }
@@ -9889,7 +9995,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V113.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V116.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 

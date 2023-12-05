@@ -237,6 +237,9 @@ namespace Ginger.Run
 
         private void LoadRunSetConfigBySelection(RunSetConfig defaultRunSet)
         {
+            //hide current Run set UI
+            xRunsetPageGrid.Visibility = Visibility.Collapsed;
+
             if (mRunSetsSelectionPage == null)
             {
                 RunSetFolderTreeItem runSetsRootfolder = new RunSetFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<RunSetConfig>());
@@ -375,6 +378,7 @@ namespace Ginger.Run
                     }
 
                     UpdateRunButtonIcon();
+                    UpdateReRunFailedButtonIcon();
                 }
             });
         }
@@ -413,7 +417,7 @@ namespace Ginger.Run
                 {
                     xRunRunsetBtn.ButtonImageType = eImageType.Running;
                     xRunRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
-                    xRunRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+                    xRunRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
                     xRunRunsetBtn.IsEnabled = false;
                     if (RunSetConfig.GingerRunners.Any(x => x.Executor.IsRunning == true))
                     {
@@ -442,77 +446,72 @@ namespace Ginger.Run
             });
         }
 
-        //private void UpdateReRunFailedButtonIcon(bool isRunStarted = false)
-        //{
-            
-        //    this.Dispatcher.Invoke(() =>
-        //    {
-        //        bool setAsRunning = false;
-        //        if (WorkSpace.Instance.RunsetExecutor.Runners.Any(x => x.Executor.BusinessFlows.Any(x => x.RunStatus == eRunStatus.Failed)))
-        //        {
-        //            xReRunFailedRunsetBtn.Visibility = Visibility.Visible;
-        //            xRunRunsetBtn.Visibility = Visibility.Collapsed;
+        private void UpdateReRunFailedButtonIcon(bool isRunStarted = false)
+        {
 
-        //            if (isRunStarted)
-        //            {
-        //                xReRunFailedRunsetBtn.ButtonText = "Starting...";
-        //                xReRunFailedRunsetBtn.ToolTip = "Performing Run Preparations";
-        //                setAsRunning = true;
-        //            }
-        //            else if (mRunSetConfig.IsRunning)
-        //            {
-        //                xReRunFailedRunsetBtn.ButtonText = "Running...";
-        //                setAsRunning = true;
-        //            }
-        //            else if (RunSetConfig.GingerRunners.FirstOrDefault(x => x.Status == eRunStatus.Running) != null)
-        //            {
-        //                xReRunFailedRunsetBtn.ButtonText = "Running...";
-        //                xReRunFailedRunsetBtn.ToolTip = "Execution of at least one Runner is in progress";
-        //                setAsRunning = true;
-        //            }
-        //            else
-        //            {
-        //                xReRunFailedRunsetBtn.ButtonText = "ReRunFailed";
-        //                xReRunFailedRunsetBtn.ToolTip = "Run All Failed Runners";
-        //                setAsRunning = false;
-        //            }
+            this.Dispatcher.Invoke(() =>
+            {
+                bool setAsRunning = false;
+                if (WorkSpace.Instance.RunsetExecutor.Runners.Any(x => x.Executor != null && x.Executor.BusinessFlows.Any(x => x.RunStatus == eRunStatus.Failed)))
+                {
+                    xReRunFailedRunsetBtn.Visibility = Visibility.Visible;
+                    xRunRunsetBtn.Visibility = Visibility.Collapsed;
 
-        //            if (setAsRunning)
-        //            {
-        //                xReRunFailedRunsetBtn.ButtonImageType = eImageType.Running;
-        //                xReRunFailedRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
-        //                xReRunFailedRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
-        //                xReRunFailedRunsetBtn.IsEnabled = false;
-        //                if (RunSetConfig.GingerRunners.Any(x => x.Executor.IsRunning == true))
-        //                {
-        //                    xStopRunsetBtn.ButtonText = "Stop";
-        //                    xStopRunsetBtn.ButtonImageType = eImageType.Stop;
-        //                    xStopRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionStop");
-        //                    xStopRunsetBtn.IsEnabled = true;
-        //                    xStopRunsetBtn.Visibility = Visibility.Visible;
-        //                }
-        //                xContinueRunsetBtn.Visibility = Visibility.Collapsed;
-        //                xResetRunsetBtn.Visibility = Visibility.Collapsed;
-        //            }
-        //            else
-        //            {
-        //                xReRunFailedRunsetBtn.ButtonImageType = eImageType.Run;
-        //                xReRunFailedRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
-        //                xReRunFailedRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-        //                xReRunFailedRunsetBtn.IsEnabled = true;
-        //                xStopRunsetBtn.Visibility = Visibility.Collapsed;
-        //                xContinueRunsetBtn.Visibility = Visibility.Visible;
-        //                xResetRunsetBtn.Visibility = Visibility.Visible;
-        //                xRunsetSaveBtn.IsEnabled = true;
-        //            }
-        //        }
-        //        else 
-        //        { 
-        //            xReRunFailedRunsetBtn.Visibility = Visibility.Collapsed;
-        //            xRunRunsetBtn.Visibility = Visibility.Visible;
-        //        }
-        //    });
-        //}
+                    if (isRunStarted)
+                    {
+                        xReRunFailedRunsetBtn.ButtonText = "Starting...";
+                        xReRunFailedRunsetBtn.ToolTip = "Performing Run Preparations";
+                        setAsRunning = true;
+                    }
+                    else if (mRunSetConfig.IsRunning)
+                    {
+                        xReRunFailedRunsetBtn.ButtonText = "Running...";
+                        xReRunFailedRunsetBtn.ToolTip = "Execution of at least one Runner is in progress";
+                        setAsRunning = true;
+                    }
+                    else
+                    {
+                        xReRunFailedRunsetBtn.ButtonText = "Re-Run Failed Flows";
+                        xReRunFailedRunsetBtn.ToolTip = "Re-Run All Failed Business flows";
+                        setAsRunning = false;
+                    }
+
+                    if (setAsRunning)
+                    {
+                        xReRunFailedRunsetBtn.ButtonImageType = eImageType.Running;
+                        xReRunFailedRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
+                        xReRunFailedRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+                        xReRunFailedRunsetBtn.IsEnabled = false;
+                        if (RunSetConfig.GingerRunners.Any(x => x.Executor.IsRunning == true))
+                        {
+                            xStopRunsetBtn.ButtonText = "Stop";
+                            xStopRunsetBtn.ButtonImageType = eImageType.Stop;
+                            xStopRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionStop");
+                            xStopRunsetBtn.IsEnabled = true;
+                            xStopRunsetBtn.Visibility = Visibility.Visible;
+                        }
+                        xContinueRunsetBtn.Visibility = Visibility.Collapsed;
+                        xResetRunsetBtn.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        xReRunFailedRunsetBtn.ButtonImageType = eImageType.Run;
+                        xReRunFailedRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_Execution");
+                        xReRunFailedRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+                        xReRunFailedRunsetBtn.IsEnabled = true;
+                        xStopRunsetBtn.Visibility = Visibility.Collapsed;
+                        xContinueRunsetBtn.Visibility = Visibility.Visible;
+                        xResetRunsetBtn.Visibility = Visibility.Visible;
+                        xRunsetSaveBtn.IsEnabled = true;
+                    }
+                }
+                else
+                {
+                    xReRunFailedRunsetBtn.Visibility = Visibility.Collapsed;
+                    xRunRunsetBtn.Visibility = Visibility.Visible;
+                }
+            });
+        }
         private bool CheckIfExecutionIsInProgress()
         {
             if (mRunSetConfig.IsRunning || RunSetConfig.GingerRunners.FirstOrDefault(x => x.Status == eRunStatus.Running || x.Executor.IsRunning == true) != null)
@@ -572,6 +571,10 @@ namespace Ginger.Run
                         return;
                     }
                     WorkSpace.Instance.RunsetExecutor.RunSetConfig.LastRunsetLoggerFolder = null;
+                    if (RunSetConfig.ExecutionID == null)
+                    {
+                        RunSetConfig.ExecutionID = Guid.NewGuid();
+                    }
                     switch (EventArgs.RunnerItemType)
                     {
                         case RunnerItemPage.eRunnerItemType.BusinessFlow:
@@ -898,7 +901,7 @@ namespace Ginger.Run
             {
                 xDescriptionTextBlock.Text = string.Empty;
                 TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
-                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
+                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$PrimaryColor_Black")).ToString());
 
                 //description
                 if (!string.IsNullOrEmpty(mRunSetConfig.Description))
@@ -943,6 +946,7 @@ namespace Ginger.Run
             else if (e.PropertyName == nameof(RunSetConfig.IsRunning))
             {
                 UpdateRunButtonIcon();
+                UpdateReRunFailedButtonIcon();
             }
         }
 
@@ -1084,6 +1088,11 @@ namespace Ginger.Run
             if (runSetToSet == null)
             {
                 runSetToSet = GetDefualtRunSetConfig();
+                if (!WorkSpace.Instance.UserProfile.AutoLoadLastRunSet)
+                {
+                    LoadRunSetConfigBySelection(runSetToSet);
+                    return;
+                }
             }
 
             if (runSetToSet != null)
@@ -1109,7 +1118,7 @@ namespace Ginger.Run
             if (mCurrentSelectedRunner != null)
             {
                 mCurrentSelectedRunner.xBorder.Visibility = System.Windows.Visibility.Collapsed;
-                mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_Black") as Brush;
                 mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Height = 1;
                 if (!mCurrentSelectedRunner.ExecutorEngine.GingerRunner.Active)
                 {
@@ -1117,14 +1126,14 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    mCurrentSelectedRunner.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                    mCurrentSelectedRunner.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                 }
             }
 
             //highlight the selected Ginger
             GRP.xBorder.Visibility = System.Windows.Visibility.Visible;
             GRP.xRunnerInfoSplitterBorder.Background = FindResource("$amdocsLogoLinarGradientBrush") as Brush;
-            GRP.xRunnerInfoSplitterBorder.Height = 4;
+            GRP.xRunnerInfoSplitterBorder.Height = 1;
             if (!GRP.ExecutorEngine.GingerRunner.Active)
             {
                 GRP.xRunnerNameTxtBlock.Foreground = Brushes.Gray;
@@ -1293,9 +1302,9 @@ namespace Ginger.Run
             if (mFlowDiagram == null)
             {
                 mFlowDiagram = new FlowDiagramPage();
-                mFlowDiagram.SetView(Brushes.White, false, false);
+                mFlowDiagram.SetView(Brushes.Transparent, false, false);
                 mFlowDiagram.SetHighLight = false;
-                mFlowDiagram.BackGround = Brushes.White;
+                mFlowDiagram.BackGround = Brushes.Transparent;
                 mFlowDiagram.ZoomPanelContainer.Visibility = Visibility.Collapsed;
                 mFlowDiagram.ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
                 mFlowDiagram.Height = 300;
@@ -1335,8 +1344,8 @@ namespace Ginger.Run
 
             GRP.xBorder.Visibility = System.Windows.Visibility.Collapsed;
             GRP.xRunnerInfoSplitterBorder.Height = 1;
-            GRP.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_DarkBlue") as Brush;
-            GRP.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+            GRP.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_Black") as Brush;
+            GRP.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             mFlowX = mFlowX + 610;
         }
 
@@ -1587,8 +1596,11 @@ namespace Ginger.Run
         {
             try
             {
+                //show current Run set UI
+                xRunsetPageGrid.Visibility = Visibility.Visible;
+
                 bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
-                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;
+                bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              
                 if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
                 {
                     WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Clear();
@@ -1624,7 +1636,7 @@ namespace Ginger.Run
                 {
                     InitRunnersSection(false, ViewMode);
                 }
-
+                UpdateReRunFailedButtonIcon();
                 this.Dispatcher.Invoke(() =>
                 {
                     //Init Operations Section
@@ -1824,7 +1836,7 @@ namespace Ginger.Run
                 Reporter.ToUser(eUserMsgKey.AnalyzerSaveRunSet);
                 return;
             }
-            AP.Init(WorkSpace.Instance.Solution, RSC);
+            AP.Init(RSC, WorkSpace.Instance.Solution);
             AP.ShowAsWindow();
 
         }
@@ -1874,7 +1886,7 @@ namespace Ginger.Run
                     return;
                 }
                 UpdateRunButtonIcon(true);
-
+               
                 ResetALMDefectsSuggestions();
 
 
@@ -1917,83 +1929,85 @@ namespace Ginger.Run
             finally
             {
                 UpdateRunButtonIcon();
-
-                //UpdateReRunFailedButtonIcon();
+                UpdateReRunFailedButtonIcon();                
             }
         }
 
-        //private async void xReRunFailedRunsetBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    RunsetExecutor ReRunRunsetExecutor = new RunsetExecutor();
+        private async void xReRunFailedRunsetBtn_Click(object sender, RoutedEventArgs e)
+        {
+            RunsetExecutor ReRunRunsetExecutor = new RunsetExecutor();
+            List<Guid> DeactivatedBfInstanceGuidList = new List<Guid>();
+            if (WorkSpace.Instance.RunsetExecutor.Runners.Any(x => x.Executor.BusinessFlows.Any(y => y.RunStatus == eRunStatus.Failed)))
+            {
+                WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active = true;
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.INFO, "No record found to re run for current execution");
+                return;
+            }
 
-        //    if(WorkSpace.Instance.RunsetExecutor.Runners.Any(x=>x.Executor.BusinessFlows.Any(y=>y.RunStatus == eRunStatus.Failed)))
-        //    {
-        //        WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfiguration.Active = true;
-        //    }
+            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active)
+            {
+                try
+                {
+                    if (RunSetConfig.DirtyStatus.Equals(eDirtyStatus.Modified))
+                    {
+                        UserSelectionSaveOrUndoRunsetChanges();
+                    }
+                    xRunsetSaveBtn.IsEnabled = false;
+                    IEnumerable<string> runnerNames = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.Executor.BusinessFlows.Count == 0).Select(y => y.Name);
 
-        //    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfiguration.Active)
-        //    {
-
-        //        try
-        //        {
-        //            if (RunSetConfig.DirtyStatus.Equals(eDirtyStatus.Modified))
-        //            {
-        //                UserSelectionSaveOrUndoRunsetChanges();
-        //            }
-        //            xRunsetSaveBtn.IsEnabled = false;
-        //            IEnumerable<string> runnerNames = WorkSpace.Instance.RunsetExecutor.Runners.Where(x => x.Executor.BusinessFlows.Count == 0).Select(y => y.Name);
-
-        //            if (runnerNames.Any())
-        //            {
-        //                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"{string.Join(", ", runnerNames)} is empty, please add {GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)} to run.");
-        //                return;
-        //            }
-        //            UpdateReRunFailedButtonIcon(true);
-
-        //            ResetALMDefectsSuggestions();
+                    if (runnerNames.Any())
+                    {
+                        Reporter.ToUser(eUserMsgKey.StaticInfoMessage, $"{string.Join(", ", runnerNames)} is empty, please add {GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)} to run.");
+                        return;
+                    }
+                    UpdateReRunFailedButtonIcon(true);
+                    ResetALMDefectsSuggestions();
 
 
-        //            //run analyzer
-        //            if (mRunSetConfig.RunWithAnalyzer)
-        //            {
-        //                int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
-        //                if (analyzeRes == 1)
-        //                {
-        //                    return;//cancel run because issues found
-        //                }
-        //            }
+                    //run analyzer
+                    if (mRunSetConfig.RunWithAnalyzer)
+                    {
+                        int analyzeRes = await AnalyzeRunsetWithUI().ConfigureAwait(false);
+                        if (analyzeRes == 1)
+                        {
+                            return;//cancel run because issues found
+                        }
+                    }
 
-        //            var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
+                    var result = await WorkSpace.Instance.RunsetExecutor.RunRunsetAsync().ConfigureAwait(false);
 
-        //            // handling ALM Defects Opening
+                    // handling ALM Defects Opening
+                    
+                    if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null && WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0)
+                    {
+                        ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
+                        if (ALMDefectProfiles != null && ALMDefectProfiles.Count > 0)
+                        {
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                InitALMDefectsOpeningSection();
+                            });
+                        }
 
-        //            if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null && WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList.Count > 0)
-        //            {
-        //                ObservableList<ALMDefectProfile> ALMDefectProfiles = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ALMDefectProfile>();
-        //                if (ALMDefectProfiles != null && ALMDefectProfiles.Count > 0)
-        //                {
-        //                    this.Dispatcher.Invoke(() =>
-        //                    {
-        //                        InitALMDefectsOpeningSection();
-        //                    });
-        //                }
-
-        //            }
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Reporter.ToLog(eLogLevel.ERROR, "Runset execution failed: ", ex);
-        //        }
-        //        finally
-        //        {
-        //            UpdateReRunFailedButtonIcon();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return;
-        //    }
-        //}
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Runset execution failed during re run failed flows ", ex);
+                }
+                finally
+                {
+                    UpdateReRunFailedButtonIcon();
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
 
         private void ResetRunners()
         {
@@ -2016,7 +2030,6 @@ namespace Ginger.Run
             try
             {
                 UpdateRunButtonIcon(true);
-
                 if (RunSetConfig.GingerRunners.FirstOrDefault(x => x.Status == eRunStatus.Stopped) == null)
                 {
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "There are no Stopped Runners to Continue.");
@@ -2051,7 +2064,7 @@ namespace Ginger.Run
                 {
                     Reporter.ToStatus(eStatusMsgKey.AnalyzerIsAnalyzing, null, mRunSetConfig.Name, GingerDicser.GetTermResValue(eTermResKey.RunSet));
                     analyzerPage = new AnalyzerPage();
-                    analyzerPage.Init(WorkSpace.Instance.Solution, mRunSetConfig);
+                    analyzerPage.Init(mRunSetConfig, WorkSpace.Instance.Solution);
                 });
 
                 await analyzerPage.AnalyzeWithoutUI();
@@ -2073,8 +2086,8 @@ namespace Ginger.Run
         private void xResetRunsetBtn_Click(object sender, RoutedEventArgs e)
         {
             CleanAndUpdateRunsetStats();
-            //UpdateReRunFailedButtonIcon();
-            //UpdateRunButtonIcon();
+            UpdateReRunFailedButtonIcon();
+            UpdateRunButtonIcon();
         }
 
         private void CleanAndUpdateRunsetStats()
@@ -2410,7 +2423,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                    currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                 }
             }
 
@@ -2476,7 +2489,7 @@ namespace Ginger.Run
 
             foreach (RunnerItemPage currentitem in xActivitiesRunnerItemsListView.Items)
             {
-                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             }
             if (mCurrentActivityRunnerItem != null)
             {
@@ -2517,7 +2530,7 @@ namespace Ginger.Run
 
             foreach (RunnerItemPage currentitem in xActionsRunnerItemsListView.Items)
             {
-                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             }
             //Need it for first time.
             if (xActionsRunnerItemsListView.SelectedItem == null)
@@ -2987,11 +3000,11 @@ namespace Ginger.Run
                     bf.Active = SetBusinessflowActive;
                     if (SetBusinessflowActive)
                     {
-                        ((RunnerItemPage)ri).xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                        ri.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                     }
                     else
                     {
-                        ((RunnerItemPage)ri).xItemName.Foreground = Brushes.Gray;
+                        ri.xItemName.Foreground = Brushes.Gray;
                     }
                 }
             }
@@ -3093,7 +3106,7 @@ namespace Ginger.Run
                 gr.GingerRunner.Active = SetRunnerActive;
                 if (SetRunnerActive)
                 {
-                    ((RunnerPage)rp.GetCustomeShape().Content).xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                    ((RunnerPage)rp.GetCustomeShape().Content).xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                 }
                 else
                 {
@@ -3196,22 +3209,12 @@ namespace Ginger.Run
 
         private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
 
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-        }
-
-        private void ReRunFailedBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
-        }
-
-        private void ReRunFailedBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
         }
 
         private void xSelfHealingConfigBtn_Click(object sender, RoutedEventArgs e)

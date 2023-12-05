@@ -19,7 +19,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Label    Grid.Row="0" Grid.Column="0" Style="{StaticResource @LabelStyle}">Log Type:</Label>
-        <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}" Width="120" HorizontalAlignment="Left" x:Name="LogTypeComboBox" ></ComboBox>
+        <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}" Width="120" HorizontalAlignment="Left" x:Name="LogTypeComboBox" ></ComboBox>
 
         <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource @LabelStyle}">Log Value:</Label>
         <Actions:UCValueExpression Grid.Row="1" Grid.Column="1" x:Name="LogValue"/>

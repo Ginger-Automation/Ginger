@@ -13,7 +13,7 @@
             <TextBox x:Name="txtMinValue" Style="{StaticResource @TextBoxStyle}"></TextBox>
             <Label Style="{StaticResource @InputFieldLabelStyle}">Max Length:</Label>
             <TextBox x:Name="txtMaxValue" Style="{StaticResource @TextBoxStyle}"></TextBox>
-            <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
+            <StackPanel Background="{StaticResource $BackgroundColor_White}">
                 <CheckBox x:Name="cbDigit" Content="Digits Only (0-9)" Style="{StaticResource @InputCheckBoxStyle}" Margin="0,10,0,0"/>
                 <CheckBox x:Name="cbLower" Content="Lowercase (a-z)" Style="{StaticResource @InputCheckBoxStyle}" Margin="0,10,0,0"/>
                 <CheckBox x:Name="cbUpper" Content="Uppercase (A-Z)" Style="{StaticResource @InputCheckBoxStyle}" Margin="0,10,0,0"/>

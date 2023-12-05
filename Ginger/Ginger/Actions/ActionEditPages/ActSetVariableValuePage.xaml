@@ -15,19 +15,19 @@
                     <GingerCore:ucTextDicResource Text="[Variable] Name:"/>
                 </Label.Content>
             </Label>
-            <ComboBox x:Name="VariableNameComboBox" HorizontalAlignment="Left" DockPanel.Dock="Top" VerticalAlignment="Top" Width="400" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="VariableNameComboBox_SelectionChanged"></ComboBox>
+            <ComboBox x:Name="VariableNameComboBox" HorizontalAlignment="Left" DockPanel.Dock="Top" VerticalAlignment="Top" Width="400" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="VariableNameComboBox_SelectionChanged"></ComboBox>
             <Label HorizontalAlignment="Left" DockPanel.Dock="Top" Style="{StaticResource @InputFieldLabelStyle}" Background="Transparent" Margin="0,10,0,0">
                 <Label.Content>
                     <GingerCore:ucTextDicResource Text="[Variable] Type:"/>
                 </Label.Content>
             </Label>
-            <TextBox x:Name="VariableTypeTextBox" HorizontalAlignment="Left" DockPanel.Dock="Top" Style="{StaticResource @TextBoxStyle}" IsReadOnly="True" Width="400" Background="#FFF6F6F6"/>
+            <TextBox x:Name="VariableTypeTextBox" HorizontalAlignment="Left" DockPanel.Dock="Top" Style="{StaticResource $TextBoxStyle}" IsReadOnly="True" Width="400" Background="#FFF6F6F6"/>
             <Label HorizontalAlignment="Left" DockPanel.Dock="Top" Style="{StaticResource @InputFieldLabelStyle}" Background="Transparent" Margin="0,10,0,0">                
                 <Label.Content>
                     <GingerCore:ucTextDicResource Text="Set [Variable] Value Operation Type:"/>
                 </Label.Content>
             </Label>
-            <ComboBox x:Name="OperationTypeComboBox" HorizontalAlignment="Left" DockPanel.Dock="Top" Width="400" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>            
+            <ComboBox x:Name="OperationTypeComboBox" HorizontalAlignment="Left" DockPanel.Dock="Top" Width="400" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>            
         </DockPanel>
     </Grid>
 </Page>

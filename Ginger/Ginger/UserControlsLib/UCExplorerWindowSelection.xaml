@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Ginger.UserControlsLib"
              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
              mc:Ignorable="d"
-             Background="{StaticResource $BackgroundColor_LightGray}"
+             Background="{StaticResource $BackgroundColor_White}"
              d:DesignHeight="30">
 
     <Grid Width="Auto" Margin="0,-1,0,1">
@@ -31,12 +31,12 @@
         <usercontrols:ucButton Grid.Column="2" x:Name="RefreshWindowsButton" ButtonType="ImageButton" ButtonImageType="Refresh" 
                                HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Refresh Windows List" ButtonFontImageSize="16" Width="30" />
 
-        <!--<GridSplitter Grid.Column="2" Width="1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right" Background="{StaticResource $BackgroundColor_LightGray}"/>-->
+        <!--<GridSplitter Grid.Column="2" Width="1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right" Background="{StaticResource $BackgroundColor_White}"/>-->
 
         <usercontrols:ucButton Grid.Column="3" x:Name="AddSwitchWindowActionButton" ButtonType="ImageButton" ButtonImageType="Add"  
                                HorizontalAlignment="Left" VerticalAlignment="Center" ToolTip="Add Switch Window Action to Flow" ButtonFontImageSize="16" />
 
-        <!--<GridSplitter Grid.Column="3" Width="1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right" Background="{StaticResource $BackgroundColor_LightGray}"/>-->
+        <!--<GridSplitter Grid.Column="3" Width="1" Height="Auto" VerticalAlignment="Stretch" HorizontalAlignment="Right" Background="{StaticResource $BackgroundColor_White}"/>-->
 
         <!--<CheckBox x:Name="xIntegratePOMChkBox" Grid.Column="4" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" 
                   TextBlock.TextAlignment="Center" IsChecked="False" Checked="xIntegratePOMChkBox_Checked" Unchecked="xIntegratePOMChkBox_Unchecked" >

@@ -72,23 +72,23 @@ namespace Ginger.ReporterLib
             {
                 case eUserMsgIcon.Error:
                     xMessageImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Error;
-                    xMessageImage.ImageForeground = Brushes.DarkRed;
+                    xMessageImage.ImageForeground = (SolidColorBrush)FindResource("$HighlightColor_Red");
                     break;
                 case eUserMsgIcon.None:
                     xMessageImage.Visibility = Visibility.Collapsed;
                     break;
                 case eUserMsgIcon.Question:
                     xMessageImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Question;
-                    xMessageImage.ImageForeground = Brushes.Purple;
+                    xMessageImage.ImageForeground = (SolidColorBrush)FindResource("$HighlightColor_Mint");
                     break;
                 case eUserMsgIcon.Warning:
                     xMessageImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Warn;
-                    xMessageImage.ImageForeground = Brushes.DarkOrange;
+                    xMessageImage.ImageForeground = (SolidColorBrush)FindResource("$HighlightColor_Orange");
                     break;
                 case eUserMsgIcon.Information:
                 default:
                     xMessageImage.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Info;
-                    xMessageImage.ImageForeground = Brushes.DarkBlue;
+                    xMessageImage.ImageForeground = (SolidColorBrush)FindResource("$HighlightColor_Aqua");
                     break;
             }
         }

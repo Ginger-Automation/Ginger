@@ -10,7 +10,7 @@
       Title="VariableStopWatchEditPage">
 
     <Grid>
-        <StackPanel Background="{StaticResource $BackgroundColor_LightGray}"  Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
+        <StackPanel Background="{StaticResource $BackgroundColor_White}"  Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
             <Label Style="{StaticResource @InputFieldLabelStyle}"  Width="80" >Timer unit:</Label>
             <UserControlsLib:UCComboBox x:Name="xTimerUnitCombo"  Width="100" VerticalAlignment="Top" > </UserControlsLib:UCComboBox>
         </StackPanel>

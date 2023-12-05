@@ -10,7 +10,7 @@
       d:DesignHeight="1555.556" d:DesignWidth="3453.333"
       Title="ScanAPIModelWizardPage">
 
-    <Grid Name="MainGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Name="MainGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.Resources>
             <DataTemplate x:Key="xIsSelectedTemplate">
                 <CheckBox x:Name="xIsSelected_FieldSelection" Click="IsSelected_FieldSelection_Click" Style="{StaticResource @GridCellCheckBoxStyle}" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>

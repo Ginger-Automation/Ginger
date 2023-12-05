@@ -9,7 +9,7 @@
       Title="WizardIntroPage">
 
     <Grid>
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid Background="{StaticResource $BackgroundColor_White}">
             <TextBlock x:Name="xIntroTextBlock" Style="{StaticResource $TextBlockStyle}" TextWrapping="Wrap" Margin="10,10,10,0"></TextBlock>
         </Grid>
     </Grid>

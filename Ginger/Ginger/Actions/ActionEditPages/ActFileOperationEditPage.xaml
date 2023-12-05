@@ -7,7 +7,7 @@
       d:DesignHeight="250" d:DesignWidth="700"
 	Title="ActFileOperationEditPage" >
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="500*"/>
             <ColumnDefinition Width="100"/>
@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
         <StackPanel  Grid.Row="0">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Operation Type:</Label>            
-            <ComboBox x:Name="FileActionMode" SelectionChanged="FileActionMode_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+            <ComboBox x:Name="FileActionMode" SelectionChanged="FileActionMode_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
             
         </StackPanel>
         <StackPanel Grid.Row="1" >

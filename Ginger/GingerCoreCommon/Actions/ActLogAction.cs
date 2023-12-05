@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -94,7 +94,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override eImageType Image { get { return eImageType.Empty; } }
+        public override eImageType Image { get { return eImageType.File; } }
 
         eLogLevel GetLogLevel(eActionLogLevels loglevel)
         {

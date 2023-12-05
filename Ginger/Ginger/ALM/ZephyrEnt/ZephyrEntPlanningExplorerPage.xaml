@@ -9,7 +9,7 @@
       Height="600" Width="700"
 	  Title="">
 
-    <Grid x:Name="ExplorerTreeGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="ExplorerTreeGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="400*"/>
             <ColumnDefinition Width="200*" x:Name="testSetDetailsColumn"/>
@@ -38,7 +38,7 @@
                             <GingerCore:ucTextDicResource Text="Mapped [BusinessFlow]:"/>
                         </Label.Content>
                     </Label>
-                    <TextBlock TextWrapping="WrapWithOverflow" x:Name="txtBoxTSMappedBF" DockPanel.Dock="Top"  HorizontalAlignment="Left" FontSize="12" Width="200" Foreground="{StaticResource $Color_DarkBlue}" Margin="2,0,0,0" >'BusinessFlow\aaa\ccc\vvv'</TextBlock>
+                    <TextBlock TextWrapping="WrapWithOverflow" x:Name="txtBoxTSMappedBF" DockPanel.Dock="Top"  HorizontalAlignment="Left" FontSize="12" Width="200" Foreground="{StaticResource $PrimaryColor_Black}" Margin="2,0,0,0" >'BusinessFlow\aaa\ccc\vvv'</TextBlock>
                 </DockPanel>
             </StackPanel>
         </ScrollViewer>

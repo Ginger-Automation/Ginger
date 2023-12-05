@@ -11,13 +11,13 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="50*"/>
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        <Label x:Name="lblActionType" DockPanel.Dock="Top" Style="{StaticResource @ucTitleStyle_4}" HorizontalAlignment="Stretch">Action Type</Label>
+        <Label x:Name="lblActionType" DockPanel.Dock="Top" Style="{StaticResource @ucTitleStyle_4}" HorizontalAlignment="Stretch" Margin="-5,0,0,0">Action Type</Label>
         <ScrollViewer Grid.Row="1" >
             <TextBlock x:Name="ActionHelpTextBlock" DockPanel.Dock="Top" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" Margin="0,0,0,0"></TextBlock>
         </ScrollViewer>
-        <Button x:Name="HelpBtn" Content="User Guide &amp; Video" Click="HelpBtn_Click" Grid.Row="2" Style="{StaticResource @InputButtonStyle}" FontWeight="Bold" HorizontalAlignment="Right" Padding="0,0,0,0" Margin="0,0,50,0" VerticalAlignment="Center" Width="140"/>
+        <Button x:Name="HelpBtn" Content="User Guide &amp; Video" Click="HelpBtn_Click" Grid.Row="2" Style="{StaticResource @InputButtonStyle}" FontWeight="Bold" HorizontalAlignment="Left" Padding="0,0,0,0" Margin="0,0,0,0" VerticalAlignment="Center" Width="140"/>
 
     </Grid>
 </Page>

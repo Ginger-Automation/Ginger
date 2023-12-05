@@ -11,7 +11,7 @@
       Title="Learn Config">
 
     <ScrollViewer>
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid Background="{StaticResource $BackgroundColor_White}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="80"/>
                 <RowDefinition Height="320*"/>
@@ -65,10 +65,10 @@
                                 </Expander.Header>
                                 <Expander.Content>
                                     <TabControl>
-                                        <TabItem Header="Basic Elements">
+                                        <TabItem Header="Basic Elements" Style="{StaticResource $RoundedTab}">
                                             <Ginger:ucGrid x:Name="xAutoMapBasicElementTypesGrid" AutomationProperties.AutomationId="AutoMapElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
                                         </TabItem>
-                                        <TabItem Header="Advanced Elements">
+                                        <TabItem Header="Advanced Elements" Style="{StaticResource $RoundedTab}">
                                             <Ginger:ucGrid x:Name="xAutoMapAdvancedlementTypesGrid" AutomationProperties.AutomationId="AutoMapAdvancedElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
                                         </TabItem>
                                     </TabControl>

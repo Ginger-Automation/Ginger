@@ -7,7 +7,7 @@
       Height="28" Width="400" MinHeight="30"
 	Title="Remove Table Column">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" Height="34" VerticalAlignment="Top">
+    <Grid Background="{StaticResource $BackgroundColor_White}" Height="34" VerticalAlignment="Top">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="130"/>
             <ColumnDefinition Width="270"/>
@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
                
         <Label Content="Column Name:" Grid.Row="0" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
-        <ComboBox Height="24" x:Name="DSColNameComboBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}"/>
+        <ComboBox Height="24" x:Name="DSColNameComboBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}"/>
         
     </Grid>
 </Page>

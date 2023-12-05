@@ -152,28 +152,62 @@ namespace GingerCore.ALM.RQM
                         //}
 
                         List<ExecutionResult> exeResultList = new List<ExecutionResult>();
+                        bool isFlowskipped = false;
                         foreach (ActivitiesGroup activGroup in businessFlow.ActivitiesGroups)
                         {
-                            if (projEnvironment != null)
+
+                            if (ALMCore.DefaultAlmConfig.PublishSkipped.Equals("False",StringComparison.CurrentCultureIgnoreCase))
                             {
-                                IValueExpression mAGVE = new GingerCore.ValueExpression(projEnvironment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
-                                activGroup.CalculateExternalId(mAGVE);
+                                if(activGroup.RunStatus == eActivitiesGroupRunStatus.Skipped)
+                                {
+                                    isFlowskipped = true;   
+                                    continue;
+                                }
                             }
-                            if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
-                                || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
-                                || publishToALMConfig.FilterStatus == FilterByStatus.All)
+                            if (activGroup.ActivitiesIdentifiers.Count > 0)
                             {
-                                testPlan.Name = !string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunNameCalculated) ? publishToALMConfig.VariableForTCRunNameCalculated : testPlan.Name;
-                                ExecutionResult exeResult = GetExeResultforActivityGroup(businessFlow, bfExportedID, activGroup, ref result, testPlan, currentRQMProjectMapping, loginData, publishToALMConfig);
-                                if (exeResult != null)
+                                if (projEnvironment != null)
                                 {
-                                    exeResultList.Add(exeResult);
+                                    IValueExpression mAGVE = new GingerCore.ValueExpression(projEnvironment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                                    activGroup.CalculateExternalId(mAGVE);
                                 }
-                                else
+                                if ((publishToALMConfig.FilterStatus == FilterByStatus.OnlyPassed && activGroup.RunStatus == eActivitiesGroupRunStatus.Passed)
+                                    || (publishToALMConfig.FilterStatus == FilterByStatus.OnlyFailed && activGroup.RunStatus == eActivitiesGroupRunStatus.Failed)
+                                    || publishToALMConfig.FilterStatus == FilterByStatus.All)
                                 {
-                                    result = $"Execution Results List not found for {businessFlow.Name} and testplan {bfExportedID}";
-                                    //return false;
+                                    testPlan.Name = !string.IsNullOrEmpty(publishToALMConfig.VariableForTCRunNameCalculated) ? publishToALMConfig.VariableForTCRunNameCalculated : testPlan.Name;
+                                    ExecutionResult exeResult = GetExeResultforActivityGroup(businessFlow, bfExportedID, activGroup, ref result, testPlan, currentRQMProjectMapping, loginData, publishToALMConfig);
+                                    if (exeResult != null)
+                                    {
+                                        exeResultList.Add(exeResult);
+                                    }
+                                    else
+                                    {
+                                        result += $" {Environment.NewLine} Execution Result not created for {businessFlow.Name} and testplan {bfExportedID}";
+                                        Reporter.ToLog(eLogLevel.DEBUG, result);
+                                        //return false;///Need to improve for Multiple Activity Group
+                                    }
                                 }
+                            }
+                            else
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, $"Skipping ALM Results Publish of '{activGroup.Name}' Group in {businessFlow.Name}' Flow as it dows not have any activities in it");
+                            }
+                        }
+
+                        if (!exeResultList.Any())
+                        {
+                            
+                            if (isFlowskipped)
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, $"Skipping ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as skippedUpdate configured as {ALMCore.DefaultAlmConfig.PublishSkipped}");
+                                return true;
+                            }
+                            else
+                            {
+                                Reporter.ToLog(eLogLevel.DEBUG, $"Skipping ALM Results Publish of '{businessFlow.Name}' Flow and testplan '{bfExportedID}' as no valid Execution found for it");
+                                result += $"  {Environment.NewLine} Skipping ALM Results Publish of '{businessFlow.Name}' Flow and 'testplan {bfExportedID}' as no valid Execution found for it ";
+                                return false;
                             }
                         }
 
@@ -193,13 +227,13 @@ namespace GingerCore.ALM.RQM
                             resultInfo = RQMConnect.Instance.RQMRep.ExportExecutionResult(loginData, exeResultList, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName);
                             if (!resultInfo.IsSuccess)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for  {businessFlow.Name} and testplan {bfExportedID}, execution record id {exeResultList.FirstOrDefault().TestCaseExportID} Error: {resultInfo.ErrorDesc}");
+                                Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for  {businessFlow.Name} and testplan {bfExportedID}, execution record id {exeResultList.FirstOrDefault().ExecutionRecordExportID} Error: {resultInfo.ErrorDesc}");
                                 return false;
                             }
                         }
-                        catch
+                        catch(Exception ex)
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for {businessFlow.Name} and testplan {bfExportedID}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for {businessFlow.Name} and testplan {bfExportedID}",ex);
                         }
                         finally
                         {
@@ -293,9 +327,13 @@ namespace GingerCore.ALM.RQM
                         else
                         {
                             result = $"{GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}: {businessFlow.Name} Execution results failed to publist to RQM due to {resultInfo.ErrorDesc}";
-                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to export execution details to RQM/ALM due to{resultInfo.ErrorDesc}");
+                            Reporter.ToLog(eLogLevel.ERROR, $"Failed to export execution details to RQM/ALM due to {resultInfo.ErrorDesc}");
                             return false;
                         }
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Failed to Get Project list");
                     }
 
                 }
@@ -412,7 +450,7 @@ namespace GingerCore.ALM.RQM
 
                     }
                 }
-                else if (string.IsNullOrEmpty(exeRecordId) || exeRecordId.Equals("0"))
+                else
                 {
                     string TestCaseVersionUrl = RQMConnect.Instance.GetTestCaseVersionURLByIdByProject(loginData, testPlan.PreFix, testCaseId);
 
@@ -426,13 +464,13 @@ namespace GingerCore.ALM.RQM
                     if (string.IsNullOrEmpty(exeRecordId) || exeRecordId.Equals("0"))
                     {
                         Reporter.ToLog(eLogLevel.DEBUG, $"Record id not found for {businessFlow.Name}, creating new record");
-                        CreateExecutionRecord(bfExportedID, activGroup, testPlan, loginData, testCaseId, testScriptId, ref exeRecordId);
+                       result = CreateExecutionRecord(bfExportedID, activGroup, testPlan, loginData, testCaseId, testScriptId, ref exeRecordId);
                     }
                 }
-                else
+                
+                if(!string.IsNullOrEmpty(result))
                 {
-                    Reporter.ToLog(eLogLevel.DEBUG, $"Record id not found for {businessFlow.Name}, creating new record");
-                    CreateExecutionRecord(bfExportedID, activGroup, testPlan, loginData, testCaseId, testScriptId, ref exeRecordId);
+                    return null;
                 }
 
                 if (string.IsNullOrEmpty(exeRecordId) || exeRecordId.Equals("0"))
@@ -552,13 +590,19 @@ namespace GingerCore.ALM.RQM
             }
         }
 
-        private void CreateExecutionRecord(string bfExportedID, ActivitiesGroup activGroup, RQMTestPlan testPlan, LoginDTO loginData, string txExportID, string tsExportID, ref string erExportID)
+        private string CreateExecutionRecord(string bfExportedID, ActivitiesGroup activGroup, RQMTestPlan testPlan, LoginDTO loginData, string txExportID, string tsExportID, ref string erExportID)
         {
+            string result = string.Empty;
             ACL_Data_Contract.Activity currentActivity = GetTestCaseFromActivityGroup(activGroup);
             try
             {
                 // if executionRecord not updated and not exists - so create one in RQM and update BussinesFlow object (this may be not saved due not existed "autosave" functionality)
-                var esultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivity(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, testPlan.Name);
+                var resultInfo = RQMConnect.Instance.RQMRep.CreateExecutionRecordPerActivity(loginData, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName, currentActivity, bfExportedID, testPlan.Name);
+                if (resultInfo != null && !string.IsNullOrEmpty(resultInfo.ErrorDesc))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Method - {MethodBase.GetCurrentMethod().Name}, Error - Test Case not found {resultInfo.ErrorCode}, {resultInfo.ErrorDesc}");
+                    result = $"Method - {MethodBase.GetCurrentMethod().Name}, Error - Test Case not found {resultInfo.ErrorCode}, {resultInfo.ErrorDesc}";
+                }
                 if (!currentActivity.ExportedTcExecutionRecId.Equals("0"))
                 {
                     string atsID = GetExportedIDString(activGroup.ExternalID, "AtsID");
@@ -567,15 +611,17 @@ namespace GingerCore.ALM.RQM
                         atsID = string.Empty;
                     }
                     erExportID = currentActivity.ExportedTcExecutionRecId.ToString();
-                    activGroup.ExternalID = $"RQMID={txExportID}|RQMScriptID={tsExportID}|RQMRecordID={erExportID}|AtsID={atsID}";
+                    activGroup.ExternalIdCalculated = $"RQMID={txExportID}|RQMScriptID={tsExportID}|RQMRecordID={erExportID}|AtsID={atsID}";
                     Reporter.ToLog(eLogLevel.DEBUG
-                        , $"created Record id with {activGroup.ExternalID}");
+                        , $"created Record id with {activGroup.ExternalIdCalculated}");
                 }
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to create Execution Record Per Activity- {currentActivity.EntityName} in CreateExecutionRecord {ex.InnerException}");
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to create Execution Record Per Activity- {currentActivity.EntityName} in CreateExecutionRecord {ex.InnerException}",ex);
+                result = $"Failed to create Execution Record Per Activity- {currentActivity.EntityName} in CreateExecutionRecord {ex.InnerException}";
             }
+            return result ;
         }
 
         public bool ExportBfActivitiesGroupsToALM(BusinessFlow businessFlow, ObservableList<ActivitiesGroup> grdActivitiesGroups, ref string result)

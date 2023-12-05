@@ -16,32 +16,33 @@ limitations under the License.
 */
 #endregion
 
-using Amdocs.Ginger.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 
 namespace Ginger.ConflictResolve
 {
-
-    public class ConflictResolve
+    /// <summary>
+    /// Interaction logic for TreeViewComparisonWindow.xaml
+    /// </summary>
+    public partial class TreeViewComparisonWindow : Window
     {
-        public enum eResolveOperations
+        public Frame Frame => xFrame;
+
+        public TreeViewComparisonWindow()
         {
-            [EnumValueDescription("Accept Server Changes")]
-            AcceptServer,
-            [EnumValueDescription("Keep Local Changes")]
-            KeepLocal
+            InitializeComponent();
+            
         }
-        public string ConflictPath { get; set; }
-
-        public string RelativeConflictPath
-        {
-            get
-            {
-                return amdocs.ginger.GingerCoreNET.WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(ConflictPath);
-            }
-        }
-
-        public string ItemName { get; set; }
-
-        public eResolveOperations resolveOperations { get; set; }
     }
 }

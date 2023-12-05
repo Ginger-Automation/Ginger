@@ -8,9 +8,9 @@
       d:DesignHeight="800" d:DesignWidth="800"
 	Title="SolutionPage">
 
-    <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
+    <DockPanel Background="{StaticResource $BackgroundColor_White}">
         <Label x:Name="xLoadSolutionlbl" DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}" FontSize="20" Content="Please Load Solution" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <StackPanel x:Name="xSolutionDetailsStack" DockPanel.Dock="Top" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="0" Margin="5,0,5,0" >
+        <StackPanel x:Name="xSolutionDetailsStack" DockPanel.Dock="Top" Background="{StaticResource $BackgroundColor_White}" Grid.Row="0" Margin="5,0,5,0" >
             <Label Style="{StaticResource $LabelStyle}" Content="Solution Folder:" />
             <TextBox x:Name="SolutionFolderTextBox" Style="{StaticResource $TextBoxStyle}" IsReadOnly="True"/>
             <Label Style="{StaticResource $LabelStyle}" Content="Solution Name:"  />

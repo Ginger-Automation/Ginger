@@ -238,9 +238,9 @@
   
     <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
-    <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.1" />
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.2" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.4.2" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.4.3" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   
@@ -280,15 +280,15 @@
     <PackageReference Include="NUglify" Version="1.9.7" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="108.0.3" />
-    <PackageReference Include="Selenium.Support" Version="4.11.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.11.0" />
+    <PackageReference Include="Selenium.Support" Version="4.13.1" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.13.1" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="4.1.0" />
     <PackageReference Include="SharpAdbClient" Version="2.3.23" />
     <PackageReference Include="SSH.NET" Version="2020.0.1" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Data.OleDb" Version="6.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
-    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
@@ -394,6 +394,14 @@
   </ItemGroup>
 
   <ItemGroup>
+
+    <None Update="DiameterLib\AVPDictionary.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
+    <None Update="DiameterLib\AvpsPerMessageConfiguration.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
 
     <None Update="Images\%40amdocs_logo.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -945,6 +953,9 @@
     <None Update="Reports\Ginger-Web-Client\main-es2015.e34ae47b01aae731b7d5.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Reports\Ginger-Web-Client\main-es2015.f6965e40fcdabf83b4c5.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Reports\Ginger-Web-Client\main-es2015.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -964,6 +975,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main-es5.e34ae47b01aae731b7d5.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\main-es5.f6965e40fcdabf83b4c5.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\main-es5.js">
@@ -1123,6 +1137,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\styles.2f15af51caafc14d831e.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Reports\Ginger-Web-Client\styles.3702b93d5b8caa280f0d.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Reports\Ginger-Web-Client\styles.c77db239a1dbff874057.css">

@@ -19,8 +19,8 @@
         </StackPanel>
 
         <TabControl Grid.Row="1">
-                
-                <TabItem Header="Preview">
+
+            <TabItem Header="Preview" Style="{StaticResource $RoundedTab}">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="40"/>
@@ -41,7 +41,7 @@
 
                 </TabItem>
 
-            <TabItem Header="Design">
+            <TabItem Header="Design" Style="{StaticResource $RoundedTab}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="74*"/>
@@ -53,7 +53,7 @@
             </TabItem>
 
 
-            <TabItem Header="Advanced">
+            <TabItem Header="Advanced" Style="{StaticResource $RoundedTab}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="74*"/>

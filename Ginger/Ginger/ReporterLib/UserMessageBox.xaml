@@ -8,10 +8,10 @@
         mc:Ignorable="d"
         Title="Ginger Message" Height="200" Width="400" WindowStyle="ToolWindow" ShowInTaskbar="False"  
         WindowStartupLocation="CenterScreen" Topmost="True" 
-        Background="{StaticResource $BackgroundColor_LightGray}" BorderBrush="{StaticResource $amdocsLogoRadialGradientBrush}"
+        Background="{StaticResource $BackgroundColor_White}" BorderBrush="{StaticResource $amdocsLogoRadialGradientBrush}"
         KeyUp="Window_KeyUp">
 
-    <Border BorderBrush="DarkGray" BorderThickness="1">
+    <Border BorderBrush="DarkGray" BorderThickness="1" >
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>

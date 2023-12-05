@@ -269,7 +269,7 @@ namespace Ginger.Run
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
 
-            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
+            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
@@ -278,12 +278,6 @@ namespace Ginger.Run
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
-
-            //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
-            //{
-            //    RunListeners.Add(new TelemetryRunListener());
-            //}
-
         }
 
         public GingerExecutionEngine(GingerRunner GingerRunner, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
@@ -296,12 +290,12 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
-            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
+            if (ExecutedFrom != eExecutedFrom.Automation)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
 
-            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
+            if (ExecutedFrom != eExecutedFrom.Automation && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
@@ -448,7 +442,6 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;         
             try
             {
-                               
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.FirstOrDefault(x => x.Active) == null)
                 {
                     runnerExecutionSkipped = true;
@@ -524,6 +517,17 @@ namespace Ginger.Run
                         SetBusinessFlowActivitiesAndActionsSkipStatus(executedBusFlow);
                         CalculateBusinessFlowFinalStatus(executedBusFlow);
                         continue;
+                    }
+                    if(WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && executedBusFlow.RunStatus == eRunStatus.Passed)
+                    {
+                        SetBusinessFlowActivitiesAndActionsSkipStatus(executedBusFlow);
+                        CalculateBusinessFlowFinalStatus(executedBusFlow);
+                        continue;
+                    }
+
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && executedBusFlow.RunStatus == eRunStatus.Failed)
+                    {
+                        executedBusFlow.Reset();
                     }
 
                     //Run Bf
@@ -1197,6 +1201,7 @@ namespace Ginger.Run
                     act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                     //To Handle Scenario which the Driver is still searching the element until Implicit wait will be done, lates being used on SeleniumDriver.Isrunning method 
                     SetDriverPreviousRunStoppedFlag(true);
+                    NotifyActionEnd(act);
                 }
                 else
                 {
@@ -1235,7 +1240,7 @@ namespace Ginger.Run
                 RunActivity(CurrentBusinessFlow.CurrentActivity, resetErrorHandlerExecutedFlag: false);
             }
             else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow)
-            {
+            {                
                 RunBusinessFlow(CurrentBusinessFlow, doResetErrorHandlerExecutedFlag: false);
             }
         }
@@ -1479,41 +1484,47 @@ namespace Ginger.Run
 
         private ObservableList<ErrorHandler> GetErrorHandlersForCurrentActivity()
         {
-            ObservableList<ErrorHandler> errorHandlersToExecute = new ObservableList<ErrorHandler>();
-
-            eHandlerMappingType typeHandlerMapping = (eHandlerMappingType)((Activity)CurrentBusinessFlow.CurrentActivity).ErrorHandlerMappingType;
-
-            if (typeHandlerMapping == eHandlerMappingType.None)
+            switch (CurrentBusinessFlow.CurrentActivity.ErrorHandlerMappingType)
             {
-                // if set to NONE then, return an empty list. Nothing to execute!
-                return errorHandlersToExecute;
-            }
+                case eHandlerMappingType.AllAvailableHandlers:
+                    // pass all error handlers, by default
+                    return GetAllErrorHandlersByType(eHandlerType.Error_Handler);
 
-            if (typeHandlerMapping == eHandlerMappingType.SpecificErrorHandlers)
-            {
-                // fetch list of all error handlers in the current business flow
-                ObservableList<ErrorHandler> allCurrentBusinessFlowErrorHandlers = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
+                case eHandlerMappingType.SpecificErrorHandlers:
+                    // fetch list of all error handlers in the current business flow
+                    ObservableList<ErrorHandler> allCurrentBusinessFlowErrorHandlers = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
 
-                ObservableList<ErrorHandler> lstMappedErrorHandler = new ObservableList<ErrorHandler>();
-                foreach (Guid _guid in CurrentBusinessFlow.CurrentActivity.MappedErrorHandlers)
-                {
-                    // check if mapped error handlers are PRESENT in the current list of error handlers in the business flow i.e. allCurrentBusinessFlowErrorHandlers (checking for deletion, inactive etc.)
-                    if (allCurrentBusinessFlowErrorHandlers.Any(x => x.Guid == _guid)) //.ToList().Exists(x => x.Guid == _guid))
+                    ObservableList<ErrorHandler> specificErrorHandlers = new ObservableList<ErrorHandler>();
+                    foreach (Guid _guid in CurrentBusinessFlow.CurrentActivity.MappedErrorHandlers)
                     {
-                        ErrorHandler _activity = CurrentBusinessFlow.Activities.Where(x => x.Guid == _guid).Cast<ErrorHandler>().FirstOrDefault();
-                        lstMappedErrorHandler.Add(_activity);
+                        // check if mapped error handlers are PRESENT in the current list of error handlers in the business flow i.e. allCurrentBusinessFlowErrorHandlers (checking for deletion, inactive etc.)
+                        if (allCurrentBusinessFlowErrorHandlers.Any(x => x.Guid == _guid)) //.ToList().Exists(x => x.Guid == _guid))
+                        {
+                            var _activity = CurrentBusinessFlow.Activities.FirstOrDefault(x => x.Guid == _guid) as ErrorHandler;
+                            specificErrorHandlers.Add(_activity);
+                        }
                     }
-                }
-                // pass only specific mapped error handlers present the business flow
-                errorHandlersToExecute = lstMappedErrorHandler;
-            }
-            else if (typeHandlerMapping == eHandlerMappingType.AllAvailableHandlers || typeHandlerMapping == eHandlerMappingType.ErrorHandlersMatchingTrigger)
-            {
-                // pass all error handlers, by default
-                errorHandlersToExecute = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
-            }
-            return errorHandlersToExecute;
+                    // pass only specific mapped error handlers present the business flow
+                    return specificErrorHandlers;
 
+                case eHandlerMappingType.ErrorHandlersMatchingTrigger:
+                    ObservableList<ErrorHandler> errorHandlersMatchingTrigger = new ObservableList<ErrorHandler>();
+                    Act failedAction = (Act)CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem;
+                    ObservableList<ErrorHandler> allErrorHandlers = GetAllErrorHandlersByType(eHandlerType.Error_Handler);
+
+                    foreach (var errHandler in allErrorHandlers)
+                    {
+                        if (errHandler.TriggerType == eTriggerType.AnyError || errHandler.ErrorStringList.Any(er => !string.IsNullOrEmpty(failedAction.Error) && failedAction.Error.Trim().Contains(er.ErrorString.Trim())))
+                        {
+                            errorHandlersMatchingTrigger.Add(errHandler);
+                        }
+                    }
+
+                    return errorHandlersMatchingTrigger;
+
+                default:
+                    return new ObservableList<ErrorHandler>();
+            }
         }
 
         private void UpdateDSReturnValues(Act act)
@@ -1792,7 +1803,7 @@ namespace Ginger.Run
             }
         }
         public void ProcessReturnValueForDriver(Act act)
-        {
+          {
             //Handle all output values, create Value for Driver for each
 
             foreach (ActReturnValue ARV in act.ActReturnValues)
@@ -2595,7 +2606,7 @@ namespace Ginger.Run
                 }
                 catch (Exception ex)
                 {
-                    //Reporter.ToLog(eLogLevel.WARN, "Exception occured while performing Return Value StoreTo operation", ex);
+                    //Reporter.ToLog(eLogLevel.WARN, "Exception occurred while performing Return Value StoreTo operation", ex);
                     act.ExInfo += string.Format("Return Value StoreTo operation exception details: {0}", ex.Message);
                 }
 
@@ -4117,7 +4128,7 @@ namespace Ginger.Run
                         if (CurrentBusinessFlow.Activities[0].Acts.Any())
                         {
                             NotifyActionStart((Act)CurrentBusinessFlow.Activities[0].Acts[0]);
-                            CurrentBusinessFlow.Activities[0].Acts[0].Error = string.Format("Error occured in Input {0} values setup, please make sure all configured {1} Input {0} Mapped Values are valid", GingerDicser.GetTermResValue(eTermResKey.Variables), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
+                            CurrentBusinessFlow.Activities[0].Acts[0].Error = string.Format("Error occurred in Input {0} values setup, please make sure all configured {1} Input {0} Mapped Values are valid", GingerDicser.GetTermResValue(eTermResKey.Variables), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
                             CurrentBusinessFlow.Activities[0].Acts[0].Status = eRunStatus.Failed;
                             NotifyActionEnd((Act)CurrentBusinessFlow.Activities[0].Acts[0]);
                         }
@@ -4510,7 +4521,7 @@ namespace Ginger.Run
                         if (currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Stopped)
                         {
                             currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
-                        }
+                        }                       
                         else
                         {
                             switch (currentActivityGroup.ExecutionLoggerStatus)
@@ -4829,6 +4840,8 @@ namespace Ginger.Run
                 }
             }
 
+            Dictionary<string, Agent> appNameToAgentMapping = new();
+
             //Remove the non relevant ApplicationAgents
             for (int indx = 0; indx < mGingerRunner.ApplicationAgents.Count;)
             {
@@ -4836,12 +4849,18 @@ namespace Ginger.Run
 
                 bool appNotMappedInBF = bfsTargetApplications.All(x => x.Name != applicationAgent.AppName);
 
-                bool appHasPlatformButNoAgent =
+                if (!appNameToAgentMapping.TryGetValue(applicationAgent.AppName, out Agent availableAgentForApp))
+                {
+                    appNameToAgentMapping.Add(applicationAgent.AppName, GetAgentForApplication(applicationAgent.AppName));
+                }
+
+                bool appHasNonNAPlatformButNoAgent =
                     applicationAgent.Agent == null &&
                     applicationAgent.AppPlatform != null &&
-                    applicationAgent.AppPlatform.Platform != ePlatformType.NA;
+                    applicationAgent.AppPlatform.Platform != ePlatformType.NA &&
+                    availableAgentForApp != null; 
 
-                if (appNotMappedInBF || appHasPlatformButNoAgent)
+                if (appNotMappedInBF || appHasNonNAPlatformButNoAgent)
                 {
                     bTargetAppListModified = true;
                     mGingerRunner.ApplicationAgents.RemoveAt(indx);
@@ -4891,51 +4910,13 @@ namespace Ginger.Run
                 {
                     ApplicationAgent ag = new ApplicationAgent();
                     ag.AppName = TA.Name;
-
-                    //Map agent to the application
-                    ApplicationPlatform ap = null;
-                    if (CurrentSolution != null && CurrentSolution.ApplicationPlatforms != null)
+                    Agent agentForApp;
+                    if (!appNameToAgentMapping.TryGetValue(ag.AppName, out agentForApp))
                     {
-                        ap = CurrentSolution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == ag.AppName);
+                        agentForApp = GetAgentForApplication(ag.AppName);
+                        appNameToAgentMapping.Add(ag.AppName, agentForApp);
                     }
-                    if (ap != null)
-                    {
-                        List<Agent> platformAgents = (from p in SolutionAgents where p.Platform == ap.Platform && p.UsedForAutoMapping == false select (Agent)p).ToList();
-
-                        //Get the last used agent to this Target App if exist
-                        if (string.IsNullOrEmpty(ap.LastMappedAgentName) == false)
-                        {
-                            //check if the saved agent still valid for this application platform                          
-                            Agent mathingAgent = platformAgents.FirstOrDefault(x => x.Name == ap.LastMappedAgentName);
-                            if (mathingAgent != null)
-                            {
-                                ag.Agent = mathingAgent;
-                                ag.Agent.UsedForAutoMapping = true;
-                            }
-                        }
-
-                        if (ag.Agent == null)
-                        {
-                            //set default agent
-                            if (platformAgents.Count > 0)
-                            {
-                                if (ap.Platform == ePlatformType.Web)
-                                {
-                                    ag.Agent = platformAgents.FirstOrDefault(x => x.DriverType == Agent.eDriverType.SeleniumIE);
-                                }
-
-                                if (ag.Agent == null)
-                                {
-                                    ag.Agent = platformAgents[0];
-                                }
-
-                                if (ag.Agent != null)
-                                {
-                                    ag.Agent.UsedForAutoMapping = true;
-                                }
-                            }
-                        }
-                    }
+                    ag.Agent = agentForApp;
                     bTargetAppListModified = true;
                     mGingerRunner.ApplicationAgents.Add(ag);
                 }
@@ -4944,6 +4925,59 @@ namespace Ginger.Run
             {
                 this.GingerRunner.OnPropertyChanged(nameof(GingerRunner.ApplicationAgents));//to notify who shows this list
             }
+        }
+
+        private Agent GetAgentForApplication(string appName)
+        {
+            Agent agent = null;
+            ApplicationPlatform appPlatform = null;
+            if (CurrentSolution != null && CurrentSolution.ApplicationPlatforms != null)
+            {
+                appPlatform = CurrentSolution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == appName);
+            }
+
+            if (appPlatform != null)
+            {
+                List<Agent> platformAgents = SolutionAgents
+                    .Where(solutionAgent => solutionAgent.Platform == appPlatform.Platform && !solutionAgent.UsedForAutoMapping)
+                    .ToList();
+
+                //Get the last used agent to this Target App if exist
+                if (string.IsNullOrEmpty(appPlatform.LastMappedAgentName) == false)
+                {
+                    //check if the saved agent still valid for this application platform                          
+                    Agent matchingAgent = platformAgents.FirstOrDefault(x => string.Equals(x.Name, appPlatform.LastMappedAgentName));
+                    if (matchingAgent != null)
+                    {
+                        agent = matchingAgent;
+                        agent.UsedForAutoMapping = true;
+                    }
+                }
+
+                if (agent == null)
+                {
+                    //set default agent
+                    if (platformAgents.Count > 0)
+                    {
+                        if (appPlatform.Platform == ePlatformType.Web)
+                        {
+                            agent = platformAgents.FirstOrDefault(x => x.DriverType == Agent.eDriverType.SeleniumIE);
+                        }
+
+                        if (agent == null)
+                        {
+                            agent = platformAgents[0];
+                        }
+
+                        if (agent != null)
+                        {
+                            agent.UsedForAutoMapping = true;
+                        }
+                    }
+                }
+            }
+
+            return agent;
         }
 
         // move from here !!!!!!!!!!!!!!!!!!

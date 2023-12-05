@@ -10,7 +10,7 @@
       Height="800" Width="800"
       Title="Find &amp; Replace">
 
-    <Grid x:Name="FindAndReplace" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="FindAndReplace" Background="{StaticResource $BackgroundColor_White}">
         <Grid.Resources>
             <DataTemplate x:Key="ViewDetailsButton">
                 <Button x:Name="xViewDetailsButton" Click="ViewDetailsClicked" ToolTip="View Details" Style="{StaticResource @InputImageGridCellButtonStyle}">

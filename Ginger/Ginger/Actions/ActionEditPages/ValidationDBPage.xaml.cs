@@ -62,14 +62,14 @@ namespace Ginger.Actions
             {
                 mAct.AddOrUpdateInputParamValue("SQL", mAct.GetInputParamValue("Value"));
             }
-
+             
             FillAppComboBox();
 
             //New UI Controls:
             //Query Type selection radio button :
             QueryTypeRadioButton.Init(typeof(ActDBValidation.eQueryType), SqlSelection, mAct.GetOrCreateInputParam(ActDBValidation.Fields.QueryTypeRadioButton, ActDBValidation.eQueryType.FreeSQL.ToString()), QueryType_SelectionChanged);
             checkQueryType();
-
+            
             //Free SQL
             //needs to be unmarked when fixed VE issue
             SQLUCValueExpression.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDBValidation.Fields.SQL));
@@ -483,9 +483,11 @@ namespace Ginger.Actions
 
         private void SetVisibleControlsForAction()
         {
+
+            // Whenever no Database Operation is selected then the Input Type and the Radio buttons related to the input type should be hidden.
             if (ValidationCfgComboBox.SelectedItem == null)
             {
-                RadioButtonsSection.Visibility = Visibility.Visible;
+                RadioButtonsSection.Visibility = Visibility.Collapsed;
                 FreeSQLStackPanel.Visibility = Visibility.Collapsed;
                 SqlFile.Visibility = Visibility.Collapsed;
                 DoCommit.Visibility = Visibility.Collapsed;
@@ -538,7 +540,6 @@ namespace Ginger.Actions
                         lblWhere.Visibility = Visibility.Hidden;
                         TableColWhereStackPanel.Height = 40;
                         DoCommit.Visibility = Visibility.Collapsed;
-                        FreeSQLStackPanel.Visibility = Visibility.Collapsed;
                         DoUpdate.Visibility = Visibility.Visible;
                         RadioButtonsSection.Visibility = Visibility.Collapsed;
                         UpdateDbParametersGrid.Visibility = Visibility.Visible;
@@ -549,14 +550,18 @@ namespace Ginger.Actions
                     }
                     else
                     {
-                        FreeSQLStackPanel.Visibility = Visibility.Visible;
+                        string queryTypeRadioValue = mAct.GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton);
+                        if (queryTypeRadioValue == ActDBValidation.eQueryType.FreeSQL.ToString())
+                        {
+                            FreeSQLStackPanel.Visibility = Visibility.Visible;
+                            SqlFile.Visibility = Visibility.Collapsed;
+                        }
                         TableColWhereStackPanel.Visibility = Visibility.Collapsed;
                         txtWhere.Visibility = Visibility.Visible;
                         lblWhere.Visibility = Visibility.Visible;
                         TableColWhereStackPanel.Height = 244;
                         DoCommit.Visibility = Visibility.Visible;
                         DoUpdate.Visibility = Visibility.Collapsed;
-                        FreeSQLStackPanel.Visibility = Visibility.Visible;
                         RadioButtonsSection.Visibility = Visibility.Visible;
                     }
                     break;

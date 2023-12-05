@@ -44,8 +44,8 @@ namespace GingerWPF.BusinessFlowsLib
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
 
-        ActivitiesListViewPage mActivitiesPage;
-        VariabelsListViewPage mVariabelsPage;
+        public ActivitiesListViewPage mActivitiesPage;
+        public VariabelsListViewPage mVariabelsPage;
         BusinessFlowConfigurationsPage mConfigurationsPage;
 
         GenericWindow mGenericWin = null;
@@ -226,7 +226,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xDescriptionTextBlock.Text = string.Empty;
                 TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
-                //SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
+                //SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$PrimaryColor_Black")).ToString());
 
                 if (!string.IsNullOrEmpty(mBusinessFlow.Description))
                 {
@@ -311,7 +311,7 @@ namespace GingerWPF.BusinessFlowsLib
         private void xAnalyzeBtn_Click(object sender, RoutedEventArgs e)
         {
             AnalyzerPage AP = new AnalyzerPage();
-            AP.Init(WorkSpace.Instance.Solution, mBusinessFlow);
+            AP.Init(mBusinessFlow);
             AP.ShowAsWindow();
         }
 

@@ -372,7 +372,7 @@ namespace GingerCore.Drivers
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.DEBUG, "Error occured during POM learining while learning Custom Locators", ex);
+                Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during POM learining while learning Custom Locators", ex);
                 return null;
             }
         }

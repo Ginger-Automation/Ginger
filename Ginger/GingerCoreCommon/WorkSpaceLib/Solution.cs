@@ -449,38 +449,109 @@ namespace Ginger.SolutionGeneral
 
         public override void PostDeserialization()
         {
-            if (SolutionCategories.Count == 0)
+            foreach(eSolutionCategories category in Enum.GetValues(typeof(eSolutionCategories)))
             {
-                //Add default catrgories
-                SolutionCategory product = new SolutionCategory(eSolutionCategories.Product);
-                product.CategoryOptionalValues.Add(new SolutionCategoryValue("Product 1"));
-                product.CategoryOptionalValues.Add(new SolutionCategoryValue("Product 2"));
-                SolutionCategories.Add(product);
-
-                SolutionCategory testType = new SolutionCategory(eSolutionCategories.TestType);
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Regression"));
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Progression"));
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Sanity"));
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Acceptance"));
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("End to End"));
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Security"));
-                testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Performance"));
-                SolutionCategories.Add(testType);
-
-                SolutionCategory release = new SolutionCategory(eSolutionCategories.Release);
-                release.CategoryOptionalValues.Add(new SolutionCategoryValue("Release 1"));
-                release.CategoryOptionalValues.Add(new SolutionCategoryValue("Release 2"));
-                SolutionCategories.Add(release);
-
-                SolutionCategory iteration = new SolutionCategory(eSolutionCategories.Iteration);
-                iteration.CategoryOptionalValues.Add(new SolutionCategoryValue("Iteration 1"));
-                iteration.CategoryOptionalValues.Add(new SolutionCategoryValue("Iteration 2"));
-                SolutionCategories.Add(iteration);
-
-                SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory1));
-                SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory2));
-                SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory3));
+                if(!SolutionCategories.Any(x =>x.Category == category))
+                {
+                    AddCategory(category);
+                }
             }
+
+        }
+
+        private void AddCategory(eSolutionCategories category)
+        {
+            switch (category)
+            {
+                case eSolutionCategories.BusinessProcessTag:
+                    SolutionCategories.Add(GetBusinessProcessTagCategory());
+                    break;
+                case eSolutionCategories.SubBusinessProcessTag:
+                    SolutionCategories.Add(GetSubBusinessProcessTagCategory());
+                    break;
+                case eSolutionCategories.TestType: 
+                    SolutionCategories.Add(GetTestTypeCategory());
+                    break;
+                case eSolutionCategories.Product:
+                    SolutionCategories.Add(GetProductCategory());
+                    break;
+                case eSolutionCategories.Release:
+                    SolutionCategories.Add(GetReleaseCategory());
+                    break;
+                case eSolutionCategories.Iteration:
+                    SolutionCategories.Add(GetIterationCategory());
+                    break;
+                case eSolutionCategories.UserCategory1:
+                    SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory1));
+                    break;
+                case eSolutionCategories.UserCategory2:
+                    SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory2));
+                    break;
+                case eSolutionCategories.UserCategory3:
+                    SolutionCategories.Add(new SolutionCategory(eSolutionCategories.UserCategory3));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private SolutionCategory GetIterationCategory()
+        {
+            SolutionCategory iteration = new SolutionCategory(eSolutionCategories.Iteration);
+            iteration.CategoryOptionalValues.Add(new SolutionCategoryValue("Iteration 1"));
+            iteration.CategoryOptionalValues.Add(new SolutionCategoryValue("Iteration 2"));
+            return iteration;
+        }
+
+        private SolutionCategory GetReleaseCategory()
+        {
+            SolutionCategory release = new SolutionCategory(eSolutionCategories.Release);
+            release.CategoryOptionalValues.Add(new SolutionCategoryValue("Release 1"));
+            release.CategoryOptionalValues.Add(new SolutionCategoryValue("Release 2"));
+            return release;
+        }
+
+        private SolutionCategory GetProductCategory()
+        {
+            SolutionCategory product = new SolutionCategory(eSolutionCategories.Product);
+            product.CategoryOptionalValues.Add(new SolutionCategoryValue("Product 1"));
+            product.CategoryOptionalValues.Add(new SolutionCategoryValue("Product 2"));
+            return product;
+        }
+
+        private static SolutionCategory GetTestTypeCategory()
+        {
+            SolutionCategory testType = new SolutionCategory(eSolutionCategories.TestType);
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Regression"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Progression"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Sanity"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Acceptance"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("End to End"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Security"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Performance"));
+            testType.CategoryOptionalValues.Add(new SolutionCategoryValue("Data Creation"));
+            return testType;
+        }
+
+        private SolutionCategory GetSubBusinessProcessTagCategory()
+        {
+            SolutionCategory subBusinessProcessTags = new(eSolutionCategories.SubBusinessProcessTag);
+            subBusinessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Customer Payment (CP)"));
+            subBusinessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Customer Question (CHQ)"));
+            subBusinessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Order Creation (COP)"));
+
+            return subBusinessProcessTags;
+        }
+
+        private SolutionCategory GetBusinessProcessTagCategory()
+        {
+            SolutionCategory businessProcessTags = new(eSolutionCategories.BusinessProcessTag);
+            businessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Prepaid"));
+            businessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Postpaid"));
+            businessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Customer Creation"));
+            businessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Subscriber Creation"));
+            businessProcessTags.CategoryOptionalValues.Add(new SolutionCategoryValue("Contact Creation"));
+            return businessProcessTags;
         }
 
         public List<ApplicationPlatform> GetListOfPomSupportedPlatform()
