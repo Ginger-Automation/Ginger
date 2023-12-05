@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
@@ -30,19 +31,6 @@ using static Ginger.AnalyzerLib.RunSetConfigAnalyzer;
 
 namespace Ginger.AnalyzerLib
 {
-    public static class RunSetConfigAnalyzerCheckExtensions
-    {
-        public static Check ExcludedFromAll(this Check exclusions)
-        {
-            return Check.All ^ exclusions;
-        }
-
-        public static bool AreChecksEnabled(this Check checksEnabled, Check checksToVerify)
-        {
-            return (checksEnabled & checksToVerify) == checksToVerify;
-        }
-    }
-
     public class RunSetConfigAnalyzer : AnalyzerItemBase
     {
         public enum Check : uint
@@ -65,7 +53,7 @@ namespace Ginger.AnalyzerLib
         {
             List<AnalyzerItemBase> IssuesList = new();
             // check that we have Runners
-            if (checks.AreChecksEnabled(Check.NoRunners) && !RSC.GingerRunners.Any())
+            if (checks.AreFlagsSet(Check.NoRunners) && !RSC.GingerRunners.Any())
             {
                 RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
                 AGR.Description = "Missing Runners";
@@ -79,7 +67,7 @@ namespace Ginger.AnalyzerLib
             }
 
             //check we do not have duplicates Agents
-            if (checks.AreChecksEnabled(Check.DuplicateAgents) && RSC.RunModeParallel)
+            if (checks.AreFlagsSet(Check.DuplicateAgents) && RSC.RunModeParallel)
             {
                 List<Guid> Agents = new List<Guid>();
                 foreach (GingerRunner GR in RSC.GingerRunners)
@@ -125,7 +113,7 @@ namespace Ginger.AnalyzerLib
             }
 
             //check all configured mapped data still valid
-            if (checks.AreChecksEnabled(Check.BusinessFlowVariablesAreValid))
+            if (checks.AreFlagsSet(Check.BusinessFlowVariablesAreValid))
             {
                 foreach (GingerRunner GR in RSC.GingerRunners)
                 {

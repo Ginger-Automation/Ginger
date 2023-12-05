@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Platforms;
@@ -28,19 +29,6 @@ using static Ginger.AnalyzerLib.AnalyzeGingerRunner;
 
 namespace Ginger.AnalyzerLib
 {
-    public static class AnalyzeGingerRunnerCheckExtensions
-    {
-        public static Check ExcludedFromAll(this Check exclusions)
-        {
-            return Check.All ^ exclusions;
-        }
-
-        public static bool AreChecksEnabled(this Check checksEnabled, Check checksToVerify)
-        {
-            return (checksEnabled & checksToVerify) == checksToVerify;
-        }
-    }
-    
     public class AnalyzeGingerRunner : AnalyzerItemBase
     {
         public enum Check : uint
@@ -58,7 +46,7 @@ namespace Ginger.AnalyzerLib
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
 
             // check that we have BFs
-            if (checks.AreChecksEnabled(Check.NoBusinessFlows) && !GR.Executor.BusinessFlows.Any())
+            if (checks.AreFlagsSet(Check.NoBusinessFlows) && !GR.Executor.BusinessFlows.Any())
             {
                 AnalyzeGingerRunner AGR = CreateNewIssue(IssuesList, GR);
                 AGR.Description = "Runner is missing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
@@ -71,7 +59,7 @@ namespace Ginger.AnalyzerLib
                 AGR.Selected = false;
             }
 
-            if (checks.AreChecksEnabled(Check.AgentsAreConfigured))
+            if (checks.AreFlagsSet(Check.AgentsAreConfigured))
             {
                 //check all Agents are configured            
                 foreach (ApplicationAgent AA in GR.ApplicationAgents)

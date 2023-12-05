@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
@@ -94,7 +95,7 @@ namespace Ginger.AnalyzerLib
                         BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(BF.Guid);
                         if (actualBf != null)
                         {
-                            RunBusinessFlowAnalyzer(actualBf, solution, issuesList, AnalyzeBusinessFlow.Check.MissingMandatoryInputValues.ExcludedFromAll());
+                            RunBusinessFlowAnalyzer(actualBf, solution, issuesList, AnalyzeBusinessFlow.Check.All.ExcludeFlags(AnalyzeBusinessFlow.Check.MissingMandatoryInputValues));
                         }
                     }
                 });
