@@ -371,7 +371,7 @@ namespace GingerCoreNET.DataSource
                                         dr[property.Key] = property.Value.AsDateTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
                                         break;
                                     case BsonType.String:
-                                        dr[property.Key] = property.Value.AsString;
+                                        dr[property.Key] = property.Value.RawValue.ToString();
                                         break;
                                     case BsonType.Int32:
                                     case BsonType.Int64:
@@ -382,7 +382,7 @@ namespace GingerCoreNET.DataSource
                                         dr[property.Key] = property.Value.AsDecimal.ToString(CultureInfo.InvariantCulture);
                                         break;
                                     default:
-                                        dr[property.Key] = property.Value.ToString();
+                                        dr[property.Key] = property.Value.RawValue.ToString();
                                         break;
                                 }
                                 string ads = property.Key.ToString();
@@ -397,7 +397,7 @@ namespace GingerCoreNET.DataSource
                                 }
                                 else
                                 {
-                                    dr[property.Key] = property.Value.ToString();
+                                    dr[property.Key] = property.Value.RawValue.ToString();
                                 }
                             }
                         }
@@ -475,17 +475,17 @@ namespace GingerCoreNET.DataSource
                                         {
                                             dt.Columns.Add(property.Key, typeof(string));
                                         }
-                                        if (property.Value.AsString == "System.Collections.Generic.Dictionary`2[System.String,BsonValue]" || property.Value.AsString == "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
+                                        if (property.Value.RawValue.ToString() == "System.Collections.Generic.Dictionary`2[System.String,BsonValue]" || property.Value.RawValue.ToString() == "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
                                         {
                                             dr[property.Key] = "";
                                         }
-                                        else if (property.Value.AsString == "System.Data.DataRowCollection" || property.Value.AsString == "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
+                                        else if (property.Value.RawValue.ToString() == "System.Data.DataRowCollection" || property.Value.RawValue.ToString() == "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
                                         {
                                             duplicate = true;
                                         }
                                         else
                                         {
-                                            dr[property.Key] = property.Value.ToString();
+                                            dr[property.Key] = property.Value.RawValue.ToString();
                                         }
                                     }
                                 }
@@ -676,7 +676,7 @@ namespace GingerCoreNET.DataSource
                                     {
                                         dt.Columns.Add(property.Key, typeof(string));
                                     }
-                                    dr[property.Key] = property.Value.ToString();
+                                    dr[property.Key] = property.Value.RawValue.ToString();
                                 }
                             }
                             dt.Rows.Add(dr);
@@ -839,7 +839,7 @@ namespace GingerCoreNET.DataSource
                 var resultdxs = db.Execute(query).ToArray();
                 foreach (BsonValue bs in resultdxs)
                 {
-                    result = bs.AsString;
+                    result = bs.RawValue.ToString();
                 }
             }
             return result;
@@ -908,7 +908,7 @@ namespace GingerCoreNET.DataSource
                             var mapper = new BsonMapper();
                             var sd = mapper.ToDocument(dictionary);
 
-                            var nobj = mapper.ToObject<Dictionary<string, BsonValue>>(doc);
+                            //var nobj = mapper.ToObject<Dictionary<string, BsonValue>>(doc);
 
                             batch.Add(new BsonDocument(sd));
                             table.Upsert(batch);
