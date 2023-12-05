@@ -179,6 +179,8 @@ namespace GingerCore.Actions
             }
         }
 
+        internal string QueryValue { get; private set; }
+
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> QueryParams = new ObservableList<ActInputValue>();
 
@@ -407,7 +409,7 @@ namespace GingerCore.Actions
                     }
                     break;
             }
-            SQL = GetSQLQuery();
+            QueryValue = GetSQLQuery();
             NoSqlDriver.MakeSureConnectionIsOpen();
             NoSqlDriver.PerformDBAction();
         }
@@ -528,7 +530,9 @@ namespace GingerCore.Actions
         private void FreeSQLHandler()
         {
             int? queryTimeout = Timeout;
-            string calcSQL = GetSQLQuery();
+            QueryValue = GetSQLQuery();
+            //TODO: Instead of using calcSQL, we can use QueryValue directly. Need verify that it wouldn't cause any issue in parallel execution.
+            string calcSQL = QueryValue;
             string ErrorString = string.Empty;
             try
             {
