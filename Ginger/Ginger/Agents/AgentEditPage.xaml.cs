@@ -41,13 +41,17 @@ namespace Ginger.Agents
         ePlatformType mOriginalPlatformType;
         string mOriginalDriverType;
         bool IsReadOnly, IsEnabledCheckBox;
+        private readonly bool _ignoreValidationRules;
+        private readonly General.eRIPageViewMode _viewMode;
 
-        public AgentEditPage(Agent agent, bool isReadOnly = false)
+        public AgentEditPage(Agent agent, bool isReadOnly = false, bool ignoreValidationRules = false, General.eRIPageViewMode viewMode = General.eRIPageViewMode.Standalone)
         {
             InitializeComponent();
             //xAgentNameTextBox.IsReadOnly
 
             this.IsReadOnly = isReadOnly;
+            _ignoreValidationRules = ignoreValidationRules;
+            _viewMode = viewMode;
             ChangeContorlsReadOnly(IsReadOnly);
 
             if (agent != null)
@@ -56,7 +60,10 @@ namespace Ginger.Agents
                 CurrentItemToSave = mAgent;
                 xShowIDUC.Init(mAgent);
                 BindingHandler.ObjFieldBinding(xAgentNameTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Name));
-                xAgentNameTextBox.AddValidationRule(new AgentNameValidationRule());
+                if (!_ignoreValidationRules)
+                {
+                    xAgentNameTextBox.AddValidationRule(new AgentNameValidationRule());
+                }
                 BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mAgent, nameof(Agent.Notes));
                 BindingHandler.ObjFieldBinding(xAgentTypelbl, Label.ContentProperty, mAgent, nameof(Agent.AgentType));
                 BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mAgent, nameof(RepositoryItemBase.Publish));
@@ -84,12 +91,12 @@ namespace Ginger.Agents
                 }
                 if (mAgent.AgentType == eAgentType.Driver)
                 {
-                    xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent));
+                    xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent, _viewMode));
                 }
                 else
                 {
                     // xAgentConfigFrame.SetContent(new NewAgentDriverConfigPage(mAgent));
-                    xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent));
+                    xAgentConfigFrame.SetContent(new AgentDriverConfigPage(mAgent, _viewMode));
                 }
             }
         }
