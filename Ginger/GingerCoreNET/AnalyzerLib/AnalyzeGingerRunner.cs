@@ -46,7 +46,7 @@ namespace Ginger.AnalyzerLib
             List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
 
             // check that we have BFs
-            if (checks.AreFlagsSet(Check.NoBusinessFlows) && !GR.Executor.BusinessFlows.Any())
+            if (checks.AreAllFlagsSet(Check.NoBusinessFlows) && !GR.Executor.BusinessFlows.Any())
             {
                 AnalyzeGingerRunner AGR = CreateNewIssue(IssuesList, GR);
                 AGR.Description = "Runner is missing " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows);
@@ -59,7 +59,7 @@ namespace Ginger.AnalyzerLib
                 AGR.Selected = false;
             }
 
-            if (checks.AreFlagsSet(Check.AgentsAreConfigured))
+            if (checks.AreAllFlagsSet(Check.AgentsAreConfigured))
             {
                 //check all Agents are configured            
                 foreach (ApplicationAgent AA in GR.ApplicationAgents)

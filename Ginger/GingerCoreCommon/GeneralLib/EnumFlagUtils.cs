@@ -12,38 +12,61 @@ namespace Amdocs.Ginger.Common.GeneralLib
     public static class EnumFlagUtils
     {
         /// <summary>
-        /// Determines whether all the provided flags are set in the current value.
+        /// Determines whether all of the provided flags are set in the current value.
         /// </summary>
         /// <typeparam name="T">Type of flag enum.</typeparam>
         /// <param name="thisFlags">currently set flags.</param>
         /// <param name="flagsToVerify">flags to verify if they are set or not.</param>
-        /// <returns><see langword="true"/> if all the provided flags are set in the current value, otherwise <see langword="false"/>.</returns>
-        public static bool AreFlagsSet<T>(this T thisFlags, T flagsToVerify) where T : Enum
+        /// <returns><see langword="true"/> if all of the provided flags are set in the current value, otherwise <see langword="false"/>.</returns>
+        public static bool AreAllFlagsSet<T>(this T thisFlags, T flagsToVerify) where T : Enum
         {
             ArgumentNullException.ThrowIfNull(flagsToVerify);
-            if(TryCastToByteAndOperate(thisFlags, flagsToVerify, out byte thisFlagsAsByte, out byte flagsToVerifyAsByte))
+
+            //Binary operations explanation
+            //commonSetBits = thisFlags & flagsToVerify (commonSetBits are only those bits are set which are common in both, e.g. 100101 & 010100 = 000100)
+            //hasAllVerificationBits = commonSetBits == flagsToVerify (if commonSetBits has all the bits of flagsToVerify then, it will be equal to flagsToVerify, e.g. 010100 == 010100)
+
+            if (TryCastToByteAndOperate(thisFlags, flagsToVerify, out byte thisFlagsAsByte, out byte flagsToVerifyAsByte))
             {
-                return (thisFlagsAsByte & flagsToVerifyAsByte) == flagsToVerifyAsByte;
+                byte commonSetBits = (byte)(thisFlagsAsByte & flagsToVerifyAsByte);
+                bool hasAllVerificationBits = commonSetBits == flagsToVerifyAsByte;
+                return hasAllVerificationBits;
             }
             else if(TryCastToShortAndOperate(thisFlags, flagsToVerify, out short thisFlagsAsShort, out short flagsToVerifyAsShort))
             {
-                return (thisFlagsAsShort & flagsToVerifyAsShort) == flagsToVerifyAsShort;
+                short commonSetBits = (short)(thisFlagsAsShort & flagsToVerifyAsShort);
+                bool hasAllVerificationBits = commonSetBits == flagsToVerifyAsShort;
+                return hasAllVerificationBits;
             }
             else if(TryCastToUShortAndOperate(thisFlags, flagsToVerify, out ushort thisFlagsAsUShort, out ushort flagsToVerifyAsUShort))
             {
-                return (thisFlagsAsUShort & flagsToVerifyAsUShort) == flagsToVerifyAsUShort;
+                ushort commonSetBits = (ushort)(thisFlagsAsUShort & flagsToVerifyAsUShort);
+                bool hasAllVerificationBits = commonSetBits == flagsToVerifyAsUShort;
+                return hasAllVerificationBits;
             }
             else if(TryCastToIntAndOperate(thisFlags, flagsToVerify, out int thisFlagsAsInt, out int flagsToVerifyAsInt))
             {
-                return (thisFlagsAsInt & flagsToVerifyAsInt) == flagsToVerifyAsInt;
+                int commonSetBits = thisFlagsAsInt & flagsToVerifyAsInt;
+                bool hasAllVerificationBits = commonSetBits == flagsToVerifyAsInt;
+                return hasAllVerificationBits;
             }
             else if(TryCastToUIntAndOperate(thisFlags, flagsToVerify, out uint thisFlagsAsUInt, out uint flagsToVerifyAsUInt))
             {
-                return (thisFlagsAsUInt & flagsToVerifyAsUInt) == flagsToVerifyAsUInt;
+                uint commonSetBits = thisFlagsAsUInt & flagsToVerifyAsUInt;
+                bool hasAllVerificationBits = commonSetBits == flagsToVerifyAsUInt;
+                return hasAllVerificationBits;
             }
             else if (TryCastToLongAndOperate(thisFlags, flagsToVerify, out long thisFlagsAsLong, out long flagsToVerifyAsLong))
             {
-                return (thisFlagsAsLong & flagsToVerifyAsLong) == flagsToVerifyAsLong;
+                long commonSetBits = thisFlagsAsLong & flagsToVerifyAsLong;
+                bool hasAllVerificationBits = commonSetBits == flagsToVerifyAsLong;
+                return hasAllVerificationBits;
+            }
+            else if (TryCastToULongAndOperate(thisFlags, flagsToVerify, out ulong thisFlagsAsULong, out ulong flagsToVerifyAsULong))
+            {
+                ulong commonSetBits = thisFlagsAsULong & flagsToVerifyAsULong;
+                bool hasAllVerificationBits = commonSetBits == flagsToVerifyAsULong;
+                return hasAllVerificationBits;
             }
             else
             {
@@ -51,34 +74,125 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
+        /// <summary>
+        /// Determines whether any of the provided flags are set in the current value.
+        /// </summary>
+        /// <typeparam name="T">Type of flag enum.</typeparam>
+        /// <param name="thisFlags">currently set flags.</param>
+        /// <param name="flagsToVerify">flags to verify if they are set or not.</param>
+        /// <returns><see langword="true"/> if any of the provided flags are set in the current value, otherwise <see langword="false"/>.</returns>
+        public static bool AreAnyFlagsSet<T>(this T thisFlags, T flagsToVerify) where T : Enum
+        {
+            ArgumentNullException.ThrowIfNull(flagsToVerify);
+
+            //Binary operations explanation
+            //commonSetBits = thisFlags & flagsToVerify (commonSetBits are only those bits are set which are common in both, e.g. 100101 & 010100 = 000100)
+            //hasAnySetBit = commonSetBits > 0 (if there is any bit set in commonSetBits then, it's value will be greater than 0)
+
+            if (TryCastToByteAndOperate(thisFlags, flagsToVerify, out byte thisFlagsAsByte, out byte flagsToVerifyAsByte))
+            {
+                byte commonSetBits = (byte)(thisFlagsAsByte & flagsToVerifyAsByte);
+                bool hasAnySetBit = commonSetBits > 0;
+                return hasAnySetBit;
+            }
+            else if (TryCastToShortAndOperate(thisFlags, flagsToVerify, out short thisFlagsAsShort, out short flagsToVerifyAsShort))
+            {
+                short commonSetBits = (short)(thisFlagsAsShort & flagsToVerifyAsShort);
+                bool hasAnySetBit = commonSetBits > 0;
+                return hasAnySetBit;
+            }
+            else if (TryCastToUShortAndOperate(thisFlags, flagsToVerify, out ushort thisFlagsAsUShort, out ushort flagsToVerifyAsUShort))
+            {
+                ushort commonSetBits = (ushort)(thisFlagsAsUShort & flagsToVerifyAsUShort);
+                bool hasAnySetBit = commonSetBits > 0;
+                return hasAnySetBit;
+            }
+            else if (TryCastToIntAndOperate(thisFlags, flagsToVerify, out int thisFlagsAsInt, out int flagsToVerifyAsInt))
+            {
+                int commonSetBits = thisFlagsAsInt & flagsToVerifyAsInt;
+                bool hasAnySetBit = commonSetBits > 0;
+                return hasAnySetBit;
+            }
+            else if (TryCastToUIntAndOperate(thisFlags, flagsToVerify, out uint thisFlagsAsUInt, out uint flagsToVerifyAsUInt))
+            {
+                uint commonSetBits = thisFlagsAsUInt & flagsToVerifyAsUInt;
+                bool hasAnySetBit = commonSetBits > 0;
+                return hasAnySetBit;
+            }
+            else if (TryCastToLongAndOperate(thisFlags, flagsToVerify, out long thisFlagsAsLong, out long flagsToVerifyAsLong))
+            {
+                long commonSetBits = thisFlagsAsLong & flagsToVerifyAsLong;
+                bool hasAnySetBit = commonSetBits > 0;
+                return hasAnySetBit;
+            }
+            else if (TryCastToULongAndOperate(thisFlags, flagsToVerify, out ulong thisFlagsAsULong, out ulong flagsToVerifyAsULong))
+            {
+                ulong commonSetBits = thisFlagsAsULong & flagsToVerifyAsULong;
+                bool hasAnySetBit = commonSetBits > 0;
+                return hasAnySetBit;
+            }
+            else
+            {
+                throw CreateExceptionForInvalidEnumUnderlyingType<T>();
+            }
+        }
+
+        /// <summary>
+        /// Exclude the provided flags from the current value.
+        /// </summary>
+        /// <typeparam name="T">Type of flag enum.</typeparam>
+        /// <param name="thisFlags">currently set flags.</param>
+        /// <param name="flagsToExclude">flags to exclude from the current value.</param>
+        /// <returns>Value with all the provided flags excluded from the current value.</returns>
         public static T ExcludeFlags<T>(this T thisFlags, T flagsToExclude) where T : Enum
         {
             ArgumentNullException.ThrowIfNull(flagsToExclude);
-            //we first do an bitwise AND (&) operation between thisFlags and flagsToExclude, this will give us only those bits which are set in both thisFlags and flagsToExclude
-            //then we do a bitwise XOR (^) operation between thisFlags and bits from AND operation, this give us only those bits which are set in thisFlags but not set in AND operation output
+
+            //Binary operations explanation
+            //commonSetBits = thisFlags & flagsToExclude (commonSetBits are only those bits are set which are common in both, e.g. 100101 & 010100 = 000100)
+            //bitsAfterExclusion = thisFlags ^ commonSetBits (bitsAfterExclusion are those bits from thisFlags remaining after excluding commonSetBits, e.g. 100101 ^ 000100 = 100001)
+
             if (TryCastToByteAndOperate(thisFlags, flagsToExclude, out byte thisFlagsAsByte, out byte flagsToExcludeAsByte))
             {
-                return (T)(object)(thisFlagsAsByte ^ (thisFlagsAsByte & flagsToExcludeAsByte));
+                byte commonSetBits = (byte)(thisFlagsAsByte & flagsToExcludeAsByte);
+                byte bitsAfterExclusion = (byte)(thisFlagsAsByte ^ commonSetBits);
+                return (T)(object)bitsAfterExclusion;
             }
             else if (TryCastToShortAndOperate(thisFlags, flagsToExclude, out short thisFlagsAsShort, out short flagsToExcludeAsShort))
             {
-                return (T)(object)(thisFlagsAsShort ^ (thisFlagsAsShort & flagsToExcludeAsShort));
+                short commonSetBits = (short)(thisFlagsAsShort & flagsToExcludeAsShort);
+                short bitsAfterExclusion = (short)(thisFlagsAsShort ^ commonSetBits);
+                return (T)(object)bitsAfterExclusion;
             }
             else if (TryCastToUShortAndOperate(thisFlags, flagsToExclude, out ushort thisFlagsAsUShort, out ushort flagsToExcludeAsUShort))
             {
-                return (T)(object)(thisFlagsAsUShort ^ (thisFlagsAsUShort & flagsToExcludeAsUShort));
+                ushort commonSetBits = (ushort)(thisFlagsAsUShort & flagsToExcludeAsUShort);
+                ushort bitsAfterExclusion = (ushort)(thisFlagsAsUShort ^ commonSetBits);
+                return (T)(object)bitsAfterExclusion;
             }
             else if (TryCastToIntAndOperate(thisFlags, flagsToExclude, out int thisFlagsAsInt, out int flagsToExcludeAsInt))
             {
-                return (T)(object)(thisFlagsAsInt ^ (thisFlagsAsInt & flagsToExcludeAsInt));
+                int commonSetBits = thisFlagsAsInt & flagsToExcludeAsInt;
+                int bitsAfterExclusion = thisFlagsAsInt ^ commonSetBits;
+                return (T)(object)bitsAfterExclusion;
             }
             else if (TryCastToUIntAndOperate(thisFlags, flagsToExclude, out uint thisFlagsAsUInt, out uint flagsToExcludeAsUInt))
             {
-                return (T)(object)(thisFlagsAsUInt ^ (thisFlagsAsUInt & flagsToExcludeAsUInt));
+                uint commonSetBits = thisFlagsAsUInt & flagsToExcludeAsUInt;
+                uint bitsAfterExclusion = thisFlagsAsUInt ^ commonSetBits;
+                return (T)(object)bitsAfterExclusion;
             }
             else if (TryCastToLongAndOperate(thisFlags, flagsToExclude, out long thisFlagsAsLong, out long flagsToExcludeAsLong))
             {
-                return (T)(object)(thisFlagsAsLong ^ (thisFlagsAsLong & flagsToExcludeAsLong));
+                long commonSetBits = thisFlagsAsLong & flagsToExcludeAsLong;
+                long bitsAfterExclusion = thisFlagsAsLong ^ commonSetBits;
+                return (T)(object)bitsAfterExclusion;
+            }
+            else if (TryCastToULongAndOperate(thisFlags, flagsToExclude, out ulong thisFlagsAsULong, out ulong flagsToExcludeAsULong))
+            {
+                ulong commonSetBits = thisFlagsAsULong & flagsToExcludeAsULong;
+                ulong bitsAfterExclusion = thisFlagsAsULong ^ commonSetBits;
+                return (T)(object)bitsAfterExclusion;
             }
             else
             {

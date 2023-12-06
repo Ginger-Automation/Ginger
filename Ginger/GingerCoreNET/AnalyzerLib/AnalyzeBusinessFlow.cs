@@ -92,7 +92,7 @@ namespace Ginger.AnalyzerLib
         {
             List<AnalyzerItemBase> issues = new();
 
-            if (checks.AreFlagsSet(Check.MissingTargetApplications) && HasMissingTargetApplications(businessFlow, solution, out AnalyzeBusinessFlow issue))
+            if (checks.AreAllFlagsSet(Check.MissingTargetApplications) && HasMissingTargetApplications(businessFlow, solution, out AnalyzeBusinessFlow issue))
             {
                 issues.Add(issue);
             }
@@ -104,17 +104,17 @@ namespace Ginger.AnalyzerLib
         {
             List<AnalyzerItemBase> issues = new();
 
-            if (checks.AreFlagsSet(Check.NoActivities) && HasNoActivities(businessFlow, out AnalyzeBusinessFlow issue))
+            if (checks.AreAllFlagsSet(Check.NoActivities) && HasNoActivities(businessFlow, out AnalyzeBusinessFlow issue))
             {
                 issues.Add(issue);
             }
 
-            if (checks.AreFlagsSet(Check.MissingMandatoryInputValues) && HasMissingMandatoryInputValues(businessFlow, out List<AnalyzeBusinessFlow> issueList))
+            if (checks.AreAllFlagsSet(Check.MissingMandatoryInputValues) && HasMissingMandatoryInputValues(businessFlow, out List<AnalyzeBusinessFlow> issueList))
             {
                 issues.AddRange(issueList);
             }
 
-            if (checks.AreFlagsSet(Check.LegacyOutputValidation) && HasLegacyOutputValidations(businessFlow, out issue))
+            if (checks.AreAllFlagsSet(Check.LegacyOutputValidation) && HasLegacyOutputValidations(businessFlow, out issue))
             {
                 issues.Add(issue);
             }

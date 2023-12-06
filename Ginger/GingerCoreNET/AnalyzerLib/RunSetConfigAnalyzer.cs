@@ -53,7 +53,7 @@ namespace Ginger.AnalyzerLib
         {
             List<AnalyzerItemBase> IssuesList = new();
             // check that we have Runners
-            if (checks.AreFlagsSet(Check.NoRunners) && !RSC.GingerRunners.Any())
+            if (checks.AreAllFlagsSet(Check.NoRunners) && !RSC.GingerRunners.Any())
             {
                 RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
                 AGR.Description = "Missing Runners";
@@ -67,7 +67,7 @@ namespace Ginger.AnalyzerLib
             }
 
             //check we do not have duplicates Agents
-            if (checks.AreFlagsSet(Check.DuplicateAgents) && RSC.RunModeParallel)
+            if (checks.AreAllFlagsSet(Check.DuplicateAgents) && RSC.RunModeParallel)
             {
                 List<Guid> Agents = new List<Guid>();
                 foreach (GingerRunner GR in RSC.GingerRunners)
@@ -113,7 +113,7 @@ namespace Ginger.AnalyzerLib
             }
 
             //check all configured mapped data still valid
-            if (checks.AreFlagsSet(Check.BusinessFlowVariablesAreValid))
+            if (checks.AreAllFlagsSet(Check.BusinessFlowVariablesAreValid))
             {
                 foreach (GingerRunner GR in RSC.GingerRunners)
                 {
