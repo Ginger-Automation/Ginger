@@ -78,6 +78,7 @@ namespace Ginger.ConflictResolve
                             _analyzerPage.Init(mergedRunSetConfig);
                             xAnalyzerPageFrame.ClearAndSetContent(_analyzerPage);
                         });
+                        _analyzerPage.AnalyzeWithUI().Wait();
                     }
                 }
                 HideLoading();

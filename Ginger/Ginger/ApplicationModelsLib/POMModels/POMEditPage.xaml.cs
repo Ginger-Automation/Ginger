@@ -151,6 +151,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEditPageExpander, Expander.IsExpandedProperty, mPOM, nameof(mPOM.IsCollapseDetailsExapander));
 
             SetDefaultPage();
+
+            if(mEditMode == eRIPageViewMode.View || mEditMode == eRIPageViewMode.ViewAndExecute)
+            {
+                xDetailsStackPanel.IsEnabled = false;
+            }
+            else
+            {
+                xDetailsStackPanel.IsEnabled = true;
+            }
         }
 
         private void SetDefaultPage()

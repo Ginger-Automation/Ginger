@@ -268,12 +268,17 @@ namespace Ginger.Run
             _ignoreValidationRules = ignoreValidationRules;
             if (mEditMode == eEditMode.View)
             {
+                Config.IsEnabled = false;
                 xOperationsPnl.IsEnabled = false;
                 xRunnersCanvasControls.IsEnabled = false;
                 xRunnersExecutionControls.IsEnabled = false;
                 xBusinessFlowsListOperationsPnl.IsEnabled = false;
                 LoadRunSetConfig(runSetConfig, false, true);
                 return;
+            }
+            else
+            {
+                Config.IsEnabled = true;
             }
 
             if (WorkSpace.Instance.RunningInExecutionMode)
@@ -1596,7 +1601,7 @@ namespace Ginger.Run
         {
             try
             {
-                bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
+                bool isSolutionSame = mRunSetConfig != null && mRunSetConfig.ContainingFolderFullPath != null && mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName);
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              
                 if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
                 {

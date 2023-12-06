@@ -130,6 +130,54 @@ namespace Ginger.ConflictResolve
                     xPageFrame.ClearAndSetContent(new BusinessFlowViewPage(mergedBusinessFlow, context: null!, General.eRIPageViewMode.View, ignoreValidationRules: true));
                 });
             }
+            else if (mergedItem is RunSetConfig mergedRunSetConfig)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    xPageViewTabItem.IsEnabled = true;
+                    xPageFrame.ClearAndSetContent(new NewRunSetPage(mergedRunSetConfig, NewRunSetPage.eEditMode.View, ignoreValidationRules: true));
+                });
+            }
+            else if (mergedItem is Agent mergedAgent)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    xPageViewTabItem.IsEnabled = true;
+                    xPageFrame.ClearAndSetContent(new AgentEditPage(mergedAgent, isReadOnly: true, ignoreValidationRules: true, General.eRIPageViewMode.View));
+                });
+            }
+            else if (mergedItem is Activity mergedActivity)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    xPageViewTabItem.IsEnabled = true;
+                    xPageFrame.ClearAndSetContent(new ActivityPage(mergedActivity, new Amdocs.Ginger.Common.Context() { Activity = mergedActivity }, General.eRIPageViewMode.View));
+                });
+            }
+            else if (mergedItem is Act mergedAction)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    xPageViewTabItem.IsEnabled = true;
+                    xPageFrame.ClearAndSetContent(new ActionEditPage(mergedAction, General.eRIPageViewMode.View));
+                });
+            }
+            else if(mergedItem is ApplicationAPIModel mergedApplicationAPIModel)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    xPageViewTabItem.IsEnabled = true;
+                    xPageFrame.ClearAndSetContent(new APIModelPage(mergedApplicationAPIModel, General.eRIPageViewMode.View));
+                });
+            }
+            else if(mergedItem is ApplicationPOMModel mergedApplicationPOMModel)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    xPageViewTabItem.IsEnabled = true;
+                    xPageFrame.ClearAndSetContent(new POMEditPage(mergedApplicationPOMModel, General.eRIPageViewMode.View));
+                });
+            }
             else
             {
                 Dispatcher.Invoke(() =>
