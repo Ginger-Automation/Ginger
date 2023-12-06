@@ -200,6 +200,54 @@ namespace Amdocs.Ginger.Common.GeneralLib
             }
         }
 
+        public static T IncludeFlags<T>(this T thisFlags, T flagsToInclude) where T : Enum
+        {
+            ArgumentNullException.ThrowIfNull(flagsToInclude);
+
+            //Binary operations explanation
+            //combinedSetBits = thisFlags | flagsToExclude (combinedSetBits are those bits which are set in either, e.g. 100101 | 010100 = 110101)
+
+            if (TryCastToByteAndOperate(thisFlags, flagsToInclude, out byte thisFlagsAsByte, out byte flagsToIncludeAsByte))
+            {
+                byte combinedSetBits = (byte)(thisFlagsAsByte | flagsToIncludeAsByte);
+                return (T)(object)combinedSetBits;
+            }
+            else if (TryCastToShortAndOperate(thisFlags, flagsToInclude, out short thisFlagsAsShort, out short flagsToIncludeAsShort))
+            {
+                short combinedSetBits = (short)(thisFlagsAsShort | flagsToIncludeAsShort);
+                return (T)(object)combinedSetBits;
+            }
+            else if (TryCastToUShortAndOperate(thisFlags, flagsToInclude, out ushort thisFlagsAsUShort, out ushort flagsToIncludeAsUShort))
+            {
+                ushort combinedSetBits = (ushort)(thisFlagsAsUShort | flagsToIncludeAsUShort);
+                return (T)(object)combinedSetBits;
+            }
+            else if (TryCastToIntAndOperate(thisFlags, flagsToInclude, out int thisFlagsAsInt, out int flagsToIncludeAsInt))
+            {
+                int combinedSetBits = thisFlagsAsInt | flagsToIncludeAsInt;
+                return (T)(object)combinedSetBits;
+            }
+            else if (TryCastToUIntAndOperate(thisFlags, flagsToInclude, out uint thisFlagsAsUInt, out uint flagsToIncludeAsUInt))
+            {
+                uint combinedSetBits = thisFlagsAsUInt | flagsToIncludeAsUInt;
+                return (T)(object)combinedSetBits;
+            }
+            else if (TryCastToLongAndOperate(thisFlags, flagsToInclude, out long thisFlagsAsLong, out long flagsToIncludeAsLong))
+            {
+                long combinedSetBits = thisFlagsAsLong | flagsToIncludeAsLong;
+                return (T)(object)combinedSetBits;
+            }
+            else if (TryCastToULongAndOperate(thisFlags, flagsToInclude, out ulong thisFlagsAsULong, out ulong flagsToIncludeAsULong))
+            {
+                ulong combinedSetBits = thisFlagsAsULong | flagsToIncludeAsULong;
+                return (T)(object)combinedSetBits;
+            }
+            else
+            {
+                throw CreateExceptionForInvalidEnumUnderlyingType<T>();
+            }
+        }
+
         private static bool TryCastToByteAndOperate<T>(T value1, T value2, out byte convertedValue1, out byte convertedValue2) where T : Enum
         {
             if (Enum.GetUnderlyingType(typeof(T)) == typeof(byte))
