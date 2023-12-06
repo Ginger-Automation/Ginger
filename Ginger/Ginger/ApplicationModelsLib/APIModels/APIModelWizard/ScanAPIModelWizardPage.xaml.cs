@@ -82,9 +82,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
             AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(selectedAPIModels).OrderBy(d => d.comparisonStatus));
 
-            if (AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).Any())
+            if (AddAPIModelWizard.DeltaModelsList.Where(f=>f.matchingAPIModel!=null).GroupBy(m => m.matchingAPIModel).Any())
             {
-                foreach (DeltaAPIModel deltaAPIMod in AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)))
+                foreach (DeltaAPIModel deltaAPIMod in AddAPIModelWizard.DeltaModelsList.Where(f => f.matchingAPIModel != null).GroupBy(m => m.matchingAPIModel).SelectMany(m=>m))
                 {
                     deltaAPIMod.MatchingAPIName = "[Warning] " + deltaAPIMod.MatchingAPIName;
                 }
@@ -101,17 +101,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             xApisSelectionGrid.grdMain.SelectedItem = null;
 
             xApisSelectionGrid.DataSourceList = AddAPIModelWizard.DeltaModelsList;
-        }
-        private void xCompareAndMergeButton_Loaded(object sender, RoutedEventArgs e)
-        {
-            ucButton xCompareAndMergeButton = sender as ucButton;
-
-            if (xCompareAndMergeButton != null)
-            {
-                bool disableButtonCondition = (AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).Any());
-
-                xCompareAndMergeButton.IsEnabled = !disableButtonCondition;
-            }
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
