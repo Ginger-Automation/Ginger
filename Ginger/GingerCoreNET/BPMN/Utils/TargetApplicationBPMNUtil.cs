@@ -31,5 +31,24 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Utils
 
             return targetApp;
         }
+
+        /// <summary>
+        /// Get <see cref="TargetBase"/> whose Guid matches the given <paramref name="targetAppGuid"/>.
+        /// </summary>
+        /// <param name="targetAppGuid">Guid of the <see cref="TargetBase"/> to search for.</param>
+        /// <returns><see cref="TargetBase"/> with Guid matching the given <paramref name="targetAppGuid"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="TargetBase"/> is found with Guid matching the given <paramref name="targetAppGuid"/>.</exception>
+        internal static TargetBase GetTargetApplicationByGuid(Guid targetAppGuid, ISolutionFacadeForBPMN solutionFacade)
+        {
+            IEnumerable<TargetBase> targetApplications = solutionFacade.GetTargetApplications();
+            TargetBase? targetApp = targetApplications.FirstOrDefault(targetApp => targetApp.Guid == targetAppGuid);
+
+            if (targetApp == null)
+            {
+                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found with Guid '{targetAppGuid}'");
+            }
+
+            return targetApp;
+        }
     }
 }

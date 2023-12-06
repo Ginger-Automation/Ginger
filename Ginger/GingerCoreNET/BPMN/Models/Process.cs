@@ -80,14 +80,21 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
 
         public ExclusiveGateway AddExclusiveGateway(Guid guid, string name)
         {
-            return AddExclusiveGateway(guid.ToString(), name);
-        }
-
-        public ExclusiveGateway AddExclusiveGateway(string guid, string name)
-        {
             ExclusiveGateway exclusiveGateway = new(processId: Id, guid, name);
             _childEntities.Add(exclusiveGateway);
             return exclusiveGateway;
+        }
+
+        public CallActivity AddCallActivity(string name)
+        {
+            return AddCallActivity(Guid.NewGuid(), name);
+        }
+
+        public CallActivity AddCallActivity(Guid guid, string name)
+        {
+            CallActivity callActivity = new(processId: Id, guid, name);
+            _childEntities.Add(callActivity);
+            return callActivity;
         }
 
         public EndEvent AddEndEvent(string name)

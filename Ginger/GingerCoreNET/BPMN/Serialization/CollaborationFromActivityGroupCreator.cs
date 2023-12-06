@@ -298,7 +298,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             if (ActivityBPMNUtil.IsWebServicesActivity(activity, _solutionFacade))
             {
                 Consumer consumer = ActivityBPMNUtil.GetActivityFirstConsumer(activity);
-                TargetBase consumerTargetApp = GetTargetApplicationByGuid(consumer.ConsumerGuid);
+                TargetBase consumerTargetApp = TargetApplicationBPMNUtil.GetTargetApplicationByGuid(consumer.ConsumerGuid, _solutionFacade);
                 Participant participantForConsumer = new(consumerTargetApp.Guid)
                 {
                     Name = consumerTargetApp.Name,
@@ -316,25 +316,6 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             participants.Add(participantForTargetApp);
 
             return participants;
-        }
-
-        /// <summary>
-        /// Get <see cref="TargetBase"/> whose Guid matches the given <paramref name="targetAppGuid"/>.
-        /// </summary>
-        /// <param name="targetAppGuid">Guid of the <see cref="TargetBase"/> to search for.</param>
-        /// <returns><see cref="TargetBase"/> with Guid matching the given <paramref name="targetAppGuid"/>.</returns>
-        /// <exception cref="BPMNConversionException">If no <see cref="TargetBase"/> is found with Guid matching the given <paramref name="targetAppGuid"/>.</exception>
-        private TargetBase GetTargetApplicationByGuid(Guid targetAppGuid)
-        {
-            IEnumerable<TargetBase> targetApplications = _solutionFacade.GetTargetApplications();
-            TargetBase? targetApp = targetApplications.FirstOrDefault(targetApp => targetApp.Guid == targetAppGuid);
-
-            if (targetApp == null)
-            {
-                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found with Guid '{targetAppGuid}'");
-            }
-
-            return targetApp;
         }
 
         private sealed class HistoricalEnumerator<T> : IEnumerator<T>

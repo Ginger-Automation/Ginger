@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.BPMN.Models
 {
-    public sealed class ExclusiveGateway : IFlowSource, IFlowTarget
+    public sealed class CallActivity : IFlowSource, IFlowTarget
     {
         public Guid Guid { get; }
 
@@ -16,16 +16,18 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
 
         public string Name { get; }
 
+        public string ProcessRef { get; set; }
+
         public FlowCollection IncomingFlows { get; }
 
         public FlowCollection OutgoingFlows { get; }
 
-        public ExclusiveGateway(string processId, Guid guid, string name)
+        public CallActivity(string processId, Guid guid, string name)
         {
             Guid = guid;
-            ProcessId = processId;
-            Id = $"gateway_{guid}";
+            Id = $"callActivity_{Guid}";
             Name = name;
+            ProcessId = processId;
             IncomingFlows = new();
             OutgoingFlows = new();
         }
