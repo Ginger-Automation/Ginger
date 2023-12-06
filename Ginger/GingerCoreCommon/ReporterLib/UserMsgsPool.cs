@@ -318,7 +318,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.HasUnhandledConflicts, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "Cannot merge since you have {0} unhandled conflicts.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UncommitedChangesPreventCheckout, new UserMsg(eUserMsgType.ERROR, "Uncommited Changes", "Local branch has uncommited changes, check-in them before getting latest.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.IssueWhileAnalyzingConflict, new UserMsg(eUserMsgType.INFO, "Issues with Analyzer", "{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.ConflictsResolvedCount, new UserMsg(eUserMsgType.INFO, "Conflicts Resolved", "{0} conflicted files was resolved.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ConflictsResolvedCount, new UserMsg(eUserMsgType.INFO, "Conflicts Resolved", "{0} conflicted file(s) was resolved.", eUserMsgOption.OK, eUserMsgSelection.OK));
             #endregion SourceControl Messages
 
             #region Validation Messages
