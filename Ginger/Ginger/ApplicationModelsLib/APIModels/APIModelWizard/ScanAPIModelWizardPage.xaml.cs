@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
 using Ginger;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.UserControls;
@@ -31,6 +32,7 @@ using GingerCoreNET.Application_Models;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
+using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -99,6 +101,17 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             xApisSelectionGrid.grdMain.SelectedItem = null;
 
             xApisSelectionGrid.DataSourceList = AddAPIModelWizard.DeltaModelsList;
+        }
+        private void xCompareAndMergeButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            ucButton xCompareAndMergeButton = sender as ucButton;
+
+            if (xCompareAndMergeButton != null)
+            {
+                bool disableButtonCondition = (AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).Any());
+
+                xCompareAndMergeButton.IsEnabled = !disableButtonCondition;
+            }
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
