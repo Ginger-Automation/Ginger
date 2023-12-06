@@ -38,14 +38,10 @@ namespace UnitTests.NonUITests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            string Connectionstring = "filename=" + TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "DataSources" + Path.DirectorySeparatorChar + "LiteDB.db") + "; mode=Exclusive; upgrade=true";
+            string Connectionstring = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "DataSources" + Path.DirectorySeparatorChar + "LiteDB.db");
             excelFilePath = TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "ExportedDS.xlsx");
 
             liteDB.FileFullPath = Connectionstring;
-
-
-
-
         }
 
         [TestMethod]
@@ -188,7 +184,7 @@ namespace UnitTests.NonUITests
 
             //Act
             liteDB.SaveTable(dataTable);
-            var a = liteDB.GetResult("db.MyCustomizedDataTable.count");
+            var a = liteDB.GetResultString("db.MyCustomizedDataTable.count");
 
             //Assert
             Assert.AreEqual("1", a, "RowCount");

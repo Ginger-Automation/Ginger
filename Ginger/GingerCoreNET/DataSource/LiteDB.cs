@@ -51,6 +51,16 @@ namespace GingerCoreNET.DataSource
                 }
             }
         }
+       // mFileFullPath = $"filename={value}; mode=Exclusive; upgrade=true";
+
+
+        private string ConnectionString
+        {
+            get
+            {
+                return $"filename={FileFullPath}; mode=Exclusive; upgrade=true";
+            }
+        }
         public void FillDataGridView(IEnumerable<BsonDocument> documents)
         {
             if (documents != null)
@@ -101,7 +111,7 @@ namespace GingerCoreNET.DataSource
                                         dr[property.Key] = property.Value.AsDecimal.ToString(CultureInfo.InvariantCulture);
                                         break;
                                     default:
-                                        dr[property.Key] = property.Value.ToString();
+                                        dr[property.Key] = property.Value.RawValue.ToString();
                                         break;
                                 }
                             }
@@ -115,7 +125,7 @@ namespace GingerCoreNET.DataSource
         {
             try
             {
-                using (var db = new LiteDatabase(FileFullPath))
+                using (var db = new LiteDatabase(ConnectionString))
                 {
                     var results = db.GetCollection(tableName).Find(Query.All(), 0).ToList();
                     var table = db.GetCollection(tableName);
@@ -134,7 +144,7 @@ namespace GingerCoreNET.DataSource
 
         public override void AddTable(string tableName, string columnList = "")
         {
-            using (var db = new LiteDatabase(FileFullPath))
+            using (var db = new LiteDatabase(ConnectionString))
             {
                 var table = db.GetCollection(tableName);
 
@@ -170,7 +180,7 @@ namespace GingerCoreNET.DataSource
             }
             if (CopyTableName != tableName)
             {
-                using (var db = new LiteDatabase(FileFullPath))
+                using (var db = new LiteDatabase(ConnectionString))
                 {
                     var CopyTable = db.GetCollection(CopyTableName);
                     var table = db.GetCollection(tableName);
@@ -274,7 +284,7 @@ namespace GingerCoreNET.DataSource
 
         public override void DeleteTable(string tableName)
         {
-            using (var db = new LiteDatabase(FileFullPath))
+            using (var db = new LiteDatabase(ConnectionString))
             {
                 db.DropCollection(tableName);
             }
@@ -324,7 +334,7 @@ namespace GingerCoreNET.DataSource
         public override List<string> GetColumnList(string tableName)
         {
             List<string> mColumnNames = new ();
-            using (var db = new LiteDatabase(FileFullPath))
+            using (var db = new LiteDatabase(ConnectionString))
             {
                 if (tableName == "")
                 { return mColumnNames; }
@@ -454,7 +464,7 @@ namespace GingerCoreNET.DataSource
             List<string> mColumnNames = new List<string>();
             DataTable dataTable = new DataTable();
             bool duplicate = false;
-            using (var db = new LiteDatabase(FileFullPath))
+            using (var db = new LiteDatabase(ConnectionString))
             {
                 var results = db.GetCollection(query).Find(Query.All(), 0).ToList();
                 try
@@ -541,7 +551,9 @@ namespace GingerCoreNET.DataSource
 
                             // Converting BSON to JSON 
                             JArray array = new ();
-                            foreach (BsonValue bs in db.Execute(query).ToArray())
+                            // This query needs SQL Command
+                            BsonValue[] result = db.Execute(query).ToArray();
+                            foreach (BsonValue bs in result)
                             {
                                 string js = LiteDB.JsonSerializer.Serialize(bs);
                                 if (js == "0")
@@ -661,7 +673,7 @@ namespace GingerCoreNET.DataSource
         {
             DataTable Datatable = new DataTable();
             ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
-            using (var db = new LiteDatabase(FileFullPath))
+            using (var db = new LiteDatabase(ConnectionString))
             {
                 IEnumerable<string> Tables = db.GetCollectionNames();
                 foreach (string table in Tables)
@@ -697,7 +709,7 @@ namespace GingerCoreNET.DataSource
         }
         public override bool IsTableExist(string tableName)
         {
-            using (var db = new LiteDatabase(FileFullPath))
+            using (var db = new LiteDatabase(ConnectionString))
             {
                 IEnumerable<string> Tables = db.GetCollectionNames();
                 foreach (string table in Tables)
@@ -711,7 +723,7 @@ namespace GingerCoreNET.DataSource
 
         public override void RemoveColumn(string tableName, string columnName)
         {
-            using (var db = new LiteDatabase(FileFullPath))
+            using (var db = new LiteDatabase(ConnectionString))
             {
                 var results = db.GetCollection(tableName).Find(Query.All(), 0).ToList();
                 var table = db.GetCollection(tableName);
@@ -729,7 +741,7 @@ namespace GingerCoreNET.DataSource
             bool tableExist = false;
             try
             {                
-                using (var db = new LiteDatabase(FileFullPath))
+                using (var db = new LiteDatabase(ConnectionString))
                 {
                     tableExist = db.CollectionExists(newTableName);
                     if (!tableExist)
@@ -754,8 +766,9 @@ namespace GingerCoreNET.DataSource
 
         public override bool RunQuery(string query)
         {
-            using (LiteDatabase db = new LiteDatabase(FileFullPath))
+            using (LiteDatabase db = new LiteDatabase(ConnectionString))
             {
+                // SQL Command needed here:
                 var result = db.Execute(query);
             }
 
@@ -822,15 +835,16 @@ namespace GingerCoreNET.DataSource
         public string GetResultString(string query)
         {
             string result = null;
-            using (LiteDatabase db = new LiteDatabase(FileFullPath))
+            using (LiteDatabase db = new LiteDatabase(ConnectionString))
             {
+                // SQL query needed here
                 var resultdxs = db.Execute(query).ToArray();
                 foreach (BsonValue bs in resultdxs)
                 {
                     BsonDocument aa = bs.AsDocument;
                     foreach (KeyValuePair<string, BsonValue> keyval in aa.RawValue)
                     {
-                        result = keyval.Value.AsString;
+                        result = keyval.Value.RawValue.ToString();
                     }
                 }
             }
@@ -840,13 +854,14 @@ namespace GingerCoreNET.DataSource
         public object GetResult(string query)
         {
             object result = null;
-            using (LiteDatabase db = new LiteDatabase(FileFullPath))
+            using (LiteDatabase db = new LiteDatabase(ConnectionString))
             {
+                //SQL command needed here
                 
                 var resultdxs = db.Execute(query).ToArray();
                 foreach (BsonValue bs in resultdxs)
                 {
-                    result = bs.RawValue.ToString();
+                    result = bs.RawValue;
                 }
             }
             return result;
@@ -876,7 +891,7 @@ namespace GingerCoreNET.DataSource
                 dataTable.AcceptChanges();
             }
 
-            using (LiteDatabase db = new LiteDatabase(FileFullPath))
+            using (LiteDatabase db = new LiteDatabase(ConnectionString))
             {
                 dataTable.DefaultView.Sort = "GINGER_ID";
                 var table = db.GetCollection(dataTable.ToString());
@@ -1251,7 +1266,9 @@ namespace GingerCoreNET.DataSource
 
         public override int GetRowCount(string TableName)
         {
-            return GetQueryOutput("db." + TableName + ".find").Rows.Count;
+            // return GetQueryOutput("db." + TableName + ".find").Rows.Count;
+            using LiteDatabase liteDb = new(ConnectionString);
+            return liteDb.GetCollection(TableName).Count();
         }
 
         public override string AddNewKeyValueTableQuery()
@@ -1263,7 +1280,7 @@ namespace GingerCoreNET.DataSource
         {
             return ".db";
         }
-
+        //db.MyKeyValueDataTable.select GINGER_KEY_NAME where GINGER_KEY_NAME != null - GetKeyName -> query for get key name
         public override DataTable GetKeyName(string mDSTableName)
         {
             return GetQueryOutput("db." + mDSTableName + ".select GINGER_KEY_NAME where GINGER_KEY_NAME != null");
@@ -1282,7 +1299,7 @@ namespace GingerCoreNET.DataSource
 
         public void DeleteDBTableContents(string TName)
         {
-            using (LiteDatabase db = new LiteDatabase(FileFullPath))
+            using (LiteDatabase db = new LiteDatabase(ConnectionString))
             {
                 var table = db.GetCollection(TName);
 
