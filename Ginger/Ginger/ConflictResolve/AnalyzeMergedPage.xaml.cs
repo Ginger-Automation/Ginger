@@ -1,4 +1,5 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
@@ -45,13 +46,17 @@ namespace Ginger.ConflictResolve
                 typeof(RunSetConfig).IsAssignableFrom(type);
         }
 
-        public void WizardEvent(WizardEventArgs WizardEventArgs)
+        public void WizardEvent(WizardEventArgs wizardEventArgs)
         {
-            ResolveMergeConflictWizard wizard = (ResolveMergeConflictWizard)WizardEventArgs.Wizard;
+            ResolveMergeConflictWizard wizard = (ResolveMergeConflictWizard)wizardEventArgs.Wizard;
 
-            if (WizardEventArgs.EventType == EventType.Active)
+            if (wizardEventArgs.EventType == EventType.Active)
             {
                 OnWizardActivePage(wizard);
+            }
+            else if(wizardEventArgs.EventType == EventType.LeavingForNextPage)
+            {
+                OnLeavingForNextPage(wizardEventArgs);
             }
         }
 
@@ -106,6 +111,15 @@ namespace Ginger.ConflictResolve
                 xLoadingFrame.Visibility = Visibility.Collapsed;
                 xContentGrid.Visibility = Visibility.Visible;
             });
+        }
+    
+        private void OnLeavingForNextPage(WizardEventArgs wizardEventArgs)
+        {
+            if(_analyzerPage.TotalHighAndCriticalIssues > 0)
+            {
+                Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
+                wizardEventArgs.CancelEvent = true;
+            }
         }
     }
 }
