@@ -97,10 +97,8 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
                 uploadItem.ItemUploadType = UploadItemSelection.eItemUploadType.New;
                 uploadItem.ReplaceType = UploadItemSelection.eActivityInstanceType.LinkInstance;
             }
-            if (item is Activity)
+            if (item is Activity activity)
             {
-                Activity activity = (Activity)item;
-
                 if (activity.ActivitiesGroupID != null && activity.ActivitiesGroupID != string.Empty)
                 {
                     ActivitiesGroup group = Context.BusinessFlow.ActivitiesGroups.First(x => string.Equals(x.Name, activity.ActivitiesGroupID));
