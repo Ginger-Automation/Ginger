@@ -106,6 +106,7 @@ namespace Ginger.Agents
             xAgentNameTextBox.IsReadOnly = isReadOnly;
             xDescriptionTextBox.IsReadOnly = isReadOnly;
             xDriverTypeComboBox.IsReadOnly = isReadOnly;
+            xDriverTypeComboBox.IsEnabled = !isReadOnly;
             xPublishcheckbox.IsEnabled = !isReadOnly;
         }
 

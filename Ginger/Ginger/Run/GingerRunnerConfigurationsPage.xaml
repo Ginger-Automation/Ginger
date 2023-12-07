@@ -11,7 +11,7 @@
 	Title="Runner Configurations">
 
     <ScrollViewer Background="{StaticResource $BackgroundColor_LightGray}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <DockPanel  Margin="10">
+        <DockPanel x:Name="xWrappingDockPanel" Margin="10">
             <DockPanel x:Name="xNamePnl" DockPanel.Dock="Top" Margin="0,0,0,0">
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                     <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>

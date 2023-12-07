@@ -98,7 +98,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         readonly PomAllElementsPage mPomAllElementsPage;
         ePlatformType mAppPlatform;
-        public POMEditPage(ApplicationPOMModel POM, eRIPageViewMode editMode = eRIPageViewMode.View)
+        public POMEditPage(ApplicationPOMModel POM, eRIPageViewMode editMode)
         {
             InitializeComponent();
             mPOM = POM;
@@ -129,7 +129,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
             xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
 
-            mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
+            mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage, editMode: mEditMode);
             xUIElementsFrame.ClearAndSetContent(mPomAllElementsPage);
             mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
             UIElementTabTextBlockUpdate();
@@ -155,10 +155,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if(mEditMode == eRIPageViewMode.View || mEditMode == eRIPageViewMode.ViewAndExecute)
             {
                 xDetailsStackPanel.IsEnabled = false;
+                xScreenshotOperationBtns.IsEnabled = false;
             }
             else
             {
                 xDetailsStackPanel.IsEnabled = true;
+                xScreenshotOperationBtns.IsEnabled = false;
             }
         }
 
