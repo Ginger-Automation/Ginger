@@ -1206,7 +1206,7 @@ namespace Ginger.Actions
                     if (mDSTable.DSTableType == DataSourceTable.eDSTableType.GingerKeyValue)
                     {
                         TBH.AddText(" Query QUERY=");
-                        TBH.AddText("db." + mDSTable.Name);
+                       // TBH.AddText("db." + mDSTable.Name);
                         mActDSTblElem.IsKeyValueTable = true;
                         if (ControlActionComboBox.SelectedValue != null)
                         {
@@ -1214,11 +1214,11 @@ namespace Ginger.Actions
                             {
                                 if (cmbKeyName.SelectedItem == null)
                                 {
-                                    TBH.AddText(".select GINGER_KET_VALUE where GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
+                                    TBH.AddText($"Select GINGER_KEY_VALUE FROM {mDSTable.Name} where GINGER_KEY_NAME=\"{cmbKeyName.Text}\"");
                                 }
                                 else
                                 {
-                                    TBH.AddText(".select GINGER_KEY_VALUE where GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
+                                    TBH.AddText($"Select GINGER_KEY_VALUE  FROM {mDSTable.Name} where GINGER_KEY_NAME=\"{cmbKeyName.SelectedItem}\"");
                                 }
                             }
 
@@ -1226,28 +1226,28 @@ namespace Ginger.Actions
                             {
                                 if (cmbKeyName.SelectedItem == null)
                                 {
-                                    TBH.AddText(".update GINGER_KEY_VALUE = \"" + mActDSTblElem.ValueUC + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
+                                    TBH.AddText($"Update {mDSTable.Name} SET GINGER_KEY_VALUE = \"{mActDSTblElem.ValueUC}\" where GINGER_KEY_NAME=\"{cmbKeyName.Text}\"");
                                 }
                                 else
                                 {
-                                    TBH.AddText(".update GINGER_KEY_VALUE = \"" + mActDSTblElem.ValueUC + "\" where GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
+                                    TBH.AddText($"Update {mDSTable.Name} SET GINGER_KEY_VALUE = \"{mActDSTblElem.ValueUC}\" where GINGER_KEY_NAME=\"{cmbKeyName.SelectedItem} \"");
                                 }
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.DeleteRow.ToString())
                             {
                                 if (cmbKeyName.SelectedItem == null)
                                 {
-                                    TBH.AddBoldText(".delete GINGER_KEY_NAME=\"" + cmbKeyName.Text + "\"");
+                                    TBH.AddBoldText($"Delete {mDSTable.Name} where GINGER_KEY_NAME=\"{cmbKeyName.Text}\"");
                                 }
                                 else
                                 {
-                                    TBH.AddText(".delete GINGER_KEY_NAME=\"" + cmbKeyName.SelectedItem.ToString() + "\"");
+                                    TBH.AddText($"Delete {mDSTable.Name} where GINGER_KEY_NAME=\"{cmbKeyName.SelectedItem}\"");
                                 }
 
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.RowCount.ToString())
                             {
-                                TBH.AddBoldText(".count");
+                                TBH.AddBoldText($"SELECT COUNT(*) FROM {mDSTable.Name}");
                                 TBH.AddText("}");
                                 mActDSTblElem.ValueExp = TBH.GetText();
 
@@ -1255,7 +1255,7 @@ namespace Ginger.Actions
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == ActDSTableElement.eControlAction.AddRow.ToString())
                             {
-                                TBH.AddBoldText(".insert");
+                                TBH.AddBoldText($"INSERT INTO {mDSTable.Name}");
                                 TBH.AddText("}");
                                 mActDSTblElem.ValueExp = TBH.GetText();
 
@@ -1368,7 +1368,7 @@ namespace Ginger.Actions
                         }
                         TBH.AddText(" Query QUERY=");
 
-                        TBH.AddText("db." + mDSTable.Name);
+                        //TBH.AddText("db." + mDSTable.Name);
                         //Get ColunmNA
                         if (cmbColumnValue.SelectedIndex != -1)
                         {
@@ -1385,22 +1385,22 @@ namespace Ginger.Actions
                             {
                                 if (Where.IsChecked == true)
                                 {
-                                    TBH.AddBoldText(".select $ where ");
+                                    TBH.AddBoldText($"SELECT $ FROM {mDSTable.Name} where");
                                 }
                                 else
                                 {
-                                    TBH.AddBoldText(".find");
+                                    TBH.AddBoldText($"SELECT $ FROM {mDSTable.Name}");
                                 }
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "SetValue")
                             {
-                                TBH.AddBoldText(".update ");
+                                TBH.AddBoldText($"UPDATE {mDSTable.Name} ");
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteRow")
-                            { TBH.AddBoldText(".delete"); }
+                            { TBH.AddBoldText($"DELETE {mDSTable.Name} where"); }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "RowCount")
                             {
-                                TBH.AddBoldText(".count");
+                                TBH.AddBoldText($"SELECT COUNT(*) FROM {mDSTable.Name}");
                                 TBH.AddText("}");
                                 mActDSTblElem.ValueExp = TBH.GetText();
 
@@ -1408,7 +1408,7 @@ namespace Ginger.Actions
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "AvailableRowCount")
                             {
-                                TBH.AddBoldText(".find GINGER_USED= \"False\"");
+                                TBH.AddBoldText($"SELECT $ FROM {mDSTable.Name} where GINGER_USED= \"False\"");
                                 TBH.AddText("}");
                                 mActDSTblElem.ValueExp = TBH.GetText();
 
@@ -1416,19 +1416,18 @@ namespace Ginger.Actions
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "MarkAsDone")
                             {
-                                TBH.AddBoldText(".update GINGER_USED= \"True\"");
+                                TBH.AddBoldText($"UPDATE {mDSTable.Name} SET GINGER_USED= \"True\" ");
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "DeleteAll")
                             {
-                                TBH.AddBoldText(".delete");
+                                TBH.AddBoldText($"DELETE {mDSTable.Name}");
                                 TBH.AddText("}");
                                 mActDSTblElem.ValueExp = TBH.GetText();
-
                                 return;
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "MarkAllUnUsed")
                             {
-                                TBH.AddBoldText(".update GINGER_USED= \"False\" ");
+                                TBH.AddBoldText($"UPDATE {mDSTable.Name} SET GINGER_USED= \"False\"");
                                 TBH.AddText("}");
                                 mActDSTblElem.ValueExp = TBH.GetText();
 
@@ -1436,7 +1435,7 @@ namespace Ginger.Actions
                             }
                             else if (ControlActionComboBox.SelectedValue.ToString() == "MarkAllUsed")
                             {
-                                TBH.AddBoldText(".update GINGER_USED= \"True\"");
+                                TBH.AddBoldText($"UPDATE {mDSTable.Name} SET GINGER_USED= \"True\"");
                                 TBH.AddText("}");
                                 mActDSTblElem.ValueExp = TBH.GetText();
 
@@ -1452,32 +1451,36 @@ namespace Ginger.Actions
                                     {
                                         if (cmbColumnValue.SelectedIndex != -1)
                                         {
-                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + mActDSTblElem.ValueUC + "\" where GINGER_USED =\"False\"");
+                                            TBH.AddBoldText($"SET {cmbColumnValue.SelectedItem} = \"{ mActDSTblElem.ValueUC}\" where GINGER_USED =\"False\"");
                                         }
                                         else
                                         {
                                             string col = cmbColumnValue.Text;
-                                            TBH.AddBoldText(col + " = \"" + mActDSTblElem.ValueUC + "\" where GINGER_USED =\"False\"");
+                                            
+                                            TBH.AddBoldText($"SET {col} = \"{ mActDSTblElem.ValueUC}\" where GINGER_USED =\"False\"");
                                         }
 
                                     }
                                     else if (ControlActionComboBox.SelectedValue.ToString() != "MarkAsDone")
                                     {
-                                        TBH.AddBoldText(" GINGER_USED =\"False\"");
+                                        TBH.AddBoldText(" where GINGER_USED =\"False\"");
                                     }
                                 }
                                 else if (RowNum.IsChecked == true)
                                 {
+                                    
                                     if (ControlActionComboBox.SelectedValue.ToString() == "SetValue")
                                     {
+                                        //string rowNumber = RowSelectorValue.SelectedIndex != -1 ? RowSelectorValue.SelectedItem.ToString() : RowSelectorValue.Text;
+
                                         if (cmbColumnValue.SelectedIndex != -1)
                                         {
-                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + mActDSTblElem.ValueUC + "\"");
+                                            TBH.AddBoldText($"SET {cmbColumnValue.SelectedItem} = \"{mActDSTblElem.ValueUC}\"");
                                         }
                                         else
                                         {
                                             string col = cmbColumnValue.Text;
-                                            TBH.AddBoldText(col + " = \"" + mActDSTblElem.ValueUC + "\"");
+                                            TBH.AddBoldText($"SET {col} = \"{mActDSTblElem.ValueUC}\"");
                                         }
                                     }
                                 }
@@ -1488,12 +1491,12 @@ namespace Ginger.Actions
                                     {
                                         if (cmbColumnValue.SelectedIndex != -1)
                                         {
-                                            TBH.AddBoldText(cmbColumnValue.SelectedItem.ToString() + " = \"" + mActDSTblElem.ValueUC + "\" where");
+                                            TBH.AddBoldText($"SET {cmbColumnValue.SelectedItem} = \"{mActDSTblElem.ValueUC}\" where ");
                                         }
                                         else
                                         {
                                             string col = cmbColumnValue.Text;
-                                            TBH.AddBoldText(col + " = \"" + mActDSTblElem.ValueUC + "\" where");
+                                            TBH.AddBoldText($"SET {col} = \"{mActDSTblElem.ValueUC}\" where ");
                                         }
 
                                     }
@@ -1576,6 +1579,9 @@ namespace Ginger.Actions
                             selColName = selColName.Replace("__", "_");
                             string SelCellGingerId = ((DataRowView)((DataGridCellInfo)SelectedItemsList[0]).Item).Row["GINGER_ID"].ToString();
 
+                            // "db." + mDSTable.Name + ".select $." + selColName + " where GINGER_ID=" + SelCellGingerId
+
+                            //TBH.AddText($"SELECT {selColName} FROM {mDSTable.Name} where GINGER_ID = {SelCellGingerId}");
                             TBH.AddText("db." + mDSTable.Name + ".select $." + selColName + " where GINGER_ID=" + SelCellGingerId);
                             mActDSTblElem.VarName = selColName;
                         }

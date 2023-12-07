@@ -28,9 +28,9 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
     public class LiteDbConnector
     {
         public string ConnectionString { get; set; }
-        public LiteDbConnector(string connectionString)
+        public LiteDbConnector(string filePath)
         {
-            this.ConnectionString = connectionString;
+            this.ConnectionString = $"filename={filePath}; connection=Shared; upgrade=true";
         }
 
         public EntityBuilder<T> GetMapper<T>()
