@@ -17,21 +17,17 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
 using Amdocs.Ginger.CoreNET.BPMN.Models;
 using Amdocs.Ginger.CoreNET.BPMN.Utils;
 using GingerCore;
 using GingerCore.Activities;
-using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using MongoDB.Driver.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using static Amdocs.Ginger.CoreNET.BPMN.Serialization.ProcessEntitiesFromActivityFlowControlCreator;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
