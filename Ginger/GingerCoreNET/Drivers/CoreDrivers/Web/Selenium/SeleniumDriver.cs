@@ -10105,10 +10105,16 @@ namespace GingerCore.Drivers
         {
             try
             {
-                if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() &&
-                    mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.ResponseUrl.ToLower().Contains(x.ValueForDriver.ToLower())))
+                string monitorType = mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value;
+
+                // check if event URL is a URL to monitor
+                bool isMonitorUrl = mAct.UpdateOperationInputValues.Any(x => e.ResponseUrl.ToLower().Contains(x.ValueForDriver.ToLower()));
+
+                if (monitorType == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && isMonitorUrl)
                 {
-                    if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
+                    string requestType = mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value;
+
+                    if (requestType == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
                     {
                         if (e.ResponseResourceType == "XHR")
                         {
@@ -10120,7 +10126,7 @@ namespace GingerCore.Drivers
                         networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
                     }
                 }
-                else if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
+                else if (monitorType == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
                 {
                     if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
                     {
