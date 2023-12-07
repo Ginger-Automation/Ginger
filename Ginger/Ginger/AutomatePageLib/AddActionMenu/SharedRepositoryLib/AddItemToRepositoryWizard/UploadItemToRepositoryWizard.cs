@@ -103,12 +103,12 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
 
                 if (activity.ActivitiesGroupID != null && activity.ActivitiesGroupID != string.Empty)
                 {
-                    ActivitiesGroup group = (ActivitiesGroup)Context.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => x.Name == activity.ActivitiesGroupID);
+                    ActivitiesGroup group = Context.BusinessFlow.ActivitiesGroups.First(x => string.Equals(x.Name, activity.ActivitiesGroupID));
                     if (group != null)
                     {
                         ObservableList<ActivitiesGroup> repoGroups = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-                        ActivitiesGroup repoGroup = repoGroups.FirstOrDefault(x => (x.Guid == group.Guid) || (x.Guid == group.ParentGuid) || (group.ExternalID != null &&
-                        group.ExternalID != string.Empty && x.ExternalID == group.ExternalID));
+                        ActivitiesGroup repoGroup = repoGroups.First(x => (x.Guid == group.Guid) || (x.Guid == group.ParentGuid) || (group.ExternalID != null &&
+                        group.ExternalID != string.Empty && string.Equals(x.ExternalID, group.ExternalID)));
                         if (repoGroup == null)
                         {
                             uploadItem.Comment = "It is recommended to also add parent activity group: " + group.ItemName + " to repository";
