@@ -1370,7 +1370,12 @@ namespace Ginger.Run
         private void RunnerFlowelement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             RunnerPage rp = (RunnerPage)((FlowElement)sender).GetCustomeShape().Content;
-            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.ExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
+            General.eRIPageViewMode runnerConfigsPage = General.eRIPageViewMode.Standalone;
+            if(mEditMode == eEditMode.View)
+            {
+                runnerConfigsPage = General.eRIPageViewMode.ViewAndExecute;
+            }
+            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.ExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext, runnerConfigsPage);
             PACW.ShowAsWindow();
             rp.ExecutorEngine.GingerRunner.PauseDirtyTracking();
             rp.UpdateRunnerInfo();
