@@ -40,6 +40,12 @@ using System.IO;
 using Task = System.Threading.Tasks.Task;
 using System.Windows;
 using System.Windows.Controls;
+using GingerCore.Activities;
+using MongoDB.Bson;
+using System.Linq;
+using Ginger.Repository.AddItemToRepositoryWizard;
+using Ginger.Repository.ItemToRepositoryWizard;
+using Amdocs.Ginger.Repository;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -233,10 +239,25 @@ namespace Ginger.SolutionWindows.TreeViewItems
             Export.GingerToCSV.BusinessFlowToCSV(mBusinessFlow);
         }
 
+        private IEnumerable<ActivitiesGroup> GetActivityGroupsMissingFromSharedRepository()
+        {
+            return mBusinessFlow.ActivitiesGroups.Where(ag => !ag.IsSharedRepositoryInstance);
+        }
+
         private void ExportBPMN(object sender, RoutedEventArgs e)
         {
             try
             {
+                IEnumerable<ActivitiesGroup> activityGroupsMissingFromSharedRepository = GetActivityGroupsMissingFromSharedRepository();
+                bool hasActivityGroupsMissingFromSharedRepository = activityGroupsMissingFromSharedRepository.Any();
+                if (hasActivityGroupsMissingFromSharedRepository)
+                {
+                    bool wasAllAddedToSharedRepository = TryAddingMissingActivityGroupsToSharedRepository(activityGroupsMissingFromSharedRepository);
+                    if(!wasAllAddedToSharedRepository)
+                    {
+                        return;
+                    }
+                }
                 Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNFile);
                 string xml = CreateBPMNXMLForBusinessFlow();
                 string filePath = SaveBPMNXMLFile(filename: mBusinessFlow.Name, xml);
@@ -259,6 +280,28 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 Reporter.HideStatusMessage();
             }
+        }
+
+        private bool TryAddingMissingActivityGroupsToSharedRepository(IEnumerable<ActivitiesGroup> activityGroups)
+        {
+            eUserMsgSelection userResponse = Reporter.ToUser(eUserMsgKey.AddActivityGroupsToSharedRepositoryForBPMNConversion);
+            bool wasAllAddedToSharedRepository = false;
+            if(userResponse != eUserMsgSelection.Yes)
+            {
+                return wasAllAddedToSharedRepository;
+            }
+
+            Context context = new()
+            { 
+                BusinessFlow = mBusinessFlow 
+            };
+            IEnumerable<RepositoryItemBase> activitiesAndGroups = activityGroups
+                .SelectMany(ag => ag.ActivitiesIdentifiers.Select(ai => ai.IdentifiedActivity))
+                .Cast<RepositoryItemBase>()
+                .Concat(activityGroups);
+            WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(context, activitiesAndGroups));
+            wasAllAddedToSharedRepository = activityGroups.All(ag => ag.IsSharedRepositoryInstance);
+            return wasAllAddedToSharedRepository;
         }
 
         private string CreateBPMNXMLForBusinessFlow()

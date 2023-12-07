@@ -101,11 +101,11 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             {
                 if (activity.ActivitiesGroupID != null && activity.ActivitiesGroupID != string.Empty)
                 {
-                    ActivitiesGroup group = Context.BusinessFlow.ActivitiesGroups.First(x => string.Equals(x.Name, activity.ActivitiesGroupID));
+                    ActivitiesGroup? group = Context.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => string.Equals(x.Name, activity.ActivitiesGroupID));
                     if (group != null)
                     {
                         ObservableList<ActivitiesGroup> repoGroups = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
-                        ActivitiesGroup repoGroup = repoGroups.First(x => (x.Guid == group.Guid) || (x.Guid == group.ParentGuid) || (group.ExternalID != null &&
+                        ActivitiesGroup? repoGroup = repoGroups.FirstOrDefault(x => (x.Guid == group.Guid) || (x.Guid == group.ParentGuid) || (group.ExternalID != null &&
                         group.ExternalID != string.Empty && string.Equals(x.ExternalID, group.ExternalID)));
                         if (repoGroup == null)
                         {
