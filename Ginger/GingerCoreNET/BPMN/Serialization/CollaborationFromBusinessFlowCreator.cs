@@ -46,6 +46,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
                 SystemRef = firstParticipant.Guid.ToString(),
                 Description = _businessFlow.Description
             };
+
+            foreach(Participant participant in participants)
+            {
+                collaboration.AddParticipant(participant);
+            }
+
             return collaboration;
         }
 
@@ -125,6 +131,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
         {
             Participant participant = GetParticipantOfActivityGroup(activityGroup, collaboration);
             CallActivity callActivity = participant.Process.AddCallActivity(name: activityGroup.Name);
+            callActivity.ProcessRef = activityGroup.Guid.ToString();
             return callActivity;
         }
 

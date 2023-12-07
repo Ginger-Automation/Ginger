@@ -20,6 +20,9 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
+using Amdocs.Ginger.CoreNET.BPMN.Models;
+using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using Ginger.Actions.ActionConversion;
 using Ginger.ALM;
 using Ginger.BusinessFlowWindows;
@@ -33,7 +36,8 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.IO;
+using Task = System.Threading.Tasks.Task;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -41,6 +45,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
 {
     public class BusinessFlowTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
+        private const string BPMNExportPath = @"~\\Documents\BPMN";
+
         private BusinessFlowViewPage mBusinessFlowViewPage;
 
         private BusinessFlow mBusinessFlow { get; set; }
@@ -118,6 +124,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to ALM", ExportToALM, null, eImageType.ALM);
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Map to ALM", MapToALM, null, eImageType.MapALM);
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to CSV", ExportToCSV, null, eImageType.CSV);
+                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to BPMN file", ExportBPMN, icon: eImageType.ShareExternal);
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExportMenu, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
 
                 if (WorkSpace.Instance.BetaFeatures.BFExportToJava)
@@ -224,6 +231,62 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             Export.GingerToCSV.BrowseForFilename();
             Export.GingerToCSV.BusinessFlowToCSV(mBusinessFlow);
+        }
+
+        private void ExportBPMN(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNFile);
+                string xml = CreateBPMNXMLForBusinessFlow();
+                string filePath = SaveBPMNXMLFile(filename: mBusinessFlow.Name, xml);
+                string solutionRelativeFilePath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(filePath);
+                Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeFilePath);
+            }
+            catch (Exception ex)
+            {
+                if (ex is BPMNException)
+                {
+                    Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, ex.Message);
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, "Unexpected Error, check logs for more details.");
+                }
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while exporting BPMN", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
+        }
+
+        private string CreateBPMNXMLForBusinessFlow()
+        {
+            Reporter.ToLog(eLogLevel.INFO, $"Creating BPMN XML for business flow {mBusinessFlow.Name}");
+            CollaborationFromBusinessFlowCreator collaborationFromBusinessFlowCreator = new(mBusinessFlow);
+            Collaboration collaboration = collaborationFromBusinessFlowCreator.Create();
+            BPMNXMLSerializer serializer = new();
+            string xml = serializer.Serialize(collaboration);
+            return xml;
+        }
+
+        private string SaveBPMNXMLFile(string filename, string xml)
+        {
+            Reporter.ToLog(eLogLevel.INFO, "Saving BPMN XML file");
+            if (!filename.EndsWith(".bpmn", StringComparison.OrdinalIgnoreCase))
+            {
+                filename += ".bpmn";
+            }
+
+            string directoryPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BPMNExportPath);
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+            string filePath = Path.Combine(directoryPath, filename);
+            File.WriteAllText(filePath, xml);
+            return filePath;
         }
     }
 }

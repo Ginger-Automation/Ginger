@@ -129,7 +129,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             {
                 Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNFile);
-                string xml = CreateBPMNXMLForActivitiesGroup(mActivitiesGroup);
+                string xml = CreateBPMNXMLForActivitiesGroup();
                 string filePath = SaveBPMNXMLFile(filename: mActivitiesGroup.Name, xml);
                 string solutionRelativeFilePath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(filePath);
                 Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeFilePath);
@@ -152,10 +152,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
         }
 
-        private string CreateBPMNXMLForActivitiesGroup(ActivitiesGroup activitiesGroup)
+        private string CreateBPMNXMLForActivitiesGroup()
         {
-            Reporter.ToLog(eLogLevel.INFO, $"Creating BPMN XML for activities group {activitiesGroup.Name}");
-            CollaborationFromActivityGroupCreator activitiesGroupToBPMNConverter = new(activitiesGroup);
+            Reporter.ToLog(eLogLevel.INFO, $"Creating BPMN XML for activities group {mActivitiesGroup.Name}");
+            CollaborationFromActivityGroupCreator activitiesGroupToBPMNConverter = new(mActivitiesGroup);
             Collaboration collaboration = activitiesGroupToBPMNConverter.Create();
             BPMNXMLSerializer serializer = new();
             string xml = serializer.Serialize(collaboration);
