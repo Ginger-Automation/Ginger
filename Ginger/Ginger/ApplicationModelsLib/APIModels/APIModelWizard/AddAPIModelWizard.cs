@@ -16,18 +16,24 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
+using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
+using Couchbase.Configuration.Server.Serialization;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.WizardLib;
 using GingerCore;
 using GingerCoreNET.Application_Models;
+using GingerWPF.ApplicationModelsLib.APIModelWizard;
+using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 {
@@ -56,6 +62,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
         public RepositoryFolder<ApplicationAPIModel> APIModelFolder;
 
         public string URL { get; set; }
+
+        public string InfoTitle { get; set; }
 
         public ObservableList<TemplateFile> XTFList = new ObservableList<TemplateFile>();
 
@@ -115,13 +123,41 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
             ImportAPIModels(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));
         }
+        private void AddGlobalParam(string customurl, string placehold)
+        {
+            GlobalAppModelParameter newModelGlobalParam = new GlobalAppModelParameter();
+            ModelParamUtils.SetUniquePlaceHolderName(newModelGlobalParam);
+
+            newModelGlobalParam.PlaceHolder = placehold;
+            newModelGlobalParam.OptionalValuesList.Add(new OptionalValue() { Value = customurl, IsDefault = true });
+            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newModelGlobalParam);
+        }
+
+
+        private void AddGlobalInModel(string zy)
+        {
+            var temp = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
+            var itemtoadd = temp.FirstOrDefault(m=>m.PlaceHolder == zy);
+            ModelParamsPage.AddGlobalParametertoAPIGlobalParameterList(temp, itemtoadd);
+
+        }
 
         private void ImportAPIModels(ObservableList<ApplicationAPIModel> SelectedAAMList)
         {
+            string? customUrl = SelectedAAMList.FirstOrDefault()?.URLDomain;
+            string manurl = "{Swagger}";
+            AddGlobalParam(customUrl,manurl);
+
+            var GlobalParams = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
+            var itemtoadd = GlobalParams.FirstOrDefault(m => m.PlaceHolder == manurl);
+
+            ModelParamsPage.AddGlobalParametertoAPIGlobalParameterList(GlobalParams, itemtoadd);
             foreach (ApplicationAPIModel apiModel in SelectedAAMList)
             {
+                //AddGlobalInModel(manurl);
+                apiModel.EndpointURL = manurl + apiModel.EndpointURL;
                 Dictionary<System.Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = new Dictionary<Tuple<string, string>, List<string>>();
-
+                apiModel.GlobalAppModelParameters = new ObservableList<GlobalAppModelParameter>() { itemtoadd };
                 ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
                 ImportOptionalValues.GetAllOptionalValuesFromExamplesFiles(apiModel, OptionalValuesPerParameterDict);
                 ImportOptionalValues.PopulateOptionalValuesForAPIParameters(apiModel, OptionalValuesPerParameterDict);

@@ -391,7 +391,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             bodyNodeSyncPage.ShowAsWindow();
         }
 
-        private void AddGlobalParametertoAPIGlobalParameterList(ObservableList<GlobalAppModelParameter> APIGlobalParamList, GlobalAppModelParameter GAMP)
+        public static void AddGlobalParametertoAPIGlobalParameterList(ObservableList<GlobalAppModelParameter> APIGlobalParamList, GlobalAppModelParameter GAMP)
         {
             GlobalAppModelParameter newAPIGlobalParam = new GlobalAppModelParameter();
             newAPIGlobalParam.Guid = GAMP.Guid;
