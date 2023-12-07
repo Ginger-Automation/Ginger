@@ -619,16 +619,8 @@ namespace GingerCoreNET.DataSource
         }
         public override bool IsTableExist(string tableName)
         {
-            using (var db = new LiteDatabase(ConnectionString))
-            {
-                IEnumerable<string> Tables = db.GetCollectionNames();
-                foreach (string table in Tables)
-                {
-                    if (tableName == table)
-                    { return true; }
-                }
-            }
-            return false;
+            using var db = new LiteDatabase(ConnectionString);
+            return db.CollectionExists(tableName);
         }
 
         public override void RemoveColumn(string tableName, string columnName)

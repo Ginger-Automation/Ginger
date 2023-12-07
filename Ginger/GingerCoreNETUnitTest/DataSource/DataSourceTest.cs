@@ -301,7 +301,7 @@ namespace UnitTests.NonUITests
             liteDB.Execute(actDSTable, query);
 
             //Assert
-            query = "SELECT $ FROM MyCustomizedDataTable GINGER_USED= \"True\"";
+            query = "SELECT $ FROM MyCustomizedDataTable where GINGER_USED= \"True\"";
             DataTable dt = liteDB.GetQueryOutput(query);
 
             Assert.AreEqual(1, dt.Rows.Count);
