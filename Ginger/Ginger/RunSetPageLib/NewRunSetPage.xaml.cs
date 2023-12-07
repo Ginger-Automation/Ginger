@@ -273,12 +273,14 @@ namespace Ginger.Run
                 xRunnersCanvasControls.IsEnabled = false;
                 xRunnersExecutionControls.IsEnabled = false;
                 xBusinessFlowsListOperationsPnl.IsEnabled = false;
+                xRunsetOperationsTab.IsEnabled = false;
                 LoadRunSetConfig(runSetConfig, false, true);
                 return;
             }
             else
             {
                 Config.IsEnabled = true;
+                xRunsetOperationsTab.IsEnabled = true;
             }
 
             if (WorkSpace.Instance.RunningInExecutionMode)

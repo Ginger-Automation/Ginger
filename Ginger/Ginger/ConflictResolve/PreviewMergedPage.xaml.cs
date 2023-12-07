@@ -175,7 +175,7 @@ namespace Ginger.ConflictResolve
                 Dispatcher.Invoke(() =>
                 {
                     xPageViewTabItem.IsEnabled = true;
-                    xPageFrame.ClearAndSetContent(new POMEditPage(mergedApplicationPOMModel, General.eRIPageViewMode.View));
+                    xPageFrame.ClearAndSetContent(new POMEditPage(mergedApplicationPOMModel, General.eRIPageViewMode.View, ignoreValidationRules: true));
                 });
             }
             else
