@@ -54,7 +54,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
         private Collaboration CreateCollaboration()
         {
 
-            IEnumerable<Participant> participants = CreateParticipants(_businessFlow.ActivitiesGroups);
+            IEnumerable<Participant> participants = CreateParticipants();
             
             Participant firstParticipant = participants.First();
 
@@ -73,9 +73,15 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             return collaboration;
         }
 
-        private IEnumerable<Participant> CreateParticipants(IEnumerable<ActivitiesGroup> activityGroups)
+        private IEnumerable<Participant> CreateParticipants()
         {
             List<Participant> participants = new();
+            IEnumerable<ActivitiesGroup> activityGroups = _businessFlow.ActivitiesGroups.Where(ag => ActivitiesGroupBPMNUtil.IsActive(ag, _solutionFacade));
+            if(!activityGroups.Any())
+            {
+                throw new BPMNConversionException($"No active {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} available in {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}.");
+            }
+
             foreach(ActivitiesGroup activityGroup in activityGroups)
             {
                 Participant participant = CreateParticipant(activityGroup);
