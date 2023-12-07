@@ -274,6 +274,7 @@ namespace Ginger.Run
                 xRunnersExecutionControls.IsEnabled = false;
                 xBusinessFlowsListOperationsPnl.IsEnabled = false;
                 xRunsetOperationsTab.IsEnabled = false;
+                mALMDefectsOpening.IsEnabled = false;
                 LoadRunSetConfig(runSetConfig, false, true);
                 return;
             }
@@ -281,6 +282,7 @@ namespace Ginger.Run
             {
                 Config.IsEnabled = true;
                 xRunsetOperationsTab.IsEnabled = true;
+                mALMDefectsOpening.IsEnabled = true;
             }
 
             if (WorkSpace.Instance.RunningInExecutionMode)
