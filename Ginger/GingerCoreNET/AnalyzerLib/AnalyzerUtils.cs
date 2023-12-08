@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
@@ -58,14 +59,14 @@ namespace Ginger.AnalyzerLib
             ReportUnusedVariables(solution, usedVariablesInSolution, issuesList);
         }
 
-        public void RunRunSetConfigAnalyzer(RunSetConfig runsetConfig, ObservableList<AnalyzerItemBase> issuesList)
+        public void RunRunSetConfigAnalyzer(RunSetConfig runsetConfig, RunSetConfigAnalyzer.Check runsetAnalyzerChecks, AnalyzeGingerRunner.Check runnerAnalyzerChecks, ObservableList<AnalyzerItemBase> issuesList)
         {
-            RunRunSetConfigAnalyzer(runsetConfig, solution: null, issuesList);
+            RunRunSetConfigAnalyzer(runsetConfig, runsetAnalyzerChecks, runnerAnalyzerChecks, solution: null, issuesList);
         }
 
-        public void RunRunSetConfigAnalyzer(RunSetConfig mRunSetConfig, Solution solution, ObservableList<AnalyzerItemBase> issuesList)
+        public void RunRunSetConfigAnalyzer(RunSetConfig mRunSetConfig, RunSetConfigAnalyzer.Check runsetAnalyzerChecks, AnalyzeGingerRunner.Check runnerAnalyzerChecks, Solution solution, ObservableList<AnalyzerItemBase> issuesList)
         {
-            foreach (AnalyzerItemBase issue in RunSetConfigAnalyzer.Analyze(mRunSetConfig, solution))
+            foreach (AnalyzerItemBase issue in RunSetConfigAnalyzer.Analyze(mRunSetConfig, solution, runsetAnalyzerChecks))
             {
                 AddIssue(issuesList, issue);
             }
@@ -75,9 +76,14 @@ namespace Ginger.AnalyzerLib
             List<Guid> checkedGuidList = new List<Guid>();
             Parallel.ForEach(mRunSetConfig.GingerRunners, new ParallelOptions { MaxDegreeOfParallelism = 5 }, GR =>
             {
-                foreach (AnalyzerItemBase issue in AnalyzeGingerRunner.Analyze(GR))
+                foreach (AnalyzerItemBase issue in AnalyzeGingerRunner.Analyze(GR, runnerAnalyzerChecks))
                 {
                     AddIssue(issuesList, issue);
+                }
+
+                if(GR.Executor == null)
+                {
+                    return;
                 }
 
                 //Code to analyze Runner Unique Businessflow with Source BF
@@ -89,7 +95,7 @@ namespace Ginger.AnalyzerLib
                         BusinessFlow actualBf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(BF.Guid);
                         if (actualBf != null)
                         {
-                            RunBusinessFlowAnalyzer(actualBf, solution, issuesList, AnalyzeBusinessFlow.Check.MissingMandatoryInputValues.ExcludedFromAll());
+                            RunBusinessFlowAnalyzer(actualBf, solution, issuesList, AnalyzeBusinessFlow.Check.All.ExcludeFlags(AnalyzeBusinessFlow.Check.MissingMandatoryInputValues));
                         }
                     }
                 });
@@ -385,7 +391,7 @@ namespace Ginger.AnalyzerLib
         public bool AnalyzeRunset(RunSetConfig runset, bool reportIssues)
         {
             ObservableList<AnalyzerItemBase> issues = new ObservableList<AnalyzerItemBase>();
-            RunRunSetConfigAnalyzer(runset, issues);
+            RunRunSetConfigAnalyzer(runset, RunSetConfigAnalyzer.Check.All, AnalyzeGingerRunner.Check.All, issues);
 
             List<AnalyzerItemBase> highCriticalIssues = issues.Where(x => x.Severity == AnalyzerItemBase.eSeverity.High || x.Severity == AnalyzerItemBase.eSeverity.Critical).ToList();
             if (highCriticalIssues != null && highCriticalIssues.Count > 0)

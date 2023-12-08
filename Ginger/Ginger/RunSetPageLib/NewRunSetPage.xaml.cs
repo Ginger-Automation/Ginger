@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
@@ -85,6 +86,8 @@ namespace Ginger.Run
         private bool mRunSetBusinessFlowWasChanged = false;
         private bool mSolutionWasChanged = false;
         Context mContext = new Context();
+        private readonly bool _ignoreValidationRules;
+
         public enum eObjectType
         {
             BusinessFlow,
@@ -259,21 +262,33 @@ namespace Ginger.Run
             }
         }
 
-        public NewRunSetPage(RunSetConfig runSetConfig, eEditMode editMode = eEditMode.ExecutionFlow)//when window opened automatically when running from command line
+        public NewRunSetPage(RunSetConfig runSetConfig, eEditMode editMode = eEditMode.ExecutionFlow, bool ignoreValidationRules = false)//when window opened automatically when running from command line
         {
             InitializeComponent();
             //Init
             Init();
 
             mEditMode = editMode;
+            _ignoreValidationRules = ignoreValidationRules;
             if (mEditMode == eEditMode.View)
             {
+                Config.IsEnabled = false;
                 xOperationsPnl.IsEnabled = false;
                 xRunnersCanvasControls.IsEnabled = false;
                 xRunnersExecutionControls.IsEnabled = false;
                 xBusinessFlowsListOperationsPnl.IsEnabled = false;
+                xRunsetOperationsTab.IsEnabled = false;
+                mALMDefectsOpening.IsEnabled = false;
+                mExecutionSummary.IsEnabled = false;
                 LoadRunSetConfig(runSetConfig, false, true);
                 return;
+            }
+            else
+            {
+                Config.IsEnabled = true;
+                xRunsetOperationsTab.IsEnabled = true;
+                mALMDefectsOpening.IsEnabled = true;
+                mExecutionSummary.IsEnabled = true;
             }
 
             if (WorkSpace.Instance.RunningInExecutionMode)
@@ -713,7 +728,10 @@ namespace Ginger.Run
         void InitRunSetConfigurations()
         {
             BindingHandler.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
-            xRunSetNameTextBox.AddValidationRule(new RunSetNameValidationRule());
+            if (!_ignoreValidationRules)
+            {
+                xRunSetNameTextBox.AddValidationRule(new RunSetNameValidationRule());
+            }
             xShowIDUC.Init(mRunSetConfig);
             BindingHandler.ObjFieldBinding(xRunSetDescriptionTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Description));
             TagsViewer.Init(mRunSetConfig.Tags);
@@ -725,10 +743,12 @@ namespace Ginger.Run
             xSealightsBuildSessionIDTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID));
 
             // check if fields have been populated (front-end validation)
-            xSealightsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
-            xSealightsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsLabId), "Lab ID or Build Session ID must be provided"));
-            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
-
+            if (!_ignoreValidationRules)
+            {
+                xSealightsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
+                xSealightsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsLabId), "Lab ID or Build Session ID must be provided"));
+                xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
+            }
             xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
             xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
             xDefaultSessionIdRadioBtn.Checked += XDefaultSessionIdRadioBtn_Checked;
@@ -1365,7 +1385,12 @@ namespace Ginger.Run
         private void RunnerFlowelement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             RunnerPage rp = (RunnerPage)((FlowElement)sender).GetCustomeShape().Content;
-            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.ExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
+            General.eRIPageViewMode runnerConfigsPage = General.eRIPageViewMode.Standalone;
+            if(mEditMode == eEditMode.View)
+            {
+                runnerConfigsPage = General.eRIPageViewMode.ViewAndExecute;
+            }
+            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.ExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext, runnerConfigsPage);
             PACW.ShowAsWindow();
             rp.ExecutorEngine.GingerRunner.PauseDirtyTracking();
             rp.UpdateRunnerInfo();
@@ -1599,7 +1624,7 @@ namespace Ginger.Run
                 //show current Run set UI
                 xRunsetPageGrid.Visibility = Visibility.Visible;
 
-                bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
+                bool isSolutionSame = mRunSetConfig != null && mRunSetConfig.ContainingFolderFullPath != null && mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName);
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              
                 if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
                 {
