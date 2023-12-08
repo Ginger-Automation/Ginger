@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
@@ -273,12 +274,18 @@ namespace Ginger.Run
                 xRunnersCanvasControls.IsEnabled = false;
                 xRunnersExecutionControls.IsEnabled = false;
                 xBusinessFlowsListOperationsPnl.IsEnabled = false;
+                xRunsetOperationsTab.IsEnabled = false;
+                mALMDefectsOpening.IsEnabled = false;
+                mExecutionSummary.IsEnabled = false;
                 LoadRunSetConfig(runSetConfig, false, true);
                 return;
             }
             else
             {
                 Config.IsEnabled = true;
+                xRunsetOperationsTab.IsEnabled = true;
+                mALMDefectsOpening.IsEnabled = true;
+                mExecutionSummary.IsEnabled = true;
             }
 
             if (WorkSpace.Instance.RunningInExecutionMode)

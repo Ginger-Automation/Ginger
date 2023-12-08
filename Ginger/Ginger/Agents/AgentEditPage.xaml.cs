@@ -108,6 +108,7 @@ namespace Ginger.Agents
             xDriverTypeComboBox.IsReadOnly = isReadOnly;
             xDriverTypeComboBox.IsEnabled = !isReadOnly;
             xPublishcheckbox.IsEnabled = !isReadOnly;
+            xTestBtn.IsEnabled = !IsReadOnly;
         }
 
         private void xPluginIdComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
