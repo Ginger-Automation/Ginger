@@ -12,6 +12,7 @@ using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace GingerCoreNETUnitTest.BPMN
     [TestClass]
     public sealed class CollaborationFromActivityGroupCreatorTests
     {
+        private const string ConditionalTaskNamePrefix = "FC - ";
+
         [TestMethod]
         public void Create_NullActivityGroup_ThrowsArgumentNullException()
         {
@@ -247,7 +250,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(f => f.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
 
@@ -261,7 +264,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -276,7 +279,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == activityWithFlowControl.Guid);
             Flow? flowFromConditionalTaskToTargetActivityTask = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == targetActivityTask);
             Assert.IsNotNull(flowFromConditionalTaskToTargetActivityTask, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to target {nameof(Activity)} {nameof(Task)}.");
@@ -364,7 +367,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(f => f.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
 
@@ -378,7 +381,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -395,7 +398,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == targetActivityGuid);
             Flow? flowFromConditionalTaskToTargetActivityTask = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == targetActivityTask);
             Assert.IsNotNull(flowFromConditionalTaskToTargetActivityTask, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to target {nameof(Activity)} {nameof(Task)}.");
@@ -483,7 +486,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(f => f.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
 
@@ -497,7 +500,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -514,7 +517,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => string.Equals(t.Name, targetActivityName));
             Flow? flowFromConditionalTaskToTargetActivityTask = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == targetActivityTask);
             Assert.IsNotNull(flowFromConditionalTaskToTargetActivityTask, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to target {nameof(Activity)} {nameof(Task)}.");
@@ -584,7 +587,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} is found.");
         }
 
@@ -598,7 +601,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -626,7 +629,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Name.Contains(ConditionalTaskNamePrefix));
             EndEvent terminationEndEvent = process.EndEvents.First(e => e.EndEventType == EndEventType.Termination);
             Flow? flowFromConditionalTaskToEndEvent = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == terminationEndEvent);
             Assert.IsNotNull(flowFromConditionalTaskToEndEvent, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to {nameof(EndEvent)} with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Termination)}.");
@@ -715,7 +718,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
 
@@ -729,7 +732,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.First(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -756,7 +759,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Name.Contains(ConditionalTaskNamePrefix));
             EndEvent? terminationEndEvent = process.EndEvents.FirstOrDefault(e => e.EndEventType == EndEventType.Termination);
             Flow? flowFromConditionalTaskToEndEvent = conditionalTask.OutgoingFlows.First(f => f.Target == terminationEndEvent);
             Assert.IsNotNull(flowFromConditionalTaskToEndEvent, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to {nameof(EndEvent)} with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Termination)}.");
@@ -844,7 +847,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(f => f.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(f => f.Name.Contains(ConditionalTaskNamePrefix));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
         
@@ -858,7 +861,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Name.Contains(ConditionalTaskNamePrefix));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -885,7 +888,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Name.Contains(ConditionalTaskNamePrefix));
             EndEvent errorEndEvent = process.EndEvents.First(e => e.EndEventType == EndEventType.Error);
             Flow? flowFromConditionalTaskToEndEvent = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == errorEndEvent);
             Assert.IsNotNull(flowFromConditionalTaskToEndEvent, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to {nameof(EndEvent)} with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Error)}.");
@@ -973,7 +976,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
 
@@ -987,7 +990,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -1020,7 +1023,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Name.Contains(ConditionalTaskNamePrefix));
             Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => string.Equals(t.Name, targetActivityName));
             Flow? flowFromConditionalTaskToTargetActivityTask = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == targetActivityTask);
             Assert.IsNotNull(flowFromConditionalTaskToTargetActivityTask, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to target {nameof(Activity)} {nameof(Task)}.");
