@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
 using Amdocs.Ginger.CoreNET.BPMN.Models;
+using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using Amdocs.Ginger.CoreNET.BPMN.Utils;
 using GingerCore;
 using GingerCore.Activities;
@@ -30,7 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 #nullable enable
-namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
+namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 {
     //TODO: BPMN - How to handle WithoutPlatformApps
     /// <summary>
@@ -146,7 +147,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
 
                 Flow.Create(name: string.Empty, source: lastTaskForCurrentActivity, target: exclusiveGateway);
 
-                foreach(IFlowSource conditionalTask in conditionalTasks)
+                foreach (IFlowSource conditionalTask in conditionalTasks)
                 {
                     Flow.Create(name: string.Empty, source: conditionalTask, target: firstEntityForNextActivity);
                 }

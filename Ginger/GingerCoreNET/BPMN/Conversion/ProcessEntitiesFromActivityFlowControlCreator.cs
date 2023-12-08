@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 
 #nullable enable
-namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
+namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 {
     internal sealed class ProcessEntitiesFromActivityFlowControlCreator
     {
@@ -33,7 +33,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
         private readonly Participant _activityParticipant;
         private readonly IEnumerable<FlowControl> _flowControls;
 
-        internal ProcessEntitiesFromActivityFlowControlCreator(Activity activity, Collaboration collaboration, ISolutionFacadeForBPMN solutionFacade, 
+        internal ProcessEntitiesFromActivityFlowControlCreator(Activity activity, Collaboration collaboration, ISolutionFacadeForBPMN solutionFacade,
             IDictionary<Activity, IEnumerable<Task>> activityTasksMap)
         {
             _activity = activity;
@@ -283,7 +283,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
         {
             string targetActivityName = flowControl.GetNameFromValue();
             Activity? targetActivity = _solutionFacade.GetActivitiesFromSharedRepository().FirstOrDefault(a => string.Equals(a.ActivityName, targetActivityName));
-            if(targetActivity == null)
+            if (targetActivity == null)
             {
                 throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found in shared repository by name {targetActivityName}.");
             }
@@ -321,7 +321,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
         private IEnumerable<Task> GetTasksForActivityByGuid(Guid activityGuid)
         {
             KeyValuePair<Activity, IEnumerable<Task>> activityTasksPair = _activityTasksMap.FirstOrDefault(kv => kv.Key.Guid == activityGuid);
-            if(activityTasksPair.Value == null || !activityTasksPair.Value.Any())
+            if (activityTasksPair.Value == null || !activityTasksPair.Value.Any())
             {
                 throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found by Guid '{activityGuid}'.");
             }
@@ -334,7 +334,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             KeyValuePair<Activity, IEnumerable<Task>> activityTasksPair = _activityTasksMap.FirstOrDefault(kv => string.Equals(kv.Key.ActivityName, activityName));
             if (activityTasksPair.Value == null || !activityTasksPair.Value.Any())
             {
-                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found by name '{ activityName}'.");
+                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found by name '{activityName}'.");
             }
 
             return activityTasksPair.Value;

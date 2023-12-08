@@ -46,6 +46,8 @@ using System.Linq;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.CoreNET.BPMN.Conversion;
+using Amdocs.Ginger.CoreNET.BPMN.Exportation;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -130,7 +132,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to ALM", ExportToALM, null, eImageType.ALM);
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Map to ALM", MapToALM, null, eImageType.MapALM);
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to CSV", ExportToCSV, null, eImageType.CSV);
-                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to BPMN file", ExportBPMN, icon: eImageType.ShareExternal);
+                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to BPMN file", ExportBPMNMenuItem_Click, icon: eImageType.ShareExternal);
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExportMenu, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
 
                 if (WorkSpace.Instance.BetaFeatures.BFExportToJava)
@@ -244,25 +246,70 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return mBusinessFlow.ActivitiesGroups.Where(ag => !ag.IsSharedRepositoryInstance);
         }
 
-        private void ExportBPMN(object sender, RoutedEventArgs e)
+        private void ExportBPMNMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            bool wasAllAddedToSharedRepository = TryAddingMissingActivityGroupsToSharedRepository();
+            if (!wasAllAddedToSharedRepository)
+            {
+                return;
+            }
+            ExportBusinessFlowBPMN();
+        }
+
+        private bool TryAddingMissingActivityGroupsToSharedRepository()
+        {
+            bool wasAllAddedToSharedRepository; 
+            try
+            { 
+                IEnumerable<ActivitiesGroup> activityGroups = GetActivityGroupsMissingFromSharedRepository();
+                bool hasActivityGroupsMissingFromSharedRepository = activityGroups.Any();
+                if (hasActivityGroupsMissingFromSharedRepository)
+                {
+                    wasAllAddedToSharedRepository = true;
+                    return wasAllAddedToSharedRepository;
+                }
+
+                eUserMsgSelection userResponse = Reporter.ToUser(eUserMsgKey.AddActivityGroupsToSharedRepositoryForBPMNConversion);
+                if (userResponse != eUserMsgSelection.Yes)
+                {
+                    wasAllAddedToSharedRepository = false;
+                    return wasAllAddedToSharedRepository;
+                }
+
+                Context context = new()
+                {
+                    BusinessFlow = mBusinessFlow
+                };
+                IEnumerable<RepositoryItemBase> activitiesAndGroups = activityGroups
+                    .SelectMany(ag => ag.ActivitiesIdentifiers.Select(ai => ai.IdentifiedActivity))
+                    .Cast<RepositoryItemBase>()
+                    .Concat(activityGroups);
+                WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(context, activitiesAndGroups));
+
+                wasAllAddedToSharedRepository = activityGroups.All(ag => ag.IsSharedRepositoryInstance);
+                return wasAllAddedToSharedRepository;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.FailedToAddItemsToSharedRepository, "Unexpected error, check logs for more details");
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while adding missing activities and activity groups to shared repository.", ex);
+                wasAllAddedToSharedRepository = false;
+                return wasAllAddedToSharedRepository;
+            }
+        }
+
+        private void ExportBusinessFlowBPMN()
         {
             try
             {
-                IEnumerable<ActivitiesGroup> activityGroupsMissingFromSharedRepository = GetActivityGroupsMissingFromSharedRepository();
-                bool hasActivityGroupsMissingFromSharedRepository = activityGroupsMissingFromSharedRepository.Any();
-                if (hasActivityGroupsMissingFromSharedRepository)
-                {
-                    bool wasAllAddedToSharedRepository = TryAddingMissingActivityGroupsToSharedRepository(activityGroupsMissingFromSharedRepository);
-                    if(!wasAllAddedToSharedRepository)
-                    {
-                        return;
-                    }
-                }
                 Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNFile);
-                string xml = CreateBPMNXMLForBusinessFlow();
-                string filePath = SaveBPMNXMLFile(filename: mBusinessFlow.Name, xml);
-                string solutionRelativeFilePath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(filePath);
-                Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeFilePath);
+
+                string fullBPMNExportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BPMNExportPath);
+                BusinessFlowToBPMNExporter businessFlowToBPMNExporter = new(mBusinessFlow, fullBPMNExportPath);
+                string exportPath = businessFlowToBPMNExporter.Export();
+                string solutionRelativeExportPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(exportPath);
+
+                Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeExportPath);
             }
             catch (Exception ex)
             {
@@ -280,56 +327,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 Reporter.HideStatusMessage();
             }
-        }
-
-        private bool TryAddingMissingActivityGroupsToSharedRepository(IEnumerable<ActivitiesGroup> activityGroups)
-        {
-            eUserMsgSelection userResponse = Reporter.ToUser(eUserMsgKey.AddActivityGroupsToSharedRepositoryForBPMNConversion);
-            bool wasAllAddedToSharedRepository = false;
-            if(userResponse != eUserMsgSelection.Yes)
-            {
-                return wasAllAddedToSharedRepository;
-            }
-
-            Context context = new()
-            { 
-                BusinessFlow = mBusinessFlow 
-            };
-            IEnumerable<RepositoryItemBase> activitiesAndGroups = activityGroups
-                .SelectMany(ag => ag.ActivitiesIdentifiers.Select(ai => ai.IdentifiedActivity))
-                .Cast<RepositoryItemBase>()
-                .Concat(activityGroups);
-            WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(context, activitiesAndGroups));
-            wasAllAddedToSharedRepository = activityGroups.All(ag => ag.IsSharedRepositoryInstance);
-            return wasAllAddedToSharedRepository;
-        }
-
-        private string CreateBPMNXMLForBusinessFlow()
-        {
-            Reporter.ToLog(eLogLevel.INFO, $"Creating BPMN XML for business flow {mBusinessFlow.Name}");
-            CollaborationFromBusinessFlowCreator collaborationFromBusinessFlowCreator = new(mBusinessFlow);
-            Collaboration collaboration = collaborationFromBusinessFlowCreator.Create();
-            BPMNXMLSerializer serializer = new();
-            string xml = serializer.Serialize(collaboration);
-            return xml;
-        }
-
-        private string SaveBPMNXMLFile(string filename, string xml)
-        {
-            Reporter.ToLog(eLogLevel.INFO, "Saving BPMN XML file");
-            if (!filename.EndsWith(".bpmn", StringComparison.OrdinalIgnoreCase))
-            {
-                filename += ".bpmn";
-            }
-
-            string directoryPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BPMNExportPath);
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
-            string filePath = Path.Combine(directoryPath, filename);
-            File.WriteAllText(filePath, xml);
-            return filePath;
         }
     }
 }

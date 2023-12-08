@@ -27,7 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 #nullable enable
-namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
+namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 {
     public sealed class CollaborationFromBusinessFlowCreator
     {
@@ -55,7 +55,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
         {
 
             IEnumerable<Participant> participants = CreateParticipants();
-            
+
             Participant firstParticipant = participants.First();
 
             Collaboration collaboration = new(_businessFlow.Guid, CollaborationType.UseCase)
@@ -65,7 +65,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
                 Description = _businessFlow.Description
             };
 
-            foreach(Participant participant in participants)
+            foreach (Participant participant in participants)
             {
                 collaboration.AddParticipant(participant);
             }
@@ -77,12 +77,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
         {
             List<Participant> participants = new();
             IEnumerable<ActivitiesGroup> activityGroups = _businessFlow.ActivitiesGroups.Where(ag => ActivitiesGroupBPMNUtil.IsActive(ag, _solutionFacade));
-            if(!activityGroups.Any())
+            if (!activityGroups.Any())
             {
                 throw new BPMNConversionException($"No active {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} available in {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}.");
             }
 
-            foreach(ActivitiesGroup activityGroup in activityGroups)
+            foreach (ActivitiesGroup activityGroup in activityGroups)
             {
                 Participant participant = CreateParticipant(activityGroup);
                 participants.Add(participant);
@@ -95,7 +95,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             IEnumerable<Activity> activities = ActivitiesGroupBPMNUtil.GetActivities(activityGroup, _solutionFacade);
             Activity firstActivity = activities.First();
             Participant participant;
-            if(ActivityBPMNUtil.IsWebServicesActivity(firstActivity, _solutionFacade))
+            if (ActivityBPMNUtil.IsWebServicesActivity(firstActivity, _solutionFacade))
             {
                 Consumer firstConsumer = ActivityBPMNUtil.GetActivityFirstConsumer(firstActivity);
                 TargetBase consumerTargetApp = TargetApplicationBPMNUtil.GetTargetApplicationByGuid(firstConsumer.ConsumerGuid, _solutionFacade);
