@@ -10,7 +10,7 @@
       Height="350" Width="500"
 	Title="Runner Configurations">
 
-    <ScrollViewer Background="{StaticResource $BackgroundColor_LightGray}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+    <ScrollViewer Background="{StaticResource $BackgroundColor_White}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <DockPanel x:Name="xWrappingDockPanel" Margin="10">
             <DockPanel x:Name="xNamePnl" DockPanel.Dock="Top" Margin="0,0,0,0">
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">

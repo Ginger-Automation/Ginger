@@ -10,7 +10,7 @@
       d:DesignHeight="800" d:DesignWidth="240"
       Title="MainAddActionsNavigationPage" Background="White">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition Height="*" />
@@ -18,7 +18,7 @@
 
         <Border Name="xNavigationBarPnl" Grid.Row="0" BorderBrush="{StaticResource $amdocsLogoRadialGradientBrush}" BorderThickness="0,0,0,1">
             <DockPanel Background="{StaticResource $amdocsLogoLinarGradientBrush}">
-                <UserControls:ucButton x:Name="xGoBackBtn" DockPanel.Dock="Left" ButtonType="ImageButton" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="GoBack" Click="xGoBackBtn_Click" ButtonImageForground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Margin="0,0,0,0" ToolTip="Previous Menu Options" />
+                <UserControls:ucButton x:Name="xGoBackBtn" DockPanel.Dock="Left" ButtonType="ImageButton" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="Close2" Click="xGoBackBtn_Click" ButtonImageForground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="0" Margin="0,0,0,0" ToolTip="Go Back" />
                 <StackPanel x:Name="xSelectedItemTitlePnl" Orientation="Horizontal" DockPanel.Dock="Left" Margin="10,0,0,0" Visibility="Collapsed" HorizontalAlignment="Center">
                     <UserControls:ImageMakerControl x:Name="xSelectedItemTitleImage" SetAsFontImageWithSize="18" ImageType="Empty" HorizontalAlignment="Right" SetBorder="False" VerticalAlignment="Center" Foreground="White"  />
                     <Label x:Name="xSelectedItemTitleText" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="16" FontWeight="Bold" Foreground="White"  />

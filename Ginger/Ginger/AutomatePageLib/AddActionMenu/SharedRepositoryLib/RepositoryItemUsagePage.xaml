@@ -7,7 +7,7 @@
       xmlns:h="clr-namespace:Ginger.Help" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" h:GingerHelpProvider.HelpString="Shared Repository"
       Height="500" Width="850"
 	Title="RepositoryItemUsagePage" Loaded="RepositoryItemUsagePageLoaded">
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="500*" />
             <RowDefinition Height="40" />
@@ -16,7 +16,7 @@
         <Ginger:ucGrid x:Name="usageGrid" Title="Repository Item Usage" Grid.Row="0" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
 
 
-        <Grid Grid.Row="1" Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid Grid.Row="1" Background="{StaticResource $BackgroundColor_White}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60" />
                 <ColumnDefinition Width="500*" />

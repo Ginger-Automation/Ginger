@@ -83,6 +83,12 @@ namespace Ginger.GeneralWindows
             xSelectedItemFrame.SetContent(null);
 
             xMainNavigationListView.Items.Clear();
+
+            LoadMenus();
+        }
+
+        private void LoadMenus()
+        {
             foreach (TopMenuItem menu in mTwoLevelMenu.MenuList)
             {
                 if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures && WorkSpace.Instance.Solution != null)
@@ -93,27 +99,17 @@ namespace Ginger.GeneralWindows
                     }
                 }
                 xMainNavigationListView.Items.Add(menu);
-            }
+            }      
         }
 
-        private void LoadMenus()
-        {
-            foreach (TopMenuItem menu in mTwoLevelMenu.MenuList)
-            {
-                if (!WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
-                {
-                    if (menu.Name == WorkSpace.Instance.Solution.ExternalIntegrationsTabName)
-                    {
-                        continue;
-                    }
-                }
-                xMainNavigationListView.Items.Add(menu);
-            }
-        }
-
-        private void SelectFirstTopMenu()
+        public void SelectFirstTopMenu()
         {
             xMainNavigationListView.SelectedItem = xMainNavigationListView.Items[0];
+        }
+
+        public void SelectTopMenu(int menuItemID)
+        {
+            xMainNavigationListView.SelectedItem = xMainNavigationListView.Items[menuItemID];
         }
 
         private void xMainNavigationListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -124,7 +120,7 @@ namespace Ginger.GeneralWindows
                 return;
             }
 
-            SetSelectedListItemStyle(xMainNavigationListView, (SolidColorBrush)FindResource("$Color_DarkBlue"));
+            SetSelectedListItemStyle(xMainNavigationListView, (SolidColorBrush)FindResource("$PrimaryColor_Black"));
 
             ObservableList<SubMenuItem> subItems;
             subItems = SelectedMainListItem.SubItems;
@@ -160,7 +156,7 @@ namespace Ginger.GeneralWindows
             {
                 if (subItems.Count > 1)
                 {
-                    SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$Color_DarkBlue"));
+                    SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$PrimaryColor_Black"));
                 }
             }
 
@@ -193,7 +189,7 @@ namespace Ginger.GeneralWindows
 
             if (xSubNavigationListView.Items.Count > 1)
             {
-                SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$Color_DarkBlue"));
+                SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$PrimaryColor_Black"));
             }
         }
 
@@ -231,14 +227,14 @@ namespace Ginger.GeneralWindows
 
         private void xMainNavigationListView_Loaded(object sender, RoutedEventArgs e)
         {
-            SetSelectedListItemStyle(xMainNavigationListView, (SolidColorBrush)FindResource("$Color_DarkBlue"));
+            SetSelectedListItemStyle(xMainNavigationListView, (SolidColorBrush)FindResource("$PrimaryColor_Black"));
         }
 
         private void xSubNavigationListView_Loaded(object sender, RoutedEventArgs e)
         {
             if (xSubNavigationListView.Items.Count > 1 && xSubNavigationListView.IsVisible)
             {
-                SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$Color_DarkBlue"));
+                SetSelectedListItemStyle(xSubNavigationListView, (SolidColorBrush)FindResource("$PrimaryColor_Black"));
             }
         }
     }

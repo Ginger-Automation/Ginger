@@ -8,14 +8,14 @@
       d:DesignHeight="300" d:DesignWidth="800"
       Title="SelectItemFromSolutionPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" Margin="10,10,10,0">
+    <Grid Background="{StaticResource $BackgroundColor_White}" Margin="10,10,10,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="80"/>
             <RowDefinition Height="300*" MinHeight="50"/>
         </Grid.RowDefinitions>
         <StackPanel x:Name="ItemTypeListSelectionPanel" Orientation="Vertical">
             <Label x:Name="ItemTypeListLabel" Style="{StaticResource @InputFieldLabelStyle}">Filter List by Item Type:</Label>
-            <ComboBox x:Name="ItemTypeListComboBox" SelectionChanged="ItemTypeList_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+            <ComboBox x:Name="ItemTypeListComboBox" SelectionChanged="ItemTypeList_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
             <Label Style="{StaticResource $LabelStyle}">Select Items To Import:</Label>
         </StackPanel>
         <Ginger:ucGrid Grid.Row="1" x:Name="xItemsToImportGrid" AutomationProperties.AutomationId="ItemsToImport AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />

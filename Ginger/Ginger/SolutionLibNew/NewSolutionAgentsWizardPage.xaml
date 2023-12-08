@@ -8,7 +8,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="NewSolutionAgentsWizardPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="110"/>
             <ColumnDefinition Width="200*"/>
@@ -29,6 +29,6 @@
         <Label x:Name="PlatformTypeComboBox" Grid.Column="1" Grid.Row="1" Content="platform"/>
 
         <Label Content="Driver" Grid.Row="2" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
-        <ComboBox x:Name="DriverComboBox" Grid.Column="2" Grid.Row="2" Height="25" Style="{StaticResource @InputComboBoxStyle}"/>
+        <ComboBox x:Name="DriverComboBox" Grid.Column="2" Grid.Row="2" Height="25" Style="{StaticResource $FlatInputComboBoxStyle}"/>
     </Grid>
 </Page>

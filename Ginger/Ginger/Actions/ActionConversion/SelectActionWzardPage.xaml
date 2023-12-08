@@ -10,7 +10,7 @@
       d:DesignHeight="450" d:DesignWidth="700"
       Title="SelectActionWzardPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Ginger:ucGrid x:Name="xGridConvertibleActions" Title="Action Types to Convert" ShowTagsFilter="Collapsed" Grid.Row="3" Grid.Column="0" IsReadOnly="True" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowCut="Collapsed" ShowRefresh="Collapsed" ShowUndo="Collapsed" ShowUpDown="Collapsed" ShowEdit="Collapsed"/>
     </Grid>
 </Page>

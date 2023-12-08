@@ -12,7 +12,7 @@
       
 	Title="New HTML Report Template">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.Resources>
             <DataTemplate x:Key="FieldIsAddedToReportSummaryView">
                 <CheckBox x:Name="grdSummaryView_FieldSelection" Unchecked="FieldIsAddedToReport_Checked" Checked="FieldIsAddedToReport_Checked" IsEnabled="{Binding IsNotMandatory, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" IsChecked="{Binding IsSelected,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
@@ -20,8 +20,8 @@
         </Grid.Resources>
 
         <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <TabControl x:Name="tabConfigurations" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="tabConfigurations_SelectionChanged" Background="{StaticResource $BackgroundColor_LightGray}" >
-            <TabItem x:Name="tbiConfigurations">
+            <TabControl x:Name="tabConfigurations" DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="tabConfigurations_SelectionChanged" Background="{StaticResource $BackgroundColor_White}" >
+                <TabItem x:Name="tbiConfigurations" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Configurations"/>
@@ -43,7 +43,7 @@
                                 <Expander x:Name="GeneralExpander" IsExpanded="False">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="General" FontWeight="Bold" Foreground="{DynamicResource $Color_DarkBlue}"/>
+                                            <TextBlock Text="General" FontWeight="Bold" Foreground="{DynamicResource $PrimaryColor_Black}"/>
                                         </StackPanel>
                                     </Expander.Header>
                                     <StackPanel>
@@ -76,7 +76,7 @@
                                 <Expander x:Name="LayoutExpander" Margin="0,5,0,0" IsExpanded="False" Grid.Row="1">
                                     <Expander.Header>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="Layout" FontWeight="Bold" Foreground="{DynamicResource $Color_DarkBlue}"/>
+                                            <TextBlock Text="Layout" FontWeight="Bold" Foreground="{DynamicResource $PrimaryColor_Black}"/>
                                         </StackPanel>
                                     </Expander.Header>
                                     <StackPanel>
@@ -116,7 +116,7 @@
                             <Expander x:Name="DataExpander" Margin="0,5,0,0" IsExpanded="True" Grid.Row="1">
                             <Expander.Header>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Reports Data" FontWeight="Bold" Foreground="{DynamicResource $Color_DarkBlue}"/>
+                                    <TextBlock Text="Reports Data" FontWeight="Bold" Foreground="{DynamicResource $PrimaryColor_Black}"/>
                                 </StackPanel>
                             </Expander.Header>
                             <StackPanel>
@@ -170,7 +170,7 @@
                                             <Label Content="HTML Report Configuration By Levels:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
                                             <StackPanel x:Name="htmlReportConfigSummaryViewFieldsPnl"  Orientation="Horizontal">
                                                 <TabControl x:Name="tabReportLevels" DockPanel.Dock="Top" Width="494" VerticalAlignment="Stretch" >
-                                                    <TabItem x:Name="tbiSummaryViewFields">
+                                                    <TabItem x:Name="tbiSummaryViewFields" Style="{StaticResource $RoundedTab}">
                                                         <TabItem.Header>
                                                             <StackPanel Orientation="Horizontal">
                                                                 <CheckBox x:Name="SummaryViews_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsEnabled="False" IsChecked="True"/>
@@ -196,7 +196,7 @@
                                                         </Grid>
                                                     </TabItem>
 
-                                                    <TabItem x:Name="tbiGingersField">
+                                                    <TabItem x:Name="tbiGingersField" Style="{StaticResource $RoundedTab}">
                                                         <TabItem.Header>
                                                             <StackPanel Orientation="Horizontal">
                                                                 <CheckBox x:Name="gingers_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
@@ -222,7 +222,7 @@
                                                         </Grid>
                                                     </TabItem>
 
-                                                    <TabItem x:Name="tbBusinessFlowField">
+                                                    <TabItem x:Name="tbBusinessFlowField" Style="{StaticResource $RoundedTab}">
                                                         <TabItem.Header>
                                                             <StackPanel Orientation="Horizontal">
                                                                 <CheckBox x:Name="bf_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
@@ -252,7 +252,7 @@
                                                         </Grid>
                                                     </TabItem>
 
-                                                    <TabItem x:Name="tbActivityGroupsField">
+                                                    <TabItem x:Name="tbActivityGroupsField" Style="{StaticResource $RoundedTab}">
                                                         <TabItem.Header>
                                                             <StackPanel Orientation="Horizontal">
                                                                 <CheckBox x:Name="activityGroups_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
@@ -282,7 +282,7 @@
                                                         </Grid>
                                                     </TabItem>
 
-                                                    <TabItem x:Name="tbiActivitiesField">
+                                                    <TabItem x:Name="tbiActivitiesField" Style="{StaticResource $RoundedTab}">
                                                         <TabItem.Header>
                                                             <StackPanel Orientation="Horizontal">
                                                                 <CheckBox x:Name="activities_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
@@ -312,7 +312,7 @@
                                                         </Grid>
                                                     </TabItem>
 
-                                                    <TabItem x:Name="tbiActionsField">
+                                                    <TabItem x:Name="tbiActionsField" Style="{StaticResource $RoundedTab}">
                                                         <TabItem.Header>
                                                             <StackPanel Orientation="Horizontal">
                                                                 <CheckBox x:Name="actions_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
@@ -368,7 +368,7 @@
                             <Expander x:Name="SourceFeildsExpander" Margin="0,5,0,0" IsExpanded="True" Grid.Row="2">
                                 <Expander.Header>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Execution JSON Data" FontWeight="Bold" Foreground="{DynamicResource $Color_DarkBlue}"/>
+                                        <TextBlock Text="Execution JSON Data" FontWeight="Bold" Foreground="{DynamicResource $PrimaryColor_Black}"/>
                                     </StackPanel>
                                 </Expander.Header>
                                 <StackPanel>
@@ -377,7 +377,7 @@
                                         <Label Content="Source Fields Configuration By Levels:" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="12"/>
                                         <StackPanel x:Name="FieldsConfigPnl"  Orientation="Horizontal">
                                             <TabControl x:Name="tabReportLevelFeilds" DockPanel.Dock="Top" Width="494" VerticalAlignment="Stretch" >
-                                                <TabItem x:Name="tbiRunsetViewSourceFields">
+                                                <TabItem x:Name="tbiRunsetViewSourceFields" Style="{StaticResource $RoundedTab}">
                                                     <TabItem.Header>
                                                         <StackPanel Orientation="Horizontal">
                                                             <CheckBox x:Name="RunsetViewSourceFields_HeaderSelection" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsEnabled="False" IsChecked="True"/>
@@ -403,7 +403,7 @@
                                                     </Grid>
                                                 </TabItem>
 
-                                                <TabItem x:Name="tbiRunnerViewSourceFields">
+                                                <TabItem x:Name="tbiRunnerViewSourceFields" Style="{StaticResource $RoundedTab}">
                                                     <TabItem.Header>
                                                         <StackPanel Orientation="Horizontal">
                                                             <CheckBox x:Name="RunnerViewSourceFields_HeaderSelectionx" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
@@ -429,7 +429,7 @@
                                                     </Grid>
                                                 </TabItem>
 
-                                                <TabItem x:Name="tbBusinessFlowViewSourceFields">
+                                                <TabItem x:Name="tbBusinessFlowViewSourceFields" Style="{StaticResource $RoundedTab}">
                                                     <TabItem.Header>
                                                         <StackPanel Orientation="Horizontal">
                                                             <CheckBox x:Name="BusinessFlowViewSourceFields_HeaderSelectionx" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
@@ -459,7 +459,7 @@
                                                     </Grid>
                                                 </TabItem>
 
-                                                <TabItem x:Name="tbActivityGroupsViewSourceFields">
+                                                <TabItem x:Name="tbActivityGroupsViewSourceFields" Style="{StaticResource $RoundedTab}">
                                                     <TabItem.Header>
                                                         <StackPanel Orientation="Horizontal">
                                                             <CheckBox x:Name="ActivityGroupsViewSourceFields_HeaderSelectionx" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
@@ -489,7 +489,7 @@
                                                     </Grid>
                                                 </TabItem>
 
-                                                <TabItem x:Name="tbiActivityViewSourceFields">
+                                                <TabItem x:Name="tbiActivityViewSourceFields" Style="{StaticResource $RoundedTab}">
                                                     <TabItem.Header>
                                                         <StackPanel Orientation="Horizontal">
                                                             <CheckBox x:Name="ActivityViewSourceFields_HeaderSelectionx" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
@@ -519,7 +519,7 @@
                                                     </Grid>
                                                 </TabItem>
 
-                                                <TabItem x:Name="tbiActionViewSourceFields">
+                                                <TabItem x:Name="tbiActionViewSourceFields" Style="{StaticResource $RoundedTab}">
                                                     <TabItem.Header>
                                                         <StackPanel Orientation="Horizontal">
                                                             <CheckBox x:Name="ActionViewSourceFields_HeaderSelectionx" Margin="0,2,5,0" Style="{StaticResource @GridCellCheckBoxStyle}" VerticalAlignment="Top" HorizontalAlignment="Center" IsChecked="True"/>
@@ -555,7 +555,7 @@
                 </StackPanel>
             </TabItem>
 
-            <TabItem x:Name="tbiPreview">
+                <TabItem x:Name="tbiPreview" Style="{StaticResource $RoundedTab}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Preview"/>

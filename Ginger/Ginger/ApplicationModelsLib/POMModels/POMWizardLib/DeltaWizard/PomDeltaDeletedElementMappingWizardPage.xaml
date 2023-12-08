@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PomDeltaDeletedElementMappingWizardPage">
 
-    <Grid Name="MainGrid"  Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Name="MainGrid"  Background="{StaticResource $BackgroundColor_White}">
         <Grid.Resources>
             <DataTemplate x:Key="xMatchingElementTemplate">
                 <UserControls:ucButton x:Name="xManualMatchBtn" VerticalAlignment="Center" IsEnabled="True"  Margin="0" Padding="0" Height="23"

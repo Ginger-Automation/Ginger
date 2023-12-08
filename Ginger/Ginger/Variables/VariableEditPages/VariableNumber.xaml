@@ -9,7 +9,7 @@
       Title="VariableNumber">
 
     <Grid>
-        <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
+        <StackPanel Background="{StaticResource $BackgroundColor_White}">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Initial Value:</Label>
             <TextBox x:Name="txtNumberValue"   Style="{StaticResource @TextBoxStyle}"  Margin="0,0,0,10" ToolTip="Only Numeric Value Allowed."/>
             <Expander Margin="0,10,0,0"  Padding="10,5,10,5" Style="{StaticResource $ExpanderStyle}" IsExpanded="True">
@@ -17,8 +17,8 @@
                     <Label Content="Number Type Configuration" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
                 </Expander.Header>
                 <Expander.Content>
-                    <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
-                        <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
+                    <StackPanel Background="{StaticResource $BackgroundColor_White}">
+                        <DockPanel Background="{StaticResource $BackgroundColor_White}">
                             <RadioButton Click="rdoInputInt_Click"  Content="Integer"  x:Name="rdoInputInt" Style="{StaticResource $InputRadioButtonStyle}" Margin="0,5,0,10"></RadioButton>
                             <RadioButton Click="rdoInputDecimal_Click"  Content="Decimal"  x:Name="rdoInputDecimal" Style="{StaticResource $InputRadioButtonStyle}" Margin="5,5,0,10"></RadioButton>
                         </DockPanel>
