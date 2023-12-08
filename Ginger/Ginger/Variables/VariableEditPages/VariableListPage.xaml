@@ -9,12 +9,12 @@
 
     <Grid>
         <StackPanel>
-            <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
+            <DockPanel Background="{StaticResource $BackgroundColor_White}">
                 <Label Style="{StaticResource @InputFieldLabelStyle}">List Values:</Label>
                 <Image x:Name="infoImage" Source="{StaticResource @Question_Large.png.png}" Height="16" Width="16" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,0,8,0" ToolTip="Set each list value in a separate row"/>
             </DockPanel>
             <TextBox x:Name="txtValueList" Height="150" Style="{StaticResource @MultiRowsTextBoxStyle}"></TextBox>
-            <StackPanel Background="{StaticResource $BackgroundColor_LightGray}">
+            <StackPanel Background="{StaticResource $BackgroundColor_White}">
                 <CheckBox x:Name="cbRandomOrder" Content="Random Order" Style="{StaticResource @InputCheckBoxStyle}" Margin="0,10,0,0"/>
             </StackPanel>
         </StackPanel>

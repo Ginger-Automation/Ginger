@@ -15,12 +15,12 @@
         </Grid.RowDefinitions>
         <StackPanel  Grid.Row="0" Grid.ColumnSpan="5" >
             <Label Style="{StaticResource @InputFieldLabelStyle}">Get Mainframe Details</Label>
-            <ComboBox x:Name="GetMainFrameDetailsCombo"  Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="GetMainFrameDetailsCombo_SelectionChanged"></ComboBox>
+            <ComboBox x:Name="GetMainFrameDetailsCombo"  Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="GetMainFrameDetailsCombo_SelectionChanged"></ComboBox>
 
         </StackPanel>
         <StackPanel  Grid.Row="1" Grid.ColumnSpan="5" x:Name="TextDetailsInstancePanel">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Get Details Of </Label>
-            <ComboBox x:Name="TextDetailsInstanceCombo"  Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="TextDetailsInstanceCombo_SelectionChanged"></ComboBox>
+            <ComboBox x:Name="TextDetailsInstanceCombo"  Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="TextDetailsInstanceCombo_SelectionChanged"></ComboBox>
         </StackPanel>
         <StackPanel  Grid.Row="2"  x:Name="InstanceDetailsPanel">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Instance</Label>

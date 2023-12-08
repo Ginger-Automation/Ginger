@@ -13,7 +13,7 @@
 
     <Grid>
 
-        <Ginger:ucGrid x:Name="xTagsGrid" Title="Solution Tags List" Margin="5" Grid.Row="1" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowSearch="Collapsed" ShowUpDown="Collapsed"/>
+        <Ginger:ucGrid x:Name="xTagsGrid" Title="Solution Tags List" Margin="5" Grid.Row="1" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowSearch="Visible" ShowUpDown="Collapsed"/>
 
     </Grid>
 </UserControlsLib:GingerUIPage>

@@ -269,7 +269,7 @@ namespace Ginger.Run
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
 
-            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
+            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
@@ -278,12 +278,6 @@ namespace Ginger.Run
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
-
-            //if (WorkSpace.Instance != null && !WorkSpace.Instance.Telemetry.DoNotCollect)
-            //{
-            //    RunListeners.Add(new TelemetryRunListener());
-            //}
-
         }
 
         public GingerExecutionEngine(GingerRunner GingerRunner, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
@@ -296,12 +290,12 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
-            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.DataPublishingPhase == ExecutionLoggerConfiguration.eDataPublishingPhase.DuringExecution)
+            if (ExecutedFrom != eExecutedFrom.Automation)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
 
-            if (ExecutedFrom != eExecutedFrom.Automation && mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
+            if (ExecutedFrom != eExecutedFrom.Automation && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
             }
@@ -448,7 +442,6 @@ namespace Ginger.Run
             bool runnerExecutionSkipped = false;         
             try
             {
-                               
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.FirstOrDefault(x => x.Active) == null)
                 {
                     runnerExecutionSkipped = true;
@@ -1810,7 +1803,7 @@ namespace Ginger.Run
             }
         }
         public void ProcessReturnValueForDriver(Act act)
-        {
+          {
             //Handle all output values, create Value for Driver for each
 
             foreach (ActReturnValue ARV in act.ActReturnValues)
@@ -4847,6 +4840,8 @@ namespace Ginger.Run
                 }
             }
 
+            Dictionary<string, Agent> appNameToAgentMapping = new();
+
             //Remove the non relevant ApplicationAgents
             for (int indx = 0; indx < mGingerRunner.ApplicationAgents.Count;)
             {
@@ -4854,12 +4849,18 @@ namespace Ginger.Run
 
                 bool appNotMappedInBF = bfsTargetApplications.All(x => x.Name != applicationAgent.AppName);
 
-                bool appHasPlatformButNoAgent =
+                if (!appNameToAgentMapping.TryGetValue(applicationAgent.AppName, out Agent availableAgentForApp))
+                {
+                    appNameToAgentMapping.Add(applicationAgent.AppName, GetAgentForApplication(applicationAgent.AppName));
+                }
+
+                bool appHasNonNAPlatformButNoAgent =
                     applicationAgent.Agent == null &&
                     applicationAgent.AppPlatform != null &&
-                    applicationAgent.AppPlatform.Platform != ePlatformType.NA;
+                    applicationAgent.AppPlatform.Platform != ePlatformType.NA &&
+                    availableAgentForApp != null; 
 
-                if (appNotMappedInBF || appHasPlatformButNoAgent)
+                if (appNotMappedInBF || appHasNonNAPlatformButNoAgent)
                 {
                     bTargetAppListModified = true;
                     mGingerRunner.ApplicationAgents.RemoveAt(indx);
@@ -4909,51 +4910,13 @@ namespace Ginger.Run
                 {
                     ApplicationAgent ag = new ApplicationAgent();
                     ag.AppName = TA.Name;
-
-                    //Map agent to the application
-                    ApplicationPlatform ap = null;
-                    if (CurrentSolution != null && CurrentSolution.ApplicationPlatforms != null)
+                    Agent agentForApp;
+                    if (!appNameToAgentMapping.TryGetValue(ag.AppName, out agentForApp))
                     {
-                        ap = CurrentSolution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == ag.AppName);
+                        agentForApp = GetAgentForApplication(ag.AppName);
+                        appNameToAgentMapping.Add(ag.AppName, agentForApp);
                     }
-                    if (ap != null)
-                    {
-                        List<Agent> platformAgents = (from p in SolutionAgents where p.Platform == ap.Platform && p.UsedForAutoMapping == false select (Agent)p).ToList();
-
-                        //Get the last used agent to this Target App if exist
-                        if (string.IsNullOrEmpty(ap.LastMappedAgentName) == false)
-                        {
-                            //check if the saved agent still valid for this application platform                          
-                            Agent mathingAgent = platformAgents.FirstOrDefault(x => x.Name == ap.LastMappedAgentName);
-                            if (mathingAgent != null)
-                            {
-                                ag.Agent = mathingAgent;
-                                ag.Agent.UsedForAutoMapping = true;
-                            }
-                        }
-
-                        if (ag.Agent == null)
-                        {
-                            //set default agent
-                            if (platformAgents.Count > 0)
-                            {
-                                if (ap.Platform == ePlatformType.Web)
-                                {
-                                    ag.Agent = platformAgents.FirstOrDefault(x => x.DriverType == Agent.eDriverType.SeleniumIE);
-                                }
-
-                                if (ag.Agent == null)
-                                {
-                                    ag.Agent = platformAgents[0];
-                                }
-
-                                if (ag.Agent != null)
-                                {
-                                    ag.Agent.UsedForAutoMapping = true;
-                                }
-                            }
-                        }
-                    }
+                    ag.Agent = agentForApp;
                     bTargetAppListModified = true;
                     mGingerRunner.ApplicationAgents.Add(ag);
                 }
@@ -4962,6 +4925,59 @@ namespace Ginger.Run
             {
                 this.GingerRunner.OnPropertyChanged(nameof(GingerRunner.ApplicationAgents));//to notify who shows this list
             }
+        }
+
+        private Agent GetAgentForApplication(string appName)
+        {
+            Agent agent = null;
+            ApplicationPlatform appPlatform = null;
+            if (CurrentSolution != null && CurrentSolution.ApplicationPlatforms != null)
+            {
+                appPlatform = CurrentSolution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == appName);
+            }
+
+            if (appPlatform != null)
+            {
+                List<Agent> platformAgents = SolutionAgents
+                    .Where(solutionAgent => solutionAgent.Platform == appPlatform.Platform && !solutionAgent.UsedForAutoMapping)
+                    .ToList();
+
+                //Get the last used agent to this Target App if exist
+                if (string.IsNullOrEmpty(appPlatform.LastMappedAgentName) == false)
+                {
+                    //check if the saved agent still valid for this application platform                          
+                    Agent matchingAgent = platformAgents.FirstOrDefault(x => string.Equals(x.Name, appPlatform.LastMappedAgentName));
+                    if (matchingAgent != null)
+                    {
+                        agent = matchingAgent;
+                        agent.UsedForAutoMapping = true;
+                    }
+                }
+
+                if (agent == null)
+                {
+                    //set default agent
+                    if (platformAgents.Count > 0)
+                    {
+                        if (appPlatform.Platform == ePlatformType.Web)
+                        {
+                            agent = platformAgents.FirstOrDefault(x => x.DriverType == Agent.eDriverType.SeleniumIE);
+                        }
+
+                        if (agent == null)
+                        {
+                            agent = platformAgents[0];
+                        }
+
+                        if (agent != null)
+                        {
+                            agent.UsedForAutoMapping = true;
+                        }
+                    }
+                }
+            }
+
+            return agent;
         }
 
         // move from here !!!!!!!!!!!!!!!!!!

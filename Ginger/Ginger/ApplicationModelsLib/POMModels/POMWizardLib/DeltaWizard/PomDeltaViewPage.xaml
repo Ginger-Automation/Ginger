@@ -79,7 +79,7 @@
         </Grid.RowDefinitions>
 
         <Ginger:ucGrid x:Name="xMainElementsGrid" Grid.Row="0" Title="Mapped Elements" ShowTitle="Collapsed" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowEdit="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed"/>
-        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows"  Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
+        <GridSplitter x:Name="RowSplitter" Grid.Row="0" ResizeDirection="Rows"  Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $PrimaryColor_Black}" />
 
         <Expander x:Name="xDetailsExpander" Grid.Row="1" ExpandDirection="Down" Expanded="DetailsGrid_Expanded" IsExpanded="False" IsEnabled="False" Collapsed="DetailsGrid_Collapsed" Style="{StaticResource @ExpanderLightStyle}">
             <Expander.Header>
@@ -92,44 +92,29 @@
                         <ColumnDefinition Width="250"/>
                     </Grid.ColumnDefinitions>
                     <TabControl x:Name="xElementDetailsTabs" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" SelectionChanged="xElementDetailsTabs_SelectionChanged" >
-                        <TabControl.Resources>
-                            <Style TargetType="{x:Type TabItem}">
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                                <Setter Property="Height" Value="25"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsSelected" Value="False" >
-                                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                                    </Trigger>
-                                    <Trigger Property="IsSelected" Value="True" >
-                                        <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TabControl.Resources>
-
-                        <TabItem Margin="0,0,0,0" >
+                        <TabItem Margin="0,0,0,0" Style="{StaticResource $RoundedTab}">
                             <TabItem.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                     <UserControls:ImageMakerControl ImageType="ListGroup"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                                    <TextBlock x:Name="xPropertiesTextBlock" Text="Control Properties" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                                    <TextBlock x:Name="xPropertiesTextBlock" Text="Control Properties" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                                 </StackPanel>
                             </TabItem.Header>
                             <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
                         </TabItem>
-                        <TabItem>
+                        <TabItem Style="{StaticResource $RoundedTab}">
                             <TabItem.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                                     <UserControls:ImageMakerControl ImageType="LocationPointer"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                                    <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                                    <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                                 </StackPanel>
                             </TabItem.Header>
                             <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed"/>
                         </TabItem>
-                        <TabItem x:Name="xFriendlyLocatorTab">
+                        <TabItem x:Name="xFriendlyLocatorTab" Style="{StaticResource $RoundedTab}">
                             <TabItem.Header>
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                                     <UserControls:ImageMakerControl ImageType="LocationPointer"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                                    <TextBlock x:Name="xFriendlyLocatorsTextBlock" Text="Friendly Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                                    <TextBlock x:Name="xFriendlyLocatorsTextBlock" Text="Friendly Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                                 </StackPanel>
                             </TabItem.Header>
                             <Ginger:ucGrid x:Name="xFriendlyLocatorsGrid" Title="Friendly Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed"/>

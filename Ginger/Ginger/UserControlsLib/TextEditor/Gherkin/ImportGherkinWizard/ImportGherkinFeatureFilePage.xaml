@@ -8,7 +8,7 @@
       d:DesignHeight="400" d:DesignWidth="600"
 	Title="ImportGherkinFeatureFilePage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="35*"/>
             <RowDefinition Height="30*"/>

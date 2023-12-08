@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -16,7 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using System.Linq;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
+using Microsoft.CodeAnalysis;
 
 namespace Ginger.Reports
 {
@@ -127,42 +130,6 @@ namespace Ginger.Reports
             }
         }
 
-        private string mCentralizedReportDataServiceURL;
-        [IsSerializedForLocalRepository]
-        public string CentralizedReportDataServiceURL
-        {
-            get
-            {
-                return mCentralizedReportDataServiceURL;
-            }
-            set
-            {
-                if (mCentralizedReportDataServiceURL != value)
-                {
-                    mCentralizedReportDataServiceURL = value;
-                    OnPropertyChanged(nameof(CentralizedReportDataServiceURL));
-                }
-            }
-        }
-
-        private string mCentralizedHtmlReportServiceURL;
-        [IsSerializedForLocalRepository]
-        public string CentralizedHtmlReportServiceURL
-        {
-            get
-            {
-                return mCentralizedHtmlReportServiceURL;
-            }
-            set
-            {
-                if (mCentralizedHtmlReportServiceURL != value)
-                {
-                    mCentralizedHtmlReportServiceURL = value;
-                    OnPropertyChanged(nameof(CentralizedHtmlReportServiceURL));
-                }
-            }
-        }
-
         private string _HTMLReportsConfigurationSetName = string.Empty;
 
         public override string ItemName
@@ -180,5 +147,22 @@ namespace Ginger.Reports
                 }
             }
         }
+        public override bool SerializationError(SerializationErrorType errorType, string name, string value)
+        {
+            if (errorType.Equals(SerializationErrorType.PropertyNotFound))
+            {
+                if (name == "CentralizedHtmlReportServiceURL" && GingerCoreCommonWorkSpace.Instance.Solution!=null )
+                {
+                    GingerCoreCommonWorkSpace.Instance.Solution.
+                        ExecutionLoggerConfigurationSetList.FirstOrDefault((executionLogger)=>executionLogger.IsSelected).CentralizedHtmlReportServiceURL = value;
+
+                    return true;
+                }
+
+            }
+
+            return false;
+        }
+
     }
 }

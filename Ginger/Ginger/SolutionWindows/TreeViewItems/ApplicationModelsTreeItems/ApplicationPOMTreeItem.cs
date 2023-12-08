@@ -61,7 +61,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems
         {
             if (mPOMEditPage == null)
             {
-                mPOMEditPage = new POMEditPage(mApplicationPOM);
+                mPOMEditPage = new POMEditPage(mApplicationPOM, General.eRIPageViewMode.Standalone);
             }
             return mPOMEditPage;
         }

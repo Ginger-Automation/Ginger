@@ -159,25 +159,22 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Empty:
                     // Do nothing and leave it empty             
                     break;
-                case eImageType.Ginger:
+                case eImageType.Ginger: //new
                     SetAsStaticImage("Ginger.png");
                     break;
-                case eImageType.GingerIconWhite:
+                case eImageType.GingerIconWhite: //new
                     SetAsStaticImage("GingerIconWhite.png");
                     break;
-                case eImageType.GingerIconGray:
-                    SetAsStaticImage("GingerIconInGrayNoBackground.png");
-                    break;
-                case eImageType.GingerLogo:
+                case eImageType.GingerLogo: //new
                     SetAsStaticImage("GingerByAmdocsLogo.png");
                     break;
-                case eImageType.GingerLogoGray:
+                case eImageType.GingerLogoGray: //new
                     SetAsStaticImage("GingerByAmdocsLogoGray.png");
                     break;
-                case eImageType.GingerLogoWhiteSmall:
+                case eImageType.GingerLogoWhite: //new
                     SetAsStaticImage("GingerByAmdocsLogoWhiteSmall.png");
                     break;
-                case eImageType.GingerSplash:
+                case eImageType.GingerSplash://new
                     SetAsStaticImage("GingerSplashImageNew.png");
                     break;
                 case eImageType.VRT:
@@ -386,6 +383,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Close:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowClose);
                     break;
+                case eImageType.Close2:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Times);
+                    break;
                 case eImageType.Continue:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FastForward);
                     break;
@@ -411,7 +411,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_WindowClose);
                     break;
                 case eImageType.Reset:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_RedoAlt);
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Retweet);
                     break;
                 case eImageType.Undo:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_UndoAlt);
@@ -807,11 +807,17 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Browser:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Chrome);
                     break;
+
                 case eImageType.Java:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Brands_Java);
                     break;
+
                 case eImageType.KeyboardLayout:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Keyboard);
+                    break;
+
+                case eImageType.Smile:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_SmileWink);
                     break;
 
                 case eImageType.Linux:
@@ -1097,7 +1103,7 @@ namespace Amdocs.Ginger.UserControls
             }
             else if (foreground == null)
             {
-                foreground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                foreground = (SolidColorBrush)FindResource("$BackgroundColor_Black");
             }
             xFAImage.Foreground = foreground;
             if (this.ImageForeground != null)
@@ -1136,7 +1142,7 @@ namespace Amdocs.Ginger.UserControls
             if (SetBorder)
             {
                 ImageMakerBorder.BorderThickness = new Thickness(1);
-                ImageMakerBorder.BorderBrush = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                ImageMakerBorder.BorderBrush = (SolidColorBrush)FindResource("$BackgroundColor_Black");
             }
             else
             {

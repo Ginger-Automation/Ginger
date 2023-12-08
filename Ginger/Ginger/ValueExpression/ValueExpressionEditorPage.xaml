@@ -7,7 +7,7 @@
       xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
       Title="Value Expression Editor" Height="600" Width="700">
     
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="230"/>
             <ColumnDefinition Width="150*"/>
@@ -44,18 +44,18 @@
                 <ColumnDefinition Width="30"/>
             </Grid.ColumnDefinitions>
 
-            <TextEditor:UCTextEditor x:Name="xExpressionUCTextEditor" Grid.Column="0" Grid.Row="0"  Margin="0,0,0,0" ShowUpdateContent="Visible" SetUpdateLabel="Update VE" AllowWordWrapping="True" LostFocus="ValueUCTextEditor_LostFocus" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}"/>
-            <StackPanel Grid.Column="1" Grid.Row="0"  Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,27,0,0">
+            <TextEditor:UCTextEditor x:Name="xExpressionUCTextEditor" Grid.Column="0" Grid.Row="0"  Margin="0,0,0,0" ShowUpdateContent="Visible" SetUpdateLabel="Update VE" AllowWordWrapping="True" LostFocus="ValueUCTextEditor_LostFocus" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Black}"/>
+            <StackPanel Grid.Column="1" Grid.Row="0"  Background="{StaticResource $BackgroundColor_White}" Margin="0,27,0,0">
                 <UserControls:ucButton x:Name="xClearButton" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Delete" Click="xClearButton_Click" ToolTip="Clear Expression" Margin="-1,-5,0,0"/>
                 <UserControls:ucButton x:Name="xTestButton" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Run" Click="xTestButton_Click" ToolTip="Calculate Expression" Margin="0,-5,0,0"/>
             </StackPanel>
 
             <!--<GridSplitter ResizeDirection="Rows" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Height="1" Background="Transparent"  VerticalAlignment="Top" HorizontalAlignment="Stretch" IsEnabled="True" Margin="0,0,0,0"/>-->
 
-            <Border Grid.Column="0" Grid.Row="1"  Margin="0,0,0,0" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_DarkBlue}">
+            <Border Grid.Column="0" Grid.Row="1"  Margin="0,0,0,0" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Black}">
                 <DockPanel >
-                    <Label Content="Calculated Value Expression:" Style="{StaticResource   $LabelStyle}" Background="{StaticResource $BackgroundColor_LightGray}" DockPanel.Dock="Top" Margin="0,0,0,0"/>
-                    <TextBox x:Name="xCalculatedTextBox"  Style="{StaticResource $MultiRowsTextBoxStyle_ReadOnly}" IsReadOnly="True" DockPanel.Dock="Top"  Background="{StaticResource $BackgroundColor_LightGray}" BorderThickness="0,1,0,0"/>
+                    <Label Content="Calculated Value Expression:" Style="{StaticResource   $LabelStyle}" Background="{StaticResource $BackgroundColor_White}" DockPanel.Dock="Top" Margin="0,0,0,0"/>
+                    <TextBox x:Name="xCalculatedTextBox"  Style="{StaticResource $MultiRowsTextBoxStyle_ReadOnly}" IsReadOnly="True" DockPanel.Dock="Top"  Background="{StaticResource $BackgroundColor_White}" BorderThickness="0,1,0,0"/>
                 </DockPanel>
             </Border>
 

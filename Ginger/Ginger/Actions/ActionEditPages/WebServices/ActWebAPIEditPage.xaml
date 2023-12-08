@@ -10,7 +10,7 @@
       d:DesignHeight="1500" d:DesignWidth="750"
 	Title="ActWebAPIEditPage">
 
-    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_White}">
 
 
         <Grid.RowDefinitions>
@@ -136,7 +136,7 @@
                                 </StackPanel>
                                 <StackPanel x:Name="BodyInputGridPannel" Visibility="Collapsed">
                                     <Actions:UCInputValuesGrid x:Name="BodyContentGrid" Margin="0,10,0,0"/>
-                                    <Grid  Name="controlGrid" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Visible">
+                                    <Grid  Name="controlGrid" Background="{StaticResource $BackgroundColor_White}" Visibility="Visible">
                                         <Grid.Resources>
                                             <DataTemplate x:Key="VEGridValueExpressionButton">
                                                 <Button x:Name="VEGridInputGridVEButton" Content="..." Click="VEGridInputGridVEButton_Click" Style="{DynamicResource DataGridCellButtonStyle}" />
