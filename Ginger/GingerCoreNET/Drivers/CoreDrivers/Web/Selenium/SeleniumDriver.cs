@@ -191,7 +191,7 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Only For Chrome : Use a valid device name from theDevTools Emulation panel.")]
+        [UserConfiguredDescription("Only For Chrome : Use a valid device name from the DevTools Emulation panel.")]
         public string EmulationDeviceName { get; set; }
 
         [UserConfigured]
