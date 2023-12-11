@@ -5,27 +5,55 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Ginger.ConflictResolve"
       xmlns:UCTreeView="clr-namespace:GingerWPF.UserControlsLib.UCTreeView"
+      xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ConflictViewPage">
     <Grid>
+        <Grid.Resources>
+            <Style TargetType="TextBlock" x:Key="$HeadingStyle">
+                <Setter Property="Foreground" Value="{DynamicResource $BackgroundColor_DarkBlue}"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Background" Value="{DynamicResource $BackgroundColor_LightGray}"/>
+                <Setter Property="VerticalAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+            </Style>
+        </Grid.Resources>
         <Frame x:Name="xLoadingFrame" Visibility="Collapsed"/>
         <Grid x:Name="xContentGrid" Visibility="Collapsed">
             <Grid.RowDefinitions>
-                <!--<RowDefinition Height="50/>-->
-                <RowDefinition Height="0"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <!--<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
-                <Button x:Name="xPrevConflict" Content="Previous Conflict" Click="xPrevConflict_Click"/>
-                <Button x:Name="xNextConflict" Content="Next Conflict" Click="xNextConflict_Click"/>
-            </StackPanel>-->
-            <UCTreeView:UCTreeView x:Name="xLocalItemTree" Grid.Row="1" Grid.Column="0" />
-            <UCTreeView:UCTreeView x:Name="xRemoteItemTree" Grid.Row="1" Grid.Column="1"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+                <usercontrols:ucButton x:Name="xPrevConflict" ButtonType="RoundTextAndImageButton" ButtonImageType="GoBack" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="10"  Click="xPrevConflict_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Go to previous conflict"/>
+                <usercontrols:ucButton x:Name="xNextConflict" ButtonType="RoundTextAndImageButton" ButtonImageType="GoNext" ButtonFontImageSize="12" ButtonImageWidth="12" ButtonImageHeight="10" Click="xNextConflict_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" ToolTip="Go to next conflict"/>
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 5 10 5">
+                <TextBlock Text="Remaining conflicts: " Foreground="Red" FontWeight="SemiBold" FontSize="13"/>
+                <TextBlock x:Name="xRemainingConflictCount" Foreground="Red" FontWeight="SemiBold" FontSize="13"/>
+            </StackPanel>
+            <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="8,0,0,0" Text="Local Changes" Style="{StaticResource $HeadingStyle}" FontSize="14"/>
+                <GridSplitter Grid.Row="1" Grid.Column="0" Width="1" Background="{DynamicResource $BackgroundColor_DarkBlue}"/>
+                <TextBlock Grid.Column="2" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="8,0,0,0" Text="Remote Changes" Style="{StaticResource $HeadingStyle}" FontSize="14"/>
+            </Grid>
+            <UCTreeView:UCTreeView x:Name="xLocalItemTree" Grid.Row="2" Grid.Column="0" />
+            <UCTreeView:UCTreeView x:Name="xRemoteItemTree" Grid.Row="2" Grid.Column="1"/>
         </Grid>
     </Grid>
 </Page>

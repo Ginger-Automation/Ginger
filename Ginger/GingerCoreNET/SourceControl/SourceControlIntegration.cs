@@ -201,9 +201,12 @@ namespace Ginger.SourceControl
                 path = path.Replace("@/", "\\");
             }
 
-            string conflictedContent = File.ReadAllText(path);
-            string localContent = sourceControl.GetLocalContentFromConflicted(conflictedContent);
-            RepositoryItemBase localItem = NewRepositorySerializer.DeserializeFromText(localContent);
+            string localContent = sourceControl.GetLocalContentForConflict(path);
+            RepositoryItemBase localItem = null;
+            if (!string.IsNullOrEmpty(localContent))
+            {
+                localItem = NewRepositorySerializer.DeserializeFromText(localContent);
+            }
 
             return localItem;
         }
@@ -215,9 +218,13 @@ namespace Ginger.SourceControl
                 path = path.Replace("@/", "\\");
             }
 
-            string conflictedContent = File.ReadAllText(path);
-            string remoteContent = sourceControl.GetRemoteContentFromConflicted(conflictedContent);
-            RepositoryItemBase remoteItem = NewRepositorySerializer.DeserializeFromText(remoteContent);
+            string remoteContent = sourceControl.GetRemoteContentForConflict(path);
+
+            RepositoryItemBase remoteItem = null;
+            if (!string.IsNullOrEmpty(remoteContent))
+            {
+                remoteItem = NewRepositorySerializer.DeserializeFromText(remoteContent);
+            }
 
             return remoteItem;
         }
@@ -226,7 +233,16 @@ namespace Ginger.SourceControl
         {
             ICollection<Comparison> childComparisons = RepositoryItemBaseComparer.Compare("[0]", localItem, remoteItem);
             Comparison.StateType state = childComparisons.All(c => c.State == Comparison.StateType.Unmodified) ? Comparison.StateType.Unmodified : Comparison.StateType.Modified;
-            return new Comparison("ROOT", state, childComparisons: childComparisons, dataType: localItem.GetType());
+            Type dataType = typeof(RepositoryItemBase);
+            if(localItem != null)
+            {
+                dataType = localItem.GetType();
+            }
+            else if(remoteItem != null)
+            {
+                dataType = remoteItem.GetType();
+            }
+            return new Comparison("ROOT", state, childComparisons: childComparisons, dataType: dataType);
         }
 
         public static Comparison GetComparisonForConflicted(SourceControlBase sourceControl, string path)
@@ -236,10 +252,9 @@ namespace Ginger.SourceControl
                 path = path.Replace("@/", "\\");
             }
 
-            string conflictedContent = File.ReadAllText(path);
-            string localContent = sourceControl.GetLocalContentFromConflicted(conflictedContent);
+            string localContent = sourceControl.GetLocalContentForConflict(path);
             RepositoryItemBase localItem = NewRepositorySerializer.DeserializeFromText(localContent);
-            string remoteContent = sourceControl.GetRemoteContentFromConflicted(conflictedContent);
+            string remoteContent = sourceControl.GetRemoteContentForConflict(path);
             RepositoryItemBase remoteItem = NewRepositorySerializer.DeserializeFromText(remoteContent);
             ICollection<Comparison> childComparisons = RepositoryItemBaseComparer.Compare("[0]", localItem, remoteItem);
             Comparison.StateType state = childComparisons.All(c => c.State == Comparison.StateType.Unmodified) ? Comparison.StateType.Unmodified : Comparison.StateType.Modified;

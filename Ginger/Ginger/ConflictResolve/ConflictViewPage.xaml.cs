@@ -1,25 +1,29 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2023 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.SourceControlLib;
-using GingerCore;
-using GingerTest.WizardLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static System.Windows.Forms.AxHost;
 
 namespace Ginger.ConflictResolve
 {
@@ -28,18 +32,32 @@ namespace Ginger.ConflictResolve
     /// </summary>
     public partial class ConflictViewPage : Page, IWizardPage
     {
-        private Comparison _wizardComparison;
+        private ResolveMergeConflictWizard? _wizard;
 
         public ConflictViewPage()
         {
             InitializeComponent();
+            SetUI();
+        }
+
+        private void SetUI()
+        {
+            SetConflictButtonUI();
+        }
+
+        private void SetConflictButtonUI()
+        {
+            xPrevConflict.xButtonText.Visibility = Visibility.Collapsed;
+            xPrevConflict.xButtonImage.Margin = new Thickness(left: 5, top: 0, right: 5, bottom: 0); 
+            xNextConflict.xButtonText.Visibility = Visibility.Collapsed;
+            xNextConflict.xButtonImage.Margin = new Thickness(left: 5, top: 0, right: 5, bottom: 0);
         }
 
         public void WizardEvent(WizardEventArgs wizardEventArgs)
         {
-            ResolveMergeConflictWizard? wizard = wizardEventArgs.Wizard as ResolveMergeConflictWizard;
+            _wizard = wizardEventArgs.Wizard as ResolveMergeConflictWizard;
 
-            if (wizard == null)
+            if (_wizard == null)
             {
                 throw new InvalidOperationException($"{nameof(ConflictViewPage)} must be used with {nameof(ResolveMergeConflictWizard)}.");
             }
@@ -47,23 +65,29 @@ namespace Ginger.ConflictResolve
             switch (wizardEventArgs.EventType)
             {
                 case EventType.Init:
-                    OnWizardPageInit(wizard);
+                    OnWizardPageInit();
                     break;
                 case EventType.LeavingForNextPage:
-                    OnWizardPageLeavingForNextPage(wizard, wizardEventArgs);
+                    OnWizardPageLeavingForNextPage(wizardEventArgs);
                     break;
                 default:
                     break;
             }
         }
 
-        private void OnWizardPageInit(ResolveMergeConflictWizard wizard)
+        private void OnWizardPageInit()
         {
+            if(_wizard == null)
+            {
+                return;
+            }
+
             Task.Run(() =>
             {
                 ShowLoading();
-                _wizardComparison = wizard.Comparison;
-                SetTreeItems(wizard.Comparison);
+                SetConflictStats(_wizard.Comparison);
+                UpdateRemainingConflictCount();
+                SetTreeItems(_wizard.Comparison);
                 HideLoading();
             });
         }
@@ -88,6 +112,50 @@ namespace Ginger.ConflictResolve
                 xLoadingFrame.Visibility = Visibility.Collapsed;
                 xContentGrid.Visibility = Visibility.Visible;
             });
+        }
+
+        private void SetConflictStats(Comparison comparison)
+        {
+            BindComparisonSelectedProperty(comparison);
+        }
+
+        private void BindComparisonSelectedProperty(Comparison comparison)
+        {
+            if(comparison.State == Comparison.StateType.Unmodified)
+            {
+                return;
+            }
+
+            comparison.PropertyChanged += Comparison_Selected_Changed;
+            
+            if(comparison.State == Comparison.StateType.Added || comparison.State == Comparison.StateType.Deleted)
+            {
+                return;
+            }
+
+            foreach(Comparison childComparison in comparison.ChildComparisons)
+            {
+                BindComparisonSelectedProperty(childComparison);
+            }
+        }
+
+        private void Comparison_Selected_Changed(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (!string.Equals(e.PropertyName, nameof(Comparison.Selected)))
+            {
+                return;
+            }
+
+            UpdateRemainingConflictCount();
+        }
+
+        private void UpdateRemainingConflictCount()
+        {
+            if(_wizard != null)
+            {
+                int remainingComparisonCount = _wizard.Comparison.UnselectedComparisonCount();
+                Dispatcher.Invoke(() => xRemainingConflictCount.Text = remainingComparisonCount.ToString());
+            }
         }
 
         private void SetTreeItems(Comparison comparison)
@@ -115,79 +183,117 @@ namespace Ginger.ConflictResolve
             });
         }
 
-        private void OnWizardPageLeavingForNextPage(ResolveMergeConflictWizard wizard, WizardEventArgs eventArgs)
+        private void OnWizardPageLeavingForNextPage(WizardEventArgs eventArgs)
         {
-            int unselectedComparisonCount = wizard.Comparison.UnselectedComparisonCount();
+            if(_wizard == null)
+            {
+                return;
+            }
+
+            int unselectedComparisonCount = _wizard.Comparison.UnselectedComparisonCount();
             if (unselectedComparisonCount > 0)
             {
-                Reporter.ToUser(eUserMsgKey.HasUnselectedConflicts, messageArgs: unselectedComparisonCount);
+                Reporter.ToUser(eUserMsgKey.HandleConflictsBeforeMovingForward, messageArgs: unselectedComparisonCount);
                 eventArgs.CancelEvent = true;
             }
         }
 
-        private void xPrevConflict_Click(object sender, RoutedEventArgs e)
+        private void ShowNavigatingToConflictLoader()
         {
-            ITreeViewItem? previousConflictTVI = null;
-            Func<ITreeViewItem, bool> iterationConsumer = tvi =>
+            if (_wizard == null)
             {
-                Comparison comparison = (Comparison)tvi.NodeObject();
-                bool continueIteration = true;
-
-                bool IsAddedOrDeleted = comparison.State == Comparison.StateType.Added || comparison.State == Comparison.StateType.Deleted;
-                bool selfAndSiblingNotSelected = !comparison.Selected && (!comparison.HasSiblingComparison || !comparison.SiblingComparison.Selected);
-
-                if (IsAddedOrDeleted && selfAndSiblingNotSelected)
-                {
-                    previousConflictTVI = tvi;
-                    continueIteration = false;
-                }
-
-                return continueIteration;
-            };
-
-            xLocalItemTree.IterateTreeViewItems(iterationConsumer, inReverseOrder: true);
-            if (previousConflictTVI != null)
-            {
-                xLocalItemTree.SelectItem(previousConflictTVI);
+                return;
             }
 
-            xRemoteItemTree.IterateTreeViewItems(iterationConsumer, inReverseOrder: true);
-            if (previousConflictTVI != null)
+            _wizard.ProcessStarted();
+        }
+
+        private void HideNavigatingToConflictLoader()
+        {
+            if(_wizard == null)
             {
-                xRemoteItemTree.SelectItem(previousConflictTVI);
+                return;
+            }
+
+            _wizard.ProcessEnded();
+        }
+
+        private void xPrevConflict_Click(object sender, RoutedEventArgs e)
+        {
+            _ = HighlighPrevConflictAsync();
+        }
+
+        private async Task HighlighPrevConflictAsync()
+        {
+            NextConflictFinder localNextConflictFinder = new();
+            Task findNextLocalConflictTask = xLocalItemTree.IterateTreeViewItemsAsync(localNextConflictFinder.IterationConsumer, inReverseOrder: true);
+
+            NextConflictFinder remoteNextConflictFinder = new();
+            Task findNextRemoteConflictTask = xRemoteItemTree.IterateTreeViewItemsAsync(remoteNextConflictFinder.IterationConsumer, inReverseOrder: true);
+
+            ShowNavigatingToConflictLoader();
+            await Task.WhenAll(findNextLocalConflictTask, findNextRemoteConflictTask);
+            HideNavigatingToConflictLoader();
+
+            if (localNextConflictFinder.NextConflictTreeViewItem != null)
+            {
+                xLocalItemTree.FocusItem(localNextConflictFinder.NextConflictTreeViewItem);
+            }
+
+            if (remoteNextConflictFinder.NextConflictTreeViewItem != null)
+            {
+                xRemoteItemTree.FocusItem(remoteNextConflictFinder.NextConflictTreeViewItem);
             }
         }
 
         private void xNextConflict_Click(object sender, RoutedEventArgs e)
         {
-            ITreeViewItem? nextConflictTVI = null;
-            Func<ITreeViewItem, bool> iterationConsumer = tvi =>
+            _ = HighlightNextConflictAsync();
+        }
+
+        private async Task HighlightNextConflictAsync()
+        {
+            NextConflictFinder localNextConflictFinder = new();
+            Task findNextLocalConflictTask = xLocalItemTree.IterateTreeViewItemsAsync(localNextConflictFinder.IterationConsumer);
+
+            NextConflictFinder remoteNextConflictFinder = new();
+            Task findNextRemoteConflictTask = xRemoteItemTree.IterateTreeViewItemsAsync(remoteNextConflictFinder.IterationConsumer);
+
+            ShowNavigatingToConflictLoader();
+            await Task.WhenAll(findNextLocalConflictTask, findNextRemoteConflictTask);
+            HideNavigatingToConflictLoader();
+
+            if (localNextConflictFinder.NextConflictTreeViewItem != null)
             {
-                Comparison comparison = (Comparison)tvi.NodeObject();
+                xLocalItemTree.FocusItem(localNextConflictFinder.NextConflictTreeViewItem);
+            }
+
+            if (remoteNextConflictFinder.NextConflictTreeViewItem != null)
+            {
+                xRemoteItemTree.FocusItem(remoteNextConflictFinder.NextConflictTreeViewItem);
+            }
+        }
+
+        private sealed class NextConflictFinder
+        {
+            public TreeViewItem? NextConflictTreeViewItem { get; private set; }
+
+            public bool IterationConsumer(TreeViewItem currentTreeViewItem)
+            {
+                Comparison comparison = (Comparison)((ITreeViewItem)currentTreeViewItem.Tag).NodeObject();
                 bool continueIteration = true;
 
                 bool IsAddedOrDeleted = comparison.State == Comparison.StateType.Added || comparison.State == Comparison.StateType.Deleted;
+                bool canBeSelected = comparison.IsSelectionEnabled;
                 bool selfAndSiblingNotSelected = !comparison.Selected && (!comparison.HasSiblingComparison || !comparison.SiblingComparison.Selected);
 
-                if (IsAddedOrDeleted && selfAndSiblingNotSelected)
+                if (IsAddedOrDeleted && canBeSelected && selfAndSiblingNotSelected)
                 {
-                    nextConflictTVI = tvi;
+                    NextConflictTreeViewItem = currentTreeViewItem;
                     continueIteration = false;
                 }
 
                 return continueIteration;
-            };
-
-            xLocalItemTree.IterateTreeViewItems(iterationConsumer);
-            if (nextConflictTVI != null)
-            {
-                xLocalItemTree.SelectItem(nextConflictTVI);
-            }
-
-            xRemoteItemTree.IterateTreeViewItems(iterationConsumer);
-            if (nextConflictTVI != null)
-            {
-                xRemoteItemTree.SelectItem(nextConflictTVI);
             }
         }
     }

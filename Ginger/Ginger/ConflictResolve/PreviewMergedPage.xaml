@@ -8,132 +8,23 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="PreviewMergedPage">
-    <Page.Resources>
-        <!--<Style x:Key="TreeViewToggleButton" TargetType="ToggleButton">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ToggleButton">
-                        <Polygon x:Name="TreeArrow" Points="10 0, 12.5 2.5, 10 5" Fill="Transparent" StrokeThickness="1" Stroke="Gray"/>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="TreeArrow" Property="Points" Value="13.53 0, 13.53 3.53, 10 3.53"/>
-                                <Setter TargetName="TreeArrow" Property="Stroke" Value="Black"/>
-                                <Setter TargetName="TreeArrow" Property="Fill" Value="Black"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
-    </Page.Resources>
     <Grid>
-        <!--<Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <TreeView>
-            <TreeViewItem IsExpanded="True">
-                <TreeViewItem.Header>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Item-1"/>
-                    </StackPanel>
-                </TreeViewItem.Header>
-                <TreeViewItem>
-                    <TreeViewItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Item-1.1"/>
-                        </StackPanel>
-                    </TreeViewItem.Header>
-                </TreeViewItem>
-            </TreeViewItem>
-        </TreeView>
-        <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <Grid Width="22">
-                <ToggleButton>
-                    <ToggleButton.Template>
-                        <ControlTemplate>
-                            <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                                --><!--<Polygon Points="10 0, 14.5 4, 10 8" Fill="Transparent" Stroke="Gray" StrokeThickness="1"/>--><!--
-                                <Polygon Points="16 0, 16 6, 10 6" Fill="DimGray" Stroke="Black" StrokeThickness="0.6"/>
-                            </StackPanel>
-                        </ControlTemplate>
-                    </ToggleButton.Template>
-                </ToggleButton>
-            </Grid>
-            <Label Content="Item-1"/>
-        </StackPanel>-->
-        <!--<Grid Background="White">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <TreeView Grid.Column="0" Grid.ColumnSpan="2">
-                <TreeView.Resources>
-                    <Style TargetType="TreeViewItem">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="TreeViewItem">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition MinWidth="20" Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="Auto"/>
-                                        </Grid.RowDefinitions>
-                                        <ToggleButton x:Name="Expander" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"  HorizontalAlignment="Center" IsChecked="{Binding Path=IsExpanded,
-                          RelativeSource={RelativeSource TemplatedParent}}" Style="{StaticResource TreeViewToggleButton}" />
-                                        <ContentPresenter ContentSource="Header" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
-                                        <ItemsPresenter x:Name="ItemsHost" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsExpanded" Value="False">
-                                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed"/>
-                                        </Trigger>
-                                        <Trigger Property="HasItems" Value="False">
-                                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </TreeView.Resources>
-                <TreeViewItem>
-                    <TreeViewItem.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Item-1"/>
-                        </StackPanel>
-                    </TreeViewItem.Header>
-                </TreeViewItem>
-                <TreeViewItem IsExpanded="True">
-                    <TreeViewItem.Header>
-                        <StackPanel Orientation="Horizontal" Background="#F9ACA6">
-                            <Label Content="Item-2"/>
-                        </StackPanel>
-                    </TreeViewItem.Header>
-                    <TreeViewItem>
-                        <TreeViewItem.Header>
-                            <StackPanel Orientation="Horizontal" Background="#F9ACA6">
-                                <Label Content="Item-2.1"/>
-                            </StackPanel>
-                        </TreeViewItem.Header>
-                        <TreeViewItem>
-                            <TreeViewItem.Header>
-                                <StackPanel Orientation="Horizontal" Background="#F9ACA6">
-                                    <Label Content="Item-2.1.1"/>
-                                </StackPanel>
-                            </TreeViewItem.Header>
-                        </TreeViewItem>
-                    </TreeViewItem>
-                </TreeViewItem>
-            </TreeView>
-        </Grid>-->
         <Frame x:Name="xLoadingFrame" Visibility="Collapsed"/>
         <Grid x:Name="xContentGrid" Visibility="Collapsed">
-            <UCTreeView:UCTreeView x:Name="xTree" Grid.Row="0" Grid.Column="0"/>
+            <TabControl Background="{StaticResource $BackgroundColor_LightGray}">
+                <TabItem Background="{StaticResource $BackgroundColor_LightGray}">
+                    <TabItem.Header>
+                        <Label Content="Tree View"/>
+                    </TabItem.Header>
+                    <UCTreeView:UCTreeView x:Name="xTree" Grid.Row="0" Grid.Column="0"/>
+                </TabItem>
+                <TabItem x:Name="xPageViewTabItem" Background="{StaticResource $BackgroundColor_LightGray}" IsEnabled="False">
+                    <TabItem.Header>
+                        <Label Content="Page View"/>
+                    </TabItem.Header>
+                    <Frame x:Name="xPageFrame"/>
+                </TabItem>
+            </TabControl>
         </Grid>
     </Grid>
 </Page>

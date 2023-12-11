@@ -103,6 +103,8 @@ namespace Ginger.UserControlsLib
         {
             ConsumerComboBox control = (ConsumerComboBox)d;
             control.DisplayInConsumer();
+            control.SelectNodes();
+            control.SetSelectedConsumer();
         }
 
         private static void OnSelectedConsumerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -140,14 +142,17 @@ namespace Ginger.UserControlsLib
         #region Methods
         private void SelectNodes()
         {
-            foreach (Consumer consumer in SelectedConsumer)
+            if(SelectedConsumer!=null && SelectedConsumer.Count > 0)
             {
-                Node? node = _nodeList.FirstOrDefault(n => n.Consumer.ConsumerGuid == consumer.ConsumerGuid);
-                if (node != null)
+                foreach (Consumer consumer in SelectedConsumer)
                 {
-                    node.IsSelected = true;
+                    Node? node = _nodeList.FirstOrDefault(n => n.Consumer.ConsumerGuid == consumer.ConsumerGuid);
+                    if (node != null)
+                    {
+                        node.IsSelected = true;
+                    }
                 }
-            }
+            }   
         }
 
         private void SetSelectedConsumer()
@@ -190,12 +195,12 @@ namespace Ginger.UserControlsLib
                         displayText.Append(',');
                     }
                 }
-                this.Text = displayText.ToString().TrimEnd(',');
+                Text = displayText.ToString().TrimEnd(',');
             }
             // set DefaultText if nothing else selected
-            if (string.IsNullOrEmpty(this.Text))
+            if (string.IsNullOrEmpty(Text))
             {
-                this.Text = this.DefaultText;
+                Text = DefaultText;
             }
         }
 

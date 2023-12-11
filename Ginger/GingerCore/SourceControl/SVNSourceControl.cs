@@ -174,7 +174,13 @@ namespace GingerCore.SourceControl
 
                 foreach (SvnStatusEventArgs arg in statuses)
                 {
-                    if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(arg.FullPath))
+                    string path = arg.FullPath;
+                    if(PathIsDirectory(path))
+                    {
+                        path += @"\";
+                    }
+
+                    if (WorkSpace.Instance.SolutionRepository.IsSolutionPathToAvoid(path))
                     {
                         continue;
                     }
@@ -240,6 +246,12 @@ namespace GingerCore.SourceControl
             }
 
             return files;
+        }
+
+        private bool PathIsDirectory(string path)
+        {
+            FileAttributes fileAttributes = File.GetAttributes(path);
+            return (fileAttributes & FileAttributes.Directory) == FileAttributes.Directory;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -552,8 +564,9 @@ namespace GingerCore.SourceControl
         private const string ConflictEndMarker = ">>>>>>>";
         private const string CR_LF = "\r\n";
 
-        public override string GetLocalContentFromConflicted(string conflictedContent)
+        public override string GetLocalContentForConflict(string conflictFilePath)
         {
+            string conflictedContent = File.ReadAllText(conflictFilePath);
             string localContent = GetLocalContentViaMarkers(conflictedContent);
             return localContent;
         }
@@ -587,8 +600,9 @@ namespace GingerCore.SourceControl
             return localContent;
         }
 
-        public override string GetRemoteContentFromConflicted(string conflictedContent)
+        public override string GetRemoteContentForConflict(string conflictFilePath)
         {
+            string conflictedContent = File.ReadAllText(conflictFilePath);
             string remoteContent = GetRemoteContentViaMarkers(conflictedContent);
             return remoteContent;
         }

@@ -1,7 +1,27 @@
-﻿using Amdocs.Ginger.Common.SourceControlLib;
+#region License
+/*
+Copyright © 2014-2023 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SourceControl;
 using GingerCore;
+using GingerCore.GeneralLib;
+using GingerWPF.BusinessFlowsLib;
 using GingerWPF.WizardLib;
 using LibGit2Sharp;
 using System;
@@ -51,9 +71,13 @@ namespace Ginger.ConflictResolve
             Task.Run(() =>
             {
                 ShowLoading();
-                RepositoryItemBase mergedItem = wizard.GetMergedItem();
-                Comparison mergedItemComparison = SourceControlIntegration.CompareConflictedItems(mergedItem, null);
-                SetTreeItems(mergedItemComparison);
+                bool hasMergedItem = wizard.TryGetOrCreateMergedItem(out RepositoryItemBase? mergedItem);
+                if (hasMergedItem && mergedItem != null)
+                {
+                    Comparison mergedItemComparison = SourceControlIntegration.CompareConflictedItems(mergedItem, null);
+                    SetTreeItems(mergedItemComparison);
+                    SetPageContent(mergedItem);
+                }
                 HideLoading();
             });
         }
@@ -87,6 +111,26 @@ namespace Ginger.ConflictResolve
                 xTree.ClearTreeItems();
                 xTree.AddItem(new ConflictMergeTreeViewItem(comparison));
             });
+        }
+
+        private void SetPageContent(RepositoryItemBase mergedItem)
+        {
+            if(mergedItem is BusinessFlow mergedBusinessFlow)
+            {
+                Dispatcher.Invoke(() => 
+                {
+                    xPageViewTabItem.IsEnabled = true;
+                    xPageFrame.ClearAndSetContent(new BusinessFlowViewPage(mergedBusinessFlow, context: null!, General.eRIPageViewMode.View));
+                });
+            }
+            else
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    xPageViewTabItem.IsEnabled = false;
+                    xPageFrame.ClearAndSetContent(null);
+                });
+            }
         }
     }
 }

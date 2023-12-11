@@ -18,7 +18,6 @@ limitations under the License.
 
 using System;
 using System.Collections;
-
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -1316,7 +1315,7 @@ namespace Amdocs.Ginger.Repository
 
         private void ItmePropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (DirtyTrackingFields.Contains(e.PropertyName))
+            if (DirtyTrackingFields != null && DirtyTrackingFields.Contains(e.PropertyName))
             {
                 if (((RepositoryItemBase)sender).DirtyStatus != eDirtyStatus.Modified)
                 {

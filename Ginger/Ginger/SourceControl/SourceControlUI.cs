@@ -89,6 +89,14 @@ namespace Ginger.SourceControl
                         }
                     }
                 }
+                else if(string.Equals(error, Reporter.UserMsgsPool[eUserMsgKey.UncommitedChangesPreventCheckout].Message))
+                {
+                    Reporter.ToUser(eUserMsgKey.UncommitedChangesPreventCheckout);
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.StaticErrorMessage, $"Unable to get latest changes. {error}");
+                }
             }
             return true;
         }

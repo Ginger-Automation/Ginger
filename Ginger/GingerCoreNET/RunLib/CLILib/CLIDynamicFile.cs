@@ -19,14 +19,18 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
+using Amdocs.Ginger.Plugin.Core;
 using Ginger.Configurations;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Environments;
+using GingerCore.Variables;
 using GingerCoreNET.ALMLib;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -87,8 +91,18 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
         {
             if (FileType == eFileType.JSON)
             {
+                GingerExecConfig exeConfiguration;
                 //Dynamic JSON
-                GingerExecConfig exeConfiguration = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(content);
+                try
+                {
+                    exeConfiguration = DynamicExecutionManager.DeserializeDynamicExecutionFromJSON(content);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"error while convert dynamic json {ex.InnerException}", ex);
+                    return;
+                }
+
                 cliHelper.SetEncryptionKey(exeConfiguration.EncryptionKey);
                 if (exeConfiguration.SolutionScmDetails != null)
                 {
@@ -195,6 +209,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 {
                     LoadSealightsDetailsFromJSON(exeConfiguration);
                 }
+                if (exeConfiguration.GlobalVariables != null)
+                {
+                    LoadGlobalVariableValues(exeConfiguration);
+                }
                 if (runset.EnvironmentName != null || runset.EnvironmentID != null)
                 {
                     ProjEnvironment env = DynamicExecutionManager.FindItemByIDAndName<ProjEnvironment>(
@@ -238,6 +256,44 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             WorkSpace.Instance.Solution.SealightsConfiguration.SealightsSessionTimeout = gingerExecConfig.SealightsDetails.SealightsSessionTimeout.ToString();
             WorkSpace.Instance.Solution.SealightsConfiguration.SealightsReportedEntityLevel = (SealightsConfiguration.eSealightsEntityLevel)gingerExecConfig.SealightsDetails.SealightsEntityLevel;
             WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken = gingerExecConfig.SealightsDetails.SealightsAgentToken;
+        }
+        private void LoadGlobalVariableValues(GingerExecConfig gingerExecConfig)
+        {
+            try
+            {
+                foreach (GlobalVariable customizedVar in gingerExecConfig.GlobalVariables)
+                {
+                    VariableBase originalVar = DynamicExecutionManager.FindItemByIDAndName<VariableBase>(
+                                   new Tuple<string, Guid?>(nameof(VariableBase.Guid), customizedVar.VariableID),
+                                   new Tuple<string, string>(nameof(VariableBase.Name), customizedVar.VariableName),
+                                   WorkSpace.Instance.Solution.Variables);
+                    if (originalVar != null)
+                    {
+                        switch (originalVar.VariableType)
+                        {
+                            case "String":
+                            case "Number":
+                            case "Selection List":
+                            case "DateTime":
+                                if (!originalVar.SetValue(customizedVar.VariableCustomizedValue))
+                                {
+                                    throw new InvalidOperationException($"Invalid value/format '{customizedVar.VariableCustomizedValue}' provided for variable '{originalVar.Name}'");
+                                }
+                                break;
+                            default: throw new InvalidOperationException($"Value customization is not supported for variable type '{originalVar.VariableType}', variable name '{originalVar.Name}'");
+                        }
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Global Variable With Name '{customizedVar.VariableName}' And ID '{customizedVar.VariableID}' Not Found");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while setting Global Variable Customized Value", ex);
+                throw;
+            }
         }
 
         private void LoadALMDetailsFromJSON(GingerExecConfig gingerExecConfig)

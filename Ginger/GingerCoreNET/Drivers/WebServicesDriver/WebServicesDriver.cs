@@ -21,6 +21,8 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter;
+using Amdocs.Ginger.CoreNET.DiameterLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -34,12 +36,19 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace GingerCore.Drivers.WebServicesDriverLib
 {
     public class WebServicesDriver : DriverBase, IVirtualDriver
     {
+        public override string GetDriverConfigsEditPageName(Agent.eDriverType driverSubType = Agent.eDriverType.NA)
+        {
+            return "WebServicesDriverEditPage";
+        }
+
         [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Show Driver Window On Launch")]
@@ -121,6 +130,21 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         [UserConfiguredDescription("Use Proxy Server Settings | Set to true in order to use local Proxy Server settings, if set to true configured Agent 'Proxy Settings' will be avoided. ")]
         public bool UseServerProxySettings { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredDefault("false")]
+        [UserConfiguredDescription("Configure Tcp client endpoint")]
+        public bool UseTcp { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Tcp client hostname")]
+        public string TcpHostname { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Tcp client port")]
+        public string TcpPort { get; set; }
+
         private bool mIsDriverWindowLaunched
         {
             get
@@ -142,6 +166,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         public string mRawResponse;
         public string mRawRequest;
         private HttpWebClientUtils mWebAPI;
+        private TcpClient mTcpClient;
 
         public override bool IsSTAThread()
         {
@@ -180,7 +205,6 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             {
                 CreateSTA(ShowDriverWindow);
             }
-
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
@@ -207,6 +231,12 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 {
                     mDriverWindow.Close();
                     mDriverWindow = null;
+                }
+                if (mTcpClient != null)
+                {
+                    mTcpClient.Close();
+                    mTcpClient.Dispose();
+                    mTcpClient = null;
                 }
             }
             catch (Exception ex)
@@ -341,11 +371,14 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                 //Post Execution Copy execution result fields from actWebAPI to ActWebAPIModel (act)
                 CopyExecutionAttributes(act, actWebAPI);
 
-
-
             }
             else if (act is ActScreenShot)
             {
+            }
+            else if (act is ActDiameter)
+            {
+                ActDiameter mActDiameter = act as ActDiameter;
+                HandleDiameterRequest(mActDiameter);
             }
             else
             {
@@ -353,7 +386,81 @@ namespace GingerCore.Drivers.WebServicesDriverLib
             }
 
         }
+        private void HandleDiameterRequest(ActDiameter act)
+        {
+            Reporter.ToLog(eLogLevel.INFO, $"Starting Diameter Action");
+            if (act == null)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"An unexpected error occurred while processing the Diameter Action");
+                return;
+            }
 
+            if (!UseTcp)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"WebService Driver isn't configured to use TCP, please change driver configurations");
+                act.Error = $"The used WebService agent isn't configured to use TCP, please set configurations on agent's page";
+                return;
+            }
+
+            DiameterUtils diameterUtils = new DiameterUtils(new DiameterMessage());
+
+            if (mTcpClient == null)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"Starting TCP client initialization");
+
+                bool tcpInitialized = InitializeTCPClient();
+                if (!tcpInitialized)
+                {
+                    HandleTCPInitializationError(act);
+                    return;
+                }
+                Reporter.ToLog(eLogLevel.DEBUG, $"TCP client Initialization ended successfully");
+            }
+
+            diameterUtils.SetTcpClient(ref mTcpClient);
+
+            if (!diameterUtils.ConstructDiameterRequest(act))
+            {
+                act.Error += $"Error occurred in constructing the Diameter message";
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to construct the Diameter message");
+                return;
+            }
+            Reporter.ToLog(eLogLevel.DEBUG, $"ConstructDiameterRequest passed successfully");
+
+            diameterUtils.SaveRequestToFile(SaveRequestXML, SavedXMLDirectoryPath);
+            mRawRequest = diameterUtils.RequestFileContent;
+
+            var isSentSuccess = diameterUtils.SendRequest(TcpHostname, TcpPort);
+            if (!isSentSuccess)
+            {
+                act.Error += $"Failed to send Diameter message";
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred in sending the Diameter message");
+                return;
+            }
+
+            Reporter.ToLog(eLogLevel.DEBUG, $"SendRequest passed successfully");
+
+            var isReceiveResponseSuccess = diameterUtils.ReceiveResponse(TcpHostname, TcpPort);
+            if (!isReceiveResponseSuccess)
+            {
+                act.Error += $"Failed to receive Diameter response";
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred in receiving the Diameter response");
+                return;
+            }
+
+            Reporter.ToLog(eLogLevel.DEBUG, $"ReceiveResponse passed successfully");
+
+            diameterUtils.SaveResponseToFile(SaveResponseXML, SavedXMLDirectoryPath);
+            mRawResponse = diameterUtils.ResponseFileContent;
+
+            diameterUtils.ParseResponseToOutputParams();
+        }
+
+        private void HandleTCPInitializationError(ActDiameter act)
+        {
+            Reporter.ToLog(eLogLevel.ERROR, $"TCP client initialization failed - see log for more information");
+            act.Error = $"TCP client initialization failed";
+        }
         private string ReplacePlaceHolderParameneterWithActual(string ValueBeforeReplacing, ObservableList<EnhancedActInputValue> APIModelDynamicParamsValue)
         {
             if (string.IsNullOrEmpty(ValueBeforeReplacing))
@@ -504,7 +611,7 @@ namespace GingerCore.Drivers.WebServicesDriverLib
                     propertiesQouteFixed = propertiesQouteFixed.Replace("\0", "");
                     act.AddOrUpdateReturnParamActual(kpr.Value[0] + "-Properties", kpr.Value[5]);
                 }
-                if(mWebAPI is not null)
+                if (mWebAPI is not null)
                 {
                     act.RawResponseValues = mWebAPI.ResponseFileContent;
                     act.AddOrUpdateReturnParamActual("Raw Request: ", mWebAPI.RequestFileContent);
@@ -773,6 +880,49 @@ namespace GingerCore.Drivers.WebServicesDriverLib
         {
             errorMessage = string.Empty;
             return true;
+        }
+
+        private bool InitializeTCPClient()
+        {
+            if (!IsTCPConnectionDetailsValid())
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Tcp configuration error - Tcp hostname or port cannot be empty while driver is configured to use Tcp");
+                return false;
+            }
+
+            try
+            {
+                mTcpClient = new TcpClient(TcpHostname, Convert.ToInt32(TcpPort));
+                if (mTcpClient == null || !mTcpClient.Connected)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to establish the connection to {TcpHostname}:{TcpPort}");
+                    return false;
+                }
+
+                Reporter.ToLog(eLogLevel.DEBUG, $"Connection established to {TcpHostname}:{TcpPort}");
+                return true;
+            }
+            catch (FormatException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Invalid TCP port format - {ex.Message}");
+                ErrorMessageFromDriver = "Invalid TCP port format, please check configurations";
+            }
+            catch (SocketException ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error when trying to connect to the TCP client - {ex.Message}");
+                ErrorMessageFromDriver = "Failed to connect the TCP client, please check configurations";
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Unexpected error when trying to start Web Services Driver - {ex.Message}");
+                ErrorMessageFromDriver = "An unexpected error occurred, please check configurations";
+            }
+            return false;
+        }
+
+        private bool IsTCPConnectionDetailsValid()
+        {
+            return !string.IsNullOrEmpty(TcpHostname) && !string.IsNullOrEmpty(TcpPort);
         }
     }
 }

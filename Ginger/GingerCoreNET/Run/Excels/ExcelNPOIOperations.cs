@@ -56,12 +56,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                  initialColNumber -> is used to locate the first column number of the first header column
                  */
                 int initialColNumber = -1;
-                int blankColNumbers = 0;
-                SetHeaderColumns(headerRow , ref initialColNumber, dtExcelTable, ref blankColNumbers);
+                SetHeaderColumns(headerRow , ref initialColNumber, dtExcelTable);
                 /*
                  intialColNumber is used to also locate where to start and end the reading of the row data. 
                  */
-                SetRowsForDataTable(sheet , dtExcelTable , initialColNumber, rowHeaderNumber, rowLimit , blankColNumbers);
+                SetRowsForDataTable(sheet , dtExcelTable , initialColNumber, rowHeaderNumber, rowLimit);
                 return dtExcelTable;
             }
             catch (Exception ex)
@@ -400,7 +399,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         }
 
 
-        private void SetHeaderColumns(IRow headerRow, ref int initialColNumber, DataTable dtExcelTable, ref int blankColNumbers )
+        private void SetHeaderColumns(IRow headerRow, ref int initialColNumber, DataTable dtExcelTable )
         {
             int colCount = headerRow.LastCellNum;
             for (var c = 0; c < colCount; c++)
@@ -416,7 +415,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
                 }
                 else
                 {
-                    blankColNumbers++;
+                    dtExcelTable.Columns.Add("Col " + c);
                 }
             }
         }
@@ -429,24 +428,19 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib
         /// <param name="startRowNumber">Used to locate the first Row Number from where the row data begins</param>
         /// <param name="rowLimit">If the 'View Data / View Filtered Data' is selected on the Excel Action Page, the rowLimit is set , which means the user will only see AT MOST 'rowLimit' number of rows apart from the Column Header row </param>
 
-        private void SetRowsForDataTable(ISheet sheet, DataTable dtExcelTable, int initialColNumber, int startRowNumber, int rowLimit, int blankColNumbers)
+        private void SetRowsForDataTable(ISheet sheet, DataTable dtExcelTable, int initialColNumber, int startRowNumber, int rowLimit)
         {
             var currentRowNumber = startRowNumber;
             var currentRow = sheet.GetRow(currentRowNumber);
             while ( HasDataTableReachedRowLimit(currentRow , rowLimit , startRowNumber, currentRowNumber))
             {
                 var dr = dtExcelTable.NewRow();
-                int currentBlankRows = 0;
-                for (var currentColNumber = initialColNumber; currentColNumber < (initialColNumber + dr.ItemArray.Length + blankColNumbers); currentColNumber++)
+                for (var currentColNumber = initialColNumber; currentColNumber < (initialColNumber + dr.ItemArray.Length); currentColNumber++)
                 {
                     var cell = currentRow.GetCell(currentColNumber);
                     if (cell != null)
                     {
-                        dr[currentColNumber - initialColNumber - currentBlankRows] = GetCellValue(cell, cell.CellType);
-                    }
-                    else
-                    {
-                        currentBlankRows++;
+                        dr[currentColNumber - initialColNumber] = GetCellValue(cell, cell.CellType);
                     }
                 }
                 dtExcelTable.Rows.Add(dr);
