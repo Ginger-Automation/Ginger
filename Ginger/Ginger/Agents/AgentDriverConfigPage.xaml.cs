@@ -38,14 +38,15 @@ namespace Ginger.Agents
 
         enum eConfigsViewType { Grid, Page };
         eConfigsViewType mConfigsViewType;
+        private readonly General.eRIPageViewMode _viewMode;
 
-        public AgentDriverConfigPage(Agent agent)
+        public AgentDriverConfigPage(Agent agent, General.eRIPageViewMode viewMode = General.eRIPageViewMode.Standalone)
         {
             InitializeComponent();
 
             mAgent = agent;
             mAgent.PropertyChanged += Agent_PropertyChanged;
-
+            _viewMode = viewMode;
             InitAgentDriverConfigs();
             SetDriverConfigsPageContent();
         }
@@ -89,6 +90,14 @@ namespace Ginger.Agents
             {
                 //Grid 
                 DriverConfigurationGrid.Visibility = System.Windows.Visibility.Visible;
+                if(_viewMode == General.eRIPageViewMode.View || _viewMode == General.eRIPageViewMode.ViewAndExecute)
+                {
+                    DriverConfigurationGrid.IsEnabled = false;
+                }
+                else
+                {
+                    DriverConfigurationGrid.IsEnabled = true;
+                }
                 DriverConfigurationFrame.Visibility = System.Windows.Visibility.Collapsed;
                 SetGridView();
             }
