@@ -98,7 +98,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         readonly PomAllElementsPage mPomAllElementsPage;
         ePlatformType mAppPlatform;
-        public POMEditPage(ApplicationPOMModel POM, eRIPageViewMode editMode = eRIPageViewMode.View)
+        public POMEditPage(ApplicationPOMModel POM, eRIPageViewMode editMode, bool ignoreValidationRules = false)
         {
             InitializeComponent();
             mPOM = POM;
@@ -111,7 +111,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xShowIDUC.Init(mPOM);
             xFirstRowExpanderLabel.Content = string.Format("'{0}' Details", mPOM.Name);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
-            xNameTextBox.AddValidationRule(new AddEditPOMWizardLib.POMNameValidationRule());
+            if (!ignoreValidationRules)
+            {
+                xNameTextBox.AddValidationRule(new AddEditPOMWizardLib.POMNameValidationRule());
+            }
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
             xPageURLTextBox.Init(null, mPOM, nameof(mPOM.PageURL));
 
@@ -129,7 +132,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
             xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
 
-            mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
+            mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage, editMode: mEditMode);
             xUIElementsFrame.ClearAndSetContent(mPomAllElementsPage);
             mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
             UIElementTabTextBlockUpdate();
@@ -151,6 +154,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEditPageExpander, Expander.IsExpandedProperty, mPOM, nameof(mPOM.IsCollapseDetailsExapander));
 
             SetDefaultPage();
+
+            if(mEditMode == eRIPageViewMode.View || mEditMode == eRIPageViewMode.ViewAndExecute)
+            {
+                xDetailsStackPanel.IsEnabled = false;
+                xScreenshotOperationBtns.IsEnabled = false;
+            }
+            else
+            {
+                xDetailsStackPanel.IsEnabled = true;
+                xScreenshotOperationBtns.IsEnabled = true;
+            }
         }
 
         private void SetDefaultPage()

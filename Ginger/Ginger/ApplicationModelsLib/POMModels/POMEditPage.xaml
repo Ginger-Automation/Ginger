@@ -26,7 +26,7 @@
                     <Label x:Name="xFirstRowExpanderLabel" Content="Details" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" />
                 </Expander.Header>
                 <Expander.Content>
-                    <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Vertical" x:Name="xDetailsStackPanel">
                         <Grid>
                             <Grid.Resources>
                                 <local:BooleanToVisiblityCollapsedConverter x:Key="visibilityConverter" />
@@ -95,7 +95,7 @@
                 </TabItem.Header>
                 <ScrollViewer>
                     <StackPanel Orientation="Vertical" >
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <StackPanel x:Name="xScreenshotOperationBtns" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                             <UserControls:ucButton x:Name="xBrowseImageLoadButton"  ButtonType="RoundTextAndImageButton"  ButtonText="Browse Image" ButtonImageType="Folder" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="BrowseImageButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
                             <UserControls:ucButton x:Name="xTakeScreenShotLoadButton"  ButtonType="RoundTextAndImageButton" ButtonText="Take Screenshot" ButtonImageType="Camera" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="TakeScreenShotButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
                         </StackPanel>
