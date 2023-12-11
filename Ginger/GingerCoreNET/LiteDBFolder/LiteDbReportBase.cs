@@ -291,7 +291,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 }
                 else
                 {
-                    return AllBusinessFlowsColl.GroupBy(b => b.GUID).Select(group => group.Last()).OrderBy(b => b.Seq).ToList().AsReadOnly();
+                    return AllBusinessFlowsColl.GroupBy(b => b.InstanceGUID).Select(group => group.Last()).OrderBy(b => b.Seq).ToList().AsReadOnly();
                 }
             }
         }

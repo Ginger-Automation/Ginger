@@ -235,11 +235,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 ClearSeq();
             }
 
-            if (liteDbBFList.Count > context.Runner.BusinessFlows.Count)
+/*            if (liteDbBFList.Count > context.Runner.BusinessFlows.Count)
             {
                 liteDbBFList.RemoveRange(0, context.Runner.BusinessFlows.Count);
             }
-            if (lastBfStatus == eRunStatus.Stopped)
+*/            if (lastBfStatus == eRunStatus.Stopped)
             {
                 BFR._id = lastBfObjId;
                 ClearSeq();
@@ -275,7 +275,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             BFR.ChildExecutedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), ChildExecutedItemsCountAction);
             BFR.ChildPassedItemsCount.Add(HTMLReportConfiguration.eExecutionStatisticsCountBy.Actions.ToString(), ChildPassedItemsCountAction);
 
-            if (context.BusinessFlow.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
+/*            if (context.BusinessFlow.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
             {
                 BFR._id = context.BusinessFlow.LiteDbId;
                 var BFRToUpdate = liteDbManager.GetBfLiteData().IncludeAll().Find(x => x._id == BFR._id).ToList();
@@ -290,7 +290,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                     }
                     liteDbActivityList.AddRange((BFRToUpdate[0] as LiteDbBusinessFlow).ActivitiesColl);
                 }
-            }
+            }*/
             if (WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionLoggerConfigurationIsEnabled)
             {
                 if (offlineMode)
