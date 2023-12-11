@@ -100,7 +100,7 @@
 
                             <Label x:Name="xEndPointURLLabel" Content="End Point URL:"  Grid.Column="0" Grid.Row="0" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
                             <TextBox x:Name="xEndPointURLTextBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" ToolTip="Centralized DB Service end point" Margin="10,0,0,0"  Width="400" VerticalScrollBarVisibility="Auto"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   Text="" />
-                            <Label x:Name="xPublishingPhase" Content="Data Publishing Phase:"  Grid.Column="0" Grid.Row="2" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12"/>
+                           
                             <Label x:Name="xHTMLReportURLLabel" Content="HTML Report URL:"  Grid.Column="0" Grid.Row="1" Style="{StaticResource @InputFieldLabelStyle}"   FontSize="12" Grid.ColumnSpan="2" Margin="0,5,0,5" Grid.RowSpan="2"/>
                             <TextBox x:Name="xHTMLReportURLTextBox" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Left" ToolTip="Centralized DB Service end point" Margin="10,0,0,0"  Width="400" VerticalScrollBarVisibility="Auto"  Style="{StaticResource @TextBoxStyle}" TextWrapping="Wrap"   Text="" />
 
