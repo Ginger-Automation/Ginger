@@ -124,8 +124,9 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Path of extensions to be enabled | Use a semi-colon to separate multiple extensions.")]
-        public string ExtensionPaths { get; set; }
+        [UserConfiguredDescription("Path to extension to be enabled")]
+        public string ExtensionPath { get; set; }
+        // Note: ExtensionPath is a semi-colon delimited string containing one or more extension paths
 
         [UserConfigured]
         [UserConfiguredDefault("true")]
@@ -190,7 +191,7 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Only For Chrome : Use a valid device name from the DevTools Emulation panel.")]
+        [UserConfiguredDescription("Only For Chrome : Use a valid device name from theDevTools Emulation panel.")]
         public string EmulationDeviceName { get; set; }
 
         [UserConfigured]
@@ -236,7 +237,7 @@ namespace GingerCore.Drivers
 
         [UserConfigured]
         [UserConfiguredDefault("normal")]
-        [UserConfiguredDescription("Defines the current session's page loading strategy.you can change from the default parameter of normal to eager or none")]
+        [UserConfiguredDescription("Defines the current session’s page loading strategy.you can change from the default parameter of normal to eager or none")]
         public string PageLoadStrategy { get; set; }
 
         [UserConfigured]
@@ -521,9 +522,9 @@ namespace GingerCore.Drivers
                         {
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
                         }
-                        else if (!string.IsNullOrEmpty(ExtensionPaths))
+                        else if (!string.IsNullOrEmpty(ExtensionPath))
                         {
-                            string[] extensionPaths = ExtensionPaths.Split(';'); 
+                            string[] extensionPaths = ExtensionPath.Split(';'); 
                             options.AddExtensions(extensionPaths);                            
                         }
 
