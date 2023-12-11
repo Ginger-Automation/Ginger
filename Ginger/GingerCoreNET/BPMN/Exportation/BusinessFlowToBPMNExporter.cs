@@ -82,6 +82,10 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
         {
             string zipDirectoryPath = CreateReleaseZIPDirectory(bpmnFiles);
             string zipFilePath = $"{zipDirectoryPath}.zip";
+            if(File.Exists(zipFilePath))
+            {
+                File.Delete(zipFilePath);
+            }
             ZipFile.CreateFromDirectory(zipDirectoryPath, zipFilePath);
             Directory.Delete(zipDirectoryPath, recursive: true);
             return zipFilePath;
@@ -93,7 +97,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             string zipDirectoryPath = Path.Combine(zipDirectoryRootPath, "requirements-library");
             if (Directory.Exists(zipDirectoryPath))
             {
-                Directory.Delete(zipDirectoryPath);
+                Directory.Delete(zipDirectoryPath, recursive: true);
             }
             Directory.CreateDirectory(zipDirectoryPath);
 
