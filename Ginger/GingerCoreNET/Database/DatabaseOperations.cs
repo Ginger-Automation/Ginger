@@ -37,6 +37,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using static GingerCore.Environments.Database;
+using static GingerCore.Actions.ActDBValidation;
+using GingerCore.Actions;
 
 namespace GingerCore.Environments
 {
@@ -208,6 +210,7 @@ namespace GingerCore.Environments
                 if (host.Length == 2)
                 {
                     Database.ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
+                    //Database.ConnectionString = $"Server={host[0]} ;Port= {host[1]} ;User Id={this.UserCalculated}; Password={this.PassCalculated};Database= {Database.Name} ;";
                 }
             }
                 return ConnectionStringCalculated;
@@ -395,6 +398,7 @@ namespace GingerCore.Environments
                     case eDBTypes.Hbase: 
                         
                         Database.ConnectionString = GetConnectionString();
+                        
 
                         GingerHbase ghbase = new GingerHbase(Database.TNS, Database.User, Database.Pass);
                         ghbase.Db = Database;
@@ -527,10 +531,8 @@ namespace GingerCore.Environments
                             databaseTableNames = objGingerCosmos.GetTableList(Keyspace);
                         break;
                         case eDBTypes.Hbase:
-                            GingerHbase ghbase = new GingerHbase(Database.TNS, Database.User, Database.Pass);
-                            ghbase.GetTableList().Wait();
-                            databaseTableNames = ghbase.HBTableList;
-                            //databaseTableNames = ghbase.GetTableList();
+                            GingerHbase ghbase = new GingerHbase(Database.TNS, Database.User, Database.Pass);                            
+                            databaseTableNames = ghbase.GetTableList(Keyspace);
                             break;
 
                         case eDBTypes.Oracle:

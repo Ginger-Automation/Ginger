@@ -25,6 +25,7 @@ using GingerCore.Actions.Common;
 using GingerCore.Environments;
 using GingerCore.NoSqlBase;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Azure.Cosmos.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -406,9 +407,14 @@ namespace GingerCore.Actions
                     }
                     break;
                 case Database.eDBTypes.Hbase:
-                    if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerCosmos))
+                    
+                    if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerHbase))
                     {
                         NoSqlDriver = new GingerHbase(DBValidationType, DB, this);
+                    }
+                    else
+                    {
+                        NoSqlDriver.Action= DBValidationType;                        
                     }
                     break;
             }
