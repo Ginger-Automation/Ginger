@@ -18,13 +18,11 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.DataSource;
 using Amdocs.Ginger.Repository;
 using GingerCore.DataSource;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -86,6 +84,16 @@ namespace GingerCore.Actions
             if (DataSource.DSType == DataSourceBase.eDSType.LiteDataBase)
             {
                 GingerCoreNET.DataSource.GingerLiteDB liteDB = new GingerCoreNET.DataSource.GingerLiteDB();
+                string value = GetInputParamValue("Value");
+                if (!string.IsNullOrEmpty(value))
+                {
+                    ValueExpression mValueExpression = new(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, RunOnBusinessFlow, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
+                    mValueExpression.Value = value;
+                    ValueUC = mValueExpression.ValueCalculated;
+                }
+
+                LiteDBSQLTranslator liteDBSQLTranslator = new (this);
+                this.ValueExp = liteDBSQLTranslator.CreateValueExpression();
                 string Query = ValueExp.Substring(ValueExp.IndexOf("QUERY=") + 6, ValueExp.Length - (ValueExp.IndexOf("QUERY=") + 7));
                 liteDB.FileFullPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(DataSource.FileFullPath);
 
@@ -281,6 +289,24 @@ namespace GingerCore.Actions
 
         }
 
+
+        private string mKeyName;
+        [IsSerializedForLocalRepository]
+        public string KeyName
+        {
+            get 
+            {
+                return mKeyName; 
+            }
+            set
+            {
+                if(!string.Equals(mKeyName , value))
+                {
+                    mKeyName = value;
+                    OnPropertyChanged(nameof(KeyName));
+                }
+            }
+        }
         private eControlAction mControlAction;
         [IsSerializedForLocalRepository]
         public eControlAction ControlAction
