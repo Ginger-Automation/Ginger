@@ -57,7 +57,7 @@
                                 </Grid>
                             </StackPanel>
 
-                            <CheckBox x:Name="xLearnScreenshotsOfElements" AutomationProperties.AutomationId="LearnScreenshotsElementsCheckBox AID" Content="Learn Sreenshots of Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="False" Style="{StaticResource $CeckBoxStyle}"/>
+                            <CheckBox x:Name="xLearnScreenshotsOfElements" AutomationProperties.AutomationId="LearnScreenshotsElementsCheckBox AID" Content="Learn Screenshots of Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="False" Style="{StaticResource $CeckBoxStyle}"/>
                             <CheckBox x:Name="xLearnOnlyMappedElements" AutomationProperties.AutomationId="LearnOnlyMappedElementsCheckBox AID" Content="Learn Only Mapped Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="False" Style="{StaticResource $CeckBoxStyle}"/>
                             <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsEnabled="False" IsExpanded="False" Margin="5,0,0,0">
                                 <Expander.Header>

@@ -391,9 +391,9 @@ namespace GingerCore.Actions
 
         public enum eMonitorUrl
         {
-            [EnumValueDescription("All URLs")]
+            [EnumValueDescription("All")]
             AllUrl,
-            [EnumValueDescription("Selected URLs")]
+            [EnumValueDescription("Specific URLs")]
             SelectedUrl,
         }
 
