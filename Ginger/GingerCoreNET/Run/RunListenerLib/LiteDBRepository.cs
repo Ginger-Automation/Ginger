@@ -942,5 +942,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             liteDbBFList.Clear();
         }
 
+        public override void DeleteLocalData(string logFolder, ObjectId runsetId, Guid executionId)
+        {
+            DeleteLiteDbAndScreenShotData(runsetId, executionId);
+        }
     }
 }

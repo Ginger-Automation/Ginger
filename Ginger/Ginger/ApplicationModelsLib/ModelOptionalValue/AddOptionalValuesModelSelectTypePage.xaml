@@ -10,7 +10,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="AddOptionalValuesModelSelectTypePage">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid Background="{StaticResource $BackgroundColor_White}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
                 <RowDefinition Height="Auto"/>
@@ -24,10 +24,10 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left" Content="Source Type:" Style="{StaticResource @InputFieldLabelStyle}" />
-            <ComboBox Grid.Row="0" Grid.Column="1"  Name="xSourceTypeComboBox" ContextMenu="{x:Null}" Width="150"  Style="{StaticResource @InputComboBoxStyle}"  VerticalAlignment="Center" SelectionChanged="xSourceTypeComboBox_SelectionChanged"  HorizontalAlignment="Left"  Margin="0,0,5,0"></ComboBox>
+            <ComboBox Grid.Row="0" Grid.Column="1"  Name="xSourceTypeComboBox" ContextMenu="{x:Null}" Width="150"  Style="{StaticResource $FlatInputComboBoxStyle}"  VerticalAlignment="Center" SelectionChanged="xSourceTypeComboBox_SelectionChanged"  HorizontalAlignment="Left"  Margin="0,0,5,0"></ComboBox>
 
             <StackPanel x:Name="xDBStackPanel" Grid.Row="1" Grid.ColumnSpan="3" Visibility="Collapsed" HorizontalAlignment="Left" >
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
@@ -43,7 +43,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Label Grid.Row="0" Grid.Column="0" Content="DB Type:" HorizontalAlignment="Left" Style="{StaticResource @InputFieldLabelStyle}"></Label>
-                    <ComboBox x:Name="xDBTypeComboBox" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" ContextMenu="{x:Null}" Width="115" Style="{StaticResource @InputComboBoxStyle}"  VerticalAlignment="Center" SelectionChanged="xDBTypeComboBox_SelectionChanged"  HorizontalAlignment="Left"  Margin="0,0,5,0"></ComboBox>
+                    <ComboBox x:Name="xDBTypeComboBox" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" ContextMenu="{x:Null}" Width="115" Style="{StaticResource $FlatInputComboBoxStyle}"  VerticalAlignment="Center" SelectionChanged="xDBTypeComboBox_SelectionChanged"  HorizontalAlignment="Left"  Margin="0,0,5,0"></ComboBox>
                     <Label Grid.Row="1" Grid.Column="0"  Content="TNS\Host\File Path:" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}"></Label>
                     <TextBox Grid.Row="1"  Grid.Column="1" Grid.ColumnSpan="2"  Background="White" x:Name="xBDHostTextBox" Text="" VerticalAlignment="Center" IsEnabled="true" HorizontalAlignment="Left"  Width="250" Style="{StaticResource @MultiRowsTextBoxStyle}" Margin="0,0,5,0"  />
                     <usercontrols:ucButton Grid.Row="1" Grid.Column="4"  HorizontalAlignment="Left"   x:Name="xDBBrowseButton" VerticalAlignment="Top" ToolTip="Browse File" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="OpenFolder" Click="xDBBrowseButton_Click" Margin="0,0,0,0" />
@@ -89,7 +89,7 @@
                     <DockPanel Grid.Row="2" Grid.ColumnSpan="3">
                         <StackPanel >
                             <Label Name="xSheetLable"   HorizontalAlignment="Left" Content="Sheet:" VerticalAlignment="Center" Style="{StaticResource @InputFieldLabelStyle}"  />
-                            <ComboBox x:Name="xSheetNameComboBox" SelectionChanged="xSheetNameComboBox_SelectionChanged"  Margin="5,0,0,0"  VerticalAlignment="Center" Style="{StaticResource @InputComboBoxStyle}" IsEditable="True" Width="250" HorizontalAlignment="Left" ></ComboBox>
+                            <ComboBox x:Name="xSheetNameComboBox" SelectionChanged="xSheetNameComboBox_SelectionChanged"  Margin="5,0,0,0"  VerticalAlignment="Center" Style="{StaticResource $FlatInputComboBoxStyle}" IsEditable="True" Width="250" HorizontalAlignment="Left" ></ComboBox>
                         </StackPanel>
                         <usercontrols:ucButton x:Name="RefreshBtn" ToolTip="Refresh Sheets" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="Refresh" Click="RefreshButton_Click" VerticalAlignment="Bottom" Margin="0,20,0,0" />
                         <usercontrols:ucButton x:Name="xExcelViewDataButton" ToolTip="View All Data" ButtonType="ImageButton"  ButtonImageWidth="20" ButtonImageHeight="15" ButtonImageType="View" Click="xExcelViewDataButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,20,0,0" />
@@ -103,7 +103,7 @@
                         <usercontrols:ucButton x:Name="xExcelViewWhereButton" ToolTip="View Filtered Data" ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageType="Filter" Click="xExcelViewWhereButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,25,0,0" />
                     </DockPanel>
 
-                    <GridSplitter x:Name="xExcelGridSplitter" Grid.ColumnSpan="3" Grid.Row="4" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource $Color_DarkBlue}" IsEnabled="False" Margin="0,5,0,5" />
+                    <GridSplitter x:Name="xExcelGridSplitter" Grid.ColumnSpan="3" Grid.Row="4" Height="1"  HorizontalAlignment="Stretch"  Background="{StaticResource $PrimaryColor_Black}" IsEnabled="False" Margin="0,5,0,5" />
 
                     <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,0,0,5">
                         <DockPanel x:Name="xExcelDataGridDockPanel" Margin="0,5,5,5">

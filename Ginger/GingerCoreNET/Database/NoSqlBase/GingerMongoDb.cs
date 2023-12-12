@@ -292,7 +292,7 @@ namespace GingerCore.NoSqlBase
         public override void PerformDBAction()
         {
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
-            VE.Value = Act.SQL;
+            VE.Value = Act.QueryValue;
             string SQLCalculated = VE.ValueCalculated;
             string collectionName = "";
             if (Action == Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue)

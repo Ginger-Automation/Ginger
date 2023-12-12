@@ -7,7 +7,7 @@
       Height="160" Width="600" MinHeight="160" MinWidth="100"
 	Title="ExceptionDetailsPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="62" MaxWidth="62" MinWidth="62"/>
             <ColumnDefinition x:Name="colError" Width="488*"/>
@@ -25,7 +25,7 @@
         <Button x:Name="MoreLessInfoBtn" Grid.Row="0" Grid.Column="2" Content="More" Style="{StaticResource @InputButtonStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="MoreLessInfoBtn_Click" Margin="5,5,5,5"/>
 
         <ScrollViewer Grid.Row="1" Grid.ColumnSpan="3"  VerticalScrollBarVisibility="Visible"  HorizontalScrollBarVisibility="Visible">
-            <Border BorderThickness="1" BorderBrush="{StaticResource $Color_DarkBlue}">
+            <Border BorderThickness="1" BorderBrush="{StaticResource $PrimaryColor_Black}">
                 <TextBlock x:Name="FullErrorDetailsTextBlock"  Height="Auto" Style="{StaticResource @DetailsTextBlockStyle}" Text="Error Full Details" Margin="0,5,0,0" TextWrapping="Wrap"></TextBlock>
             </Border>
         </ScrollViewer>       

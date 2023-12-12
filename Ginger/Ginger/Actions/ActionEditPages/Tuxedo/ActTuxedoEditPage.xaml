@@ -17,7 +17,7 @@
 
     
     <TabControl>
-            <TabItem Header="UD File">
+        <TabItem Header="UD File" Style="{StaticResource $RoundedTab}">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="5">
                         <Label Style="{StaticResource @InputFieldLabelStyle}">Local UD File</Label>
@@ -37,7 +37,7 @@
 
         </TabItem>
 
-            <TabItem Header="Unix Configurations">
+        <TabItem Header="Unix Configurations" Style="{StaticResource $RoundedTab}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="200"/>

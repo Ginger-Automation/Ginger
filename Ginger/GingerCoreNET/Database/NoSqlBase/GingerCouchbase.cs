@@ -177,7 +177,7 @@ namespace GingerCore.NoSqlBase
 
         public override void PerformDBAction()
         {
-            string SQL = Act.SQL;
+            string SQL = Act.QueryValue;
             string keyspace = Act.Keyspace;
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
             VE.Value = SQL;

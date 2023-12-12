@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
         <StackPanel  Grid.Row="0" Grid.ColumnSpan="5" x:Name="TextDetailsInstancePanel">
             <Label Style="{StaticResource @InputFieldLabelStyle}">Set Text Mode</Label>
-            <ComboBox x:Name="SetTextModeCombo"  Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="SetTextModeCombo_SelectionChanged"></ComboBox>
+            <ComboBox x:Name="SetTextModeCombo"  Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="SetTextModeCombo_SelectionChanged"></ComboBox>
         </StackPanel>
         <StackPanel  Grid.Row="1">
          <CheckBox x:Name="SendAfterSettingText" Margin="0,10,0,0"></CheckBox>

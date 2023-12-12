@@ -131,7 +131,7 @@ namespace GingerCore.NoSqlBase
             try
             {
                 ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
-                VE.Value = Act.SQL;
+                VE.Value = Act.QueryValue;
                 string SQLCalculated = VE.ValueCalculated.ToLower();
                 string dbName = "";
                 string containerName = "";

@@ -136,7 +136,17 @@ namespace Ginger.AnalyzerLib
                 IEnumerable<ActivityIdentifiers> activityIdentifiers = activityGoup.ActivitiesIdentifiers;
                 foreach (ActivityIdentifiers activityIdentifier in activityIdentifiers)
                 {
-                    if (activityIdentifier.ActivityGuid == activity.Guid)
+                    if (activityIdentifier.ActivityGuid == activity.Guid && activityIdentifier.ActivityName == activity.ActivityName)
+                    {
+                        existsInAnyActivityGroup = true;
+                        break;
+                    }
+                    else if (activityIdentifier.ActivityGuid == activity.Guid)
+                    {
+                        existsInAnyActivityGroup = true;
+                        break;
+                    }
+                    else if (activityIdentifier.ActivityName == activity.ActivityName)
                     {
                         existsInAnyActivityGroup = true;
                         break;

@@ -16,7 +16,7 @@
         </Grid.ColumnDefinitions>
         <UCTreeView:TreeView2 x:Name="MainTreeView" TreeTitle="Title" />
 
-        <GridSplitter ResizeDirection="Columns" Grid.Column="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True"/>
+        <GridSplitter ResizeDirection="Columns" Grid.Column="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="{StaticResource $PrimaryColor_Black}" IsEnabled="True"/>
 
         <Frame x:Name="DetailsFrame" Grid.Column="1" Margin="5,0,0,0"/>
     </Grid>
