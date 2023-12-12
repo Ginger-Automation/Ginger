@@ -272,10 +272,6 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
         public string UnhandledPromptBehavior { get; set; }
 
-        [UserConfigured]
-        [UserConfiguredDefault("")]
-        [UserConfiguredDescription("Specify domains to be blocked for browser session")]
-        public string BlockedDomains { get; set; }
 
         protected IWebDriver Driver;
 
@@ -9879,13 +9875,19 @@ namespace GingerCore.Drivers
             devTools = webDriver as IDevTools;
             if (webDriver is ChromiumDriver)
             {
-                //ChromiumDriver cd = (ChromiumDriver)webDriver;
-
-                //DevTool Session 
-                devToolsSession = devTools.GetDevToolsSession(117);
-                devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
-                devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V117.Network.EnableCommandSettings());
-                blockOrUnblockUrls();
+                try
+                {
+                    //DevTool Session 
+                    devToolsSession = devTools.GetDevToolsSession(117);
+                    devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
+                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V117.Network.EnableCommandSettings());
+                    blockOrUnblockUrls();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                    mAct.Error = ex.Message;
+                }
             }
 
         }
@@ -9902,7 +9904,7 @@ namespace GingerCore.Drivers
         {
             if (mAct != null )
             {
-                if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls) // && !string.IsNullOrEmpty(mAct.sBlockedUrls))
+                if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
                 {
                     devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V117.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
                 }
