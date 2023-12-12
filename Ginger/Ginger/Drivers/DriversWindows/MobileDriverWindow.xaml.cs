@@ -1443,6 +1443,7 @@ namespace Ginger.Drivers.DriversWindows
                 double ratio_X = 1;
                 double ratio_Y = 1;
 
+                ((GenericAppiumDriver)mDriver).CalculateSourceMobileImageConvertFactors(eImagePointUsage.Click);
                 ratio_X = (xDeviceScreenshotImage.Source.Width / ((GenericAppiumDriver)mDriver).SourceMobileImageWidthConvertFactor) / xDeviceScreenshotImage.ActualWidth;
                 ratio_Y = (xDeviceScreenshotImage.Source.Height / ((GenericAppiumDriver)mDriver).SourceMobileImageHeightConvertFactor) / xDeviceScreenshotImage.ActualHeight;
 
