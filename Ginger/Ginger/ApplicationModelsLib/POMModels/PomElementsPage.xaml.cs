@@ -377,8 +377,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 xMainElementsGrid.PasteItemEvent += PasteElementEvent;
                 xMainElementsGrid.SelectedItemChanged += XMainElementsGrid_SelectedItemChanged;
                 
-              //  WeakEventManager<ucGrid, PasteItemEventArgs>.AddHandler(source: xMainElementsGrid, eventName: nameof(ucGrid.PasteItemEvent), handler: PasteElementEvent);
-                //WeakEventManager<ucGrid, SelectedGridItemChangedEventHandler>.AddHandler(source: xMainElementsGrid, eventName: nameof(ucGrid.SelectedItemChanged), handler: XMainElementsGrid_SelectedItemChanged);
                 WeakEventManager<DataGrid, SelectionChangedEventArgs>.AddHandler(source: xMainElementsGrid.grdMain, eventName: nameof(DataGrid.SelectionChanged), handler: Grid_SelectionChanged);
 
             
