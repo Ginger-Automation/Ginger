@@ -46,7 +46,7 @@ namespace GingerUtils
 
             var gZipBuffer = new byte[compressedData.Length + 4];
             Buffer.BlockCopy(compressedData, 0, gZipBuffer, 4, compressedData.Length);
-            Buffer.BlockCopy(BitConverter.GetBytes(buffer.Length), 0, gZipBuffer, 0, 4);
+            Buffer.BlockCopy(System.BitConverter.GetBytes(buffer.Length), 0, gZipBuffer, 0, 4);
             return Convert.ToBase64String(gZipBuffer);
         }
 
@@ -60,7 +60,7 @@ namespace GingerUtils
             byte[] gZipBuffer = Convert.FromBase64String(compressedText);
             using (var memoryStream = new MemoryStream())
             {
-                int dataLength = BitConverter.ToInt32(gZipBuffer, 0);
+                int dataLength = System.BitConverter.ToInt32(gZipBuffer, 0);
                 memoryStream.Write(gZipBuffer, 4, gZipBuffer.Length - 4);
 
                 var buffer = new byte[dataLength];

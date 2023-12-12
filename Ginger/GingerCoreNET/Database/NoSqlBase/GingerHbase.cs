@@ -297,7 +297,7 @@ namespace GingerCore.NoSqlBase
         {
                                           
                 ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
-                VE.Value = Act.SQL;
+                VE.Value = Act.QueryValue;
                 string SQLCalculated = VE.ValueCalculated;
                 var ConnectionUri = new Uri(Db.DatabaseOperations.TNSCalculated);
                 ClusterCredentials ClCredential = new(ConnectionUri, Db.DatabaseOperations.UserCalculated, Db.DatabaseOperations.PassCalculated);                
