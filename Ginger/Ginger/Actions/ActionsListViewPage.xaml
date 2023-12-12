@@ -20,7 +20,7 @@
                 <ColumnDefinition Width="370"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <UserControls:ucButton x:Name="xGoToActionsList" Grid.Column="0" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoBack" Click="xGoToActionsList_Click" Foreground="{StaticResource $SelectionColor_LightBlue}" >
+            <UserControls:ucButton x:Name="xGoToActionsList" Grid.Column="0" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="GoBack" Click="xGoToActionsList_Click" Foreground="{StaticResource $HighlightColor_LightBlue}" >
                 <UserControls:ucButton.ToolTip>
                     <GingerCore:ucTextDicResource Text="Back to Actions List"></GingerCore:ucTextDicResource>
                 </UserControls:ucButton.ToolTip>
@@ -34,7 +34,7 @@
                 <UserControls:ucButton x:Name="xNextActionBtn" ButtonType="ImageButton" Click="xNextActionBtn_Click" ToolTip="Next Action"  ButtonFontImageSize="16"  ButtonImageType="MoveDown" />
                 <UserControls:ucButton x:Name="xExpandActionBtn" ButtonType="ImageButton" Click="xExpandActionBtn_Click" ToolTip="Edit Action in full screen"  ButtonFontImageSize="16"  ButtonImageType="ExpandToFullScreen" />
                 <StackPanel  x:Name="xEditOperationsPnl" Orientation="Horizontal">
-                    <GridSplitter x:Name="xOperationsSpliter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
+                    <GridSplitter x:Name="xOperationsSpliter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="4,4,4,4" Height="18"/>
                     <UserControls:ucButton x:Name="xUndoBtn" ButtonType="ImageButton" Click="XUndoBtn_Click" ToolTip="Undo Last Changes"  ButtonFontImageSize="16" ButtonImageType="Undo" />
                     <UserControls:ucButton x:Name="xDeleteBtn" ButtonType="ImageButton" Click="xDeleteBtn_Click" ToolTip="Delete Action"  ButtonFontImageSize="16" ButtonImageType="Delete" />
                     <UserControls:ucButton x:Name="xActiveBtn" ButtonType="ImageButton" Click="xActiveBtn_Click" ToolTip="Active"  ButtonFontImageSize="16" ButtonImageType="Active" />
@@ -63,8 +63,8 @@
                             </MenuItem>
                         </MenuItem>
                     </Menu>
-                    <GridSplitter x:Name="xRunSpliter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4" Height="18"/>
-                    <UserControls:ucButton x:Name="xRunActionBtn" ButtonType="RoundTextAndImageButton" Click="xRunActionBtn_Click" ButtonText="Run Action" ToolTip="Run Action"  ButtonFontImageSize="12" ButtonImageHeight="10" ButtonImageWidth="10" ButtonImageType="Run" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
+                    <GridSplitter x:Name="xRunSpliter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="4,4,4,4" Height="18"/>
+                    <UserControls:ucButton x:Name="xRunActionBtn" ButtonType="RoundTextAndImageButton" Click="xRunActionBtn_Click" ButtonText="Run Action" ToolTip="Run Action"  ButtonFontImageSize="12" ButtonImageHeight="10" ButtonImageWidth="10" ButtonImageType="Run" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
                 </StackPanel>
             </StackPanel>
         </Grid>

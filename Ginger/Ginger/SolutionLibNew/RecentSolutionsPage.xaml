@@ -16,7 +16,7 @@
             <RowDefinition Height="60"/>
         </Grid.RowDefinitions>
         <Label x:Name="recentSolutionsLabel" Content="Recent Solutions:" Style="{StaticResource @LabelStyle}" HorizontalAlignment="Left" Width="107" FontWeight="Bold" Grid.RowSpan="4"/>
-        <ListBox x:Name="recentSolutionsListBox" Background="{DynamicResource $BackgroundColor_LightGray}" BorderThickness="0" Grid.Row="1" SelectionChanged="recentSolutionsListBox_SelectionChanged" Margin="5">
+        <ListBox x:Name="recentSolutionsListBox" Background="{DynamicResource $BackgroundColor_White}" BorderThickness="0" Grid.Row="1" SelectionChanged="recentSolutionsListBox_SelectionChanged" Margin="5">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>

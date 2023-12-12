@@ -13,7 +13,7 @@
       Title="PomDeltaSettingsPage">
 
     <ScrollViewer>
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid Background="{StaticResource $BackgroundColor_White}">
             <DockPanel Margin="5,20,10,0">
                 <!--<agents:ucAgentControl x:Name="xAgentControlUC" AutomationProperties.AutomationId="ucAgentControl AID" DockPanel.Dock="Top" Margin="0,0,0,15"></agents:ucAgentControl>-->
 
@@ -43,10 +43,10 @@
                         </Expander.Header>
                         <Expander.Content>
                             <TabControl>
-                                <TabItem Header="Basic Elements">
+                                <TabItem Header="Basic Elements" Style="{StaticResource $RoundedTab}">
                                     <Ginger:ucGrid x:Name="xAutoMapBasicElementTypesGrid" AutomationProperties.AutomationId="AutoMapElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
                                 </TabItem>
-                                <TabItem Header="Advanced Elements">
+                                <TabItem Header="Advanced Elements" Style="{StaticResource $RoundedTab}">
                                     <Ginger:ucGrid x:Name="xAutoMapAdvancedElementTypesGrid" AutomationProperties.AutomationId="AutoMapAdvancedElementTypesGrid AID" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowUpDown="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowDelete="Collapsed" />
                                 </TabItem>
                             </TabControl>

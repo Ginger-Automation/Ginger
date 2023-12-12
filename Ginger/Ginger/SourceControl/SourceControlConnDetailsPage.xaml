@@ -9,7 +9,7 @@
 	  Title="Source Control Connection Details">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}" >
+        <Grid Background="{StaticResource $BackgroundColor_White}" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="35"></RowDefinition>
                 <RowDefinition Height="35"></RowDefinition>

@@ -24,7 +24,7 @@
                 <UserControlsLib:UCComboBox x:Name="Value" Margin="21,83,-43,-83" RenderTransformOrigin="0.2,1.972" HorizontalAlignment="Left" Width="322" Grid.ColumnSpan="2" />
             </Grid>
         </StackPanel>
-        <StackPanel x:Name="Description" Background="{StaticResource $BackgroundColor_LightGray}" Margin="24,131,-24,-131" >
+        <StackPanel x:Name="Description" Background="{StaticResource $BackgroundColor_White}" Margin="24,131,-24,-131" >
             <TextBlock x:Name="txtDescription" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}"  Background="#FFEFEFF2"/>
             <TextBlock Style="{StaticResource @TextBlockStyle}" VerticalAlignment="Center"  HorizontalAlignment="Left" Width="287" Background="#FFEFEFF2" ><Run Text="Special Keystrokes:" /></TextBlock>
             <TextBlock Style="{StaticResource @TextBlockStyle}" VerticalAlignment="Center"  HorizontalAlignment="Left" Width="287" Background="#FFEFEFF2" ><Run Text="ALT : %"/></TextBlock>

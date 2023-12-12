@@ -8,7 +8,7 @@
       d:DesignHeight="350" d:DesignWidth="350"
       Title="Self Healing Configurations">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" >
+    <Grid Background="{StaticResource $BackgroundColor_White}" >
         <Grid.RowDefinitions>
             <RowDefinition />
         </Grid.RowDefinitions>

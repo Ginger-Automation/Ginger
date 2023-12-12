@@ -61,7 +61,7 @@ namespace GingerCore.Actions
             }
         }
 
-        public override eImageType Image { get { return eImageType.Empty; } }
+        public override eImageType Image { get { return eImageType.Smile; } }
 
         public override void Execute()
         {

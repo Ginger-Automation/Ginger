@@ -9,7 +9,7 @@
       d:DesignHeight="600" d:DesignWidth="800"
 	Title="AgentEditPage">
 
-    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}" Margin="10">
+    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_White}" Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="145"/>
             <ColumnDefinition Width="363*"/>
@@ -31,7 +31,7 @@
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch">
             <TextBox x:Name="AgentNameTextBox" Style="{StaticResource @TextBoxStyle}" FontSize="14" FontWeight="Bold"/>
-            <ComboBox x:Name="DriverComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource @InputComboBoxStyle}" Margin="0,15,0,0"/>
+            <ComboBox x:Name="DriverComboBox" Width="250" HorizontalAlignment="Left" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,15,0,0"/>
             <TextBox x:Name="PlatformComboBox" Style="{StaticResource @TextBoxStyle}" Width="250" HorizontalAlignment="Left"  Margin="0,15,0,0" IsReadOnly="True" IsEnabled="False"/>
 
         </StackPanel>

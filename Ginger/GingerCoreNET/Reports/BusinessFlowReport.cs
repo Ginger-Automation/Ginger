@@ -62,6 +62,8 @@ namespace Ginger.Reports
             public static string SolutionVariablesDetails = "SolutionVariablesDetails";
             public static string BFFlowControls = "BFFlowControls";
             public static string BFFlowControlDT = "BFFlowControlDT";
+            public static string ExternalID = "ExternalID";
+            public static string ExternalID2 = "ExternalID2";
         }
 
         private bool _showAllIterationsElements = false;
@@ -199,6 +201,26 @@ namespace Ginger.Reports
             get { return mBusinessFlow.RunStatus.ToString(); }
             set { mBusinessFlow.RunStatus = (Amdocs.Ginger.CoreNET.Execution.eRunStatus)Enum.Parse(typeof(Amdocs.Ginger.CoreNET.Execution.eRunStatus), value); }
         }
+        private string mExternalID;
+        [JsonProperty]
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(false)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID { get { return mExternalID; } set { mExternalID = value; } }
+
+        [JsonProperty]
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID 2")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(false)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID2 { get { return mBusinessFlow.ExternalID2; } }
+
+
+
+
 
         public bool IsPassed { get { return mBusinessFlow.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed; } }
         public bool IsFailed { get { return mBusinessFlow.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed; } }

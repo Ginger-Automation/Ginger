@@ -10,9 +10,9 @@
     <Grid>
         <StackPanel>            
             <Label Grid.Column="0" Content="Action Type:" Style="{StaticResource @SubInputFieldLabelStyle}"/>
-            <ComboBox x:Name="ActionNameComboBox" Style="{StaticResource @InputComboBoxStyle}" />
+            <ComboBox x:Name="ActionNameComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" />
             <Label Grid.Column="0" Content="The other element locate By:" Style="{StaticResource @SubInputFieldLabelStyle}"/>
-            <ComboBox Grid.Column="1" x:Name="cbooLocateBy"  Style="{StaticResource @InputComboBoxStyle}" />
+            <ComboBox Grid.Column="1" x:Name="cbooLocateBy"  Style="{StaticResource $FlatInputComboBoxStyle}" />
             <Label Grid.Column="2" Content="The other element locate Value:" Style="{StaticResource @SubInputFieldLabelStyle}" />
             <Actions:UCValueExpression Grid.Column="3" HorizontalAlignment="Stretch" x:Name="txtoLocateValue" />
 

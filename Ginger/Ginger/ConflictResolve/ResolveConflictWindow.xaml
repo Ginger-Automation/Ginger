@@ -9,14 +9,14 @@
       mc:Ignorable="d" 
       d:DesignHeight="600" d:DesignWidth="1200"
       Height="600" Width="1200" Title="Resolve Conflict Window">
-    <Grid x:Name="ResolveConflictsGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="ResolveConflictsGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.Resources>
             <local:ResolutionToCompareVisibilityConverter x:Key="resolutionToCompareVisibilityConverter" />
             <ObjectDataProvider x:Key="resolutionItemsSource" MethodName="GetResolutionItemsSource" ObjectType="{x:Type local:ResolveConflictWindow}"/>
             <DataTemplate x:Key="xOperationCellTemplate">
                 <StackPanel Orientation="Horizontal">
-                    <ComboBox x:Name="xResolutionComboBox" DisplayMemberPath="text" SelectedValuePath="Value" SelectedValue="{Binding Resolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Source={StaticResource resolutionItemsSource}}" Style="{StaticResource @InputComboBoxStyle}" Width="160"/>
-                    <UserControls:ucButton ButtonType="ImageButton" ButtonImageWidth="15" ButtonImageHeight="15" Height="25" ButtonImageType="Columns" Click="xCompareAndMergeButton_Click" Visibility="{Binding Resolution, Converter={StaticResource resolutionToCompareVisibilityConverter}}"/>
+                    <ComboBox x:Name="xResolutionComboBox" DisplayMemberPath="text" SelectedValuePath="Value" SelectedValue="{Binding Resolution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Source={StaticResource resolutionItemsSource}}" Style="{StaticResource $FlatInputComboBoxStyle}" Width="160"/>
+                    <Button Height="25" Content="Compare" Click="xCompareAndMergeButton_Click" Style="{StaticResource $RoundTextButtonStyle_Generic}" Visibility="{Binding Resolution, Converter={StaticResource resolutionToCompareVisibilityConverter}}" FontSize="12" Padding="8 2 8 2" Margin="5 0 0 0"  FontWeight="SemiBold"/>
                 </StackPanel>
             </DataTemplate>
             <DataTemplate x:Key="xReadyForResolutionCellTemplate">

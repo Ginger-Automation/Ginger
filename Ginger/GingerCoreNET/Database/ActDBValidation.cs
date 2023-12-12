@@ -25,6 +25,7 @@ using GingerCore.Actions.Common;
 using GingerCore.Environments;
 using GingerCore.NoSqlBase;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -177,6 +178,8 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue("SQL", value);
             }
         }
+
+        internal string QueryValue { get; private set; }
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> QueryParams = new ObservableList<ActInputValue>();
@@ -406,7 +409,7 @@ namespace GingerCore.Actions
                     }
                     break;
             }
-            GetSqlValueFromFilePath();
+            QueryValue = GetSQLQuery();
             NoSqlDriver.MakeSureConnectionIsOpen();
             NoSqlDriver.PerformDBAction();
         }
@@ -508,7 +511,7 @@ namespace GingerCore.Actions
             this.AddOrUpdateReturnParamActual(Column, val);
         }
 
-        private void GetSqlValueFromFilePath()
+        private string GetSQLQuery()
         {
             if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
             {
@@ -516,18 +519,23 @@ namespace GingerCore.Actions
                 string filePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(GetInputParamCalculatedValue(ActDBValidation.Fields.QueryFile));
 
                 FileInfo scriptFile = new FileInfo(filePath);
-                SQL = scriptFile.OpenText().ReadToEnd();
+                return scriptFile.OpenText().ReadToEnd();
+            }
+            else
+            {
+                return GetInputParamCalculatedValue(Fields.SQL);
             }
         }
 
         private void FreeSQLHandler()
         {
             int? queryTimeout = Timeout;
-            string calcSQL = GetInputParamCalculatedValue("SQL");
+            QueryValue = GetSQLQuery();
+            //TODO: Instead of using calcSQL, we can use QueryValue directly. Need verify that it wouldn't cause any issue in parallel execution.
+            string calcSQL = QueryValue;
             string ErrorString = string.Empty;
             try
             {
-                GetSqlValueFromFilePath();
                 if (string.IsNullOrEmpty(calcSQL))
                 {
                     this.Error = "Fail to run Free SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= Missing SQL Query.";

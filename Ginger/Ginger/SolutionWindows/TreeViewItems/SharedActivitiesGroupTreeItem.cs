@@ -19,7 +19,9 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.CoreNET.BPMN;
+using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
+using Amdocs.Ginger.CoreNET.BPMN.Models;
+using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using Ginger.Activities;
 using Ginger.ALM;
 using Ginger.Repository;
@@ -128,15 +130,19 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNFile);
                 string xml = CreateBPMNXMLForActivitiesGroup(mActivitiesGroup);
-                string filePath = SaveBPMNXMLFile($"{mActivitiesGroup.Name}.bpmn", xml);
+                string filePath = SaveBPMNXMLFile(filename: mActivitiesGroup.Name, xml);
                 string solutionRelativeFilePath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(filePath);
                 Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeFilePath);
             }
             catch (Exception ex)
             {
-                if (ex is BPMNExportException)
+                if (ex is BPMNException)
                 {
                     Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, ex.Message);
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, "Unexpected Error, check logs for more details.");
                 }
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while exporting BPMN", ex);
             }
@@ -149,8 +155,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private string CreateBPMNXMLForActivitiesGroup(ActivitiesGroup activitiesGroup)
         {
             Reporter.ToLog(eLogLevel.INFO, $"Creating BPMN XML for activities group {activitiesGroup.Name}");
-            ActivitiesGroupToBPMNConverter activitiesGroupToBPMNConverter = new();
-            Collaboration collaboration = activitiesGroupToBPMNConverter.Convert(activitiesGroup);
+            CollaborationFromActivityGroupCreator activitiesGroupToBPMNConverter = new(activitiesGroup);
+            Collaboration collaboration = activitiesGroupToBPMNConverter.Create();
             BPMNXMLSerializer serializer = new();
             string xml = serializer.Serialize(collaboration);
             return xml;

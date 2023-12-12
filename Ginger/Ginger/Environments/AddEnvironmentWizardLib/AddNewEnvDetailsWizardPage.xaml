@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AddNewEnvDetailsWizardPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <StackPanel Margin="10" HorizontalAlignment="Left">
             <Label HorizontalAlignment="Left" Style="{StaticResource $LabelStyle}">Name:</Label>
             <TextBox x:Name="xNameTextBox" AutomationProperties.AutomationId="Name AID" Width="450" Style="{StaticResource @TextBoxStyle}" Margin="5,0,0,0" FontWeight="Bold"></TextBox>

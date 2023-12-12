@@ -12,7 +12,7 @@
       Height="600" Width="800"
 	Title="Download Solution">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Name="ExpenderDetailsRow" Height="50"/>
             <RowDefinition Name="ExpenderConfigurationRow" Height="50"/>
@@ -68,7 +68,7 @@
 
                     <Button x:Name="xFetchBranchesButton" Click="FetchBranches_Click"  Grid.Row="3" Grid.Column="2" Content="Fetch Branches"  HorizontalAlignment="Left" Style="{StaticResource $RoundTextButtonStyle_Generic}" Margin="10,0,0,0" />
                     <Label x:Name="xSelectBranchLabel" Content="Select Branch:" Style="{StaticResource @InputFieldLabelStyle}" Grid.Column="0" Grid.Row="4" Margin="10,5,0,0"/>
-                    <ComboBox x:Name="xBranchesCombo" Style="{StaticResource @InputComboBoxStyle}" Margin="0,5,0,7" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="4"></ComboBox>
+                    <ComboBox x:Name="xBranchesCombo" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,5,0,7" HorizontalAlignment="Stretch" Grid.Column="1" Grid.Row="4"></ComboBox>
 
                     
                 </Grid>

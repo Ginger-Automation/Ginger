@@ -10,7 +10,7 @@
       d:DesignHeight="400" d:DesignWidth="600"
       Title="AddAPIModelSelectTypePage" >
 
-    <Grid x:Name="PageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="PageGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Name="SecondRow" Height="0"/>
@@ -50,7 +50,7 @@
             <UserControls:ucButton x:Name="xBrowseLoadButton" ButtonType="RoundTextAndImageButton" ButtonText="Load" ButtonImageType="MoveDown" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed"  Click="BrowseButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
             <UserControls:ucButton x:Name="xPreviewButton" ButtonType="RoundTextAndImageButton" ButtonText="Preview" ButtonImageType="Search" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" Visibility="Collapsed" Click="PreviewButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}"/>
 
-            </DockPanel>
+        </DockPanel>
 
         <Label Name="SourceRviewLable" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Visibility="Collapsed" Content="Source Preview:" VerticalAlignment="Top"  />
 
@@ -58,6 +58,6 @@
 
         <Label Name="XMLTemplatesLable" Grid.Row="4" Grid.Column="0" HorizontalAlignment="Left" Visibility="Collapsed" Content="Request Templates:" VerticalAlignment="Top"  />
         <ginger:ucGrid x:Name="XMLTemplatesGrid" Grid.Row="4" Grid.Column="1" Visibility="Collapsed" Title="Request Templates" ShowRefresh="Collapsed" ShowEdit="Collapsed"  ShowAdd="Visible" ShowDelete="Visible" ShowClearAll="Visible" ShowUndo="Collapsed" EnableTagsPanel="False" ShowUpDown="Collapsed"></ginger:ucGrid>
-
+        <Label Name="SupportNote" Style="{StaticResource @LabelStyle}" Grid.Row="4" Grid.ColumnSpan="2" VerticalAlignment="Bottom" FontSize="10" Content="Note: Swagger 2.0 API and Swagger Open API 3.0 are supported (YAML and Json)" Padding="15,0,0,0"/>
     </Grid>
 </Page>

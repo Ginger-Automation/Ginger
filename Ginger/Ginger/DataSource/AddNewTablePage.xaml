@@ -8,7 +8,7 @@
       Height="60" Width="500" MinHeight="60"
 	Title="Add New Table">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="130"/>
             <ColumnDefinition Width="370"/>
@@ -22,7 +22,7 @@
         <TextBox Height="24" x:Name="TableName" Grid.Row="0" Grid.Column="1" Style="{StaticResource @TextBoxStyle}"/>
 
         <Label Content="Table Type:" Grid.Row="1" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
-        <ComboBox Height="24" x:Name="DSTableTypeComboBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}"/>
+        <ComboBox Height="24" x:Name="DSTableTypeComboBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}"/>
 
     </Grid>
 </Page>

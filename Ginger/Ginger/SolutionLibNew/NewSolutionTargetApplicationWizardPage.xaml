@@ -8,7 +8,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="NewSolutionTargetApplicationWizardPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <StackPanel>
             
             <Label Style="{StaticResource @InputFieldLabelStyle}">Main Application Name:</Label>
@@ -22,7 +22,7 @@
             </Grid>
             <StackPanel>
                 <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Main Application Platform:" />
-                <ComboBox x:Name="MainApplicationPlatformComboBox" Style="{StaticResource @InputComboBoxStyle}" Width="200" HorizontalAlignment="Left" />
+                <ComboBox x:Name="MainApplicationPlatformComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200" HorizontalAlignment="Left" />
             </StackPanel>
 
             <Label>

@@ -72,12 +72,7 @@ namespace Ginger.BusinessFlowWindows
             SeriesActivityCollection = new SeriesCollection();
             SeriesActionCollection = new SeriesCollection();
 
-            DataContext = this;
-            //if (ActivityChart.Palette == null)
-            //    ActivityChart.Palette = new ResourceDictionaryCollection();
-            //else
-            //    ActivityChart.Palette.Clear();
-            //List<StatItems> activityStatList = new List<StatItems>();           
+            DataContext = this;    
             List<StatItem> st = mContext.BusinessFlow.GetActivitiesStats();
             foreach (var v in st)
             {
@@ -91,11 +86,6 @@ namespace Ginger.BusinessFlowWindows
             Activities.Content = GingerDicser.GetTermResValue(eTermResKey.Activities);
 
             //Action
-            //if (ActionChart.Palette == null)
-            //    ActionChart.Palette = new ResourceDictionaryCollection();
-            //else
-            //    ActionChart.Palette.Clear();
-            //List<StatItems> actionStatList = new List<StatItems>();
             List<StatItem> act = mContext.BusinessFlow.GetActionsStat();
             foreach (var v in act)
             {
@@ -111,14 +101,6 @@ namespace Ginger.BusinessFlowWindows
             foreach (string s in status)
             {
                 SwitchLegend(s);
-            }
-            {
-                stck.Children.Add(Ginger.General.makeImgFromControl(ActivityChart, totalActivity.ToString(), 1));
-                stck.Children.Add(Ginger.General.makeImgFromControl(ActionChart, totalAction.ToString(), 2));
-            }
-            {
-                //App.RunsetActivityTextbox.Text = totalActivity.ToString();
-                //App.RunsetActionTextbox.Text = totalAction.ToString();
             }
         }
         public void HideAllLegend()

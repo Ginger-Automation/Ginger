@@ -46,9 +46,6 @@ namespace Ginger.Reports
             mHTMLReportConfiguration.StartDirtyTracking();
             CurrentItemToSave = WorkSpace.Instance.Solution;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(LimitReportFolder, CheckBox.IsCheckedProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.LimitReportFolderSize));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralizedReportDataServiceURLTextBox, TextBox.TextProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.CentralizedReportDataServiceURL));
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralizedHtmlReportServiceURLTextBox, TextBox.TextProperty, mHTMLReportConfiguration, nameof(mHTMLReportConfiguration.CentralizedHtmlReportServiceURL));
-
 
             if (LimitReportFolder.IsChecked == true)
             {
@@ -77,8 +74,6 @@ namespace Ginger.Reports
                 htmlReportAutoProdOnRadioBtn.IsChecked = false;
                 htmlReportAutoProdOffRadioBtn.IsChecked = true;
             }
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCentralizedReportSettingsGrid, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
         }
 
 

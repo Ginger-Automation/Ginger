@@ -7,10 +7,10 @@
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
 	Title="RunSetActionEmailReportEditPage">
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <TabControl Grid.RowSpan="2">
-            <TabItem Header="Message">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem Header="Message" Style="{StaticResource $RoundedTab}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="230" />
@@ -35,12 +35,12 @@
                             <Label Style="{StaticResource @LabelStyle}" Content="Body:" DockPanel.Dock="Left"/>
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="10,10,0,0">
                                 <Label Style="{StaticResource @LabelStyle}" Content="HTML Report:" VerticalAlignment="Center" />
-                                <ComboBox x:Name="HTMLReportComboBox" Margin="5" Width="150" SelectionChanged="HTMLReportComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"/>
+                                <ComboBox x:Name="HTMLReportComboBox" Margin="5" Width="150" SelectionChanged="HTMLReportComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"/>
                             </StackPanel>
                             
                             <StackPanel Name="CustomReportSection" Orientation="Horizontal" DockPanel.Dock="Left" Margin="10,10,0,0" HorizontalAlignment="Left">
                                 <Label Style="{StaticResource @LabelStyle}" Content="Custom HTML Report:" VerticalAlignment="Center" />
-                                <ComboBox x:Name="CustomHTMLReportComboBox" Margin="5" Width="150" SelectionChanged="CustomHTMLReportComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                                <ComboBox x:Name="CustomHTMLReportComboBox" Margin="5" Width="150" SelectionChanged="CustomHTMLReportComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
                                 <Button x:Name="rfsrh" Click="rfsrh_Click" usercontrols:ImageMaker.Content="Refresh"  Width="16"  Style="{StaticResource @InputImageButtonStyle_NoBorder}" ToolTip="Change Agent Mapping">                                    
                                 </Button>
                             </StackPanel>                                                        
@@ -51,8 +51,8 @@
                     <TextBox Grid.Row="1" x:Name="BodyTextBox" TextWrapping="Wrap" AcceptsReturn="True" ScrollViewer.VerticalScrollBarVisibility="Auto" Style="{StaticResource @MultiRowsTextBoxStyle}" />
                 </Grid>
             </TabItem>
-            <TabItem Header="Attachments" Background="{StaticResource $BackgroundColor_LightGray}">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem Header="Attachments" Style="{StaticResource $RoundedTab}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <StackPanel>
                         <Ginger:ucGrid x:Name="AttachmentsGrid" Title="Attachments" ShowAdd="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
                     </StackPanel>
@@ -60,12 +60,12 @@
             </TabItem>
 
 
-            <TabItem Header="Delivery Method" Background="{StaticResource $BackgroundColor_LightGray}">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem Header="Delivery Method" Style="{StaticResource $RoundedTab}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Style="{StaticResource @LabelStyle}"  VerticalAlignment="Center" Margin="-2,10,0,10" Width="118">E-mail Method:</Label>
-                            <ComboBox x:Name="EmailMethodComboBox" Style="{StaticResource @InputComboBoxStyle}" Width="120" Height="25" SelectionChanged="EmailMethodComboBox_SelectionChanged"/>
+                            <ComboBox x:Name="EmailMethodComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="120" Height="25" SelectionChanged="EmailMethodComboBox_SelectionChanged"/>
                             
                         </StackPanel>
                         <StackPanel x:Name="SMTPConfig">

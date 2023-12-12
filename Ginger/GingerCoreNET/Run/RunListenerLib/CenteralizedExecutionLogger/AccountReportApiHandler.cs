@@ -99,8 +99,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             var destination = iMapper.Map<LiteDbRunSet, AccountReportRunSet>(runSet);
             return destination;
         }
-
-        public async Task SendRunsetExecutionDataToCentralDBAsync(AccountReportRunSet accountReportRunSet, bool isUpdate = false)
+        public async Task<bool> SendRunsetExecutionDataToCentralDBAsync(AccountReportRunSet accountReportRunSet, bool isUpdate = false)
         {
             if (restClient != null)
             {
@@ -113,8 +112,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                     Reporter.ToLog(eLogLevel.INFO, string.Format("Finishing to publish execution data to central DB for Runset- '{0}'", accountReportRunSet.Name));
                 }
                 string message = string.Format("execution data to Central DB for the Runset:'{0}' (Execution Id:'{1}')", accountReportRunSet.Name, accountReportRunSet.ExecutionId);
-                bool responseIsSuccess = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).ConfigureAwait(false);
-                if (responseIsSuccess)
+                bool isResponseSuccessful = await SendRestRequestAndGetResponse(SEND_RUNSET_EXECUTION_DATA, accountReportRunSet, isUpdate).ConfigureAwait(false);
+                if (isResponseSuccessful)
                 {
                     Reporter.ToLog(eLogLevel.INFO, $"Successfully sent { message}");
                 }
@@ -122,11 +121,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Failed to send { message}");
                 }
+                return isResponseSuccessful;
             }
             else
             {
                 Reporter.ToLog(eLogLevel.WARN, "Rest Client is null as endpoint url is not provided");
             }
+
+            return false;
         }
 
         public async Task SendRunnerExecutionDataToCentralDBAsync(AccountReportRunner accountReportRunner, bool isUpdate = false)
