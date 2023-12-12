@@ -74,9 +74,8 @@
                 </StackPanel>
             </StackPanel>
 
-            <Grid x:Name="xUpdateNetworkUrlGridPnl" Visibility="Collapsed" HorizontalAlignment="Stretch" Margin="0,10,0,0" Height="Auto" MaxHeight="350" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <Grid x:Name="xUpdateNetworkUrlGridPnl" Visibility="Collapsed" HorizontalAlignment="Stretch" Margin="0,10,0,0" Height="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <Label Style="{StaticResource @LabelStyle}" x:Name="LabelHeaders" Content="Request Headers:" Grid.Row="0"/>
