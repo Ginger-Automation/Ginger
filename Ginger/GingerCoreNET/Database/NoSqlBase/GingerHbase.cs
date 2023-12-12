@@ -54,7 +54,7 @@ namespace GingerCore.NoSqlBase
         {
             return Connect();
         }
-        HBaseClient actionClient;
+        HBaseClient client;
         RequestOptions requestOption;
         public override  bool Connect()
         {
@@ -80,7 +80,7 @@ namespace GingerCore.NoSqlBase
                 AlternativeHost = null
             };
 
-            actionClient = new HBaseClient(ClCredential, requestOption);
+            client = new HBaseClient(ClCredential, requestOption);
                 
             try
             {
@@ -90,7 +90,7 @@ namespace GingerCore.NoSqlBase
                 {
                     try
                     {
-                        tables = actionClient.ListTablesAsync().Result;
+                        tables = client.ListTablesAsync().Result;
                     }
                     catch (Exception ex)
                     {
@@ -393,7 +393,7 @@ namespace GingerCore.NoSqlBase
                                         break;
                                     }
                                 }
-                                if (columnFound == true)
+                                if (columnFound )
                                 {
                                     break;
                                 }
@@ -504,7 +504,7 @@ namespace GingerCore.NoSqlBase
                 }
                 finally
                 {
-                    actionClient.DisposeIfNotNull();
+                    client.DisposeIfNotNull();
                 }                                       
 
         }
