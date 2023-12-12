@@ -245,7 +245,14 @@ namespace Ginger
                     }
 
                     btn.Margin = margin;
-                    btn.Style = this.FindResource("$RoundTextButtonStyle_Generic") as Style;
+                    if (windowBtnsList.IndexOf(btn) == 0)
+                    {
+                        btn.Style = this.FindResource("$RoundTextButtonStyle_Generic_Highlight") as Style;
+                    }
+                    else
+                    {
+                        btn.Style = this.FindResource("$RoundTextButtonStyle_Generic") as Style;
+                    }
                     DockPanel.SetDock(btn, Dock.Right);
                     BottomPanel.Children.Add(btn);
                 }

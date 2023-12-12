@@ -21,7 +21,7 @@
         </Grid.ColumnDefinitions>
 
         <TabControl Name="tabMain" Height="Auto" Grid.ColumnSpan="2">
-            <TabItem Header="Find">
+            <TabItem Header="Find" Style="{StaticResource $RoundedTab}">
                 <StackPanel>
                     <TextBlock Margin="3">Text to Find:</TextBlock>
                     <TextBox Margin="3" Name="txtFind" />
@@ -30,7 +30,7 @@
                     Width="80" Content="Find Next" Click="FindNextClick" />
                 </StackPanel>
             </TabItem>
-            <TabItem x:Name="xReaplaceTab" Header="Replace">
+            <TabItem x:Name="xReaplaceTab" Header="Replace" Style="{StaticResource $RoundedTab}">
                 <StackPanel>
                     <TextBlock Margin="3">Text to Find:</TextBlock>
                     <TextBox Margin="3" Name="txtFind2" />

@@ -35,13 +35,22 @@ namespace Ginger.Run
         Context mContext;
         GenericWindow genWin = null;
 
-        public GingerRunnerConfigurationsPage(GingerExecutionEngine runner, ePageViewMode pageViewMode, Context context)
+        public GingerRunnerConfigurationsPage(GingerExecutionEngine runner, ePageViewMode pageViewMode, Context context, General.eRIPageViewMode pageEditMode = General.eRIPageViewMode.Standalone)
         {
             InitializeComponent();
 
             mRunner = runner;
             mPageViewMode = pageViewMode;
             mContext = context;
+
+            if (pageEditMode == General.eRIPageViewMode.View || pageEditMode == General.eRIPageViewMode.ViewAndExecute)
+            {
+                xWrappingDockPanel.IsEnabled = false;
+            }
+            else
+            {
+                xWrappingDockPanel.IsEnabled = true;
+            }
 
             mRunner.GingerRunner.PauseDirtyTracking();
 

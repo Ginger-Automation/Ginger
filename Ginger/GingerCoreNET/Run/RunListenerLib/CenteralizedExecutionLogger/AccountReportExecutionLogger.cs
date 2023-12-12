@@ -26,6 +26,7 @@ using GingerCore.Actions;
 using GingerCore.Activities;
 using System;
 using System.Threading.Tasks;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 {
@@ -69,16 +70,24 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
         }
 
-        public async Task RunSetEnd(RunSetConfig runsetConfig)
+        public async Task<bool> RunSetEnd(RunSetConfig runsetConfig , IExecutionLoggerManager executionManager)
         {
-            await SendRunsetEndDataToCentralDbTaskAsync(runsetConfig);
+
+            bool isDataUploadedSuccessfully = await SendRunsetEndDataToCentralDbTaskAsync(runsetConfig);
+            
+            if(isDataUploadedSuccessfully && executionManager.Configuration.DeleteLocalDataOnPublish.Equals(eDeleteLocalDataOnPublish.Yes))
+            {
+                executionManager.mExecutionLogger.DeleteLocalData(runsetConfig.LastRunsetLoggerFolder, runsetConfig.LiteDbId , runsetConfig.ExecutionID ?? Guid.Empty);
+            }
+
             Reporter.HideStatusMessage();
+            return isDataUploadedSuccessfully;
         }
 
-        public async Task SendRunsetEndDataToCentralDbTaskAsync(RunSetConfig runsetConfig)
+        public async Task<bool> SendRunsetEndDataToCentralDbTaskAsync(RunSetConfig runsetConfig)
         {
-            AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runsetConfig, mContext);
-            await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
+            AccountReportRunSet accountReportRunSet = AccountReportEntitiesDataMapping.MapRunsetEndData(runsetConfig);
+            return await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet, true);
         }
         #endregion RunSet   
 

@@ -14,7 +14,7 @@
             <ColumnDefinition Width="154"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <Label HorizontalAlignment="Left" x:Name="lblWaitforIdleComboBox" MinWidth="150"  Content="Wait for Idle Option:" VerticalAlignment="Top" Style="{StaticResource $LabelStyle}" Background="{StaticResource $BackgroundColor_LightGray}"/>
+        <Label HorizontalAlignment="Left" x:Name="lblWaitforIdleComboBox" MinWidth="150"  Content="Wait for Idle Option:" VerticalAlignment="Top" Style="{StaticResource $LabelStyle}" Background="{StaticResource $BackgroundColor_White}"/>
         <UserControlsLib:UCComboBox x:Name="WaitforIdleComboBox" Width="600"  HorizontalAlignment="Left" Grid.Column="1" Margin="-10,0,0,0"/>
     </Grid>
 </Page>

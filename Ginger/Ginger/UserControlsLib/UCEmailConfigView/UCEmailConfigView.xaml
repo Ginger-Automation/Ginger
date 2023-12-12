@@ -10,7 +10,7 @@
              xmlns:Ginger="clr-namespace:Ginger"
              mc:Ignorable="d" 
              d:DesignHeight="556.717" d:DesignWidth="728.358">
-    <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+    <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_White}">
         <StackPanel.Resources>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
             <GridLength x:Key="LabelColumnWidth">180</GridLength>
@@ -33,12 +33,12 @@
                 <RadioButton GroupName="ActionTypeRadioButtonGroup" x:Name="xActionTypeReadRadioButton" Content="Read" Style="{StaticResource RadioButtonStyle}" Checked="xActionType_Changed" Unchecked="xBodyContentType_Changed"/>
             </StackPanel>
         </Grid>
-        <TabControl x:Name="xSendDetailContainer" Background="{StaticResource $BackgroundColor_LightGray}">
-            <TabItem x:Name="xMessageTab" IsSelected="True" Background="{StaticResource $BackgroundColor_LightGray}">
+        <TabControl x:Name="xSendDetailContainer" Background="{StaticResource $BackgroundColor_White}">
+            <TabItem x:Name="xMessageTab" IsSelected="True" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <Label Content="Message"/>
                 </TabItem.Header>
-                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_White}">
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
@@ -129,7 +129,7 @@
                     </StackPanel>
                 </StackPanel>
             </TabItem>
-            <TabItem x:Name="xAttachmentsTab" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Collapsed" >
+            <TabItem x:Name="xAttachmentsTab" Style="{StaticResource $RoundedTab}" Visibility="Collapsed" >
                 <TabItem.Header>
                     <Label Content="Attachments"/>
                 </TabItem.Header>
@@ -143,18 +143,18 @@
                 </TabItem.Resources>
                 <Ginger:ucGrid x:Name="xAttachmentsGrid" Title="Attachments" ShowAdd="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowUpDown="Collapsed"/>
             </TabItem>
-            <TabItem x:Name="xDeliveryTab" Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem x:Name="xDeliveryTab" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <Label Content="Configuration"/>
                 </TabItem.Header>
-                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_White}">
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Grid.Row="1" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Method:"/>
-                        <ComboBox x:Name="xEmailMethod" SelectionChanged="xEmailMethod_SelectionChanged" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}">
+                        <ComboBox x:Name="xEmailMethod" SelectionChanged="xEmailMethod_SelectionChanged" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}">
                             <ComboBoxItem x:Name="xEmailMethodSMTP" Content="SMTP" Tag="SMTP"/>
                             <ComboBoxItem x:Name="xEmailMethodOutlook" Content="Outlook" Tag="OUTLOOK"/>
                         </ComboBox>
@@ -257,11 +257,11 @@
             </TabItem>
         </TabControl>
         <TabControl x:Name="xReadDetailContainer" Visibility="Collapsed">
-            <TabItem Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <Label Content="Filters"/>
                 </TabItem.Header>
-                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_White}">
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.Style>
                             <Style TargetType="Grid">
@@ -434,7 +434,7 @@
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Has Attachments:"/>
-                        <ComboBox x:Name="xHasAttachmentsComboBox" Style="{StaticResource @InputComboBoxStyle}" Grid.Column="1"/>
+                        <ComboBox x:Name="xHasAttachmentsComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Grid.Column="1"/>
                     </Grid>
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.Style>
@@ -513,18 +513,18 @@
 
                 </StackPanel>
             </TabItem>
-            <TabItem Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <Label Content="Configuration"/>
                 </TabItem.Header>
-                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_LightGray}">
+                <StackPanel Orientation="Vertical" Background="{StaticResource $BackgroundColor_White}">
                     <Grid Margin="{StaticResource RowMargin}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="{StaticResource LabelColumnWidth}"/>
                             <ColumnDefinition Width="{StaticResource ValueColumnWidth}"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Email Method:"/>
-                        <ComboBox x:Name="xEmailReadMethod" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}">
+                        <ComboBox x:Name="xEmailReadMethod" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}">
                             <ComboBoxItem x:Name="xEmailReadMethodMSGraph" Content="MS Graph API" Tag="MSGraphAPI" IsSelected="True" />
                             <ComboBoxItem x:Name="xEmailReadMethodIMAP" Content="IMAP" Tag="IMAP"  IsSelected="True"/>
                         </ComboBox>

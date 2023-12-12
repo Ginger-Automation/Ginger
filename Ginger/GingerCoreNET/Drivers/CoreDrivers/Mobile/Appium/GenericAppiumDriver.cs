@@ -47,7 +47,6 @@ using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Microsoft.Graph.SecurityNamespace;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
@@ -202,8 +201,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public override void StartDriver()
         {
-            mIsDeviceConnected = ConnectToAppium();
-            CalculateSourceMobileImageConvertFactors();
+            mIsDeviceConnected = ConnectToAppium();            
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
@@ -2873,31 +2871,23 @@ namespace Amdocs.Ginger.CoreNET
         }
 
 
-        private void CalculateSourceMobileImageConvertFactors()
+        public void CalculateSourceMobileImageConvertFactors(eImagePointUsage factorUsage)
         {
             SourceMobileImageWidthConvertFactor = 1;
             SourceMobileImageHeightConvertFactor = 1;
 
-            if (AppType == eAppType.Web)
+            if (factorUsage == eImagePointUsage.Explore && AppType == eAppType.Web)
             {
                 SourceMobileImageWidthConvertFactor = 3;
                 SourceMobileImageHeightConvertFactor = 3;
             }
-            else
-            {
-                if (DeviceSource != eDeviceSource.MicroFoucsUFTMLab)
-                {
-                    SourceMobileImageWidthConvertFactor = 2;
-                    SourceMobileImageHeightConvertFactor = 2;
-                }
-            }
-
-        }
+        }       
 
         public override Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
         {
             Point pointOnAppScreen = new Point();
             double ratio_X = 1, ratio_Y = 1;
+            CalculateSourceMobileImageConvertFactors(eImagePointUsage.Explore);
             ratio_X = (SrcWidth / SourceMobileImageWidthConvertFactor) / ActWidth;
             ratio_Y = (SrcHeight / SourceMobileImageHeightConvertFactor) / ActHeight;
 
@@ -2912,6 +2902,7 @@ namespace Amdocs.Ginger.CoreNET
             double ratio_X, ratio_Y;
             XmlNode rectangleXmlNode = clickedElementInfo.ElementObject as XmlNode;
 
+            CalculateSourceMobileImageConvertFactors(eImagePointUsage.Explore);
             ratio_X = (SrcWidth / SourceMobileImageWidthConvertFactor) / ActWidth;
             ratio_Y = (SrcHeight / SourceMobileImageHeightConvertFactor) / ActHeight;
 

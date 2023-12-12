@@ -30,6 +30,8 @@ namespace Ginger.UserControlsLib.UCListView
 
         bool ExpandItemOnLoad { get; set; }
 
+        bool ShowIndex { get;}
+
         void SetItem(object item);
 
         string GetItemNameField();
@@ -48,7 +50,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         string GetItemIconTooltipField();
 
-        string GetItemExecutionStatusField();
+        string GetItemExecutionStatusField();  
 
         string GetItemActiveField();
 

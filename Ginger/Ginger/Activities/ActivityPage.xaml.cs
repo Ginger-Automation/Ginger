@@ -63,7 +63,7 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         // We keep a static page so even if we move between activities the Run controls and info stay the same
-        public ActivityPage(Activity activity, Context context, Ginger.General.eRIPageViewMode pageViewMode)
+        public ActivityPage(Activity activity, Context context, Ginger.General.eRIPageViewMode pageViewMode, bool highlightActivityName = false)
         {
             InitializeComponent();
 
@@ -73,6 +73,11 @@ namespace GingerWPF.BusinessFlowsLib
 
             SetUIView();
             BindControlsToActivity();
+
+            if (highlightActivityName)
+            {
+                xNameTextBlock.Foreground= (SolidColorBrush)FindResource("$SelectionColor_Pink");
+            }
         }
 
         private void UpdateActivityViewMode(Ginger.General.eRIPageViewMode pageViewMod)
@@ -367,7 +372,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xDescriptionTextBlock.Text = string.Empty;
                 TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
-                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
+                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$PrimaryColor_Black")).ToString());
                 if (mActivity != null)
                 {
                     //Application info
@@ -594,12 +599,12 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
 
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
         }
 
         private async void xSaveBtn_Click(object sender, RoutedEventArgs e)

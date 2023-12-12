@@ -33,7 +33,7 @@
             <DockPanel x:Name="xAllListOperationsBarPnl"  HorizontalAlignment="Right" DockPanel.Dock="Right" Margin="10 0 0 0">
                 <StackPanel x:Name="xListOperationsPnl" DockPanel.Dock="Left" Orientation="Horizontal"/>
                 <Menu x:Name="xListExtraOperationsMenu" Margin="0,0,0,0" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent" ToolTip="Extra Operations">
-                    <MenuItem Cursor="Hand">
+                    <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                         <MenuItem.Header>
                             <usercontrols:ImageMakerControl  ImageType="EllipsisH" SetAsFontImageWithSize="17" Height="18" Width="18" HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
                         </MenuItem.Header>
@@ -42,63 +42,69 @@
             </DockPanel>
         </DockPanel>
 
-        <Grid Grid.Row="1" >
-            <TextBox x:Name="xSearchTextBox" MinWidth="50" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderBrush="White" />
-            <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
-            <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" Click="xSearchBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
-        </Grid>
-        
+        <Border Grid.Row="1" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="0.5" CornerRadius="5" Margin="10,0,10,0">
+            <Grid >
+                <TextBox x:Name="xSearchTextBox" MinWidth="50" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderThickness="0" BorderBrush="Transparent" />
+                <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
+                <usercontrols:ucButton x:Name="xSearchBtn" ToolTip="Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Search" Click="xSearchBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
+            </Grid>
+        </Border>
+
         <Ginger:ucTagsViewer x:Name="xTagsFilter" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" AddTags="False"/>
 
         <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0" IsEnabled="False" Background="LightGray" />
 
-        <ListView x:Name="xListView" Grid.Row="3" 
-                  Margin="0 0 0 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible" 
+        <Border Grid.Row="3" Background="{StaticResource $BackgroundColor_VeryLightGray}" BorderThickness="10" CornerRadius="20" >
+            <ScrollViewer Margin="5"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <ListView x:Name="xListView" 
+                  Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible" 
                   VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
-                  VerticalContentAlignment="Top"  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $UcListViewItemStyle}" 
+                  VerticalContentAlignment="Top"  HorizontalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Hidden" SelectionMode="Single" IsSynchronizedWithCurrentItem="True" ItemContainerStyle="{StaticResource $UcListViewItemStyle}" 
                   SelectionChanged="xListView_SelectionChanged" AllowDrop="True" >
 
-            <ListView.GroupStyle>
-                <GroupStyle>
-                    <GroupStyle.ContainerStyle>
-                        <Style TargetType="{x:Type GroupItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate>
-                                        <Expander IsExpanded="True">
-                                            <Expander.Header>
-                                                <Grid HorizontalAlignment="Stretch">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="100*"/>
-                                                        <ColumnDefinition Width="100"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <DockPanel HorizontalAlignment="Stretch" Grid.Column="0">
-                                                        <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" ToolTip="{Binding Name}" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontSize="16" VerticalAlignment="Center" Style="{StaticResource $TextBlockStyle}" TextTrimming="CharacterEllipsis" Margin="0,0,0,0" />
-                                                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="2,0,0,0">
-                                                            <TextBlock Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center" FontSize="11" >(</TextBlock>
-                                                            <TextBlock Text="{Binding ItemCount}" Foreground="{StaticResource $BackgroundColor_DarkBlue}" FontSize="11" VerticalAlignment="Center" Margin="0,0,0,0"></TextBlock>
-                                                            <TextBlock Foreground="{StaticResource $BackgroundColor_DarkBlue}" VerticalAlignment="Center" FontSize="11" Margin="0,0,0,0">)</TextBlock>
-                                                        </StackPanel>
-                                                        <DockPanel x:Name="xGroupNotificationsPnl" Tag="{Binding Name}" HorizontalAlignment="Left" Margin="5,0,0,0" Loaded="XGroupNotificationsPnl_Loaded" />
-                                                    </DockPanel>
-                                                    <Menu x:Name="xGroupOperationsMenu" Tag="{Binding Name}" Grid.Column="1" Margin="0,0,0,0"  HorizontalAlignment="Left" VerticalAlignment="Center" Background="Transparent" Loaded="XGroupOperationsMenu_Loaded" ToolTip="Group Operations" >
-                                                        <MenuItem Cursor="Hand">
-                                                            <MenuItem.Icon>
-                                                                <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="17" Height="18" Width="18" HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
-                                                            </MenuItem.Icon>
-                                                        </MenuItem>
-                                                    </Menu>
-                                                </Grid>
-                                            </Expander.Header>
-                                            <ItemsPresenter />
-                                        </Expander>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GroupStyle.ContainerStyle>
-                </GroupStyle>
-            </ListView.GroupStyle>
-        </ListView>
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate>
+                                                <Expander IsExpanded="True">
+                                                    <Expander.Header>
+                                                        <Grid HorizontalAlignment="Stretch">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="100*"/>
+                                                                <ColumnDefinition Width="100"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <DockPanel HorizontalAlignment="Stretch" Grid.Column="0">
+                                                                <TextBlock DockPanel.Dock="Left" Text="{Binding Name}" ToolTip="{Binding Name}" Foreground="{StaticResource $BackgroundColor_Black}" FontSize="16" VerticalAlignment="Center" Style="{StaticResource $TextBlockStyle}" TextTrimming="CharacterEllipsis" Margin="0,0,0,0" />
+                                                                <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="2,0,0,0">
+                                                                    <TextBlock Foreground="{StaticResource $BackgroundColor_Black}" VerticalAlignment="Center" FontSize="11" >(</TextBlock>
+                                                                    <TextBlock Text="{Binding ItemCount}" Foreground="{StaticResource $BackgroundColor_Black}" FontSize="11" VerticalAlignment="Center" Margin="0,0,0,0"></TextBlock>
+                                                                    <TextBlock Foreground="{StaticResource $BackgroundColor_Black}" VerticalAlignment="Center" FontSize="11" Margin="0,0,0,0">)</TextBlock>
+                                                                </StackPanel>
+                                                                <DockPanel x:Name="xGroupNotificationsPnl" Tag="{Binding Name}" HorizontalAlignment="Left" Margin="5,0,0,0" Loaded="XGroupNotificationsPnl_Loaded" />
+                                                            </DockPanel>
+                                                            <Menu x:Name="xGroupOperationsMenu" Tag="{Binding Name}" Grid.Column="1" Margin="0,0,0,0"  HorizontalAlignment="Left" VerticalAlignment="Center" Background="Transparent" Loaded="XGroupOperationsMenu_Loaded" ToolTip="Group Operations" >
+                                                                <MenuItem Cursor="Hand">
+                                                                    <MenuItem.Icon>
+                                                                        <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="17" Height="18" Width="18" HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
+                                                                    </MenuItem.Icon>
+                                                                </MenuItem>
+                                                            </Menu>
+                                                        </Grid>
+                                                    </Expander.Header>
+                                                    <ItemsPresenter />
+                                                </Expander>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
+            </ScrollViewer>
+        </Border>
     </Grid>
 </UserControl>
