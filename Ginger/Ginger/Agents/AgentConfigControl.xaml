@@ -12,7 +12,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Horizontal" >
-            <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Stretch" Background="{DynamicResource $Color_DarkBlue}"  Width="220">
+            <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Stretch" Background="{DynamicResource $PrimaryColor_Black}"  Width="220">
                 <Label x:Name="Name" Content="Name" HorizontalAlignment="Left" Style="{StaticResource @ucTitleStyle_3}"/>
                 <Label x:Name="Description" Content="Control description here " HorizontalAlignment="Left" Foreground="White"/>
             </StackPanel>

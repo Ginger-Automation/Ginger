@@ -69,7 +69,7 @@
             <DataGrid x:Name="ControllerActionsGrid" MouseDoubleClick="ControllerActionsGrid_MouseDoubleClick"></DataGrid>
         </DockPanel>
 
-        <GridSplitter ResizeDirection="Columns" Grid.Column="0" Width="5" HorizontalAlignment="Right" Grid.Row="0"  Grid.RowSpan="4" VerticalAlignment="Stretch" Background="{StaticResource $Color_DarkBlue}" IsEnabled="True" Margin="0,1,0,0"/>
+        <GridSplitter ResizeDirection="Columns" Grid.Column="0" Width="5" HorizontalAlignment="Right" Grid.Row="0"  Grid.RowSpan="4" VerticalAlignment="Stretch" Background="{StaticResource $PrimaryColor_Black}" IsEnabled="True" Margin="0,1,0,0"/>
          
     </Grid>
 </Page>

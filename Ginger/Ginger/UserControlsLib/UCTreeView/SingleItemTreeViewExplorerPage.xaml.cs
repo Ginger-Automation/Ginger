@@ -38,7 +38,22 @@ namespace GingerWPF.UserControlsLib
             get { return xTreeView; }
         }
 
-        public SingleItemTreeViewExplorerPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null, bool isSaveButtonHidden = false)
+        public object SelectedItemObject
+        {
+            get
+            {
+                if (TreeView.Tree.CurrentSelectedTreeViewItem != null)
+                {
+                    return TreeView.Tree.CurrentSelectedTreeViewItem.NodeObject();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public SingleItemTreeViewExplorerPage(string itemTypeName, eImageType itemTypeIcon, ITreeViewItem itemTypeRootNode, RoutedEventHandler saveAllHandler = null, RoutedEventHandler addHandler = null, EventHandler treeItemDoubleClickHandler = null, bool isSaveButtonHidden = false, bool showTitle= true)
         {
             InitializeComponent();
 
@@ -46,7 +61,7 @@ namespace GingerWPF.UserControlsLib
 
             xTreeView.TreeTitle = itemTypeName;
             xTreeView.TreeIcon = itemTypeIcon;
-            xTreeView.Background = (Brush)FindResource("$BackgroundColor_LightGray");
+            xTreeView.Background = (Brush)FindResource("$BackgroundColor_White");
 
             TreeViewItem r = xTreeView.Tree.AddItem(itemTypeRootNode);
             r.IsExpanded = true;
@@ -60,6 +75,11 @@ namespace GingerWPF.UserControlsLib
             {
                 xTreeView.Tree.ItemDoubleClick -= treeItemDoubleClickHandler;
                 xTreeView.Tree.ItemDoubleClick += treeItemDoubleClickHandler;
+            }
+
+            if(!showTitle)
+            {
+                TreeView.TreeTitleVisibility = Visibility.Collapsed;
             }
         }
 

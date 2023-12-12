@@ -48,7 +48,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
         {
             return ActivityBPMNUtil
                 .GetFlowControls(_activity)
-                .Where(fc => SubProcessRelevantFlowControls.Contains(fc.FlowControlAction));
+                .Where(fc => fc.Active && SubProcessRelevantFlowControls.Contains(fc.FlowControlAction));
         }
 
         internal IEnumerable<IProcessEntity> Create()

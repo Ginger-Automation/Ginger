@@ -7,7 +7,7 @@
       d:DesignHeight="500" d:DesignWidth="500"
 	Title="ActWebServiceEditPage">
 
-    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}" >
+    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_White}" >
         <Grid.Resources>
             <DataTemplate x:Key="InputValueExpressionButton">
                 <Button x:Name="InputGridVEButton" Content="..." Click="InputGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>

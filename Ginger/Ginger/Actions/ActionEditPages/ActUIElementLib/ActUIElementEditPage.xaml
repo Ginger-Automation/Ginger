@@ -7,7 +7,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="500" d:DesignWidth="800"      
 	  Title="ActUIElementEditPage">
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="400*"/>

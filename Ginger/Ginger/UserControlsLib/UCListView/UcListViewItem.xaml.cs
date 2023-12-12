@@ -160,6 +160,12 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     ExpandItem();
                 }
+
+                if (!ListHelper.ShowIndex)
+                {
+                    xIndexCol.Width = new GridLength(0);
+                    xExpandCollapseCol.Width = new GridLength(20);
+                }
             }
         }
 
@@ -218,7 +224,7 @@ namespace Ginger.UserControlsLib.UCListView
                         b.Mode = BindingMode.OneWay;
                         b.Converter = new ActiveBackgroundColorConverter();
                         b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                        xListItemGrid.SetBinding(Grid.BackgroundProperty, b);
+                        xMainBorder.SetBinding(Border.BackgroundProperty, b);
                     }
                 });
             }
@@ -315,6 +321,7 @@ namespace Ginger.UserControlsLib.UCListView
                 ListItemUniqueIdentifier identifier = ListHelper.GetItemUniqueIdentifier(Item);
                 if (identifier != null)
                 {
+                    xIdentifierCol.Width = new GridLength(8);
                     if (!String.IsNullOrEmpty(identifier.Color))
                     {
                         BrushConverter conv = new BrushConverter();
@@ -325,6 +332,7 @@ namespace Ginger.UserControlsLib.UCListView
                 }
                 else
                 {
+                    xIdentifierCol.Width = new GridLength(0);
                     xIdentifierBorder.Background = System.Windows.Media.Brushes.Transparent;
                     xIdentifierBorder.ToolTip = string.Empty;
                     xIdentifierBorder.Visibility = Visibility.Collapsed;
@@ -404,11 +412,7 @@ namespace Ginger.UserControlsLib.UCListView
                         operationBtn.ButtonFontImageSize = operation.ImageSize;
                         operationBtn.IsEnabled = operation.IsEnabeled;
 
-                        if (operation.ImageForeground == null)
-                        {
-                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
-                        }
-                        else
+                        if (operation.ImageForeground != null)
                         {
                             operationBtn.ButtonImageForground = operation.ImageForeground;
                         }
@@ -464,11 +468,7 @@ namespace Ginger.UserControlsLib.UCListView
                         menuitem.Header = operation.Header;
                         menuitem.ToolTip = operation.ToolTip;
 
-                        if (operation.ImageForeground == null)
-                        {
-                            //iconImage.ImageForeground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
-                        }
-                        else
+                        if (operation.ImageForeground != null)
                         {
                             iconImage.ImageForeground = operation.ImageForeground;
                         }
@@ -561,7 +561,7 @@ namespace Ginger.UserControlsLib.UCListView
 
                         if (operation.ImageForeground == null)
                         {
-                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_DarkBlue");
+                            //operationBtn.ButtonImageForground = (SolidColorBrush)FindResource("$BackgroundColor_Black");
                         }
                         else
                         {
@@ -762,7 +762,7 @@ namespace Ginger.UserControlsLib.UCListView
                 {
                     string fullDesc = string.Empty;
                     bool errorWasSet = false;
-                    xItemDescriptionTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                    xItemDescriptionTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                     if (!string.IsNullOrEmpty(mItemErrorField))
                     {
                         Object error = Item.GetType().GetProperty(mItemErrorField).GetValue(Item);
@@ -850,7 +850,7 @@ namespace Ginger.UserControlsLib.UCListView
             }
             else
             {
-                return System.Windows.Media.Brushes.White;
+                return System.Windows.Media.Brushes.Transparent;
             }
         }
 

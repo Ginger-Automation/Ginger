@@ -11,7 +11,7 @@
       d:DesignHeight="200" d:DesignWidth="600"
       Title="Select Activities Group">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <StackPanel x:Name="xGroupPanel" Margin="10" >
             <Label  Style="{StaticResource $LabelStyle}" FontWeight="Bold">
                 <Label.Content>

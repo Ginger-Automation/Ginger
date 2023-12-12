@@ -17,8 +17,8 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <Grid  x:Name="xActionScreenshots" Background="{StaticResource $BackgroundColor_LightGray}">
-            <Grid x:Name="ScreenShotsGrid" Grid.Row="1" Margin="5,10,0,0" Background="{StaticResource $BackgroundColor_LightGray}" />
+        <Grid  x:Name="xActionScreenshots" Background="{StaticResource $BackgroundColor_White}">
+            <Grid x:Name="ScreenShotsGrid" Grid.Row="1" Margin="5,10,0,0" Background="{StaticResource $BackgroundColor_White}" />
         </Grid>
     </Grid>
 </Page>

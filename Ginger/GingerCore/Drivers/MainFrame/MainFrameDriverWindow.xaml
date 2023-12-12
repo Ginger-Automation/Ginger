@@ -11,7 +11,7 @@
             <RowDefinition Height="271*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Background="{StaticResource $BackgroundColor_LightGray}">  
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Background="{StaticResource $BackgroundColor_White}">  
             <ToggleButton x:Name="RecordBtn" Click="RecordButton_Click" ToolTip="Record Operations" Style="{StaticResource @InputImageToggleButtonStyle_NoBorder}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,3">
                 <Image Source="{StaticResource @Record_24x24.png}"/>
             </ToggleButton>

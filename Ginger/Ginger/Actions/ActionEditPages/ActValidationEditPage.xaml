@@ -8,7 +8,7 @@
       d:DesignHeight="600" d:DesignWidth="1000"
 	Title="ActValdiationEditPage">
 
-    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}" >
+    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_White}" >
         <Grid.RowDefinitions>
             <RowDefinition Height="55" x:Name="RowCreds"/>
             <RowDefinition Height="55"/>

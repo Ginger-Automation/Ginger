@@ -10,7 +10,7 @@
 	Title="ElementInfoPage">
 
     <ScrollViewer>
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid Background="{StaticResource $BackgroundColor_White}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>

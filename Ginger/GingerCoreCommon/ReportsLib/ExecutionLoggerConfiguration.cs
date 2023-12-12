@@ -52,7 +52,13 @@ namespace Ginger.Reports
             Yes,
             No
         }
-        
+
+        public enum eDeleteLocalDataOnPublish
+        {
+            Yes , 
+            No
+        }
+
         // Why we serialzie!!?
 
         [IsSerializedForLocalRepository]
@@ -136,6 +142,26 @@ namespace Ginger.Reports
                 }
             }
         }
+
+        private eDeleteLocalDataOnPublish mDeleteLocalDataOnPublish = eDeleteLocalDataOnPublish.No;
+
+        [IsSerializedForLocalRepository]
+        public eDeleteLocalDataOnPublish DeleteLocalDataOnPublish
+        {
+            get
+            {
+                return mDeleteLocalDataOnPublish;
+            }
+            set
+            {
+                if (mDeleteLocalDataOnPublish != value)
+                {
+                    mDeleteLocalDataOnPublish = value;
+                    OnPropertyChanged(nameof(DeleteLocalDataOnPublish));
+                }
+            }
+        }
+
 
         private string mCentralizedHtmlReportServiceURL;
         [IsSerializedForLocalRepository]

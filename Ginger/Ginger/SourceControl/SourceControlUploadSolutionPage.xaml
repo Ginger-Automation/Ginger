@@ -10,7 +10,7 @@
       Height="400" Width="800"
 	  Title="Upload Solution To Source Control">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="105"/>
             <RowDefinition Height="100"/>
@@ -70,7 +70,7 @@
 
                     <Button x:Name="xFetchBranchesButton" Click="FetchBranches_Click" Content="Fetch Branches" Grid.Column="3" HorizontalAlignment="Stretch" Style="{StaticResource $RoundTextButtonStyle_Generic}" Margin="10,0,0,0" />
                     <Label x:Name="xSelectBranchLabel" Content="Select Branch:" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}" Margin="10,5,0,0"/>
-                    <ComboBox x:Name="xBranchesCombo" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}" Margin="0,5,0,7" HorizontalAlignment="Stretch"></ComboBox>
+                    <ComboBox x:Name="xBranchesCombo" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}" Margin="0,5,0,7" HorizontalAlignment="Stretch"></ComboBox>
                 </Grid>
             </StackPanel>
             <StackPanel x:Name="SP_CreateNewBranch" Visibility="Collapsed" Margin="0,0,0,0">

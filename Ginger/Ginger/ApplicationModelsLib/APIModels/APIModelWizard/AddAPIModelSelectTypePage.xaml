@@ -10,7 +10,7 @@
       d:DesignHeight="400" d:DesignWidth="600"
       Title="AddAPIModelSelectTypePage" >
 
-    <Grid x:Name="PageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="PageGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Name="SecondRow" Height="0"/>

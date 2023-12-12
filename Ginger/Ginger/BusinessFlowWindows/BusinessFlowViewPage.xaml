@@ -12,7 +12,7 @@
       d:DesignHeight="300" d:DesignWidth="800" 
       Title="BusinessFlowViewPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
             <RowDefinition Height="80"/>
@@ -75,7 +75,7 @@
                     </MenuItem>
                 </Menu>
             </StackPanel>
-            <GridSplitter x:Name="xAutomateSplitter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="4,4,4,4"/>
+            <GridSplitter x:Name="xAutomateSplitter" Width="1" HorizontalAlignment="Right" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="4,4,4,4"/>
             <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
                 <UserControls:ucButton x:Name="xAutomateBtn" ButtonType="RoundTextAndImageButton" ButtonText="Automate"  ButtonImageType="Automate"  ButtonFontImageSize="12" ButtonImageWidth="16" ButtonImageHeight="12" Click="xAutomate_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Highlighted}" Loaded="xAutomateBtn_Loaded">
                     <UserControls:ucButton.ToolTip>
@@ -85,9 +85,9 @@
             </StackPanel>
         </DockPanel>
 
-        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="3" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Business Flow Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="13" Foreground="{StaticResource $BackgroundColor_DarkBlue}"/>
+        <TextBlock x:Name="xDescriptionTextBlock" Grid.Row="1" Grid.ColumnSpan="3" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Business Flow Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="13" Foreground="{StaticResource $BackgroundColor_Black}"/>
 
-        <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}" SelectionChanged="XItemsTabs_SelectionChanged">
+        <TabControl x:Name="xItemsTabs" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" SelectionChanged="XItemsTabs_SelectionChanged">
             <TabItem x:Name="xDetailsTab" Style="{StaticResource $CoolTab}" TabIndex="1">
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
@@ -97,7 +97,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xDetailsTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Frame x:Name="xDetailsTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="Transparent">
                     <Frame.Content>
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
                             <UserControls:ImageMakerControl  ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" />
@@ -116,7 +116,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xActivitiesTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Frame x:Name="xActivitiesTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="Transparent">
                     <Frame.Content>
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
                             <UserControls:ImageMakerControl  ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" />
@@ -135,7 +135,7 @@
                         </DockPanel>
                     </Border>
                 </TabItem.Header>
-                <Frame x:Name="xVariabelsTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}">
+                <Frame x:Name="xVariabelsTabFrame" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="Transparent">
                     <Frame.Content>
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
                             <UserControls:ImageMakerControl  ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" />
