@@ -47,6 +47,14 @@ namespace Ginger.ConflictResolve
             CherryPick
         }
 
+        public enum States
+        {
+            NotReady,
+            Selected,
+            Ready,
+            ReadyAndAnalyzed
+        }
+
         private RepositoryItemBase? _localItem;
         private RepositoryItemBase? _remoteItem;
         private RepositoryItemBase? _mergedItem;
@@ -74,6 +82,8 @@ namespace Ginger.ConflictResolve
             }
         }
 
+        public States State { get; private set; }
+
         private ResolutionType _resolution;
         public ResolutionType Resolution 
         {
@@ -83,6 +93,7 @@ namespace Ginger.ConflictResolve
                 if(_resolution != value)
                 {
                     _resolution = value;
+                    UpdateStateByResolutionType();
                     CanResolve = CalculateCanResolve();
                     OnPropertyChanged(nameof(Resolution));
                 }
@@ -116,6 +127,8 @@ namespace Ginger.ConflictResolve
             }
         }
 
+        public IEnumerable<ResolutionType> PossibleResolutionTypes { get; }
+
         public Conflict(string conflictPath)
         {
             Path = conflictPath;
@@ -124,6 +137,7 @@ namespace Ginger.ConflictResolve
             _comparison = null!;
             _canResolve = CalculateCanResolve();
             RelativePath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(Path);
+            State = States.NotReady;
         }
 
         private void OnPropertyChanged(string propertyName)
@@ -133,6 +147,23 @@ namespace Ginger.ConflictResolve
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private void UpdateStateByResolutionType()
+        {
+            if(Resolution == ResolutionType.AcceptServer || Resolution == ResolutionType.KeepLocal)
+            {
+                State = States.Ready;
+            }
+            else if (Resolution == ResolutionType.CherryPick)
+            {
+                State = States.NotReady;
+            }
+        }
+
+        public void SetState(States state)
+        {
+            State = state;
         }
 
         private void LoadComparison()
