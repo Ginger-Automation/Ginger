@@ -9,7 +9,7 @@
       d:DesignHeight="650" d:DesignWidth="700"
       Title="Data Structure Example">
 
-    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Name="pageGrid" Background="{StaticResource $BackgroundColor_White}">
 
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Vertical">

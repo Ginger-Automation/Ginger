@@ -9,7 +9,7 @@
       d:DesignHeight="600" d:DesignWidth="800"
 	Title="RunSetActionGenerateTestNGReportEditPage">
 
-    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="pageGrid" Background="{StaticResource $BackgroundColor_White}">
         
         <StackPanel>
             <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Target TestNG Report Folder:</Label>

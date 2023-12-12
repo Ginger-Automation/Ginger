@@ -940,18 +940,11 @@ namespace Ginger
             {
                 btnClearSearch.Visibility = Visibility.Visible;
                 xSearchBtn.Visibility = Visibility.Collapsed;
-                xSearchBtn.IsEnabled = true;
-
-                //SetBtnImage(btnClearSearch, "@Clear_16x16.png");
-                //btnClearSearch.IsEnabled = true;
             }
             else
             {
                 btnClearSearch.Visibility = Visibility.Collapsed;
                 xSearchBtn.Visibility = Visibility.Visible;
-                xSearchBtn.IsEnabled = false;
-                //SetBtnImage(btnClearSearch, "@DisabledClear_16x16.png");
-                //btnClearSearch.IsEnabled = false;
             }
 
             string search = txtSearch.Text.ToUpper();
@@ -1119,7 +1112,7 @@ namespace Ginger
             GingerCore.General.FillComboFromEnumType(cmb, eType);
 
             cmb.AddHandler(ComboBox.SelectionChangedEvent, handler);
-            cmb.Style = this.FindResource("@InputComboBoxStyle") as Style;
+            cmb.Style = this.FindResource("$FlatInputComboBoxStyle") as Style;
 
             if (label.Trim() != "")
             {
@@ -2507,7 +2500,7 @@ namespace Ginger
             }
             else
             {
-                Grid.BorderBrush = FindResource("$Color_DarkBlue") as Brush;
+                Grid.BorderBrush = FindResource("$PrimaryColor_Black") as Brush;
             }
 
             return validationRes;
@@ -2588,6 +2581,11 @@ namespace Ginger
                     btnDelete_Click(null, null);
                 }
             }
+        }
+
+        private void xSearchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //do nothing
         }
     }
 }

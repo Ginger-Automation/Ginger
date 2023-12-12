@@ -9,7 +9,7 @@
       d:DesignHeight="800" d:DesignWidth="400"
       Title="UserProfilePage">
 
-    <ScrollViewer Background="{StaticResource $BackgroundColor_LightGray}">
+    <ScrollViewer Background="{StaticResource $BackgroundColor_White}">
         <StackPanel Grid.Column="0" >
             <Label Content="Profile Image:" Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="-5,20,0,0"/>
             <Grid Height="100">

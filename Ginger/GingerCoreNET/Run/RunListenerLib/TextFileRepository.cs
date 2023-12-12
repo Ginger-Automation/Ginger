@@ -282,5 +282,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
 
         }
+
+        public override void DeleteLocalData(string logFolder, LiteDB.ObjectId runsetId, Guid executionId)
+        {
+            DeleteLocalData(logFolder);
+        }
     }
 }

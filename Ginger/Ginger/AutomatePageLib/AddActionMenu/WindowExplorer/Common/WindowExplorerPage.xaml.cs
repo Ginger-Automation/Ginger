@@ -147,7 +147,7 @@ namespace Ginger.WindowExplorer
             xWindowControlsTreeView.SearchStarted += WindowControlsTreeView_SearchStarted;
             xWindowControlsTreeView.SearchCancelled += WindowControlsTreeView_SearchCancelled;
             xWindowControlsTreeView.SearchCompleted += WindowControlsTreeView_SearchCompleted;
-            xWindowControlsTreeView.TreeTitleStyle = (Style)TryFindResource("@NoTitle");
+            xWindowControlsTreeView.TreeTitleVisibility = Visibility.Collapsed;
             xWindowControlsTreeView.Tree.ItemSelected += WindowControlsTreeView_ItemSelected;
 
             xWindowSelection.RefreshWindowsButton.Click += RefreshWindowsButton_Click;
@@ -1363,7 +1363,7 @@ namespace Ginger.WindowExplorer
                                 }
                                 else
                                 {
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$PrimaryColor_Black");
                                 } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
                         }

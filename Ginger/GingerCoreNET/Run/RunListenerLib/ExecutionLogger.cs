@@ -24,6 +24,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
+using LiteDB;
 using System;
 using System.Linq;
 
@@ -234,5 +235,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
             return string.Empty;
         }
+        public abstract void DeleteLocalData(string logFolder, ObjectId runsetId, Guid executionId);
     }
 }

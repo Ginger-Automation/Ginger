@@ -10,7 +10,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="SelectPluginFolderPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <StackPanel>
             <Label Style="{StaticResource $LabelStyle}">Select Plugin folder:</Label>
 

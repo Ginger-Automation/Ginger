@@ -29,7 +29,7 @@
 
         </Grid.RowDefinitions>
         <StackPanel  Grid.Row="0" Grid.Column="1" >
-            <ComboBox x:Name="FileTransferActionComboBox" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="FileTransferActionComboBox_SelectionChanged"/>
+            <ComboBox x:Name="FileTransferActionComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="FileTransferActionComboBox_SelectionChanged"/>
         </StackPanel>
 
         <StackPanel  Grid.Row="1" Grid.Column="1" >

@@ -8,7 +8,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AddNewEnvIntroPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <TextBlock x:Name="xNewEnvironmentIntroTxtBlock" Style="{StaticResource $TextBlockStyle}" TextWrapping="Wrap" Margin="10,10,10,0"></TextBlock>
     </Grid>
 </Page>

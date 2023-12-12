@@ -14,7 +14,7 @@
         <BooleanToVisibilityConverter x:Key="b2v" />
     </Page.Resources>
     
-    <Grid x:Name="xPageGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="xPageGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.Resources>
             <DataTemplate x:Key="ParamValueExpressionButton">
                 <Button x:Name="ParamsGridVEButton" Content="..." Click="CapabilitiesGridVEButton_Click"  Style="{StaticResource DataGridCellButtonStyle}"/>

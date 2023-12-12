@@ -37,9 +37,8 @@ namespace Amdocs.Ginger.Common.Enums
         Ginger,
         GingerLogo,
         GingerLogoGray,
-        GingerLogoWhiteSmall,
+        GingerLogoWhite,
         GingerIconWhite,
-        GingerIconGray,
         GingerSplash,
         VRT,
         Applitools,
@@ -116,6 +115,7 @@ namespace Amdocs.Ginger.Common.Enums
         AddCircle,//needed?
         Stop,
         Close,
+        Close2,
         Run,
         RunSingle,
         Continue,
@@ -310,6 +310,7 @@ namespace Amdocs.Ginger.Common.Enums
         AngleArrowRight,
         Support,
         Asterisk,
+        Smile,
         #endregion
 
         #region Source control Images     
