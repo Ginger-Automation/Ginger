@@ -180,7 +180,6 @@ namespace Ginger.Run
             ViewMode1 = Viewmode;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xBusinessflowsTotalCount, Label.ContentProperty, mExecutorEngine, nameof(GingerExecutionEngine.TotalBusinessflow));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mExecutorEngine.GingerRunner, nameof(GingerRunner.Status), BindingMode.OneWay);
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatusLabel, ImageMakerControl.ImageTypeProperty, mExecutorEngine.GingerRunner, nameof(GingerRunner.Status), bindingConvertor: new StatusIconConverter(), BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunnerActive, ucButton.ButtonImageTypeProperty, mExecutorEngine.GingerRunner, nameof(GingerRunner.Active), bindingConvertor: new ActiveIconConverter(), BindingMode.TwoWay);
             UpdateRunnerInfo();
             if (Viewmode)
@@ -209,7 +208,6 @@ namespace Ginger.Run
         {
             BindingOperations.ClearBinding(xBusinessflowsTotalCount, Label.ContentProperty);
             BindingOperations.ClearBinding(xStatus, StatusItem.StatusProperty);
-            BindingOperations.ClearBinding(xStatusLabel, ImageMakerControl.ImageTypeProperty);
             BindingOperations.ClearBinding(xRunnerActive, ucButton.ButtonImageTypeProperty);
             if (ViewMode1)
             {
@@ -485,7 +483,7 @@ namespace Ginger.Run
             }
             else
             {
-                ((RunnerItemPage)sender).xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                ((RunnerItemPage)sender).xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             }
             mExecutorEngine.GingerRunner.DirtyStatus = eDirtyStatus.Modified;
         }
@@ -885,7 +883,7 @@ namespace Ginger.Run
             }
             else
             {
-                xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             }
         }
 

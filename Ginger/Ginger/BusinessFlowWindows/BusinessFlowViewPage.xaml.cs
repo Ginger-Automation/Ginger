@@ -30,6 +30,7 @@ using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
@@ -46,6 +47,7 @@ namespace GingerWPF.BusinessFlowsLib
         BusinessFlow mBusinessFlow;
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
+        private readonly bool _ignoreValidationRules;
 
         public ActivitiesListViewPage mActivitiesPage;
         public VariabelsListViewPage mVariabelsPage;
@@ -53,13 +55,14 @@ namespace GingerWPF.BusinessFlowsLib
 
         GenericWindow mGenericWin = null;
 
-        public BusinessFlowViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode)
+        public BusinessFlowViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode, bool ignoreValidationRules = false)
         {
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
             CurrentItemToSave = mBusinessFlow;
             mContext = context;
+            _ignoreValidationRules = ignoreValidationRules;
             if (mContext == null)
             {
                 mContext = new Context();
@@ -182,7 +185,7 @@ namespace GingerWPF.BusinessFlowsLib
                 {
                     if (mConfigurationsPage == null)
                     {
-                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, childPagesMode);
+                        mConfigurationsPage = new BusinessFlowConfigurationsPage(mBusinessFlow, mContext, childPagesMode, _ignoreValidationRules);
                         xDetailsTabFrame.SetContent(mConfigurationsPage);
                     }
                     else
@@ -230,7 +233,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xDescriptionTextBlock.Text = string.Empty;
                 TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
-                //SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
+                //SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$PrimaryColor_Black")).ToString());
 
                 if (!string.IsNullOrEmpty(mBusinessFlow.Description))
                 {

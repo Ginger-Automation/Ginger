@@ -9,7 +9,7 @@
       d:DesignHeight="800" d:DesignWidth="1200"
       Title="POMDeltaPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="300*"/>
         </Grid.ColumnDefinitions>

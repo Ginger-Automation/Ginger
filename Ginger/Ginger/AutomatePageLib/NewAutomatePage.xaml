@@ -24,115 +24,103 @@
         </Grid.RowDefinitions>
 
         <!--Top Row displaying Business Flow level controls-->
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-            <DockPanel x:Name="xBusinessFlowControlsPnl"  Background="{StaticResource $BackgroundColor_White}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <UserControls:ucButton x:Name="xGoToBFsTreeBtn" DockPanel.Dock="Left" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="GoBack"  Click="xGoToBFsTreeBtn_Click" Foreground="{StaticResource $SelectionColor_LightBlue}" >
+        <Border Grid.Row="0" BorderThickness="0,0,0,15" >
+            <ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+                <DockPanel x:Name="xBusinessFlowControlsPnl"  Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <!--<UserControls:ucButton x:Name="xGoToBFsTreeBtn" DockPanel.Dock="Left" ButtonType="CircleImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="GoBack"  Click="xGoToBFsTreeBtn_Click" Foreground="{StaticResource $HighlightColor_LightBlue}" >
                     <UserControls:ucButton.ToolTip>
                         <GingerCore:ucTextDicResource Text="Back to [BusinessFlows] Tree"></GingerCore:ucTextDicResource>
                     </UserControls:ucButton.ToolTip>
-                </UserControls:ucButton>
-
-                <StackPanel x:Name="xBusinessFlowDetailsPnl" DockPanel.Dock="Left" Orientation="Horizontal">
-                    <UserControls:ImageMakerControl ImageType="BusinessFlow" SetAsFontImageWithSize="22" Width="32" Height="32" Foreground="{StaticResource $BackgroundColor_DarkGray}">
-                        <UserControls:ImageMakerControl.ToolTip>
-                            <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
-                        </UserControls:ImageMakerControl.ToolTip>
-                    </UserControls:ImageMakerControl>
-                    <TextBlock x:Name="xBusinessFlowNameTxtBlock" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Business Flow Name" FontSize="20" FontWeight="Bold" MaxWidth="250" Margin="5,0,0,0" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource $SelectionColor_Pink}"  />
-                    <StackPanel Orientation="Horizontal" Margin="0,0,30,0">
-                        <Label HorizontalAlignment="Center" FontSize="20" Foreground="{StaticResource $BackgroundColor_DarkBlue}">></Label>
-                        <ComboBox x:Name="xBusinessFlowItemComboBox" ContextMenu="{x:Null}" SelectionChanged="xBusinessFlowItemComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" FontSize="18" Height="30" Foreground="{StaticResource $SelectionColor_Pink}"/>
+                </UserControls:ucButton>-->
+                    <StackPanel x:Name="xBusinessFlowDetailsPnl" DockPanel.Dock="Left" Orientation="Horizontal" Margin="10,0,0,0" MinWidth="370">
+                        <UserControls:ImageMakerControl ImageType="BusinessFlow" SetAsFontImageWithSize="22" Width="32" Height="32" Foreground="{StaticResource $BackgroundColor_DarkGray}">
+                            <UserControls:ImageMakerControl.ToolTip>
+                                <GingerCore:ucTextDicResource Text="[BusinessFlow]"/>
+                            </UserControls:ImageMakerControl.ToolTip>
+                        </UserControls:ImageMakerControl>
+                        <TextBlock x:Name="xBusinessFlowNameTxtBlock" HorizontalAlignment="Left" VerticalAlignment="Center" Text="Business Flow Name" FontSize="20" FontWeight="Bold" MaxWidth="250"  Margin="5,0,0,0" TextTrimming="CharacterEllipsis"  Foreground="{StaticResource $SelectionColor_Pink}"  />
+                        <StackPanel Orientation="Horizontal" Margin="0,0,30,0">
+                            <Label HorizontalAlignment="Center" FontSize="20" Foreground="{StaticResource $BackgroundColor_Black}">></Label>
+                            <ComboBox x:Name="xBusinessFlowItemComboBox" ContextMenu="{x:Null}" SelectionChanged="xBusinessFlowItemComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,0,0,0" FontSize="18" Height="30" Foreground="{StaticResource $SelectionColor_Pink}"/>
+                        </StackPanel>
+                        <UserControls:ucButton x:Name="xSaveBusinessFlowBtn" ButtonType="ImageButton" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Save" Click="xSaveBusinessFlowBtn_Click" >
+                            <UserControls:ucButton.ToolTip>
+                                <GingerCore:ucTextDicResource Text="Save [BusinessFlow] Changes"></GingerCore:ucTextDicResource>
+                            </UserControls:ucButton.ToolTip>
+                        </UserControls:ucButton>
+                        <UserControls:ucButton x:Name="xUndoChangesBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="15" ButtonImageType="Undo" Click="xUndoChangesBtn_Click" >
+                            <UserControls:ucButton.ToolTip>
+                                <GingerCore:ucTextDicResource Text="Undo [BusinessFlow] Changes"></GingerCore:ucTextDicResource>
+                            </UserControls:ucButton.ToolTip>
+                        </UserControls:ucButton>
                     </StackPanel>
-                    <UserControls:ucButton x:Name="xSaveBusinessFlowBtn" ButtonType="ImageButton" HorizontalAlignment="Left" Visibility="Collapsed" VerticalAlignment="Center" ButtonFontImageSize="22" ButtonImageType="Save" Click="xSaveBusinessFlowBtn_Click" >
-                        <UserControls:ucButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Save [BusinessFlow] Changes"></GingerCore:ucTextDicResource>
-                        </UserControls:ucButton.ToolTip>
-                    </UserControls:ucButton>
-                    <UserControls:ucButton x:Name="xUndoChangesBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="20" ButtonImageType="Undo" Click="xUndoChangesBtn_Click" >
-                        <UserControls:ucButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Undo [BusinessFlow] Changes"></GingerCore:ucTextDicResource>
-                        </UserControls:ucButton.ToolTip>
-                    </UserControls:ucButton>
-                </StackPanel>
 
-                <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>
+                    <GridSplitter Width="0.5" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="5,10,5,10"/>
 
-                <StackPanel x:Name="xExecutionControlsPnl" HorizontalAlignment="Left" DockPanel.Dock="Left" Orientation="Horizontal">
-                    <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run Flow" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
-                    <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed"/>
-                    <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" Visibility="Collapsed" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
-                    <UserControls:ucButton x:Name="xResetFlowBtn" ButtonType="ImageButton" Click="xResetFlowBtn_Click"  ButtonFontImageSize="20" ButtonImageType="Reset" Margin="0,3,0,0" >
-                        <UserControls:ucButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Reset [BusinessFlow] Execution Details"/>
-                        </UserControls:ucButton.ToolTip>
-                    </UserControls:ucButton>
-                </StackPanel>
-
-                <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Left" Orientation="Horizontal" >
-                    <Frame x:Name="xAppsAgentsMappingFrame" NavigationUIVisibility="Hidden"/>
-                    <StackPanel VerticalAlignment="Center" >
-                        <Label Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="0,0,0,0">Environment:</Label>
-                        <ComboBox x:Name="xEnvironmentComboBox" ContextMenu="{x:Null}" SelectionChanged="xEnvironmentComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="2,0,0,0"></ComboBox>
+                    <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Left" Orientation="Horizontal" >
+                        <Frame x:Name="xAppsAgentsMappingFrame" NavigationUIVisibility="Hidden"/>
+                        <StackPanel VerticalAlignment="Center" Margin="0,0,0,10" >
+                            <Label Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="0,0,0,0">Environment:</Label>
+                            <ComboBox x:Name="xEnvironmentComboBox" ContextMenu="{x:Null}" SelectionChanged="xEnvironmentComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="2,0,0,0"></ComboBox>
+                        </StackPanel>
+                        <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" ToolTip="All Execution Configurations" Margin="5,0,0,0"/>
+                        <UserControls:ucButton x:Name="xSelfHealingConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="SelfHealing" Click="xSelfHealingConfigBtn_Click"  ToolTip="Self Healing Configurations" Margin="5,0,0,0"/>
+                        <UserControls:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Lists items selection in sync with execution progress. Click to un-sync it" ButtonType="ImageButton" ButtonFontImageSize="16"  ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click" Margin="5,0,0,0"/>
                     </StackPanel>
-                    <UserControls:ucButton x:Name="xAutomationRunnerConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="19" ButtonImageType="Config" Click="xAutomationRunnerConfigBtn_Click" ToolTip="All Execution Configurations"/>
-                    <UserControls:ucButton x:Name="xSelfHealingConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageType="SelfHealing" Click="xSelfHealingConfigBtn_Click"  ToolTip="Self Healing Configurations"/>
-                    <UserControls:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Lists items selection in sync with execution progress. Click to un-sync it" ButtonType="ImageButton" ButtonFontImageSize="20"  ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"/>
 
-                </StackPanel>
+                    <GridSplitter Width="0.5" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="5,10,5,10"/>
 
-                <GridSplitter Width="1" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="5,10,5,10"/>
+                    <StackPanel x:Name="xBusinessFlowOperationssPnl" DockPanel.Dock="Left" Orientation="Horizontal">
+                        <UserControls:ucButton x:Name="xSearchBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="Search" Click="xSearchBtn_Click" Margin="5,0,0,0">
+                            <UserControls:ucButton.ToolTip>
+                                <GingerCore:ucTextDicResource Text="Find &amp; Replace in [BusinessFlow]"></GingerCore:ucTextDicResource>
+                            </UserControls:ucButton.ToolTip>
+                        </UserControls:ucButton>
 
-                <StackPanel x:Name="xBusinessFlowOperationssPnl" DockPanel.Dock="Left" Orientation="Horizontal">
-                    <UserControls:ucButton x:Name="xSearchBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageType="Search" Click="xSearchBtn_Click" >
-                        <UserControls:ucButton.ToolTip>
-                            <GingerCore:ucTextDicResource Text="Find &amp; Replace in [BusinessFlow]"></GingerCore:ucTextDicResource>
-                        </UserControls:ucButton.ToolTip>
-                    </UserControls:ucButton>
-
-                    <Menu x:Name="xAnalyzerOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Analyzer Options">
-                        <MenuItem Cursor="Hand">
-                            <MenuItem.Icon>
-                                <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
-                            </MenuItem.Icon>
-                            <MenuItem.Header>
-                                <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent"/>
-                            </MenuItem.Header>
-                            <MenuItem x:Name="xAnalyzeMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAnalyzeBtn_Click">
+                        <Menu x:Name="xAnalyzerOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Analyzer Options" Margin="5,0,0,0">
+                            <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                                 <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="12" />
+                                    <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Background="Transparent" />
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Analyze [BusinessFlow] to Detect Integrity Issues" />
+                                    <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Background="Transparent" />
                                 </MenuItem.Header>
+                                <MenuItem x:Name="xAnalyzeMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAnalyzeBtn_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="12" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Analyze [BusinessFlow] to Detect Integrity Issues" />
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                <MenuItem x:Name="xAutoAnalyzeConfigMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAutoAnalyzeConfigMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl x:Name="xAutoAnalyzeConfigMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="12" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Auto Analyze [BusinessFlow] before Flow Execution" />
+                                    </MenuItem.Header>
+                                </MenuItem>
                             </MenuItem>
-                            <MenuItem x:Name="xAutoAnalyzeConfigMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAutoAnalyzeConfigMenuItem_Click">
-                                <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl x:Name="xAutoAnalyzeConfigMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="12" />
-                                </MenuItem.Icon>
-                                <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Auto Analyze [BusinessFlow] before Flow Execution" />
-                                </MenuItem.Header>
-                            </MenuItem>
-                        </MenuItem>
-                    </Menu>
+                        </Menu>
 
-                    <Menu x:Name="xReportOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Report Options">
-                        <MenuItem Cursor="Hand">
-                            <MenuItem.Icon>
-                                <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
-                            </MenuItem.Icon>
-                            <MenuItem.Header>
-                                <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent"/>
-                            </MenuItem.Header>
-                            <MenuItem x:Name="xSummaryPageMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xSummaryPageMenuItem_Click">
+                        <Menu x:Name="xReportOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Report Options" Margin="5,0,0,0">
+                            <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                                 <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="Graph" SetAsFontImageWithSize="16" />
+                                    <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Open [BusinessFlow] Execution Summary Page" />
+                                    <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent"/>
                                 </MenuItem.Header>
-                            </MenuItem>
-                            <!--<MenuItem x:Name="xLastItemReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLastItemReportMenuItem_Click">
+                                <MenuItem x:Name="xSummaryPageMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xSummaryPageMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl ImageType="Graph" SetAsFontImageWithSize="16" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Open [BusinessFlow] Execution Summary Page" />
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                <!--<MenuItem x:Name="xLastItemReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLastItemReportMenuItem_Click">
                                 <MenuItem.Icon>
                                     <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" />
                                 </MenuItem.Icon>
@@ -140,166 +128,187 @@
                                     <GingerCore:ucTextDicResource Text="Produce Last Executed Item Report" />
                                 </MenuItem.Header>
                             </MenuItem>-->
-                            <MenuItem x:Name="xReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xReportMenuItem_Click">
-                                <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" />
-                                </MenuItem.Icon>
-                                <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Produce [BusinessFlow] Execution Report" />
-                                </MenuItem.Header>
+                                <MenuItem x:Name="xReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xReportMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl ImageType="Report" SetAsFontImageWithSize="16" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Produce [BusinessFlow] Execution Report" />
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                <MenuItem x:Name="xTimelineReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xTimelineReportMenuItem_Click" Visibility="Collapsed">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl ImageType="Timer" SetAsFontImageWithSize="16" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Produce [BusinessFlow] Execution Timeline Report" />
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                <MenuItem x:Name="xAutoReportConfigMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAutoReportConfigMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl x:Name="xAutoReportConfigMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="13" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Auto Produce [BusinessFlow] Execution Report after Flow Execution" />
+                                    </MenuItem.Header>
+                                </MenuItem>
                             </MenuItem>
-                            <MenuItem x:Name="xTimelineReportMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xTimelineReportMenuItem_Click" Visibility="Collapsed">
-                                <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="Timer" SetAsFontImageWithSize="16" />
-                                </MenuItem.Icon>
-                                <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Produce [BusinessFlow] Execution Timeline Report" />
-                                </MenuItem.Header>
-                            </MenuItem>
-                            <MenuItem x:Name="xAutoReportConfigMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xAutoReportConfigMenuItem_Click">
-                                <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl x:Name="xAutoReportConfigMenuItemIcon" ImageType="Active" SetAsFontImageWithSize="13" />
-                                </MenuItem.Icon>
-                                <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Auto Produce [BusinessFlow] Execution Report after Flow Execution" />
-                                </MenuItem.Header>
-                            </MenuItem>
-                        </MenuItem>
-                    </Menu>
+                        </Menu>
 
 
-                    <Menu x:Name="xBDDOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Linked Feature File Options">
-                        <MenuItem Cursor="Hand">
-                            <MenuItem.Icon>
-                                <UserControls:ImageMakerControl ImageType="File" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
-                            </MenuItem.Icon>
-                            <MenuItem.Header>
-                                <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent"/>
-                            </MenuItem.Header>
-                            <MenuItem x:Name="xBDDGenerateScenariosMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDGenerateScenarioMenuItem_Click">
+                        <Menu x:Name="xBDDOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Linked Feature File Options" Margin="5,0,0,0">
+                            <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                                 <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="Action" SetAsFontImageWithSize="16" />
+                                    <UserControls:ImageMakerControl ImageType="File" SetAsFontImageWithSize="16"  HorizontalAlignment="Right" Margin="0,0,0,0" Background="Transparent"/>
                                 </MenuItem.Icon>
                                 <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Generate Feature File Scenarios" />
+                                    <UserControls:ImageMakerControl ImageType="ArrowDown" SetAsFontImageWithSize="15"  HorizontalAlignment="Left" Margin="0,0,0,0" Background="Transparent"/>
                                 </MenuItem.Header>
+                                <MenuItem x:Name="xBDDGenerateScenariosMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDGenerateScenarioMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl ImageType="Action" SetAsFontImageWithSize="16" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Generate Feature File Scenarios" />
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                <MenuItem x:Name="xBDDCleanScenariosMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDCleanScenariosMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl ImageType="Delete" SetAsFontImageWithSize="16" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Delete Feature File Scenarios" />
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                <MenuItem x:Name="xBDDOpenFeatureFileMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDOpenFeatureFileMenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <UserControls:ImageMakerControl  ImageType="Open" SetAsFontImageWithSize="13" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <GingerCore:ucTextDicResource Text="Open Linked Feature File" />
+                                    </MenuItem.Header>
+                                </MenuItem>
                             </MenuItem>
-                            <MenuItem x:Name="xBDDCleanScenariosMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDCleanScenariosMenuItem_Click">
-                                <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="Delete" SetAsFontImageWithSize="16" />
-                                </MenuItem.Icon>
-                                <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Delete Feature File Scenarios" />
-                                </MenuItem.Header>
-                            </MenuItem>
-                            <MenuItem x:Name="xBDDOpenFeatureFileMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xBDDOpenFeatureFileMenuItem_Click">
-                                <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl  ImageType="Open" SetAsFontImageWithSize="13" />
-                                </MenuItem.Icon>
-                                <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Open Linked Feature File" />
-                                </MenuItem.Header>
-                            </MenuItem>
-                        </MenuItem>
-                    </Menu>
+                        </Menu>
 
-                    <Menu x:Name="xExtraBusinessFlowOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations">
-                        <MenuItem Cursor="Hand">
-                            <MenuItem.Header>
-                                <UserControls:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="18"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
-                            </MenuItem.Header>                            
-                            <MenuItem x:Name="xActionConversionMenuItem" Style="{StaticResource $MenuItemStyle}">
-                                <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="Convert" SetAsFontImageWithSize="16" />
-                                </MenuItem.Icon>
+                        <Menu x:Name="xExtraBusinessFlowOperationsMenu" Background="Transparent" VerticalAlignment="Center" ToolTip="Extra Operations" Margin="5,0,0,0">
+                            <MenuItem Cursor="Hand" Style="{StaticResource $MenuItemStyle_ButtonMenu2}">
                                 <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Conversion" />
+                                    <UserControls:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="18"  HorizontalAlignment="Center" Margin="0,0,0,0" Background="Transparent"/>
                                 </MenuItem.Header>
-                                <MenuItem x:Name="xLegacyActionsMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLegacyActionsMenuItem_Click">
+                                <MenuItem x:Name="xActionConversionMenuItem" Style="{StaticResource $MenuItemStyle}">
                                     <MenuItem.Icon>
-                                        <UserControls:ImageMakerControl ImageType="Convert" SetAsFontImageWithSize="18" />
+                                        <UserControls:ImageMakerControl ImageType="Convert" SetAsFontImageWithSize="16" />
                                     </MenuItem.Icon>
                                     <MenuItem.Header>
-                                        <GingerCore:ucTextDicResource Text="Legacy Actions Conversion" />
+                                        <GingerCore:ucTextDicResource Text="Conversion" />
                                     </MenuItem.Header>
+                                    <MenuItem x:Name="xLegacyActionsMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLegacyActionsMenuItem_Click">
+                                        <MenuItem.Icon>
+                                            <UserControls:ImageMakerControl ImageType="Convert" SetAsFontImageWithSize="18" />
+                                        </MenuItem.Icon>
+                                        <MenuItem.Header>
+                                            <GingerCore:ucTextDicResource Text="Legacy Actions Conversion" />
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                    <MenuItem x:Name="xLegacyActionsRemoveMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLegacyActionsRemoveMenuItem_Click">
+                                        <MenuItem.Icon>
+                                            <UserControls:ImageMakerControl ImageType="Delete" SetAsFontImageWithSize="18" />
+                                        </MenuItem.Icon>
+                                        <MenuItem.Header>
+                                            <GingerCore:ucTextDicResource Text="Clean Inactive Legacy Actions" />
+                                        </MenuItem.Header>
+                                    </MenuItem>
                                 </MenuItem>
-                                <MenuItem x:Name="xLegacyActionsRemoveMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xLegacyActionsRemoveMenuItem_Click">
+                                <MenuItem x:Name="xALMMenuItem" Style="{StaticResource $MenuItemStyle}">
                                     <MenuItem.Icon>
-                                        <UserControls:ImageMakerControl ImageType="Delete" SetAsFontImageWithSize="18" />
+                                        <UserControls:ImageMakerControl ImageType="ALM" SetAsFontImageWithSize="16" />
                                     </MenuItem.Icon>
                                     <MenuItem.Header>
-                                        <GingerCore:ucTextDicResource Text="Clean Inactive Legacy Actions" />
+                                        <GingerCore:ucTextDicResource Text="ALM Operations" />
                                     </MenuItem.Header>
+                                    <MenuItem x:Name="xExportToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToAlmMenuItem_Click">
+                                        <MenuItem.Icon>
+                                            <UserControls:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="18" />
+                                        </MenuItem.Icon>
+                                        <MenuItem.Header>
+                                            <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to ALM" />
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                    <MenuItem x:Name="xMapToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xMapToAlmMenuItem_Click">
+                                        <MenuItem.Icon>
+                                            <UserControls:ImageMakerControl ImageType="MapALM" SetAsFontImageWithSize="18" />
+                                        </MenuItem.Icon>
+                                        <MenuItem.Header>
+                                            <GingerCore:ucTextDicResource Text="Map [BusinessFlow] to ALM" />
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                    <MenuItem x:Name="xRefreshFromAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRefreshFromAlmMenuItem_Click">
+                                        <MenuItem.Icon>
+                                            <UserControls:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="18" />
+                                        </MenuItem.Icon>
+                                        <MenuItem.Header>
+                                            <GingerCore:ucTextDicResource Text="Refresh [BusinessFlow] from ALM" />
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                    <MenuItem x:Name="xExportResultsToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportResultsToAlmMenuItem_Click">
+                                        <MenuItem.Icon>
+                                            <UserControls:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="18" />
+                                        </MenuItem.Icon>
+                                        <MenuItem.Header>
+                                            <GingerCore:ucTextDicResource Text="Export [BusinessFlow] Execution Results to ALM" />
+                                        </MenuItem.Header>
+                                    </MenuItem>
                                 </MenuItem>
-                            </MenuItem>
-                            <MenuItem x:Name="xALMMenuItem" Style="{StaticResource $MenuItemStyle}">
-                                <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="ALM" SetAsFontImageWithSize="16" />
-                                </MenuItem.Icon>
-                                <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="ALM Operations" />
-                                </MenuItem.Header>
-                                <MenuItem x:Name="xExportToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToAlmMenuItem_Click">
-                                    <MenuItem.Icon>
-                                        <UserControls:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="18" />
-                                    </MenuItem.Icon>
-                                    <MenuItem.Header>
-                                        <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to ALM" />
-                                    </MenuItem.Header>
-                                </MenuItem>
-                                <MenuItem x:Name="xMapToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xMapToAlmMenuItem_Click">
-                                    <MenuItem.Icon>
-                                        <UserControls:ImageMakerControl ImageType="MapALM" SetAsFontImageWithSize="18" />
-                                    </MenuItem.Icon>
-                                    <MenuItem.Header>
-                                        <GingerCore:ucTextDicResource Text="Map [BusinessFlow] to ALM" />
-                                    </MenuItem.Header>
-                                </MenuItem>
-                                <MenuItem x:Name="xRefreshFromAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRefreshFromAlmMenuItem_Click">
-                                    <MenuItem.Icon>
-                                        <UserControls:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="18" />
-                                    </MenuItem.Icon>
-                                    <MenuItem.Header>
-                                        <GingerCore:ucTextDicResource Text="Refresh [BusinessFlow] from ALM" />
-                                    </MenuItem.Header>
-                                </MenuItem>
-                                <MenuItem x:Name="xExportResultsToAlmMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportResultsToAlmMenuItem_Click">
-                                    <MenuItem.Icon>
-                                        <UserControls:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="18" />
-                                    </MenuItem.Icon>
-                                    <MenuItem.Header>
-                                        <GingerCore:ucTextDicResource Text="Export [BusinessFlow] Execution Results to ALM" />
-                                    </MenuItem.Header>
-                                </MenuItem>
-                            </MenuItem>
 
-                            <MenuItem x:Name="xExportMenuItem" Style="{StaticResource $MenuItemStyle}">
-                                <MenuItem.Icon>
-                                    <UserControls:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="16" />
-                                </MenuItem.Icon>
-                                <MenuItem.Header>
-                                    <GingerCore:ucTextDicResource Text="Export [BusinessFlow]" />
-                                </MenuItem.Header>
-                                <MenuItem x:Name="xExportToCSVMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToCSVMenuItem_Click">
+                                <MenuItem x:Name="xExportMenuItem" Style="{StaticResource $MenuItemStyle}">
                                     <MenuItem.Icon>
-                                        <UserControls:ImageMakerControl ImageType="CSV" SetAsFontImageWithSize="16" />
+                                        <UserControls:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="16" />
                                     </MenuItem.Icon>
                                     <MenuItem.Header>
-                                        <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to CSV" />
+                                        <GingerCore:ucTextDicResource Text="Export [BusinessFlow]" />
                                     </MenuItem.Header>
+                                    <MenuItem x:Name="xExportToCSVMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToCSVMenuItem_Click">
+                                        <MenuItem.Icon>
+                                            <UserControls:ImageMakerControl ImageType="CSV" SetAsFontImageWithSize="16" />
+                                        </MenuItem.Icon>
+                                        <MenuItem.Header>
+                                            <GingerCore:ucTextDicResource Text="Export [BusinessFlow] to CSV" />
+                                        </MenuItem.Header>
+                                    </MenuItem>
                                 </MenuItem>
                             </MenuItem>
-                        </MenuItem>
-                    </Menu>
-                </StackPanel>
-            </DockPanel>
-        </ScrollViewer>
+                        </Menu>
+                    </StackPanel>
 
-        <Border x:Name="xItemsTabsSection" Grid.Row="2" Background="White" BorderThickness="0">
-            <TabControl x:Name="xItemsTabs"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Background="White" Margin="0,0,0,0">
+                    <!--<GridSplitter Width="0.5" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="5,10,5,10"/>-->
+
+                    <StackPanel x:Name="xExecutionControlsPnl" HorizontalAlignment="Right" DockPanel.Dock="Right" Orientation="Horizontal" Margin="0,0,15,0">
+                        <UserControls:ucButton x:Name="xRunFlowBtn" ToolTip="Reset &amp; Run Flow"  ButtonType="RoundTextAndImageButton"  ButtonText="Run Flow" FontWeight="Bold" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunFlowBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
+                        <UserControls:ucButton x:Name="xStopRunBtn" ToolTip= "Stop Execution" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed"/>
+                        <UserControls:ucButton x:Name="xContinueRunBtn" ToolTip="Continue Execution from where it Stopped" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" Visibility="Collapsed" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave"/>
+                        <UserControls:ucButton x:Name="xResetFlowBtn" ButtonType="ImageButton" Click="xResetFlowBtn_Click"  ButtonFontImageSize="20" ButtonImageType="Reset" Margin="0,3,0,0" >
+                            <UserControls:ucButton.ToolTip>
+                                <GingerCore:ucTextDicResource Text="Reset [BusinessFlow] Execution Details"/>
+                            </UserControls:ucButton.ToolTip>
+                        </UserControls:ucButton>
+                    </StackPanel>
+                </DockPanel>
+            </ScrollViewer>
+            <Border.BorderBrush>
+                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                    <GradientStop Color="Gray" Offset="0.5"/>
+                    <GradientStop Color="LightGray" Offset="0.75"/>
+                    <GradientStop Color="White" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.BorderBrush>
+        </Border>
+        
+        <Border x:Name="xItemsTabsSection" Grid.Row="2" Background="Transparent" BorderThickness="0">
+            <TabControl x:Name="xItemsTabs"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Background="Transparent" Margin="0,0,0,0">
                 <TabItem x:Name="xBfActiVitiesTab" Style="{StaticResource $CoolMainTab}" TabIndex="1" >
-                    <DockPanel Background="{StaticResource $BackgroundColor_LightGray}">
-                        <DockPanel x:Name="xActivitiesLoadingPnl" Visibility="Collapsed"  DockPanel.Dock="Top" Margin="0,100,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="{StaticResource $BackgroundColor_LightGray}" >
+                    <DockPanel Background="Transparent">
+                        <DockPanel x:Name="xActivitiesLoadingPnl" Visibility="Collapsed"  DockPanel.Dock="Top" Margin="0,100,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="Transparent" >
                             <UserControls:ImageMakerControl DockPanel.Dock="Top" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
                             <Label DockPanel.Dock="Bottom" HorizontalAlignment="Center" FontSize="15" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal">
                                 <Label.Content>
@@ -307,14 +316,14 @@
                                 </Label.Content>
                             </Label>
                         </DockPanel>
-                        <Grid x:Name="xActivitiesDataGrid" DockPanel.Dock="Top" Visibility="Visible" Background="{StaticResource $BackgroundColor_LightGray}">
+                        <Grid x:Name="xActivitiesDataGrid" DockPanel.Dock="Top" Visibility="Visible" Background="Transparent">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="382"/>
+                                <ColumnDefinition Width="525"/>
                                 <ColumnDefinition Width="300*"/>
                                 <ColumnDefinition x:Name="xAddActionsColumn" Width="5" MinWidth="5" MaxWidth="1300"/>
                             </Grid.ColumnDefinitions>
 
-                            <Border Grid.Column="0" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,0,0">
+                            <Border Grid.Column="0" Background="Transparent" Margin="0,0,0,0">
                                 <Frame x:Name="xActivitiesListFrame"  Content="Activities List Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden"  />
                             </Border>
 
@@ -325,12 +334,15 @@
                                 <Label Content="Loading..." HorizontalAlignment="Center" FontSize="15" Style="{StaticResource $LabelStyle}" Margin="5,5,0,0" FontWeight="Normal"/>
                             </StackPanel>
 
-                            <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="{StaticResource $BackgroundColor_LightGray}" />
+                            <Frame x:Name="xCurrentActivityFrame" Grid.Column="1" Content="Current Activity Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden" Background="Transparent" />
 
-                            <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="{StaticResource $amdocsLogoLinarGradientBrush}" IsEnabled="False" Margin="0,0,0,0" />
+                            <GridSplitter x:Name="xAddActionSectionSpliter" ResizeDirection="Columns" Grid.Column="2" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Height="Auto" Background="White" IsEnabled="False" Margin="0,50,0,50" />
 
-                            <Frame Name="xAddActionMenuFrame" NavigationUIVisibility="Hidden" Grid.Column="2" Background="Yellow" Margin="5,0,0,0"/>
-                            <UserControls:ucButton x:Name="xAddActionsBtn" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,-7,0" VerticalAlignment="Center" ToolTip="Add Actions" ButtonType="CircleImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Add" Click="XAddActionsBtn_Click" ButtonStyle="{StaticResource $AddActionsMenuBtnStyle}"/>
+                            <Border Grid.Column="2" BorderThickness="5,0,0,0" CornerRadius="10" BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" Margin="5,0,0,0">
+                                <Frame Name="xAddActionMenuFrame" NavigationUIVisibility="Hidden"  Background="Transparent" Margin="0,1,0,1" />
+                            </Border>
+                            
+                            <UserControls:ucButton x:Name="xAddActionsBtn" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,-12,0" VerticalAlignment="Center" ToolTip="Add Actions" ButtonType="CircleImageButton" ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Add" Click="XAddActionsBtn_Click" ButtonStyle="{StaticResource $AddActionsMenuBtnStyle}"/>
                         </Grid>
                     </DockPanel>
                 </TabItem>
@@ -347,7 +359,7 @@
 
         <StackPanel x:Name="xItemsLoadingPnl" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" >
             <UserControls:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
-            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
+            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Black}">
                 <Label.Content>
                     <GingerCore:ucTextDicResource x:Name="xLoadWindowText" Text="Loading [BusinessFlow]..."/>
                 </Label.Content>

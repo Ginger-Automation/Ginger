@@ -73,13 +73,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public PomElementsPage mappedUIElementsPage;
         public PomElementsPage unmappedUIElementsPage;
         public EventHandler raiseUIElementsCountUpdated;
+        private General.eRIPageViewMode _editMode;
 
 
-        public PomAllElementsPage(ApplicationPOMModel POM, eAllElementsPageContext context, bool AddSelfHealingColumn = true)
+        public PomAllElementsPage(ApplicationPOMModel POM, eAllElementsPageContext context, bool AddSelfHealingColumn = true, General.eRIPageViewMode editMode = General.eRIPageViewMode.Standalone)
         {
             InitializeComponent();
             mPOM = POM;
             mContext = context;
+            _editMode = editMode;
 
             if (mContext == eAllElementsPageContext.AddPOMWizard)
             {
@@ -89,17 +91,30 @@ namespace Ginger.ApplicationModelsLib.POMModels
             CollectionChangedEventManager.AddHandler(source: mPOM.UnMappedUIElements, handler: UnMappedUIElements_CollectionChanged);
             
 
-            mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, AddSelfHealingColumn);
+            mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, AddSelfHealingColumn, editMode);
             xMappedElementsFrame.ClearAndSetContent(mappedUIElementsPage);
 
-            unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped, AddSelfHealingColumn);
+            unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped, AddSelfHealingColumn, editMode);
             xUnMappedElementsFrame.ClearAndSetContent(unmappedUIElementsPage);
 
             UnMappedUIElementsUpdate();
             MappedUIElementsUpdate();
+            SetEditMode();
         }
 
-        private void UnMappedUIElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void SetEditMode()
+        {
+            if(_editMode == General.eRIPageViewMode.View || _editMode == General.eRIPageViewMode.ViewAndExecute)
+            {
+                xLearningOperationBtns.IsEnabled = false;
+            }
+            else
+            {
+                xLearningOperationBtns.IsEnabled = true;
+            }
+        }
+
+    private void UnMappedUIElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             UnMappedUIElementsUpdate();
             if (raiseUIElementsCountUpdated != null)
@@ -407,7 +422,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                                 }
                                 else
                                 {
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$PrimaryColor_Black");
                                 } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
                         }

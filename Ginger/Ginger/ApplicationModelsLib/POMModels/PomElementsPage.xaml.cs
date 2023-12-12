@@ -128,12 +128,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        public PomElementsPage(ApplicationPOMModel pom, eElementsContext context, bool AddSelfHealingColumn)
+        private readonly General.eRIPageViewMode _editMode;
+
+        public PomElementsPage(ApplicationPOMModel pom, eElementsContext context, bool AddSelfHealingColumn, General.eRIPageViewMode editMode)
         {
             InitializeComponent();
             mPOM = pom;
             mContext = context;
             mAddSelfHealingColumn = AddSelfHealingColumn;
+            _editMode = editMode;
 
             if (mContext == eElementsContext.Mapped)
             {
@@ -175,6 +178,22 @@ namespace Ginger.ApplicationModelsLib.POMModels
             else
             {
                 DisableDetailsExpander();
+            }
+            SetEditMode();
+        }
+
+        private void SetEditMode()
+        {
+            if(_editMode == General.eRIPageViewMode.View || _editMode == General.eRIPageViewMode.ViewAndExecute)
+            {
+                xMainElementsGrid.IsEnabled = false;
+                xElementDetails.IsEnabled = false;
+            }
+            else
+            {
+
+                xMainElementsGrid.IsEnabled = true;
+                xElementDetails.IsEnabled = true;
             }
         }
 
@@ -992,7 +1011,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                                 }
                                 else
                                 {
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$PrimaryColor_Black");
                                 } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
                         }

@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.SolutionGeneral;
@@ -35,24 +36,12 @@ using static Ginger.AnalyzerLib.AnalyzeBusinessFlow;
 #nullable enable
 namespace Ginger.AnalyzerLib
 {
-    public static class AnalyzeBusinessFlowCheckExtensions
-    {
-        public static Check ExcludedFromAll(this Check exclusions)
-        {
-            return Check.All ^ exclusions;
-        }
-
-        public static bool AreChecksEnabled(this Check checksEnabled, Check checksToVerify)
-        {
-            return (Check.All & checksEnabled) == checksToVerify;
-        }
-    }
-
     public class AnalyzeBusinessFlow : AnalyzerItemBase
     {
         public enum Check : uint
         {
             All = ~0u,
+            None = 0u,
             MissingTargetApplications = 1 << 0,
             NoActivities = 1 << 1,
             MissingMandatoryInputValues = 1 << 2,
@@ -103,7 +92,7 @@ namespace Ginger.AnalyzerLib
         {
             List<AnalyzerItemBase> issues = new();
 
-            if (HasMissingTargetApplications(businessFlow, solution, out AnalyzeBusinessFlow issue))
+            if (checks.AreAllFlagsSet(Check.MissingTargetApplications) && HasMissingTargetApplications(businessFlow, solution, out AnalyzeBusinessFlow issue))
             {
                 issues.Add(issue);
             }
@@ -115,17 +104,17 @@ namespace Ginger.AnalyzerLib
         {
             List<AnalyzerItemBase> issues = new();
 
-            if (HasNoActivities(businessFlow, out AnalyzeBusinessFlow issue))
+            if (checks.AreAllFlagsSet(Check.NoActivities) && HasNoActivities(businessFlow, out AnalyzeBusinessFlow issue))
             {
                 issues.Add(issue);
             }
 
-            if (checks.AreChecksEnabled(Check.MissingMandatoryInputValues) && HasMissingMandatoryInputValues(businessFlow, out List<AnalyzeBusinessFlow> issueList))
+            if (checks.AreAllFlagsSet(Check.MissingMandatoryInputValues) && HasMissingMandatoryInputValues(businessFlow, out List<AnalyzeBusinessFlow> issueList))
             {
                 issues.AddRange(issueList);
             }
 
-            if (HasLegacyOutputValidations(businessFlow, out issue))
+            if (checks.AreAllFlagsSet(Check.LegacyOutputValidation) && HasLegacyOutputValidations(businessFlow, out issue))
             {
                 issues.Add(issue);
             }

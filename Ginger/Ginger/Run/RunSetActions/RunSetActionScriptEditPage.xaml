@@ -7,7 +7,7 @@
       d:DesignHeight="600" d:DesignWidth="800"
 	Title="RunSetActionScriptEditPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
        
         <StackPanel>
             <Label HorizontalAlignment="Left" Style="{StaticResource @LabelStyle}">Script File Name:</Label>

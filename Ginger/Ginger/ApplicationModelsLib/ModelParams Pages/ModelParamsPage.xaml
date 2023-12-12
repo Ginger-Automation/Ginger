@@ -32,7 +32,7 @@
             </Expander.Content>
         </Expander>
         
-        <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $Color_DarkBlue}" />
+        <GridSplitter x:Name="RowSplitter" ResizeDirection="Rows"  Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Height="5" Width="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="{StaticResource $PrimaryColor_Black}" />
 
 
         <Grid.Resources>

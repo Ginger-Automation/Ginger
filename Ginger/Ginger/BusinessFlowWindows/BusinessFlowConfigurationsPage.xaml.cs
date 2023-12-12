@@ -46,14 +46,16 @@ namespace GingerWPF.BusinessFlowsLib
         BusinessFlow mBusinessFlow;
         Context mContext;
         Ginger.General.eRIPageViewMode mPageViewMode;
+        private readonly bool _ignoreValidationRules;
 
-        public BusinessFlowConfigurationsPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode)
+        public BusinessFlowConfigurationsPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode, bool ignoreValidationRules = false)
         {
             InitializeComponent();
 
             mBusinessFlow = businessFlow;
             mContext = context;
             mPageViewMode = pageViewMode;
+            _ignoreValidationRules = ignoreValidationRules;
 
             CollectionChangedEventManager.AddHandler(source: mBusinessFlow.Activities, handler: mBusinessFlowActivities_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: mBusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
@@ -167,7 +169,10 @@ namespace GingerWPF.BusinessFlowsLib
             }
             xAddTargetApplication.Content= $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}s:";
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
-            xNameTxtBox.AddValidationRule(new BusinessFlowNameValidationRule());
+            if(!_ignoreValidationRules) 
+            { 
+                xNameTxtBox.AddValidationRule(new BusinessFlowNameValidationRule());
+            }
             xShowIDUC.Init(mBusinessFlow);
             BindingHandler.ObjFieldBinding(xDescriptionTxt, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Description));
             xTagsViewer.Init(mBusinessFlow.Tags);

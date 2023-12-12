@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
@@ -88,6 +89,8 @@ namespace Ginger.Run
         private bool mRunSetBusinessFlowWasChanged = false;
         private bool mSolutionWasChanged = false;
         Context mContext = new Context();
+        private readonly bool _ignoreValidationRules;
+
         public enum eObjectType
         {
             BusinessFlow,
@@ -240,6 +243,9 @@ namespace Ginger.Run
 
         private void LoadRunSetConfigBySelection(RunSetConfig defaultRunSet)
         {
+            //hide current Run set UI
+            xRunsetPageGrid.Visibility = Visibility.Collapsed;
+
             if (mRunSetsSelectionPage == null)
             {
                 RunSetFolderTreeItem runSetsRootfolder = new RunSetFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<RunSetConfig>());
@@ -259,21 +265,33 @@ namespace Ginger.Run
             }
         }
 
-        public NewRunSetPage(RunSetConfig runSetConfig, eEditMode editMode = eEditMode.ExecutionFlow)//when window opened automatically when running from command line
+        public NewRunSetPage(RunSetConfig runSetConfig, eEditMode editMode = eEditMode.ExecutionFlow, bool ignoreValidationRules = false)//when window opened automatically when running from command line
         {
             InitializeComponent();
             //Init
             Init();
 
             mEditMode = editMode;
+            _ignoreValidationRules = ignoreValidationRules;
             if (mEditMode == eEditMode.View)
             {
+                Config.IsEnabled = false;
                 xOperationsPnl.IsEnabled = false;
                 xRunnersCanvasControls.IsEnabled = false;
                 xRunnersExecutionControls.IsEnabled = false;
                 xBusinessFlowsListOperationsPnl.IsEnabled = false;
+                xRunsetOperationsTab.IsEnabled = false;
+                mALMDefectsOpening.IsEnabled = false;
+                mExecutionSummary.IsEnabled = false;
                 LoadRunSetConfig(runSetConfig, false, true);
                 return;
+            }
+            else
+            {
+                Config.IsEnabled = true;
+                xRunsetOperationsTab.IsEnabled = true;
+                mALMDefectsOpening.IsEnabled = true;
+                mExecutionSummary.IsEnabled = true;
             }
 
             if (WorkSpace.Instance.RunningInExecutionMode)
@@ -417,7 +435,7 @@ namespace Ginger.Run
                 {
                     xRunRunsetBtn.ButtonImageType = eImageType.Running;
                     xRunRunsetBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
-                    xRunRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+                    xRunRunsetBtn.ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
                     xRunRunsetBtn.IsEnabled = false;
                     if (RunSetConfig.GingerRunners.Any(x => x.Executor.IsRunning == true))
                     {
@@ -713,7 +731,10 @@ namespace Ginger.Run
         void InitRunSetConfigurations()
         {
             BindingHandler.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
-            xRunSetNameTextBox.AddValidationRule(new RunSetNameValidationRule());
+            if (!_ignoreValidationRules)
+            {
+                xRunSetNameTextBox.AddValidationRule(new RunSetNameValidationRule());
+            }
             xShowIDUC.Init(mRunSetConfig);
             BindingHandler.ObjFieldBinding(xRunSetDescriptionTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Description));
             TagsViewer.Init(mRunSetConfig.Tags);
@@ -729,10 +750,10 @@ namespace Ginger.Run
             xSealightsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsLabId), "Lab ID or Build Session ID must be provided"));
             xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
 
-            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xDefaultTestStageRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XDefaultTestStageRadioBtn_Checked);
-            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xDefaultLabIdRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XDefaultLabIdRadioBtn_Checked);
-            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xDefaultSessionIdRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XDefaultSessionIdRadioBtn_Checked);
-            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xDefaultTestRecommendationsRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XDefaultTestRecommendationsRadioBtn_Checked);
+            xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
+            xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
+            xDefaultSessionIdRadioBtn.Checked += XDefaultSessionIdRadioBtn_Checked;
+            xDefaultTestRecommendationsRadioBtn.Checked += XDefaultTestRecommendationsRadioBtn_Checked;
 
             WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xCustomTestStageRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XCustomTestStageRadioBtn_Checked);
             WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xCustomLabIdRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XCustomLabIdRadioBtn_Checked);
@@ -902,7 +923,7 @@ namespace Ginger.Run
             {
                 xDescriptionTextBlock.Text = string.Empty;
                 TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
-                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
+                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$PrimaryColor_Black")).ToString());
 
                 //description
                 if (!string.IsNullOrEmpty(mRunSetConfig.Description))
@@ -1089,6 +1110,11 @@ namespace Ginger.Run
             if (runSetToSet == null)
             {
                 runSetToSet = GetDefualtRunSetConfig();
+                if (!WorkSpace.Instance.UserProfile.AutoLoadLastRunSet)
+                {
+                    LoadRunSetConfigBySelection(runSetToSet);
+                    return;
+                }
             }
 
             if (runSetToSet != null)
@@ -1114,7 +1140,7 @@ namespace Ginger.Run
             if (mCurrentSelectedRunner != null)
             {
                 mCurrentSelectedRunner.xBorder.Visibility = System.Windows.Visibility.Collapsed;
-                mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_Black") as Brush;
                 mCurrentSelectedRunner.xRunnerInfoSplitterBorder.Height = 1;
                 if (!mCurrentSelectedRunner.ExecutorEngine.GingerRunner.Active)
                 {
@@ -1122,14 +1148,14 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    mCurrentSelectedRunner.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                    mCurrentSelectedRunner.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                 }
             }
 
             //highlight the selected Ginger
             GRP.xBorder.Visibility = System.Windows.Visibility.Visible;
             GRP.xRunnerInfoSplitterBorder.Background = FindResource("$amdocsLogoLinarGradientBrush") as Brush;
-            GRP.xRunnerInfoSplitterBorder.Height = 4;
+            GRP.xRunnerInfoSplitterBorder.Height = 1;
             if (!GRP.ExecutorEngine.GingerRunner.Active)
             {
                 GRP.xRunnerNameTxtBlock.Foreground = Brushes.Gray;
@@ -1298,9 +1324,9 @@ namespace Ginger.Run
             if (mFlowDiagram == null)
             {
                 mFlowDiagram = new FlowDiagramPage();
-                mFlowDiagram.SetView(Brushes.White, false, false);
+                mFlowDiagram.SetView(Brushes.Transparent, false, false);
                 mFlowDiagram.SetHighLight = false;
-                mFlowDiagram.BackGround = Brushes.White;
+                mFlowDiagram.BackGround = Brushes.Transparent;
                 mFlowDiagram.ZoomPanelContainer.Visibility = Visibility.Collapsed;
                 mFlowDiagram.ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
                 mFlowDiagram.Height = 300;
@@ -1340,8 +1366,8 @@ namespace Ginger.Run
 
             GRP.xBorder.Visibility = System.Windows.Visibility.Collapsed;
             GRP.xRunnerInfoSplitterBorder.Height = 1;
-            GRP.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_DarkBlue") as Brush;
-            GRP.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+            GRP.xRunnerInfoSplitterBorder.Background = FindResource("$BackgroundColor_Black") as Brush;
+            GRP.xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             mFlowX = mFlowX + 610;
         }
 
@@ -1361,7 +1387,12 @@ namespace Ginger.Run
         private void RunnerFlowelement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             RunnerPage rp = (RunnerPage)((FlowElement)sender).GetCustomeShape().Content;
-            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.ExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
+            General.eRIPageViewMode runnerConfigsPage = General.eRIPageViewMode.Standalone;
+            if(mEditMode == eEditMode.View)
+            {
+                runnerConfigsPage = General.eRIPageViewMode.ViewAndExecute;
+            }
+            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.ExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext, runnerConfigsPage);
             PACW.ShowAsWindow();
             rp.ExecutorEngine.GingerRunner.PauseDirtyTracking();
             rp.UpdateRunnerInfo();
@@ -1593,7 +1624,10 @@ namespace Ginger.Run
         {
             try
             {
-                bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
+                //show current Run set UI
+                xRunsetPageGrid.Visibility = Visibility.Visible;
+
+                bool isSolutionSame = mRunSetConfig != null && mRunSetConfig.ContainingFolderFullPath != null && mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName);
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              
                 if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
                 {
@@ -2417,7 +2451,7 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                    currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                 }
             }
 
@@ -2483,7 +2517,7 @@ namespace Ginger.Run
 
             foreach (RunnerItemPage currentitem in xActivitiesRunnerItemsListView.Items)
             {
-                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             }
             if (mCurrentActivityRunnerItem != null)
             {
@@ -2524,7 +2558,7 @@ namespace Ginger.Run
 
             foreach (RunnerItemPage currentitem in xActionsRunnerItemsListView.Items)
             {
-                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                currentitem.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
             }
             //Need it for first time.
             if (xActionsRunnerItemsListView.SelectedItem == null)
@@ -2994,11 +3028,11 @@ namespace Ginger.Run
                     bf.Active = SetBusinessflowActive;
                     if (SetBusinessflowActive)
                     {
-                        ((RunnerItemPage)ri).xItemName.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                        ri.xItemName.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                     }
                     else
                     {
-                        ((RunnerItemPage)ri).xItemName.Foreground = Brushes.Gray;
+                        ri.xItemName.Foreground = Brushes.Gray;
                     }
                 }
             }
@@ -3100,7 +3134,7 @@ namespace Ginger.Run
                 gr.GingerRunner.Active = SetRunnerActive;
                 if (SetRunnerActive)
                 {
-                    ((RunnerPage)rp.GetCustomeShape().Content).xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_DarkBlue") as Brush;
+                    ((RunnerPage)rp.GetCustomeShape().Content).xRunnerNameTxtBlock.Foreground = FindResource("$BackgroundColor_Black") as Brush;
                 }
                 else
                 {
@@ -3203,22 +3237,12 @@ namespace Ginger.Run
 
         private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
 
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
-        }
-
-        private void ReRunFailedBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
-        }
-
-        private void ReRunFailedBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
         }
 
         private void xSelfHealingConfigBtn_Click(object sender, RoutedEventArgs e)

@@ -10,7 +10,7 @@
       d:DesignHeight="450" d:DesignWidth="700"
       Title="ConversionStatusReportPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="PageGrid">
+    <Grid Background="{StaticResource $BackgroundColor_White}" x:Name="PageGrid">
         <Grid.Resources>
             <local:BooleanToVisiblityCollapsedConverter x:Key="visibilityConverter" />
             <local:ConversionStatusForgroundColorConverter x:Key="ConversionStatusConverter" />

@@ -26,6 +26,7 @@ using GingerCore.Actions;
 using GingerCore.Activities;
 using System;
 using System.Threading.Tasks;
+using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 {
@@ -69,10 +70,16 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             await AccountReportApiHandler.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
         }
 
-        public async Task<bool> RunSetEnd(RunSetConfig runsetConfig)
+        public async Task<bool> RunSetEnd(RunSetConfig runsetConfig , IExecutionLoggerManager executionManager)
         {
 
             bool isDataUploadedSuccessfully = await SendRunsetEndDataToCentralDbTaskAsync(runsetConfig);
+            
+            if(isDataUploadedSuccessfully && executionManager.Configuration.DeleteLocalDataOnPublish.Equals(eDeleteLocalDataOnPublish.Yes))
+            {
+                executionManager.mExecutionLogger.DeleteLocalData(runsetConfig.LastRunsetLoggerFolder, runsetConfig.LiteDbId , runsetConfig.ExecutionID ?? Guid.Empty);
+            }
+
             Reporter.HideStatusMessage();
             return isDataUploadedSuccessfully;
         }

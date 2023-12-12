@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="TestSetMappingPage">
 
-    <Grid x:Name="xTestSetGrid" Margin="10,10,10,0" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="xTestSetGrid" Margin="10,10,10,0" Background="{StaticResource $BackgroundColor_White}">
         <Frame x:Name="load_frame" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" SizeChanged="load_frame_SizeChanged"/>
         <StackPanel Name="xMappedTestSetPanel" Visibility="Collapsed">
             <Label x:Name="xMappedTestSetLbl" Style="{StaticResource $LabelStyle}" Grid.Column="0" Content="Mapped Test Set:" VerticalAlignment="Top"/>

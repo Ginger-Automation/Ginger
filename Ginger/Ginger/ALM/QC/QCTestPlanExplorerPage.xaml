@@ -9,7 +9,7 @@
       mc:Ignorable="d" 
       Height="600" Width="700" Title="QC/ALM Test Plan">
 
-    <Grid x:Name="ExplorerTreeGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="ExplorerTreeGrid" Background="{StaticResource $BackgroundColor_White}">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="580*"/>
