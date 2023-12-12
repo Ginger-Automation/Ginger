@@ -40,22 +40,22 @@ namespace Ginger.ConflictResolve
         private readonly Comparison.StateType[] _childrenStateFilter;
         private readonly IDictionary<Comparison, IList<ConflictComparisonTreeViewItem>> _tviRepo;
 
-        private TreeViewItem? _treeViewItem;
+        private TreeViewItem? _currentTreeViewItem;
         public override TreeViewItem? TreeViewItem
         {
-            get => _treeViewItem;
+            get => _currentTreeViewItem;
             set
             {
-                if(_treeViewItem != null)
+                if(_currentTreeViewItem != null)
                 {
-                    WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(_treeViewItem, nameof(TreeViewItem.Expanded), TreeViewItem_ExpandedCollapsed);
-                    WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(_treeViewItem, nameof(TreeViewItem.Collapsed), TreeViewItem_ExpandedCollapsed);
+                    WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(_currentTreeViewItem, nameof(TreeViewItem.Expanded), TreeViewItem_ExpandedCollapsed);
+                    WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(_currentTreeViewItem, nameof(TreeViewItem.Collapsed), TreeViewItem_ExpandedCollapsed);
                 }
-                _treeViewItem = value;
-                if(_treeViewItem != null)
+                _currentTreeViewItem = value;
+                if(_currentTreeViewItem != null)
                 {
-                    WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(_treeViewItem, nameof(TreeViewItem.Expanded), TreeViewItem_ExpandedCollapsed);
-                    WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(_treeViewItem, nameof(TreeViewItem.Collapsed), TreeViewItem_ExpandedCollapsed);
+                    WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(_currentTreeViewItem, nameof(TreeViewItem.Expanded), TreeViewItem_ExpandedCollapsed);
+                    WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(_currentTreeViewItem, nameof(TreeViewItem.Collapsed), TreeViewItem_ExpandedCollapsed);
                 }
             }
         }
