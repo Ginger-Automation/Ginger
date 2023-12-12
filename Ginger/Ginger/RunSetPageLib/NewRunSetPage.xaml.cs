@@ -746,14 +746,17 @@ namespace Ginger.Run
             xSealightsBuildSessionIDTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID));
 
             // check if fields have been populated (front-end validation)
-            xSealightsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
-            xSealightsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsLabId), "Lab ID or Build Session ID must be provided"));
-            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
+            if (!_ignoreValidationRules)
+            {
+                xSealightsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
+                xSealightsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsLabId), "Lab ID or Build Session ID must be provided"));
+                xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
+            }
 
-            xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
-            xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
-            xDefaultSessionIdRadioBtn.Checked += XDefaultSessionIdRadioBtn_Checked;
-            xDefaultTestRecommendationsRadioBtn.Checked += XDefaultTestRecommendationsRadioBtn_Checked;
+            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xDefaultTestStageRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XDefaultTestStageRadioBtn_Checked);
+            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xDefaultLabIdRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XDefaultLabIdRadioBtn_Checked);
+            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xDefaultSessionIdRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XDefaultSessionIdRadioBtn_Checked);
+            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xDefaultTestRecommendationsRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XDefaultTestRecommendationsRadioBtn_Checked);
 
             WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xCustomTestStageRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XCustomTestStageRadioBtn_Checked);
             WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xCustomLabIdRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XCustomLabIdRadioBtn_Checked);

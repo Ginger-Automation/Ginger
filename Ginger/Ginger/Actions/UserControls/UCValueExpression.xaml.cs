@@ -22,7 +22,6 @@ using GingerCore;
 using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 
 namespace Ginger.Actions
 {

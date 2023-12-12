@@ -529,7 +529,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mActivity != null)
             {
-                PropertyChangedEventManager.AddHandler(source: mActivity, handler: Activity_PropertyChanged, propertyName: allProperties);
+                PropertyChangedEventManager.RemoveHandler(source: mActivity, handler: Activity_PropertyChanged, propertyName: allProperties);
             }
             mActivity = (Activity)mActivitiesPage.ListView.CurrentItem;
 

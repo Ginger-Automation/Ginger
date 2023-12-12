@@ -262,7 +262,7 @@ namespace GingerWPF.BusinessFlowsLib
                         {
                             mActionsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         }
-                        WeakEventManager<ActionsListViewPage, RoutedEventArgs>.AddHandler(source: mActionsPage, eventName: nameof(ActionsListViewPage.ShiftToActionEditEvent), handler: MActionsPage_ShiftToActionEditEvent);
+                        WeakEventManager<ActionsListViewPage, RoutedEventArgs>.RemoveHandler(source: mActionsPage, eventName: nameof(ActionsListViewPage.ShiftToActionEditEvent), handler: MActionsPage_ShiftToActionEditEvent);
                         WeakEventManager<ActionsListViewPage, RoutedEventArgs>.AddHandler(source: mActionsPage, eventName: nameof(ActionsListViewPage.ShiftToActionsListEvent), handler: MActionsPage_ShiftToActionsListEvent);
                         
 

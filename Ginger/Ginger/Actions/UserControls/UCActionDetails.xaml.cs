@@ -31,7 +31,7 @@ namespace Ginger.Actions._Common
         public UCActionDetails()
         {
             InitializeComponent();
-            this.DataContextChanged += UserControl_DataContextChanged;            
+            this.DataContextChanged += UserControl_DataContextChanged;
         }
 
         private void UserControl_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

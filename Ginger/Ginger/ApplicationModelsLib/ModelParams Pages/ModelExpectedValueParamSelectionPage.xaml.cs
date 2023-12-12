@@ -24,6 +24,7 @@ using Ginger.UserControls;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
@@ -62,7 +63,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             Button selectBtn = new Button();
             selectBtn.Content = "Select";
-            selectBtn.Click += new RoutedEventHandler(selectBtn_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: selectBtn, eventName: nameof(ButtonBase.Click), handler: selectBtn_Click);
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(selectBtn);
