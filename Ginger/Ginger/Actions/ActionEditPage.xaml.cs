@@ -486,7 +486,6 @@ namespace Ginger.Actions
             {
                 xAddOutToDSCheckbox.IsEnabled = false;
             }
-            //xDataSourceConfigGrid.LostFocus += DataSourceConfigGrid_LostFocus;
             WeakEventManager<UIElement, RoutedEventArgs>.AddHandler(source: xDataSourceConfigGrid, eventName: nameof(UIElement.LostFocus), handler: DataSourceConfigGrid_LostFocus);
             //Output Values
 

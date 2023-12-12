@@ -223,11 +223,8 @@ namespace Ginger.Actions.Communication
 
             xEmailConfigView.xAttachmentsGrid.DataSourceList = mAttachments;
             
-            //xEmailConfigView.xFilterFolderAllRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
-            //xEmailConfigView.xFilterFolderSpecificRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
-            //xEmailConfigView.AddFileAttachment += xSendEMailConfigView_FileAdded;
+
             xEmailConfigView.EmailMethodChanged += xSendEMailConfigView_EmailMethodChanged;
-            //xEmailConfigView.AttachmentNameVEButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
             xEmailConfigView.ActionTypeChanged += xSendEMailConfigView_ActionTypeChanged;
             xEmailConfigView.HasAttachmentsSelectionChanged += xSendEMailConfigView_HasAttachmentsSelectionChanged;
             xEmailConfigView.ReadmailMethodChanged += xReadEmailConfigView_ReadMethodChanged;            ;
@@ -236,7 +233,6 @@ namespace Ginger.Actions.Communication
             WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xEmailConfigView.xFilterFolderSpecificRadioButton, eventName: nameof(ToggleButton.Checked), handler: xFilterFolderRadioButton_SelectionChanged);
 
             WeakEventManager<UCEmailConfigView, RoutedEventArgs>.AddHandler(source: xEmailConfigView, eventName: nameof(UCEmailConfigView.AddFileAttachment), handler: xSendEMailConfigView_FileAdded);
-            //WeakEventManager<UCEmailConfigView, RoutedEventArgs>.AddHandler(source: xEmailConfigView, eventName: nameof(UCEmailConfigView.EmailMethodChanged), handler: xSendEMailConfigView_EmailMethodChanged);
             WeakEventManager<UCEmailConfigView, RoutedEventArgs>.AddHandler(source: xEmailConfigView, eventName: nameof(UCEmailConfigView.AttachmentNameVEButtonClick), handler: xSendEMailConfigView_NameValueExpressionButtonClick);
 
         }

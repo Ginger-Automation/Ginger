@@ -837,8 +837,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 string allProperties = string.Empty;
                mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
                mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
-               //PropertyChangedEventManager.RemoveHandler(source: mSelectedElement, handler: Properties_CollectionChanged, propertyName: allProperties);
-               //PropertyChangedEventManager.AddHandler(source: mSelectedElement, handler: Properties_CollectionChanged, propertyName: allProperties);
                 
                 
                 xElementDetails.xPropertiesGrid.DataSourceList = GingerCore.General.ConvertListToObservableList(mSelectedElement.Properties.Where(p => p.ShowOnUI).ToList());
@@ -1081,7 +1079,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xElementDetails.xFriendlyLocatorsGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
 
             WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xElementDetails.xFriendlyLocatorsGrid.grdMain, eventName: nameof(DataGrid.PreparingCellForEdit), handler: FriendlyLocatorsGrid_PreparingCellForEdit);
-            //WeakEventManager<ucGrid, PasteItemEventArgs>.AddHandler(source: xElementDetails.xFriendlyLocatorsGrid, eventName: nameof(ucGrid.PasteItemEvent), handler: PasteLocatorEvent);
             xElementDetails.xFriendlyLocatorsGrid.PasteItemEvent += PasteLocatorEvent;
            
             
