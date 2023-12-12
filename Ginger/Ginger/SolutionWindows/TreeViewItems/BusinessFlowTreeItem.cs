@@ -132,7 +132,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to ALM", ExportToALM, null, eImageType.ALM);
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Map to ALM", MapToALM, null, eImageType.MapALM);
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to CSV", ExportToCSV, null, eImageType.CSV);
-                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to BPMN file", ExportBPMNMenuItem_Click, icon: eImageType.ShareExternal);
+                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export as Otoma Use Case Zip file", ExportBPMNMenuItem_Click, icon: eImageType.ShareExternal);
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExportMenu, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
 
                 if (WorkSpace.Instance.BetaFeatures.BFExportToJava)
@@ -302,7 +302,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             try
             {
-                Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNFile);
+                Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNZIP);
 
                 string fullBPMNExportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BPMNExportPath);
                 BusinessFlowToBPMNExporter businessFlowToBPMNExporter = new(mBusinessFlow, fullBPMNExportPath);
