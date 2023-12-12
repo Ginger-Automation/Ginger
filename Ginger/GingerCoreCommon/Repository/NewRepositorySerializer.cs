@@ -460,35 +460,37 @@ namespace Amdocs.Ginger.Repository
         {
             string encoding = "utf-8";
 
-            var ms = new MemoryStream(Encoding.GetEncoding(encoding).GetBytes(xml));
-
-            var xdrs = new XmlReaderSettings()
+            using (var ms = new MemoryStream(Encoding.GetEncoding(encoding).GetBytes(xml)))
             {
-                IgnoreComments = true,
-                IgnoreWhitespace = true,
-                CloseInput = true
-            };
-
-
-            XmlReader xdr = XmlReader.Create(ms, xdrs);
-            xdr.Read();
-            xdr.Read();
-
-            while (xdr.NodeType != XmlNodeType.EndElement)
-            {
-                object item = xmlReadObject(null, xdr);
-                if (item != null)
+                var xdrs = new XmlReaderSettings()
                 {
-                    lst.Add((T)item);
-                }
-                else
-                {
-                    return;
-                }
+                    IgnoreComments = true,
+                    IgnoreWhitespace = true,
+                    CloseInput = true
+                };
 
+
+                using (XmlReader xdr = XmlReader.Create(ms, xdrs))
+                {
+                    xdr.Read();
+                    xdr.Read();
+
+                    while (xdr.NodeType != XmlNodeType.EndElement)
+                    {
+                        object item = xmlReadObject(null, xdr);
+                        if (item != null)
+                        {
+                            lst.Add((T)item);
+                        }
+                        else
+                        {
+                            return;
+                        }
+
+                    }
+                    xdr.ReadEndElement();
+                }
             }
-            xdr.ReadEndElement();
-
         }
 
 
@@ -526,44 +528,49 @@ namespace Amdocs.Ginger.Repository
         {
             string encoding = "utf-8"; // make it static or remove string creation
             //check if we need ms or maybe text reader + do using to release mem
-            var ms = new MemoryStream(Encoding.GetEncoding(encoding).GetBytes(xml));
-            var xdrs = new XmlReaderSettings()
+            using (var ms = new MemoryStream(Encoding.GetEncoding(encoding).GetBytes(xml)))
             {
-                IgnoreComments = true,
-                IgnoreWhitespace = true,
-                CloseInput = true
-            };
-            XmlReader xdr = XmlReader.Create(ms, xdrs);
-            xdr.Read();
-            xdr.Read();
-            object RootObj;
-            if (xdr.Name == cGingerRepositoryItem)
-            {
-                // New style with header
-                xdr.Read();  // Now we are in the header
-
-                RepositoryItemHeader RIH = new RepositoryItemHeader();
-                xdr.MoveToFirstAttribute();
-                for (int i = 0; i < xdr.AttributeCount; i++)
+                var xdrs = new XmlReaderSettings()
                 {
-                    SetRepositoryItemHeaderAttr(RIH, xdr.Name, xdr.Value);
-                    xdr.MoveToNextAttribute();
+                    IgnoreComments = true,
+                    IgnoreWhitespace = true,
+                    CloseInput = true
+                };
+                using (XmlReader xdr = XmlReader.Create(ms, xdrs)) 
+                {
+                    xdr.Read();
+                    xdr.Read();
+                    object RootObj;
+                    if (xdr.Name == cGingerRepositoryItem)
+                    {
+                        // New style with header
+                        xdr.Read();  // Now we are in the header
+
+                        RepositoryItemHeader RIH = new RepositoryItemHeader();
+                        xdr.MoveToFirstAttribute();
+                        for (int i = 0; i < xdr.AttributeCount; i++)
+                        {
+                            SetRepositoryItemHeaderAttr(RIH, xdr.Name, xdr.Value);
+                            xdr.MoveToNextAttribute();
+                        }
+
+                        // After we are done reading the RI header attrs we moved to the main object
+                        xdr.Read();
+
+                        RootObj = xmlReadObject(null, xdr, targetObj, filePath: filePath);
+                        ((RepositoryItemBase)RootObj).RepositoryItemHeader = RIH;
+
+                    }
+                    else
+                    {
+                        //Item saved by old Serialize so calling it to load the XML 
+                        return (RepositoryItemBase)OnNewRepositorySerializerEvent(NewRepositorySerializerEventArgs.eEventType.LoadWithOldSerilizerRequired, filePath, xml, targetObj);
+                    }
+                    return (RepositoryItemBase)RootObj;
                 }
-
-                // After we are done reading the RI header attrs we moved to the main object
-                xdr.Read();
-
-                RootObj = xmlReadObject(null, xdr, targetObj, filePath: filePath);
-                ((RepositoryItemBase)RootObj).RepositoryItemHeader = RIH;
-
+                
             }
-            else
-            {
-                //Item saved by old Serialize so calling it to load the XML 
-                return (RepositoryItemBase)OnNewRepositorySerializerEvent(NewRepositorySerializerEventArgs.eEventType.LoadWithOldSerilizerRequired, filePath, xml, targetObj);
-            }
-
-            return (RepositoryItemBase)RootObj;
+                
         }
 
 
@@ -1495,24 +1502,25 @@ namespace Amdocs.Ginger.Repository
         public object DeserializeFromTextWithTargetObj(Type t, string xml, RepositoryItemBase targetObj = null)
         {
             string encoding = "utf-8";
-            var ms = new MemoryStream(Encoding.GetEncoding(encoding).GetBytes(xml));
-            var xdrs = new XmlReaderSettings()
+            using (var ms = new MemoryStream(Encoding.GetEncoding(encoding).GetBytes(xml)))
             {
-                IgnoreComments = true,
-                IgnoreWhitespace = true,
-                CloseInput = true
-            };
+                var xdrs = new XmlReaderSettings()
+                {
+                    IgnoreComments = true,
+                    IgnoreWhitespace = true,
+                    CloseInput = true
+                };
 
-            XmlReader xdr = XmlReader.Create(ms, xdrs);
-            // Skip the header
-            xdr.Read();
-            xdr.Read();
-            xdr.Read();
-            xdr.Read();
+                XmlReader xdr = XmlReader.Create(ms, xdrs);
+                // Skip the header
+                xdr.Read();
+                xdr.Read();
+                xdr.Read();
+                xdr.Read();
+                object RootObj = xmlReadObject(null, xdr, targetObj);
 
-            object RootObj = xmlReadObject(null, xdr, targetObj);
-
-            return RootObj;
+                return RootObj;
+            }
         }
 
 
