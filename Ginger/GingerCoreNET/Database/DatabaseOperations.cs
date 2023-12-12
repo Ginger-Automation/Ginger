@@ -209,8 +209,7 @@ namespace GingerCore.Environments
                 string[] host = TNSCalculated.Split(':');
                 if (host.Length == 2)
                 {
-                    Database.ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";
-                    //Database.ConnectionString = $"Server={host[0]} ;Port= {host[1]} ;User Id={this.UserCalculated}; Password={this.PassCalculated};Database= {Database.Name} ;";
+                    Database.ConnectionString = "Server=" + host[0] + ";Port=" + host[1] + ";User Id={USER}; Password={PASS};Database=" + Database.Name + ";";                    
                 }
             }
                 return ConnectionStringCalculated;
@@ -675,7 +674,10 @@ namespace GingerCore.Environments
         public string fUpdateDB(string updateCmd, bool commit)
         {
             string result = "";
-            if (oConn == null) Connect();
+            if (oConn == null)
+            {
+                Connect();
+            }
             if (MakeSureConnectionIsOpen())
             {
                 using (DbCommand command = oConn.CreateCommand())

@@ -32,12 +32,10 @@ namespace GingerCore.NoSqlBase
         ActDBValidation Act = null;
         string connectionUrl;
         string userName;
-        string password;
-        private SecureString _clusterPassword;
+        string password;               
         
-        private static ClusterCredentials ClCredential;
         private static readonly Encoding _encoding = Encoding.UTF8;
-        private static string familyName;
+       
        
         public GingerHbase(string url,string Uname,string passwd)
         {
@@ -64,9 +62,9 @@ namespace GingerCore.NoSqlBase
             this.connectionUrl = Db.DatabaseOperations.TNSCalculated;
             this.userName = Db.DatabaseOperations.UserCalculated;
             this.password = Db.DatabaseOperations.PassCalculated;
-            var ConnectionUri = new Uri(this.connectionUrl);           
-            
-            ClCredential = new(ConnectionUri, this.userName,this.password);
+            var ConnectionUri = new Uri(this.connectionUrl);
+
+            ClusterCredentials ClCredential = new(ConnectionUri, this.userName,this.password);
            
 
             requestOption =  new RequestOptions
@@ -119,7 +117,7 @@ namespace GingerCore.NoSqlBase
             }         
         }       
 
-        public string[] getWhereParts(string refstring,string familyname) //This returns a list where the first element signifies the operator,second the family name ,third the fieldname  and fourth the fieldvalue
+        public string[] getWhereParts(string refstring,string familyname) 
         {
             string[] resarray = new string[4];
             string[] words1 = new string[2];
@@ -167,15 +165,15 @@ namespace GingerCore.NoSqlBase
             if (words1[0].Contains(':'))
             {
                 string[] temp = words1[0].Split(':');
-                resarray[1] = temp[0].Trim(); // Family name
-                resarray[2] = temp[1].Trim(); // Field name
-                resarray[3] = words1[1].Trim(); // Field value
+                resarray[1] = temp[0].Trim(); 
+                resarray[2] = temp[1].Trim(); 
+                resarray[3] = words1[1].Trim(); 
             }
             else
             {
-                resarray[1] = familyname;    //Family Name
-                resarray[2] = words1[0].Trim();  // Field Name
-                resarray[3] = words1[1].Trim();  // Field Value
+                resarray[1] = familyname;    
+                resarray[2] = words1[0].Trim();  
+                resarray[3] = words1[1].Trim(); 
 
             }
             return resarray;
@@ -190,7 +188,7 @@ namespace GingerCore.NoSqlBase
             }
             else if (string.Equals("RegexComp", op))
             {
-                RegexStringComparator comp = new RegexStringComparator(fieldValue);   // any value that starts with 'my'
+                RegexStringComparator comp = new RegexStringComparator(fieldValue);   
                 return new SingleColumnValueFilter(
                   Encoding.UTF8.GetBytes(family),
                   Encoding.UTF8.GetBytes(fieldName),
@@ -199,22 +197,23 @@ namespace GingerCore.NoSqlBase
             }          
             else
             {
-                //no CompareOp enum value found matching the given op
+                
                 return null;
             }
             
         }
         public Scanner getScanner(string wherepart, string familyname)
         {
-            //This code has been written with the assumption that the user is using either the AND filter or the OR filter or the IN filter at a time. Not using them simultaneously.
-            Scanner scanner = new Scanner();                      
             
-            string[] Querydata = new string[4];
+            Scanner scanner = new Scanner();
+
+            string[] Querydata;
+            string[] whereSubParts;
             Filter filter = null;
 
-            if (!(wherepart.Contains(" AND ") || wherepart.Contains(" OR ") || wherepart.Contains(" IN ")))  // Adding the functionality of IN operator, need to check the functionality where the field name contains IN 
+            if (!(wherepart.Contains(" AND ") || wherepart.Contains(" OR ") || wherepart.Contains(" IN ")))  
             {
-                Querydata = getWhereParts(wherepart, familyname);// operator, familyname,fieldname,fieldvalue
+                Querydata = getWhereParts(wherepart, familyname);
 
                 filter = getFilter(Querydata[0], Querydata[1], Querydata[2], Querydata[3]);               
                 scanner.filter = filter.ToEncodedString();
@@ -222,15 +221,13 @@ namespace GingerCore.NoSqlBase
             }
             else if (wherepart.Contains(" AND "))
             {
-                string[] whereSubParts = wherepart.Split(" AND ", StringSplitOptions.None);
+                whereSubParts = wherepart.Split(" AND ", StringSplitOptions.None);
                 Querydata = getWhereParts(whereSubParts[0], familyname);
-                Filter firstfilter = getFilter(Querydata[0], Querydata[1], Querydata[2], Querydata[3]);
-                //Filter firstfilter = new SkipFilter(new ValueFilter(CompareFilter.CompareOp.Equal, new BinaryComparator(new byte[] { 0 })));
-
+                Filter firstfilter = getFilter(Querydata[0], Querydata[1], Querydata[2], Querydata[3]);         
                 for (int i = 0; i < whereSubParts.Length; i++)
                 {
 
-                    Querydata = getWhereParts(whereSubParts[i], familyname);// operator, familyname,fieldname,fieldvalue
+                    Querydata = getWhereParts(whereSubParts[i], familyname);
                     Filter nextfilter = getFilter(Querydata[0], Querydata[1], Querydata[2], Querydata[3]);
                     filter = new FilterList(FilterList.Operator.MustPassAll, firstfilter, nextfilter);
                     firstfilter = nextfilter;
@@ -239,7 +236,7 @@ namespace GingerCore.NoSqlBase
             }
             else if (wherepart.Contains(" IN "))
             {
-                string[] whereSubParts = wherepart.Split(" IN ", StringSplitOptions.None); //whereSubParts[0] contains the fieldname to compare.Ex:  where id IN(111,222,333);
+                whereSubParts = wherepart.Split(" IN ", StringSplitOptions.None); 
                 string fieldName;
 
                 if (whereSubParts[0].Contains(':'))
@@ -274,7 +271,7 @@ namespace GingerCore.NoSqlBase
             }
             else
             {
-                string[] whereSubParts = wherepart.Split(" OR ", StringSplitOptions.None);
+                whereSubParts = wherepart.Split(" OR ", StringSplitOptions.None);
                 string fieldName;
                 Filter firstfilter;
                 Querydata = getWhereParts(whereSubParts[0], familyname);
@@ -283,7 +280,7 @@ namespace GingerCore.NoSqlBase
                 for (int i = 1; i < whereSubParts.Length; i++)
                 {
 
-                    Querydata = getWhereParts(whereSubParts[i], familyname);// operator, familyname,fieldname,fieldvalue
+                    Querydata = getWhereParts(whereSubParts[i], familyname);
 
                     Filter nextfilter = getFilter(Querydata[0], Querydata[1], Querydata[2], Querydata[3]);
                     filter = new FilterList(FilterList.Operator.MustPassOne, firstfilter, nextfilter);
@@ -471,7 +468,7 @@ namespace GingerCore.NoSqlBase
                                         string rowKey = _encoding.GetString(row.key);
 
                                         List<Cell> cells = row.values;
-                                        //if cells contain all of the fileds in the where clause, then only the below codes will be executed or else it will be skipped
+                                        
                                         foreach (Cell c in cells)
                                         {
                                             string colname = ExtractColumnName(c.column);
@@ -522,8 +519,7 @@ namespace GingerCore.NoSqlBase
 
         public override List<string> GetTableList(string Keyspace)
         {
-            //throw new NotImplementedException();
-
+          
             ClusterCredentials ClCredential = new(new System.Uri(this.connectionUrl), this.userName, this.password);
             HBaseClient client1 = new HBaseClient(ClCredential);
             HBTableList = new List<string>() ;
@@ -559,17 +555,17 @@ namespace GingerCore.NoSqlBase
             ClusterCredentials ClCredential = new(new System.Uri(Db.DatabaseOperations.TNSCalculated), Db.DatabaseOperations.UserCalculated, Db.DatabaseOperations.PassCalculated);
             HBaseClient client1 = new HBaseClient(ClCredential);
             var result11 = client1.GetTableSchemaAsync(Tablename, null).Result.columns.ToList();
-            // if more than one family name present then the if block will be executed 
+            
             if (result11.Count > 1)
             {
                 for (int i = 0; i < result11.Count; i++)
                 {
-                    var tmp = result11[i].name;//This returns the family names present in the table
+                    var tmp = result11[i].name;
                     Scanner scanner = new Scanner();
                     var filter = new FamilyFilter(CompareFilter.CompareOp.Equal, new BinaryComparator(Encoding.UTF8.GetBytes(tmp)));
                     scanner.filter = filter.ToEncodedString();
                     RequestOptions scanOptions = RequestOptions.GetDefaultOptions();
-                    scanOptions.AlternativeEndpoint = "";//Constants.RestEndpointBaseZero;
+                    scanOptions.AlternativeEndpoint = "";
                     ScannerInformation scanInfo = null;
                     try
                     {
@@ -605,7 +601,7 @@ namespace GingerCore.NoSqlBase
                 var filter = new FamilyFilter(CompareFilter.CompareOp.Equal, new BinaryComparator(Encoding.UTF8.GetBytes(result11[0].name)));
                 scanner.filter = filter.ToEncodedString();
                 RequestOptions scanOptions = RequestOptions.GetDefaultOptions();
-                scanOptions.AlternativeEndpoint = "";//Constants.RestEndpointBaseZero;
+                scanOptions.AlternativeEndpoint = "";
                 ScannerInformation scanInfo ;
                 try
                 {
