@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using static GingerCore.Actions.ActDSTableElement;
 
@@ -1191,7 +1190,7 @@ namespace GingerCoreNET.DataSource
         //db.MyKeyValueDataTable.select GINGER_KEY_NAME where GINGER_KEY_NAME != null - GetKeyName -> query for get key name
         public override DataTable GetKeyName(string mDSTableName)
         {
-            return GetQueryOutput($"SELECT GINGER_KEY_NAME FROM {mDSTableName} WHERE GINGER_KEY_NAME IS NOT NULL");
+            return GetQueryOutput($"SELECT GINGER_KEY_NAME FROM {mDSTableName} WHERE GINGER_KEY_NAME != NULL");
         }
 
         bool isDeleteAllExecuted = false;

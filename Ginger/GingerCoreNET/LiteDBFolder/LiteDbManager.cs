@@ -65,12 +65,12 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             List<LiteDbRunSet> filterData = null;
             if (!string.IsNullOrEmpty(runsetId))
             {
-                filterData = LiteDbRunSet.IncludeAllReferences(result).Find(a => a._id.ToString() == runsetId).ToList();
+                filterData = LiteDbRunSet.IncludeAllReferences(result).Find(a => a._id.Equals(new ObjectId(runsetId))).ToList();
             }
             else
             {
                 runsetId = LiteDbRunSet.IncludeAllReferences(result).Max(x => x._id).ToString();
-                filterData = LiteDbRunSet.IncludeAllReferences(result).Find(a => a._id.ToString() == runsetId).ToList();
+                filterData = LiteDbRunSet.IncludeAllReferences(result).Find(a => a._id.Equals(new ObjectId(runsetId))).ToList();
             }
             return filterData.Last();
         }
