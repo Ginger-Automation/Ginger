@@ -61,6 +61,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile
         Lock, UnLock
     }
 
+    public enum eImagePointUsage
+    {
+        Click, Explore
+    }
+
     public class MobileDriverCommon
     {
 
