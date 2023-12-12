@@ -122,10 +122,13 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Auto Detect Proxy Setting?")]
         public bool AutoDetect { get; set; }
+
         [UserConfigured]
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Path to extension to be enabled")]
         public string ExtensionPath { get; set; }
+        // Note: ExtensionPath is a semi-colon delimited string containing one or more extension paths
+
         [UserConfigured]
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Disable Chrome Extension. This feature is not available anymore")]
@@ -140,7 +143,6 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Ignore Internet Explorer protected mode")]
         public bool IgnoreIEProtectedMode { get; set; }
-
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
@@ -176,7 +178,6 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Only for Edge: Open Edge browser in IE Mode")]
         public bool OpenIEModeInEdge { get; set; }
-
 
         [UserConfigured]
         [UserConfiguredDefault("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")]
@@ -524,7 +525,8 @@ namespace GingerCore.Drivers
                         }
                         else if (!string.IsNullOrEmpty(ExtensionPath))
                         {
-                            options.AddExtension(Path.GetFullPath(ExtensionPath));
+                            string[] extensionPaths = ExtensionPath.Split(';'); 
+                            options.AddExtensions(extensionPaths);                            
                         }
 
                         //setting proxy
