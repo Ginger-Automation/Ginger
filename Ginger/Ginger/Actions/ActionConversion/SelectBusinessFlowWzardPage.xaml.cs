@@ -155,14 +155,7 @@ namespace Ginger.Actions.ActionConversion
                 RepositoryFolder<BusinessFlow> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>();
                 BusinessFlowsFolderTreeItem bfsRoot = new BusinessFlowsFolderTreeItem(repositoryFolder);
                 mBFSelectionPage = new SingleItemTreeViewSelectionPage("Business Flow", eImageType.BusinessFlow, bfsRoot,SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
-                if (WorkSpace.Instance.RunningforTest)
-                {
-                    mBFSelectionPage.SelectionDone += MBFSelectionPage_SelectionDone;
-                }
-                else
-                {
-                    WeakEventManager<SingleItemTreeViewSelectionPage, SelectionTreeEventArgs>.AddHandler(source: mBFSelectionPage, eventName: nameof(SingleItemTreeViewSelectionPage.SelectionDone), handler: MBFSelectionPage_SelectionDone);
-                }
+                WeakEventManager<SingleItemTreeViewSelectionPage, SelectionTreeEventArgs>.AddHandler(source: mBFSelectionPage, eventName: nameof(SingleItemTreeViewSelectionPage.SelectionDone), handler: MBFSelectionPage_SelectionDone);
 
             }
             List<object> selectedBFs = mBFSelectionPage.ShowAsWindow(ownerWindow: ((WizardWindow)((WizardBase)mConversionProcess).mWizardWindow));

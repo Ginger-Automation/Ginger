@@ -465,23 +465,11 @@ namespace Ginger.Actions
                 updateDSOutGrid();
             }
 
-            if (WorkSpace.Instance.RunningforTest)
-            {
-                xAddOutToDSCheckbox.Checked += AddOutDS_Checked;
-                xAddOutToDSCheckbox.Unchecked += AddOutDS_Unchecked;
-                xDataSourceNameCombo.SelectionChanged += cmbDataSourceName_SelectionChanged;
-                xDataSourceTableNameCombo.SelectionChanged += cmbDataSourceTableName_SelectionChanged;
-                xdsOutputParamMapType.SelectionChanged += OutDSParamType_SelectionChanged;
-            }
-            else
-            {
                 WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xdsOutputParamMapType, eventName: nameof(Selector.SelectionChanged), handler: OutDSParamType_SelectionChanged);
                 WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xDataSourceNameCombo, eventName: nameof(Selector.SelectionChanged), handler: cmbDataSourceName_SelectionChanged);
                 WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xDataSourceTableNameCombo, eventName: nameof(Selector.SelectionChanged), handler: cmbDataSourceTableName_SelectionChanged);
                 WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xAddOutToDSCheckbox, eventName: nameof(ToggleButton.Checked), handler: AddOutDS_Checked);
                 WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xAddOutToDSCheckbox, eventName: nameof(ToggleButton.Unchecked), handler: AddOutDS_Unchecked);
-
-            }
 
 
 
@@ -1254,26 +1242,13 @@ namespace Ginger.Actions
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button okBtn = new Button();
             okBtn.Content = "Ok";
-            if (WorkSpace.Instance.RunningforTest)
-            {
-                okBtn.Click += new RoutedEventHandler(okBtn_Click);
-            }
-            else
-            {
-                WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: okBtn_Click);
-            }
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: okBtn_Click);
             
             
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";
-            if (WorkSpace.Instance.RunningforTest)
-            {
-                undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
-            }
-            else
-            {
-                WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtn, eventName: nameof(ButtonBase.Click), handler: undoBtn_Click);
-            }
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtn, eventName: nameof(ButtonBase.Click), handler: undoBtn_Click);
+            
             
             
             Button saveBtn = new Button();
@@ -1302,14 +1277,8 @@ namespace Ginger.Actions
 
                 case General.eRIPageViewMode.SharedReposiotry:
                     title = "Edit Shared Repository " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    if (WorkSpace.Instance.RunningforTest)
-                    {
-                        saveBtn.Click += new RoutedEventHandler(SharedRepoSaveBtn_Click);
-                    }
-                    else
-                    {
-                        WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveBtn, eventName: nameof(ButtonBase.Click), handler: SharedRepoSaveBtn_Click);
-                    }
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveBtn, eventName: nameof(ButtonBase.Click), handler: SharedRepoSaveBtn_Click);
+                    
                     
                     
                     winButtons.Add(saveBtn);
@@ -1324,14 +1293,8 @@ namespace Ginger.Actions
 
                 case General.eRIPageViewMode.ChildWithSave:
                     title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    if (WorkSpace.Instance.RunningforTest)
-                    {
-                        saveBtn.Click += new RoutedEventHandler(ParentSaveButton_Click);
-                    }
-                    else
-                    {
-                        WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveBtn, eventName: nameof(ButtonBase.Click), handler: ParentSaveButton_Click);
-                    }
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveBtn, eventName: nameof(ButtonBase.Click), handler: ParentSaveButton_Click);
+                    
                     
                     
                     winButtons.Add(saveBtn);
