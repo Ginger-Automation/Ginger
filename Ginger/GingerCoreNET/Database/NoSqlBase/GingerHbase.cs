@@ -54,7 +54,7 @@ namespace GingerCore.NoSqlBase
         {
             return Connect();
         }
-        HBaseClient client;
+        HBaseClient actionClient;
         RequestOptions requestOption;
         public override  bool Connect()
         {
@@ -80,7 +80,7 @@ namespace GingerCore.NoSqlBase
                 AlternativeHost = null
             };
 
-            client = new HBaseClient(ClCredential, requestOption);
+            actionClient = new HBaseClient(ClCredential, requestOption);
                 
             try
             {
@@ -90,7 +90,7 @@ namespace GingerCore.NoSqlBase
                 {
                     try
                     {
-                        tables = client.ListTablesAsync().Result;
+                        tables = actionClient.ListTablesAsync().Result;
                     }
                     catch (Exception ex)
                     {
@@ -216,12 +216,12 @@ namespace GingerCore.NoSqlBase
                 Querydata = getWhereParts(wherepart, familyname);
 
                 filter = getFilter(Querydata[0], Querydata[1], Querydata[2], Querydata[3]);               
-                scanner.filter = filter.ToEncodedString();
+                scanner.filter = filter?.ToEncodedString();
 
             }
             else if (wherepart.Contains(" AND "))
             {
-                whereSubParts = wherepart.Split(" AND ", StringSplitOptions.None);
+                whereSubParts = wherepart.Split(" AND ");
                 Querydata = getWhereParts(whereSubParts[0], familyname);
                 Filter firstfilter = getFilter(Querydata[0], Querydata[1], Querydata[2], Querydata[3]);         
                 for (int i = 0; i < whereSubParts.Length; i++)
@@ -232,11 +232,11 @@ namespace GingerCore.NoSqlBase
                     filter = new FilterList(FilterList.Operator.MustPassAll, firstfilter, nextfilter);
                     firstfilter = nextfilter;
                 }
-                scanner.filter = filter.ToEncodedString();
+                scanner.filter = filter?.ToEncodedString();
             }
             else if (wherepart.Contains(" IN "))
             {
-                whereSubParts = wherepart.Split(" IN ", StringSplitOptions.None); 
+                whereSubParts = wherepart.Split(" IN "); 
                 string fieldName;
 
                 if (whereSubParts[0].Contains(':'))
@@ -259,7 +259,7 @@ namespace GingerCore.NoSqlBase
                         filter = new FilterList(FilterList.Operator.MustPassOne, firstfilter, nextfilter);
                         firstfilter = nextfilter;
                     }
-                    scanner.filter = filter.ToEncodedString();
+                    scanner.filter = filter?.ToEncodedString();
                 }
                 else
                 {
@@ -271,7 +271,7 @@ namespace GingerCore.NoSqlBase
             }
             else
             {
-                whereSubParts = wherepart.Split(" OR ", StringSplitOptions.None);
+                whereSubParts = wherepart.Split(" OR ");
                 string fieldName;
                 Filter firstfilter;
                 Querydata = getWhereParts(whereSubParts[0], familyname);
@@ -286,7 +286,7 @@ namespace GingerCore.NoSqlBase
                     filter = new FilterList(FilterList.Operator.MustPassOne, firstfilter, nextfilter);
                     firstfilter = nextfilter;
                 }
-                scanner.filter = filter.ToEncodedString();
+                scanner.filter = filter?.ToEncodedString();
             }
             return scanner;
         }
@@ -313,7 +313,7 @@ namespace GingerCore.NoSqlBase
                 };
                 try
                 {
-                    HBaseClient client = new HBaseClient(ClCredential, requestOption);
+                    HBaseClient actionClient = new HBaseClient(ClCredential, requestOption);
                     Scanner scanner;                              
                     ScannerInformation scanInfo = null;
                     string familyName;
@@ -329,8 +329,8 @@ namespace GingerCore.NoSqlBase
                             scanner = new Scanner();
                             FirstKeyOnlyFilter keyOnlyFilter = new FirstKeyOnlyFilter();
                             scanner.filter = keyOnlyFilter.ToEncodedString();                                    
-                            scanInfo = client.CreateScannerAsync(Act.Details.Info, scanner, requestOption).Result;
-                            nuRows = client.ScannerGetNextAsync(scanInfo, requestOption).Result.rows.Count;                      
+                            scanInfo = actionClient.CreateScannerAsync(Act.Details.Info, scanner, requestOption).Result;
+                            nuRows = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result.rows.Count;                      
                             Act.AddOrUpdateReturnParamActual("Record Count", nuRows.ToString());
                             break;
 
@@ -339,30 +339,32 @@ namespace GingerCore.NoSqlBase
                             table = Act.Table;
                             if (string.IsNullOrEmpty(table))
                             {
-                                throw new Exception("The table field can not be left empty : Please provide a value");
+                                Reporter.ToLog(eLogLevel.ERROR, "The Table value can not be empty");
+                                break;
                             }
                             string colpart = Act.Column;
                             if (string.IsNullOrEmpty(colpart))
                             {
-                                throw new Exception("The column field can not be left empty: Please provide a value");
+                                Reporter.ToLog(eLogLevel.ERROR, "The ColumnPart can not be empty");
+                                break;
 
                             }
                             wherepart = Act.Where;
                             if (string.IsNullOrEmpty(wherepart))
                             {
-                                throw new Exception("The Where field can not be left empty: Please provide a valid condition in this field");
-
+                                Reporter.ToLog(eLogLevel.ERROR, "The WherePart can not be empty");
+                                break;
                             }
                             
-                            familyName = client.GetTableSchemaAsync(table, null).Result.columns.ToList()[0].name;
+                            familyName = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList()[0].name;
                             
                             scanner = getScanner(wherepart, familyName);                           
-                            scanInfo = client.CreateScannerAsync(table, scanner, requestOption).Result;
+                            scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
                             int path = 1;
 
                             CellSet currentColumnSet;
                             bool columnFound = false;
-                            while ((currentColumnSet = client.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                            while ((currentColumnSet = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                             {
                                 foreach (CellSet.Row row in currentColumnSet.rows)
                                 {
@@ -386,7 +388,7 @@ namespace GingerCore.NoSqlBase
                                             break;
                                         }
                                     }
-                                    if (columnFound == true)
+                                    if (columnFound)
                                     {
                                         break;
                                     }
@@ -403,14 +405,15 @@ namespace GingerCore.NoSqlBase
 
                             if (string.IsNullOrEmpty(SQLCalculated))
                             {
-                                throw new Exception("Provide a valid query. It can not be left blank");
+                                Reporter.ToLog(eLogLevel.ERROR, "The Query value can not be empty");
+                                break;
                             }
                            
                             if (SQLCalculated.Contains("where"))
                             {
                                 table = SQLCalculated.Substring(SQLCalculated.IndexOf("from") + 4, (SQLCalculated.IndexOf("where") - SQLCalculated.IndexOf("from") - 4)).Trim();
                                 wherepart = SQLCalculated.Substring(SQLCalculated.IndexOf("where") + 5);
-                                familyName = client.GetTableSchemaAsync(table, null).Result.columns.ToList()[0].name;
+                                familyName = actionClient.GetTableSchemaAsync(table, null).Result.columns.ToList()[0].name;
                                 scanner = getScanner(wherepart, familyName);
            
                             }
@@ -421,7 +424,7 @@ namespace GingerCore.NoSqlBase
                                 table = SQLCalculated.Substring(SQLCalculated.IndexOf("from") + 4).Trim();
                             }
                        
-                            scanInfo = client.CreateScannerAsync(table, scanner, requestOption).Result;
+                            scanInfo = actionClient.CreateScannerAsync(table, scanner, requestOption).Result;
                             int path1 = 1;
 
                             if (SQLCalculated.Contains('*'))
@@ -429,7 +432,7 @@ namespace GingerCore.NoSqlBase
 
                                 CellSet next;
 
-                                while ((next = client.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                                while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                                 {
                                     foreach (CellSet.Row row in next.rows)
                                     {
@@ -459,9 +462,11 @@ namespace GingerCore.NoSqlBase
                                 CellSet next;
                                 List<string> list = new();
                                 foreach (string col in selectedcols)
+                                {
                                     list.Add(col.Trim());
+                                }                                    
 
-                                while ((next = client.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
+                                while ((next = actionClient.ScannerGetNextAsync(scanInfo, requestOption).Result) != null)
                                 {
                                     foreach (CellSet.Row row in next.rows)
                                     {
@@ -486,6 +491,10 @@ namespace GingerCore.NoSqlBase
                             }                      
 
                             break;
+                        default:
+                        {
+                            break;
+                        }
                     }     
                 }  
                 catch (Exception ex)
@@ -495,7 +504,7 @@ namespace GingerCore.NoSqlBase
                 }
                 finally
                 {
-                    client.DisposeIfNotNull();
+                    actionClient.DisposeIfNotNull();
                 }                                       
 
         }
@@ -563,7 +572,7 @@ namespace GingerCore.NoSqlBase
                     var tmp = result11[i].name;
                     Scanner scanner = new Scanner();
                     var filter = new FamilyFilter(CompareFilter.CompareOp.Equal, new BinaryComparator(Encoding.UTF8.GetBytes(tmp)));
-                    scanner.filter = filter.ToEncodedString();
+                    scanner.filter = filter?.ToEncodedString();
                     RequestOptions scanOptions = RequestOptions.GetDefaultOptions();
                     scanOptions.AlternativeEndpoint = "";
                     ScannerInformation scanInfo = null;
