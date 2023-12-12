@@ -24,6 +24,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
+using LiteDB;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -239,5 +240,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
 
         public abstract string CalculateExecutionJsonData(LiteDBFolder.LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate);
+        public abstract void DeleteLocalData(string logFolder, ObjectId runsetId, Guid executionId);
     }
 }
