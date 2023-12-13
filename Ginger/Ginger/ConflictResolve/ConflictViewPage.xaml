@@ -52,8 +52,12 @@
                 <GridSplitter Grid.Row="1" Grid.Column="0" Width="1" Background="{DynamicResource $BackgroundColor_DarkBlue}"/>
                 <TextBlock Grid.Column="2" HorizontalAlignment="Left" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="8,0,0,0" Text="Remote Changes" Style="{StaticResource $HeadingStyle}" FontSize="14"/>
             </Grid>
-            <UCTreeView:UCTreeView x:Name="xLocalItemTree" Grid.Row="2" Grid.Column="0" />
-            <UCTreeView:UCTreeView x:Name="xRemoteItemTree" Grid.Row="2" Grid.Column="1"/>
+            <ScrollViewer x:Name="xLocalItemTreeScroller" Grid.Row="2" Grid.Column="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ScrollChanged="xLocalItemTreeScroller_ScrollChanged">
+                <UCTreeView:UCTreeView x:Name="xLocalItemTree"/>
+            </ScrollViewer>
+            <ScrollViewer x:Name="xRemoteItemTreeScroller" Grid.Row="2" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ScrollChanged="xRemoteItemTreeScroller_ScrollChanged">
+                <UCTreeView:UCTreeView x:Name="xRemoteItemTree"/>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Page>
