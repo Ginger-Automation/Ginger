@@ -440,7 +440,7 @@ namespace Ginger.Run
                 //runnerFilter._id = new ObjectId();
                 //runSetLast.RunnersColl = new List<LiteDbRunner>() { runnerFilter };
 
-                LiteDbBusinessFlow bfFilter = runnerFilter.BusinessFlowsColl.Find(b => b.GUID.ToString() == bf.Guid.ToString() && b.StartTimeStamp.ToString() == bf.StartTimeStamp.ToLocalTime().ToString());
+                LiteDbBusinessFlow bfFilter = runnerFilter.BusinessFlowsColl.FirstOrDefault(b => b.GUID.ToString() == bf.Guid.ToString() && b.StartTimeStamp.ToString() == bf.StartTimeStamp.ToLocalTime().ToString());
                 if (bfFilter == null)
                 {
                     Reporter.ToUser(eUserMsgKey.BFNotExistInDB);
