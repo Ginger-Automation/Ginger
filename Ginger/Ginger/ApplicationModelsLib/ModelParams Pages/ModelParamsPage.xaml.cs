@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Repository;
+using Ginger;
 using Ginger.ApplicationModelsLib.APIModels;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.SolutionWindows.TreeViewItems;
@@ -33,6 +34,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -61,10 +63,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             InitModelParametersGrid();
             InitGlobalModelParametersGrid();
-
-            mApplicationModel.AppModelParameters.CollectionChanged += LocalParameters_CollectionChanged;
+            CollectionChangedEventManager.AddHandler(source: mApplicationModel.AppModelParameters, handler: LocalParameters_CollectionChanged);
+            
             UpdateLocalParametersGridHeader();
-            mApplicationModel.GlobalAppModelParameters.CollectionChanged += GloablParameters_CollectionChanged;
+            CollectionChangedEventManager.AddHandler(source: mApplicationModel.GlobalAppModelParameters, handler: GloablParameters_CollectionChanged);
             UpdateGlobalParametersGridHeader();
         }
 
@@ -85,8 +87,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             if (xGlobalModelParametersGrid.Grid != null)
             {
-                xGlobalModelParametersGrid.Grid.BeginningEdit += grdGlobalParams_BeginningEdit;
-                xGlobalModelParametersGrid.Grid.CellEditEnding += grdGlobalParams_CellEditEnding;
+                WeakEventManager<DataGrid, DataGridBeginningEditEventArgs>.AddHandler(source: xGlobalModelParametersGrid.Grid, eventName: nameof(DataGrid.BeginningEdit), handler: grdGlobalParams_BeginningEdit);
+                 WeakEventManager<DataGrid, DataGridCellEditEndingEventArgs>.AddHandler(source: xGlobalModelParametersGrid.Grid, eventName: nameof(DataGrid.CellEditEnding), handler: grdGlobalParams_CellEditEnding);
             }
 
             xGlobalModelParametersGrid.DataSourceList = APIGlobalParamList;

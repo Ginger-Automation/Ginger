@@ -47,6 +47,7 @@
     <None Remove="DLLS\AlmDataContractsStd.dll" />
     <None Remove="DLLS\ALMInteractionStd.dll" />
     <None Remove="DLLS\AlmRepositoryStd.dll" />
+    <None Remove="DLLS\GingerHbaseFilter.dll" />
     <None Remove="DLLS\JiraRepositoryStd.dll" />
     <None Remove="DLLS\LibGit2Sharp.dll" />
     <None Remove="DLLS\OctaneInteractionStd.dll" />
@@ -195,6 +196,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="DLLS\GingerHbaseFilter.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="log4netLib\log4net.config">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -232,6 +236,8 @@
   
     <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
   
+    <PackageReference Include="EnterpriseLibrary.TransientFaultHandling" Version="6.0.1304" />
+  
     <PackageReference Include="EPPlus" Version="6.0.4" />
   
     <PackageReference Include="Eyes.Images" Version="2.33.0" />
@@ -241,6 +247,9 @@
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.2" />
   
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.5.1" />
+    
+    <PackageReference Include="HBaseNet" Version="0.1.0" />
+    
     <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   
@@ -271,6 +280,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Graph" Version="4.51.0" />
+    <PackageReference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.ServiceBus" Version="6.0.1304" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
     <PackageReference Include="MySql.Data" Version="8.0.16" />
@@ -278,6 +288,8 @@
     <PackageReference Include="Npgsql" Version="4.0.7" />
     <PackageReference Include="NPOI" Version="2.5.3" />
     <PackageReference Include="NUglify" Version="1.9.7" />
+    <PackageReference Include="protobuf-net" Version="3.2.26" />
+    <PackageReference Include="protobuf-net.Core" Version="3.2.26" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="108.0.3" />
     <PackageReference Include="Selenium.Support" Version="4.13.1" />
@@ -319,6 +331,9 @@
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
     </Reference>
+    <Reference Include="GingerHbaseFilter">
+      <HintPath>DLLS\GingerHbaseFilter.dll</HintPath>
+    </Reference>
     <Reference Include="JiraRepositoryStd">
       <HintPath>DLLS\JiraRepositoryStd.dll</HintPath>
     </Reference>
@@ -330,6 +345,9 @@
     </Reference>
     <Reference Include="OctaneStdSDK">
       <HintPath>DLLS\OctaneStdSDK.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>DLLS\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="QCRestClientStd">
       <HintPath>DLLS\QCRestClientStd.dll</HintPath>

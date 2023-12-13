@@ -37,7 +37,7 @@ namespace GingerCore.Environments
         string fUpdateDB(string updateCmd, bool commit);
         string GetCalculatedWithDecryptTrue(string value);
         string GetConnectionString();
-        List<string> GetTablesColumns(string table);
+        Task<List<string>> GetTablesColumns(string table);
         Task<List<string>> GetTablesListAsync(string Keyspace = null);
         string GetRecordCount(string SQL);
         bool MakeSureConnectionIsOpen();

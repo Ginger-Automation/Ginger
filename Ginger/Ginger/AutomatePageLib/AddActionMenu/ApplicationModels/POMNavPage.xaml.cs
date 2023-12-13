@@ -32,6 +32,7 @@ using GingerCore;
 using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -92,6 +93,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEventAsync;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEventAsync;
 
+
             mContext = context;
 
             xPomElementsListView.ListTitleVisibility = Visibility.Hidden;
@@ -101,7 +103,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mPOMListHelper.ListView = xPomElementsListView;
 
             ConfigurePOMPage();
-            mContext.PropertyChanged += MContext_PropertyChanged;
+            string allProperties = string.Empty;
+            PropertyChangedEventManager.AddHandler(source: mContext, handler: MContext_PropertyChanged, propertyName: allProperties);
         }
 
         private void ConfigurePOMPage()
@@ -113,7 +116,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                             UCTreeView.eFilteroperationType.Equals, showAlerts: false);
             mItemTypeRootNode.SetTools(mPOMPage.xTreeView);
             mPOMPage.xTreeView.SetTopToolBarTools(mPOMsRoot.SaveAllTreeFolderItemsHandler, mPOMsRoot.AddPOM, RefreshTreeItems);
-            mPOMPage.OnSelect += MainTreeView_ItemSelected;
+            WeakEventManager<SingleItemTreeViewSelectionPage, SelectionTreeEventArgs>.AddHandler(source: mPOMPage, eventName: nameof(SingleItemTreeViewSelectionPage.OnSelect), handler: MainTreeView_ItemSelected);
             mPOMPage.HorizontalAlignment = HorizontalAlignment.Stretch;
             mPOMPage.xTreeView.HorizontalAlignment = HorizontalAlignment.Stretch;
             mPOMPage.xTreeView.SetAddButtonToArrow();

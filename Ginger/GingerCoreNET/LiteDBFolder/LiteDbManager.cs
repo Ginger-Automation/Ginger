@@ -41,15 +41,15 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             var activityMapper = dbConnector.GetMapper<LiteDbActivity>();
             var action = dbConnector.GetMapper<LiteDbAction>();
 
-            activityMapper.DbRef(rf => rf.ActionsColl, NameInDb<LiteDbAction>());
+            activityMapper.DbRef(rf => rf.AllActionsColl, NameInDb<LiteDbAction>());
 
-            agMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
+            agMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
 
             bfMapper.DbRef(rf => rf.ActivitiesGroupsColl, NameInDb<LiteDbActivityGroup>());
 
-            bfMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
+            bfMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
 
-            runnerMapper.DbRef(rf => rf.BusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
+            runnerMapper.DbRef(rf => rf.AllBusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
 
             runSetMapper.DbRef(rf => rf.RunnersColl, NameInDb<LiteDbRunner>());
         }
@@ -175,7 +175,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 item.Name = ($"name.{a.ToString()}");
                 item.Description = ($"description.{a.ToString()}");
                 item.RunStatus = "run";
-                item.BusinessFlowsColl = bfsData;
+                item.AllBusinessFlowsColl = bfsData;
                 data.Add(item);
             }
             return data;
@@ -195,7 +195,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 item.Elapsed = 17;
                 item.RunStatus = "run";
                 item.ActivitiesGroupsColl = acGrpData;
-                item.ActivitiesColl = activitiesColl;
+                item.AllActivitiesColl = activitiesColl;
                 data.Add(item);
             }
             return data;
@@ -211,7 +211,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 item.Description = ($"description.{a.ToString()}");
                 item.GUID = Guid.NewGuid();
                 item.RunStatus = "run";
-                item.ActivitiesColl = activitiesColl;
+                item.AllActivitiesColl = activitiesColl;
                 data.Add(item);
             }
             return data;
@@ -230,7 +230,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 item.EndTimeStamp = DateTime.Today;
                 item.Elapsed = 17;
                 item.RunStatus = "run";
-                item.ActionsColl = actionsColl;
+                item.AllActionsColl = actionsColl;
                 data.Add(item);
             }
             return data;

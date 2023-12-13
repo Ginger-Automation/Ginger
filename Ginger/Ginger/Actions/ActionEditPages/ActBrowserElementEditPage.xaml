@@ -3,7 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" xmlns:Ginger="clr-namespace:Ginger"
+      xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib" xmlns:Ginger="clr-namespace:Ginger" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="800"
 	Title="ActBrowserElementEditPage">
@@ -41,13 +41,14 @@
             <Grid x:Name="xValueGrid" DockPanel.Dock="Top" Margin="0,10,10,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="115"/>
-                    <ColumnDefinition Width="100*" />
+                    <ColumnDefinition Width="47*" />
+                    <ColumnDefinition Width="618*"/>
                 </Grid.ColumnDefinitions>
-                <Label x:Name="xValueLabel" Content="Value:"  Grid.Column="0" Style="{StaticResource $LabelStyle}"/>
-                <Actions:UCValueExpression x:Name="ValueUC" Grid.Column="1" Margin="6,0,0,0"/>
-                <Frame x:Name="xPOMUrlFrame" NavigationUIVisibility="Hidden" BorderBrush="Transparent" Grid.Column="1" Margin="5,0,0,0"/>
+                <Label x:Name="xValueLabel" Content="Value:"  Grid.Column="0" Style="{StaticResource $LabelStyle}" Margin="-5,0,0,0"/>
+                <Actions:UCValueExpression x:Name="ValueUC" Grid.Column="1" Margin="6,0,0,0" Grid.ColumnSpan="2"/>
+                <Frame x:Name="xPOMUrlFrame" NavigationUIVisibility="Hidden" BorderBrush="Transparent" Grid.Column="1" Margin="5,0,0,0" Grid.ColumnSpan="2"/>
             </Grid>
-            
+
             <StackPanel x:Name="xOpenURLInPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
                 <Label x:Name="xLable" Style="{StaticResource $LabelStyle}">Open URL in:</Label>
                 <StackPanel x:Name="xGotoURLTypeRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="21,0,0,0">
@@ -58,7 +59,7 @@
             <StackPanel x:Name="xImplicitWaitPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
                 <Label x:Name="ImplicitWait" Content="Browser load max wait time(seconds):" Style="{StaticResource $LabelStyle}"/>
                 <Actions:UCValueExpression x:Name="xImplicitWaitVE" ToolTip="Max waiting time for browser to load" Width="100" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            </StackPanel>
+            </StackPanel>           
 
             <StackPanel x:Name="xRequestTypePnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
                 <Label x:Name="xRequestTypeLbl" Style="{StaticResource $LabelStyle}">Request Types:</Label>
@@ -88,6 +89,16 @@
                         <Button x:Name="UpdateNetworkParametersGridVEButton" Content="..." Click="UpdateNetworkParametersGridVEButton_Click"  Style="{DynamicResource DataGridCellButtonStyle}"/>
                     </DataTemplate>
                 </Grid.Resources>
+            </Grid>
+            <Grid x:Name="xBlockedUrlsGrid" DockPanel.Dock="Top" Margin="-5,10,2,0" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="92*" />
+                </Grid.ColumnDefinitions>
+                <Label x:Name="xBlockedUrlsLabel" Content="Block Urls:"  VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="0" Style="{StaticResource $LabelStyle}"  Margin="0,0,0,0"/>
+                <usercontrols:ImageMakerControl Grid.Column="1" x:Name="infoBlockUrls" ToolTip="Enter multiple urls to be blocked separated by ',' " SetAsFontImageWithSize="12" ImageType="Info" Width="12" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}"  HorizontalAlignment="Center"/>
+                <Actions:UCValueExpression x:Name="VEBlockedUrls" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"   Margin="2,0,0,0"/>
             </Grid>
 
         </DockPanel>

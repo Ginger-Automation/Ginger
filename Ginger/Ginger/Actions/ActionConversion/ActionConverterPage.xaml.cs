@@ -56,7 +56,7 @@ namespace Ginger.Actions.ActionConversion
                 mBusinessFlow.Activities.Where(x => x.SelectedForConversion == true).ToList().ForEach(x => { x.SelectedForConversion = false; });
             }
             grdGroups.DataSourceList = GingerCore.General.ConvertListToObservableList(businessFlow.Activities.Where(x => x.Active == true).ToList());
-            grdGroups.RowChangedEvent += grdGroups_RowChangedEvent;
+            WeakEventManager<ucGrid, EventArgs>.AddHandler(source: grdGroups, eventName: nameof(ucGrid.RowChangedEvent), handler: grdGroups_RowChangedEvent);
             grdGroups.Title = "Name of " + GingerDicser.GetTermResValue(eTermResKey.Activities) + " in '" + mBusinessFlow.Name + "'";
             grdGroups.btnMarkAll.Visibility = Visibility.Visible;
 
@@ -155,7 +155,8 @@ namespace Ginger.Actions.ActionConversion
                 mBusinessFlow.CurrentActivity = (Activity)grdGroups.CurrentItem;
                 if (mBusinessFlow.CurrentActivity != null)
                 {
-                    ((Activity)mBusinessFlow.CurrentActivity).PropertyChanged += CurrentActivity_PropertyChanged;
+                    string allProperties = string.Empty;
+                    PropertyChangedEventManager.AddHandler(source: ((Activity)mBusinessFlow.CurrentActivity), handler: CurrentActivity_PropertyChanged, propertyName: allProperties);
                 }
             }
         }

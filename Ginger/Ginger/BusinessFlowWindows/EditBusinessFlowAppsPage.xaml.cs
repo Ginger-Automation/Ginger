@@ -27,6 +27,7 @@ using MongoDB.Driver.Linq;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
 namespace Ginger.BusinessFlowWindows
@@ -126,7 +127,7 @@ namespace Ginger.BusinessFlowWindows
         {
             Button okBtn = new Button();
             okBtn.Content = "Ok";
-            okBtn.Click += new RoutedEventHandler(OKButton_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: OKButton_Click);
             ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(okBtn);
 

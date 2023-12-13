@@ -29,6 +29,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 
@@ -219,7 +220,9 @@ namespace Ginger.Activities
                 case ActivitiesGroupPage.eEditMode.ExecutionFlow:
                     Button okBtn = new Button();
                     okBtn.Content = "Ok";
-                    okBtn.Click += new RoutedEventHandler(okBtn_Click);
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: okBtn_Click);
+                    
+                    
                     winButtons.Add(okBtn);
                     break;
 
@@ -227,7 +230,10 @@ namespace Ginger.Activities
                     title = "Edit Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup);
                     Button saveBtn = new Button();
                     saveBtn.Content = "Save";
-                    saveBtn.Click += new RoutedEventHandler(saveBtn_Click);
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveBtn, eventName: nameof(ButtonBase.Click), handler: saveBtn_Click);
+                    
+                    
+                   
                     winButtons.Add(saveBtn);
 
                     UpdateSharedRepositorySupportedOperations();
@@ -237,7 +243,10 @@ namespace Ginger.Activities
 
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";
-            undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtn, eventName: nameof(ButtonBase.Click), handler: undoBtn_Click);
+            
+            
+            
             winButtons.Add(undoBtn);
 
             this.Height = 800;

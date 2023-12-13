@@ -34,6 +34,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using static GingerCore.Actions.ActDBValidation;
@@ -77,7 +78,7 @@ namespace Ginger.Actions
             //Read from sql file
             QueryFile.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDBValidation.Fields.QueryFile), true, true, UCValueExpression.eBrowserType.File, "sql", BrowseQueryFile_Click, WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
-            QueryFile.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
+            WeakEventManager<TextBoxBase, TextChangedEventArgs>.AddHandler(source: QueryFile.ValueTextBox, eventName: nameof(TextBoxBase.TextChanged), handler: ValueTextBox_TextChanged);
 
             //OLD binding and UI
             GingerCore.General.FillComboFromEnumObj(ValidationCfgComboBox, act.DBValidationType);
@@ -428,7 +429,7 @@ namespace Ginger.Actions
             }
         }
 
-        private void ColumnComboBox_DropDownOpened(object sender, EventArgs e)
+        private async void ColumnComboBox_DropDownOpened(object sender, EventArgs e)
         {
             ColumnComboBox.Items.Clear();
             string DBName = DBNameComboBox.Text;
@@ -457,18 +458,31 @@ namespace Ginger.Actions
             }
             if (table != "")
             {
-                List<string> Columns = db.DatabaseOperations.GetTablesColumns(table);
-                if (Columns == null)
+
+                await Task.Run(async () =>
                 {
-                    return;
-                }
-                else
-                {
-                    foreach (string s in Columns)
+                    try
                     {
-                        ColumnComboBox.Items.Add(s);
+                        List<string> Columns = await db.DatabaseOperations.GetTablesColumns(table);
+                        if (Columns != null)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                foreach (string s in Columns)
+                                {
+                                    ColumnComboBox.Items.Add(s);
+                                }
+                            });
+                        }
+                        Reporter.HideStatusMessage();
                     }
-                }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"{db.DatabaseOperations.ToString()} failed to get tables", ex);
+                    }
+                });              
+                
+                
             }
             else
             {

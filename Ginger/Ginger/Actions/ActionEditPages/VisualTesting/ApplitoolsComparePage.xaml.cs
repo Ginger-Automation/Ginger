@@ -27,10 +27,12 @@ using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.Actions.VisualTesting
 {
@@ -49,10 +51,10 @@ namespace Ginger.Actions.VisualTesting
             // TODO: Complete member initialization
             this.mAct = mAct;
             xApplitoolsActionComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ApplitoolsAction, ApplitoolsAnalyzer.eApplitoolsAction.Checkpoint.ToString()), typeof(ApplitoolsAnalyzer.eApplitoolsAction), false);
-            xApplitoolsActionComboBox.ComboBox.SelectionChanged += ChangeApplitoolsAction_Changed;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xApplitoolsActionComboBox.ComboBox, eventName: nameof(Selector.SelectionChanged), handler: ChangeApplitoolsAction_Changed);
 
             xActionByComboBox.Init(mAct.GetOrCreateInputParam(ApplitoolsAnalyzer.ActionBy, ApplitoolsAnalyzer.eActionBy.Window.ToString()), typeof(ApplitoolsAnalyzer.eActionBy), false);
-            xActionByComboBox.ComboBox.SelectionChanged += ChangeActionBy_Changed;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xActionByComboBox.ComboBox, eventName: nameof(Selector.SelectionChanged), handler: ChangeActionBy_Changed);
             InitLayout();
 
             ApplicationNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ApplitoolsParamApplicationName, (Context.GetAsContext(mAct.Context)).BusinessFlow.MainApplication), true, false);
@@ -71,7 +73,8 @@ namespace Ginger.Actions.VisualTesting
             List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy, LocateByList);
             xLocateValueVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(Act.Fields.LocateValue));
-            mAct.PropertyChanged += mAct_PropertyChanged;
+           string allProperties = string.Empty;
+            PropertyChangedEventManager.AddHandler(source: mAct, handler: mAct_PropertyChanged, propertyName: allProperties);
             SetLocateValueControls();
         }
 
