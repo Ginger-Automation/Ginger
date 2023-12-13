@@ -113,12 +113,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             string conditionalTaskName = GetConditionalTaskName(flowControl);
 
-            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(
-                name: conditionalTaskName/*,
-                conditions: new List<Task.Condition>()
-                {
-                    new Task.FieldValueCondition(nameFieldTag: $"FC_{flowControl.Guid}", valueFieldTag: $"FC_PASSED_FIELD_TAG")
-                }*/);
+            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(name: conditionalTaskName);
 
             //TODO: BPMN - Get FlowControlAction name from EnumValueDescription attribute
             string flowControlActionName = flowControl.FlowControlAction.ToString();
@@ -135,12 +130,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             string conditionalTaskName = GetConditionalTaskName(flowControl);
 
-            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(
-                name: conditionalTaskName/*,
-                conditions: new List<Task.Condition>()
-                {
-                    new Task.FieldValueCondition(nameFieldTag: $"FC_{flowControl.Guid}", valueFieldTag: $"FC_PASSED_FIELD_TAG")
-                }*/);
+            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(name: conditionalTaskName);
 
             //TODO: BPMN - Get FlowControlAction name from EnumValueDescription attribute
             string flowControlActionName = flowControl.FlowControlAction.ToString();
@@ -164,12 +154,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             string conditionalTaskName = GetConditionalTaskName(flowControl);
 
-            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(
-                name: conditionalTaskName/*,
-                conditions: new List<Task.Condition>()
-                {
-                    new Task.FieldValueCondition(nameFieldTag: $"FC_{flowControl.Guid}", valueFieldTag: $"FC_PASSED_FIELD_TAG")
-                }*/);
+            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(name: conditionalTaskName);
 
             //TODO: BPMN - Get FlowControlAction name from EnumValueDescription attribute
             string flowControlActionName = flowControl.FlowControlAction.ToString();
@@ -193,12 +178,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             string conditionalTaskName = GetConditionalTaskName(flowControl);
 
-            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(
-                name: conditionalTaskName/*,
-                conditions: new List<Task.Condition>()
-                {
-                    new Task.FieldValueCondition(nameFieldTag: $"FC_{flowControl.Guid}", valueFieldTag: $"FC_PASSED_FIELD_TAG")
-                }*/);
+            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(name: conditionalTaskName);
 
             //TODO: BPMN - Get FlowControlAction name from EnumValueDescription attribute
             string flowControlActionName = flowControl.FlowControlAction.ToString();
@@ -215,12 +195,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             string conditionalTaskName = GetConditionalTaskName(flowControl);
 
-            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(
-                name: conditionalTaskName/*,
-                conditions: new List<Task.Condition>()
-                {
-                    new Task.FieldValueCondition(nameFieldTag: $"FC_{flowControl.Guid}", valueFieldTag: $"FC_PASSED_FIELD_TAG")
-                }*/);
+            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(name: conditionalTaskName);
 
             //TODO: BPMN - Get FlowControlAction name from EnumValueDescription attribute
             string flowControlActionName = flowControl.FlowControlAction.ToString();
@@ -245,12 +220,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             string conditionalTaskName = GetConditionalTaskName(flowControl);
 
-            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(
-                name: conditionalTaskName/*,
-                conditions: new List<Task.Condition>()
-                {
-                    new Task.FieldValueCondition(nameFieldTag: $"FC_{flowControl.Guid}", valueFieldTag: $"FC_PASSED_FIELD_TAG")
-                }*/);
+            Task conditionalTask = _activityParticipant.Process.AddTask<Task>(name: conditionalTaskName);
 
             Flow.Create(name: string.Empty, source: exclusiveGateway, target: conditionalTask);
             Flow.Create(flowControlActionName, conditionalTask, targetActivityTask);
