@@ -91,6 +91,12 @@ jobs:
                     rename docs Library
                     rmdir /s /q Ginger-Web-Help       
 
+            -   uses: nadeemjazmawe/Sign-action-signtool.exe@v1.0-recursive
+                with: 
+                  Directorypath: 'D:\a\Installers'   
+                  certificate: ${{ secrets.PEM }}
+                  cert-password: ${{ secrets.PEM_PASS }}
+                  
             -   uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
                 with: 
                     filepath: './Ginger/GingerInstallerScriptGithub.iss'
