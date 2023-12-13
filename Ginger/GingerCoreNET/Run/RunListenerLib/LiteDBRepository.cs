@@ -303,7 +303,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             }
             this.lastBfStatus = context.BusinessFlow.RunStatus;
 
-            //return BFR;
             return GetBFReportData(context.BusinessFlow, context.Environment);//Returning BusinessFlowReport so we will get execution info on the console
         }
 
