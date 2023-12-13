@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
+using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
 using Ginger;
 using Ginger.ApplicationModelsLib.APIModels;
@@ -316,7 +317,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(globalAppModelParameter);
 
-            AddGlobalParametertoAPIGlobalParameterList(mApplicationModel.GlobalAppModelParameters, globalAppModelParameter);
+            ModelParamUtils.AddGlobalParametertoAPIGlobalParameterList(mApplicationModel.GlobalAppModelParameters, globalAppModelParameter);
         }
 
         private void AddGlobalParam(object sender, RoutedEventArgs e)
@@ -327,7 +328,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             {
                 foreach (GlobalAppModelParameter GAMP in globalParamsToAdd)
                 {
-                    AddGlobalParametertoAPIGlobalParameterList(APIGlobalParamList, GAMP);
+                    ModelParamUtils.AddGlobalParametertoAPIGlobalParameterList(APIGlobalParamList, GAMP);
                 }
             }
         }
@@ -391,24 +392,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             APIModelBodyNodeSyncPage bodyNodeSyncPage;
             bodyNodeSyncPage = new APIModelBodyNodeSyncPage((ApplicationAPIModel)mApplicationModel, paramList);
             bodyNodeSyncPage.ShowAsWindow();
-        }
-
-        private void AddGlobalParametertoAPIGlobalParameterList(ObservableList<GlobalAppModelParameter> APIGlobalParamList, GlobalAppModelParameter GAMP)
-        {
-            GlobalAppModelParameter newAPIGlobalParam = new GlobalAppModelParameter();
-            newAPIGlobalParam.Guid = GAMP.Guid;
-            newAPIGlobalParam.CurrentValue = GAMP.CurrentValue;
-            newAPIGlobalParam.PlaceHolder = GAMP.PlaceHolder;
-            newAPIGlobalParam.Description = GAMP.Description;
-            foreach (OptionalValue ov in GAMP.OptionalValuesList)
-            {
-                OptionalValue newOV = new OptionalValue();
-                newOV.Guid = ov.Guid;
-                newOV.Value = ov.Value;
-                newOV.IsDefault = ov.IsDefault;
-                newAPIGlobalParam.OptionalValuesList.Add(newOV);
-            }
-            APIGlobalParamList.Add(newAPIGlobalParam);
         }
 
         private void RefreshGlobalParameters(object sender, RoutedEventArgs e)

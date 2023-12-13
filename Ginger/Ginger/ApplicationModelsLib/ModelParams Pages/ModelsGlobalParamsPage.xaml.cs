@@ -46,6 +46,8 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
+using GingerCoreNET.Application_Models;
+using Amdocs.Ginger.CoreNET.Application_Models;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 {
@@ -449,7 +451,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         private void AddGlobalParam(object sender, RoutedEventArgs e)
         {
             GlobalAppModelParameter newModelGlobalParam = new GlobalAppModelParameter();
-            SetUniquePlaceHolderName(newModelGlobalParam);
+            ModelParamUtils.SetUniquePlaceHolderName(newModelGlobalParam);
 
             string newParamPlaceholder = newModelGlobalParam.PlaceHolder;
 
@@ -486,58 +488,12 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             {
 
                 GlobalAppModelParameter newCopyGlobalParam = (GlobalAppModelParameter)param.CreateCopy();
-                SetUniquePlaceHolderName(newCopyGlobalParam, true);
+                ModelParamUtils.SetUniquePlaceHolderName(newCopyGlobalParam, true);
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newCopyGlobalParam);
             }
         }
 
-        public void SetUniquePlaceHolderName(GlobalAppModelParameter newModelGlobalParam, bool isCopy = false)
-        {
-            if (isCopy)
-            {
-                newModelGlobalParam.PlaceHolder = newModelGlobalParam.PlaceHolder + "_Copy";
-            }
-            else
-            {
-                newModelGlobalParam.PlaceHolder = "{NewGlobalParameter}";
-            }
-
-            if (mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder) == null)
-            {
-                return;
-            }
-
-            List<GlobalAppModelParameter> samePlaceHolderList = mModelsGlobalParamsList.Where(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder).ToList<GlobalAppModelParameter>();
-            if (samePlaceHolderList.Count == 1 && samePlaceHolderList[0] == newModelGlobalParam)
-            {
-                return; //Same internal object
-            }
-
-            //Set unique name
-            if (isCopy)
-            {
-                if ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder)) != null)
-                {
-                    int counter = 2;
-                    while ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder + counter)) != null)
-                    {
-                        counter++;
-                    }
-
-                    newModelGlobalParam.PlaceHolder = newModelGlobalParam.PlaceHolder + counter;
-                }
-            }
-            else
-            {
-                int counter = 2;
-                while ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == "{NewGlobalParameter_" + counter.ToString() + "}")) != null)
-                {
-                    counter++;
-                }
-
-                newModelGlobalParam.PlaceHolder = "{NewGlobalParameter_" + counter.ToString() + "}";
-            }
-        }
+       
 
         private void DeleteSelectedEvent(object sender, RoutedEventArgs e)
         {

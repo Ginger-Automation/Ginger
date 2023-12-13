@@ -75,5 +75,10 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             return SwaggerModels;
         }
 
+        public string getInfoTitle()
+        {
+            return Swaggerdoc.Info.Title;
+        }
+
     }
 }
