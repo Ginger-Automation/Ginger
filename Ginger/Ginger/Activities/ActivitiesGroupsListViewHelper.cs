@@ -56,6 +56,21 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public bool ExpandItemOnLoad { get; set; } = false;
 
+        public bool ShowIndex
+        {
+            get
+            {
+                if (PageViewMode == General.eRIPageViewMode.Add || PageViewMode == General.eRIPageViewMode.AddFromModel || PageViewMode == General.eRIPageViewMode.AddFromShardRepository)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+
         public ActivitiesGroupsListViewHelper(Context context, General.eRIPageViewMode pageViewMode)
         {
             mContext = context;

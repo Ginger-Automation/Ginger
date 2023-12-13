@@ -25,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace GingerCore.NoSqlBase
 {
@@ -184,11 +185,12 @@ namespace GingerCore.NoSqlBase
             }
             return table;
         }
+       
 
-        public override List<string> GetColumnList(string collectionName)
+        public  override Task<List<string>> GetColumnList(string collectionName)
         {
             Connect();
-            List<string> columns = new List<string>();
+            List<string>  columns = new List<string>();
             var db = mMongoClient.GetDatabase(DbName);
             var collection = db.GetCollection<BsonDocument>(collectionName);
 
@@ -208,7 +210,7 @@ namespace GingerCore.NoSqlBase
                 }
             }
 
-            return columns;
+            return Task.FromResult(columns);
         }
 
         private void Disconnect()
@@ -290,7 +292,7 @@ namespace GingerCore.NoSqlBase
         public override void PerformDBAction()
         {
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
-            VE.Value = Act.SQL;
+            VE.Value = Act.QueryValue;
             string SQLCalculated = VE.ValueCalculated;
             string collectionName = "";
             if (Action == Actions.ActDBValidation.eDBValidationType.SimpleSQLOneValue)
@@ -391,7 +393,7 @@ namespace GingerCore.NoSqlBase
                         AddValuesFromResult(resultSimpleSQLOne);
                         break;
                     default:
-                        Act.Error += "Operation Type " + Action + " is not yes supported for Mongo DB";
+                        Act.Error += "Operation Type " + Action + " is not yet supported for Mongo DB";
                         break;
                 }
             }

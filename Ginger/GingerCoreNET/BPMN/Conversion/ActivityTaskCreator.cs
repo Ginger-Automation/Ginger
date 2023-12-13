@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 
 #nullable enable
-namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
+namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 {
     internal sealed class ActivityTaskCreator
     {

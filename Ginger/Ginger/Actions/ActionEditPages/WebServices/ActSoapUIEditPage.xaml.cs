@@ -27,6 +27,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Xml;
 
@@ -349,7 +350,7 @@ namespace Ginger.Actions.WebServices
 
         private void FillCaseComboBox()
         {
-            TestCaseComboBox.SelectionChanged -= TestCaseComboBox_SelectionChanged;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: TestCaseComboBox, eventName: nameof(Selector.SelectionChanged), handler: TestCaseComboBox_SelectionChanged);
 
             TestCaseComboBox.Items.Clear();
             mAct.TestCaseProperties.Clear();

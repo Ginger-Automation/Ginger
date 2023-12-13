@@ -9,12 +9,12 @@
       d:DesignHeight="150" d:DesignWidth="600"
 	Title="RunSetActionHTMLReportEditPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
 
         <StackPanel>
             <StackPanel Margin="0,5,0,15" Orientation="Horizontal">
                 <Label Margin="0,0,10,0" Style="{StaticResource @LabelStyle}" Content="Select Report Template:"/>
-                <ComboBox x:Name="CurrentTemplatePickerCbx"  ContextMenu="{x:Null}" Width="250" Style="{DynamicResource @InputComboBoxStyle}" SelectionChanged="CurrentTemplatePickerCbx_SelectionChanged" ></ComboBox>
+                <ComboBox x:Name="CurrentTemplatePickerCbx"  ContextMenu="{x:Null}" Width="250" Style="{DynamicResource $FlatInputComboBoxStyle}" SelectionChanged="CurrentTemplatePickerCbx_SelectionChanged" ></ComboBox>
             </StackPanel>
             <CheckBox x:Name="UseAlternativeHTMLReportFolderCbx" Style="{StaticResource @CheckBoxStyle}" Margin="5" Content="Use custom root path for report folder" Checked="UseAlternativeHTMLReportFolderCbx_Checked" Unchecked="UseAlternativeHTMLReportFolderCbx_Unchecked"></CheckBox>
             <StackPanel x:Name="HTMLReportFolderPanel" Orientation="Vertical" IsEnabled="False" Visibility="Hidden">

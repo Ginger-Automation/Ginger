@@ -96,6 +96,7 @@ namespace Amdocs.Ginger.CoreNET.Logger
                 IoHandler.Instance.DeleteFoldersData(Path.Combine(ReportrootPath, "assets", "screenshots"));
                 LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
                 lightDbRunSet = dbManager.GetLatestExecutionRunsetData(runSetGuid);
+                lightDbRunSet.SetAllIterationElementsRecursively(WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<HTMLReportConfiguration>().First(r => r.IsDefault).ShowAllIterationsElements);
                 PopulateMissingFields(lightDbRunSet, ReportrootPath);
                 RemoveSkippedItems(lightDbRunSet);
                 string json = Newtonsoft.Json.JsonConvert.SerializeObject(lightDbRunSet);
@@ -123,13 +124,13 @@ namespace Amdocs.Ginger.CoreNET.Logger
 
             foreach (LiteDbRunner runner in liteDbRunSet.RunnersColl)
             {
-                runner.BusinessFlowsColl = runner.BusinessFlowsColl.Where(IsBusinessFlowNotSkipped).ToList();
+                runner.AllBusinessFlowsColl = runner.BusinessFlowsColl.Where(IsBusinessFlowNotSkipped).ToList();
                 foreach (LiteDbBusinessFlow businessFlow in runner.BusinessFlowsColl)
                 {
-                    businessFlow.ActivitiesColl = businessFlow.ActivitiesColl.Where(IsActivityNotSkipped).ToList();
+                    businessFlow.AllActivitiesColl = businessFlow.ActivitiesColl.Where(IsActivityNotSkipped).ToList();
                     foreach (LiteDbActivity activity in businessFlow.ActivitiesColl)
                     {
-                        activity.ActionsColl = activity.ActionsColl.Where(IsActionNotSkipped).ToList();
+                        activity.AllActionsColl = activity.ActionsColl.Where(IsActionNotSkipped).ToList();
                     }
                 }
             }

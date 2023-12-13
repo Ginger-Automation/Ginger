@@ -38,11 +38,56 @@ namespace Ginger.ConflictResolve
     {
         private readonly Comparison _comparison;
         private readonly Comparison.StateType[] _childrenStateFilter;
+        private readonly IDictionary<Comparison, IList<ConflictComparisonTreeViewItem>> _tviRepo;
 
-        public ConflictComparisonTreeViewItem(Comparison comparison, Comparison.StateType[] childrenStateFilter)
+        private TreeViewItem? _currentTreeViewItem;
+        public override TreeViewItem? TreeViewItem
+        {
+            get => _currentTreeViewItem;
+            set
+            {
+                if(_currentTreeViewItem != null)
+                {
+                    WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(_currentTreeViewItem, nameof(TreeViewItem.Expanded), TreeViewItem_ExpandedCollapsed);
+                    WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(_currentTreeViewItem, nameof(TreeViewItem.Collapsed), TreeViewItem_ExpandedCollapsed);
+                }
+                _currentTreeViewItem = value;
+                if(_currentTreeViewItem != null)
+                {
+                    WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(_currentTreeViewItem, nameof(TreeViewItem.Expanded), TreeViewItem_ExpandedCollapsed);
+                    WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(_currentTreeViewItem, nameof(TreeViewItem.Collapsed), TreeViewItem_ExpandedCollapsed);
+                }
+            }
+        }
+
+        public ConflictComparisonTreeViewItem(Comparison comparison, Comparison.StateType[] childrenStateFilter, IDictionary<Comparison, IList<ConflictComparisonTreeViewItem>> tviRepo)
         {
             _comparison = comparison;
             _childrenStateFilter = childrenStateFilter;
+            _tviRepo = tviRepo;
+            if (_tviRepo.TryGetValue(_comparison, out IList<ConflictComparisonTreeViewItem>? treeViewItems))
+            {
+                treeViewItems.Add(this);
+            }
+            else
+            {
+                _tviRepo.Add(_comparison, new List<ConflictComparisonTreeViewItem>() { this });
+            }
+        }
+
+        private void TreeViewItem_ExpandedCollapsed(object? sender, RoutedEventArgs e)
+        {
+            if(TreeViewItem != null && _tviRepo.TryGetValue(_comparison, out IList<ConflictComparisonTreeViewItem>? treeViewItems))
+            {
+                foreach(ConflictComparisonTreeViewItem tvi in treeViewItems)
+                {
+                    if (tvi.TreeViewItem == null)
+                    {
+                        continue;
+                    }
+                    tvi.TreeViewItem.IsExpanded = TreeViewItem.IsExpanded;
+                }
+            }
         }
 
         public List<ITreeViewItem> Childrens()
@@ -51,7 +96,7 @@ namespace Ginger.ConflictResolve
             {
                 return _comparison.ChildComparisons
                     .Where(childComparison => _childrenStateFilter.Contains(childComparison.State))
-                    .Select(childComparison => (ITreeViewItem)new ConflictComparisonTreeViewItem(childComparison, _childrenStateFilter))
+                    .Select(childComparison => (ITreeViewItem)new ConflictComparisonTreeViewItem(childComparison, _childrenStateFilter, _tviRepo))
                     .ToList();
             }
             return Array.Empty<ITreeViewItem>().ToList();

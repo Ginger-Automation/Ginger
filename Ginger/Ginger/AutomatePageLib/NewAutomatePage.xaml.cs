@@ -43,6 +43,7 @@ using Ginger.Run;
 using Ginger.TimeLineLib;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.TextEditor;
+using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
@@ -56,6 +57,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using LiteDB;
 using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -63,6 +65,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -90,12 +93,12 @@ namespace GingerWPF.BusinessFlowsLib
         bool mExecutionIsInProgress = false;
         bool mSyncSelectedItemWithExecution = true;
 
-        GridLength mLastAddActionsColumnWidth = new GridLength(400);
+        GridLength mLastAddActionsColumnWidth = new GridLength(350);
 
         ObjectId mRunnerLiteDbId;
         ObjectId mRunSetLiteDbId;
         RunSetReport mRunSetReport;
-
+        string allProperties = string.Empty;
         public event PropertyChangedEventHandler PropertyChanged;
         public static event EventHandler RaiseEnvComboBoxChanged;
         public void OnPropertyChanged(string name)
@@ -255,8 +258,8 @@ namespace GingerWPF.BusinessFlowsLib
             ApplicationAgent appAgent = AgentHelper.GetAppAgent(mContext.Activity, (GingerExecutionEngine)mContext.Runner, mContext);
             if (appAgent != null)
             {
-                appAgent.PropertyChanged -= AppAgent_PropertyChanged;
-                appAgent.PropertyChanged += AppAgent_PropertyChanged;
+                PropertyChangedEventManager.RemoveHandler(source: appAgent, handler: AppAgent_PropertyChanged, propertyName: allProperties);
+                PropertyChangedEventManager.AddHandler(source: appAgent, handler: AppAgent_PropertyChanged, propertyName: allProperties);
 
                 UpdateTargetAndPlatform();
 
@@ -268,8 +271,8 @@ namespace GingerWPF.BusinessFlowsLib
 
                 if (mContext.Agent != null)
                 {
-                    mContext.Agent.PropertyChanged -= Agent_PropertyChanged;
-                    mContext.Agent.PropertyChanged += Agent_PropertyChanged;
+                    PropertyChangedEventManager.RemoveHandler(source: mContext.Agent, handler: Agent_PropertyChanged, propertyName: allProperties);
+                    PropertyChangedEventManager.AddHandler(source: mContext.Agent, handler: Agent_PropertyChanged, propertyName: allProperties);
                 }
             }
             else
@@ -351,7 +354,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             GingerRunner gingerRunner = new GingerRunner();
             mExecutionEngine = new GingerExecutionEngine(gingerRunner, eExecutedFrom.Automation);
-            mExecutionEngine.GingerRunner.PropertyChanged += MRunner_PropertyChanged;
+            PropertyChangedEventManager.AddHandler(source: mExecutionEngine.GingerRunner, handler: MRunner_PropertyChanged, propertyName: allProperties);
 
             // Add Listener so we can do GiveUserFeedback            
             AutomatePageRunnerListener automatePageRunnerListener = new AutomatePageRunnerListener();
@@ -433,13 +436,13 @@ namespace GingerWPF.BusinessFlowsLib
                         UpdateApplicationsAgentsMapping();
 
                         SetBusinessFlowTargetAppIfNeeded();
-                        mBusinessFlow.TargetApplications.CollectionChanged += mBusinessFlowTargetApplications_CollectionChanged;
+                        CollectionChangedEventManager.AddHandler(source: mBusinessFlow.TargetApplications, handler: mBusinessFlowTargetApplications_CollectionChanged);
                         UpdateRunnerAgentsUsedBusinessFlow();
 
                         Ginger.General.DoEvents();//so UI will refresh
 
 
-                        mBusinessFlow.PropertyChanged += mBusinessFlow_PropertyChanged;
+                        PropertyChangedEventManager.AddHandler(source: mBusinessFlow, handler: mBusinessFlow_PropertyChanged, propertyName: allProperties);
 
                         //--BF sections updates
                         //Environments
@@ -468,8 +471,8 @@ namespace GingerWPF.BusinessFlowsLib
                         if (mActivitiesPage == null)
                         {
                             mActivitiesPage = new ActivitiesListViewPage(mBusinessFlow, mContext, Ginger.General.eRIPageViewMode.Automation);
-                            mActivitiesPage.ListView.List.SelectionChanged -= ActivitiesList_SelectionChanged;
-                            mActivitiesPage.ListView.List.SelectionChanged += ActivitiesList_SelectionChanged;
+                            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: mActivitiesPage.ListView.List, eventName: nameof(Selector.SelectionChanged), handler: ActivitiesList_SelectionChanged);
+                            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: mActivitiesPage.ListView.List, eventName: nameof(Selector.SelectionChanged), handler: ActivitiesList_SelectionChanged);
                             xActivitiesListFrame.ClearAndSetContent(mActivitiesPage);
                         }
                         else
@@ -526,7 +529,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (mActivity != null)
             {
-                mActivity.PropertyChanged -= Activity_PropertyChanged;
+                PropertyChangedEventManager.RemoveHandler(source: mActivity, handler: Activity_PropertyChanged, propertyName: allProperties);
             }
             mActivity = (Activity)mActivitiesPage.ListView.CurrentItem;
 
@@ -538,8 +541,8 @@ namespace GingerWPF.BusinessFlowsLib
             mContext.Activity = mActivity;
             if (mActivity != null)
             {
-                mActivity.PropertyChanged -= Activity_PropertyChanged;
-                mActivity.PropertyChanged += Activity_PropertyChanged;
+                PropertyChangedEventManager.RemoveHandler(source: mActivity, handler: Activity_PropertyChanged, propertyName: allProperties);
+                PropertyChangedEventManager.AddHandler(source: mActivity, handler: Activity_PropertyChanged, propertyName: allProperties);
             }
 
             UpdateContextWithActivityDependencies();
@@ -586,7 +589,7 @@ namespace GingerWPF.BusinessFlowsLib
                     if (mActivityPage == null)
                     {
                         var pageViewMode = mContext.Activity.Type == Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation : Ginger.General.eRIPageViewMode.ViewAndExecute;
-                        mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode);
+                        mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode, highlightActivityName:true);
                     }
                     else
                     {
@@ -703,7 +706,7 @@ namespace GingerWPF.BusinessFlowsLib
                     xRunFlowBtn.ToolTip = "Execution is in progress";
                     xRunFlowBtn.IsEnabled = false;
                     xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
-                    xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+                    xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
 
                     xStopRunBtn.ButtonImageType = eImageType.Stop;
                     xStopRunBtn.ButtonText = "Stop";
@@ -778,7 +781,7 @@ namespace GingerWPF.BusinessFlowsLib
                 xRunFlowBtn.ToolTip = "Analyzing in progress";
                 xRunFlowBtn.IsEnabled = false;
                 xRunFlowBtn.ButtonStyle = (Style)FindResource("$RoundTextAndImageButtonStyle_ExecutionRunning");
-                xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+                xRunFlowBtn.ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
             });
         }
 
@@ -1786,12 +1789,12 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
 
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue"); 
         }
 
         private void xExportToCSVMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1807,7 +1810,6 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             //Help Layouts            
-            App.MainWindow.AddHelpLayoutToShow("AutomatePage_GoBackToBFsHelp", xGoToBFsTreeBtn, string.Format("Click here to go back to {0} tree", GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)));
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_BusinessFlowLayerHelp", xBusinessFlowItemComboBox, string.Format("Select here which layer of {0} you want to configure: {1}, {2} or Details", GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Activities), GingerDicser.GetTermResValue(eTermResKey.Variables)));
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_AppsAgentsMappingHelp", xAppsAgentsMappingFrame, "Here you should match between the Application and the Agent which will be used for communicating and automating it");
             App.MainWindow.AddHelpLayoutToShow("AutomatePage_EnvironmentSelectionHelp", xEnvironmentComboBox, "Environments should be used for storing environment level parameters, DB connection details and more, go to “Resources-> Environments” to configure all environments you need and select here which environment data to use in execution time");

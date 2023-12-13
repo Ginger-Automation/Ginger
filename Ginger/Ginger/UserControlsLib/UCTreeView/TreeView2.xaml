@@ -8,7 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     
 
-    <DockPanel x:Name="mainDockPanel"  Style="{DynamicResource @ucDockPanelStyle}" HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0" VerticalAlignment="Stretch">
+    <DockPanel x:Name="mainDockPanel" Background="Transparent"  Style="{DynamicResource @ucDockPanelStyle}" HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0" VerticalAlignment="Stretch">
         
         <Label x:Name="treeViewTitle" Content="Tree Title" DockPanel.Dock="Top"></Label>
         

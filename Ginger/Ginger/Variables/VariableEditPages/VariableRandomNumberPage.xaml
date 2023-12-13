@@ -15,7 +15,7 @@
             <TextBox x:Name="txtMaxValue" Style="{StaticResource @TextBoxStyle}"></TextBox>
             <Label Style="{StaticResource @InputFieldLabelStyle}">Interval:</Label>
             <TextBox x:Name="txtInterval" Style="{StaticResource @TextBoxStyle}"></TextBox>
-            <StackPanel Background="{StaticResource $BackgroundColor_LightGray}" >
+            <StackPanel Background="{StaticResource $BackgroundColor_White}" >
                 <CheckBox x:Name="cbInteger" Content="Integer" Style="{StaticResource @InputCheckBoxStyle}" Margin="0,10,0,0"/>
             </StackPanel>
             

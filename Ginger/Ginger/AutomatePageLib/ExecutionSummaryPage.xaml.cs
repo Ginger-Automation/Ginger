@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -72,12 +73,7 @@ namespace Ginger.BusinessFlowWindows
             SeriesActivityCollection = new SeriesCollection();
             SeriesActionCollection = new SeriesCollection();
 
-            DataContext = this;
-            //if (ActivityChart.Palette == null)
-            //    ActivityChart.Palette = new ResourceDictionaryCollection();
-            //else
-            //    ActivityChart.Palette.Clear();
-            //List<StatItems> activityStatList = new List<StatItems>();           
+            DataContext = this;    
             List<StatItem> st = mContext.BusinessFlow.GetActivitiesStats();
             foreach (var v in st)
             {
@@ -91,11 +87,6 @@ namespace Ginger.BusinessFlowWindows
             Activities.Content = GingerDicser.GetTermResValue(eTermResKey.Activities);
 
             //Action
-            //if (ActionChart.Palette == null)
-            //    ActionChart.Palette = new ResourceDictionaryCollection();
-            //else
-            //    ActionChart.Palette.Clear();
-            //List<StatItems> actionStatList = new List<StatItems>();
             List<StatItem> act = mContext.BusinessFlow.GetActionsStat();
             foreach (var v in act)
             {
@@ -111,14 +102,6 @@ namespace Ginger.BusinessFlowWindows
             foreach (string s in status)
             {
                 SwitchLegend(s);
-            }
-            {
-                stck.Children.Add(Ginger.General.makeImgFromControl(ActivityChart, totalActivity.ToString(), 1));
-                stck.Children.Add(Ginger.General.makeImgFromControl(ActionChart, totalAction.ToString(), 2));
-            }
-            {
-                //App.RunsetActivityTextbox.Text = totalActivity.ToString();
-                //App.RunsetActionTextbox.Text = totalAction.ToString();
             }
         }
         public void HideAllLegend()
@@ -180,11 +163,11 @@ namespace Ginger.BusinessFlowWindows
         {
             Button ReportButton = new Button();
             ReportButton.Content = "Generate Report";
-            ReportButton.Click += ReportButton_Click;
+           WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: ReportButton, eventName: nameof(ButtonBase.Click), handler: ReportButton_Click);
 
             Button ExportBtn = new Button();
             ExportBtn.Content = "Export Execution Details";
-            ExportBtn.Click += new RoutedEventHandler(ExportExecutionDetails);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: ExportBtn, eventName: nameof(ButtonBase.Click), handler: ExportExecutionDetails);
 
             GenericWindow genWin = null;
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, new ObservableList<Button> { ExportBtn, ReportButton });

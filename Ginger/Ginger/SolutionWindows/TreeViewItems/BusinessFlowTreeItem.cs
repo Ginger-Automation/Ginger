@@ -20,6 +20,9 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
+using Amdocs.Ginger.CoreNET.BPMN.Models;
+using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using Ginger.Actions.ActionConversion;
 using Ginger.ALM;
 using Ginger.BusinessFlowWindows;
@@ -33,14 +36,25 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.IO;
+using Task = System.Threading.Tasks.Task;
 using System.Windows;
 using System.Windows.Controls;
+using GingerCore.Activities;
+using MongoDB.Bson;
+using System.Linq;
+using Ginger.Repository.AddItemToRepositoryWizard;
+using Ginger.Repository.ItemToRepositoryWizard;
+using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.CoreNET.BPMN.Conversion;
+using Amdocs.Ginger.CoreNET.BPMN.Exportation;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
     public class BusinessFlowTreeItem : NewTreeViewItemBase, ITreeViewItem
     {
+        private const string BPMNExportPath = @"~\\Documents\BPMN";
+
         private BusinessFlowViewPage mBusinessFlowViewPage;
 
         private BusinessFlow mBusinessFlow { get; set; }
@@ -118,6 +132,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to ALM", ExportToALM, null, eImageType.ALM);
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Map to ALM", MapToALM, null, eImageType.MapALM);
                 TreeViewUtils.AddSubMenuItem(ExportMenu, "Export to CSV", ExportToCSV, null, eImageType.CSV);
+                TreeViewUtils.AddSubMenuItem(ExportMenu, "Export as Otoma Use Case Zip file", ExportBPMNMenuItem_Click, icon: eImageType.ShareExternal);
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ExportMenu, Expander.VisibilityProperty, WorkSpace.Instance.UserProfile, nameof(WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures), bindingConvertor: new GingerCore.GeneralLib.BoolVisibilityConverter());
 
                 if (WorkSpace.Instance.BetaFeatures.BFExportToJava)
@@ -224,6 +239,94 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             Export.GingerToCSV.BrowseForFilename();
             Export.GingerToCSV.BusinessFlowToCSV(mBusinessFlow);
+        }
+
+        private IEnumerable<ActivitiesGroup> GetActivityGroupsMissingFromSharedRepository()
+        {
+            return mBusinessFlow.ActivitiesGroups.Where(ag => !ag.IsSharedRepositoryInstance);
+        }
+
+        private void ExportBPMNMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            bool wasAllAddedToSharedRepository = TryAddingMissingActivityGroupsToSharedRepository();
+            if (!wasAllAddedToSharedRepository)
+            {
+                return;
+            }
+            ExportBusinessFlowBPMN();
+        }
+
+        private bool TryAddingMissingActivityGroupsToSharedRepository()
+        {
+            bool wasAllAddedToSharedRepository; 
+            try
+            { 
+                IEnumerable<ActivitiesGroup> activityGroups = GetActivityGroupsMissingFromSharedRepository();
+                bool hasActivityGroupsMissingFromSharedRepository = activityGroups.Any();
+                if (hasActivityGroupsMissingFromSharedRepository)
+                {
+                    wasAllAddedToSharedRepository = true;
+                    return wasAllAddedToSharedRepository;
+                }
+
+                eUserMsgSelection userResponse = Reporter.ToUser(eUserMsgKey.AddActivityGroupsToSharedRepositoryForBPMNConversion);
+                if (userResponse != eUserMsgSelection.Yes)
+                {
+                    wasAllAddedToSharedRepository = false;
+                    return wasAllAddedToSharedRepository;
+                }
+
+                Context context = new()
+                {
+                    BusinessFlow = mBusinessFlow
+                };
+                IEnumerable<RepositoryItemBase> activitiesAndGroups = activityGroups
+                    .SelectMany(ag => ag.ActivitiesIdentifiers.Select(ai => ai.IdentifiedActivity))
+                    .Cast<RepositoryItemBase>()
+                    .Concat(activityGroups);
+                WizardWindow.ShowWizard(new UploadItemToRepositoryWizard(context, activitiesAndGroups));
+
+                wasAllAddedToSharedRepository = activityGroups.All(ag => ag.IsSharedRepositoryInstance);
+                return wasAllAddedToSharedRepository;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToUser(eUserMsgKey.FailedToAddItemsToSharedRepository, "Unexpected error, check logs for more details");
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while adding missing activities and activity groups to shared repository.", ex);
+                wasAllAddedToSharedRepository = false;
+                return wasAllAddedToSharedRepository;
+            }
+        }
+
+        private void ExportBusinessFlowBPMN()
+        {
+            try
+            {
+                Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNZIP);
+
+                string fullBPMNExportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BPMNExportPath);
+                BusinessFlowToBPMNExporter businessFlowToBPMNExporter = new(mBusinessFlow, fullBPMNExportPath);
+                string exportPath = businessFlowToBPMNExporter.Export();
+                string solutionRelativeExportPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(exportPath);
+
+                Reporter.ToUser(eUserMsgKey.ExportToBPMNSuccessful, solutionRelativeExportPath);
+            }
+            catch (Exception ex)
+            {
+                if (ex is BPMNException)
+                {
+                    Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, ex.Message);
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, "Unexpected Error, check logs for more details.");
+                }
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while exporting BPMN", ex);
+            }
+            finally
+            {
+                Reporter.HideStatusMessage();
+            }
         }
     }
 }

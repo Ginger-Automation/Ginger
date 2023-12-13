@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="120" d:DesignWidth="400">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.Resources>
             <local:AgentStatusColorTypeConverter x:Key="AgentStatusColorTypeConverterKey"></local:AgentStatusColorTypeConverter>
         </Grid.Resources>

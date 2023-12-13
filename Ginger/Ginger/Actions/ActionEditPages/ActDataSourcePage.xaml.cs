@@ -35,6 +35,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -103,7 +104,7 @@ namespace Ginger.Actions
                 SetDataSourceVEParams(VEOrg);
             }
 
-            ValueUC.ValueTextBox.TextChanged += ValueChanged;
+            WeakEventManager<TextBoxBase, TextChangedEventArgs>.AddHandler(source: ValueUC.ValueTextBox, eventName: nameof(TextBoxBase.TextChanged), handler: ValueChanged);
         }
 
         private void ValueChanged(object sender, TextChangedEventArgs e)
@@ -547,7 +548,7 @@ namespace Ginger.Actions
 
             grdCondition.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddWhereCondition));
             grdCondition.btnDelete.AddHandler(Button.ClickEvent, new RoutedEventHandler(DeleteWhereCondition));
-            grdCondition.Grid.LostFocus += Grid_LostFocus;
+            WeakEventManager<UIElement, RoutedEventArgs>.AddHandler(source: grdCondition.Grid, eventName: nameof(UIElement.LostFocus), handler: Grid_LostFocus);
         }
 
         private void ShowContolActionSpecificPage()
@@ -632,7 +633,7 @@ namespace Ginger.Actions
             this.Width = 550;
             Button okBtn = new Button();
             okBtn.Content = "OK";
-            okBtn.Click += new RoutedEventHandler(OKButton_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: OKButton_Click);
             ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(okBtn);
 
@@ -1916,8 +1917,8 @@ namespace Ginger.Actions
                 //else
                 grdTableData.Grid.SelectionUnit = DataGridSelectionUnit.Cell;
 
-                grdTableData.Grid.SelectedCellsChanged += grdTableData_CellChangedEvent;
-
+                //grdTableData.Grid.SelectedCellsChanged += grdTableData_CellChangedEvent;
+                WeakEventManager<DataGrid, EventArgs>.AddHandler(source: grdTableData.Grid, eventName: nameof(DataGrid.SelectedCellsChanged), handler: grdTableData_CellChangedEvent);
                 SetGridData();
                 //SelectedCell.IsChecked = true;
                 UpdateValueExpression();

@@ -2695,6 +2695,11 @@ namespace Ginger.Run
 
                     if (IsConditionTrue)
                     {
+                        bool allowInterActivityFlowControls = true;
+                        if(WorkSpace.Instance.RunsetExecutor.RunSetConfig != null)
+                        {
+                            allowInterActivityFlowControls = WorkSpace.Instance.RunsetExecutor.RunSetConfig.AllowInterActivityFlowControls;
+                        }
                         //Perform the action as condition is true
                         switch (FC.FlowControlAction)
                         {
@@ -2726,7 +2731,7 @@ namespace Ginger.Run
                                 break;
                             case eFlowControlAction.GoToActivity:
                             case eFlowControlAction.GoToActivityByName:
-                                if (GotoActivity(FC, act))
+                                if (allowInterActivityFlowControls && GotoActivity(FC, act))
                                 {
                                     isFlowChange = true;
                                 }
@@ -2752,30 +2757,42 @@ namespace Ginger.Run
                                 isFlowChange = true;
                                 break;
                             case eFlowControlAction.RerunActivity:
-                                ResetActivity(CurrentBusinessFlow.CurrentActivity);
-                                CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts[0];
-                                isFlowChange = true;
+                                if (allowInterActivityFlowControls)
+                                {
+                                    ResetActivity(CurrentBusinessFlow.CurrentActivity);
+                                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts[0];
+                                    isFlowChange = true;
+                                }
                                 break;
                             case eFlowControlAction.StopBusinessFlow:
-                                mStopBusinessFlow = true;
-                                CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.LastOrDefault();
-                                CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
-                                CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.LastOrDefault();
-                                isFlowChange = true;
+                                if (allowInterActivityFlowControls)
+                                {
+                                    mStopBusinessFlow = true;
+                                    CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.LastOrDefault();
+                                    CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
+                                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.LastOrDefault();
+                                    isFlowChange = true;
+                                }
                                 break;
                             case eFlowControlAction.FailActionAndStopBusinessFlow:
-                                act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                                act.Error += " Failed due to Flow Control rule";
-                                act.ExInfo += FC.ConditionCalculated;
-                                mStopBusinessFlow = true;
-                                CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.LastOrDefault();
-                                CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
-                                CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.LastOrDefault();
-                                isFlowChange = true;
+                                if (allowInterActivityFlowControls)
+                                {
+                                    act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+                                    act.Error += " Failed due to Flow Control rule";
+                                    act.ExInfo += FC.ConditionCalculated;
+                                    mStopBusinessFlow = true;
+                                    CurrentBusinessFlow.CurrentActivity = CurrentBusinessFlow.Activities.LastOrDefault();
+                                    CurrentBusinessFlow.Activities.CurrentItem = CurrentBusinessFlow.CurrentActivity;
+                                    CurrentBusinessFlow.CurrentActivity.Acts.CurrentItem = CurrentBusinessFlow.CurrentActivity.Acts.LastOrDefault();
+                                    isFlowChange = true;
+                                }
                                 break;
                             case eFlowControlAction.StopRun:
-                                StopRun();
-                                isFlowChange = true;
+                                if (allowInterActivityFlowControls)
+                                {
+                                    StopRun();
+                                    isFlowChange = true;
+                                }
                                 break;
                             case eFlowControlAction.SetVariableValue:
                                 try
@@ -2806,7 +2823,7 @@ namespace Ginger.Run
                             case eFlowControlAction.RunSharedRepositoryActivity:
                                 try
                                 {
-                                    if (RunSharedRepositoryActivity(FC))
+                                    if (allowInterActivityFlowControls && RunSharedRepositoryActivity(FC))
                                     {
                                         isFlowChange = true;
                                     }

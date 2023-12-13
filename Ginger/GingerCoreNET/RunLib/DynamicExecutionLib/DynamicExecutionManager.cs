@@ -1632,6 +1632,12 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runSetConfig.SelfHealingConfiguration.ReprioritizePOMLocators = dynamicRunsetConfigs.SelfHealingConfiguration.ReprioritizePOMLocators;
                 runSetConfig.SelfHealingConfiguration.AutoExecuteInSimulationMode = dynamicRunsetConfigs.SelfHealingConfiguration.AutoExecuteInSimulationMode;
             }
+
+            if (dynamicRunsetConfigs.AllowInterActivityFlowControls != null)
+            {
+                runSetConfig.AllowInterActivityFlowControls = (bool)dynamicRunsetConfigs.AllowInterActivityFlowControls;
+            }
+
             // Set config
             runsetExecutor.RunSetConfig = runSetConfig;
         }

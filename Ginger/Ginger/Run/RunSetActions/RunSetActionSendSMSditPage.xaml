@@ -7,10 +7,10 @@
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="600"
 	Title="RunSetActionSendSMSEditPage">
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">      
+    <Grid Background="{StaticResource $BackgroundColor_White}">      
         <TabControl>
-            <TabItem Header="Message">
-                <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+            <TabItem Header="Message" Style="{StaticResource $RoundedTab}">
+                <Grid Background="{StaticResource $BackgroundColor_White}">
                     
                     <StackPanel>
                         <Label Style="{StaticResource @LabelStyle}" x:Name="LabelFrom" Content="From (enter your email address):" />
@@ -42,8 +42,8 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
-           
-            <TabItem Header="Delivery Method">
+
+            <TabItem Header="Delivery Method" Style="{StaticResource $RoundedTab}">
                <Frame x:Name="RunsetActionDeliveryMethodConfigPageFrame"></Frame>
             </TabItem>
         </TabControl>

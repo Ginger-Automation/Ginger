@@ -1,9 +1,9 @@
 ﻿using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
 using Amdocs.Ginger.CoreNET.BPMN.Models;
-using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
@@ -12,6 +12,7 @@ using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace GingerCoreNETUnitTest.BPMN
     [TestClass]
     public sealed class CollaborationFromActivityGroupCreatorTests
     {
+        private const string ConditionalTaskNamePrefix = "FC - ";
+
         [TestMethod]
         public void Create_NullActivityGroup_ThrowsArgumentNullException()
         {
@@ -166,6 +169,151 @@ namespace GingerCoreNETUnitTest.BPMN
         }
 
         [TestMethod]
+        public void Create_WithOnlyInactiveFlowControl_HasNoExclusiveGateway()
+        {
+            CreateActivityGroupWithAllInactiveFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway? exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().FirstOrDefault();
+            Assert.IsNull(exclusiveGateway, $"{nameof(ExclusiveGateway)} shouldn't exist.");
+        }
+
+        [TestMethod]
+        public void Create_WithActiveAndInactiveGotoActivityFlowControl_HasExclusiveGateway()
+        {
+            CreateActivityGroupWithActiveAndInactiveGotoActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway? exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().FirstOrDefault();
+            Assert.IsNotNull(exclusiveGateway, $"No {nameof(ExclusiveGateway)} found.");
+        }
+
+        [TestMethod]
+        public void Create_WithActiveAndInactiveGotoActivityFlowControl_HasTaskForActivityWithFlowControl()
+        {
+            CreateActivityGroupWithActiveAndInactiveGotoActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.GoToActivity);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == activityWithFlowControl.Guid);
+            Assert.IsNotNull(taskForActivityWithFlowControl, $"No {nameof(Task)} found for {nameof(Activity)} with {nameof(FlowControl)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithActiveAndInactiveGotoActivityFlowControl_TaskOfActivityWithFlowControlDirectsToExclusiveGateway()
+        {
+            CreateActivityGroupWithActiveAndInactiveGotoActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.GoToActivity);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? taskForActivityWithFlowControl = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == activityWithFlowControl.Guid);
+            Assert.IsNotNull(taskForActivityWithFlowControl, $"No {nameof(Task)} found for {nameof(Activity)} with {nameof(FlowControl)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithActiveAndInactiveGotoActivityFlowControl_HasTaskForNextActivity()
+        {
+            CreateActivityGroupWithActiveAndInactiveGotoActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? nextActivityTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Guid == nextActivity.Guid);
+            Assert.IsNotNull(nextActivityTask, $"No {nameof(Task)} found for next {nameof(Activity)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithActiveAndInactiveGotoActivityFlowControl_ExclusiveGatewayDirectsToNextActivityTask()
+        {
+            CreateActivityGroupWithActiveAndInactiveGotoActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity nextActivity = activityGroup.ActivitiesIdentifiers[1].IdentifiedActivity;
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task nextActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == nextActivity.Guid);
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Flow? flowFromGatewayToNextActivityTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == nextActivityTask);
+            Assert.IsNotNull(flowFromGatewayToNextActivityTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to {nameof(Task)} of next {nameof(Activity)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithActiveAndInactiveGotoActivityFlowControl_HasConditionalTaskForActiveFlowControl()
+        {
+            CreateActivityGroupWithActiveAndInactiveGotoActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => IsConditionalTask(t));
+            Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
+        }
+
+        [TestMethod]
+        public void Create_WithActiveAndInactiveGotoActivityFlowControl_NoConditionalTaskForInactiveFlowControl()
+        {
+            CreateActivityGroupWithActiveAndInactiveGotoActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.GoToActivity);
+            FlowControl inactiveFlowControl = activityWithFlowControl.Acts.SelectMany(act => act.FlowControls).First(fc => !fc.Active);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => IsConditionalTask(t) && string.Equals(t.Name, inactiveFlowControl.Condition));
+            Assert.IsNull(conditionalTask, $"Conditional {nameof(Task)} found.");
+        }
+
+        [TestMethod]
+        public void Create_WithActiveAndInactiveGotoActivityFlowControl_ExclusiveGatewayDirectsToConditionalTask()
+        {
+            CreateActivityGroupWithActiveAndInactiveGotoActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
+            Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
+            Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
+        }
+
+        [TestMethod]
+        public void Create_WithActiveAndInactiveGotoActivityFlowControl_ConditionalTaskDirectsToTargetActivityTask()
+        {
+            CreateActivityGroupWithActiveAndInactiveGotoActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
+            CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
+            Activity activityWithFlowControl = GetActivityWithFlowControlActionType(activityGroup, eFlowControlAction.GoToActivity);
+            FlowControl flowControl = activityWithFlowControl.Acts.SelectMany(a => a.FlowControls).First(fc => fc.Active);
+            Guid targetActivityGuid = flowControl.GetGuidFromValue();
+
+            Collaboration collaboration = creator.Create();
+
+            Process process = collaboration.Participants.First().Process;
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
+            Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == targetActivityGuid);
+            Flow? flowFromConditionalTaskToTargetActivityTask = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == targetActivityTask);
+            Assert.IsNotNull(flowFromConditionalTaskToTargetActivityTask, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to target {nameof(Activity)} {nameof(Task)}.");
+        }
+
+        [TestMethod]
         public void Create_WithRerunActivityFlowControl_HasExclusiveGateway()
         {
             CreateActivityGroupWithRerunActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
@@ -247,7 +395,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(f => f.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => IsConditionalTask(t));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
 
@@ -261,7 +409,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -276,7 +424,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == activityWithFlowControl.Guid);
             Flow? flowFromConditionalTaskToTargetActivityTask = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == targetActivityTask);
             Assert.IsNotNull(flowFromConditionalTaskToTargetActivityTask, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to target {nameof(Activity)} {nameof(Task)}.");
@@ -364,7 +512,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(f => f.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => IsConditionalTask(t));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
 
@@ -378,7 +526,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -395,7 +543,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => t.Guid == targetActivityGuid);
             Flow? flowFromConditionalTaskToTargetActivityTask = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == targetActivityTask);
             Assert.IsNotNull(flowFromConditionalTaskToTargetActivityTask, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to target {nameof(Activity)} {nameof(Task)}.");
@@ -483,7 +631,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(f => f.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => IsConditionalTask(t));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
 
@@ -497,7 +645,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -514,7 +662,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => string.Equals(t.Name, targetActivityName));
             Flow? flowFromConditionalTaskToTargetActivityTask = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == targetActivityTask);
             Assert.IsNotNull(flowFromConditionalTaskToTargetActivityTask, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to target {nameof(Activity)} {nameof(Task)}.");
@@ -584,7 +732,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => IsConditionalTask(t));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} is found.");
         }
 
@@ -598,7 +746,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -626,7 +774,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             EndEvent terminationEndEvent = process.EndEvents.First(e => e.EndEventType == EndEventType.Termination);
             Flow? flowFromConditionalTaskToEndEvent = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == terminationEndEvent);
             Assert.IsNotNull(flowFromConditionalTaskToEndEvent, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to {nameof(EndEvent)} with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Termination)}.");
@@ -715,7 +863,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
 
@@ -729,7 +877,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.First(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -756,7 +904,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             EndEvent? terminationEndEvent = process.EndEvents.FirstOrDefault(e => e.EndEventType == EndEventType.Termination);
             Flow? flowFromConditionalTaskToEndEvent = conditionalTask.OutgoingFlows.First(f => f.Target == terminationEndEvent);
             Assert.IsNotNull(flowFromConditionalTaskToEndEvent, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to {nameof(EndEvent)} with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Termination)}.");
@@ -844,7 +992,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(f => f.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => IsConditionalTask(t));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
         
@@ -858,7 +1006,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -885,7 +1033,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(f => f.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             EndEvent errorEndEvent = process.EndEvents.First(e => e.EndEventType == EndEventType.Error);
             Flow? flowFromConditionalTaskToEndEvent = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == errorEndEvent);
             Assert.IsNotNull(flowFromConditionalTaskToEndEvent, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to {nameof(EndEvent)} with {nameof(EndEvent.EndEventType)} of type {nameof(EndEventType.Error)}.");
@@ -973,7 +1121,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => t.Conditions.Any());
+            Task? conditionalTask = process.GetChildEntitiesByType<Task>().FirstOrDefault(t => IsConditionalTask(t));
             Assert.IsNotNull(conditionalTask, $"No conditional {nameof(Task)} found.");
         }
 
@@ -987,7 +1135,7 @@ namespace GingerCoreNETUnitTest.BPMN
 
             Process process = collaboration.Participants.First().Process;
             ExclusiveGateway exclusiveGateway = process.GetChildEntitiesByType<ExclusiveGateway>().First();
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             Flow? flowFromGatewayToConditionalTask = exclusiveGateway.OutgoingFlows.FirstOrDefault(f => f.Target == conditionalTask);
             Assert.IsNotNull(flowFromGatewayToConditionalTask, $"No outgoing {nameof(Flow)} found from {nameof(ExclusiveGateway)} to conditional {nameof(Task)}.");
         }
@@ -1020,7 +1168,7 @@ namespace GingerCoreNETUnitTest.BPMN
             Collaboration collaboration = creator.Create();
 
             Process process = collaboration.Participants.First().Process;
-            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => t.Conditions.Any());
+            Task conditionalTask = process.GetChildEntitiesByType<Task>().First(t => IsConditionalTask(t));
             Task targetActivityTask = process.GetChildEntitiesByType<Task>().First(t => string.Equals(t.Name, targetActivityName));
             Flow? flowFromConditionalTaskToTargetActivityTask = conditionalTask.OutgoingFlows.FirstOrDefault(f => f.Target == targetActivityTask);
             Assert.IsNotNull(flowFromConditionalTaskToTargetActivityTask, $"No outgoing {nameof(Flow)} found from conditional {nameof(Task)} to target {nameof(Activity)} {nameof(Task)}.");
@@ -1054,6 +1202,11 @@ namespace GingerCoreNETUnitTest.BPMN
             Assert.ThrowsException<BPMNConversionException>(() => creator.Create(), $"Expected to throw {nameof(BPMNConversionException)} because no {nameof(Activity)} was found by name in shared repository.");
         }
 
+        private bool IsConditionalTask(Task task)
+        {
+            return task.Conditions.Any() || task.Name.StartsWith(ConditionalTaskNamePrefix);
+        }
+
         private void CreateActivityGroupWithRerunActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
         {
             ObservableList<ApplicationPlatform> applicationPlatforms = new()
@@ -1079,6 +1232,7 @@ namespace GingerCoreNETUnitTest.BPMN
                             new FlowControl()
                             {
                                 FlowControlAction = eFlowControlAction.RerunActivity,
+                                Active = true,
                                 Condition = "true",
                                 Operator = eFCOperator.CSharp
                             }
@@ -1130,6 +1284,7 @@ namespace GingerCoreNETUnitTest.BPMN
                             {
                                 FlowControlAction = eFlowControlAction.GoToActivity,
                                 Condition = "true",
+                                Active = true,
                                 Operator = eFCOperator.CSharp,
                             }
                         }
@@ -1188,6 +1343,7 @@ namespace GingerCoreNETUnitTest.BPMN
                             {
                                 FlowControlAction = eFlowControlAction.GoToActivityByName,
                                 Condition = "true",
+                                Active = true,
                                 Operator = eFCOperator.CSharp
                             }
                         }
@@ -1246,6 +1402,7 @@ namespace GingerCoreNETUnitTest.BPMN
                             {
                                 FlowControlAction = eFlowControlAction.GoToActivityByName,
                                 Condition = "true",
+                                Active = true,
                                 Operator = eFCOperator.CSharp,
                                 Value = "NonExistentActivityName"
                             }
@@ -1305,6 +1462,7 @@ namespace GingerCoreNETUnitTest.BPMN
                             {
                                 FlowControlAction = eFlowControlAction.StopBusinessFlow,
                                 Condition = "true",
+                                Active = true,
                                 Operator = eFCOperator.CSharp
                             }
                         }
@@ -1357,6 +1515,7 @@ namespace GingerCoreNETUnitTest.BPMN
                             {
                                 FlowControlAction = eFlowControlAction.StopRun,
                                 Condition = "true",
+                                Active = true,
                                 Operator = eFCOperator.CSharp
                             }
                         }
@@ -1409,6 +1568,7 @@ namespace GingerCoreNETUnitTest.BPMN
                             {
                                 FlowControlAction = eFlowControlAction.FailActionAndStopBusinessFlow,
                                 Condition = "true",
+                                Active = true,
                                 Operator = eFCOperator.CSharp
                             }
                         }
@@ -1467,6 +1627,7 @@ namespace GingerCoreNETUnitTest.BPMN
                             {
                                 FlowControlAction = eFlowControlAction.RunSharedRepositoryActivity,
                                 Condition = "true",
+                                Active = true,
                                 Operator = eFCOperator.CSharp,
                                 Value = activityFromSharedRepository.ActivityName
                             }
@@ -1521,6 +1682,7 @@ namespace GingerCoreNETUnitTest.BPMN
                             {
                                 FlowControlAction = eFlowControlAction.RunSharedRepositoryActivity,
                                 Condition = "true",
+                                Active = true,
                                 Operator = eFCOperator.CSharp,
                                 Value = "NonExistentActivityName"
                             }
@@ -1548,6 +1710,131 @@ namespace GingerCoreNETUnitTest.BPMN
             solutionFacade = solutionFacadeMock.Object;
         }
 
+        private void CreateActivityGroupWithAllInactiveFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
+        {
+            ObservableList<ApplicationPlatform> applicationPlatforms = new()
+            {
+                new ApplicationPlatform()
+                {
+                    AppName = "MyWebApp",
+                    Platform = ePlatformType.Web
+                }
+            };
+            activityGroup = new();
+            Activity activity1 = new()
+            {
+                ActivityName = "Activity 1",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName,
+                Acts = new ObservableList<IAct>()
+                {
+                    new ActDummy()
+                    {
+                        FlowControls = new ObservableList<FlowControl>()
+                        {
+                            new FlowControl()
+                            {
+                                FlowControlAction = eFlowControlAction.GoToActivity,
+                                Active = false,
+                                Condition = "true",
+                                Operator = eFCOperator.CSharp,
+                            }
+                        }
+                    }
+                }
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
+            Activity activity2 = new()
+            {
+                ActivityName = "Activitiy 2",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity2 });
+            Activity activity3 = new()
+            {
+                ActivityName = "Activitiy 3",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity3 });
+            activity1.Acts[0].FlowControls[0].Value = activity3.Guid + new FlowControl().GUID_NAME_SEPERATOR + activity3.ActivityName;
+            Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
+            solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2, activity3 });
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
+            {
+                new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
+            });
+            solutionFacade = solutionFacadeMock.Object;
+        }
+
+        private void CreateActivityGroupWithActiveAndInactiveGotoActivityFlowControl(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade)
+        {
+            ObservableList<ApplicationPlatform> applicationPlatforms = new()
+            {
+                new ApplicationPlatform()
+                {
+                    AppName = "MyWebApp",
+                    Platform = ePlatformType.Web
+                }
+            };
+            activityGroup = new();
+            Activity activity1 = new()
+            {
+                ActivityName = "Activity 1",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName,
+                Acts = new ObservableList<IAct>()
+                {
+                    new ActDummy()
+                    {
+                        FlowControls = new ObservableList<FlowControl>()
+                        {
+                            new FlowControl()
+                            {
+                                FlowControlAction = eFlowControlAction.GoToActivity,
+                                Active = false,
+                                Condition = "false",
+                                Operator = eFCOperator.CSharp,
+                            },
+                            new FlowControl()
+                            {
+                                FlowControlAction = eFlowControlAction.GoToActivity,
+                                Active = true,
+                                Condition = "true",
+                                Operator = eFCOperator.CSharp,
+                            }
+                        },
+                    }
+                }
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity1 });
+            Activity activity2 = new()
+            {
+                ActivityName = "Activitiy 2",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity2 });
+            Activity activity3 = new()
+            {
+                ActivityName = "Activitiy 3",
+                Active = true,
+                TargetApplication = applicationPlatforms[0].AppName
+            };
+            activityGroup.ActivitiesIdentifiers.Add(new ActivityIdentifiers() { IdentifiedActivity = activity3 });
+            activity1.Acts[0].FlowControls[0].Value = activity3.Guid + new FlowControl().GUID_NAME_SEPERATOR + activity3.ActivityName;
+            activity1.Acts[0].FlowControls[1].Value = activity2.Guid + new FlowControl().GUID_NAME_SEPERATOR + activity2.ActivityName;
+            Mock<ISolutionFacadeForBPMN> solutionFacadeMock = new();
+            solutionFacadeMock.Setup(sf => sf.GetApplicationPlatforms()).Returns(applicationPlatforms);
+            solutionFacadeMock.Setup(sf => sf.GetActivitiesFromSharedRepository()).Returns(new ObservableList<Activity>() { activity1, activity2, activity3 });
+            solutionFacadeMock.Setup(sf => sf.GetTargetApplications()).Returns(new ObservableList<TargetBase>()
+            {
+                new TargetApplication() { Guid = applicationPlatforms[0].Guid, AppName = applicationPlatforms[0].AppName }
+            });
+            solutionFacade = solutionFacadeMock.Object;
+        }
 
         private Activity GetActivityWithFlowControlActionType(ActivitiesGroup activityGroup, eFlowControlAction flowControlAction)
         {

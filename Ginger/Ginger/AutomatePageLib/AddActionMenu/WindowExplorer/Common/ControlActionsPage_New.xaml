@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls" xmlns:uclistview="clr-namespace:Ginger.UserControlsLib.UCListView" xmlns:Ginger="clr-namespace:Ginger"
-      mc:Ignorable="d" Background="{StaticResource $BackgroundColor_LightGray}"
+      mc:Ignorable="d" Background="{StaticResource $BackgroundColor_White}"
       Title="ControlActionsPage_New">
 
     <Grid>
@@ -37,7 +37,7 @@
 
                 <StackPanel Orientation="Vertical" Margin="10">
                     <Label Content="Locate Value:" Style="{StaticResource $LabelStyle}"/>
-                    <Border BorderBrush="{StaticResource $BackgroundColor_DarkBlue}" BorderThickness="1" Width="Auto" >
+                    <Border BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="1" Width="Auto" >
                         <TextBlock x:Name="xLocateValueTxtBlock" Text="aaaaaa" Style="{StaticResource $CoolTabTextBlockStyle}" Margin="10,0"></TextBlock>
                     </Border>
                 </StackPanel>

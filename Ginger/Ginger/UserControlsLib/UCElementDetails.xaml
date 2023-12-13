@@ -53,7 +53,7 @@
         </Grid.ColumnDefinitions>
         <!--<StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Row="0" Margin="0,5,0,5">
             <UserControls:ImageMakerControl ImageType="Tag"  SetAsFontImageWithSize="18"  Width="18" Height="18" Margin="5,5,0,0" VerticalAlignment="Center" />
-            <TextBlock x:Name="xSelectedElementTextBlock" Text="Selected Element" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" FontSize="15" />
+            <TextBlock x:Name="xSelectedElementTextBlock" Text="Selected Element" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" FontSize="15" />
         </StackPanel>-->
 
         <Frame x:Name="xElementScreenShotFrameTop" Visibility="Collapsed" Grid.Column="0" Grid.Row="0" Margin="5,0,0,0" MaxHeight="100" VerticalAlignment="Top"></Frame>
@@ -61,60 +61,60 @@
         <TabControl x:Name="xElementDetailsTabs" Grid.Row="1" Grid.Column="0" Margin="5,5,0,0" HorizontalAlignment="Stretch" SelectionChanged="ElementDetailsTabs_SelectionChanged" Height="Auto" >
             <TabControl.Resources>
                 <Style TargetType="{x:Type TabItem}">
-                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                    <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                     <Setter Property="Height" Value="25"/>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="False" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True" >
-                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_LightGray}"/>
+                            <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
                         </Trigger>
                     </Style.Triggers>
                 </Style>
             </TabControl.Resources>
 
-            <TabItem Margin="0,0,0,0" >
+            <TabItem Margin="0,0,0,0" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <UserControls:ImageMakerControl ImageType="ListGroup"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xPropertiesTextBlock" Text="Properties" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xPropertiesTextBlock" Text="Properties" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="xPropertiesGrid" Title="Control Properties"  ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowTitle="Collapsed" ShowRefresh="Collapsed" />
             </TabItem>
-            <TabItem>
+            <TabItem Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="LocationPointer"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xLocatorsTextBlock" Text="Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="xLocatorsGrid" Title="Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" RowChangedEvent="xLocatorsGrid_RowChangedEvent"/>
             </TabItem>
-            <TabItem x:Name="xFriendlyLocatorTab">
+            <TabItem x:Name="xFriendlyLocatorTab" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="LocationPointer"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xFriendlyLocatorsTextBlock" Text="Friendly Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xFriendlyLocatorsTextBlock" Text="Friendly Locators" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Ginger:ucGrid x:Name="xFriendlyLocatorsGrid" Title="Friendly Locators:" ShowAdd="Visible" ShowDelete="Visible" ShowUpDown="Visible" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Visible" ShowPaste="Visible" ShowCut="Collapsed" ShowTitle="Collapsed" RowChangedEvent="xFriendlyLocatorsGrid_RowChangedEvent"/>
             </TabItem>
-            <TabItem x:Name="xAddActionTab">
+            <TabItem x:Name="xAddActionTab" Style="{StaticResource $RoundedTab}">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl ImageType="Action"  SetAsFontImageWithSize="18"  Width="18" Height="18" />
-                        <TextBlock x:Name="xActionsTextBlock" Text="Action" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $Color_DarkBlue}" FontWeight="Bold" />
+                        <TextBlock x:Name="xActionsTextBlock" Text="Action" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
-                <!--<Grid Background="{StaticResource $BackgroundColor_LightGray}">
+                <!--<Grid Background="{StaticResource $BackgroundColor_White}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="50"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>-->
 
-                <DockPanel LastChildFill="True" Background="{StaticResource $BackgroundColor_LightGray}">
+                <DockPanel LastChildFill="True" Background="{StaticResource $BackgroundColor_White}">
                     <StackPanel x:Name="xPOMCheckStackPanel" Orientation="Vertical" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Center">
                             <CheckBox x:Name="xIntegratePOMChkBox" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10" Style="{StaticResource $CeckBoxStyle}" 
@@ -151,6 +151,6 @@
             </TabItem>
         </TabControl>
 
-        <Frame x:Name="xElementScreenShotFrame" Grid.Column="1" Grid.Row="1" Margin="5,25,5,0" Height="200" VerticalAlignment="Top"></Frame>
+        <Frame x:Name="xElementScreenShotFrame" Grid.Column="1" Grid.Row="1" Margin="5,40,5,0" Height="200" VerticalAlignment="Top"></Frame>
     </Grid>
 </UserControl>

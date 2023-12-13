@@ -1,6 +1,6 @@
 ﻿using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
-using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using GingerCore;
 using System;
 using System.Collections.Generic;

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
+namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 {
     public sealed class WorkSpaceToSolutionFacadeAdapter : ISolutionFacadeForBPMN
     {

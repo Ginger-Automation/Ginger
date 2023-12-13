@@ -7,13 +7,13 @@
       d:DesignHeight="300" d:DesignWidth="300"
 	Title="ActJavaElementEditPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <StackPanel>
             <Label Style="{StaticResource @LabelStyle}" FontWeight="Bold">Operation to Perform:</Label>
-            <ComboBox x:Name="ControlActionComboBox" SelectionChanged="ControlActionComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+            <ComboBox x:Name="ControlActionComboBox" SelectionChanged="ControlActionComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
 
             <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Wait for Idle Option:</Label>
-            <ComboBox x:Name="WaitforIdleComboBox" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+            <ComboBox x:Name="WaitforIdleComboBox" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
         </StackPanel>
     </Grid>
 </Page>
