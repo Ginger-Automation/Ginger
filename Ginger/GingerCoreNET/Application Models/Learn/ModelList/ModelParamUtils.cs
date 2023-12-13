@@ -51,9 +51,9 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
         {
             if (isCopy)
             {
-                newModelGlobalParam.PlaceHolder = newModelGlobalParam.PlaceHolder + "_Copy";
+                newModelGlobalParam.PlaceHolder = "{" + (!string.IsNullOrEmpty(newModelGlobalParam.PlaceHolder) ? newModelGlobalParam.PlaceHolder.Replace("{","").Replace("}","") : newModelGlobalParam.PlaceHolder) + "_Copy}";
             }
-            else
+            else if(string.IsNullOrEmpty(newModelGlobalParam.PlaceHolder))
             {
                 newModelGlobalParam.PlaceHolder = "{NewGlobalParameter}";
             }
@@ -91,7 +91,16 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                     counter++;
                 }
 
-                newModelGlobalParam.PlaceHolder = "{NewGlobalParameter_" + counter.ToString() + "}";
+                if(newModelGlobalParam.PlaceHolder.Contains(newModelGlobalParam.PlaceHolder))
+                {
+                    newModelGlobalParam.PlaceHolder = "{" + (!string.IsNullOrEmpty(newModelGlobalParam.PlaceHolder) ? newModelGlobalParam.PlaceHolder.Replace("{", "").Replace("}", "") : newModelGlobalParam.PlaceHolder) + counter.ToString() + "}";
+                }
+                else
+                {
+                    newModelGlobalParam.PlaceHolder = "{NewGlobalParameter_" + counter.ToString() + "}";
+                }
+
+                
             }
         }
     }

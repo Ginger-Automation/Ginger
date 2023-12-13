@@ -30,6 +30,7 @@ using GingerCoreNET.Application_Models;
 using GingerWPF.ApplicationModelsLib.APIModelWizard;
 using GingerWPF.ApplicationModelsLib.ModelParams_Pages;
 using GingerWPF.WizardLib;
+using OctaneRepositoryStd.BLL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -123,14 +124,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
             ImportAPIModels(General.ConvertListToObservableList(LearnedAPIModelsList.Where(x => x.IsSelected == true).ToList()));
         }
-        private void AddGlobalParam(string customurl, string placehold)
+        private GlobalAppModelParameter AddGlobalParam(string customurl, string placehold)
         {
             GlobalAppModelParameter newModelGlobalParam = new GlobalAppModelParameter();
+            newModelGlobalParam.PlaceHolder = "{" + placehold + "}";
+            var GlobalParams = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
+            if (GlobalParams.Any(x => x.PlaceHolder.Equals(newModelGlobalParam.PlaceHolder)))
+            {
+                newModelGlobalParam.PlaceHolder = "{" + (!string.IsNullOrEmpty(newModelGlobalParam.PlaceHolder) ? newModelGlobalParam.PlaceHolder.Replace("{", "").Replace("}", "") : newModelGlobalParam.PlaceHolder) + "_Copy}";
+            }
             ModelParamUtils.SetUniquePlaceHolderName(newModelGlobalParam);
-
-            newModelGlobalParam.PlaceHolder = placehold;
             newModelGlobalParam.OptionalValuesList.Add(new OptionalValue() { Value = customurl, IsDefault = true });
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newModelGlobalParam);
+            return newModelGlobalParam;
         }
 
 
@@ -144,20 +150,24 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
         private void ImportAPIModels(ObservableList<ApplicationAPIModel> SelectedAAMList)
         {
-            string? customUrl = SelectedAAMList.FirstOrDefault()?.URLDomain;
-            string manurl = "{Swagger}";
-            AddGlobalParam(customUrl,manurl);
-
-            var GlobalParams = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
-            var itemtoadd = GlobalParams.FirstOrDefault(m => m.PlaceHolder == manurl);
-
-            ModelParamsPage.AddGlobalParametertoAPIGlobalParameterList(GlobalParams, itemtoadd);
-            foreach (ApplicationAPIModel apiModel in SelectedAAMList)
+            GlobalAppModelParameter itemtoadd = null;
+            string? customUrl = string.Empty;
+            if (APIType == eAPIType.Swagger)
             {
-                //AddGlobalInModel(manurl);
-                apiModel.EndpointURL = manurl + apiModel.EndpointURL;
+                customUrl = SelectedAAMList.FirstOrDefault()?.URLDomain;
+                 itemtoadd = AddGlobalParam(customUrl, this.InfoTitle);
+            }
+             foreach (ApplicationAPIModel apiModel in SelectedAAMList)
+            {
+                if (APIType == eAPIType.Swagger)
+                {
+                    apiModel.EndpointURL = itemtoadd.PlaceHolder + apiModel.EndpointURL;
+                    apiModel.GlobalAppModelParameters = new ObservableList<GlobalAppModelParameter>() {  new GlobalAppModelParameter() { Guid = itemtoadd.Guid,PlaceHolder = itemtoadd.PlaceHolder,
+                     OptionalValuesList= new() { new OptionalValue() { Value = customUrl , IsDefault = true } } } };
+                }
+
                 Dictionary<System.Tuple<string, string>, List<string>> OptionalValuesPerParameterDict = new Dictionary<Tuple<string, string>, List<string>>();
-                apiModel.GlobalAppModelParameters = new ObservableList<GlobalAppModelParameter>() { itemtoadd };
+                
                 ImportOptionalValuesForParameters ImportOptionalValues = new ImportOptionalValuesForParameters();
                 ImportOptionalValues.GetAllOptionalValuesFromExamplesFiles(apiModel, OptionalValuesPerParameterDict);
                 ImportOptionalValues.PopulateOptionalValuesForAPIParameters(apiModel, OptionalValuesPerParameterDict);
