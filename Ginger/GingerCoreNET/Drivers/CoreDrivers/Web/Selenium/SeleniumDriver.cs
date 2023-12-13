@@ -576,7 +576,6 @@ namespace GingerCore.Drivers
                         if (!string.IsNullOrEmpty(DebugAddress))
                         {
                             options.DebuggerAddress = DebugAddress.Trim();
-                            ChService = ChromeDriverService.CreateDefaultService();
                         }
                          driverService = ChromeDriverService.CreateDefaultService();
                         if (HideConsoleWindow)
