@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.SourceControlLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -162,24 +163,27 @@ namespace Ginger.ConflictResolve
         {
             Dispatcher.Invoke(() =>
             {
+                Dictionary<Comparison, IList<ConflictComparisonTreeViewItem>> tviRepo = new();
                 xLocalItemTree.AddItem(
                     new ConflictComparisonTreeViewItem(
-                        comparison, 
-                        childrenStateFilter: new[] 
-                        { 
-                            Comparison.StateType.Unmodified, 
-                            Comparison.StateType.Modified, 
-                            Comparison.StateType.Deleted 
-                        }));
+                        comparison,
+                        childrenStateFilter: new[]
+                        {
+                            Comparison.StateType.Unmodified,
+                            Comparison.StateType.Modified,
+                            Comparison.StateType.Deleted
+                        },
+                        tviRepo));
                 xRemoteItemTree.AddItem(
                     new ConflictComparisonTreeViewItem(
-                        comparison, 
-                        childrenStateFilter: new[] 
-                        { 
-                            Comparison.StateType.Unmodified, 
-                            Comparison.StateType.Modified, 
-                            Comparison.StateType.Added 
-                        }));
+                        comparison,
+                        childrenStateFilter: new[]
+                        {
+                            Comparison.StateType.Unmodified,
+                            Comparison.StateType.Modified,
+                            Comparison.StateType.Added
+                        },
+                        tviRepo));
             });
         }
 
@@ -295,6 +299,16 @@ namespace Ginger.ConflictResolve
 
                 return continueIteration;
             }
+        }
+
+        private void xLocalItemTreeScroller_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            xRemoteItemTreeScroller.ScrollToVerticalOffset(xLocalItemTreeScroller.VerticalOffset);
+        }
+
+        private void xRemoteItemTreeScroller_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            xLocalItemTreeScroller.ScrollToVerticalOffset(xRemoteItemTreeScroller.VerticalOffset);
         }
     }
 }
