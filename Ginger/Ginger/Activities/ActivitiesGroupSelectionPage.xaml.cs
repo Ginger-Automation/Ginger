@@ -16,13 +16,16 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.BusinessFlowPages
 {
@@ -100,7 +103,10 @@ namespace Ginger.BusinessFlowPages
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button selectBtn = new Button();
             selectBtn.Content = "Select";
-            selectBtn.Click += SelectBtn_Click;
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: selectBtn, eventName: nameof(ButtonBase.Click), handler: SelectBtn_Click);
+            
+            
+            
             winButtons.Add(selectBtn);
 
             this.Height = 200;

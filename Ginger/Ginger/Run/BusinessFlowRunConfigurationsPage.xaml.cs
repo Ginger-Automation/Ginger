@@ -37,6 +37,8 @@ using System.Windows.Media;
 using static Ginger.Variables.InputVariableRule;
 using Amdocs.Ginger.CoreNET;
 using GingerCore.GeneralLib;
+using System.Collections.Specialized;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.Run
 {
@@ -84,7 +86,7 @@ namespace Ginger.Run
             grdVariables.AddToolbarTool("@Undo_16x16.png", "Reset " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " to Original Configurations", new RoutedEventHandler(ResetBusFlowVariables));
             grdVariables.AddToolbarTool("@Share_16x16.png", "Share Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Value to all Similar " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " in " + GingerDicser.GetTermResValue(eTermResKey.RunSet), new RoutedEventHandler(CopyBusFlowVariables));
             grdVariables.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Rules, "Rules page", new RoutedEventHandler(ShowRulesPage));
-            grdVariables.RowDoubleClick += VariablesGrid_grdMain_MouseDoubleClick;
+            WeakEventManager<ucGrid, EventArgs>.AddHandler(source: grdVariables, eventName: nameof(ucGrid.RowDoubleClick), handler: VariablesGrid_grdMain_MouseDoubleClick);
 
             SetVariablesGridView();
             LoadGridData();
@@ -92,7 +94,9 @@ namespace Ginger.Run
 
             LoadBusinessFlowcontrols(businessFlow);
             UpdateFlowControlTabVisual();
-            mBusinessFlow.BFFlowControls.CollectionChanged += BFFlowControls_CollectionChanged;            
+            CollectionChangedEventManager.AddHandler(source: mBusinessFlow.BFFlowControls, handler: BFFlowControls_CollectionChanged);
+
+
         }
 
         private void LoadBusinessFlowcontrols(BusinessFlow businessFlow)
@@ -386,10 +390,10 @@ namespace Ginger.Run
                 case eWindowMode.Configuration:
                     Button okBtn = new Button();
                     okBtn.Content = "Ok";
-                    okBtn.Click += new RoutedEventHandler(okBtn_Click);
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: okBtn_Click);
                     Button undoBtn = new Button();
                     undoBtn.Content = "Undo & Close";
-                    undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtn, eventName: nameof(ButtonBase.Click), handler: undoBtn_Click);
                     ObservableList<Button> winButtons = new ObservableList<Button>();
                     winButtons.Add(okBtn);
                     winButtons.Add(undoBtn);

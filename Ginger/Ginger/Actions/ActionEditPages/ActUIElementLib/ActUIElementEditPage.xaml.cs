@@ -33,6 +33,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static GingerCore.Actions.Common.ActUIElement;
@@ -72,7 +73,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             SetLocateValueFrame();
             ShowPlatformSpecificPage();
             ShowControlSpecificPage();
-            ElementLocateByComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: ElementLocateByComboBox, eventName: nameof(Selector.SelectionChanged), handler: ElementLocateByComboBox_SelectionChanged);
         }
 
         private void BindElementTypeComboBox()
@@ -159,10 +160,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 mElementActionsList = mPlatform.GetPlatformWidgetsUIActionsList(mAction.ElementType);
             }
 
-            ElementActionComboBox.SelectionChanged -= ElementActionComboBox_SelectionChanged;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: ElementActionComboBox, eventName: nameof(Selector.SelectionChanged), handler: ElementActionComboBox_SelectionChanged);
             ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
             ElementActionComboBox.SelectedValue = mAction.ElementAction;//need to fix binding to avoid it
-            ElementActionComboBox.SelectionChanged += ElementActionComboBox_SelectionChanged;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: ElementActionComboBox, eventName: nameof(Selector.SelectionChanged), handler: ElementActionComboBox_SelectionChanged);
 
             if (mElementActionsList.Count == 0)
             {
