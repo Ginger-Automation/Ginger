@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using DocumentFormat.OpenXml.Drawing;
 using GingerCore;
 using System;
 using System.Windows;
@@ -190,6 +191,7 @@ namespace Ginger.Actions
                     }
                     break;
                 case eBrowserType.Folder:
+                    
                     var dlgf = new System.Windows.Forms.FolderBrowserDialog();
                     dlgf.Description = "Select folder";
                     dlgf.RootFolder = Environment.SpecialFolder.MyComputer;
@@ -197,7 +199,7 @@ namespace Ginger.Actions
                     System.Windows.Forms.DialogResult resultf = dlgf.ShowDialog();
                     if (resultf == System.Windows.Forms.DialogResult.OK)
                     {
-                        ValueTextBox.Text = dlgf.SelectedPath;
+                        ValueTextBox.Text = dlgf.SelectedPath+System.IO.Path.DirectorySeparatorChar;
                     }
                     break;
             }
