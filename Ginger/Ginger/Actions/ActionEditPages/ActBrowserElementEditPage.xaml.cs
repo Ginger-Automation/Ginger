@@ -71,6 +71,7 @@ namespace Ginger.Actions
             xRequestTypeRadioButton.Init(typeof(ActBrowserElement.eRequestTypes), xRequestTypeRadioButtonPnl, mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes), ActBrowserElement.eRequestTypes.FetchOrXHR.ToString()), RequestTypeRadioButton_Clicked);
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy);
             xImplicitWaitVE.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.ImplicitWait);
+            VEBlockedUrls.BindControl(Context.GetAsContext(mAct.Context), mAct, ActBrowserElement.Fields.BlockedUrls);
             SetGridView();
             SetVisibleControlsForAction();
         }
@@ -85,6 +86,7 @@ namespace Ginger.Actions
             xMonitorURLPnl.Visibility = System.Windows.Visibility.Collapsed;
             xRequestTypePnl.Visibility = System.Windows.Visibility.Collapsed;
             xUpdateNetworkUrlGridPnl.Visibility = System.Windows.Visibility.Collapsed;
+            xBlockedUrlsGrid.Visibility = System.Windows.Visibility.Collapsed;
 
         }
 
@@ -177,6 +179,15 @@ namespace Ginger.Actions
                 ResetPOMView();
                 xValueGrid.Visibility = System.Windows.Visibility.Visible;
                 xValueLabel.Content = "Text File Path:";
+            }
+            else if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
+            {
+                ResetPOMView();
+                xBlockedUrlsGrid.Visibility = System.Windows.Visibility.Visible;                
+            }
+            else if (mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
+            {
+                ResetPOMView();                
             }
             else
             {

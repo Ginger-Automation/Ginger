@@ -57,7 +57,7 @@ namespace Ginger.UserControlsLib
             InitializeComponent();
 
             this.DataContextChanged += UCComboBox_DataContextChanged;
-
+            
         }
 
         private void UCComboBox_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

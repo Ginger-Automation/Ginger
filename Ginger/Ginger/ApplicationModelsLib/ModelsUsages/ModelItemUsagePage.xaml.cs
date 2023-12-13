@@ -30,6 +30,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.ApplicationsModels.ModelsUsages
 {
@@ -164,11 +165,13 @@ namespace Ginger.ApplicationsModels.ModelsUsages
         {
             Button UpdateAllButton = new Button();
             UpdateAllButton.Content = "Update All Selected";
-            UpdateAllButton.Click += new RoutedEventHandler(UpdateButton_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: UpdateAllButton, eventName: nameof(ButtonBase.Click), handler: UpdateButton_Click);
+            
 
             Button SaveAllBizFlowsButton = new Button();
             SaveAllBizFlowsButton.Content = "Save All Updated Usages";
-            SaveAllBizFlowsButton.Click += new RoutedEventHandler(SaveAllBizFlowsButton_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: SaveAllBizFlowsButton, eventName: nameof(ButtonBase.Click), handler: SaveAllBizFlowsButton_Click);
+            
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(SaveAllBizFlowsButton);
