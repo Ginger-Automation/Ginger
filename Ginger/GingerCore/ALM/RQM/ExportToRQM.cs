@@ -227,7 +227,7 @@ namespace GingerCore.ALM.RQM
                             resultInfo = RQMConnect.Instance.RQMRep.ExportExecutionResult(loginData, exeResultList, RQMCore.ALMProjectGuid, ALMCore.DefaultAlmConfig.ALMProjectName, RQMCore.ALMProjectGroupName);
                             if (!resultInfo.IsSuccess)
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for  {businessFlow.Name} and testplan {bfExportedID}, execution record id {exeResultList.FirstOrDefault().TestCaseExportID} Error: {resultInfo.ErrorDesc}");
+                                Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update Execution Record Results for  {businessFlow.Name} and testplan {bfExportedID}, execution record id {exeResultList.FirstOrDefault().ExecutionRecordExportID} Error: {resultInfo.ErrorDesc}");
                                 return false;
                             }
                         }
@@ -450,7 +450,7 @@ namespace GingerCore.ALM.RQM
 
                     }
                 }
-                else if (string.IsNullOrEmpty(exeRecordId) || exeRecordId.Equals("0"))
+                else
                 {
                     string TestCaseVersionUrl = RQMConnect.Instance.GetTestCaseVersionURLByIdByProject(loginData, testPlan.PreFix, testCaseId);
 
@@ -467,11 +467,7 @@ namespace GingerCore.ALM.RQM
                        result = CreateExecutionRecord(bfExportedID, activGroup, testPlan, loginData, testCaseId, testScriptId, ref exeRecordId);
                     }
                 }
-                else
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, $"Record id not found for {businessFlow.Name}, creating new record");
-                    result = CreateExecutionRecord(bfExportedID, activGroup, testPlan, loginData, testCaseId, testScriptId, ref exeRecordId);
-                }
+                
                 if(!string.IsNullOrEmpty(result))
                 {
                     return null;

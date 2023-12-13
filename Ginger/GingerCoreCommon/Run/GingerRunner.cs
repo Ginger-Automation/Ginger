@@ -186,8 +186,24 @@ namespace Ginger.Run
             }
         }
 
+        private bool mFilterExecutionByTags;
         [IsSerializedForLocalRepository]
-        public bool FilterExecutionByTags { get; set; }
+        public bool FilterExecutionByTags {
+            get
+            {
+                return mFilterExecutionByTags;
+            }
+
+            set
+            {
+                if(mFilterExecutionByTags != value)
+                {
+                    mFilterExecutionByTags = value;
+                    OnPropertyChanged(nameof(GingerRunner.FilterExecutionByTags));
+                }
+            }
+                
+        }
 
         ProjEnvironment mProjEnvironment;
         public ProjEnvironment ProjEnvironment

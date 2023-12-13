@@ -35,7 +35,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -204,13 +203,18 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             LiteDbActivityGroup AGR = new LiteDbActivityGroup();
             context.Runner.CalculateActivitiesGroupFinalStatus(activityGroup, businessFlow);
-            AGR.SetReportData(GetAGReportData(activityGroup, businessFlow));
+            ActivityGroupReport activityGroupReport = GetAGReportData(activityGroup, businessFlow);
+            activityGroupReport.ExternalID = CalculateValueExpression(activityGroup.ExternalID, context.Environment , businessFlow);
+            AGR.SetReportData(activityGroupReport);
             AGR.Seq = ++this.acgSeq;
+            
+            
             if (activityGroup.LiteDbId != null && ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
             {
                 AGR._id = activityGroup.LiteDbId;
             }
             AGR.ActivitiesColl = liteDbActivityList.Where(ac => ac.ActivityGroupName != null && ac.ActivityGroupName.Equals(AGR.Name)).ToList();
+            
             SaveObjToReporsitory(AGR, liteDbManager.NameInDb<LiteDbActivityGroup>(), true);
             liteDbAGList.Add(AGR);
             if (ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated)
@@ -610,56 +614,36 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return string.Empty;
         }
 
-        public override async Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData)
+        public void DeleteLiteDbAndScreenShotData(LiteDB.ObjectId runsetId, Guid executionId)
         {
-            //Get the latest execution details from LiteDB
-            LiteDbManager dbManager = new LiteDbManager(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
-            LiteDbRunSet liteDbRunSet = dbManager.GetLatestExecutionRunsetData(runsetId?.ToString());
+            LiteDbRunSet liteDbRunSet = this.liteDbManager.GetLatestExecutionRunsetData(runsetId?.ToString());      
             List<string> screenshotList = PopulateMissingFieldsAndGetScreenshotsList(liteDbRunSet, executionId);
-
-            AccountReportApiHandler centralExecutionLogger = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
-
-            //Map the data to AccountReportRunset Object
-            AccountReportRunSet accountReportRunSet = centralExecutionLogger.MapDataToAccountReportObject(liteDbRunSet);
-            SetExecutionId(accountReportRunSet, executionId);
-            accountReportRunSet.EntityId = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid;
-            accountReportRunSet.GingerSolutionGuid = WorkSpace.Instance.Solution.Guid;
-
-            //Publish the Data and screenshots to Central DB
-            await centralExecutionLogger.SendRunsetExecutionDataToCentralDBAsync(accountReportRunSet);
-            await centralExecutionLogger.SendScreenShotsToCentralDBAsync(executionId, screenshotList);
-
-
-            //Delete local data if configured
-            if (deleteLocalData == eDeleteLocalDataOnPublish.Yes)
+            
+            try
             {
-                try
-                {
-                    dbManager.DeleteDocumentByLiteDbRunSet(liteDbRunSet);
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error when deleting local LiteDB data after Publis", ex);
-                }
 
-
-                foreach (string screenshot in screenshotList)
-                {
-                    try
-                    {
-                        File.Delete(screenshot);
-                    }
-                    catch (Exception ex)
-                    {
-                        Reporter.ToLog(eLogLevel.DEBUG, "Deleting screenshots after published to central db", ex);
-                    }
-                }
+                this.liteDbManager.DeleteDocumentByLiteDbRunSet(liteDbRunSet);
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error when deleting local LiteDB data after Publis", ex);
             }
 
 
-            return true;
+            foreach (string screenshot in screenshotList)
+            {
+                try
+                {
+                    File.Delete(screenshot);
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Deleting screenshots after published to central db", ex);
+                }
+            }
         }
-
+        /*
+         * THIS FUNCTION IS NOT USED ANYWHERE
         private void SetExecutionId(AccountReportRunSet accountReportRunSet, Guid executionId)
         {
             accountReportRunSet.ExecutionId = executionId;
@@ -690,7 +674,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 }
             }
         }
-
+        */
         private List<string> PopulateMissingFieldsAndGetScreenshotsList(LiteDbRunSet liteDbRunSet, Guid executionId)
         {
             List<string> allScreenshots = new List<string>();
@@ -956,6 +940,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         {
             lastBfStatus = eRunStatus.Pending;
             liteDbBFList.Clear();
+        }
+
+        public override void DeleteLocalData(string logFolder, ObjectId runsetId, Guid executionId)
+        {
+            DeleteLiteDbAndScreenShotData(runsetId, executionId);
         }
     }
 }

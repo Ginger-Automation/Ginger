@@ -70,19 +70,8 @@ namespace Ginger.Reports
         {
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(FolderTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationExecResultsFolder));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFolderMaximumSizeTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.ExecutionLoggerConfigurationMaximalFolderSize), bindingConvertor: new GingerCore.GeneralLib.LongStringConverter());
-
-
-            xPublishingPhaseRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDataPublishingPhase),
-                xPublishingPhasePanel, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.DataPublishingPhase));
-
-            xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish),
-                xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
-
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEndPointURLTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration,
-                nameof(ExecutionLoggerConfiguration.CentralLoggerEndPointUrl));
-
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEndPointURLTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.CentralLoggerEndPointUrl));
+            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xHTMLReportURLTextBox, TextBox.TextProperty, _selectedExecutionLoggerConfiguration, nameof(ExecutionLoggerConfiguration.CentralizedHtmlReportServiceURL));
             if (_selectedExecutionLoggerConfiguration.ExecutionLoggerConfigurationIsEnabled)
             {
                 executionResultOnRadioBtnsPnl.IsChecked = true;
@@ -111,6 +100,8 @@ namespace Ginger.Reports
             xPublishLogToCentralDBRadioButton.Init(typeof(ExecutionLoggerConfiguration.ePublishToCentralDB),
                 xPublishLogToCentralDBRadioBtnPanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB), PublishLogToCentralDBRadioButton_CheckedHandler);
+            xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish), xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
+
 
         }
 

@@ -53,22 +53,11 @@ namespace Ginger.Reports
             No
         }
 
-
         public enum eDeleteLocalDataOnPublish
         {
-            Yes,
+            Yes , 
             No
         }
-
-        public enum eDataPublishingPhase
-        {
-            [EnumValueDescription("During Execution")]
-            DuringExecution,
-            [EnumValueDescription("Post Execution")]
-            PostExecution           
-        }
-
-
 
         // Why we serialzie!!?
 
@@ -154,26 +143,6 @@ namespace Ginger.Reports
             }
         }
 
-
-        private eDataPublishingPhase mDataPublishingPhase = eDataPublishingPhase.DuringExecution;
-
-        [IsSerializedForLocalRepository]
-        public eDataPublishingPhase DataPublishingPhase
-        {
-            get
-            {
-                return mDataPublishingPhase;
-            }
-            set
-            {
-                if (mDataPublishingPhase != value)
-                {
-                    mDataPublishingPhase = value;
-                    OnPropertyChanged(nameof(DataPublishingPhase));
-                }
-            }
-        }
-
         private eDeleteLocalDataOnPublish mDeleteLocalDataOnPublish = eDeleteLocalDataOnPublish.No;
 
         [IsSerializedForLocalRepository]
@@ -194,6 +163,24 @@ namespace Ginger.Reports
         }
 
 
+        private string mCentralizedHtmlReportServiceURL;
+        [IsSerializedForLocalRepository]
+        public string CentralizedHtmlReportServiceURL
+        {
+            get
+            {
+                return mCentralizedHtmlReportServiceURL;
+            }
+            set
+            {
+                if (mCentralizedHtmlReportServiceURL != value)
+                {
+                    mCentralizedHtmlReportServiceURL = value;
+                    OnPropertyChanged(nameof(CentralizedHtmlReportServiceURL));
+                }
+            }
+        }
+        
         private string mCentralLoggerEndPointUrl;
         [IsSerializedForLocalRepository]
         public string CentralLoggerEndPointUrl

@@ -591,7 +591,7 @@ namespace GingerCore.Actions.WebAPI
         private void AddRawResponseAndRequestToOutputParams()
         {
             //If response is broken, do not show the message.
-            if (Response.ReasonPhrase == "OK")
+            if (Response.ReasonPhrase == "OK" || Response.ReasonPhrase == "Accepted" || Response.ReasonPhrase == "Created" || Response.ReasonPhrase == "Found")
             {
                 mAct.RawResponseValues = ">>>>>>>>>>>>>>>>>>>>>>>>>>> REQUEST:" + Environment.NewLine + Environment.NewLine + RequestFileContent;
                 mAct.RawResponseValues += Environment.NewLine + Environment.NewLine;

@@ -147,6 +147,11 @@ namespace GingerCore.Drivers
         public bool Use64Bitbrowser { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Use specific Version of browser. Only Testing browser versions are supported.")]
+        public string BrowserVersion { get; set; }
+
+        [UserConfigured]
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Use Browser In Private/Incognito Mode (Please use 64bit Browse with Internet Explorer ")]
         public bool BrowserPrivateMode { get; set; }
@@ -473,7 +478,7 @@ namespace GingerCore.Drivers
                         SetCurrentPageLoadStrategy(FirefoxOption);
                         SetBrowserLogLevel(FirefoxOption);
                         SetUnhandledPromptBehavior(FirefoxOption);
-
+                        SetBrowserVersion(FirefoxOption);
 
                         if (HeadlessBrowserMode == true || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                         {
@@ -513,7 +518,7 @@ namespace GingerCore.Drivers
                         SetCurrentPageLoadStrategy(options);
                         SetBrowserLogLevel(options);
                         SetUnhandledPromptBehavior(options);
-
+                        SetBrowserVersion(options);
                         if (IsUserProfileFolderPathValid())
                         {
                             options.AddArguments("user-data-dir=" + UserProfileFolderPath);
@@ -632,7 +637,7 @@ namespace GingerCore.Drivers
                             ieOptions.AttachToEdgeChrome = true;
                             ieOptions.EdgeExecutablePath = EdgeExcutablePath;
                             SetBrowserLogLevel(ieOptions);
-
+                            SetBrowserVersion(ieOptions);
                             if (EnsureCleanSession == true)
                             {
                                 ieOptions.EnsureCleanSession = true;
@@ -680,6 +685,7 @@ namespace GingerCore.Drivers
                         {
                             EdgeOptions EDOpts = new EdgeOptions();
                             SetBrowserLogLevel(EDOpts);
+                            SetBrowserVersion(EDOpts);
                             //EDOpts.AddAdditionalEdgeOption("UseChromium", true);
                             //EDOpts.UseChromium = true;
                             SetUnhandledPromptBehavior(EDOpts);
@@ -4794,6 +4800,7 @@ namespace GingerCore.Drivers
 
                 if (!foundElementsList.Contains(matchingOriginalElement))
                 {
+                    foundElemntInfo.IsAutoLearned = true;
                     foundElementsList.Add(foundElemntInfo);
                     foundElemntInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.Sequence, Value = foundElementsList.Count.ToString(), ShowOnUI = false });
                     matchingOriginalElement = ((IWindowExplorer)this).GetMatchingElement(foundElemntInfo, foundElementsList);
@@ -9817,6 +9824,21 @@ namespace GingerCore.Drivers
                 }
             }
 
+        }
+
+        private void SetBrowserVersion(DriverOptions options)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(BrowserVersion))
+                {
+                    options.BrowserVersion = BrowserVersion;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, "Error while setting browser version to driver options", ex);
+            }
         }
 
         public void SetUnhandledPromptBehavior(DriverOptions options)

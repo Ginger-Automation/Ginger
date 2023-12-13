@@ -33,8 +33,14 @@
     <None Remove="ApplicationModelsLib\APIModels\ApiActionsConversionWizard\ApiActionsConversionIntro.md" />
     <None Remove="ApplicationModelsLib\APIModels\APIModelWizard\AddAPIModelIntro.md" />
     <None Remove="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
+    <None Remove="ConflictResolve\ConflictResolveIntro.md" />
     <None Remove="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
     <None Remove="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro.md" />
+    <None Remove="Images\%24Close-Window.png" />
+    <None Remove="Images\%24DeExpand-Window.png" />
+    <None Remove="Images\%24Expand-Window.png" />
+    <None Remove="Images\%24Minimize-Window.png" />
+    <None Remove="Images\%24Pin-Window.png" />
     <None Remove="Images\%40AccessDataSource_16x16.png" />
     <None Remove="Images\%40Action_32x32.png" />
     <None Remove="Images\%40Activities_16x16.png" />
@@ -581,7 +587,6 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png" />
-    <None Remove="UserControlsLib\ImageMakerLib\Images\GingerIconInGrayNoBackground.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerSplashImageNew.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\ios.png" />
@@ -622,6 +627,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="ConflictResolve\ConflictResolveIntro.md" />
     <Resource Include="GingerIconNew.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -633,6 +639,11 @@
     <Resource Include="ApplicationModelsLib\POMModels\POMWizardLib\LearnWizard\AddPOMIntro.md" />
     <Resource Include="DataSource\ImportExcelWizardLib\ImportDataSourceIntro.md" />
     <Resource Include="GlobalSolutionLib\ImportItemWizardLib\ImportItemIntro.md" />
+    <Resource Include="Images\$Close-Window.png" />
+    <Resource Include="Images\$DeExpand-Window.png" />
+    <Resource Include="Images\$Expand-Window.png" />
+    <Resource Include="Images\$Minimize-Window.png" />
+    <Resource Include="Images\$Pin-Window.png" />
     <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <Resource Include="Resources\GingerDataSource.mdb">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
@@ -664,10 +675,10 @@
     <PackageReference Include="NSwag.Core.Yaml" Version="12.0.9" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />
     <PackageReference Include="RoyWpf.System.Windows.Interactivity" Version="0.1.2" />
-    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="117.0.5938.9200" />
+    <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="120.0.6099.7100" />
     <PackageReference Include="Selenium.WebDriver.GeckoDriver" Version="0.33.0" />
-    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.11.0" />
-    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="117.0.2045.35" />
+    <PackageReference Include="Selenium.WebDriver.IEDriver" Version="4.14.0" />
+    <PackageReference Include="Selenium.WebDriver.MSEdgeDriver" Version="119.0.2151.42" />
     <PackageReference Include="sharpadbclient" Version="2.3.23" />
     <PackageReference Include="Syncfusion.Shared.WPF" Version="20.1.0.55" />
     <PackageReference Include="System.Data.OleDb" Version="6.0.0" />
@@ -2401,9 +2412,6 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoWhiteSmall.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconInGrayNoBackground.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\GingerIconWhite.png">

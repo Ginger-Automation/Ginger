@@ -10,10 +10,10 @@
 	Title="ALM Connection Settings">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid Background="{StaticResource $BackgroundColor_White}">
             <StackPanel>
                 <StackPanel x:Name="ALMSelectPanel"  Visibility="Visible">
-                    <DockPanel Background="{StaticResource $Color_DarkBlue}">
+                    <DockPanel Background="{StaticResource $PrimaryColor_Black}">
                         <Label Style="{StaticResource @SectionHeaderLabelStyle}" HorizontalAlignment="Stretch">Step 1: Select ALM Type</Label>
                     </DockPanel>
 
@@ -49,7 +49,7 @@
 
                 <StackPanel x:Name="ALMSettingsPannel">
                     <StackPanel x:Name="ALMServerDetailsPanel" Visibility="Visible">
-                        <DockPanel Background="{StaticResource $Color_DarkBlue}">
+                        <DockPanel Background="{StaticResource $PrimaryColor_Black}">
                             <Label Style="{StaticResource @SectionHeaderLabelStyle}" HorizontalAlignment="Stretch">Step 2: Server Details</Label>
                         </DockPanel>
                         <StackPanel>
@@ -95,7 +95,7 @@
                     </StackPanel>
 
                     <StackPanel x:Name="ALMProjectDetailsPanel"  Visibility="Visible">
-                        <DockPanel Background="{StaticResource $Color_DarkBlue}">
+                        <DockPanel Background="{StaticResource $PrimaryColor_Black}">
                             <Label x:Name="loginToProjectlbl" Style="{StaticResource @SectionHeaderLabelStyle}" HorizontalAlignment="Stretch" >Step 3: Project Details</Label>
                         </DockPanel>
 
@@ -108,17 +108,17 @@
 
                             <StackPanel x:Name="ALMDomainSelectionPanel" Grid.Row="0">
                                 <Label x:Name="ALMDomainLabel" Style="{StaticResource @InputFieldLabelStyle}">Domain:</Label>
-                                <ComboBox x:Name="DomainComboBox" SelectionChanged="DomainComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                                <ComboBox x:Name="DomainComboBox" SelectionChanged="DomainComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
                             </StackPanel>
 
                             <StackPanel Grid.Row="1">
                                 <Label Style="{StaticResource @InputFieldLabelStyle}">Project:</Label>
-                                <ComboBox x:Name="ProjectComboBox" Style="{StaticResource @InputComboBoxStyle}" SelectionChanged="ProjectComboBox_SelectionChanged" SelectedValuePath = "Key" DisplayMemberPath = "Value"></ComboBox>
+                                <ComboBox x:Name="ProjectComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ProjectComboBox_SelectionChanged" SelectedValuePath = "Key" DisplayMemberPath = "Value"></ComboBox>
                             </StackPanel>
 
                             <StackPanel x:Name="JiraTestingALMSelectionPanel" Grid.Row="2" Visibility="Hidden">
                                 <Label x:Name="JiraTestingALMLabel" Style="{StaticResource @InputFieldLabelStyle}">Jira Testing ALM:</Label>
-                                <ComboBox x:Name="JiraTestingALMComboBox" SelectionChanged="JiraTestingALMComboBox_SelectionChanged" Style="{StaticResource @InputComboBoxStyle}"></ComboBox>
+                                <ComboBox x:Name="JiraTestingALMComboBox" SelectionChanged="JiraTestingALMComboBox_SelectionChanged" Style="{StaticResource $FlatInputComboBoxStyle}"></ComboBox>
                             </StackPanel>
                         </Grid>
 

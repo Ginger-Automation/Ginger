@@ -15,7 +15,7 @@
     </Page.Resources>
 
 
-    <Grid x:Name="xPageGrid" Background="{StaticResource $BackgroundColor_LightGray}" Grid.IsSharedSizeScope="True">
+    <Grid x:Name="xPageGrid" Grid.IsSharedSizeScope="True">
         <DockPanel>
             <Expander x:Name="xSettingsExpander" ExpandDirection="Down" IsExpanded="True" Style="{StaticResource $ExpanderStyle}" DockPanel.Dock="Top" Margin="0,0,0,0" BorderThickness="0">
                 <Expander.Header>

@@ -9,7 +9,7 @@
       d:DesignHeight="150" d:DesignWidth="150"
       x:Name="SourceControlItemInfoPageSource" Title="Eliran" Height="300" Width="300">
     <ScrollViewer>
-        <Grid  Background="{StaticResource $BackgroundColor_LightGray}">
+        <Grid  Background="{StaticResource $BackgroundColor_White}">
             <TextBlock x:Name="ItemInfoTextBlock"></TextBlock>
         </Grid>
     </ScrollViewer>

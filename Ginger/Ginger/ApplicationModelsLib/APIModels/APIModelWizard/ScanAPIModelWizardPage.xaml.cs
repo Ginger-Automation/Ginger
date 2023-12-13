@@ -22,7 +22,9 @@ using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
 using Ginger;
 using Ginger.ApplicationModelsLib.APIModels.APIModelWizard;
 using Ginger.UserControls;
@@ -30,6 +32,7 @@ using GingerCoreNET.Application_Models;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
+using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,9 +82,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
 
             AddAPIModelWizard.DeltaModelsList = new ObservableList<DeltaAPIModel>(APIDeltaUtils.DoAPIModelsCompare(selectedAPIModels).OrderBy(d => d.comparisonStatus));
 
-            if (AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)).Any())
+            if (AddAPIModelWizard.DeltaModelsList.Where(f=>f.matchingAPIModel!=null).GroupBy(m => m.matchingAPIModel).Any())
             {
-                foreach (DeltaAPIModel deltaAPIMod in AddAPIModelWizard.DeltaModelsList.GroupBy(m => m.matchingAPIModel).SelectMany(m => m.Skip(1)))
+                foreach (DeltaAPIModel deltaAPIMod in AddAPIModelWizard.DeltaModelsList.Where(f => f.matchingAPIModel != null).GroupBy(m => m.matchingAPIModel).SelectMany(m=>m))
                 {
                     deltaAPIMod.MatchingAPIName = "[Warning] " + deltaAPIMod.MatchingAPIName;
                 }

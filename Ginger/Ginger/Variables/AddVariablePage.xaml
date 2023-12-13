@@ -10,8 +10,8 @@
       h:GingerHelpProvider.HelpString="Variable"
       d:DesignHeight="600" d:DesignWidth="800" MinHeight="600" MinWidth="800">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
-        <TabControl x:Name="xVariabelsOptionsTabs" Background="{StaticResource $BackgroundColor_LightGray}"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}" Margin="10">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
+        <TabControl x:Name="xVariabelsOptionsTabs" Background="{StaticResource $BackgroundColor_White}"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}" Margin="10">
             <TabItem x:Name="xLibraryTab"  Style="{StaticResource $CoolTab}" TabIndex="1">
                 <TabItem.Header>
                     <Border Style="{StaticResource $CoolTabBorderStyle}">
