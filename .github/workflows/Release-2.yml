@@ -40,6 +40,12 @@ jobs:
                   dos2unix -b ./Runtime/ReadMe.txt
                   dos2unix -b ./Runtime/gingerInstall.sh
 
+            - name: Create Directory for GingerRuntime
+              run: | 
+                  cd Runtime/opt
+                  find Ginger/ -type f -exec chmod +x {} 
+                  
+
             -   uses: sibiraj-s/action-archiver@v1
                 with:
                   path: './Runtime'
