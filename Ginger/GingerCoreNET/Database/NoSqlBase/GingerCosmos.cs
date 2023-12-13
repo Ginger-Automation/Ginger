@@ -23,6 +23,7 @@ using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using static GingerCore.Actions.ActDBValidation;
 
 namespace GingerCore.NoSqlBase
@@ -91,8 +92,9 @@ namespace GingerCore.NoSqlBase
             }
         }
 
-        public override List<string> GetColumnList(string table)
+        public override async Task<List<string>> GetColumnList(string table)
         {
+            
             throw new NotImplementedException("Cosmos does not support columns");
         }
 

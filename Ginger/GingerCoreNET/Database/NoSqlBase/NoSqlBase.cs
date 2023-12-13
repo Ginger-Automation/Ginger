@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GingerCore.NoSqlBase
 {
@@ -33,7 +34,7 @@ namespace GingerCore.NoSqlBase
 
         public abstract List<string> GetTableList(string Keyspace);
         public abstract List<string> GetKeyspaceList();
-        public abstract List<string> GetColumnList(string table);
+        public abstract Task<List<string>> GetColumnList(string table);
 
         public abstract void PerformDBAction();
 
