@@ -35,15 +35,15 @@ namespace GingerCore.Actions
     {
         public new static partial class Fields
         {
-            public const string ControlAction = "ControlAction";
-            public const string ValueUC = "ValueUC";
-            public const string ElementLocateValue = "ElementLocateValue";
-            public const string ElementLocateBy = "ElementLocateBy";
-            public const string GotoURLType = "GotoURLType";
-            public const string ImplicitWait = "ImplicitWait";
-            public const string URLSrc = "URLSrc";
-            public const string PomGUID = "PomGUID";
-            public const string BlockedUrls = "sBlockedUrls";
+            public static string ControlAction = "ControlAction";
+            public static string ValueUC = "ValueUC";
+            public static string ElementLocateValue = "ElementLocateValue";
+            public static string ElementLocateBy = "ElementLocateBy";
+            public static string GotoURLType = "GotoURLType";
+            public static string ImplicitWait = "ImplicitWait";
+            public static string URLSrc = "URLSrc";
+            public static string PomGUID = "PomGUID";
+            public static string BlockedUrls = "sBlockedUrls";
         }
 
         public override string ActionDescription { get { return "Browser Action"; } }
