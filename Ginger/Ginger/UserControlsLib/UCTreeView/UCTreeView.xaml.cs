@@ -18,7 +18,9 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.ConflictResolve;
 using GingerWPF.DragDropLib;
+using GingerWPF.TreeViewItemsLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -224,9 +226,15 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         // TODO: remove temp code after cleanup 
         public TreeViewItem AddItem(ITreeViewItem item, TreeViewItem Parent = null)
         {
-            TreeViewItem TVI = new TreeViewItem();
-            TVI.Tag = item;
-            TVI.Header = item.Header();
+            TreeViewItem TVI = new()
+            {
+                Tag = item,
+                Header = item.Header()
+            };
+            if (item is NewTreeViewItemBase newTreeViewItem)
+            {
+                newTreeViewItem.TreeViewItem = TVI;
+            }
             if (Parent == null)
             {
                 Tree.Items.Add(TVI);
