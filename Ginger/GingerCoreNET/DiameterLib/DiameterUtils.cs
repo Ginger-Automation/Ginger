@@ -733,7 +733,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, $"Writing value: {value} to memory stream");
-                byte[] bytes = BitConverter.GetBytes(value);
+                byte[] bytes = System.BitConverter.GetBytes(value);
                 WriteBytesToStream(stream, data: bytes, seekPosition: offset);
             }
             catch (InvalidOperationException ex)
@@ -747,7 +747,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, $"Writing value: {value} to memory stream");
-                byte[] bytes = BitConverter.GetBytes(value);
+                byte[] bytes = System.BitConverter.GetBytes(value);
                 WriteBytesToStream(stream, data: bytes, seekPosition: offset, offsetInData: 1, byteCount: 3);
             }
             catch (InvalidOperationException ex)
@@ -1078,7 +1078,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             try
             {
                 int avpValueAsInt = Convert.ToInt32(avpValue);
-                byte[] enumeratedBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(avpValueAsInt));
+                byte[] enumeratedBytes = System.BitConverter.GetBytes(IPAddress.HostToNetworkOrder(avpValueAsInt));
 
                 //Calculate Padding
                 padding = CalculatePadding(enumeratedBytes.Length);
@@ -1131,7 +1131,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             try
             {
                 int avpValueAsInt = Convert.ToInt32(avpValue);
-                byte[] integer32Bytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(avpValueAsInt));
+                byte[] integer32Bytes = System.BitConverter.GetBytes(IPAddress.HostToNetworkOrder(avpValueAsInt));
 
                 //Calculate Padding
                 padding = CalculatePadding(integer32Bytes.Length);
@@ -1159,7 +1159,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             {
                 long avpValue = Convert.ToInt64(valueForDriver);
 
-                byte[] U64Bytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(avpValue));
+                byte[] U64Bytes = System.BitConverter.GetBytes(IPAddress.HostToNetworkOrder(avpValue));
 
                 //Calculate Padding
                 padding = CalculatePadding(U64Bytes.Length);
@@ -1187,7 +1187,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             {
                 int avpValueAsInt = Convert.ToInt32(avpValue);
 
-                byte[] unsigned32Bytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(avpValueAsInt));
+                byte[] unsigned32Bytes = System.BitConverter.GetBytes(IPAddress.HostToNetworkOrder(avpValueAsInt));
 
                 //Calculate padding
                 padding = CalculatePadding(unsigned32Bytes.Length);
@@ -1283,7 +1283,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             try
             {
                 const short addressFamily = 1;
-                byte[] addressFamilyBytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(addressFamily));
+                byte[] addressFamilyBytes = System.BitConverter.GetBytes(IPAddress.HostToNetworkOrder(addressFamily));
                 byte[] addressBytes = IPAddress.Parse(avpValue).GetAddressBytes();
 
                 // Calculate padding
@@ -1837,7 +1837,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 const int startIndex = 0;
 
                 byte[] data = binaryReader.ReadBytes(dataLength);
-                int enumerated = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(data, startIndex));
+                int enumerated = IPAddress.NetworkToHostOrder(System.BitConverter.ToInt32(data, startIndex));
 
                 return enumerated.ToString();
             }
@@ -1854,7 +1854,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 const int startIndex = 0;
 
                 byte[] data = binaryReader.ReadBytes(dataLength);
-                int signedValue = BitConverter.ToInt32(data, startIndex);
+                int signedValue = System.BitConverter.ToInt32(data, startIndex);
 
                 int value = IPAddress.NetworkToHostOrder(signedValue);
 
@@ -1873,7 +1873,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 const int startIndex = 0;
 
                 byte[] data = binaryReader.ReadBytes(dataLength);
-                long unsigned64 = BitConverter.ToInt64(data, startIndex);
+                long unsigned64 = System.BitConverter.ToInt64(data, startIndex);
 
                 long value = IPAddress.NetworkToHostOrder(unsigned64);
 
@@ -1892,7 +1892,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
                 const int startIndex = 0;
 
                 byte[] data = binaryReader.ReadBytes(dataLength);
-                int unsigned32 = BitConverter.ToInt32(data, startIndex);
+                int unsigned32 = System.BitConverter.ToInt32(data, startIndex);
 
                 int value = Math.Abs(IPAddress.NetworkToHostOrder(unsigned32));
 
@@ -2056,7 +2056,7 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
         }
         private int ConvertBytesToInt(byte[] bytes)
         {
-            if (BitConverter.IsLittleEndian)
+            if (System.BitConverter.IsLittleEndian)
             {
                 Array.Reverse(bytes);
             }

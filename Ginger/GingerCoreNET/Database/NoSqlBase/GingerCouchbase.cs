@@ -25,6 +25,7 @@ using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace GingerCore.NoSqlBase
 {
@@ -118,7 +119,7 @@ namespace GingerCore.NoSqlBase
             return null;
         }
 
-        public override List<string> GetColumnList(string tablename)
+        public override Task<List<string>> GetColumnList(string tablename)
         {
             return null;
         }
@@ -176,7 +177,7 @@ namespace GingerCore.NoSqlBase
 
         public override void PerformDBAction()
         {
-            string SQL = Act.SQL;
+            string SQL = Act.QueryValue;
             string keyspace = Act.Keyspace;
             ValueExpression VE = new ValueExpression(Db.ProjEnvironment, Db.BusinessFlow, Db.DSList);
             VE.Value = SQL;

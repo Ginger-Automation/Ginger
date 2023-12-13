@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
@@ -72,33 +73,48 @@ namespace Ginger.ApplicationModelsLib.POMModels
         public PomElementsPage mappedUIElementsPage;
         public PomElementsPage unmappedUIElementsPage;
         public EventHandler raiseUIElementsCountUpdated;
+        private General.eRIPageViewMode _editMode;
 
 
-        public PomAllElementsPage(ApplicationPOMModel POM, eAllElementsPageContext context, bool AddSelfHealingColumn = true)
+        public PomAllElementsPage(ApplicationPOMModel POM, eAllElementsPageContext context, bool AddSelfHealingColumn = true, General.eRIPageViewMode editMode = General.eRIPageViewMode.Standalone)
         {
             InitializeComponent();
             mPOM = POM;
             mContext = context;
+            _editMode = editMode;
 
             if (mContext == eAllElementsPageContext.AddPOMWizard)
             {
                 xReLearnElements.Visibility = Visibility.Collapsed;
             }
+            CollectionChangedEventManager.AddHandler(source: mPOM.MappedUIElements, handler: MappedUIElements_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mPOM.UnMappedUIElements, handler: UnMappedUIElements_CollectionChanged);
+            
 
-            mPOM.MappedUIElements.CollectionChanged += MappedUIElements_CollectionChanged;
-            mPOM.UnMappedUIElements.CollectionChanged += UnMappedUIElements_CollectionChanged;
-
-            mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, AddSelfHealingColumn);
+            mappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Mapped, AddSelfHealingColumn, editMode);
             xMappedElementsFrame.ClearAndSetContent(mappedUIElementsPage);
 
-            unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped, AddSelfHealingColumn);
+            unmappedUIElementsPage = new PomElementsPage(mPOM, eElementsContext.Unmapped, AddSelfHealingColumn, editMode);
             xUnMappedElementsFrame.ClearAndSetContent(unmappedUIElementsPage);
 
             UnMappedUIElementsUpdate();
             MappedUIElementsUpdate();
+            SetEditMode();
         }
 
-        private void UnMappedUIElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void SetEditMode()
+        {
+            if(_editMode == General.eRIPageViewMode.View || _editMode == General.eRIPageViewMode.ViewAndExecute)
+            {
+                xLearningOperationBtns.IsEnabled = false;
+            }
+            else
+            {
+                xLearningOperationBtns.IsEnabled = true;
+            }
+        }
+
+    private void UnMappedUIElements_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             UnMappedUIElementsUpdate();
             if (raiseUIElementsCountUpdated != null)

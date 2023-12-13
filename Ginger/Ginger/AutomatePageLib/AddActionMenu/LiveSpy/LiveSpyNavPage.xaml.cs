@@ -26,6 +26,7 @@ using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerCoreNET;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Controls;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
@@ -45,7 +46,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             InitializeComponent();
 
             mContext = context;
-            context.PropertyChanged += Context_PropertyChanged;
+            string allProperties = string.Empty;
+            PropertyChangedEventManager.AddHandler(source: context, handler: Context_PropertyChanged, propertyName: allProperties);
 
             if (mContext.Agent != null)
             {

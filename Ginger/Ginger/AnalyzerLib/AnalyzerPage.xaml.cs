@@ -62,6 +62,8 @@ namespace Ginger.AnalyzerLib
         private Solution? mSolution;
         private BusinessFlow businessFlow;
         private RunSetConfig mRunSetConfig;
+        private RunSetConfigAnalyzer.Check _runSetAnalyzerChecks;
+        private AnalyzeGingerRunner.Check _runnerAnalyzerChecks;
         // ObservableList<DataSourceBase> DSList;
 
         public bool BusyInProcess = false;
@@ -147,15 +149,17 @@ namespace Ginger.AnalyzerLib
             mAnalyzerUtils.SelfHealingAutoFixIssue = selfHealingAutoFixIssue;
         }
 
-        public void Init(RunSetConfig runSetConfig)
+        public void Init(RunSetConfig runSetConfig, RunSetConfigAnalyzer.Check runsetAnalyzerChecks = RunSetConfigAnalyzer.Check.All, AnalyzeGingerRunner.Check runnerAnalyzerChecks = AnalyzeGingerRunner.Check.All)
         {
-            Init(runSetConfig, solution: null);
+            Init(runSetConfig, solution: null, runsetAnalyzerChecks, runnerAnalyzerChecks);
         }
 
-        internal void Init(Run.RunSetConfig RSC, Solution? solution)
+        internal void Init(Run.RunSetConfig RSC, Solution? solution, RunSetConfigAnalyzer.Check checks = RunSetConfigAnalyzer.Check.All, AnalyzeGingerRunner.Check runnerAnalyzerChecks = AnalyzeGingerRunner.Check.All)
         {
             mRunSetConfig = RSC;
             mSolution = solution;
+            _runSetAnalyzerChecks = checks;
+            _runnerAnalyzerChecks = runnerAnalyzerChecks;
             mAnalyzedObject = AnalyzedObject.RunSetConfig;
             AnalyzerItemsGrid.Title = $"'{RSC.Name}' {GingerDicser.GetTermResValue(eTermResKey.RunSet)} Issues";
 
@@ -233,7 +237,7 @@ namespace Ginger.AnalyzerLib
 
                         case AnalyzedObject.RunSetConfig:
                             SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + "...");
-                            mAnalyzerUtils.RunRunSetConfigAnalyzer(mRunSetConfig, mSolution, mIssues);
+                            mAnalyzerUtils.RunRunSetConfigAnalyzer(mRunSetConfig, _runSetAnalyzerChecks, _runnerAnalyzerChecks, mSolution, mIssues);
                             break;
                     }
                 });
