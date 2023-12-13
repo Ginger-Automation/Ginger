@@ -22,7 +22,12 @@ jobs:
 
             - name: Create Directory for GingerRuntime
               run: | 
-                  mkdir Runtime               
+                  mkdir Runtime   
+                  
+            - name: Make Ginger Runtime file executable 
+              run: | 
+                  cd Runtime/opt
+                  find /Ginger/GingerRuntime/bin/Release/net7.0/linux-x64/selenium-manager -type f -exec chmod +x {} 
  
             -   uses: sibiraj-s/action-archiver@v1
                 with:
