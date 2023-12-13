@@ -103,5 +103,23 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
                 
             }
         }
+
+        public static void AddGlobalParametertoAPIGlobalParameterList(ObservableList<GlobalAppModelParameter> APIGlobalParamList, GlobalAppModelParameter GAMP)
+        {
+            GlobalAppModelParameter newAPIGlobalParam = new GlobalAppModelParameter();
+            newAPIGlobalParam.Guid = GAMP.Guid;
+            newAPIGlobalParam.CurrentValue = GAMP.CurrentValue;
+            newAPIGlobalParam.PlaceHolder = GAMP.PlaceHolder;
+            newAPIGlobalParam.Description = GAMP.Description;
+            foreach (OptionalValue ov in GAMP.OptionalValuesList)
+            {
+                OptionalValue newOV = new OptionalValue();
+                newOV.Guid = ov.Guid;
+                newOV.Value = ov.Value;
+                newOV.IsDefault = ov.IsDefault;
+                newAPIGlobalParam.OptionalValuesList.Add(newOV);
+            }
+            APIGlobalParamList.Add(newAPIGlobalParam);
+        }
     }
 }

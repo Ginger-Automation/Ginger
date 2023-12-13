@@ -139,15 +139,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard
             return newModelGlobalParam;
         }
 
-
-        private void AddGlobalInModel(string zy)
-        {
-            var temp = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
-            var itemtoadd = temp.FirstOrDefault(m=>m.PlaceHolder == zy);
-            ModelParamsPage.AddGlobalParametertoAPIGlobalParameterList(temp, itemtoadd);
-
-        }
-
         private void ImportAPIModels(ObservableList<ApplicationAPIModel> SelectedAAMList)
         {
             GlobalAppModelParameter itemtoadd = null;
