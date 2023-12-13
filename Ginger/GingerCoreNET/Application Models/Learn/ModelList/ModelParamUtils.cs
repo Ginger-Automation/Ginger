@@ -40,15 +40,11 @@ using System.Windows;
 
 namespace Amdocs.Ginger.CoreNET.Application_Models
 {
-    public class ModelParamUtils
+    public static class ModelParamUtils
     {
-
-        public static ObservableList<GlobalAppModelParameter> mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
-
-        
-
         public static void SetUniquePlaceHolderName(GlobalAppModelParameter newModelGlobalParam, bool isCopy = false)
         {
+            var mModelsGlobalParamsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<GlobalAppModelParameter>();
             if (isCopy)
             {
                 newModelGlobalParam.PlaceHolder = "{" + (!string.IsNullOrEmpty(newModelGlobalParam.PlaceHolder) ? newModelGlobalParam.PlaceHolder.Replace("{","").Replace("}","") : newModelGlobalParam.PlaceHolder) + "_Copy}";
