@@ -369,6 +369,8 @@ namespace GingerCore.Drivers
 
         public override void StartDriver()
         {
+            DriverService driverService = null;
+
             if (StartBMP)
             {
                 BMPServer = new Server(StartBMPBATFile, StartBMPPort);
@@ -466,9 +468,9 @@ namespace GingerCore.Drivers
                             ieoptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
                         }
 
-                        InternetExplorerDriverService IEService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
-                        IEService.HideCommandPromptWindow = HideConsoleWindow;
-                        Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        driverService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
+                        driverService.HideCommandPromptWindow = HideConsoleWindow;
+                        Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         break;
                     #endregion
 
@@ -506,10 +508,10 @@ namespace GingerCore.Drivers
                             FirefoxOption.Profile = profile;
                         }
 
-                        FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService();
-                        FFService.HideCommandPromptWindow = HideConsoleWindow;
-                        Driver = new FirefoxDriver(FFService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                        this.mDriverProcessId = FFService.ProcessId;
+                        driverService = FirefoxDriverService.CreateDefaultService();
+                        driverService.HideCommandPromptWindow = HideConsoleWindow;
+                        Driver = new FirefoxDriver((FirefoxDriverService)driverService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        this.mDriverProcessId = driverService.ProcessId;
                         break;
                     #endregion
 
@@ -584,18 +586,17 @@ namespace GingerCore.Drivers
                         if (!string.IsNullOrEmpty(DebugAddress))
                         {
                             options.DebuggerAddress = DebugAddress.Trim();
-                            
                         }
-                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
+                         driverService = ChromeDriverService.CreateDefaultService();
                         if (HideConsoleWindow)
                         {
-                            ChService.HideCommandPromptWindow = HideConsoleWindow;
+                            driverService.HideCommandPromptWindow = HideConsoleWindow;
                         }
 
                         try
                         {
-                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                            this.mDriverProcessId = ChService.ProcessId;
+                            Driver = new ChromeDriver((ChromeDriverService)driverService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            this.mDriverProcessId = driverService.ProcessId;
                         }
                         catch (Exception ex)
                         {
@@ -680,9 +681,9 @@ namespace GingerCore.Drivers
 
                             SetCurrentPageLoadStrategy(ieOptions);
                             ieOptions.IgnoreZoomLevel = true;
-                            InternetExplorerDriverService IExplorerService = InternetExplorerDriverService.CreateDefaultService();
-                            IExplorerService.HideCommandPromptWindow = HideConsoleWindow;
-                            Driver = new InternetExplorerDriver(IExplorerService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            driverService = InternetExplorerDriverService.CreateDefaultService();
+                            driverService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         }
                         else
 
@@ -699,10 +700,10 @@ namespace GingerCore.Drivers
                             }
 
                             SetCurrentPageLoadStrategy(EDOpts);
-                            EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
-                            EDService.HideCommandPromptWindow = HideConsoleWindow;
-                            Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                            this.mDriverProcessId = EDService.ProcessId;
+                            driverService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
+                            driverService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new EdgeDriver((EdgeDriverService)driverService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            this.mDriverProcessId = driverService.ProcessId;
                         }
 
                         break;
@@ -851,25 +852,38 @@ namespace GingerCore.Drivers
                 ErrorMessageFromDriver = ex.Message;
 
                 //If driver is mismatched, try renaming the existing driver and let selenium update the driver
-                if (RestartRetry && ex.Message.Contains("session not created: This version of "))
+                if (RestartRetry && ex.Message.Contains("session not created: This version of"))
                 {
                     RestartRetry = false;
-
-                    //Rename driver name
-                    if (mBrowserTpe == eBrowserType.Chrome)
-                    {
-                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(CHROME_DRIVER_NAME), GetDriversPathPerOS());
-                    }
-                    else if (mBrowserTpe == eBrowserType.Edge)
-                    {
-                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(EDGE_DRIVER_NAME), GetDriversPathPerOS());
-                    }
-                    else if (mBrowserTpe == eBrowserType.FireFox)
-                    {
-                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(FIREFOX_DRIVER_NAME), GetDriversPathPerOS());
-                    }
+                    UpdateDriver(driverService);
                     StartDriver();
                 }
+            }
+        }
+
+        private void UpdateDriver(DriverService driverService)
+        {
+            //Close launched driver process as it does not gets closed on exception
+            if (driverService?.ProcessId != 0)
+            {
+                try
+                {
+                    System.Diagnostics.Process.GetProcessById(driverService.ProcessId)?.Kill();                
+                }
+                catch { }
+            }
+            //Rename driver name
+            if (mBrowserTpe == eBrowserType.Chrome)
+            {
+                GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(CHROME_DRIVER_NAME), GetDriversPathPerOS());
+            }
+            else if (mBrowserTpe == eBrowserType.Edge)
+            {
+                GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(EDGE_DRIVER_NAME), GetDriversPathPerOS());
+            }
+            else if (mBrowserTpe == eBrowserType.FireFox)
+            {
+                GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(FIREFOX_DRIVER_NAME), GetDriversPathPerOS());
             }
         }
 
