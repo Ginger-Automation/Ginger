@@ -10,7 +10,7 @@
       d:DesignHeight="30" d:DesignWidth="1035"
 	Title="LocateByPOMElementPage">
 
-    <Grid x:Name="xPOMGrid" Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid x:Name="xPOMGrid" Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition Height="50*"/>
             <RowDefinition Height="50*"/>

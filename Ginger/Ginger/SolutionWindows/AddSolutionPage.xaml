@@ -7,7 +7,7 @@
       Height="350" Width="520" MinHeight="270"
 	Title="Add Solution">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <StackPanel>
             <Label Style="{StaticResource @InputFieldLabelStyle}">Solution Name:</Label>
             <TextBox x:Name="SolutionNameTextBox" AutomationProperties.AutomationId="QA-SolutionNameTextBox" Style="{StaticResource @TextBoxStyle}" FontWeight="Bold"/>
@@ -32,7 +32,7 @@
             </Grid>
             <StackPanel>
                 <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Main Application Platform:" />
-                <ComboBox x:Name="MainPlatformComboBox" Style="{StaticResource @InputComboBoxStyle}" Width="200" HorizontalAlignment="Left" />
+                <ComboBox x:Name="MainPlatformComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200" HorizontalAlignment="Left"/>
             </StackPanel>
             <usercontrols1:UCEncryptionKey x:Name="UCEncryptionKey"></usercontrols1:UCEncryptionKey>
         </StackPanel>

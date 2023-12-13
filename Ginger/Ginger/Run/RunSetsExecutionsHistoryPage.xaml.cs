@@ -104,7 +104,7 @@ namespace Ginger.Run
             grdExecutionsHistory.AddToolbarTool("@Open_16x16.png", "Open Execution Results Main Folder", new RoutedEventHandler(GetExecutionResultsFolder));
             grdExecutionsHistory.AddToolbarTool("@Delete_16x16.png", "Delete Selected Execution Results", new RoutedEventHandler(DeleteSelectedExecutionResults));
             grdExecutionsHistory.AddToolbarTool("@Trash_16x16.png", "Delete All Execution Results", new RoutedEventHandler(DeleteAllSelectedExecutionResults));
-            grdExecutionsHistory.RowDoubleClick += OpenExecutionResultsFolder;
+            WeakEventManager<ucGrid, RoutedEventArgs>.AddHandler(source: grdExecutionsHistory, eventName: nameof(ucGrid.RowDoubleClick), handler: OpenExecutionResultsFolder);
 
             if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
             {
@@ -262,10 +262,7 @@ namespace Ginger.Run
                 else if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
                 {
                     string runSetFolder = executionLoggerHelper.GetLoggerDirectory(runSetReport.LogFolder);
-
-                    var fi = new DirectoryInfo(runSetFolder);
-                    CleanDirectory(fi.FullName);
-                    fi.Delete();
+                    TextFileRepository.DeleteLocalData(runSetFolder);
                 }
                 else if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.Remote && !remoteDeletionFlag)
                 {
@@ -277,27 +274,6 @@ namespace Ginger.Run
             if (grdExecutionsHistory.Grid.SelectedItems.Count > 0)
             {
                 LoadExecutionsHistoryData();
-            }
-        }
-
-        private static void CleanDirectory(string folderName)
-        {
-            try
-            {
-                System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(folderName);
-
-                foreach (System.IO.FileInfo file in di.GetFiles())
-                {
-                    file.Delete();
-                }
-                foreach (System.IO.DirectoryInfo dir in di.GetDirectories())
-                {
-                    dir.Delete(true);
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Clean the Folder '{0}', Issue:'{1}'", folderName, ex.Message));
             }
         }
 

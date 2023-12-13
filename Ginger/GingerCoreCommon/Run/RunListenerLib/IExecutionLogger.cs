@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -18,13 +18,11 @@ limitations under the License.
 
 //using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using System;
-using System.Threading.Tasks;
-using Ginger.Reports;
+using Amdocs.Ginger.Common;
 using Ginger.Run;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.Environments;
-using LiteDB;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -46,14 +44,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         // void RunSetUpdate(ObjectId runSetLiteDbId, ObjectId runnerLiteDbId, GingerExecutionEngine gingerRunner);
         void SaveObjToReporsitory(object obj, string FileName = "", bool toAppend = false);
-        Task<bool> SendExecutionLogToCentralDBAsync(ObjectId runsetId, Guid executionId, ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish deleteLocalData);
         string SetExecutionLogFolder(string executionLogfolder, bool isCleanFile);
         //object SetReportAction(Act action, IContext context, eExecutedFrom executedFrom, bool offlineMode = false);
         //object SetReportActivity(Activity activity, IContext context, bool offlineMode = false, bool isConfEnable = false);
-        object SetReportActivityGroup(ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false);
+        object SetReportActivityGroup(IContext context, ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false);
         //object SetReportBusinessFlow(IContext context, bool offlineMode = false, eExecutedFrom executedFrom = eExecutedFrom.Run, bool isConfEnable = false);
         //void SetReportRunner(IGingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, IContext mContext, string filename, int runnerCount);
         //void SetReportRunSet(RunSetReport runSetReport, string logFolder);
         void StartRunSet();
+        void DeleteLocalData(string logFolder , LiteDB.ObjectId runsetId, Guid executionId );
     }
 }

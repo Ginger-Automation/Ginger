@@ -8,7 +8,7 @@
 	Title="StartPage">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <DockPanel x:Name="Docky" Background="{DynamicResource $BackgroundColor_LightGray}">
+        <DockPanel x:Name="Docky" Background="{DynamicResource $BackgroundColor_White}">
 
             <Image  Source="{StaticResource @GingerLogoNew_Small}" Height="200" Width="640" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="20,20,0,0" />
             <Label  x:Name="lblAppVersion" Content="AppVersion" Style="{StaticResource @AppVerStyle}" HorizontalAlignment="Left" DockPanel.Dock="Top" Margin="15,0,0,0" Width="Auto"></Label>
@@ -53,7 +53,7 @@
                         x:Name="recentSolutionsListBox" 
                         Width="200" 
                         Height="100" 
-                        Background="{DynamicResource $BackgroundColor_LightGray}"
+                        Background="{DynamicResource $BackgroundColor_White}"
                         BorderThickness="0"
                         DockPanel.Dock="Top">
                         <ListBox.ItemTemplate>

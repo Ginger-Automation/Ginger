@@ -34,8 +34,11 @@ using GingerCore.GeneralLib;
 using GingerCore.Helpers;
 using GingerWPF.WizardLib;
 using System;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 namespace GingerWPF.BusinessFlowsLib
@@ -63,7 +66,7 @@ namespace GingerWPF.BusinessFlowsLib
         }
 
         // We keep a static page so even if we move between activities the Run controls and info stay the same
-        public ActivityPage(Activity activity, Context context, Ginger.General.eRIPageViewMode pageViewMode)
+        public ActivityPage(Activity activity, Context context, Ginger.General.eRIPageViewMode pageViewMode, bool highlightActivityName = false)
         {
             InitializeComponent();
 
@@ -73,6 +76,11 @@ namespace GingerWPF.BusinessFlowsLib
 
             SetUIView();
             BindControlsToActivity();
+
+            if (highlightActivityName)
+            {
+                xNameTextBlock.Foreground= (SolidColorBrush)FindResource("$SelectionColor_Pink");
+            }
         }
 
         private void UpdateActivityViewMode(Ginger.General.eRIPageViewMode pageViewMod)
@@ -164,7 +172,7 @@ namespace GingerWPF.BusinessFlowsLib
 
             xRunBtn.ButtonText = GingerDicser.GetTermResValue(eTermResKey.Activity, "Run");
         }
-
+        string allProperties = string.Empty;
         private void BindControlsToActivity()
         {
             if (mPageViewMode != Ginger.General.eRIPageViewMode.View && mPageViewMode != Ginger.General.eRIPageViewMode.ViewAndExecute && mActivity.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
@@ -175,15 +183,22 @@ namespace GingerWPF.BusinessFlowsLib
             //General Info Section Bindings
             BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.TextProperty, mActivity, nameof(Activity.ActivityName));
             BindingHandler.ObjFieldBinding(xNameTextBlock, TextBlock.ToolTipProperty, mActivity, nameof(Activity.ActivityName));
-            mActivity.PropertyChanged -= mActivity_PropertyChanged;
-            mActivity.PropertyChanged += mActivity_PropertyChanged;
+            PropertyChangedEventManager.RemoveHandler(source: mActivity, handler: mActivity_PropertyChanged, propertyName: allProperties);
+            PropertyChangedEventManager.AddHandler(source: mActivity, handler: mActivity_PropertyChanged, propertyName: allProperties);
+            
+
+            
             SetIconImageType();
             UpdateDescription();
             //xSharedRepoInstanceUC.Init(mActivity, mContext.BusinessFlow);
 
             //Actions Tab Bindings    
-            mActivity.Acts.CollectionChanged -= Acts_CollectionChanged;
-            mActivity.Acts.CollectionChanged += Acts_CollectionChanged;
+            CollectionChangedEventManager.RemoveHandler(source: mActivity.Acts, handler: Acts_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mActivity.Acts, handler: Acts_CollectionChanged);
+           
+
+            
+
             UpdateActionsTabHeader();
             if (mActionsPage != null && xActionsTab.IsSelected)
             {
@@ -191,8 +206,13 @@ namespace GingerWPF.BusinessFlowsLib
             }
 
             //Variables Tab Bindings   
-            mActivity.Variables.CollectionChanged -= Variables_CollectionChanged;
-            mActivity.Variables.CollectionChanged += Variables_CollectionChanged;
+            CollectionChangedEventManager.RemoveHandler(source: mActivity.Variables, handler: Variables_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mActivity.Variables, handler: Variables_CollectionChanged);
+
+            
+
+           
+
             UpdateVariabelsTabHeader();
             if (mVariabelsPage != null && xVariablesTab.IsSelected)
             {
@@ -242,8 +262,14 @@ namespace GingerWPF.BusinessFlowsLib
                         {
                             mActionsPage.ListView.ListTitleVisibility = Visibility.Collapsed;
                         }
-                        mActionsPage.ShiftToActionEditEvent += MActionsPage_ShiftToActionEditEvent;
-                        mActionsPage.ShiftToActionsListEvent += MActionsPage_ShiftToActionsListEvent;
+                        WeakEventManager<ActionsListViewPage, RoutedEventArgs>.RemoveHandler(source: mActionsPage, eventName: nameof(ActionsListViewPage.ShiftToActionEditEvent), handler: MActionsPage_ShiftToActionEditEvent);
+                        WeakEventManager<ActionsListViewPage, RoutedEventArgs>.AddHandler(source: mActionsPage, eventName: nameof(ActionsListViewPage.ShiftToActionsListEvent), handler: MActionsPage_ShiftToActionsListEvent);
+                        
+
+                        
+
+
+
                         xActionsTabFrame.SetContent(mActionsPage);
                     }
                     else
@@ -303,9 +329,9 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void ClearActivityBindings()
         {
-            mActivity.PropertyChanged -= mActivity_PropertyChanged;
-            mActivity.Acts.CollectionChanged -= Acts_CollectionChanged;
-            mActivity.Variables.CollectionChanged -= Variables_CollectionChanged;
+            PropertyChangedEventManager.RemoveHandler(source: mActivity, handler: mActivity_PropertyChanged, propertyName: allProperties);
+            CollectionChangedEventManager.RemoveHandler(source: mActivity.Acts, handler: Acts_CollectionChanged);
+            CollectionChangedEventManager.RemoveHandler(source: mActivity.Variables, handler: Variables_CollectionChanged);
 
             if (mActivity != null && mPageViewMode != Ginger.General.eRIPageViewMode.View && mPageViewMode != Ginger.General.eRIPageViewMode.ViewAndExecute && mActivity.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.NoChange)
             {
@@ -367,7 +393,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 xDescriptionTextBlock.Text = string.Empty;
                 TextBlockHelper xDescTextBlockHelper = new TextBlockHelper(xDescriptionTextBlock);
-                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$Color_DarkBlue")).ToString());
+                SolidColorBrush foregroundColor = (SolidColorBrush)new BrushConverter().ConvertFromString((TryFindResource("$PrimaryColor_Black")).ToString());
                 if (mActivity != null)
                 {
                     //Application info
@@ -477,11 +503,11 @@ namespace GingerWPF.BusinessFlowsLib
 
             Button okBtn = new Button();
             okBtn.Content = "Ok";
-            okBtn.Click += new RoutedEventHandler(OkBtn_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: OkBtn_Click);
 
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";
-            undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtn, eventName: nameof(ButtonBase.Click), handler: UndoBtn_Click);
 
             Button saveBtn = new Button();
             saveBtn.Content = "Save";
@@ -491,7 +517,7 @@ namespace GingerWPF.BusinessFlowsLib
                 case Ginger.General.eRIPageViewMode.SharedReposiotry:
                     mActivity.SaveBackup();
                     title = "Edit Shared Repository " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-                    saveBtn.Click += new RoutedEventHandler(SharedRepoSaveBtn_Click);
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveBtn, eventName: nameof(ButtonBase.Click), handler: SharedRepoSaveBtn_Click);
                     winButtons.Add(saveBtn);
                     winButtons.Add(undoBtn);
                     break;
@@ -499,7 +525,9 @@ namespace GingerWPF.BusinessFlowsLib
                 case Ginger.General.eRIPageViewMode.ChildWithSave:
                     mActivity.SaveBackup();
                     title = "Edit " + GingerDicser.GetTermResValue(eTermResKey.Activity);
-                    saveBtn.Click += new RoutedEventHandler(ParentItemSaveButton_Click);
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveBtn, eventName: nameof(ButtonBase.Click), handler: ParentItemSaveButton_Click);
+                    
+                    
                     winButtons.Add(saveBtn);
                     winButtons.Add(undoBtn);
                     break;
@@ -594,12 +622,12 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
         }
 
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_Pink");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
         }
 
         private async void xSaveBtn_Click(object sender, RoutedEventArgs e)

@@ -25,6 +25,7 @@ using GingerCore.GeneralLib;
 using GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -46,7 +47,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mContext = context;
 
             ConfigureAPIPage();
-            mContext.PropertyChanged += MContext_PropertyChanged;
+            string allProperties = string.Empty;
+            PropertyChangedEventManager.AddHandler(source: mContext, handler: MContext_PropertyChanged, propertyName: allProperties);
         }
 
         private void ConfigureAPIPage()

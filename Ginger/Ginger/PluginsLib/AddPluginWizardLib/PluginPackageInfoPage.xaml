@@ -28,10 +28,10 @@
         <DataGrid x:Name="ServicesGrid" IsReadOnly="True" SelectionChanged="ServicesGrid_SelectionChanged" Grid.Row="1"></DataGrid>
 
         <TabControl Grid.Row="2">
-            <TabItem Header="Actions">
+            <TabItem Header="Actions" Style="{StaticResource $RoundedTab}">
                 <DataGrid x:Name="ActionsDataGrid" IsReadOnly="True"/>
             </TabItem>
-            <TabItem Header="Text Editors"></TabItem>
+            <TabItem Header="Text Editors" Style="{StaticResource $RoundedTab}"/>
         </TabControl>
     </Grid>
 </Page>

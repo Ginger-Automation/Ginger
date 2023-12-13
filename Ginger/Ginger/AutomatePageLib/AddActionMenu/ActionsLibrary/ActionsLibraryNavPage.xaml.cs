@@ -34,10 +34,12 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
@@ -61,8 +63,9 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mContext = context;
             mActionsList = mContext.BusinessFlow.CurrentActivity.Acts;
 
-            mContext.PropertyChanged += MContext_PropertyChanged;
-            mContext.BusinessFlow.TargetApplications.CollectionChanged += TargetApplications_CollectionChanged;
+            string allProperties = string.Empty;
+            PropertyChangedEventManager.AddHandler(source: mContext, handler: MContext_PropertyChanged, propertyName: allProperties);
+            CollectionChangedEventManager.AddHandler(source: mContext.BusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
 
             FillActionsList();
 
@@ -73,7 +76,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             Button addActionBtn = new Button();
             addActionBtn.Content = "Add Action";
-            addActionBtn.Click += new RoutedEventHandler(AddActionButton_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: addActionBtn, eventName: nameof(ButtonBase.Click), handler: AddActionButton_Click);
         }
 
         private void TargetApplications_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -199,7 +202,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             ucListView.ListSelectionMode = SelectionMode.Extended;
             mActionsListHelper.ListView = ucListView;
 
-            ucListView.ItemMouseDoubleClick += ActionsListViewItem_MouseDoubleClick;
+
+            WeakEventManager<UcListView, EventArgs>.AddHandler(source: ucListView, eventName: nameof(UcListView.ItemMouseDoubleClick), handler: ActionsListViewItem_MouseDoubleClick);
         }
 
         private void SetActionsListViewData(UcListView ucListView, ObservableList<Act> dataSource)
@@ -371,7 +375,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                 }
                                 else
                                 {
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$PrimaryColor_Black");
                                 } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
                         }

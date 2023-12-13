@@ -88,6 +88,15 @@ namespace Ginger.BusinessFlowPages.ListHelpers
 
         public bool ExpandItemOnLoad { get; set; } = false;
 
+        public bool ShowIndex
+        {
+            get
+            {
+                return false;
+
+            }
+        }
+
         public VariablesListViewHelper(ObservableList<VariableBase> variables, RepositoryItemBase variablesParent, eVariablesLevel variablesLevel, Context context, General.eRIPageViewMode pageViewMode)
         {
             Variables = variables;

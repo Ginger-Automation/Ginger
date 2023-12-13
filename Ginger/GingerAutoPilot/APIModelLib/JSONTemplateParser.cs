@@ -115,7 +115,11 @@ namespace Amdocs.Ginger.Common.APIModelLib
                 JToken jt2 = jt.SelectToken(Jn.Path);
                 try
                 {
-                    if (jt2.Type != JTokenType.String && jt2.Type != JTokenType.Array)
+                    if (jt2.Type != JTokenType.String && jt2.Type != JTokenType.Object && jt2.Type != JTokenType.Array)
+                    {
+                        consts.Add(param);
+                    }
+                    if(jt2.Type != JTokenType.Array && param=="<ID2>")
                     {
                         consts.Add(param);
                     }
@@ -128,6 +132,7 @@ namespace Amdocs.Ginger.Common.APIModelLib
                     else
                     {
                         ((JValue)jt2).Value = param;
+                        
                     }
                 }
 
@@ -136,7 +141,7 @@ namespace Amdocs.Ginger.Common.APIModelLib
                     Console.WriteLine("GenerateBodyANdModelParameters error - " + ex.Message);
 
                     // Why do we do work in exception !!!!!!!!!!!!!
-                    if (jt2.Type != JTokenType.String && jt2.Type != JTokenType.Array)
+                    if (jt2.Type != JTokenType.String && jt2.Type != JTokenType.Array && jt2.Type != JTokenType.Object)
                     {
                         consts.Add(param);
                     }

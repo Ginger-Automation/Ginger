@@ -21,6 +21,7 @@ using Ginger.UserControlsLib;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using System;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -46,11 +47,11 @@ namespace Ginger.Environments
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
 
             UpdateParametersTabHeader();
-            app.GeneralParams.CollectionChanged += GeneralParams_CollectionChanged;
+            CollectionChangedEventManager.AddHandler(source: app.GeneralParams, handler: GeneralParams_CollectionChanged);
             UpdateDBsTabHeader();
-            app.Dbs.CollectionChanged += Dbs_CollectionChanged;
+            CollectionChangedEventManager.AddHandler(source: app.Dbs, handler: Dbs_CollectionChanged);
             UpdateLoginuserTabHeader();
-            app.LoginUsers.CollectionChanged += LoginUsers_CollectionChanged;
+            CollectionChangedEventManager.AddHandler(source: app.LoginUsers, handler: LoginUsers_CollectionChanged);
             ColorSelectedTab();
         }
 
@@ -135,7 +136,7 @@ namespace Ginger.Environments
                                 }
                                 else
                                 {
-                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$Color_DarkBlue");
+                                    ((TextBlock)ctrl).Foreground = (SolidColorBrush)FindResource("$PrimaryColor_Black");
                                 } ((TextBlock)ctrl).FontWeight = FontWeights.Bold;
                             }
                         }

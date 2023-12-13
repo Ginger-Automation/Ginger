@@ -1,0 +1,54 @@
+﻿using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.BPMN.Conversion;
+using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
+using GingerCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+#nullable enable
+namespace Amdocs.Ginger.CoreNET.BPMN.Utils
+{
+    internal static class TargetApplicationBPMNUtil
+    {
+        /// <summary>
+        /// Get <see cref="TargetBase"/> whose name matches the given <paramref name="targetAppName"/>.
+        /// </summary>
+        /// <param name="targetAppName">Name of the <see cref="TargetBase"/> to search for.</param>
+        /// <returns><see cref="TargetBase"/> with name matching the given <paramref name="targetAppName"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="TargetBase"/> is found with name matching the given <paramref name="targetAppName"/>.</exception>
+        internal static TargetBase GetTargetApplicationByName(string targetAppName, ISolutionFacadeForBPMN solutionFacade)
+        {
+            IEnumerable<TargetBase> targetApplications = solutionFacade.GetTargetApplications();
+            TargetBase? targetApp = targetApplications.FirstOrDefault(targetApp => string.Equals(targetApp.Name, targetAppName));
+
+            if (targetApp == null)
+            {
+                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found with name '{targetAppName}'");
+            }
+
+            return targetApp;
+        }
+
+        /// <summary>
+        /// Get <see cref="TargetBase"/> whose Guid matches the given <paramref name="targetAppGuid"/>.
+        /// </summary>
+        /// <param name="targetAppGuid">Guid of the <see cref="TargetBase"/> to search for.</param>
+        /// <returns><see cref="TargetBase"/> with Guid matching the given <paramref name="targetAppGuid"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="TargetBase"/> is found with Guid matching the given <paramref name="targetAppGuid"/>.</exception>
+        internal static TargetBase GetTargetApplicationByGuid(Guid targetAppGuid, ISolutionFacadeForBPMN solutionFacade)
+        {
+            IEnumerable<TargetBase> targetApplications = solutionFacade.GetTargetApplications();
+            TargetBase? targetApp = targetApplications.FirstOrDefault(targetApp => targetApp.Guid == targetAppGuid);
+
+            if (targetApp == null)
+            {
+                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found with Guid '{targetAppGuid}'");
+            }
+
+            return targetApp;
+        }
+    }
+}

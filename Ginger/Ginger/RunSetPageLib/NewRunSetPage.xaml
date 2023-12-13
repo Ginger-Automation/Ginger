@@ -16,137 +16,146 @@
       Title="Runset"  Loaded="Page_loaded">
 
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+    <Grid Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <StackPanel x:Name="xRunSetLoadingPnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" >
             <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
-            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_DarkBlue}">
+            <Label HorizontalAlignment="Left" FontSize="25" Foreground="{StaticResource $BackgroundColor_Black}">
                 <Label.Content>
                     <GingerCore:ucTextDicResource Text="Loading [RunSet]..."/>
                 </Label.Content>
             </Label>
         </StackPanel>
 
-        <Grid Name="xRunsetPageGrid" Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Visible" >
+        <Grid Name="xRunsetPageGrid" Background="Transparent" Visibility="Visible" >
             <Grid.RowDefinitions>
-                <RowDefinition Height="55"/>
-                <RowDefinition Height="60"/>
+                <RowDefinition Height="100"/>
+                <!--<RowDefinition Height="60"/>-->
                 <RowDefinition x:Name="Tabs" Height="500*"/>
             </Grid.RowDefinitions>
 
-            <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto">
-                <DockPanel>
-                    <usercontrols:ImageMakerControl x:Name="xIconImage"  ImageType="RunSet" Margin="3,0,5,2" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" VerticalAlignment="Center"/>
-                    <usercontrols1:UcLabel x:Name="xRunSetUcLabel" DockPanel.Dock="Left" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" MaxWidth="500" MaxHeight="50"/>
+            <Border Grid.Row="0" BorderThickness="0,0,0,15" >
+            <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <DockPanel>
+                            <usercontrols:ImageMakerControl x:Name="xIconImage"  ImageType="RunSet" Margin="3,0,5,2" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" VerticalAlignment="Center"/>
+                            <usercontrols1:UcLabel x:Name="xRunSetUcLabel" DockPanel.Dock="Left" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" MaxWidth="500" MaxHeight="50"/>
+                            <!--<TextBlock x:Name="xNameTextBlock" DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Runset Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" MaxHeight="50" MaxWidth="500" />-->
+                            <DockPanel x:Name="xOperationsPnl" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Right" >
+                                <StackPanel x:Name="xGeneralOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
+                                    <usercontrols:ucButton x:Name="xRunSetChange"  ButtonType="ImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Open" Click="xRunSetChange_Click">
+                                        <usercontrols:ucButton.ToolTip>
+                                            <GingerCore:ucTextDicResource Text="Select other [RunSet]"/>
+                                        </usercontrols:ucButton.ToolTip>
+                                    </usercontrols:ucButton>
+                                    <usercontrols:ucButton x:Name="xAddRunSet" ButtonType="ImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Add" Click="xAddRunSet_Click" Margin="5,0,0,0">
+                                        <usercontrols:ucButton.ToolTip>
+                                            <GingerCore:ucTextDicResource Text="Add New [RunSet]"/>
+                                        </usercontrols:ucButton.ToolTip>
+                                    </usercontrols:ucButton>
 
-                    <!--<TextBlock x:Name="xNameTextBlock" DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Runset Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" MaxHeight="50" MaxWidth="500" />-->
-                    <DockPanel x:Name="xOperationsPnl" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Right" >
-                        <StackPanel x:Name="xGeneralOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
-                            <usercontrols:ucButton x:Name="xRunSetChange"  ButtonType="ImageButton"  ButtonFontImageSize="20" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="Open" Click="xRunSetChange_Click">
-                                <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="Select other [RunSet]"/>
-                                </usercontrols:ucButton.ToolTip>
-                            </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xAddRunSet" ButtonType="ImageButton"  ButtonFontImageSize="20" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="Add" Click="xAddRunSet_Click">
-                                <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="Add New [RunSet]"/>
-                                </usercontrols:ucButton.ToolTip>
-                            </usercontrols:ucButton>
+                                    <GridSplitter Width="1" Height="25" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Black}" Margin="10 0 10 0"/>
 
-                            <GridSplitter Width="1" Height="25" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="10 0 10 0"/>
+                                    <usercontrols:ucButton x:Name="xRunsetSaveBtn"  ButtonType="ImageButton" Visibility="Collapsed"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Save" Click="xRunsetSaveBtn_Click" Margin="5,0,0,0">
+                                        <usercontrols:ucButton.ToolTip>
+                                            <GingerCore:ucTextDicResource Text="Save [RunSet] Changes"/>
+                                        </usercontrols:ucButton.ToolTip>
+                                    </usercontrols:ucButton>
+                                    <usercontrols:ucButton x:Name="xUndoChangesBtn"  ButtonType="ImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Undo" Click="xUndoChangesBtn_Click" Margin="5,0,0,0">
+                                        <usercontrols:ucButton.ToolTip>
+                                            <GingerCore:ucTextDicResource Text="Undo [RunSet] Changes"/>
+                                        </usercontrols:ucButton.ToolTip>
+                                    </usercontrols:ucButton>
+                                    <usercontrols:ucButton x:Name="xRunsetReportBtn" ButtonType="ImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Report" Click="xRunsetReportBtn_Click" Margin="5,0,0,0">
+                                        <usercontrols:ucButton.ToolTip>
+                                            <GingerCore:ucTextDicResource Text="Generate [RunSet] Report"/>
+                                        </usercontrols:ucButton.ToolTip>
+                                    </usercontrols:ucButton>
+                                    <usercontrols:ucButton x:Name="xFind" ButtonType="ImageButton"  ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Search" Click="xFind_Click" Margin="5,0,0,0">
+                                        <usercontrols:ucButton.ToolTip>
+                                            <GingerCore:ucTextDicResource Text="Find in [RunSet]"/>
+                                        </usercontrols:ucButton.ToolTip>
+                                    </usercontrols:ucButton>
+                                    <usercontrols:ucButton x:Name="xAutoRunButton"  ButtonType="ImageButton" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="CLI"  Click="XAutoRunButton_Click" Margin="5,0,0,0">
+                                        <usercontrols:ucButton.ToolTip>
+                                            <GingerCore:ucTextDicResource Text="Create [RunSet] Auto Run Configuration"/>
+                                        </usercontrols:ucButton.ToolTip>
+                                    </usercontrols:ucButton>
 
-                            <usercontrols:ucButton x:Name="xRunsetSaveBtn"  ButtonType="ImageButton" Visibility="Collapsed"  ButtonFontImageSize="21" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="Save" Click="xRunsetSaveBtn_Click">
-                                <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="Save [RunSet] Changes"/>
-                                </usercontrols:ucButton.ToolTip>
-                            </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xUndoChangesBtn"  ButtonType="ImageButton"  ButtonFontImageSize="20" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="Undo" Click="xUndoChangesBtn_Click">
-                                <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="Undo [RunSet] Changes"/>
-                                </usercontrols:ucButton.ToolTip>
-                            </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xRunsetReportBtn" ButtonType="ImageButton"  ButtonFontImageSize="20" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="Report" Click="xRunsetReportBtn_Click">
-                                <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="Generate [RunSet] Report"/>
-                                </usercontrols:ucButton.ToolTip>
-                            </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xFind" ButtonType="ImageButton"  ButtonFontImageSize="20" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="Search" Click="xFind_Click">
-                                <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="Find in [RunSet]"/>
-                                </usercontrols:ucButton.ToolTip>
-                            </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xAutoRunButton"  ButtonType="ImageButton" ButtonFontImageSize="20" ButtonImageWidth="22" ButtonImageHeight="22" ButtonImageType="CLI"  Click="XAutoRunButton_Click">
-                                <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="Create [RunSet] Auto Run Configuration"/>
-                                </usercontrols:ucButton.ToolTip>
-                            </usercontrols:ucButton>
+                                    <Menu x:Name="xOtherOperationsMenu" Background="Transparent" ToolTip="Extra Operations">
+                                        <MenuItem Cursor="Hand">
+                                            <MenuItem.Header>
+                                                <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16" Width="16" Height="30" Margin="5,5,5,5"/>
+                                            </MenuItem.Header>
+                                            <MenuItem x:Name="xAnalyzerMenuItem" Style="{StaticResource $MenuItemStyle}" Click="analyzerRunset_Click">
+                                                <MenuItem.Icon>
+                                                    <usercontrols:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="14"/>
+                                                </MenuItem.Icon>
+                                                <MenuItem.Header>
+                                                    <GingerCore:ucTextDicResource Text="Analyze [RunSet]" FontSize="12"/>
+                                                </MenuItem.Header>
+                                            </MenuItem>
+                                            <MenuItem x:Name="xExportToAlmBtnMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToAlmBtn_Click">
+                                                <MenuItem.Icon>
+                                                    <usercontrols:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="14"/>
+                                                </MenuItem.Icon>
+                                                <MenuItem.Header>
+                                                    <GingerCore:ucTextDicResource Text="Export Execution Result to ALM" FontSize="12"/>
+                                                </MenuItem.Header>
+                                            </MenuItem>
+                                            <MenuItem x:Name="xReloadRunsetMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRunSetReload_Click">
+                                                <MenuItem.Icon>
+                                                    <usercontrols:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="14"/>
+                                                </MenuItem.Icon>
+                                                <MenuItem.Header>
+                                                    <GingerCore:ucTextDicResource Text="Reload [RunSet]" FontSize="12"/>
+                                                </MenuItem.Header>
+                                            </MenuItem>
+                                        </MenuItem>
+                                    </Menu>
+                                </StackPanel>
 
-                            <Menu x:Name="xOtherOperationsMenu" Background="Transparent" ToolTip="Extra Operations">
-                                <MenuItem Cursor="Hand">
-                                    <MenuItem.Header>
-                                        <usercontrols:ImageMakerControl ImageType="EllipsisH" SetAsFontImageWithSize="16" Width="16" Height="30" Margin="5,5,5,5"/>
-                                    </MenuItem.Header>
-                                    <MenuItem x:Name="xAnalyzerMenuItem" Style="{StaticResource $MenuItemStyle}" Click="analyzerRunset_Click">
-                                        <MenuItem.Icon>
-                                            <usercontrols:ImageMakerControl ImageType="Analyze" SetAsFontImageWithSize="14"/>
-                                        </MenuItem.Icon>
-                                        <MenuItem.Header>
-                                            <GingerCore:ucTextDicResource Text="Analyze [RunSet]" FontSize="12"/>
-                                        </MenuItem.Header>
-                                    </MenuItem>
-                                    <MenuItem x:Name="xExportToAlmBtnMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xExportToAlmBtn_Click">
-                                        <MenuItem.Icon>
-                                            <usercontrols:ImageMakerControl ImageType="Export" SetAsFontImageWithSize="14"/>
-                                        </MenuItem.Icon>
-                                        <MenuItem.Header>
-                                            <GingerCore:ucTextDicResource Text="Export Execution Result to ALM" FontSize="12"/>
-                                        </MenuItem.Header>
-                                    </MenuItem>
-                                    <MenuItem x:Name="xReloadRunsetMenuItem" Style="{StaticResource $MenuItemStyle}" Click="xRunSetReload_Click">
-                                        <MenuItem.Icon>
-                                            <usercontrols:ImageMakerControl ImageType="Refresh" SetAsFontImageWithSize="14"/>
-                                        </MenuItem.Icon>
-                                        <MenuItem.Header>
-                                            <GingerCore:ucTextDicResource Text="Reload [RunSet]" FontSize="12"/>
-                                        </MenuItem.Header>
-                                    </MenuItem>
-                                </MenuItem>
-                            </Menu>
-                        </StackPanel>
+                                <GridSplitter Width="1" Height="25" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Black}" Margin="10 0 10 0"/>
 
-                        <GridSplitter Width="1" Height="25" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="10 0 10 0"/>
-
-                        <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
-                            <usercontrols:ucButton x:Name="xRunRunsetBtn"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
-                                <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="Reset &amp; Run All Runners"/>
-                                </usercontrols:ucButton.ToolTip>
-                            </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xReRunFailedRunsetBtn" Visibility="Collapsed" ButtonType="RoundTextAndImageButton"  ButtonText="ReRunFailed" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xReRunFailedRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="ReRunFailedBtn_MouseEnter" MouseLeave="ReRunFailedBtn_MouseLeave">
-                                <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="ReRun Failed Business Flows"/>
-                                </usercontrols:ucButton.ToolTip>
-                            </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xStopRunsetBtn" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed">
-                                <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="Stop All Runners"/>
-                                </usercontrols:ucButton.ToolTip>
-                            </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xContinueRunsetBtn" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $SelectionColor_Pink}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
-                                <usercontrols:ucButton.ToolTip>
-                                    <GingerCore:ucTextDicResource Text="Continue All Stopped Runners"/>
-                                </usercontrols:ucButton.ToolTip>
-                            </usercontrols:ucButton>
-                            <usercontrols:ucButton x:Name="xResetRunsetBtn" ToolTip="Reset All Runners" ButtonType="ImageButton" ButtonImageType="Reset"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" Click="xResetRunsetBtn_Click"/>
-                        </StackPanel>
-                    </DockPanel>
-                </DockPanel>
-            </ScrollViewer>
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <TextBlock x:Name="xDescriptionTextBlock"  TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Runset Description" VerticalAlignment="Top" HorizontalAlignment="Stretch" FontSize="13" Style="{StaticResource $TextBlockStyle}"/>
-            </ScrollViewer>
-
-
-            <TabControl DockPanel.Dock="Left" SelectionChanged="TabControl_SelectionChanged" x:Name="RunTab" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="2" Grid.Column="1" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_LightGray}"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                <StackPanel x:Name="xExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
+                                    <usercontrols:ucButton x:Name="xRunRunsetBtn"  ButtonType="RoundTextAndImageButton"  ButtonText="Run" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xRunRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
+                                        <usercontrols:ucButton.ToolTip>
+                                            <GingerCore:ucTextDicResource Text="Reset &amp; Run All Runners"/>
+                                        </usercontrols:ucButton.ToolTip>
+                                    </usercontrols:ucButton>
+                                    <usercontrols:ucButton x:Name="xReRunFailedRunsetBtn" Visibility="Collapsed" ButtonType="RoundTextAndImageButton"  ButtonText="ReRunFailed" ButtonImageType="Run"  ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xReRunFailedRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_Execution}" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
+                                        <usercontrols:ucButton.ToolTip>
+                                            <GingerCore:ucTextDicResource Text="ReRun Failed Business Flows"/>
+                                        </usercontrols:ucButton.ToolTip>
+                                    </usercontrols:ucButton>
+                                    <usercontrols:ucButton x:Name="xStopRunsetBtn" ButtonType="RoundTextAndImageButton" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xStopRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_ExecutionStop}" Visibility="Collapsed">
+                                        <usercontrols:ucButton.ToolTip>
+                                            <GingerCore:ucTextDicResource Text="Stop All Runners"/>
+                                        </usercontrols:ucButton.ToolTip>
+                                    </usercontrols:ucButton>
+                                    <usercontrols:ucButton x:Name="xContinueRunsetBtn" ButtonType="RoundTextAndImageButton" ButtonText="Continue" ButtonImageType="Continue" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="xContinueRunsetBtn_Click" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle_SubExecution}" ButtonImageForground="{StaticResource $HighlightColor_LightBlue}" MouseEnter="RunBtn_MouseEnter" MouseLeave="RunBtn_MouseLeave">
+                                        <usercontrols:ucButton.ToolTip>
+                                            <GingerCore:ucTextDicResource Text="Continue All Stopped Runners"/>
+                                        </usercontrols:ucButton.ToolTip>
+                                    </usercontrols:ucButton>
+                                    <usercontrols:ucButton x:Name="xResetRunsetBtn" ToolTip="Reset All Runners" ButtonType="ImageButton" ButtonImageType="Reset"  ButtonFontImageSize="20" ButtonImageWidth="20" ButtonImageHeight="20" Click="xResetRunsetBtn_Click"/>
+                                </StackPanel>
+                            </DockPanel>
+                        </DockPanel>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <TextBlock x:Name="xDescriptionTextBlock" DockPanel.Dock="Left" MaxWidth="500" MaxHeight="40"  TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="5,0,0,0" Text="Runset Description" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="13" Style="{StaticResource $TextBlockStyle}"/>
+                        </ScrollViewer>
+                    </StackPanel>
+                </ScrollViewer>
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                        <GradientStop Color="Gray" Offset="0.5"/>
+                        <GradientStop Color="LightGray" Offset="0.75"/>
+                        <GradientStop Color="White" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+            </Border>
+        
+            <TabControl DockPanel.Dock="Left" SelectionChanged="TabControl_SelectionChanged" x:Name="RunTab" Background="Transparent" Grid.Row="1" Grid.Column="1" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_White}"  VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <TabItem x:Name="xRunnersTab" Style="{StaticResource $CoolTab}" TabIndex="1">
                     <TabItem.Header>
                         <Border x:Name="RunnerBorder" Style="{StaticResource $CoolTabBorderStyle}" >
@@ -164,55 +173,57 @@
                                 <RowDefinition x:Name="xRunnerItemsViewRow" Height="200*" />
                             </Grid.RowDefinitions>
 
-                            <DockPanel x:Name="xRunnersControlPnl" Grid.Row="0" Background="{StaticResource $BackgroundColor_LightGray}" >
-                                <usercontrols:ucButton x:Name="xRunnerDetailViewBtn" Margin="40 0 0 0" ToolTip="Expand / Collapse All Runners" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="CollapseAll" Click="xRunnerDetailView_Click" Visibility="Visible" />
-                                <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="10 0 10 0"/>
-                                <DockPanel x:Name="xRunnersCanvasControls" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_LightGray}">
-                                    <usercontrols:ucButton x:Name="xRunnersActiveBtn" ToolTip="Active / Inactive All Runners" ButtonFontImageSize="14" ButtonImageWidth="17" ButtonImageHeight="17" ButtonType="CircleImageButton" ButtonImageType="ActiveAll" Click="xRunnersActive_Click" />
-                                    <usercontrols:ucButton x:Name="xAddRunnerBtn" ToolTip="Add Runner" ButtonType="CircleImageButton" ButtonFontImageSize="14" ButtonImageWidth="17" ButtonImageHeight="17" ButtonImageType="Add" Click="addRunner_Click"></usercontrols:ucButton>
-                                    <usercontrols:ucButton x:Name="xClearAllRunnerBtn" ToolTip="Delete All Runners" ButtonType="CircleImageButton" ButtonFontImageSize="14" ButtonImageWidth="17" ButtonImageHeight="17"  ButtonImageType="Delete" Click="clearAllRunner_Click"></usercontrols:ucButton>
-                                    <usercontrols:ucButton x:Name="xMoveRunnerLeftBtn" ToolTip="Shift Runner Left" ButtonType="CircleImageButton" ButtonFontImageSize="14" ButtonImageWidth="17" ButtonImageHeight="17"  ButtonImageType="MoveLeft" Click="MoveRunnerLeft_Click" />
-                                    <usercontrols:ucButton x:Name="xMoveRunnerRightBtn" ToolTip="Shift Runner Right" ButtonType="CircleImageButton" ButtonFontImageSize="14" ButtonImageWidth="17" ButtonImageHeight="17"  ButtonImageType="MoveRight" Click="MoveRunnerRight_Click"/>
+                            <DockPanel x:Name="xRunnersControlPnl" Grid.Row="0" Background="Transparent" >
+                                <usercontrols:ucButton x:Name="xRunnerDetailViewBtn" Margin="40 0 0 0" ToolTip="Expand / Collapse All Runners" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="CollapseAll" Click="xRunnerDetailView_Click" Visibility="Visible" />
+                                <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Black}" Margin="10 0 10 0"/>
+                                <DockPanel x:Name="xRunnersCanvasControls" HorizontalAlignment="Left" DockPanel.Dock="Left" Margin="0,0,0,0" Background="Transparent">
+                                    <usercontrols:ucButton x:Name="xRunnersActiveBtn" ToolTip="Active / Inactive All Runners" ButtonFontImageSize="14" ButtonImageWidth="16" ButtonImageHeight="16" ButtonType="CircleImageButton" ButtonImageType="ActiveAll" Click="xRunnersActive_Click" />
+                                    <usercontrols:ucButton x:Name="xAddRunnerBtn" ToolTip="Add Runner" ButtonType="CircleImageButton" ButtonFontImageSize="14" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Add" Click="addRunner_Click"></usercontrols:ucButton>
+                                    <usercontrols:ucButton x:Name="xClearAllRunnerBtn" ToolTip="Delete All Runners" ButtonType="CircleImageButton" ButtonFontImageSize="14" ButtonImageWidth="16" ButtonImageHeight="16"  ButtonImageType="Delete" Click="clearAllRunner_Click"></usercontrols:ucButton>
+                                    <usercontrols:ucButton x:Name="xMoveRunnerLeftBtn" ToolTip="Shift Runner Left" ButtonType="CircleImageButton" ButtonFontImageSize="14" ButtonImageWidth="16" ButtonImageHeight="16"  ButtonImageType="MoveLeft" Click="MoveRunnerLeft_Click" />
+                                    <usercontrols:ucButton x:Name="xMoveRunnerRightBtn" ToolTip="Shift Runner Right" ButtonType="CircleImageButton" ButtonFontImageSize="14" ButtonImageWidth="16" ButtonImageHeight="16"  ButtonImageType="MoveRight" Click="MoveRunnerRight_Click"/>
                                     <z:ZoomPanel x:Name="xZoomPanel"></z:ZoomPanel>
                                 </DockPanel>
-                                <DockPanel x:Name="xRunnersExecutionControls" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="{StaticResource $BackgroundColor_LightGray}" Margin="0,0,-3,0">
-                                    <Label Content="Environment :" x:Name="xEnvironmentCombolbl" Foreground="{StaticResource $BackgroundColor_DarkBlue}" ></Label>
+                                <DockPanel x:Name="xRunnersExecutionControls" HorizontalAlignment="Right" DockPanel.Dock="Right" Background="Transparent" Margin="0,0,-3,0">
+                                    <Label Content="Environment :" x:Name="xEnvironmentCombolbl" Foreground="{StaticResource $BackgroundColor_Black}" ></Label>
                                     <ComboBox x:Name="xRunsetEnvironmentCombo" ToolTip="Environment"  HorizontalAlignment="Left" ContextMenu="{x:Null}" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="0,5,5,3" SelectionChanged="XRunsetEnvironmentCombo_SelectionChanged"></ComboBox>
-                                    <usercontrols:ucButton x:Name="xRunnersExecutionConfigBtn" ToolTip="Runners Execution Configurations" ButtonType="ImageButton" ButtonFontImageSize="18" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Config" Click="xRunnersExecutionConfigBtn_Click"></usercontrols:ucButton>
-                                    <usercontrols:ucButton x:Name="xSelfHealingConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageType="SelfHealing" Click="xSelfHealingConfigBtn_Click"  ToolTip="Self Healing Configurations"/>
+                                    <usercontrols:ucButton x:Name="xRunnersExecutionConfigBtn" ToolTip="Runners Execution Configurations" ButtonType="ImageButton" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Config" Click="xRunnersExecutionConfigBtn_Click" Margin="5,0,0,0"/>
+                                    <usercontrols:ucButton x:Name="xSelfHealingConfigBtn" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="16" ButtonImageType="SelfHealing" Click="xSelfHealingConfigBtn_Click"  ToolTip="Self Healing Configurations" Margin="5,0,0,0"/>
 
-                                    <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="6 0 6 0"/>
-                                    <usercontrols:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Runner Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonFontImageSize="17" ButtonImageWidth="20" ButtonImageHeight="20" ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"></usercontrols:ucButton>
+                                    <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Black}" Margin="6 0 6 0"/>
+                                    <usercontrols:ucButton x:Name="xSelectedItemExecutionSyncBtn" ToolTip="Runner Items Selection is Synced with Execution Progress, Click to Un-Sync it" ButtonType="ImageButton" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="Visible"  Click="xSelectedItemExecutionSyncBtn_Click"></usercontrols:ucButton>
                                 </DockPanel>
                             </DockPanel>
 
-                            <DockPanel Grid.Row="1" Background="White">
-                                <ScrollViewer Name="xRunnersCanvasView" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                                    <Frame Name="xRunnersCanvasFrame" HorizontalAlignment="Stretch"  Background="White"  Margin="0 0 0 0" />
-                                </ScrollViewer>
-                                <DockPanel Name="xRunnersMiniView" HorizontalAlignment="Stretch" Panel.ZIndex="1" VerticalAlignment="Stretch"  Background="{StaticResource $BackgroundColor_LightGray}" Visibility="Collapsed" >
-                                    <ComboBox x:Name="xRunnersCombo" ToolTip="Runners"  Validation.ErrorTemplate="{x:Null}" Width="350" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="40,5,5,3" FontSize="20" FontWeight="Bold" Height="30" Foreground="{StaticResource $SelectionColor_Pink}"></ComboBox>
-                                    <DockPanel HorizontalAlignment="Right" x:Name="xRunnerInfoDocPanel">
-                                        <DockPanel x:Name="xMiniRunnerExecutionPanel">
-                                            <usercontrols:ucButton x:Name="xRunRunnerBtn"  ToolTip="Reset &amp; Run Runner" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Run" Click="xRunRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
-                                            <usercontrols:ucButton x:Name="xStopRunnerBtn" ToolTip="Stop Runner Execution" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Stop" Click="xStopRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
-                                            <usercontrols:ucButton x:Name="xContinueRunnerBtn"  ToolTip="Continue Runner Execution from Last Stopped Action" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xContinueRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
+                            <Border Grid.Row="1" BorderThickness="1" CornerRadius="20" Background="{StaticResource $BackgroundColor_VeryLightGray}" Margin="20,0,20,0">
+                                <DockPanel  Background="Transparent" >
+                                    <ScrollViewer Name="xRunnersCanvasView" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                        <Frame Name="xRunnersCanvasFrame" HorizontalAlignment="Stretch"  Background="Transparent"  Margin="-20 0 0 0" />
+                                    </ScrollViewer>
+                                    <DockPanel Name="xRunnersMiniView" HorizontalAlignment="Stretch" Panel.ZIndex="1" VerticalAlignment="Stretch"  Background="Transparent" Visibility="Collapsed" >
+                                        <ComboBox x:Name="xRunnersCombo" ToolTip="Runners"  Validation.ErrorTemplate="{x:Null}" Width="350" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="40,5,5,3" FontSize="20" FontWeight="Bold" Height="30" Foreground="{StaticResource $SelectionColor_Pink}"></ComboBox>
+                                        <DockPanel HorizontalAlignment="Right" x:Name="xRunnerInfoDocPanel">
+                                            <DockPanel x:Name="xMiniRunnerExecutionPanel">
+                                                <usercontrols:ucButton x:Name="xRunRunnerBtn"  ToolTip="Reset &amp; Run Runner" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Run" Click="xRunRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
+                                                <usercontrols:ucButton x:Name="xStopRunnerBtn" ToolTip="Stop Runner Execution" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Stop" Click="xStopRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
+                                                <usercontrols:ucButton x:Name="xContinueRunnerBtn"  ToolTip="Continue Runner Execution from Last Stopped Action" ButtonType="ImageButton" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15" ButtonImageType="Continue" Click="xContinueRunnerBtn_Click" ButtonStyle="{StaticResource $ImageButtonStyle_Execution}"></usercontrols:ucButton>
+                                            </DockPanel>
+                                            <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_Black}" Margin="12 0 12 0"/>
+                                            <Label x:Name="xRuntimeLbl" Content="00:00:00" Width="90" Height="32" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource $HighlightColor_LightBlue}" />
+                                            <state:StatusItem x:Name="xStatus" Margin="0 2 2 0" HorizontalAlignment="Right" SetStatusIcon="True"></state:StatusItem>
                                         </DockPanel>
-                                        <GridSplitter Width="1" Height="30" HorizontalAlignment="Stretch" Background="{StaticResource $BackgroundColor_DarkBlue}" Margin="12 0 12 0"/>
-                                        <Label x:Name="xRuntimeLbl" Content="00:00:00" Width="90" Height="32" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" Foreground="{StaticResource $SelectionColor_LightBlue}" />
-                                        <state:StatusItem x:Name="xStatus" Margin="0 2 2 0" HorizontalAlignment="Right" SetStatusIcon="True"></state:StatusItem>
                                     </DockPanel>
                                 </DockPanel>
-                            </DockPanel>
-
+                            </Border>
+                            
                             <ScrollViewer Name="xRunnerItemsView" Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                                 <DockPanel>
                                     <Label x:Name="xRunnerNamelbl" DockPanel.Dock="Top" Margin="40 0 0 0" Content="Runner Name"  HorizontalAlignment="Left" FontSize="20" Foreground="{StaticResource $SelectionColor_Pink}" />
-                                    <Grid Name="xRunnerItemsGrid" DockPanel.Dock="Top" Margin="0,5,0,0" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+                                    <Grid Name="xRunnerItemsGrid" DockPanel.Dock="Top" Margin="0,5,0,0" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="615"/>
-                                            <ColumnDefinition Width="615"/>
-                                            <ColumnDefinition Width="615"/>
+                                            <ColumnDefinition Width="615*"/>
+                                            <ColumnDefinition Width="615*"/>
+                                            <ColumnDefinition Width="615*"/>
                                         </Grid.ColumnDefinitions>
                                         <Grid x:Name="xBusinessFlowsRunnerItemsGrid" Grid.Column="0" Margin="10,0,0,0"  >
                                             <Grid.RowDefinitions>
@@ -255,7 +266,7 @@
                                                             <GingerCore:ucTextDicResource Text="Move [BusinessFlow] Down"/>
                                                         </usercontrols:ucButton.ToolTip>
                                                     </usercontrols:ucButton>
-                                                    <usercontrols:ucButton x:Name="xBusinessflowsDetailViewBtn" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="14" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="CollapseAll" Click="xBusinessflowsDetailView_Click" Visibility="Visible" >
+                                                    <usercontrols:ucButton x:Name="xBusinessflowsDetailViewBtn" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="CollapseAll" Click="xBusinessflowsDetailView_Click" Visibility="Visible" >
                                                         <usercontrols:ucButton.ToolTip>
                                                             <GingerCore:ucTextDicResource Text="Expand/Collapse All [BusinessFlows]"/>
                                                         </usercontrols:ucButton.ToolTip>
@@ -264,13 +275,15 @@
                                                 </DockPanel>
                                             </DockPanel>
                                             <usercontrols:ImageMakerControl x:Name="xBusinessflowsRunnerItemsLoadingIcon" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />
-                                            <ListView x:Name="xBusinessflowsRunnerItemsListView" MaxHeight="400" Grid.Row="1" Margin="0 0 10 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" SelectionChanged="xBusinessflowListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
-                                                <ListView.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <StackPanel Orientation="Vertical"></StackPanel>
-                                                    </ItemsPanelTemplate>
-                                                </ListView.ItemsPanel>
-                                            </ListView>
+                                            <Border Grid.Row="1" BorderThickness="1" CornerRadius="20" Background="{StaticResource $BackgroundColor_VeryLightGray}" Margin="20,10,20,10">
+                                                <ListView x:Name="xBusinessflowsRunnerItemsListView" MaxHeight="400"  Margin="10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"  SelectionMode="Single" SelectionChanged="xBusinessflowListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
+                                                    <ListView.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Vertical"></StackPanel>
+                                                        </ItemsPanelTemplate>
+                                                    </ListView.ItemsPanel>
+                                                </ListView>
+                                            </Border>
                                         </Grid>
 
                                         <Grid x:Name="xActivitiesRunnerItemsGrid" Grid.Column="1" Margin="0,0,0,0">
@@ -288,7 +301,7 @@
                                                     </Label>
                                                 </StackPanel>
                                                 <DockPanel HorizontalAlignment="Right" Margin="0 0 10 0">
-                                                    <usercontrols:ucButton x:Name="xActivitiesDetailViewBtn" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="ExpandAll" Click="xActivitiesDetailView_Click" Visibility="Visible" >
+                                                    <usercontrols:ucButton x:Name="xActivitiesDetailViewBtn" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="ExpandAll" Click="xActivitiesDetailView_Click" Visibility="Visible" >
                                                         <usercontrols:ucButton.ToolTip>
                                                             <GingerCore:ucTextDicResource Text="Expand/Collapse All [Activities]"/>
                                                         </usercontrols:ucButton.ToolTip>
@@ -296,16 +309,18 @@
                                                 </DockPanel>
                                             </DockPanel>
                                             <usercontrols:ImageMakerControl x:Name="xActivitiesRunnerItemsLoadingIcon" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />
-                                            <ListView x:Name="xActivitiesRunnerItemsListView" MaxHeight="400" Grid.Row="1" Margin="0 0 10 0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" SelectionChanged="xActivitiesListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
-                                                <ListView.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <StackPanel Orientation="Vertical"></StackPanel>
-                                                    </ItemsPanelTemplate>
-                                                </ListView.ItemsPanel>
-                                            </ListView>
+                                            <Border Grid.Row="1" BorderThickness="1" CornerRadius="20" Background="{StaticResource $BackgroundColor_VeryLightGray}" Margin="20,10,20,10">
+                                                <ListView x:Name="xActivitiesRunnerItemsListView" MaxHeight="400"  Margin="10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" SelectionChanged="xActivitiesListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
+                                                    <ListView.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Vertical"></StackPanel>
+                                                        </ItemsPanelTemplate>
+                                                    </ListView.ItemsPanel>
+                                                </ListView>
+                                            </Border>
                                         </Grid>
 
-                                        <Grid x:Name="xActionsRunnerItemsGrid" Grid.Column="2" Margin="-5,0,0,0">
+                                        <Grid x:Name="xActionsRunnerItemsGrid" Grid.Column="2" Margin="0,0,0,0">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="40" />
                                                 <RowDefinition Height="300*" />
@@ -316,17 +331,19 @@
                                                     <Label x:Name="xActionsName" Margin="5 0 0 0" Height="40" HorizontalAlignment="Left" Content="Actions" FontSize="20" Style="{StaticResource $SubHeaderLabelStyle}" VerticalAlignment="Center"/>
                                                 </StackPanel>
                                                 <DockPanel HorizontalAlignment="Right" Margin="0 0 10 0">
-                                                    <usercontrols:ucButton x:Name="xActionsDetailViewBtn" ToolTip="Expand/Collapse All Actions" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="17" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="ExpandAll" Click="xActionsDetailView_Click" Visibility="Visible" />
+                                                    <usercontrols:ucButton x:Name="xActionsDetailViewBtn" ToolTip="Expand/Collapse All Actions" ButtonType="ImageButton" HorizontalAlignment="Left" ButtonFontImageSize="16" ButtonImageWidth="16" ButtonImageHeight="16" ButtonImageType="ExpandAll" Click="xActionsDetailView_Click" Visibility="Visible" />
                                                 </DockPanel>
                                             </DockPanel>
                                             <usercontrols:ImageMakerControl x:Name="xActionsRunnerItemsLoadingIcon" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Center" Width="60" Height="60" Visibility="Collapsed" />
-                                            <ListView x:Name="xActionsRunnerItemsListView" MaxHeight="400" Margin="0 0 10 0" Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  BorderThickness="0" Background="Transparent"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" SelectionChanged="xActionsListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
-                                                <ListView.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <StackPanel Orientation="Vertical"></StackPanel>
-                                                    </ItemsPanelTemplate>
-                                                </ListView.ItemsPanel>
-                                            </ListView>
+                                            <Border Grid.Row="1" BorderThickness="1" CornerRadius="20" Background="{StaticResource $BackgroundColor_VeryLightGray}" Margin="20,10,20,10">
+                                                <ListView x:Name="xActionsRunnerItemsListView" MaxHeight="400" Margin="10" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  BorderThickness="0" Background="Transparent"  VerticalContentAlignment="Top"  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" SelectionChanged="xActionsListView_SelectionChanged" ItemContainerStyle="{StaticResource $ListViewItemBorderStyle}">
+                                                    <ListView.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Orientation="Vertical"></StackPanel>
+                                                        </ItemsPanelTemplate>
+                                                    </ListView.ItemsPanel>
+                                                </ListView>
+                                            </Border>
                                         </Grid>
                                     </Grid>
                                 </DockPanel>
@@ -369,7 +386,7 @@
                         </Border>
                     </TabItem.Header>
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <DockPanel Grid.Row="0" x:Name="Config" Visibility="Visible" Background="{StaticResource $BackgroundColor_LightGray}" MinHeight="800">
+                        <DockPanel Grid.Row="0" x:Name="Config" Visibility="Visible" Background="Transparent" MinHeight="800">
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                                 <Label Style="{StaticResource $LabelStyle}" Content="Name:"/>
                                 <usercontrols1:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" Margin="0,0,0,0"/>
@@ -401,7 +418,7 @@
                                 <Expander.Header>
                                     <StackPanel Orientation="Horizontal">
                                         <Label Content="Sealights Execution Logger Settings" Style="{StaticResource $HorizontalExpanderLabelStyle}"/>
-                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_DarkBlue}" />
+                                        <usercontrols:ImageMakerControl SetAsFontImageWithSize="16" ToolTip="Enterprise Feature" ImageType="Building"  Width="20" Height="16" Foreground="{StaticResource $BackgroundColor_Black}" />
                                     </StackPanel>
                                 </Expander.Header>
                                 <Expander.Content>

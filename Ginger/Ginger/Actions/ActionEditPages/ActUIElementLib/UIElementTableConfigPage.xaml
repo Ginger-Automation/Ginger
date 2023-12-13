@@ -9,7 +9,7 @@
       d:DesignHeight="430" d:DesignWidth="820"
       Title="TableActionConfigPage">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <Grid Background="{StaticResource $BackgroundColor_LightGray}" x:Name="MainGrid">
+        <Grid Background="{StaticResource $BackgroundColor_White}" x:Name="MainGrid">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="subElementTypeRow" Height="65*"/>  
                 <RowDefinition x:Name="OperationTypeRow" Height="40*"/>
@@ -40,17 +40,17 @@
                     </Grid.ColumnDefinitions>
 
                     <Label HorizontalAlignment="Left" Style="{StaticResource @SubInputFieldLabelStyle}" 
-                           Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0">Sub-element Type</Label>
+                           Background="{StaticResource $BackgroundColor_White}" VerticalAlignment="Center" Grid.Row="0" Grid.Column="0">Sub-element Type</Label>
                     <UserControlsLib:UCComboBox x:Name="SubElementTypeComboBox" Grid.Row="0" Grid.Column="1"/>
 
                     <Label HorizontalAlignment="Left" Style="{StaticResource @SubInputFieldLabelStyle}" 
-                           Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0">Sub Element Action</Label>
+                           Background="{StaticResource $BackgroundColor_White}" VerticalAlignment="Center" Grid.Row="1" Grid.Column="0">Sub Element Action</Label>
                     <UserControlsLib:UCComboBox x:Name="SubElementActionComboBox" Grid.Row="1" Grid.Column="1" />
 
                 </Grid>
             </StackPanel>
 
-            <Label  Grid.Row="1"  HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_LightGray}" 
+            <Label  Grid.Row="1"  HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_White}" 
                     x:Name="OperationLabel" Content="Control Action:" />
             <StackPanel x:Name="ControlActionPanel" Grid.Row="1"  Grid.Column="1" VerticalAlignment="Center">
                 <UserControlsLib:UCComboBox x:Name="ControlActionComboBox" Margin="15" />
@@ -58,7 +58,7 @@
             <Frame x:Name="ControlActionFrame" VerticalAlignment="Center" Grid.Row="1" Grid.Column="2"  Visibility="Visible"/>
             
             <StackPanel Grid.Row="2" Grid.Column="0"  x:Name="ColumnLabelPanel" Visibility="Visible" VerticalAlignment="Center">
-                <Label HorizontalAlignment="Left" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Center">Column:</Label>
+                <Label HorizontalAlignment="Left" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_White}" VerticalAlignment="Center">Column:</Label>
             </StackPanel>
             <StackPanel Grid.Row="2" Grid.Column="1"  x:Name="cmbColSelectorValuePanel" Visibility="Visible"  VerticalAlignment="Center">
                 <UserControlsLib:UCComboBox x:Name="cmbColSelectorValue" Margin="15"/>
@@ -71,7 +71,7 @@
 
 
             <StackPanel Grid.Row="3" Grid.Column="0" x:Name="RowLabelPanel" Visibility="Visible">
-                <Label HorizontalAlignment="Left" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_LightGray}" VerticalAlignment="Top">Row:</Label>
+                <Label HorizontalAlignment="Left" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_White}" VerticalAlignment="Top">Row:</Label>
             </StackPanel>
             <StackPanel Grid.Row="3" Grid.Column="1" x:Name="RowSelectorPanel" Margin="0,0,0,0" Visibility="Visible">               
                 <RadioButton Name="RowNum" Content="Row Number" Checked="RowNum_Checked" Tag="Row Number" Unchecked="RowNum_Unchecked" Margin="0,5,0,5" GroupName="RowSelectorGroup"/>
@@ -111,14 +111,14 @@
             </StackPanel>
 
 
-            <Label  Grid.Row="5" Grid.Column="0" Content="Description:" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_LightGray}"
+            <Label  Grid.Row="5" Grid.Column="0" Content="Description:" Style="{StaticResource @SubInputFieldLabelStyle}" Background="{StaticResource $BackgroundColor_White}"
                     HorizontalAlignment="Stretch" Margin="0,10,0,0" x:Name="DescriptionLabel"/>
             <StackPanel Grid.Row="6" Grid.Column="1" x:Name="DescriptionPanel" Visibility="Visible" Margin="0,10,0,0" Grid.RowSpan="1" Grid.ColumnSpan="3" >
                 <Grid Margin="0,0,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="70"/>
                     </Grid.RowDefinitions>
-                    <DockPanel x:Name="Description" Background="{StaticResource $BackgroundColor_LightGray}" Grid.Row="1" >
+                    <DockPanel x:Name="Description" Background="{StaticResource $BackgroundColor_White}" Grid.Row="1" >
                         <ScrollViewer Background="White">
                             <TextBlock x:Name="txtDescription" TextWrapping="Wrap" Style="{StaticResource @TextBlockStyle}" DockPanel.Dock="Top" Background="#FFEFEFF2" ></TextBlock>
                         </ScrollViewer>

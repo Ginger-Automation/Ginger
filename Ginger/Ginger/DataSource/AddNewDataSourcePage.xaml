@@ -10,7 +10,7 @@
       Height="140" Width="500" MinHeight="140"
 	Title="Config Data Source">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="130"/>
             <ColumnDefinition Width="370"/>
@@ -32,7 +32,7 @@
             <RadioButton VerticalAlignment="Center" x:Name="New" Content="New" Checked="New_Checked"/>
         </StackPanel>
         <Label Content="Data Source Type:" Grid.Row="1" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>       
-        <ComboBox Height="24" x:Name="DSTypeComboBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource @InputComboBoxStyle}"/>
+        <ComboBox Height="24" x:Name="DSTypeComboBox" Grid.Row="1" Grid.Column="1" Style="{StaticResource $FlatInputComboBoxStyle}"/>
 
         <Label Content="Data Source Name:" Grid.Row="2" Grid.Column="0" Style="{StaticResource @InputFieldLabelStyle}"/>
         <TextBox Height="24" x:Name="DSName" Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" ToolTip="Data Source Name" Style="{StaticResource @TextBoxStyle}" TextChanged="DSName_TextChanged"/>

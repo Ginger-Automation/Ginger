@@ -22,12 +22,14 @@ using GingerCore.Actions.Communication;
 using GingerCore.GeneralLib;
 using NUglify.Helpers;
 using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using CheckBox = System.Windows.Controls.CheckBox;
 
 namespace Ginger.Actions.Communication
@@ -48,7 +50,7 @@ namespace Ginger.Actions.Communication
             InitializeXSendEMailConfigView();
 
         }
-
+        string allProperties = string.Empty;
         [MemberNotNull(nameof(mAttachments))]
         private void CreateAttachmentList()
         {
@@ -59,8 +61,8 @@ namespace Ginger.Actions.Communication
             }
 
             mAttachments = new(attachmentFilenames.Split(";", StringSplitOptions.RemoveEmptyEntries).Select(filename => new Attachment(filename)));
-            mAttachments.ForEach(attachment => attachment.PropertyChanged += Attachment_PropertyChanged);
-            mAttachments.CollectionChanged += mAttachments_CollectionChanged;
+            mAttachments.ForEach(attachment => PropertyChangedEventManager.AddHandler(source: attachment, handler: Attachment_PropertyChanged, propertyName: allProperties));
+            CollectionChangedEventManager.AddHandler(source: mAttachments, handler: mAttachments_CollectionChanged);
         }
 
         private void Attachment_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -221,14 +223,18 @@ namespace Ginger.Actions.Communication
 
             xEmailConfigView.xAttachmentsGrid.DataSourceList = mAttachments;
             
-            xEmailConfigView.xFilterFolderAllRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
-            xEmailConfigView.xFilterFolderSpecificRadioButton.Checked += xFilterFolderRadioButton_SelectionChanged;
-            xEmailConfigView.AddFileAttachment += xSendEMailConfigView_FileAdded;
+
             xEmailConfigView.EmailMethodChanged += xSendEMailConfigView_EmailMethodChanged;
-            xEmailConfigView.AttachmentNameVEButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
             xEmailConfigView.ActionTypeChanged += xSendEMailConfigView_ActionTypeChanged;
             xEmailConfigView.HasAttachmentsSelectionChanged += xSendEMailConfigView_HasAttachmentsSelectionChanged;
             xEmailConfigView.ReadmailMethodChanged += xReadEmailConfigView_ReadMethodChanged;            ;
+
+            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xEmailConfigView.xFilterFolderAllRadioButton, eventName: nameof(ToggleButton.Checked), handler: xFilterFolderRadioButton_SelectionChanged);
+            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xEmailConfigView.xFilterFolderSpecificRadioButton, eventName: nameof(ToggleButton.Checked), handler: xFilterFolderRadioButton_SelectionChanged);
+
+            WeakEventManager<UCEmailConfigView, RoutedEventArgs>.AddHandler(source: xEmailConfigView, eventName: nameof(UCEmailConfigView.AddFileAttachment), handler: xSendEMailConfigView_FileAdded);
+            WeakEventManager<UCEmailConfigView, RoutedEventArgs>.AddHandler(source: xEmailConfigView, eventName: nameof(UCEmailConfigView.AttachmentNameVEButtonClick), handler: xSendEMailConfigView_NameValueExpressionButtonClick);
+
         }
 
         private static ComboEnumItem FindComboBoxItem(ComboBox comboBox, Predicate<ComboEnumItem> predicate)

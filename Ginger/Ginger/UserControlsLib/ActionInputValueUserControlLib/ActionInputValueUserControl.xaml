@@ -9,7 +9,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="300">
 
-    <StackPanel Name="PagePanel" Background="{StaticResource $BackgroundColor_LightGray}">
+    <StackPanel Name="PagePanel" Background="{StaticResource $BackgroundColor_White}">
         <!--<Grid.ColumnDefinitions>
             <ColumnDefinition Width="100*"/>
             <ColumnDefinition Width="30"/>

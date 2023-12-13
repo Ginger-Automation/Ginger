@@ -40,6 +40,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace GingerWPF.BusinessFlowsLib
@@ -191,14 +192,14 @@ namespace GingerWPF.BusinessFlowsLib
 
                 mActionsListHelper = new ActionsListViewHelper(mContext, mPageViewMode);
                 mActionsListHelper.ActionListItemEvent += MActionListItemInfo_ActionListItemEvent;
+                
                 mActionsListView.SetDefaultListDataTemplate(mActionsListHelper);
 
                 mActionsListView.ListSelectionMode = SelectionMode.Extended;
 
-                mActionsListView.PreviewDragItem += listActions_PreviewDragItem;
-                mActionsListView.ItemDropped += listActions_ItemDropped;
-
-                mActionsListView.List.MouseDoubleClick += ActionsListView_MouseDoubleClick;
+                WeakEventManager<UcListView, EventArgs>.AddHandler(source: mActionsListView, eventName: nameof(UcListView.PreviewDragItem), handler: listActions_PreviewDragItem);
+                WeakEventManager<UcListView, EventArgs>.AddHandler(source: mActionsListView, eventName: nameof(UcListView.ItemDropped), handler: listActions_ItemDropped);
+                WeakEventManager<Control, MouseButtonEventArgs>.AddHandler(source: mActionsListView.List, eventName: nameof(Control.MouseDoubleClick), handler: ActionsListView_MouseDoubleClick);
 
                 // Enable Virtualization for Actions ListView to improve the loading time/performance
                 mActionsListView.List.SetValue(ScrollViewer.CanContentScrollProperty, true);
@@ -435,7 +436,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void RunBtn_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$SelectionColor_LightBlue");
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
         }
 
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)

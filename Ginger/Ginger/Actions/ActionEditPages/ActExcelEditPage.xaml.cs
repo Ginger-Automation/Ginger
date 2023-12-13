@@ -142,12 +142,12 @@ namespace Ginger.Actions
         }
         private void DisableSheetNameComboBox()
         {
-            SheetNamComboBox.DropDownOpened -= SheetNamComboBox_DropDownOpened;
+            WeakEventManager<ComboBox, EventArgs>.RemoveHandler(source: SheetNamComboBox, eventName: nameof(ComboBox.DropDownOpened), handler: SheetNamComboBox_DropDownOpened);
         }
 
         private void EnableSheetNameComboBox()
         {
-            SheetNamComboBox.DropDownOpened += SheetNamComboBox_DropDownOpened;
+            WeakEventManager<ComboBox, EventArgs>.AddHandler(source: SheetNamComboBox, eventName: nameof(ComboBox.DropDownOpened), handler: SheetNamComboBox_DropDownOpened);
         }
 
         private void ContextProcessInputValueForDriver()

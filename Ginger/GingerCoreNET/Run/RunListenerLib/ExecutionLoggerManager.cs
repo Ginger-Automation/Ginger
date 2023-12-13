@@ -174,7 +174,7 @@ namespace Ginger.Run
         public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
         {
             //ActivityGroupReport AGR = new ActivityGroupReport(activityGroup, mContext.BusinessFlow);
-            object AGR = mExecutionLogger.SetReportActivityGroup(activityGroup, mContext.BusinessFlow, offlineMode);
+            object AGR = mExecutionLogger.SetReportActivityGroup(mContext, activityGroup, mContext.BusinessFlow, offlineMode);
 
             if (!offlineMode)
             {
@@ -402,7 +402,7 @@ namespace Ginger.Run
         // fix
         public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
-            object AR = ((ExecutionLogger)mExecutionLogger).SetReportActivity(activity, mContext, offlineMode, Configuration.ExecutionLoggerConfigurationIsEnabled);
+            object AR = ((ExecutionLogger)mExecutionLogger).SetReportActivity(activity, mContext, ExecutedFrom, offlineMode, Configuration.ExecutionLoggerConfigurationIsEnabled);
 
             if (!offlineMode)
             {
@@ -841,30 +841,8 @@ namespace Ginger.Run
         {
             throw new NotImplementedException();
         }
+     
 
-        public async System.Threading.Tasks.Task PublishToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId)
-        {
-            if (Configuration.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
-            {
-                try
-                {
-                    Reporter.ToLog(eLogLevel.INFO, string.Format("######## Publishing {0} Execution details to central DB", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                    Configuration.IsPublishToCentralDBRunning = true;
-                    
-                    await mExecutionLogger.SendExecutionLogToCentralDBAsync(runsetId, executionId, Configuration.DeleteLocalDataOnPublish);
-                    
-                    Reporter.ToLog(eLogLevel.INFO, string.Format("########################## Execution details Publish to Central DB Completed", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
-                }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception during Send exeuction data to central DB", ex);
-                }
-                finally
-                {
-                    Configuration.IsPublishToCentralDBRunning = false;
-                }
 
-            }
-        }
     }
 }

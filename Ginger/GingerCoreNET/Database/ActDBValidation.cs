@@ -25,6 +25,8 @@ using GingerCore.Actions.Common;
 using GingerCore.Environments;
 using GingerCore.NoSqlBase;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Azure.Cosmos.Linq;
+using Org.BouncyCastle.Bcpg.OpenPgp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -178,6 +180,8 @@ namespace GingerCore.Actions
             }
         }
 
+        internal string QueryValue { get; private set; }
+
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> QueryParams = new ObservableList<ActInputValue>();
 
@@ -198,7 +202,7 @@ namespace GingerCore.Actions
             {
                 try
                 {
-                    if (DB != null && (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase || DB.DBType == Database.eDBTypes.MongoDb || DB.DBType == Database.eDBTypes.CosmosDb))
+                    if (DB != null && (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase || DB.DBType == Database.eDBTypes.MongoDb || DB.DBType == Database.eDBTypes.CosmosDb || DB.DBType == Database.eDBTypes.Hbase))
                     {
                         return eDatabaseTye.NoSQL;
                     }
@@ -331,7 +335,7 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateInputParamValue("SQL", GetInputParamValue("Value"));
             }
-
+           
             if (SetDBConnection() == false)
             {
                 return;//Failed to find the DB in the Environment
@@ -405,8 +409,19 @@ namespace GingerCore.Actions
                         NoSqlDriver = new GingerCosmos(DBValidationType, DB, this);
                     }
                     break;
+                case Database.eDBTypes.Hbase:
+                    
+                    if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerHbase))
+                    {
+                        NoSqlDriver = new GingerHbase(DBValidationType, DB, this);
+                    }
+                    else
+                    {
+                        NoSqlDriver.Action= DBValidationType;                        
+                    }
+                    break;
             }
-            GetSqlValueFromFilePath();
+            QueryValue = GetSQLQuery();
             NoSqlDriver.MakeSureConnectionIsOpen();
             NoSqlDriver.PerformDBAction();
         }
@@ -508,7 +523,7 @@ namespace GingerCore.Actions
             this.AddOrUpdateReturnParamActual(Column, val);
         }
 
-        private void GetSqlValueFromFilePath()
+        private string GetSQLQuery()
         {
             if (GetInputParamValue(ActDBValidation.Fields.QueryTypeRadioButton) == ActDBValidation.eQueryType.SqlFile.ToString())
             {
@@ -516,18 +531,23 @@ namespace GingerCore.Actions
                 string filePath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(GetInputParamCalculatedValue(ActDBValidation.Fields.QueryFile));
 
                 FileInfo scriptFile = new FileInfo(filePath);
-                SQL = scriptFile.OpenText().ReadToEnd();
+                return scriptFile.OpenText().ReadToEnd();
+            }
+            else
+            {
+                return GetInputParamCalculatedValue(Fields.SQL);
             }
         }
 
         private void FreeSQLHandler()
         {
             int? queryTimeout = Timeout;
-            string calcSQL = GetInputParamCalculatedValue("SQL");
+            QueryValue = GetSQLQuery();
+            //TODO: Instead of using calcSQL, we can use QueryValue directly. Need verify that it wouldn't cause any issue in parallel execution.
+            string calcSQL = QueryValue;
             string ErrorString = string.Empty;
             try
             {
-                GetSqlValueFromFilePath();
                 if (string.IsNullOrEmpty(calcSQL))
                 {
                     this.Error = "Fail to run Free SQL: " + Environment.NewLine + calcSQL + Environment.NewLine + "Error= Missing SQL Query.";

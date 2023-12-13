@@ -43,8 +43,11 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
+using GingerCoreNET.Application_Models;
+using Amdocs.Ginger.CoreNET.Application_Models;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 {
@@ -125,8 +128,9 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
                 xModelsGlobalParamsGrid.ShowUpDown = Visibility.Collapsed;
                 xModelsGlobalParamsGrid.Grid.CanUserDeleteRows = false;
 
-                xModelsGlobalParamsGrid.Grid.BeginningEdit += grdMain_BeginningEdit;
-                xModelsGlobalParamsGrid.Grid.CellEditEnding += grdMain_CellEditEndingAsync;
+                WeakEventManager<DataGrid, DataGridBeginningEditEventArgs>.AddHandler(source: xModelsGlobalParamsGrid.Grid, eventName: nameof(DataGrid.BeginningEdit), handler: grdMain_BeginningEdit);
+                WeakEventManager<DataGrid, DataGridCellEditEndingEventArgs>.AddHandler(source: xModelsGlobalParamsGrid.Grid, eventName: nameof(DataGrid.CellEditEnding), handler: grdMain_CellEditEndingAsync);
+                
             }
 
 
@@ -447,7 +451,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         private void AddGlobalParam(object sender, RoutedEventArgs e)
         {
             GlobalAppModelParameter newModelGlobalParam = new GlobalAppModelParameter();
-            SetUniquePlaceHolderName(newModelGlobalParam);
+            ModelParamUtils.SetUniquePlaceHolderName(newModelGlobalParam);
 
             string newParamPlaceholder = newModelGlobalParam.PlaceHolder;
 
@@ -484,58 +488,12 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
             {
 
                 GlobalAppModelParameter newCopyGlobalParam = (GlobalAppModelParameter)param.CreateCopy();
-                SetUniquePlaceHolderName(newCopyGlobalParam, true);
+                ModelParamUtils.SetUniquePlaceHolderName(newCopyGlobalParam, true);
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newCopyGlobalParam);
             }
         }
 
-        public void SetUniquePlaceHolderName(GlobalAppModelParameter newModelGlobalParam, bool isCopy = false)
-        {
-            if (isCopy)
-            {
-                newModelGlobalParam.PlaceHolder = newModelGlobalParam.PlaceHolder + "_Copy";
-            }
-            else
-            {
-                newModelGlobalParam.PlaceHolder = "{NewGlobalParameter}";
-            }
-
-            if (mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder) == null)
-            {
-                return;
-            }
-
-            List<GlobalAppModelParameter> samePlaceHolderList = mModelsGlobalParamsList.Where(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder).ToList<GlobalAppModelParameter>();
-            if (samePlaceHolderList.Count == 1 && samePlaceHolderList[0] == newModelGlobalParam)
-            {
-                return; //Same internal object
-            }
-
-            //Set unique name
-            if (isCopy)
-            {
-                if ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder)) != null)
-                {
-                    int counter = 2;
-                    while ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == newModelGlobalParam.PlaceHolder + counter)) != null)
-                    {
-                        counter++;
-                    }
-
-                    newModelGlobalParam.PlaceHolder = newModelGlobalParam.PlaceHolder + counter;
-                }
-            }
-            else
-            {
-                int counter = 2;
-                while ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == "{NewGlobalParameter_" + counter.ToString() + "}")) != null)
-                {
-                    counter++;
-                }
-
-                newModelGlobalParam.PlaceHolder = "{NewGlobalParameter_" + counter.ToString() + "}";
-            }
-        }
+       
 
         private void DeleteSelectedEvent(object sender, RoutedEventArgs e)
         {
@@ -659,13 +617,15 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
         {
             Button selectBtn = new Button();
             selectBtn.Content = "Select";
-            selectBtn.Click += new RoutedEventHandler(selectBtn_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: selectBtn, eventName: nameof(ButtonBase.Click), handler: selectBtn_Click);
+            
             ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(selectBtn);
 
             xModelsGlobalParamsGrid.ShowToolsBar = Visibility.Collapsed;
             xModelsGlobalParamsGrid.Grid.IsReadOnly = true;
-            xModelsGlobalParamsGrid.Grid.MouseDoubleClick += selectBtn_Click;
+            WeakEventManager<Control, RoutedEventArgs>.AddHandler(source: xModelsGlobalParamsGrid.Grid, eventName: nameof(Control.MouseDoubleClick), handler: selectBtn_Click);
+            
 
             GenericWindow.LoadGenericWindow(ref mGenericWindow, null, windowStyle, "Add Global Parameter", this, winButtons, true, "Cancel", CloseWinClicked);
 

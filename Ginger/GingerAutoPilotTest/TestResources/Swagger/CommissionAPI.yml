@@ -1,0 +1,1022 @@
+openapi: 3.0.0
+info:
+  description: Commission Service (RSN)
+  version: 1.0.0
+  title: Commission Service (RSN)
+  contact:
+    email: it@cashbot.cz
+tags:
+  - name: commission
+    description: API methods for commissions
+  - name: subject
+    description: API methods for subjects
+  - name: subject module
+    description: API methods for subjects    
+  - name: account
+    description: API methods for accounts
+  - name: module
+    description: API methods for modules
+  - name: event
+    description: API methods for events
+  - name: settlement
+    description: API methods for settlements
+paths:
+  /commission/type/list:
+    get:
+      tags:
+        - commission
+      summary: Get commission type list
+      operationId: commissionTypeList
+      responses:
+        '200':
+          description: Commission types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommissionType'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - ApiKeyAuth: []
+  /subject/new:
+    post:
+      tags:
+        - subject
+      summary: Create new subject
+      operationId: subjectNew
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subject'
+        description: Subject
+        required: true
+      responses:
+        '200':
+          description: Subject
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - ApiKeyAuth: []
+  /subject/update:
+    post:
+      tags:
+        - subject
+      summary: Update subject
+      operationId: subjectUpdate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subject'
+        description: Subject
+        required: true
+      responses:
+        '200':
+          description: Subject
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Non-existing subject
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'                
+                
+      security:
+        - ApiKeyAuth: []        
+  /subject/detail/{subjectId}:
+    get:
+      tags:
+        - subject
+      summary: Get subject detail
+      operationId: subjectDetail
+      parameters:
+        - name: subjectId
+          in: path
+          description: Subject ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Subject
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Non-existing subject
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'                
+                
+      security:
+        - ApiKeyAuth: []
+  /subject/list:
+    get:
+      tags:
+        - subject
+      summary: Get subjects
+      operationId: subjectList
+      responses:
+        '200':
+          description: Subjects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subject'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - ApiKeyAuth: []                
+  /subject/delete/{subjectId}:
+    delete:
+      tags:
+        - subject
+      summary: Delete subject
+      operationId: subjectDelete
+      parameters:
+        - name: subjectId
+          in: path
+          description: Subject ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Deleted subject
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subject'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Non-existing subject
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'                
+      security:
+        - ApiKeyAuth: []
+  /account/new:
+    post:
+      tags:
+        - account
+      summary: Create new account
+      operationId: accountNew
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+        description: Account
+        required: true
+      responses:
+        '200':
+          description: Account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - ApiKeyAuth: []
+  /account/update:
+    post:
+      tags:
+        - account
+      summary: Update account
+      operationId: accountUpdate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+        description: Account
+        required: true
+      responses:
+        '200':
+          description: Account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Non-existing account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'                
+      security:
+        - ApiKeyAuth: []        
+  /account/detail/{accountId}:
+    get:
+      tags:
+        - account
+      summary: Get account detail
+      operationId: accountDetail
+      parameters:
+        - name: accountId
+          in: path
+          description: Account ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Non-existing account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'                
+                
+      security:
+        - ApiKeyAuth: []
+  /account/list:
+    get:
+      tags:
+        - account
+      summary: Get accounts
+      operationId: accountList
+      responses:
+        '200':
+          description: Accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - ApiKeyAuth: []               
+  /account/delete/{accountId}:
+    delete:
+      tags:
+        - account
+      summary: Delete account
+      operationId: accountDelete
+      parameters:
+        - name: accountId
+          in: path
+          description: Account ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Deleted account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Non-existing account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'                
+                
+      security:
+        - ApiKeyAuth: []
+  /module/list:
+    get:
+      tags:
+        - module
+      summary: Get module list
+      operationId: moduleList
+      responses:
+        '200':
+          description: Modules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Module'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - ApiKeyAuth: []        
+  /event/type/list:
+    get:
+      tags:
+        - event
+      summary: Get event type list
+      operationId: eventTypeList
+      responses:
+        '200':
+          description: Event types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventType'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - ApiKeyAuth: []
+  /event/new:
+    post:
+      tags:
+        - event
+      summary: Create new event
+      operationId: eventNew
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+        description: Event
+        required: true
+      responses:
+        '200':
+          description: Processed event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - ApiKeyAuth: []
+  /event/detail/{eventId}:
+    get:
+      tags:
+        - event
+      summary: Get event detail
+      operationId: eventDetail
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Non-existing event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'                
+                
+      security:
+        - ApiKeyAuth: []
+  /event/list/{subjectId}:
+    get:
+      tags:
+        - event
+      summary: Get events
+      operationId: eventList
+      parameters:
+        - name: subjectId
+          in: path
+          description: Subject ID
+          required: true
+          schema:
+            type: string
+            format: uuid           
+      responses:
+        '200':
+          description: Events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - ApiKeyAuth: []               
+  /event/delete/{eventId}:
+    delete:
+      tags:
+        - event
+      summary: Delete event
+      operationId: eventDelete
+      parameters:
+        - name: eventId
+          in: path
+          description: Event ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Deleted event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Non-existing event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'                
+                
+      security:
+        - ApiKeyAuth: []        
+  /settlement/new:
+    post:
+      tags:
+        - settlement
+      summary: Create new settlement
+      operationId: settlementNew
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Settlement'
+        description: Settlement
+        required: true
+      responses:
+        '200':
+          description: Settlement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settlement'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - ApiKeyAuth: []
+  /settlement/detail/{settlementId}:
+    get:
+      tags:
+        - settlement
+      summary: Get settlement detail
+      operationId: settlementDetail
+      parameters:
+        - name: settlementId
+          in: path
+          description: Settlement ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Settlement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settlement'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Non-existing settlement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settlement'                
+      security:
+        - ApiKeyAuth: []        
+  /settlement/list/{accountId}:
+    get:
+      tags:
+        - settlement
+      summary: Get settlements
+      operationId: settlementList
+      parameters:
+        - name: accountId
+          in: path
+          description: Account ID
+          required: true
+          schema:
+            type: string
+            format: uuid           
+      responses:
+        '200':
+          description: Settlements
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Settlement'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - ApiKeyAuth: []                      
+  /settlement/delete/{settlementId}:
+    delete:
+      tags:
+        - settlement
+      summary: Delete settlement
+      operationId: settlementDelete
+      parameters:
+        - name: settlementId
+          in: path
+          description: Settlement ID
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Deleted settlement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settlement'
+        '400':
+          description: Business error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Non-existing settlement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settlement'                
+                
+      security:
+        - ApiKeyAuth: []                
+servers:
+  - url: https://service.cashbot.cz/commission/1.0.0
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    CommissionType:
+      type: object
+      description: Commission type
+      properties:
+        commissionTypeId:
+          description: Commission type ID
+          type: string
+          format: uuid
+          example: ace57c29-855a-47b8-a229-59171fd1b196
+        code:
+          description: Code
+          type: string
+          example: SalesCommission
+        name:
+          description: Name
+          type: string
+          example: Sales commission
+        unit:
+          $ref: '#/components/schemas/Unit'
+    Unit:
+      type: object
+      description: Unit
+      properties:
+        unitId:
+          description: Unit ID
+          type: string
+          format: uuid
+          example: e719fef5-cac0-4224-a3a7-4fbe9d38aa5c
+        code:
+          description: Code
+          type: string
+          example: EUR
+        name:
+          description: Name
+          type: string
+          example: Euro
+    Subject:
+      type: object
+      description: Subject
+      properties:
+        subjectId:
+          description: Subject ID
+          type: string
+          format: uuid
+          example: e017a5b8-6a87-4d4f-bc79-61d98b630490
+        name:
+          description: Subject name
+          type: string
+          example: Commission subject
+    Account:
+      type: object
+      description: Account
+      properties:
+        accountId:
+          description: Account ID
+          type: string
+          format: uuid
+          example: 7e37cdc4-2fab-40e7-a6d5-d6f53e30e761
+        name:
+          description: Account name
+          type: string
+          example: Red Stone Now s.r.o.
+        parentAccount:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/Account'
+    Module:
+      type: object
+      description: Module
+      properties:
+        moduleId:
+          description: Module ID
+          type: string
+          format: uuid
+          example: 86486c2a-6493-49b6-b16c-ab579bd55319
+        code:
+          description: Module code
+          type: string
+          example: PercentCommission
+        name:
+          description: Module name
+          type: string
+          example: Percent commission
+    EventType:
+      type: object
+      description: Event type
+      properties:
+        eventTypeId:
+          description: Event type ID
+          type: string
+          format: uuid
+          example: 1d76c754-868e-4d29-ad75-e1b913f1ae19
+        code:
+          description: Event code
+          type: string
+          example: OrderApproved
+        name:
+          description: Event name
+          type: string
+          example: Order approved
+    Event:
+      type: object
+      description: Event
+      properties:
+        eventId:
+          description: Event ID
+          type: string
+          format: uuid
+          example: 1094a550-db80-4f7e-a8d9-81d77cf75a31
+        commissionType:
+          $ref: '#/components/schemas/CommissionType'
+        date:
+          description: Date
+          type: string
+          format: date-time
+          example: 2023-01-01
+        subject:
+          $ref: '#/components/schemas/Subject'
+        type:
+          $ref: '#/components/schemas/EventType'
+        modules:
+          type: array
+          items:
+            $ref: '#/components/schemas/Module'          
+        parameters:
+          type: array
+          items:
+            $ref: '#/components/schemas/EventParameter'
+    EventParameter:
+      type: object
+      description: Event parameter
+      properties:
+        code:
+          description: Parameter code
+          type: string
+          example: Amount
+        value:
+          $ref: '#/components/schemas/TypeValue'
+    TypeValue:
+      type: object
+      description: Type value
+      properties:
+        type:
+          description: Value type
+          type: string
+          enum: 
+          - boolean
+          - integer
+          - decimal
+          - string
+          - date
+          - uuid
+          example: boolean
+        valueBoolean:
+          description: Item boolean value
+          type: boolean
+          nullable: true
+          example: true  
+        valueInteger:
+          description: Item integer value
+          type: integer
+          format: int64
+          nullable: true
+          example: 10
+        valueDecimal:
+          description: Item decimal value
+          type: number
+          format: decimal
+          nullable: true
+          example: 10.5
+        valueString:
+          description: Item string value
+          type: string
+          nullable: true
+          example: Text
+        valueDate:
+          description: Item date value
+          type: string
+          format: date-time
+          nullable: true
+          example: 2021-01-01  
+        valueUuid:
+          description: Item uuid value
+          type: string
+          format: uuid
+          nullable: true
+          example: 28d4e455-ba0e-4885-b1d4-1ec842baf5e3        
+    Settlement:
+      type: object
+      description: Settlement
+      properties:
+        settlementId:
+          description: Settlement ID
+          type: string
+          format: uuid
+          example: 14535e31-82b6-45b9-a2d3-8fdc650f1968
+        commissionType:
+          $ref: '#/components/schemas/CommissionType'
+        fromDate:
+          description: From date
+          type: string
+          format: date-time
+          example: 2023-01-01
+        toDate:
+          description: To date
+          type: string
+          format: date-time
+          example: 2023-12-31
+        close:
+          description: Close settlement
+          type: boolean
+          default: false
+        status:
+          description: Settlement status
+          type: string
+          enum: 
+          - processing
+          - completed
+          default: processing
+        settlementAccount:
+          $ref: '#/components/schemas/SettlementAccount'
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'            
+    SettlementAccount:
+      type: object
+      description: Settlement account
+      properties:
+        account:
+          $ref: '#/components/schemas/Account'
+        outcome:
+          $ref: '#/components/schemas/Outcome'     
+        settlementModules:
+          type: array
+          items:
+            $ref: '#/components/schemas/SettlementModule'          
+        childSettlementAccounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/SettlementAccount'              
+    SettlementModule:
+      type: object
+      description: Settlement module
+      properties:
+        module:
+          $ref: '#/components/schemas/Module'
+        outcome:
+          $ref: '#/components/schemas/Outcome'
+        settlementSubjects:
+          type: array
+          items:
+            $ref: '#/components/schemas/SettlementSubject'                    
+    SettlementSubject:
+      type: object
+      description: Settlement subject
+      properties:
+        date:
+          description: Date
+          type: string
+          format: date-time
+          example: 2023-01-01
+        subject:
+          $ref: '#/components/schemas/Subject'
+        outcome:
+          $ref: '#/components/schemas/Outcome'                         
+    Outcome:
+      type: object
+      description: Outcome
+      properties:
+        amount:
+          description: Amount
+          type: number
+          format: decimal
+          example: 10000
+        totalAmount:
+          description: Total amount
+          type: number
+          format: decimal
+          example: 100000
+        maximalAmount:
+          description: Maximal amount
+          type: number
+          format: decimal
+          example: 500000
+        commission:
+          $ref: '#/components/schemas/Commission'
+    Commission:
+      type: object
+      description: Commission
+      properties:
+        amount:
+          description: Amount
+          type: number
+          format: decimal
+          example: 800
+        totalAmount:
+          description: Total amount
+          type: number
+          format: decimal
+          example: 1000          
+        bonus:
+          $ref: '#/components/schemas/Bonus'
+    Bonus:
+      type: object
+      description: Bonus
+      properties:
+        amount:
+          description: Amount
+          type: number
+          format: decimal
+          example: 200
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/BonusItem'   
+    BonusItem:
+      type: object
+      description: Bonus item
+      properties:
+        name:
+          description: Name
+          type: string
+          example: Bonus 5%
+        amount:
+          description: Amount
+          type: number
+          format: decimal
+          example: 200
+    Error:
+      type: object
+      description: API error
+      properties:
+        errorCode:
+          description: Error code
+          type: string
+          example: CannotProcess
+        errorUniqueId:
+          description: Error unique ID
+          type: string
+          example: 2420BF19D35D41878764A2E60A349900
+        errorDescription:
+          description: Error description
+          type: string
+          nullable: true
+          example: Cannot process identification

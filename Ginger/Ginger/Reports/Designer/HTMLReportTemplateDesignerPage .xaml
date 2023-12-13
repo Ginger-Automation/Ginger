@@ -20,7 +20,7 @@
 
         <TabControl Grid.Row="1">
 
-            <TabItem Header="Preview">
+            <TabItem Header="Preview" Style="{StaticResource $RoundedTab}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="123*"/>
@@ -46,7 +46,7 @@
 
             </TabItem>
 
-            <TabItem Header="Design" Visibility="Collapsed">
+            <TabItem Header="Design" Visibility="Collapsed" Style="{StaticResource $RoundedTab}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="74*"/>
@@ -58,7 +58,7 @@
             </TabItem>
 
 
-            <TabItem Header="Advanced">
+            <TabItem Header="Advanced" Style="{StaticResource $RoundedTab}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="11*"/>

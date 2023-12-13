@@ -144,7 +144,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         }
         public void SetReportData(RepositoryItemBase item)
         { }
-        public string SetStatus<T>(List<T> reportColl)
+        public string SetStatus<T>(IEnumerable<T> reportColl)
         {
             if (reportColl.Any(rp => (rp as LiteDbReportBase).RunStatus.Equals(eRunStatus.Stopped.ToString())))
             {
@@ -237,6 +237,17 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             ChildPassedItemsCount = new Dictionary<string, int>();
         }
 
+        public void SetAllIterationElementsRecursively(bool value)
+        {
+            foreach(LiteDbRunner runner in RunnersColl)
+            {
+                if(runner != null)
+                {
+                    runner.SetAllIterationElementsRecursively(value);
+                }    
+            }
+        }
+
         internal void SetReportData(RunSetReport runSetReport)
         {
             Seq = runSetReport.Seq;
@@ -263,12 +274,29 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         [FieldParamsIsSelected(true)]
         public List<string> ApplicationAgentsMappingList { get; set; }
 
+        public bool AllIterationElements { get; set; }
+
         [FieldParams]
         [FieldParamsNameCaption("BusinessFlows")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public List<LiteDbBusinessFlow> BusinessFlowsColl { get; set; }
+        public IReadOnlyList<LiteDbBusinessFlow> BusinessFlowsColl
+        {
+            get
+            {
+                if(AllIterationElements || !AllBusinessFlowsColl.Any())
+                {
+                    return AllBusinessFlowsColl;
+                }
+                else
+                {
+                    return AllBusinessFlowsColl.GroupBy(b => b.InstanceGUID).Select(group => group.Last()).OrderBy(b => b.Seq).ToList().AsReadOnly();
+                }
+            }
+        }
+
+        public List<LiteDbBusinessFlow> AllBusinessFlowsColl { get; set; }
 
         [FieldParams]
         [FieldParamsNameCaption("ChildExecutableItemsCount")]
@@ -292,10 +320,22 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         public Dictionary<string, int> ChildPassedItemsCount { get; set; }
         public LiteDbRunner()
         {
-            BusinessFlowsColl = new List<LiteDbBusinessFlow>();
+            AllBusinessFlowsColl = new List<LiteDbBusinessFlow>();
             ChildExecutableItemsCount = new Dictionary<string, int>();
             ChildExecutedItemsCount = new Dictionary<string, int>();
             ChildPassedItemsCount = new Dictionary<string, int>();
+        }
+
+        public void SetAllIterationElementsRecursively(bool value)
+        {
+            AllIterationElements = value;
+            foreach (LiteDbBusinessFlow businessFlow in BusinessFlowsColl)
+            {
+                if (businessFlow != null)
+                {
+                    businessFlow.SetAllIterationElementsRecursively(value);
+                }
+            }
         }
 
         internal void SetReportData(GingerReport gingerReport)
@@ -335,12 +375,29 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         [FieldParamsIsSelected(true)]
         public List<string> SolutionVariablesAfterExec { get; set; }
 
+        public bool AllIterationElements { get; set; }
+
         [FieldParams]
         [FieldParamsNameCaption("Activities")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public List<LiteDbActivity> ActivitiesColl { get; set; }
+        public IReadOnlyList<LiteDbActivity> ActivitiesColl
+        {
+            get
+            {
+                if(AllIterationElements || !AllActivitiesColl.Any())
+                {
+                    return AllActivitiesColl;
+                }
+                else
+                {
+                    return AllActivitiesColl.GroupBy(a => a.GUID).Select(group => group.Last()).OrderBy(a => a.Seq).ToList();
+                }
+            }
+        }
+
+        public List<LiteDbActivity> AllActivitiesColl { get; set; }
 
         [FieldParams]
         [FieldParamsNameCaption("ActivitiesGroups")]
@@ -376,16 +433,45 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
         public Dictionary<string, int> ChildPassedItemsCount { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID 2")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID2 { get; set; }
+
         public LiteDbBusinessFlow()
         {
             ActivitiesGroupsColl = new List<LiteDbActivityGroup>();
-            ActivitiesColl = new List<LiteDbActivity>();
+            AllActivitiesColl = new List<LiteDbActivity>();
             ChildExecutableItemsCount = new Dictionary<string, int>();
             ChildExecutedItemsCount = new Dictionary<string, int>();
             ChildPassedItemsCount = new Dictionary<string, int>();
         }
+
+        public void SetAllIterationElementsRecursively(bool value)
+        {
+            AllIterationElements = value;
+            foreach (LiteDbActivity activity in ActivitiesColl)
+            {
+                if (activity != null)
+                {
+                    activity.SetAllIterationElementsRecursively(value);
+                }
+            }
+        }
+
         public void SetReportData(BusinessFlowReport bfReport)
         {
+            AllIterationElements = bfReport.AllIterationElements;
             this.Seq = bfReport.Seq;
             this.GUID = Guid.Parse(bfReport.GUID);
             InstanceGUID = bfReport.InstanceGUID;
@@ -402,6 +488,9 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             SolutionVariablesBeforeExec = bfReport.SolutionVariablesBeforeExec;
             SolutionVariablesAfterExec = bfReport.SolutionVariablesAfterExec;
             BFFlowControlDT = bfReport.BFFlowControls;
+            ExternalID = bfReport.ExternalID;
+            ExternalID2 = bfReport.ExternalID2;
+
         }
     }
 
@@ -421,22 +510,67 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         [FieldParamsIsSelected(true)]
         public string AutomationPrecentage { get; set; }
 
+        public bool AllIterationElements { get; set; }
+
         [FieldParams]
         [FieldParamsNameCaption("Activities")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public List<LiteDbActivity> ActivitiesColl { get; set; }
+        public IReadOnlyList<LiteDbActivity> ActivitiesColl
+        {
+            get
+            {
+                if(AllIterationElements || !AllActivitiesColl.Any())
+                {
+                    return AllActivitiesColl;
+                }
+                else
+                {
+                    return AllActivitiesColl.GroupBy(a => a.GUID).Select(group => group.Last()).OrderBy(a => a.Seq).ToList();
+                }
+            }
+        }
+
+        public List<LiteDbActivity> AllActivitiesColl { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID 2")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID2 { get; set; }
+
 
         public LiteDbActivityGroup()
         {
-            ActivitiesColl = new List<LiteDbActivity>();
+            AllActivitiesColl = new List<LiteDbActivity>();
+        }
+
+        public void SetAllIterationElementsRecursively(bool value)
+        {
+            AllIterationElements = value;
+            foreach (LiteDbActivity activity in ActivitiesColl)
+            {
+                if (activity != null)
+                {
+                    activity.SetAllIterationElementsRecursively(value);
+                }
+            }
         }
 
         internal void SetReportData(ActivityGroupReport agReport)
         {
             //this.Seq = businessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1;
             //this.ExecutionLogFolder = executionLogFolder + bf.ExecutionLogFolder;
+            AllIterationElements = agReport.AllIterationElements;
             Seq = agReport.Seq;
             GUID = Guid.Parse(agReport.GUID);
             Name = agReport.Name;
@@ -447,6 +581,8 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             Elapsed = agReport.Elapsed;
             this.RunStatus = agReport.RunStatus;
             ExecutedActivitiesGUID = agReport.ExecutedActivitiesGUID;
+            ExternalID = agReport.ExternalID;
+            ExternalID2 = agReport.ExternalID2;
         }
     }
     public class LiteDbActivity : LiteDbReportBase
@@ -458,12 +594,29 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         [FieldParamsIsSelected(true)]
         public string ActivityGroupName { get; set; }
 
+        public bool AllIterationElements { get; set; }
+
         [FieldParams]
         [FieldParamsNameCaption("Actions")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
-        public List<LiteDbAction> ActionsColl { get; set; }
+        public IReadOnlyList<LiteDbAction> ActionsColl
+        {
+            get
+            {
+                if (AllIterationElements || !AllActionsColl.Any())
+                {
+                    return AllActionsColl;
+                }
+                else
+                {
+                    return AllActionsColl.GroupBy(a => a.GUID).Select(group => group.Last()).OrderBy(a => a.Seq).ToList();
+                }
+            }
+        }
+
+        public List<LiteDbAction> AllActionsColl { get; set; }
 
         [FieldParams]
         [FieldParamsNameCaption("ChildExecutableItemsCount")]
@@ -493,13 +646,34 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         [FieldParamsIsSelected(true)]
         public string ErrorDetails { get; set; }
 
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID { get; set; }
+
+        [FieldParams]
+        [FieldParamsNameCaption("Mapped ALM Entity ID 2")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string ExternalID2 { get; set; }
+
+
         public LiteDbActivity()
         {
-            ActionsColl = new List<LiteDbAction>();
+            AllActionsColl = new List<LiteDbAction>();
+        }
+
+        public void SetAllIterationElementsRecursively(bool value)
+        {
+            AllIterationElements = value;
         }
 
         public void SetReportData(ActivityReport activityReport)
         {
+            AllIterationElements = activityReport.AllIterationElements;
             Seq = activityReport.Seq;
             GUID = Guid.Parse(activityReport.GUID);
             Name = activityReport.ActivityName;
@@ -511,6 +685,8 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             RunStatus = activityReport.RunStatus;
             VariablesAfterExec = activityReport.VariablesAfterExec;
             VariablesBeforeExec = activityReport.VariablesBeforeExec;
+            ExternalID = activityReport.ExternalID;
+            ExternalID2 = activityReport.ExternalID2;
         }
     }
 
@@ -590,6 +766,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
 
         }
+
         public void SetReportData(ActionReport actionReport)
         {
             Seq = actionReport.Seq;

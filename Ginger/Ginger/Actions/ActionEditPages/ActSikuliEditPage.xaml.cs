@@ -26,6 +26,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
 namespace Ginger.Actions
@@ -66,8 +67,9 @@ namespace Ginger.Actions
             JavaPathTextBox.Init(Context.GetAsContext(actSikuli.Context), actSikuli.GetOrCreateInputParam(nameof(ActSikuli.CustomJavaPath)));
 
 
-            xPatternImageLocationTextBox.ValueTextBox.TextChanged -= ValueTextBox_TextChanged;
-            xPatternImageLocationTextBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
+            WeakEventManager<TextBoxBase, TextChangedEventArgs>.RemoveHandler(source: xPatternImageLocationTextBox.ValueTextBox, eventName: nameof(TextBoxBase.TextChanged), handler: ValueTextBox_TextChanged);
+            WeakEventManager<TextBoxBase, TextChangedEventArgs>.AddHandler(source: xPatternImageLocationTextBox.ValueTextBox, eventName: nameof(TextBoxBase.TextChanged), handler: ValueTextBox_TextChanged);
+
             xPatternImageLocationTextBox.ValueTextBox.Text = actSikuli.PatternPath;
 
             if (!string.IsNullOrEmpty(actSikuli.PatternSimilarity))

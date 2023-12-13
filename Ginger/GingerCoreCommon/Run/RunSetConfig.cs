@@ -498,9 +498,11 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
             }
             return false;
         }
-              
+
 
         [IsSerializedForLocalRepository]
         public ReRunConfig ReRunConfigurations = new ReRunConfig();
+
+        public bool AllowInterActivityFlowControls { get; set; } = true;
     }
 }

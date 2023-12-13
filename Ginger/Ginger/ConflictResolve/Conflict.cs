@@ -119,8 +119,8 @@ namespace Ginger.ConflictResolve
         public Conflict(string conflictPath)
         {
             Path = conflictPath;
-            _localItem = null!;
-            _remoteItem = null!;
+            _localItem = SourceControlIntegration.GetLocalItemFromConflict(WorkSpace.Instance.SourceControl, Path);
+            _remoteItem = SourceControlIntegration.GetRemoteItemFromConflict(WorkSpace.Instance.SourceControl, Path);
             _comparison = null!;
             _canResolve = CalculateCanResolve();
             RelativePath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(Path);
@@ -138,9 +138,6 @@ namespace Ginger.ConflictResolve
         private void LoadComparison()
         {
             _isComparisonLoaded = true;
-
-            _localItem = SourceControlIntegration.GetLocalItemFromConflict(WorkSpace.Instance.SourceControl, Path);
-            _remoteItem = SourceControlIntegration.GetRemoteItemFromConflict(WorkSpace.Instance.SourceControl, Path);
             _comparison = SourceControlIntegration.CompareConflictedItems(_localItem, _remoteItem);
             _comparison.PropertyChanged += (_, args) =>
             {

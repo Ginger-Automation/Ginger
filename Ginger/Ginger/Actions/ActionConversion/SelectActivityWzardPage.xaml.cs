@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
 using Ginger.UserControls;
@@ -23,6 +24,7 @@ using GingerCore;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Ginger.Actions.ActionConversion
@@ -65,7 +67,7 @@ namespace Ginger.Actions.ActionConversion
             ActionConversionUtils utils = new ActionConversionUtils();
             ObservableList<Activity> lst = utils.GetConvertableActivitiesFromBusinessFlow(mWizard.Context.BusinessFlow);
             xGrdGroups.DataSourceList = lst;
-            xGrdGroups.RowChangedEvent += grdGroups_RowChangedEvent;
+            WeakEventManager<ucGrid, EventArgs>.AddHandler(source: xGrdGroups, eventName: nameof(ucGrid.RowChangedEvent), handler: grdGroups_RowChangedEvent);    
             xGrdGroups.Title = "Convert " + GingerDicser.GetTermResValue(eTermResKey.Activities);
             xGrdGroups.MarkUnMarkAllActive += MarkUnMarkAllActivities;
             xGrdGroups.ValidationRules = new List<ucGrid.eUcGridValidationRules>()

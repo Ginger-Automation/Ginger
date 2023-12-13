@@ -24,10 +24,9 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Environments;
+using LiteDB;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
-using static Ginger.Reports.ExecutionLoggerConfiguration;
 
 namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 {
@@ -45,7 +44,6 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public BusinessFlow mCurrentBusinessFlow;
         public Activity mCurrentActivity;
         // uint meventtime;
-        public IValueExpression mVE;
         public ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
         ProjEnvironment mExecutionEnvironment = null;
 
@@ -118,15 +116,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             {
                 AR.Seq = context.Activity.ExecutionLogActionCounter;
             }
-            if ((action.RunDescription != null) && (action.RunDescription != string.Empty))
-            {
-                if (mVE == null)
-                {
-                    mVE = new GingerCore.ValueExpression(context.Environment, context.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
-                }
-                mVE.Value = action.RunDescription;
-                AR.RunDescription = mVE.ValueCalculated;
-            }
+
+            AR.RunDescription = ConvertValueExpressionToString(context.Environment , context.BusinessFlow , action.RunDescription);
             return AR;
         }
         internal ActivityReport GetActivityReportData(Activity activity, Context context, bool offlineMode)
@@ -134,44 +125,29 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             ActivityReport AR = new ActivityReport(activity);
             AR.Seq = context.BusinessFlow.ExecutionLogActivityCounter;
             AR.VariablesBeforeExec = activity.VariablesBeforeExec;
-
-            if ((activity.RunDescription != null) && (activity.RunDescription != string.Empty))
-            {
-                if (mVE == null)
-                {
-                    mVE = new GingerCore.ValueExpression(context.Environment, context.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
-
-                }
-                mVE.Value = activity.RunDescription;
-                AR.RunDescription = mVE.ValueCalculated;
-            }
+            AR.RunDescription = ConvertValueExpressionToString(context.Environment , context.BusinessFlow, activity.RunDescription);
             return AR;
         }
-        internal ActivityGroupReport GetAGReportData(ActivitiesGroup activityGroup, BusinessFlow businessFlow)
+        internal ActivityGroupReport GetAGReportData(ActivitiesGroup activityGroup, IContext context)
         {
-            ActivityGroupReport AGR = new ActivityGroupReport(activityGroup, businessFlow);
-            AGR.Seq = businessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1;
-            AGR.ExecutionLogFolder = ExecutionLogfolder + businessFlow.ExecutionLogFolder;
+            ActivityGroupReport AGR = new (activityGroup, context.BusinessFlow);
+            AGR.Seq = context.BusinessFlow.ActivitiesGroups.IndexOf(activityGroup) + 1;
+            AGR.ExecutionLogFolder = ExecutionLogfolder + context.BusinessFlow.ExecutionLogFolder;
+            AGR.ExternalID = ConvertValueExpressionToString(context.Environment, context.BusinessFlow, activityGroup.ExternalID);
+
             return AGR;
         }
         internal BusinessFlowReport GetBFReportData(BusinessFlow businessFlow, ProjEnvironment environment)
         {
             BusinessFlowReport BFR = new BusinessFlowReport(businessFlow);
             BFR.VariablesBeforeExec = businessFlow.VariablesBeforeExec;
-
             BFR.SolutionVariablesBeforeExec = businessFlow.SolutionVariablesBeforeExec;
             BFR.Seq = this.ExecutionLogBusinessFlowsCounter;
-            if (!string.IsNullOrEmpty(businessFlow.RunDescription))
-            {
-                if (mVE == null)
-                {
-                    mVE = new GingerCore.ValueExpression(environment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
-                }
-                mVE.Value = businessFlow.RunDescription;
-                BFR.RunDescription = mVE.ValueCalculated;
-            }
+            BFR.RunDescription = ConvertValueExpressionToString(environment, businessFlow, businessFlow.RunDescription );
+            BFR.ExternalID = ConvertValueExpressionToString( environment, businessFlow , businessFlow.ExternalID);
             return BFR;
         }
+
         //public static object LoadObjFromJSonFile(string FileName, Type t)
         //{
         //    return JsonLib.LoadObjFromJSonFile(FileName, t, mJsonSerializer);
@@ -182,10 +158,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         //    return JsonLib.LoadObjFromJSonString(str, t, mJsonSerializer);
         //}
 
-        public abstract object SetReportActivity(Activity activity, Context context, bool offlineMode = false, bool isConfEnable = false);
+        public abstract object SetReportActivity(Activity activity, Context context, eExecutedFrom executedFrom = eExecutedFrom.Run, bool offlineMode = false, bool isConfEnable = false);
 
-        public abstract object SetReportBusinessFlow(Context context, bool offlineMode = false, Amdocs.Ginger.Common.eExecutedFrom executedFrom = eExecutedFrom.Run, bool isConfEnable = false);
-        public abstract object SetReportActivityGroup(ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false);
+        public abstract object SetReportBusinessFlow(Context context, bool offlineMode = false, eExecutedFrom executedFrom = eExecutedFrom.Run, bool isConfEnable = false);
+        public abstract object SetReportActivityGroup(IContext context, ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode = false);
         public virtual void SetReportRunner(GingerExecutionEngine gingerRunner, GingerReport gingerReport, ParentGingerData gingerData, Context mContext, string filename, int runnerCount)
         {
             if (gingerRunner == null)
@@ -241,8 +217,24 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         public abstract string GetLogFolder(string folder);
 
 
-        public abstract Task<bool> SendExecutionLogToCentralDBAsync(LiteDB.ObjectId runsetId, Guid executionId, eDeleteLocalDataOnPublish deleteLocalData);
 
         public abstract string CalculateExecutionJsonData(LiteDBFolder.LiteDbRunSet liteDbRunSet, HTMLReportConfiguration reportTemplate);
+
+        protected static string ConvertValueExpressionToString(ProjEnvironment environment, BusinessFlow businessFlow , string ValueExpresionString)
+        {
+            if (string.IsNullOrEmpty(ValueExpresionString))
+            {
+                IValueExpression mVE = new GingerCore.ValueExpression(environment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false)
+                {
+                    Value = ValueExpresionString
+                };
+
+                return mVE.ValueCalculated;
+            }
+
+
+            return string.Empty;
+        }
+        public abstract void DeleteLocalData(string logFolder, ObjectId runsetId, Guid executionId);
     }
 }

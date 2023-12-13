@@ -56,13 +56,13 @@ namespace Ginger
 
         private void tagStack_MouseLeave(object sender, MouseEventArgs e)
         {
-            tagStack.Background = (Brush)FindResource("$SelectionColor_VeryLightBlue");
+            xTagBorder.BorderBrush = (Brush)FindResource("$BackgroundColor_DarkGray");
             closeImage.Visibility = Visibility.Collapsed;
         }
 
         private void tagStack_MouseEnter(object sender, MouseEventArgs e)
         {
-            tagStack.Background = (Brush)FindResource("$SelectionColor_Pink");
+            xTagBorder.BorderBrush = (Brush)FindResource("$SelectionColor_Pink");
             closeImage.Visibility = Visibility.Visible;
         }
     }

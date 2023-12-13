@@ -17,26 +17,43 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
+using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Ginger.AnalyzerLib.RunSetConfigAnalyzer;
 
 namespace Ginger.AnalyzerLib
 {
-    class RunSetConfigAnalyzer : AnalyzerItemBase
+    public class RunSetConfigAnalyzer : AnalyzerItemBase
     {
+        public enum Check : uint
+        {
+            All = ~0u,
+            None = 0u,
+            NoRunners = 1 << 0,
+            DuplicateAgents = 1 << 1,
+            BusinessFlowVariablesAreValid = 1 << 2,
+        }
+
         public RunSetConfig RunSetConfig { get; set; }
 
-        public static List<AnalyzerItemBase> Analyze(RunSetConfig RSC)
+        public static List<AnalyzerItemBase> Analyze(RunSetConfig runSetConfig, Check checks = Check.All)
         {
-            List<AnalyzerItemBase> IssuesList = new List<AnalyzerItemBase>();
+            return Analyze(runSetConfig, solution: null, checks);
+        }
+
+        public static List<AnalyzerItemBase> Analyze(RunSetConfig RSC, Solution solution, Check checks = Check.All)
+        {
+            List<AnalyzerItemBase> IssuesList = new();
             // check that we have Runners
-            if (!RSC.GingerRunners.Any())
+            if (checks.AreAllFlagsSet(Check.NoRunners) && !RSC.GingerRunners.Any())
             {
                 RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
                 AGR.Description = "Missing Runners";
@@ -50,7 +67,7 @@ namespace Ginger.AnalyzerLib
             }
 
             //check we do not have duplicates Agents
-            if (RSC.RunModeParallel)
+            if (checks.AreAllFlagsSet(Check.DuplicateAgents) && RSC.RunModeParallel)
             {
                 List<Guid> Agents = new List<Guid>();
                 foreach (GingerRunner GR in RSC.GingerRunners)
@@ -96,59 +113,65 @@ namespace Ginger.AnalyzerLib
             }
 
             //check all configured mapped data still valid
-            foreach (GingerRunner GR in RSC.GingerRunners)
+            if (checks.AreAllFlagsSet(Check.BusinessFlowVariablesAreValid))
             {
-                foreach (BusinessFlow bf in GR.Executor.BusinessFlows)
+                foreach (GingerRunner GR in RSC.GingerRunners)
                 {
-                    List<VariableBase> inputVars = bf.GetBFandActivitiesVariabeles(true).ToList();
-                    List<VariableBase> optionalVariables = null;
-                    List<VariableBase> optionalOutputVariables = null;
-                    foreach (VariableBase inputVar in inputVars)
+                    foreach (BusinessFlow bf in GR.Executor.BusinessFlows)
                     {
-                        bool issueExist = false;
-                        Guid mappedGuid = Guid.Empty;
-                        switch (inputVar.MappedOutputType)
+                        List<VariableBase> inputVars = bf.GetBFandActivitiesVariabeles(true).ToList();
+                        List<VariableBase> optionalVariables = null;
+                        List<VariableBase> optionalOutputVariables = null;
+                        foreach (VariableBase inputVar in inputVars)
                         {
-                            case VariableBase.eOutputType.Variable:
-                                if (optionalVariables == null)
-                                {
-                                    optionalVariables = ((GingerExecutionEngine)GR.Executor).GetPossibleOutputVariables(RSC, bf, includeGlobalVars: true, includePrevRunnersVars: false);
-                                }
-                                issueExist = optionalVariables.FirstOrDefault(x => x.Name == inputVar.MappedOutputValue) == null;
-                                break;
-                            case VariableBase.eOutputType.OutputVariable:
-                                if (optionalOutputVariables == null)
-                                {
-                                    optionalOutputVariables = ((GingerExecutionEngine)GR.Executor).GetPossibleOutputVariables(RSC, bf, includeGlobalVars: false, includePrevRunnersVars: true);
-                                }
-                                issueExist = optionalOutputVariables.FirstOrDefault(x => x.VariableInstanceInfo == inputVar.MappedOutputValue) == null;
-                                break;
-                            case VariableBase.eOutputType.GlobalVariable:
-                                Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
-                                issueExist = WorkSpace.Instance.Solution.Variables.FirstOrDefault(x => x.Guid == mappedGuid) == null;
-                                break;
-                            case VariableBase.eOutputType.ApplicationModelParameter:
-                                Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
-                                issueExist = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<GlobalAppModelParameter>(mappedGuid) == null;
-                                break;
-                            case VariableBase.eOutputType.DataSource:
-                                issueExist = string.IsNullOrEmpty(inputVar.MappedOutputValue);
-                                break;
-                        }
+                            bool issueExist = false;
+                            Guid mappedGuid = Guid.Empty;
+                            switch (inputVar.MappedOutputType)
+                            {
+                                case VariableBase.eOutputType.Variable:
+                                    if (optionalVariables == null)
+                                    {
+                                        optionalVariables = ((GingerExecutionEngine)GR.Executor).GetPossibleOutputVariables(RSC, bf, includeGlobalVars: true, includePrevRunnersVars: false);
+                                    }
+                                    issueExist = optionalVariables.FirstOrDefault(x => x.Name == inputVar.MappedOutputValue) == null;
+                                    break;
+                                case VariableBase.eOutputType.OutputVariable:
+                                    if (optionalOutputVariables == null)
+                                    {
+                                        optionalOutputVariables = ((GingerExecutionEngine)GR.Executor).GetPossibleOutputVariables(RSC, bf, includeGlobalVars: false, includePrevRunnersVars: true);
+                                    }
+                                    issueExist = optionalOutputVariables.FirstOrDefault(x => x.VariableInstanceInfo == inputVar.MappedOutputValue) == null;
+                                    break;
+                                case VariableBase.eOutputType.GlobalVariable:
+                                    if (solution != null)
+                                    {
+                                        Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
+                                        issueExist = solution.Variables.FirstOrDefault(x => x.Guid == mappedGuid) == null;
+                                    }
+                                    break;
+                                case VariableBase.eOutputType.ApplicationModelParameter:
+                                    Guid.TryParse(inputVar.MappedOutputValue, out mappedGuid);
+                                    issueExist = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<GlobalAppModelParameter>(mappedGuid) == null;
+                                    break;
+                                case VariableBase.eOutputType.DataSource:
+                                    issueExist = string.IsNullOrEmpty(inputVar.MappedOutputValue);
+                                    break;
+                            }
 
-                        if (issueExist)
-                        {
-                            //create error
-                            RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
-                            AGR.ItemParent = GR.Name;
-                            AGR.Description = string.Format("Configured input {0} data mapping from type '{1}' is missing", GingerDicser.GetTermResValue(eTermResKey.Variable), inputVar.MappedOutputType);
-                            AGR.Details = string.Format("In '{0}' Runner, '{1}' {2}, the configured input {3} '{4}' data mapping from type '{5}' and value '{6}' is missing", GR.Name, bf.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Variable), inputVar.Name, inputVar.MappedOutputType, inputVar.MappedOutputValue);
-                            AGR.HowToFix = string.Format("Re-configure the missing input {0} data mapping", GingerDicser.GetTermResValue(eTermResKey.Variable));
-                            AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;
-                            AGR.IssueType = eType.Error;
-                            AGR.Impact = "Execution might fail due to wrong data mapping";
-                            AGR.Severity = eSeverity.High;
-                            AGR.Selected = false;
+                            if (issueExist)
+                            {
+                                //create error
+                                RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
+                                AGR.ItemParent = GR.Name;
+                                AGR.Description = string.Format("Configured input {0} data mapping from type '{1}' is missing", GingerDicser.GetTermResValue(eTermResKey.Variable), inputVar.MappedOutputType);
+                                AGR.Details = string.Format("In '{0}' Runner, '{1}' {2}, the configured input {3} '{4}' data mapping from type '{5}' and value '{6}' is missing", GR.Name, bf.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.Variable), inputVar.Name, inputVar.MappedOutputType, inputVar.MappedOutputValue);
+                                AGR.HowToFix = string.Format("Re-configure the missing input {0} data mapping", GingerDicser.GetTermResValue(eTermResKey.Variable));
+                                AGR.CanAutoFix = AnalyzerItemBase.eCanFix.No;
+                                AGR.IssueType = eType.Error;
+                                AGR.Impact = "Execution might fail due to wrong data mapping";
+                                AGR.Severity = eSeverity.High;
+                                AGR.Selected = false;
+                            }
                         }
                     }
                 }

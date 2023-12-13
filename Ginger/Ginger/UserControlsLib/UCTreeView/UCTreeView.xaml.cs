@@ -18,9 +18,12 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.ConflictResolve;
 using GingerWPF.DragDropLib;
+using GingerWPF.TreeViewItemsLib;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -223,9 +226,15 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         // TODO: remove temp code after cleanup 
         public TreeViewItem AddItem(ITreeViewItem item, TreeViewItem Parent = null)
         {
-            TreeViewItem TVI = new TreeViewItem();
-            TVI.Tag = item;
-            TVI.Header = item.Header();
+            TreeViewItem TVI = new()
+            {
+                Tag = item,
+                Header = item.Header()
+            };
+            if (item is NewTreeViewItemBase newTreeViewItem)
+            {
+                newTreeViewItem.TreeViewItem = TVI;
+            }
             if (Parent == null)
             {
                 Tree.Items.Add(TVI);
@@ -254,22 +263,23 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         private void TVI_Expanded(object? sender, RoutedEventArgs e)
         {
             TreeViewItem treeViewItem = (TreeViewItem)e.Source;
+            Mouse.OverrideCursor = Cursors.Wait;
             _ = LoadChildItems(treeViewItem);
+            Mouse.OverrideCursor = null;
         }
 
         private async Task LoadChildItems(TreeViewItem treeViewItem)
         {
-            Mouse.OverrideCursor = Cursors.Wait;
-
-            RemoveDummyNode(treeViewItem);
-            SetRepositoryFolderIsExpanded(treeViewItem, isExpanded: true);
-            await SetTreeNodeItemChilds(treeViewItem);
-            GingerCore.General.DoEvents();
-            // remove the handler as expand data is cached now on tree
-            WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_Expanded);
-            WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_ExtraExpanded);
-
-            Mouse.OverrideCursor = null;
+            bool hadDummyNode = TryRemoveDummyNode(treeViewItem);
+            if (hadDummyNode)
+            {
+                SetRepositoryFolderIsExpanded(treeViewItem, isExpanded: true);
+                await SetTreeNodeItemChilds(treeViewItem);
+                GingerCore.General.DoEvents();
+                // remove the handler as expand data is cached now on tree
+                WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_Expanded);
+                WeakEventManager<TreeViewItem, RoutedEventArgs>.AddHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_ExtraExpanded);
+            }
         }
 
         private void TVI_Collapsed(object? sender, RoutedEventArgs e)
@@ -338,7 +348,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                             mSetTreeNodeItemChildsEvent.Set();
                             if (tviChildNodesLoadTaskMap.ContainsKey(TVI))
                             {
-                                tviChildNodesLoadTaskMap.Remove(TVI);
+                                tviChildNodesLoadTaskMap[TVI] = setChildItemsTask;
+                            }
+                            else
+                            {
+                                tviChildNodesLoadTaskMap.Add(TVI, setChildItemsTask);
                             }
                         }
                         catch(Exception ex)
@@ -346,7 +360,6 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                             Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
                         }
                     });
-                    tviChildNodesLoadTaskMap.Add(TVI, setChildItemsTask);
                 }
             }
 
@@ -400,15 +413,18 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             return false;
         }
 
-        private void RemoveDummyNode(TreeViewItem node)
+        private bool TryRemoveDummyNode(TreeViewItem node)
         {
             if (node.Items.Count > 0)
             {
-                if (((TreeViewItem)node.Items[0]).Header.ToString().IndexOf("DUMMY") >= 0)
+                string? header = ((TreeViewItem)node.Items[0]).Header.ToString();
+                if (header != null && header.IndexOf("DUMMY") >= 0)
                 {
                     node.Items.Clear();
+                    return true;
                 }
             }
+            return false;
         }
 
         public void RefreshSelectedTreeNodeChildrens(object sender, System.Windows.RoutedEventArgs e)
@@ -445,7 +461,6 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (TVI != null)
             {
                 TVI.Items.Clear();
-                SetTreeNodeItemChilds(TVI);
                 TVI.IsExpanded = true;
             }
         }
@@ -1230,7 +1245,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             else
             {
                 Tree.BorderThickness = new Thickness(0);
-                Tree.BorderBrush = FindResource("$Color_DarkBlue") as Brush;
+                Tree.BorderBrush = FindResource("$PrimaryColor_Black") as Brush;
             }
 
             return validationRes;

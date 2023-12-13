@@ -8,7 +8,7 @@
       d:DesignHeight="300" d:DesignWidth="300"
       Title="NewSolutionNameFolderWizardPage">
 
-    <Grid Background="{StaticResource $BackgroundColor_LightGray}">
+    <Grid Background="{StaticResource $BackgroundColor_White}">
         <StackPanel>
                 <Label Style="{StaticResource @InputFieldLabelStyle}">Solution Name:</Label>
                 <TextBox x:Name="SolutionNameTextBox" AutomationProperties.AutomationId="QA-SolutionNameTextBox" Style="{StaticResource @TextBoxStyle}" FontWeight="Bold"/>

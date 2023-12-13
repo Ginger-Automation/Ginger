@@ -21,7 +21,9 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
+using Amdocs.Ginger.CoreNET.Application_Models;
 using Amdocs.Ginger.Repository;
+using Ginger;
 using Ginger.ApplicationModelsLib.APIModels;
 using Ginger.ApplicationModelsLib.ModelOptionalValue;
 using Ginger.SolutionWindows.TreeViewItems;
@@ -33,6 +35,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -61,10 +64,10 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             InitModelParametersGrid();
             InitGlobalModelParametersGrid();
-
-            mApplicationModel.AppModelParameters.CollectionChanged += LocalParameters_CollectionChanged;
+            CollectionChangedEventManager.AddHandler(source: mApplicationModel.AppModelParameters, handler: LocalParameters_CollectionChanged);
+            
             UpdateLocalParametersGridHeader();
-            mApplicationModel.GlobalAppModelParameters.CollectionChanged += GloablParameters_CollectionChanged;
+            CollectionChangedEventManager.AddHandler(source: mApplicationModel.GlobalAppModelParameters, handler: GloablParameters_CollectionChanged);
             UpdateGlobalParametersGridHeader();
         }
 
@@ -85,8 +88,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             if (xGlobalModelParametersGrid.Grid != null)
             {
-                xGlobalModelParametersGrid.Grid.BeginningEdit += grdGlobalParams_BeginningEdit;
-                xGlobalModelParametersGrid.Grid.CellEditEnding += grdGlobalParams_CellEditEnding;
+                WeakEventManager<DataGrid, DataGridBeginningEditEventArgs>.AddHandler(source: xGlobalModelParametersGrid.Grid, eventName: nameof(DataGrid.BeginningEdit), handler: grdGlobalParams_BeginningEdit);
+                 WeakEventManager<DataGrid, DataGridCellEditEndingEventArgs>.AddHandler(source: xGlobalModelParametersGrid.Grid, eventName: nameof(DataGrid.CellEditEnding), handler: grdGlobalParams_CellEditEnding);
             }
 
             xGlobalModelParametersGrid.DataSourceList = APIGlobalParamList;
@@ -314,7 +317,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             WorkSpace.Instance.SolutionRepository.AddRepositoryItem(globalAppModelParameter);
 
-            AddGlobalParametertoAPIGlobalParameterList(mApplicationModel.GlobalAppModelParameters, globalAppModelParameter);
+            ModelParamUtils.AddGlobalParametertoAPIGlobalParameterList(mApplicationModel.GlobalAppModelParameters, globalAppModelParameter);
         }
 
         private void AddGlobalParam(object sender, RoutedEventArgs e)
@@ -325,7 +328,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             {
                 foreach (GlobalAppModelParameter GAMP in globalParamsToAdd)
                 {
-                    AddGlobalParametertoAPIGlobalParameterList(APIGlobalParamList, GAMP);
+                    ModelParamUtils.AddGlobalParametertoAPIGlobalParameterList(APIGlobalParamList, GAMP);
                 }
             }
         }
@@ -389,24 +392,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
             APIModelBodyNodeSyncPage bodyNodeSyncPage;
             bodyNodeSyncPage = new APIModelBodyNodeSyncPage((ApplicationAPIModel)mApplicationModel, paramList);
             bodyNodeSyncPage.ShowAsWindow();
-        }
-
-        private void AddGlobalParametertoAPIGlobalParameterList(ObservableList<GlobalAppModelParameter> APIGlobalParamList, GlobalAppModelParameter GAMP)
-        {
-            GlobalAppModelParameter newAPIGlobalParam = new GlobalAppModelParameter();
-            newAPIGlobalParam.Guid = GAMP.Guid;
-            newAPIGlobalParam.CurrentValue = GAMP.CurrentValue;
-            newAPIGlobalParam.PlaceHolder = GAMP.PlaceHolder;
-            newAPIGlobalParam.Description = GAMP.Description;
-            foreach (OptionalValue ov in GAMP.OptionalValuesList)
-            {
-                OptionalValue newOV = new OptionalValue();
-                newOV.Guid = ov.Guid;
-                newOV.Value = ov.Value;
-                newOV.IsDefault = ov.IsDefault;
-                newAPIGlobalParam.OptionalValuesList.Add(newOV);
-            }
-            APIGlobalParamList.Add(newAPIGlobalParam);
         }
 
         private void RefreshGlobalParameters(object sender, RoutedEventArgs e)

@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
 namespace Ginger.ApplicationModelsLib.POMModels
@@ -79,8 +80,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ContainingFolder), Header = "Folder", WidthWeight = 100, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(POMBindingObjectHelper.ItemName), Header = "Name", WidthWeight = 150, AllowSorting = true, BindingMode = BindingMode.OneWay, ReadOnly = true });
-            xGridPOMListItems.btnAdd.Click -= BtnAdd_Click;
-            xGridPOMListItems.btnAdd.Click += BtnAdd_Click;
+            WeakEventManager<ButtonBase, RoutedEventArgs>.RemoveHandler(source: xGridPOMListItems.btnAdd, eventName: nameof(ButtonBase.Click), handler: BtnAdd_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: xGridPOMListItems.btnAdd, eventName: nameof(ButtonBase.Click), handler: BtnAdd_Click);
+
             xGridPOMListItems.SetAllColumnsDefaultView(view);
             xGridPOMListItems.InitViewItems();
             PomModels = new ObservableList<POMBindingObjectHelper>();
@@ -108,7 +110,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mItemTypeRootNode.SetTools(mApplicationPOMSelectionPage.xTreeView);
                 mApplicationPOMSelectionPage.xTreeView.SetTopToolBarTools(appModelFolder.SaveAllTreeFolderItemsHandler, appModelFolder.AddPOM, RefreshTreeItems);
 
-                mApplicationPOMSelectionPage.SelectionDone += MAppModelSelectionPage_SelectionDone;
+                WeakEventManager<SingleItemTreeViewSelectionPage, SelectionTreeEventArgs>.AddHandler(source: mApplicationPOMSelectionPage, eventName: nameof(SingleItemTreeViewSelectionPage.SelectionDone), handler: MAppModelSelectionPage_SelectionDone);
             }
 
             List<object> selectedPOMs = mApplicationPOMSelectionPage.ShowAsWindow(ownerWindow: OwnerWindow);

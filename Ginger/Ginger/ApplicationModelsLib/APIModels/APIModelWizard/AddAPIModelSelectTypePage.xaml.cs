@@ -20,12 +20,14 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib;
+using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
 using Amdocs.Ginger.Repository;
 using DocumentFormat.OpenXml.Drawing;
 using Ginger.UserControls;
 using GingerWPF.ApplicationModelsLib.APIModels;
 using GingerWPF.ApplicationModelsLib.APIModels.APIModelWizard;
 using GingerWPF.WizardLib;
+using NPOI.HPSF;
 using System;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
@@ -242,6 +244,15 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
 
                 xURLTextBox.Text = string.Empty;
 
+                if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString())
+                {
+                    SupportNote.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    SupportNote.Visibility = Visibility.Collapsed;
+                }
+
                 if (URLRadioButton.IsChecked == true)
                 {
                     if (APITypeComboBox.SelectedValue.ToString() == eAPIType.Swagger.ToString() || (string.IsNullOrEmpty(xURLTextBox.Text) && APITypeComboBox.SelectedValue.ToString() == eAPIType.WSDL.ToString()))
@@ -274,6 +285,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 xBrowseLoadButton.Visibility = Visibility.Collapsed;
                 xPreviewButton.Visibility = Visibility.Collapsed;
                 XMLTemplatesLable.Visibility = Visibility.Visible;
+                SupportNote.Visibility = Visibility.Collapsed;
                 BrowseButtonClicked(new object(), new RoutedEventArgs());
 
                 xURLTextBox.ClearValidations(TextBox.TextProperty);
@@ -427,7 +439,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 {
                     System.Windows.Forms.OpenFileDialog dlg2 = new System.Windows.Forms.OpenFileDialog();
 
-                    dlg2.Filter = "JSON Files (*.json)|*.json" + "|YAML Files (*.yaml)|*.yaml;*.yml" + "|All Files (*.*)|*.*";
+                    dlg2.Filter = "JSON Files (*.json)|*.json|YAML Files (*.yaml, *.yml)|*.yaml;*.yml|All Files (*.*)|*.*";
 
                     System.Windows.Forms.DialogResult result = dlg2.ShowDialog();
 
@@ -565,6 +577,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 SwaggerParser swaggerParser = new SwaggerParser();
                 ObservableList<ApplicationAPIModel> swaggerList = new ObservableList<ApplicationAPIModel>();
                 swaggerList = swaggerParser.ParseDocument(fileName, swaggerList);
+                AddAPIModelWizard.InfoTitle = swaggerParser.getInfoTitle();
                 if (swaggerList == null || swaggerList.Count == 0)
                 {
                     return false;
