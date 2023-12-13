@@ -429,7 +429,7 @@ namespace Ginger.Actions
             }
         }
 
-        private void ColumnComboBox_DropDownOpened(object sender, EventArgs e)
+        private async void ColumnComboBox_DropDownOpened(object sender, EventArgs e)
         {
             ColumnComboBox.Items.Clear();
             string DBName = DBNameComboBox.Text;
@@ -458,18 +458,31 @@ namespace Ginger.Actions
             }
             if (table != "")
             {
-                List<string> Columns = db.DatabaseOperations.GetTablesColumns(table);
-                if (Columns == null)
+
+                await Task.Run(async () =>
                 {
-                    return;
-                }
-                else
-                {
-                    foreach (string s in Columns)
+                    try
                     {
-                        ColumnComboBox.Items.Add(s);
+                        List<string> Columns = await db.DatabaseOperations.GetTablesColumns(table);
+                        if (Columns != null)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
+                                foreach (string s in Columns)
+                                {
+                                    ColumnComboBox.Items.Add(s);
+                                }
+                            });
+                        }
+                        Reporter.HideStatusMessage();
                     }
-                }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"{db.DatabaseOperations.ToString()} failed to get tables", ex);
+                    }
+                });              
+                
+                
             }
             else
             {

@@ -41,6 +41,7 @@ using InputSimulatorStandard;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Chromium;
 using OpenQA.Selenium.DevTools;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
@@ -63,7 +64,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V117.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
@@ -281,6 +282,7 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("dismissAndNotify")]
         [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
         public string UnhandledPromptBehavior { get; set; }
+
 
         protected IWebDriver Driver;
 
@@ -7848,7 +7850,12 @@ namespace GingerCore.Drivers
                             return;
                         }
                         break;
-
+                    case ActBrowserElement.eControlAction.SetBlockedUrls:
+                    case ActBrowserElement.eControlAction.UnblockeUrls:
+                        mAct = act;
+                        SetUPDevTools(Driver);
+                        GotoURL(act, Driver.Url);
+                        break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
                 }
@@ -9928,13 +9935,47 @@ namespace GingerCore.Drivers
         {
             //Get DevTools
             devTools = webDriver as IDevTools;
+            if (webDriver is ChromiumDriver)
+            {
+                try
+                {
+                    //DevTool Session 
+                    devToolsSession = devTools.GetDevToolsSession(117);
+                    devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
+                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V117.Network.EnableCommandSettings());
+                    blockOrUnblockUrls();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                    mAct.Error = ex.Message;
+                }
+            }
 
-            //DevTool Session 
-            devToolsSession = devTools.GetDevToolsSession(116);
-            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains>();
-            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V116.Network.EnableCommandSettings());
-
-
+        }
+        private string[] getBlockedUrlsArray(string sUrlsToBeBlocked)
+        {
+            string[] arrBlockedUrls = new string[] { };
+            if (!string.IsNullOrEmpty(sUrlsToBeBlocked))
+            {
+                arrBlockedUrls = sUrlsToBeBlocked.Trim(',').Split(",");
+            }
+            return arrBlockedUrls;
+        }
+        private void blockOrUnblockUrls()
+        {
+            if (mAct != null )
+            {
+                if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
+                {
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V117.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
+                }
+                else if(mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
+                {
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V117.Network.SetBlockedURLsCommandSettings() { Urls = new string[] { } });
+                }
+                Thread.Sleep(300);
+            }
         }
         public async Task GetNetworkLogAsync(ActBrowserElement act)
         {
@@ -10019,7 +10060,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V116.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V117.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 
