@@ -34,6 +34,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using static GingerCore.Actions.ActDBValidation;
@@ -77,7 +78,7 @@ namespace Ginger.Actions
             //Read from sql file
             QueryFile.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActDBValidation.Fields.QueryFile), true, true, UCValueExpression.eBrowserType.File, "sql", BrowseQueryFile_Click, WorkSpace.Instance.SolutionRepository.SolutionFolder);
 
-            QueryFile.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
+            WeakEventManager<TextBoxBase, TextChangedEventArgs>.AddHandler(source: QueryFile.ValueTextBox, eventName: nameof(TextBoxBase.TextChanged), handler: ValueTextBox_TextChanged);
 
             //OLD binding and UI
             GingerCore.General.FillComboFromEnumObj(ValidationCfgComboBox, act.DBValidationType);

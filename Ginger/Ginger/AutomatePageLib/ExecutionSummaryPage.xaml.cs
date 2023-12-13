@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -162,11 +163,11 @@ namespace Ginger.BusinessFlowWindows
         {
             Button ReportButton = new Button();
             ReportButton.Content = "Generate Report";
-            ReportButton.Click += ReportButton_Click;
+           WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: ReportButton, eventName: nameof(ButtonBase.Click), handler: ReportButton_Click);
 
             Button ExportBtn = new Button();
             ExportBtn.Content = "Export Execution Details";
-            ExportBtn.Click += new RoutedEventHandler(ExportExecutionDetails);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: ExportBtn, eventName: nameof(ButtonBase.Click), handler: ExportExecutionDetails);
 
             GenericWindow genWin = null;
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, new ObservableList<Button> { ExportBtn, ReportButton });

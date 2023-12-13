@@ -34,6 +34,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System;
+using System.Collections.Specialized;
 
 namespace GingerWPF.BusinessFlowsLib
 {
@@ -56,8 +57,8 @@ namespace GingerWPF.BusinessFlowsLib
             mPageViewMode = pageViewMode;
             _ignoreValidationRules = ignoreValidationRules;
 
-            mBusinessFlow.Activities.CollectionChanged += mBusinessFlowActivities_CollectionChanged;
-            mBusinessFlow.TargetApplications.CollectionChanged += TargetApplications_CollectionChanged;
+            CollectionChangedEventManager.AddHandler(source: mBusinessFlow.Activities, handler: mBusinessFlowActivities_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: mBusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
             TrackBusinessFlowAutomationPrecentage();
             BindControls();
         }
@@ -85,14 +86,14 @@ namespace GingerWPF.BusinessFlowsLib
             xAppsGrid.DataSourceList = mBusinessFlow.TargetApplicationPlatforms;
         }
 
-
+        string allProperties = string.Empty;
 
         private void TrackBusinessFlowAutomationPrecentage()
         {
             foreach (Activity activity in mBusinessFlow.Activities)
             {
-                activity.PropertyChanged -= mBusinessFlowActivity_PropertyChanged;
-                activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
+                PropertyChangedEventManager.RemoveHandler(source: activity, handler: mBusinessFlowActivity_PropertyChanged, propertyName: allProperties);
+                PropertyChangedEventManager.AddHandler(source: activity, handler: mBusinessFlowActivity_PropertyChanged, propertyName: allProperties);
             }
         }
 
@@ -129,7 +130,7 @@ namespace GingerWPF.BusinessFlowsLib
                 foreach (object o in e.NewItems)
                 {
                     Activity activity = (Activity)o;
-                    activity.PropertyChanged += mBusinessFlowActivity_PropertyChanged;
+                    PropertyChangedEventManager.AddHandler(source: activity, handler: mBusinessFlowActivity_PropertyChanged, propertyName: allProperties);
                 }
             }
             //}            
@@ -218,14 +219,14 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 ClearBindings();
 
-                mBusinessFlow.Activities.CollectionChanged -= mBusinessFlowActivities_CollectionChanged;
-                mBusinessFlow.TargetApplications.CollectionChanged -= TargetApplications_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.Activities, handler: mBusinessFlowActivities_CollectionChanged);
+                CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
 
                 mBusinessFlow = updateBusinessFlow;
                 mContext.BusinessFlow = mBusinessFlow;
 
-                mBusinessFlow.Activities.CollectionChanged += mBusinessFlowActivities_CollectionChanged;
-                mBusinessFlow.TargetApplications.CollectionChanged += TargetApplications_CollectionChanged;
+                CollectionChangedEventManager.AddHandler(source: mBusinessFlow.Activities, handler: mBusinessFlowActivities_CollectionChanged);
+                CollectionChangedEventManager.AddHandler(source: mBusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
 
                 BindControls();
             }

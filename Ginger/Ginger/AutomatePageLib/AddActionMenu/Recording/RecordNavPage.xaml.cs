@@ -28,11 +28,14 @@ using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Platforms.PlatformsInfo;
+using GingerWPF.UserControlsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
 namespace Ginger.BusinessFlowsLibNew.AddActionMenu
@@ -57,7 +60,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             InitializeComponent();
 
             mContext = context;
-            context.PropertyChanged += Context_PropertyChanged;
+            string allProperties = string.Empty;
+            PropertyChangedEventManager.AddHandler(source: context, handler: Context_PropertyChanged, propertyName: allProperties);
 
             SetDriver();
             SetRecordingControls();
@@ -104,8 +108,8 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             xSelectedPOMsGrid.SetAllColumnsDefaultView(view);
             xSelectedPOMsGrid.InitViewItems();
 
-            xSelectedPOMsGrid.btnAdd.Click -= BtnAdd_Click;
-            xSelectedPOMsGrid.btnAdd.Click += BtnAdd_Click;
+            WeakEventManager<ButtonBase, RoutedEventArgs>.RemoveHandler(source: xSelectedPOMsGrid.btnAdd, eventName: nameof(ButtonBase.Click), handler: BtnAdd_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: xSelectedPOMsGrid.btnAdd, eventName: nameof(ButtonBase.Click), handler: BtnAdd_Click);
 
             xSelectedPOMsGrid.DataSourceList = mPomModels;
         }
@@ -120,7 +124,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                                                                                             new Tuple<string, string>(nameof(ApplicationPOMModel.TargetApplicationKey) + "." +
                                                                                             nameof(ApplicationPOMModel.TargetApplicationKey.ItemName),
                                                                                             mContext.Activity.TargetApplication));
-            mApplicationPOMSelectionPage.SelectionDone += MAppModelSelectionPage_SelectionDone;
+            WeakEventManager<SingleItemTreeViewSelectionPage, SelectionTreeEventArgs>.AddHandler(source: mApplicationPOMSelectionPage, eventName: nameof(SingleItemTreeViewSelectionPage.SelectionDone), handler: MAppModelSelectionPage_SelectionDone);
 
 
             List<object> selectedPOMs = mApplicationPOMSelectionPage.ShowAsWindow();
