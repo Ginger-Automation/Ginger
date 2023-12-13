@@ -1,6 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
-using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using GingerCore;
 using GingerCore.Activities;
 using System;
@@ -21,17 +21,23 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Utils
         /// <exception cref="BPMNConversionException">If <see cref="ActivitiesGroup"/> is empty or no <see cref="Activity"/> is eligible for conversion.</exception>
         internal static IEnumerable<Activity> GetActivities(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade)
         {
-            AttachIdentifiersToActivities(activityGroup, solutionFacade);
-            IEnumerable<Activity> activities = activityGroup
-                    .ActivitiesIdentifiers
-                    .Select(identifier => identifier.IdentifiedActivity)
-                    .Where(activity => activity != null && activity.Active);
+            IEnumerable<Activity> activities = GetActivitiesOrEmpty(activityGroup, solutionFacade);
 
             if (!activities.Any())
             {
                 throw new BPMNConversionException($"No eligible {GingerDicser.GetTermResValue(eTermResKey.Activity)} found for creating BPMN.");
             }
 
+            return activities;
+        }
+
+        private static IEnumerable<Activity> GetActivitiesOrEmpty(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade)
+        {
+            AttachIdentifiersToActivities(activityGroup, solutionFacade);
+            IEnumerable<Activity> activities = activityGroup
+                    .ActivitiesIdentifiers
+                    .Select(identifier => identifier.IdentifiedActivity)
+                    .Where(activity => activity != null && activity.Active);
             return activities;
         }
 
@@ -80,6 +86,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Utils
             }
 
             return activityInRepository;
+        }
+
+        internal static bool IsActive(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade)
+        {
+            return GetActivitiesOrEmpty(activityGroup, solutionFacade).All(activity => activity.Active);
         }
     }
 }

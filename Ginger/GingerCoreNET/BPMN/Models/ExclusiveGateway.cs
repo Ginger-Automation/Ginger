@@ -8,7 +8,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
 {
     public sealed class ExclusiveGateway : IFlowSource, IFlowTarget
     {
-        public string Guid { get; }
+        public Guid Guid { get; }
 
         public string Id { get; }
 
@@ -20,9 +20,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
 
         public FlowCollection OutgoingFlows { get; }
 
-        public ExclusiveGateway(string processId, Guid guid, string name) : this(processId, guid.ToString(), name) { }
-
-        public ExclusiveGateway(string processId, string guid, string name)
+        public ExclusiveGateway(string processId, Guid guid, string name)
         {
             Guid = guid;
             ProcessId = processId;

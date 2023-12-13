@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
+namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 {
     /// <summary>
     /// A facade to expose solution data for BPMN related operations.
