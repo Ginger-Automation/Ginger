@@ -28,6 +28,7 @@ using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -159,8 +160,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xAgentControlUC, ucAgentControl.SelectedAgentProperty, mWizard.mPomLearnUtils, nameof(mWizard.mPomLearnUtils.Agent));
             xAgentControlUC.Init(mWizard.OptionalAgentsList);
-            xAgentControlUC.PropertyChanged -= XAgentControlUC_PropertyChanged;
-            xAgentControlUC.PropertyChanged += XAgentControlUC_PropertyChanged;
+            string allProperties = string.Empty;
+            PropertyChangedEventManager.RemoveHandler(source: xAgentControlUC, handler: XAgentControlUC_PropertyChanged, propertyName: allProperties);
+            PropertyChangedEventManager.AddHandler(source: xAgentControlUC, handler: XAgentControlUC_PropertyChanged, propertyName: allProperties);
 
             PlatformSpecificUIManipulations();
             AddValidations();
@@ -304,8 +306,9 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             xElementLocatorsSettingsGrid.DataSourceList = mWizard.mPomLearnUtils.ElementLocatorsSettingsList;
             foreach (ElementLocator elementLocator in mWizard.mPomLearnUtils.ElementLocatorsSettingsList)
             {
-                elementLocator.PropertyChanged -= Item_PropertyChanged;
-                elementLocator.PropertyChanged += Item_PropertyChanged;
+                string allProperties = string.Empty;
+                PropertyChangedEventManager.RemoveHandler(source: elementLocator, handler: Item_PropertyChanged, propertyName: allProperties);
+                PropertyChangedEventManager.AddHandler(source: elementLocator, handler: Item_PropertyChanged, propertyName: allProperties);
             }
         }
 

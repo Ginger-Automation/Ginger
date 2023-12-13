@@ -41,6 +41,7 @@ using InputSimulatorStandard;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Chromium;
 using OpenQA.Selenium.DevTools;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
@@ -63,7 +64,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V117.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
@@ -282,6 +283,7 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
         public string UnhandledPromptBehavior { get; set; }
 
+
         protected IWebDriver Driver;
 
         protected eBrowserType mBrowserTpe;
@@ -367,6 +369,8 @@ namespace GingerCore.Drivers
 
         public override void StartDriver()
         {
+            DriverService driverService = null;
+
             if (StartBMP)
             {
                 BMPServer = new Server(StartBMPBATFile, StartBMPPort);
@@ -464,9 +468,9 @@ namespace GingerCore.Drivers
                             ieoptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
                         }
 
-                        InternetExplorerDriverService IEService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
-                        IEService.HideCommandPromptWindow = HideConsoleWindow;
-                        Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        driverService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
+                        driverService.HideCommandPromptWindow = HideConsoleWindow;
+                        Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         break;
                     #endregion
 
@@ -504,10 +508,10 @@ namespace GingerCore.Drivers
                             FirefoxOption.Profile = profile;
                         }
 
-                        FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService();
-                        FFService.HideCommandPromptWindow = HideConsoleWindow;
-                        Driver = new FirefoxDriver(FFService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                        this.mDriverProcessId = FFService.ProcessId;
+                        driverService = FirefoxDriverService.CreateDefaultService();
+                        driverService.HideCommandPromptWindow = HideConsoleWindow;
+                        Driver = new FirefoxDriver((FirefoxDriverService)driverService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        this.mDriverProcessId = driverService.ProcessId;
                         break;
                     #endregion
 
@@ -582,18 +586,17 @@ namespace GingerCore.Drivers
                         if (!string.IsNullOrEmpty(DebugAddress))
                         {
                             options.DebuggerAddress = DebugAddress.Trim();
-                            
                         }
-                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
+                         driverService = ChromeDriverService.CreateDefaultService();
                         if (HideConsoleWindow)
                         {
-                            ChService.HideCommandPromptWindow = HideConsoleWindow;
+                            driverService.HideCommandPromptWindow = HideConsoleWindow;
                         }
 
                         try
                         {
-                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                            this.mDriverProcessId = ChService.ProcessId;
+                            Driver = new ChromeDriver((ChromeDriverService)driverService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            this.mDriverProcessId = driverService.ProcessId;
                         }
                         catch (Exception ex)
                         {
@@ -678,9 +681,9 @@ namespace GingerCore.Drivers
 
                             SetCurrentPageLoadStrategy(ieOptions);
                             ieOptions.IgnoreZoomLevel = true;
-                            InternetExplorerDriverService IExplorerService = InternetExplorerDriverService.CreateDefaultService();
-                            IExplorerService.HideCommandPromptWindow = HideConsoleWindow;
-                            Driver = new InternetExplorerDriver(IExplorerService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            driverService = InternetExplorerDriverService.CreateDefaultService();
+                            driverService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         }
                         else
 
@@ -697,10 +700,10 @@ namespace GingerCore.Drivers
                             }
 
                             SetCurrentPageLoadStrategy(EDOpts);
-                            EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
-                            EDService.HideCommandPromptWindow = HideConsoleWindow;
-                            Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                            this.mDriverProcessId = EDService.ProcessId;
+                            driverService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
+                            driverService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new EdgeDriver((EdgeDriverService)driverService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            this.mDriverProcessId = driverService.ProcessId;
                         }
 
                         break;
@@ -849,25 +852,38 @@ namespace GingerCore.Drivers
                 ErrorMessageFromDriver = ex.Message;
 
                 //If driver is mismatched, try renaming the existing driver and let selenium update the driver
-                if (RestartRetry && ex.Message.Contains("session not created: This version of "))
+                if (RestartRetry && ex.Message.Contains("session not created: This version of"))
                 {
                     RestartRetry = false;
-
-                    //Rename driver name
-                    if (mBrowserTpe == eBrowserType.Chrome)
-                    {
-                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(CHROME_DRIVER_NAME), GetDriversPathPerOS());
-                    }
-                    else if (mBrowserTpe == eBrowserType.Edge)
-                    {
-                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(EDGE_DRIVER_NAME), GetDriversPathPerOS());
-                    }
-                    else if (mBrowserTpe == eBrowserType.FireFox)
-                    {
-                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(FIREFOX_DRIVER_NAME), GetDriversPathPerOS());
-                    }
+                    UpdateDriver(driverService);
                     StartDriver();
                 }
+            }
+        }
+
+        private void UpdateDriver(DriverService driverService)
+        {
+            //Close launched driver process as it does not gets closed on exception
+            if (driverService?.ProcessId != 0)
+            {
+                try
+                {
+                    System.Diagnostics.Process.GetProcessById(driverService.ProcessId)?.Kill();                
+                }
+                catch { }
+            }
+            //Rename driver name
+            if (mBrowserTpe == eBrowserType.Chrome)
+            {
+                GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(CHROME_DRIVER_NAME), GetDriversPathPerOS());
+            }
+            else if (mBrowserTpe == eBrowserType.Edge)
+            {
+                GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(EDGE_DRIVER_NAME), GetDriversPathPerOS());
+            }
+            else if (mBrowserTpe == eBrowserType.FireFox)
+            {
+                GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(FIREFOX_DRIVER_NAME), GetDriversPathPerOS());
             }
         }
 
@@ -7848,7 +7864,12 @@ namespace GingerCore.Drivers
                             return;
                         }
                         break;
-
+                    case ActBrowserElement.eControlAction.SetBlockedUrls:
+                    case ActBrowserElement.eControlAction.UnblockeUrls:
+                        mAct = act;
+                        SetUPDevTools(Driver);
+                        GotoURL(act, Driver.Url);
+                        break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
                 }
@@ -9928,13 +9949,47 @@ namespace GingerCore.Drivers
         {
             //Get DevTools
             devTools = webDriver as IDevTools;
+            if (webDriver is ChromiumDriver)
+            {
+                try
+                {
+                    //DevTool Session 
+                    devToolsSession = devTools.GetDevToolsSession(117);
+                    devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
+                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V117.Network.EnableCommandSettings());
+                    blockOrUnblockUrls();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                    mAct.Error = ex.Message;
+                }
+            }
 
-            //DevTool Session 
-            devToolsSession = devTools.GetDevToolsSession(116);
-            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains>();
-            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V116.Network.EnableCommandSettings());
-
-
+        }
+        private string[] getBlockedUrlsArray(string sUrlsToBeBlocked)
+        {
+            string[] arrBlockedUrls = new string[] { };
+            if (!string.IsNullOrEmpty(sUrlsToBeBlocked))
+            {
+                arrBlockedUrls = sUrlsToBeBlocked.Trim(',').Split(",");
+            }
+            return arrBlockedUrls;
+        }
+        private void blockOrUnblockUrls()
+        {
+            if (mAct != null )
+            {
+                if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
+                {
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V117.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
+                }
+                else if(mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
+                {
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V117.Network.SetBlockedURLsCommandSettings() { Urls = new string[] { } });
+                }
+                Thread.Sleep(300);
+            }
         }
         public async Task GetNetworkLogAsync(ActBrowserElement act)
         {
@@ -10019,7 +10074,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V116.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V117.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 

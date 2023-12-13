@@ -24,11 +24,13 @@ using GingerCore.Actions;
 using GingerCore.Actions.VisualTesting;
 using GingerCore.GeneralLib;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
@@ -59,7 +61,7 @@ namespace Ginger.Actions.VisualTesting
             UpdateBaseLineImage();
             //TODO: hook value change and update 
 
-            CurrentBaselineImagePathTxtBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
+            WeakEventManager<TextBoxBase, TextChangedEventArgs>.AddHandler(source: CurrentBaselineImagePathTxtBox.ValueTextBox, eventName: nameof(TextBoxBase.TextChanged), handler: ValueTextBox_TextChanged);
             //Saved Applitools baseline image path
 
             //Saved Target image file path
@@ -91,8 +93,8 @@ namespace Ginger.Actions.VisualTesting
             {
                 CompareRadioButton.IsChecked = true;
             }
-
-            mAct.PropertyChanged += mAct_PropertyChanged;
+            string allProperties = string.Empty;
+            PropertyChangedEventManager.AddHandler(source: mAct, handler: mAct_PropertyChanged, propertyName: allProperties);
         }
 
         private void VisualCompareAnalyzerIntegration_VisualTestingEvent(VisualTestingEventArgs EventArgs)

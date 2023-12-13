@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
@@ -23,10 +24,12 @@ using Ginger;
 using Ginger.UserControls;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 namespace GingerWPF.ApplicationModelsLib.APIModelWizard
@@ -47,10 +50,11 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
             OptionalValuesGrid.DataSourceList = mParentObject.OptionalValuesList;
             SetOptionalValuesGridView();
-
+            string allProperties = string.Empty;
             if (!mSelectionModePage)
             {
-                mParentObject.OptionalValuesList.PropertyChanged += mAMDP_PropertyChanged;
+                PropertyChangedEventManager.AddHandler(source: mParentObject.OptionalValuesList, handler: mAMDP_PropertyChanged, propertyName: allProperties);
+                
                 OptionalValuesGrid.btnAdd.AddHandler(Button.ClickEvent, new RoutedEventHandler(AddOptionalValue));
                 OptionalValuesGrid.SetbtnDeleteHandler(btnDelete_Click);
                 OptionalValuesGrid.SetbtnClearAllHandler(btnClearAll_Click);
@@ -111,8 +115,9 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                 view.GridColsView.Add(new GridColView() { Field = nameof(OptionalValue.Value), WidthWeight = 10 });
                 if (OptionalValuesGrid.Grid != null)
                 {
-                    OptionalValuesGrid.Grid.BeginningEdit += grdMain_BeginningEdit;
-                    OptionalValuesGrid.Grid.CellEditEnding += grdMain_CellEditEnding;
+                    WeakEventManager<DataGrid, DataGridBeginningEditEventArgs>.AddHandler(source: OptionalValuesGrid.Grid, eventName: nameof(DataGrid.BeginningEdit), handler: grdMain_BeginningEdit);
+                    WeakEventManager<DataGrid, DataGridCellEditEndingEventArgs>.AddHandler(source: OptionalValuesGrid.Grid, eventName: nameof(DataGrid.CellEditEnding), handler: grdMain_CellEditEnding);
+                    
                 }
             }
             else
@@ -246,7 +251,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
         {
             Button OKButton = new Button();
             OKButton.Content = "OK";
-            OKButton.Click += new RoutedEventHandler(OKButton_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: OKButton, eventName: nameof(ButtonBase.Click), handler: OKButton_Click);
 
             if (mSelectionModePage)
             { OptionalValuesGrid.ShowToolsBar = Visibility.Collapsed; }

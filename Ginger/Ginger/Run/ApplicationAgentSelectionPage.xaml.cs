@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.Run
 {
@@ -57,7 +58,7 @@ namespace Ginger.Run
             grdPossibleAgents.InitViewItems();
 
             grdPossibleAgents.Grid.SelectionMode = DataGridSelectionMode.Single;
-            grdPossibleAgents.RowDoubleClick += grdPossibleAgents_RowDoubleClick;
+            WeakEventManager<ucGrid, EventArgs>.AddHandler(source: grdPossibleAgents, eventName: nameof(ucGrid.RowDoubleClick), handler: grdPossibleAgents_RowDoubleClick);
         }
 
         private void SetPossibleAgentsGridData()
@@ -126,7 +127,7 @@ namespace Ginger.Run
         {
             Button mapBtn = new Button();
             mapBtn.Content = "Map";
-            mapBtn.Click += new RoutedEventHandler(mapBtn_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: mapBtn, eventName: nameof(ButtonBase.Click), handler: mapBtn_Click);
 
             ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(mapBtn);

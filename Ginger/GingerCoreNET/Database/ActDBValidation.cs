@@ -25,6 +25,7 @@ using GingerCore.Actions.Common;
 using GingerCore.Environments;
 using GingerCore.NoSqlBase;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Azure.Cosmos.Linq;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using System;
 using System.Collections.Generic;
@@ -201,7 +202,7 @@ namespace GingerCore.Actions
             {
                 try
                 {
-                    if (DB != null && (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase || DB.DBType == Database.eDBTypes.MongoDb || DB.DBType == Database.eDBTypes.CosmosDb))
+                    if (DB != null && (DB.DBType == Database.eDBTypes.Cassandra || DB.DBType == Database.eDBTypes.Couchbase || DB.DBType == Database.eDBTypes.MongoDb || DB.DBType == Database.eDBTypes.CosmosDb || DB.DBType == Database.eDBTypes.Hbase))
                     {
                         return eDatabaseTye.NoSQL;
                     }
@@ -334,7 +335,7 @@ namespace GingerCore.Actions
             {
                 AddOrUpdateInputParamValue("SQL", GetInputParamValue("Value"));
             }
-
+           
             if (SetDBConnection() == false)
             {
                 return;//Failed to find the DB in the Environment
@@ -406,6 +407,17 @@ namespace GingerCore.Actions
                     if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerCosmos))
                     {
                         NoSqlDriver = new GingerCosmos(DBValidationType, DB, this);
+                    }
+                    break;
+                case Database.eDBTypes.Hbase:
+                    
+                    if (NoSqlDriver == null || NoSqlDriver.GetType() != typeof(GingerHbase))
+                    {
+                        NoSqlDriver = new GingerHbase(DBValidationType, DB, this);
+                    }
+                    else
+                    {
+                        NoSqlDriver.Action= DBValidationType;                        
                     }
                     break;
             }

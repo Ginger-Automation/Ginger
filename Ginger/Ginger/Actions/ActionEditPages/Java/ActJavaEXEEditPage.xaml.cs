@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.Actions.Java
 {
@@ -55,8 +56,8 @@ namespace Ginger.Actions.Java
             JavaPathTextBox.Init(Context.GetAsContext(mAct.Context), mAct, ActJavaEXE.Fields.JavaWSEXEPath);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, mAct, ActJavaEXE.Fields.ScriptName);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptDescriptionLabel, Label.ContentProperty, mAct, ActJavaEXE.Fields.ScriptDecription);
-
-            ScriptNameComboBox.SelectionChanged += ScriptNameComboBox_SelectionChanged;//here so won't be triggered after binding but only on user change
+            
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: ScriptNameComboBox, eventName: nameof(Selector.SelectionChanged), handler: ScriptNameComboBox_SelectionChanged);
         }
 
         private void SetInitialLookAfterBind()

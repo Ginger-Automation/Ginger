@@ -29,9 +29,11 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -224,7 +226,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xMainElementsGrid.AddComboBoxToolbarTool("Status Filter:", typeof(eDeltaStatus), ComperisonStatusFilter_SelectionChanged, "All");
 
             xMainElementsGrid.SelectedItemChanged += XMainElementsGrid_SelectedItemChanged;
-            xMainElementsGrid.Grid.SelectionChanged += Grid_SelectionChanged;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xMainElementsGrid.Grid, eventName: nameof(Selector.SelectionChanged), handler: Grid_SelectionChanged);
         }
 
         private void ComperisonStatusFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -376,14 +378,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     xDetailsExpanderLabel.Content = "Element Comparison Details";
                 }
 
-                mSelectedElement.Locators.CollectionChanged -= Locators_CollectionChanged;
-                mSelectedElement.Locators.CollectionChanged += Locators_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mSelectedElement.Locators, handler: Locators_CollectionChanged);
+                CollectionChangedEventManager.AddHandler(source: mSelectedElement.Locators, handler: Locators_CollectionChanged);
                 xLocatorsGrid.DataSourceList = mSelectedElement.Locators;
                 UpdateLocatorsHeader();
                 if (isEnableFriendlyLocator)
                 {
-                    mSelectedElement.FriendlyLocators.CollectionChanged -= FriendlyLocators_CollectionChanged;
-                    mSelectedElement.FriendlyLocators.CollectionChanged += FriendlyLocators_CollectionChanged;
+                    CollectionChangedEventManager.RemoveHandler(source: mSelectedElement.FriendlyLocators, handler: FriendlyLocators_CollectionChanged);
+                    CollectionChangedEventManager.AddHandler(source: mSelectedElement.FriendlyLocators, handler: FriendlyLocators_CollectionChanged);
                     xFriendlyLocatorsGrid.DataSourceList = mSelectedElement.FriendlyLocators;
                     xFriendlyLocatorsGrid.ShowAdd = Visibility.Collapsed;
                     xFriendlyLocatorsGrid.ShowDelete = Visibility.Collapsed;
@@ -393,8 +395,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 {
                     xFriendlyLocatorTab.Visibility = Visibility.Collapsed;
                 }
-                mSelectedElement.Properties.CollectionChanged -= Properties_CollectionChanged;
-                mSelectedElement.Properties.CollectionChanged += Properties_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mSelectedElement.Properties, handler: Properties_CollectionChanged);
+                CollectionChangedEventManager.AddHandler(source: mSelectedElement.Properties, handler: Properties_CollectionChanged);
                 xPropertiesGrid.DataSourceList = mSelectedElement.Properties;
                 UpdatePropertiesHeader();
 

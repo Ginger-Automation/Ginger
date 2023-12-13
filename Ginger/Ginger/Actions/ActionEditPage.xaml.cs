@@ -50,6 +50,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 
@@ -230,12 +231,16 @@ namespace Ginger.Actions
             xOutputValuesGrid.ToolsTray.Visibility = Visibility.Visible;
             xOutputValuesGrid.EnableGridColumns();
 
+            
+                WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: xdsOutputParamMapType, eventName: nameof(Selector.SelectionChanged), handler: OutDSParamType_SelectionChanged);
+                WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: xDataSourceNameCombo, eventName: nameof(Selector.SelectionChanged), handler: cmbDataSourceName_SelectionChanged);
+                WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: xDataSourceTableNameCombo, eventName: nameof(Selector.SelectionChanged), handler: cmbDataSourceTableName_SelectionChanged);
+                WeakEventManager<ToggleButton, RoutedEventArgs>.RemoveHandler(source: xAddOutToDSCheckbox, eventName: nameof(ToggleButton.Checked), handler: AddOutDS_Checked);
+                WeakEventManager<ToggleButton, RoutedEventArgs>.RemoveHandler(source: xAddOutToDSCheckbox, eventName: nameof(ToggleButton.Unchecked), handler: AddOutDS_Unchecked);
 
-            xdsOutputParamMapType.SelectionChanged -= OutDSParamType_SelectionChanged;
-            xDataSourceNameCombo.SelectionChanged -= cmbDataSourceName_SelectionChanged;
-            xDataSourceTableNameCombo.SelectionChanged -= cmbDataSourceTableName_SelectionChanged;
-            xAddOutToDSCheckbox.Checked -= AddOutDS_Checked;
-            xAddOutToDSCheckbox.Unchecked -= AddOutDS_Unchecked;
+
+
+
 
             mAction = null!;
             mContext = null!;
@@ -460,11 +465,15 @@ namespace Ginger.Actions
                 updateDSOutGrid();
             }
 
-            xAddOutToDSCheckbox.Checked += AddOutDS_Checked;
-            xAddOutToDSCheckbox.Unchecked += AddOutDS_Unchecked;
-            xDataSourceNameCombo.SelectionChanged += cmbDataSourceName_SelectionChanged;
-            xDataSourceTableNameCombo.SelectionChanged += cmbDataSourceTableName_SelectionChanged;
-            xdsOutputParamMapType.SelectionChanged += OutDSParamType_SelectionChanged;
+                WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xdsOutputParamMapType, eventName: nameof(Selector.SelectionChanged), handler: OutDSParamType_SelectionChanged);
+                WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xDataSourceNameCombo, eventName: nameof(Selector.SelectionChanged), handler: cmbDataSourceName_SelectionChanged);
+                WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xDataSourceTableNameCombo, eventName: nameof(Selector.SelectionChanged), handler: cmbDataSourceTableName_SelectionChanged);
+                WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xAddOutToDSCheckbox, eventName: nameof(ToggleButton.Checked), handler: AddOutDS_Checked);
+                WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xAddOutToDSCheckbox, eventName: nameof(ToggleButton.Unchecked), handler: AddOutDS_Unchecked);
+
+
+
+
 
 
             if (mAction.ConfigOutDSParamAutoCheck)
@@ -477,7 +486,7 @@ namespace Ginger.Actions
             {
                 xAddOutToDSCheckbox.IsEnabled = false;
             }
-            xDataSourceConfigGrid.LostFocus += DataSourceConfigGrid_LostFocus;
+            WeakEventManager<UIElement, RoutedEventArgs>.AddHandler(source: xDataSourceConfigGrid, eventName: nameof(UIElement.LostFocus), handler: DataSourceConfigGrid_LostFocus);
             //Output Values
 
 
@@ -1232,10 +1241,15 @@ namespace Ginger.Actions
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button okBtn = new Button();
             okBtn.Content = "Ok";
-            okBtn.Click += new RoutedEventHandler(okBtn_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: okBtn_Click);
+            
+            
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";
-            undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtn, eventName: nameof(ButtonBase.Click), handler: undoBtn_Click);
+            
+            
+            
             Button saveBtn = new Button();
             saveBtn.Content = "Save";
             switch (EditMode)
@@ -1262,7 +1276,10 @@ namespace Ginger.Actions
 
                 case General.eRIPageViewMode.SharedReposiotry:
                     title = "Edit Shared Repository " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    saveBtn.Click += new RoutedEventHandler(SharedRepoSaveBtn_Click);
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveBtn, eventName: nameof(ButtonBase.Click), handler: SharedRepoSaveBtn_Click);
+                    
+                    
+                    
                     winButtons.Add(saveBtn);
                     winButtons.Add(undoBtn);
                     break;
@@ -1275,7 +1292,10 @@ namespace Ginger.Actions
 
                 case General.eRIPageViewMode.ChildWithSave:
                     title = "Edit " + RemoveActionWord(mAction.ActionDescription) + " Action";
-                    saveBtn.Click += new RoutedEventHandler(ParentSaveButton_Click);
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveBtn, eventName: nameof(ButtonBase.Click), handler: ParentSaveButton_Click);
+                    
+                    
+                    
                     winButtons.Add(saveBtn);
                     winButtons.Add(undoBtn);
                     break;

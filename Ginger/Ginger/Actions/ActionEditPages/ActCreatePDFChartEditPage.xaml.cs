@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.Actions
 {
@@ -50,7 +51,7 @@ namespace Ginger.Actions
             DataFileNameTextBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(ActCreatePDFChart.Fields.DataFileName), nameof(ActInputValue.Value));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.SelectedValueProperty, mAct, ActCreatePDFChart.Fields.ParamName);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ParamsComboBox.ComboBox, ComboBox.ItemsSourceProperty, mAct, ActCreatePDFChart.Fields.ParamList);
-            DataFileNameTextBox.ValueTextBox.TextChanged += ValueTextBox_TextChanged;
+            WeakEventManager<TextBoxBase, TextChangedEventArgs>.AddHandler(source: DataFileNameTextBox.ValueTextBox, eventName: nameof(TextBoxBase.TextChanged), handler: ValueTextBox_TextChanged);
             mAct.ParamList = SetParamsCombo();
         }
 
