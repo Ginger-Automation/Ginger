@@ -48,6 +48,7 @@ using System.Windows.Data;
 using System.Windows.Media;
 using GingerCoreNET.Application_Models;
 using Amdocs.Ginger.CoreNET.Application_Models;
+using System.Windows.Input;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 {
@@ -624,7 +625,8 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
             xModelsGlobalParamsGrid.ShowToolsBar = Visibility.Collapsed;
             xModelsGlobalParamsGrid.Grid.IsReadOnly = true;
-            WeakEventManager<Control, RoutedEventArgs>.AddHandler(source: xModelsGlobalParamsGrid.Grid, eventName: nameof(Control.MouseDoubleClick), handler: selectBtn_Click);
+
+            WeakEventManager<Control, MouseButtonEventArgs>.AddHandler(source: xModelsGlobalParamsGrid.Grid, eventName: nameof(Control.MouseDoubleClick), handler: selectBtn_Click);
             
 
             GenericWindow.LoadGenericWindow(ref mGenericWindow, null, windowStyle, "Add Global Parameter", this, winButtons, true, "Cancel", CloseWinClicked);

@@ -47,7 +47,7 @@ namespace Ginger.SolutionWindows
 
             mSolution = WorkSpace.Instance.Solution;
             string allProperties = string.Empty;
-            PropertyChangedEventManager.AddHandler(source: (INotifyPropertyChanged)WorkSpace.Instance, handler: WorkSpacePropertyChanged, propertyName: allProperties);
+            WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
             CurrentItemToSave = mSolution;
 
             LoadGridData();
