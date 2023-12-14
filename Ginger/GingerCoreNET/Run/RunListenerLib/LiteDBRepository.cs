@@ -156,7 +156,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             if (activity.LiteDbId != null && ExecutionLoggerManager.RunSetReport != null && ExecutionLoggerManager.RunSetReport.RunSetExecutionStatus == Execution.eRunStatus.Automated) // missing Executed from
             {
                 AR._id = ObjectId.NewObjectId();
-                var ARToUpdate = liteDbManager.GetActivitiesLiteData().IncludeAll().Find(x => x._id == AR._id).ToList();
+                var ARToUpdate = LiteDbActivity.IncludeAllReferences(liteDbManager.GetActivitiesLiteData()).Find(x => x._id == AR._id).ToList();
                 if (ARToUpdate.Count > 0)
                 {
                     foreach (var action in (ARToUpdate[0] as LiteDbActivity).ActionsColl)

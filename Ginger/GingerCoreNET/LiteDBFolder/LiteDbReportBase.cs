@@ -268,13 +268,12 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             return liteCollection
                 .Include(runset => runset.RunnersColl)
-                .Include(runset => runset.RunnersColl.Select((runner) => runner.BusinessFlowsColl))
-                .Include(runset => runset.RunnersColl.Select((runner) => runner.BusinessFlowsColl.Select(businessFlow => businessFlow.ActivitiesColl)))
-                .Include(runset => runset.RunnersColl.Select((runner) => runner.BusinessFlowsColl.Select(businessFlow => businessFlow.ActivitiesGroupsColl)))
-                .Include(runset => runset.RunnersColl.Select((runner) => runner.BusinessFlowsColl.Select(businessFlow => businessFlow.ActivitiesColl.Select(activity => activity.ActionsColl))))
-                .Include(runset => runset.RunnersColl.Select((runner) => runner.BusinessFlowsColl.Select(businessFlow => businessFlow.ActivitiesGroupsColl.Select(activityGroup => activityGroup.ActivitiesColl.Select(activity => activity.ActionsColl)))))
+                .Include(runset => runset.RunnersColl.Select((runner) => runner.AllBusinessFlowsColl))
+                .Include(runset => runset.RunnersColl.Select((runner) => runner.AllBusinessFlowsColl.Select(businessFlow => businessFlow.AllActivitiesColl)))
+                .Include(runset => runset.RunnersColl.Select((runner) => runner.AllBusinessFlowsColl.Select(businessFlow => businessFlow.ActivitiesGroupsColl)))
+                .Include(runset => runset.RunnersColl.Select((runner) => runner.AllBusinessFlowsColl.Select(businessFlow => businessFlow.AllActivitiesColl.Select(activity => activity.AllActionsColl))))
+                .Include(runset => runset.RunnersColl.Select((runner) => runner.AllBusinessFlowsColl.Select(businessFlow => businessFlow.ActivitiesGroupsColl.Select(activityGroup => activityGroup.AllActivitiesColl.Select(activity => activity.AllActionsColl)))))
                 ;
-
 
         }
     }
@@ -369,8 +368,8 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             return liteCollection
                 .Include((runner) => runner.BusinessFlowsColl)
-                .Include((runner)=>runner.BusinessFlowsColl.Select((businessFlow)=>businessFlow.ActivitiesColl.Select((activity)=>activity.ActionsColl)))
-                .Include((runner)=>runner.BusinessFlowsColl.Select((businessFlow)=>businessFlow.ActivitiesGroupsColl.Select((activityGroup)=>activityGroup.ActivitiesColl.Select((activity) => activity.ActionsColl))));
+                .Include((runner) => runner.AllBusinessFlowsColl.Select((businessFlow) => businessFlow.AllActivitiesColl.Select((activity) => activity.AllActionsColl)))
+                .Include((runner) => runner.AllBusinessFlowsColl.Select((businessFlow) => businessFlow.ActivitiesGroupsColl.Select((activityGroup) => activityGroup.AllActivitiesColl.Select((activity) => activity.AllActionsColl))));
         }
 
     }
@@ -518,9 +517,9 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             return liteCollection
                 .Include((businessFlow) => businessFlow.ActivitiesGroupsColl)
-                .Include((businessFlow) => businessFlow.ActivitiesColl)
-                .Include((businessFlow) => businessFlow.ActivitiesGroupsColl.Select((activityGroup) => activityGroup.ActivitiesColl.Select((activity) => activity.ActionsColl)))
-                .Include((businessFlow) => businessFlow.ActivitiesColl.Select((activity) => activity.ActionsColl));
+                .Include((businessFlow) => businessFlow.AllActivitiesColl)
+                .Include((businessFlow) => businessFlow.ActivitiesGroupsColl.Select((activityGroup) => activityGroup.AllActivitiesColl.Select((activity) => activity.AllActionsColl)))
+                .Include((businessFlow) => businessFlow.AllActivitiesColl.Select((activity) => activity.AllActionsColl));
         }
 
     }
@@ -618,8 +617,8 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         public static ILiteCollection<LiteDbActivityGroup> IncludeAllReferences(ILiteCollection<LiteDbActivityGroup> liteCollection)
         {
             return liteCollection
-                .Include((activityGroup) => activityGroup.ActivitiesColl)
-                .Include((activityGroup) => activityGroup.ActivitiesColl.Select((activity)=>activity.ActionsColl));
+                .Include((activityGroup) => activityGroup.AllActivitiesColl)
+                .Include((activityGroup) => activityGroup.AllActivitiesColl.Select((activity) => activity.AllActionsColl));
         }
 
     }
@@ -728,7 +727,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         }
         public static ILiteCollection<LiteDbActivity> IncludeAllReferences(ILiteCollection<LiteDbActivity> liteCollection)
         {
-            return liteCollection.Include((activity) => activity.ActionsColl);
+            return liteCollection.Include((activity) => activity.AllActionsColl);
         }
 
     }
