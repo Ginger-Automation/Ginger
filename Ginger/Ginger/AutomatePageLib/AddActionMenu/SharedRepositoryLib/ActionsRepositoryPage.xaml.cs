@@ -119,8 +119,8 @@ namespace Ginger.Repository
         private void SetActionsGridView()
         {
             WeakEventManager<UcListView, EventArgs>.AddHandler(source: xActionListView, eventName: nameof(UcListView.ItemMouseDoubleClick), handler: grdActions_grdMain_ItemMouseDoubleClick);
-            WeakEventManager<UcListView, EventArgs>.AddHandler(source: xActionListView, eventName: nameof(UcListView.ItemDropped), handler: grdActions_ItemDropped);
-            WeakEventManager<UcListView, EventArgs>.AddHandler(source: xActionListView, eventName: nameof(UcListView.PreviewDragItem), handler: grdActions_PreviewDragItem);
+            xActionListView.ItemDropped += grdActions_ItemDropped;
+            xActionListView.PreviewDragItem += grdActions_PreviewDragItem;
             xActionListView.xTagsFilter.Visibility = Visibility.Visible;
         }
 
