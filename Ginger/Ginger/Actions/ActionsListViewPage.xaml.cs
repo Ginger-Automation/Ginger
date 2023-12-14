@@ -197,8 +197,8 @@ namespace GingerWPF.BusinessFlowsLib
 
                 mActionsListView.ListSelectionMode = SelectionMode.Extended;
 
-                WeakEventManager<UcListView, EventArgs>.AddHandler(source: mActionsListView, eventName: nameof(UcListView.PreviewDragItem), handler: listActions_PreviewDragItem);
-                WeakEventManager<UcListView, EventArgs>.AddHandler(source: mActionsListView, eventName: nameof(UcListView.ItemDropped), handler: listActions_ItemDropped);
+                mActionsListView.PreviewDragItem += listActions_PreviewDragItem;
+                mActionsListView.ItemDropped += listActions_ItemDropped;
                 WeakEventManager<Control, MouseButtonEventArgs>.AddHandler(source: mActionsListView.List, eventName: nameof(Control.MouseDoubleClick), handler: ActionsListView_MouseDoubleClick);
 
                 // Enable Virtualization for Actions ListView to improve the loading time/performance
