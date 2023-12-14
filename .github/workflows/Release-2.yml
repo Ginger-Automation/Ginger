@@ -27,7 +27,6 @@ jobs:
             - name: Make Ginger Runtime file executable 
               run: | 
                   ls -altr
-                  cd gingerruntime
                   find ./Ginger/GingerRuntime/bin/Release/net7.0/linux-x64/selenium-manager -type f -print0 | xargs -0 chmod +x
    
             -   uses: sibiraj-s/action-archiver@v1
