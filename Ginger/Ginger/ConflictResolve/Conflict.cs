@@ -116,7 +116,11 @@ namespace Ginger.ConflictResolve
             }
         }
 
-        public Conflict(string conflictPath)
+        public IEnumerable<ResolutionType> PossibleResolutions { get; }
+
+        public IEnumerable<ComboEnumItem> PossibleResolutionsComboEnumItems { get; }
+
+        public Conflict(string conflictPath, IEnumerable<ResolutionType> possibleResolutions)
         {
             Path = conflictPath;
             _localItem = SourceControlIntegration.GetLocalItemFromConflict(WorkSpace.Instance.SourceControl, Path);
@@ -124,6 +128,10 @@ namespace Ginger.ConflictResolve
             _comparison = null!;
             _canResolve = CalculateCanResolve();
             RelativePath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(Path);
+            PossibleResolutions = new List<ResolutionType>(possibleResolutions);
+
+            List<ComboEnumItem> resolutionOptions = GingerCore.General.GetEnumValuesForCombo(typeof(ResolutionType));
+            PossibleResolutionsComboEnumItems = resolutionOptions.Where(r => PossibleResolutions.Contains((ResolutionType)r.Value));
         }
 
         private void OnPropertyChanged(string propertyName)
