@@ -69,8 +69,8 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             }
             else
             {
-                runsetId = LiteDbRunSet.IncludeAllReferences(result).Max(x => x._id).ToString();
-                filterData = LiteDbRunSet.IncludeAllReferences(result).Find(a => a._id.Equals(new ObjectId(runsetId))).ToList();
+                ObjectId runsetObjectID = LiteDbRunSet.IncludeAllReferences(result).Max(x => x._id);
+                filterData = LiteDbRunSet.IncludeAllReferences(result).Find(a => a._id.Equals(runsetObjectID)).ToList();
             }
             return filterData.Last();
         }
