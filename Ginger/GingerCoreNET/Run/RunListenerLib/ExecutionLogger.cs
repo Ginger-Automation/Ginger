@@ -222,7 +222,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
         protected static string ConvertValueExpressionToString(ProjEnvironment environment, BusinessFlow businessFlow , string ValueExpresionString)
         {
-            if (!string.IsNullOrEmpty(ValueExpresionString))
+            if (string.IsNullOrEmpty(ValueExpresionString))
             {
                 IValueExpression mVE = new GingerCore.ValueExpression(environment, businessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false)
                 {
@@ -231,8 +231,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
                 return mVE.ValueCalculated;
             }
-            
-            
+
+
             return string.Empty;
         }
         public abstract void DeleteLocalData(string logFolder, ObjectId runsetId, Guid executionId);
