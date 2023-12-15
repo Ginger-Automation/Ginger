@@ -3511,14 +3511,10 @@
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Background" Value="White"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource $PrimaryColor_Black}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
-        <Setter Property="BorderThickness" Value="0.5"/>
         <Style.Resources>
             <Style TargetType="{x:Type Border}">
                 <Setter Property="CornerRadius" Value="5" />
-                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
-                <Setter Property="BorderThickness" Value="0.5"/>
             </Style>
         </Style.Resources>
     </Style>
