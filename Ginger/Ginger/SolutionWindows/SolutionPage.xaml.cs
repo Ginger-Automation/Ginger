@@ -44,7 +44,7 @@ namespace Ginger.SolutionWindows
             InitializeComponent();
 
             string allProperties = string.Empty;
-            PropertyChangedEventManager.AddHandler(source: (INotifyPropertyChanged)WorkSpace.Instance, handler: WorkSpacePropertyChanged, propertyName: allProperties);
+            WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
             WeakEventManager<UIElement, RoutedEventArgs>.AddHandler(source: UCEncryptionKey.UpdateKey, eventName: nameof(UIElement.PreviewMouseDown), handler: ReplaceKeyBtn_Click);
 
             Init();

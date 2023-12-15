@@ -86,7 +86,7 @@ namespace Ginger.Run
             grdVariables.AddToolbarTool("@Undo_16x16.png", "Reset " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " to Original Configurations", new RoutedEventHandler(ResetBusFlowVariables));
             grdVariables.AddToolbarTool("@Share_16x16.png", "Share Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Value to all Similar " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " in " + GingerDicser.GetTermResValue(eTermResKey.RunSet), new RoutedEventHandler(CopyBusFlowVariables));
             grdVariables.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Rules, "Rules page", new RoutedEventHandler(ShowRulesPage));
-            WeakEventManager<ucGrid, EventArgs>.AddHandler(source: grdVariables, eventName: nameof(ucGrid.RowDoubleClick), handler: VariablesGrid_grdMain_MouseDoubleClick);
+            grdVariables.RowDoubleClick += VariablesGrid_grdMain_MouseDoubleClick;
 
             SetVariablesGridView();
             LoadGridData();
