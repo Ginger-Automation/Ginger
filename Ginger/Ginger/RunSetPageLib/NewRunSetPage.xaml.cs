@@ -2683,7 +2683,7 @@ namespace Ginger.Run
         public void viewBusinessflowConfiguration(BusinessFlow businessFlow)
         {
             BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mCurrentSelectedRunner.ExecutorEngine.GingerRunner, businessFlow);
-            WeakEventManager<BusinessFlowRunConfigurationsPage, EventArgs>.AddHandler(source: varsPage, eventName: nameof(BusinessFlowRunConfigurationsPage.EventRaiseVariableEdit), handler: viewBusinessflowConfiguration_RaiseVariableEdit);
+            varsPage.EventRaiseVariableEdit += viewBusinessflowConfiguration_RaiseVariableEdit;
             varsPage.ShowAsWindow();
         }
 
