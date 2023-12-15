@@ -1164,6 +1164,12 @@ namespace GingerWPF.BusinessFlowsLib
         private void DoCleanUp()
         {
             mExecutionEngine.ClearAgents();
+            ClearBinding();
+        }
+
+        private void ClearBinding()
+        {
+            App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEventAsync;
         }
 
         private void UpdateToNewSolution()
@@ -1843,7 +1849,7 @@ namespace GingerWPF.BusinessFlowsLib
                     Reporter.HideStatusMessage();
                 }
             }
-        }
+        }       
     }
 
     public class ActiveImageTypeConverter : IValueConverter
@@ -1863,6 +1869,6 @@ namespace GingerWPF.BusinessFlowsLib
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
-        }
-    }
+        }   
+    } 
 }
