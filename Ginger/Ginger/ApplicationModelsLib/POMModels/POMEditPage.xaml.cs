@@ -136,8 +136,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage, editMode: mEditMode);
             xUIElementsFrame.ClearAndSetContent(mPomAllElementsPage);
-            WeakEventManager<PomAllElementsPage, EventArgs>.AddHandler(source: mPomAllElementsPage, eventName: nameof(PomAllElementsPage.raiseUIElementsCountUpdated), handler: UIElementCountUpdatedHandler);
-            
+            mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
+
             UIElementTabTextBlockUpdate();
 
             mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);

@@ -80,13 +80,12 @@ namespace Ginger.BusinessFlowPages
 
             xActivitiesListView.SetDefaultListDataTemplate(activityListItemInfo);
 
-            WeakEventManager<UcListView, EventArgs>.AddHandler(source: xActivitiesListView, eventName: nameof(UcListView.PreviewDragItem), handler: ActivitiesListView_PreviewDragItem);
-            WeakEventManager<UcListView, EventArgs>.AddHandler(source: xActivitiesListView, eventName: nameof(UcListView.ItemDropped), handler: ActivitiesListView_ItemDropped);
-            WeakEventManager<UcListView, EventArgs>.AddHandler(source: xActivitiesListView, eventName: nameof(UcListView.SameFrameItemDropped), handler: ActivitiesListView_SameFrameItemDropped);
+            xActivitiesListView.PreviewDragItem += ActivitiesListView_PreviewDragItem;
+            xActivitiesListView.ItemDropped += ActivitiesListView_ItemDropped;
+            xActivitiesListView.SameFrameItemDropped += ActivitiesListView_SameFrameItemDropped;
 
-            
 
-            
+
 
 
 
