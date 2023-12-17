@@ -91,7 +91,7 @@ jobs:
                     rename docs Library
                     rmdir /s /q Ginger-Web-Help       
 
-            -   uses: nadeemjazmawe/Sign-action-signtool.exe@v1.0.beta
+            -   uses: nadeemjazmawe/Sign-action-signtool.exe@v1.0.beta1
                 with: 
                   Directorypath: 'D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net7.0-windows\'   
                   certificate: ${{ secrets.PEM }}
