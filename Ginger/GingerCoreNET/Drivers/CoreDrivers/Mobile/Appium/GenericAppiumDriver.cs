@@ -86,8 +86,8 @@ namespace Amdocs.Ginger.CoreNET
 
         //Mobile Driver Configurations
         [UserConfigured]
-        [UserConfiguredDefault(@"http://127.0.0.1:4723/wd/hub")]
-        [UserConfiguredDescription("Full Appium server address including port if needed, default address is: 'https://ServerIP:Port/wd/hub'")]
+        [UserConfiguredDefault(@"http://127.0.0.1:4723/")]
+        [UserConfiguredDescription("Full Appium 2.x server address including port if needed, default address is: 'https://ServerIP:Port/'")]
         public String AppiumServer { get; set; }
 
         [UserConfigured]
@@ -328,7 +328,7 @@ namespace Amdocs.Ginger.CoreNET
                     continue;
                 }
 
-                if (UserCapability.Parameter.ToLower().Trim() == "defaulturl")
+                if (UserCapability.Parameter.ToLower().Trim() == "defaulturl" || UserCapability.Parameter.ToLower().Trim() == "ginger:defaulturl")
                 {
                     mDefaultURL = UserCapability.Value;
                     continue;
