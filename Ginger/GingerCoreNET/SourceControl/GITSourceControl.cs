@@ -38,6 +38,10 @@ namespace GingerCore.SourceControl
 
     public class GITSourceControl : SourceControlBase
     {
+        private const string XMLFileExtension = ".xml";
+        private const string IgnoreFileExtension = ".ignore";
+        private const string ConflictBackupFileExtension = ".conflictBackup";
+
         public override string Name { get { return "GIT"; } }
 
         public override bool IsSupportingLocks { get { return false; } }
@@ -226,7 +230,7 @@ namespace GingerCore.SourceControl
                         {
                             return GetItemStatus(item.State);
                         }
-                        else if (NormalizePath(item.FilePath).Contains(NormalizePath(localFilePath)) && !localFilePath.EndsWith(".xml"))
+                        else if (NormalizePath(item.FilePath).Contains(NormalizePath(localFilePath)) && !localFilePath.EndsWith(XMLFileExtension))
                         {
                             return GetItemStatus(item.State);
                         }
@@ -526,11 +530,10 @@ namespace GingerCore.SourceControl
             try
             {
                 string extension = Path.GetExtension(path);
-                string xmlExtension = ".xml";
-                string ignoreExtension = ".ignore";
-                string conflictBackupExtension = ".conflictBackup";
 
-                bool isNotXMLFile = !string.Equals(extension, xmlExtension);
+                //if it is not an XML file then, take the local/remote BLOB file and save it.
+                //if it is an XML file then, read the file content and take the local/remote content within the conflict markers.
+                bool isNotXMLFile = !string.Equals(extension, XMLFileExtension);
                 if (isNotXMLFile)
                 {
                     try
@@ -556,11 +559,11 @@ namespace GingerCore.SourceControl
                     }
                 }
 
-                if (!string.Equals(extension, string.Empty) && !File.Exists(path.Replace(xmlExtension, ignoreExtension)))
+                if (!string.IsNullOrEmpty(extension) && !File.Exists(path.Replace(XMLFileExtension, IgnoreFileExtension)))
                 {
-                    if (!File.Exists(path.Replace(xmlExtension, conflictBackupExtension)))
+                    if (!File.Exists(path.Replace(XMLFileExtension, ConflictBackupFileExtension)))
                     {
-                        File.Copy(path, path.Replace(xmlExtension, conflictBackupExtension));
+                        File.Copy(path, path.Replace(XMLFileExtension, ConflictBackupFileExtension));
                     }
                 }
 
@@ -876,12 +879,12 @@ namespace GingerCore.SourceControl
 
         private string GetBackupFilePath(string path)
         {
-            return path.Replace(".xml", ".conflictBackup");
+            return path.Replace(XMLFileExtension, ConflictBackupFileExtension);
         }
 
         private string GetIgnoreFilePath(string path)
         {
-            return path.Replace(".xml", ".ignore");
+            return path.Replace(XMLFileExtension, IgnoreFileExtension);
         }
 
         private void CreateBackup(string path)
