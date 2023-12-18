@@ -84,14 +84,24 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             foreach (ActivitiesGroup activityGroup in activityGroups)
             {
-                Participant participant = CreateParticipant(activityGroup);
+                Participant? participant = CreateParticipant(activityGroup);
+                if(participant == null)
+                {
+                    continue;
+                }
                 participants.Add(participant);
             }
             return participants;
         }
 
-        private Participant CreateParticipant(ActivitiesGroup activityGroup)
+        private Participant? CreateParticipant(ActivitiesGroup activityGroup)
         {
+            bool isEmpty = !activityGroup.ActivitiesIdentifiers.Any();
+            if (isEmpty)
+            {
+                return null;
+            }
+
             IEnumerable<Activity> activities = ActivitiesGroupBPMNUtil.GetActivities(activityGroup, _solutionFacade);
             Activity firstActivity = activities.First();
             Participant participant;
@@ -123,9 +133,20 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             IEnumerator<ActivitiesGroup> activityGroupEnumerator = _businessFlow.ActivitiesGroups.GetEnumerator();
             bool isFirstActivityGroup = true;
             ActivitiesGroup? lastActivityGroup = null;
+
+            bool allActivityGroupsAreEmpty = true;
+
             while (activityGroupEnumerator.MoveNext())
             {
                 ActivitiesGroup activityGroup = activityGroupEnumerator.Current;
+
+                bool hasNoActivities = !activityGroup.ActivitiesIdentifiers.Any();
+                if (hasNoActivities)
+                {
+                    continue;
+                }
+                allActivityGroupsAreEmpty = false;
+
                 if (isFirstActivityGroup)
                 {
                     StartEvent startEvent = CreateStartEventInParticipantOfActivityGroup(activityGroup, collaboration);
@@ -142,6 +163,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
                 EndEvent endEvent = CreateEndEventInParticipantOfActivityGroup(lastActivityGroup, collaboration);
                 Flow.Create(name: string.Empty, previousFlowSource, endEvent);
             }
+
+            if(allActivityGroupsAreEmpty)
+            {
+                throw new BPMNConversionException($"All {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroups)} cannot be empty.");
+            }    
         }
 
         private StartEvent CreateStartEventInParticipantOfActivityGroup(ActivitiesGroup activityGroup, Collaboration collaboration)
@@ -162,7 +188,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
         private EndEvent CreateEndEventInParticipantOfActivityGroup(ActivitiesGroup activityGroup, Collaboration collaboration)
         {
             Participant participant = GetParticipantOfActivityGroup(activityGroup, collaboration);
-            EndEvent endEvent = participant.Process.AddEndEvent(name: string.Empty);
+            EndEvent endEvent = participant.Process.AddEndEvent(name: string.Empty, EndEventType.Termination);
             return endEvent;
         }
 
