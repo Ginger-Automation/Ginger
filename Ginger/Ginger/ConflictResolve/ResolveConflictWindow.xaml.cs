@@ -76,7 +76,18 @@ namespace Ginger.ConflictResolve
             ObservableList<Conflict> conflicts = new();
             foreach (string conflictPath in conflictPaths)
             {
-                Conflict conflict = new(conflictPath)
+                bool isXMLFile = conflictPath.EndsWith(".xml");
+                IEnumerable<ResolutionType> possibleResolutions;
+                if (isXMLFile)
+                {
+                    possibleResolutions = Enum.GetValues<ResolutionType>();
+                }
+                else
+                {
+                    possibleResolutions = new List<ResolutionType>() { ResolutionType.KeepLocal, ResolutionType.AcceptServer };
+                }
+
+                Conflict conflict = new(conflictPath, possibleResolutions)
                 {
                     IsSelectedForResolution = true,
                     Resolution = ResolutionType.KeepLocal
@@ -252,16 +263,16 @@ namespace Ginger.ConflictResolve
                 selectedConflict.TryGetMergedItem(out itemForResolution);
             }
 
-            if (itemForResolution == null)
-            {
-                Reporter.ToUser(eUserMsgKey.IssueWhileAnalyzingConflict, "No merged item available for conflict for analyzing.");
-                return;
-            }
+            //if (itemForResolution == null)
+            //{
+            //    Reporter.ToUser(eUserMsgKey.IssueWhileAnalyzingConflict, "No merged item available for conflict for analyzing.");
+            //    return;
+            //}
 
             AnalyzeRepositoryItemBase(itemForResolution);
         }
 
-        private void AnalyzeRepositoryItemBase(RepositoryItemBase item)
+        private void AnalyzeRepositoryItemBase(RepositoryItemBase? item)
         {
             if(item is BusinessFlow businessFlow)
             {
@@ -382,13 +393,6 @@ namespace Ginger.ConflictResolve
         private DataTemplate GetDataTemplateForOperationCell()
         {
             return (DataTemplate)ResolveConflictsGrid.Resources["xOperationCellTemplate"];
-        }
-
-        public static List<ComboEnumItem> GetResolutionItemsSource()
-        {
-            //do not remove this method, it is actually called from XAML
-            List<ComboEnumItem> resolutionOptions = GingerCore.General.GetEnumValuesForCombo(typeof(ResolutionType));
-            return resolutionOptions;
         }
 
         private DataTemplate GetDataTemplateForReadyForResolutionCell()
