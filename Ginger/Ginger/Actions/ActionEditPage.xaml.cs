@@ -395,7 +395,7 @@ namespace Ginger.Actions
             {
                 mAFCP = new ActionFlowControlPage(mAction, mActParentBusinessFlow, mActParentActivity, General.eRIPageViewMode.View);
             }
-            if (EditMode == General.eRIPageViewMode.ViewAndExecute)
+            else if (EditMode == General.eRIPageViewMode.ViewAndExecute)
             {
                 mAFCP = new ActionFlowControlPage(mAction, mActParentBusinessFlow, mActParentActivity, General.eRIPageViewMode.ViewAndExecute);
             }
