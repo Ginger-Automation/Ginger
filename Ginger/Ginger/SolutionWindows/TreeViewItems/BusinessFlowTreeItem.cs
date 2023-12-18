@@ -246,7 +246,12 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             ObservableList<ActivitiesGroup> sharedActivitiesGroups = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
             SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mBusinessFlow.ActivitiesGroups, (IEnumerable<object>)sharedActivitiesGroups);
-            return mBusinessFlow.ActivitiesGroups.Where(ag => !ag.IsSharedRepositoryInstance);
+            return mBusinessFlow.ActivitiesGroups.Where(ag =>
+            {
+                bool missingFromSharedRepo = !ag.IsSharedRepositoryInstance;
+                bool hasActivities = ag.ActivitiesIdentifiers.Any();
+                return missingFromSharedRepo && hasActivities;
+            });
         }
 
         private void ExportBPMNMenuItem_Click(object sender, RoutedEventArgs e)

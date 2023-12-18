@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
 {
     public sealed class BusinessFlowToBPMNExporter
@@ -33,7 +34,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
 
             foreach (ActivitiesGroup activityGroup in _businessFlow.ActivitiesGroups)
             {
-                BPMNFileData activityGroupBPMNFileData = CreateActivityGroupBPMNFileData(activityGroup);
+                BPMNFileData? activityGroupBPMNFileData = CreateActivityGroupBPMNFileData(activityGroup);
+                if(activityGroupBPMNFileData == null)
+                {
+                    continue;
+                }
                 bpmnFiles.Add(activityGroupBPMNFileData);
             }
 
@@ -49,9 +54,14 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             return new BPMNFileData(businessFlowCollaborationBPMNFileName, businessFlowCollaborationXML);
         }
 
-        private BPMNFileData CreateActivityGroupBPMNFileData(ActivitiesGroup activityGroup)
+        private BPMNFileData? CreateActivityGroupBPMNFileData(ActivitiesGroup activityGroup)
         {
-            Collaboration activityGroupCollaboration = CreateCollaborationFromActivityGroup(activityGroup);
+            Collaboration? activityGroupCollaboration = CreateCollaborationFromActivityGroup(activityGroup);
+            if(activityGroupCollaboration == null)
+            {
+                return null;
+            }
+
             string activityGroupCollaborationXML = SerializeCollaborationToXML(activityGroupCollaboration);
             string activityGroupCollaborationBPMNFileName = $"subprocess-{activityGroup.Guid}.bpmn";
             return new BPMNFileData(activityGroupCollaborationBPMNFileName, activityGroupCollaborationXML);
@@ -71,8 +81,14 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             return xml;
         }
 
-        private Collaboration CreateCollaborationFromActivityGroup(ActivitiesGroup activityGroup)
+        private Collaboration? CreateCollaborationFromActivityGroup(ActivitiesGroup activityGroup)
         {
+            bool isEmpty = !activityGroup.ActivitiesIdentifiers.Any();
+            if(isEmpty)
+            {
+                return null;
+            }
+
             CollaborationFromActivityGroupCreator collaborationFromActivityGroupCreator = new(activityGroup);
             Collaboration activityGroupCollaboration = collaborationFromActivityGroupCreator.Create();
             return activityGroupCollaboration;
