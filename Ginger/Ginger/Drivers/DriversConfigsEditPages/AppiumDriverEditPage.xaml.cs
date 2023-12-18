@@ -56,7 +56,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void BindConfigurationsFields()
         {
-            mAppiumServer = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumServer), @"http://127.0.0.1:4723/wd/hub");
+            mAppiumServer = mAgent.GetOrCreateParam(nameof(GenericAppiumDriver.AppiumServer), @"http://127.0.0.1:4723/");
             //BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.TextProperty, mAppiumServer, nameof(DriverConfigParam.Value));
             xServerURLTextBox.Init(null, mAppiumServer, nameof(DriverConfigParam.Value));
             BindingHandler.ObjFieldBinding(xServerURLTextBox, TextBox.ToolTipProperty, mAppiumServer, nameof(DriverConfigParam.Description));
@@ -161,10 +161,12 @@ namespace Ginger.Drivers.DriversConfigsEditPages
             }
             else if (mDeviceSource.Value == eDeviceSource.MicroFoucsUFTMLab.ToString() && !IsUFTCapabilityExist())
             {
-                DriverConfigParam uftClientId = new DriverConfigParam() { Parameter = "uftm:oauthClientId", Description = "UFT Execution key Client Id" };
+                DriverConfigParam uftAppiumVersion = new DriverConfigParam() { Parameter = "uftm:appiumVersion", Value ="v2.x", Description = "Appium server version to use in UFT '1.x' or '2.x'" };
+                DriverConfigParam uftClientId = new DriverConfigParam() { Parameter = "uftm:oauthClientId", Description= "UFT Execution key Client Id" };
                 DriverConfigParam uftClientSecret = new DriverConfigParam() { Parameter = "uftm:oauthClientSecret", Description = "UFT Execution key Client Password" };
                 DriverConfigParam uftTenantId = new DriverConfigParam() { Parameter = "uftm:tenantId", Value = "\"999999999\"", Description = "Default value (Need to change only when using UFT shared spaces))" };
 
+                AddOrUpdateCapability(uftAppiumVersion);
                 AddOrUpdateCapability(uftClientId);
                 AddOrUpdateCapability(uftClientSecret);
                 AddOrUpdateCapability(uftTenantId);
@@ -184,11 +186,11 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void SetApplicationCapabilities(bool init = false)
         {
-            DriverConfigParam appPackage = new DriverConfigParam() { Parameter = "appPackage", Description = "Java package of the Android application you want to run", Value = "com.android.settings" };
-            DriverConfigParam appActivity = new DriverConfigParam() { Parameter = "appActivity", Description = "Activity name for the Android activity you want to launch from your package", Value = "com.android.settings.Settings" };
-            DriverConfigParam bundleId = new DriverConfigParam() { Parameter = "bundleId", Description = "Bundle ID of the application under test", Value = "com.apple.Preferences" };
+            DriverConfigParam appPackage = new DriverConfigParam() { Parameter = "appium:appPackage", Description = "Java package of the Android application you want to run", Value = "com.android.settings" };
+            DriverConfigParam appActivity = new DriverConfigParam() { Parameter = "appium:appActivity", Description = "Activity name for the Android activity you want to launch from your package", Value = "com.android.settings.Settings" };
+            DriverConfigParam bundleId = new DriverConfigParam() { Parameter = "appium:bundleId", Description = "Bundle ID of the application under test", Value = "com.apple.Preferences" };
             DriverConfigParam browserName = new DriverConfigParam() { Parameter = "browserName", Description = "Name of mobile web browser to automate" };
-            DriverConfigParam defualtURL = new DriverConfigParam() { Parameter = "defaultURL", Description = "Ginger Capability | Default URL to load on browser connection", Value = "https://ginger.amdocs.com/" };
+            DriverConfigParam defualtURL = new DriverConfigParam() { Parameter = "ginger:defaultURL", Description = "Ginger Capability | Default URL to load on browser connection", Value = "https://ginger.amdocs.com/" };
             if (mAppType.Value == eAppType.NativeHybride.ToString())
             {
                 if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
@@ -236,7 +238,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private void SetDeviceCapabilities(bool init = false)
         {
             DriverConfigParam deviceName = new DriverConfigParam() { Parameter = "deviceName", Value = string.Empty };
-            DriverConfigParam udid = new DriverConfigParam() { Parameter = "udid", Description = "Unique device identifier of the connected physical device", Value = string.Empty };
+            DriverConfigParam udid = new DriverConfigParam() { Parameter = "appium:udid", Description = "Unique device identifier of the connected physical device", Value = string.Empty };
             if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
             {
                 deviceName.Description = "The kind of mobile device to use, for example 'Galaxy S21'";
@@ -256,12 +258,18 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void SetOtherCapabilities(bool init = false)
         {
-            DriverConfigParam newCommandTimeout = new DriverConfigParam() { Parameter = "newCommandTimeout", Description = "How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session", Value = "300" };
+            DriverConfigParam newCommandTimeout = new DriverConfigParam() { Parameter = "appium:newCommandTimeout", Description = "How long (in seconds) Appium will wait for a new command from the client before assuming the client quit and ending the session", Value = "300" };
+            DriverConfigParam noReset = new DriverConfigParam() { Parameter = "appium:noReset", Description = "If true, instruct an Appium driver to avoid its usual reset logic during session start and cleanup", Value = "false" };
             if (!init)
             {
                 SetCurrentCapabilityValue(newCommandTimeout);
+                SetCurrentCapabilityValue(noReset);
             }
             AddOrUpdateCapability(newCommandTimeout);
+            if (mAppType.Value == eAppType.NativeHybride.ToString())
+            {
+                AddOrUpdateCapability(noReset);
+            }
         }
 
         private void AddOrUpdateCapability(DriverConfigParam capability)
@@ -433,9 +441,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void DeleteUFTMServerCapabilities()
         {
+            DeleteCapabilityIfExist("uftm:appiumVersion");
             DeleteCapabilityIfExist("uftm:oauthClientId");
             DeleteCapabilityIfExist("uftm:oauthClientSecret");
-            DeleteCapabilityIfExist("uftm:tenantId");
+            DeleteCapabilityIfExist("uftm:tenantId");            
         }
 
 
