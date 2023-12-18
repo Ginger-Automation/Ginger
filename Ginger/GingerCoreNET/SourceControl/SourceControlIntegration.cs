@@ -203,7 +203,8 @@ namespace Ginger.SourceControl
 
             string localContent = sourceControl.GetLocalContentForConflict(path);
             RepositoryItemBase localItem = null;
-            if (!string.IsNullOrEmpty(localContent))
+            bool isXMLFile = path.EndsWith(".xml");
+            if (isXMLFile && !string.IsNullOrEmpty(localContent))
             {
                 localItem = NewRepositorySerializer.DeserializeFromText(localContent);
             }
@@ -221,7 +222,8 @@ namespace Ginger.SourceControl
             string remoteContent = sourceControl.GetRemoteContentForConflict(path);
 
             RepositoryItemBase remoteItem = null;
-            if (!string.IsNullOrEmpty(remoteContent))
+            bool isXMLFile = path.EndsWith(".xml");
+            if (isXMLFile && !string.IsNullOrEmpty(remoteContent))
             {
                 remoteItem = NewRepositorySerializer.DeserializeFromText(remoteContent);
             }
