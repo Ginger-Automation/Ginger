@@ -22,8 +22,13 @@ jobs:
 
             - name: Create Directory for GingerRuntime
               run: | 
-                  mkdir Runtime               
- 
+                  mkdir Runtime   
+                  
+            - name: Make Ginger Runtime file executable 
+              run: | 
+                  ls -altr
+                  find ./Ginger/GingerRuntime/bin/Release/net7.0/linux-x64/selenium-manager -type f -print0 | xargs -0 chmod +x
+   
             -   uses: sibiraj-s/action-archiver@v1
                 with:
                   path: './Ginger/GingerRuntime/bin/Release/net7.0/linux-x64'
@@ -39,6 +44,7 @@ jobs:
                   sudo apt install dos2unix
                   dos2unix -b ./Runtime/ReadMe.txt
                   dos2unix -b ./Runtime/gingerInstall.sh
+                  
 
             -   uses: sibiraj-s/action-archiver@v1
                 with:
@@ -85,6 +91,12 @@ jobs:
                     rename docs Library
                     rmdir /s /q Ginger-Web-Help       
 
+            -   uses: nadeemjazmawe/Sign-action-signtool.exe@v1.0.beta1
+                with: 
+                  Directorypath: 'D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net7.0-windows\'   
+                  certificate: ${{ secrets.PEM }}
+                  cert-password: ${{ secrets.PEM_PASS }}
+                  
             -   uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
                 with: 
                     filepath: './Ginger/GingerInstallerScriptGithub.iss'
@@ -101,5 +113,3 @@ jobs:
                   name: WindowsInstaller
                   path: D:/a/Installers
                   
-
-
