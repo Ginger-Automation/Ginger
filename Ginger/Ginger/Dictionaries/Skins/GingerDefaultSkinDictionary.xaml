@@ -33,7 +33,7 @@
     <SolidColorBrush x:Key="$FailedStatusColor" Color="#D32F2F"/>
     <SolidColorBrush x:Key="$PendingStatusColor" Color="#ED8A02"/>
     <SolidColorBrush x:Key="$RunningStatusColor" Color="#3EA7FC"/>
-    <SolidColorBrush x:Key="$StoppedStatusColor" Color="DarkRed"/>
+    <SolidColorBrush x:Key="$StoppedStatusColor" Color="#E50075"/>
     <SolidColorBrush x:Key="$SkippedStatusColor" Color="#737373"/>
     <SolidColorBrush x:Key="$IgnoredStatusColor" Color="#737373"/>
     <SolidColorBrush x:Key="$BlockedStatusColor" Color="DarkRed"/>
