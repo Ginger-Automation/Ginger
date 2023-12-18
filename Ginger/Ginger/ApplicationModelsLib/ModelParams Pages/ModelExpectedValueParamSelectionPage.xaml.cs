@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 {
@@ -70,7 +71,7 @@ namespace GingerWPF.ApplicationModelsLib.ModelParams_Pages
 
             xModelParamSelectionGrid.ShowToolsBar = Visibility.Collapsed;
             xModelParamSelectionGrid.Grid.IsReadOnly = true;
-            WeakEventManager<Control, RoutedEventArgs>.AddHandler(source: xModelParamSelectionGrid, eventName: nameof(Control.MouseDoubleClick), handler: selectBtn_Click);
+            WeakEventManager<Control, MouseButtonEventArgs>.AddHandler(source: xModelParamSelectionGrid, eventName: nameof(Control.MouseDoubleClick), handler: selectBtn_Click);
             
 
             GenericWindow.LoadGenericWindow(ref mGenericWindow, null, windowStyle, "Expected Value Parameter Selection", this, winButtons, true, "Cancel", CloseWinClicked);

@@ -2683,7 +2683,7 @@ namespace Ginger.Run
         public void viewBusinessflowConfiguration(BusinessFlow businessFlow)
         {
             BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mCurrentSelectedRunner.ExecutorEngine.GingerRunner, businessFlow);
-            WeakEventManager<BusinessFlowRunConfigurationsPage, EventArgs>.AddHandler(source: varsPage, eventName: nameof(BusinessFlowRunConfigurationsPage.EventRaiseVariableEdit), handler: viewBusinessflowConfiguration_RaiseVariableEdit);
+            varsPage.EventRaiseVariableEdit += viewBusinessflowConfiguration_RaiseVariableEdit;
             varsPage.ShowAsWindow();
         }
 
@@ -2975,9 +2975,9 @@ namespace Ginger.Run
         }
         private void SetComboRunnerInitialView()
         {
-            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: xRunnersCombo, eventName: nameof(ButtonBase.Click), handler: xRunnersCombo_SelectionChanged);
+            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: xRunnersCombo, eventName: nameof(Selector.SelectionChanged), handler: xRunnersCombo_SelectionChanged);
             xRunnersCombo.SelectedItem = mCurrentSelectedRunner.ExecutorEngine;
-            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xRunnersCombo, eventName: nameof(ButtonBase.Click), handler: xRunnersCombo_SelectionChanged);
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xRunnersCombo, eventName: nameof(Selector.SelectionChanged), handler: xRunnersCombo_SelectionChanged);
         }
         private void xRunnersCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
