@@ -188,7 +188,7 @@ namespace Amdocs.Ginger.Repository
         /// <returns></returns>
         public virtual string GetItemType()
         {
-            throw new Exception("Unknown Type for GetItemType " + this.GetType().Name);
+            return "Unknown Type for GetItemType " + this.GetType().Name;
         }
 
 
