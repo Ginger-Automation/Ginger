@@ -94,12 +94,13 @@
             <!--Top buttons-->
             <Frame x:Name="xMainTopFrame" Grid.Row="0" Grid.Column="1" Margin="0,0,0,0" Background="Black"/>
             <UserControls:ucButton x:Name="xRefreshButton"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Center" VerticalAlignment="Bottom" ButtonFontImageSize="18" ButtonImageType="Refresh" Click="xRefreshButton_Click" ToolTip="Refresh Device Screenshot" Margin="0,0,0,0" Visibility="Collapsed"/>
-            <UserControls:ImageMakerControl x:Name="xRecordingImage" Grid.Row="0" Grid.Column="1" Height="18" Width="18" ImageType="Recording" Foreground="Red" ImageForeground="Red" HorizontalAlignment="Right" VerticalAlignment="Center" SetBorder="False" ToolTip="Recording..." Margin="0,0,60,0" Visibility="Collapsed" />
-            <UserControls:ucButton x:Name="xConfigurationsBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="17" ButtonImageType="Config" Click="xConfigurationsBtn_Click" ToolTip="Show Configurations" Margin="0,0,25,0" />
-            <UserControls:ucButton x:Name="xPinBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="17" ButtonImageType="Pin" Click="xPinBtn_Click" ToolTip="Dock Window" Margin="0,0,5,0" />
-            <UserControls:ucButton x:Name="xSwipeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="14" ButtonImageType="Pointer" Click="xSwipeBtn_Click" ToolTip="Perform Swipe" Margin="35,0,0,2" Visibility="Collapsed" />
-            <UserControls:ucButton x:Name="xPortraiteBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="24" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Portrait" Margin="10,0,0,0" Visibility="Collapsed"/>
-            <UserControls:ucButton x:Name="xLandscapeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="22" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Landscape" Margin="10,0,0,0" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
+            <UserControls:ImageMakerControl x:Name="xRecordingImage" Grid.Row="0" Grid.Column="1" Height="16" Width="16" ImageType="Recording" Foreground="Red" ImageForeground="Red" HorizontalAlignment="Right" VerticalAlignment="Center" SetBorder="False" ToolTip="Recording..." Margin="0,0,80,0" Visibility="Collapsed" />
+            <UserControls:ucButton x:Name="xConfigurationsBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="15" ButtonImageType="Config" Click="xConfigurationsBtn_Click" ToolTip="Show Configurations" Margin="0,0,25,0" />
+            <UserControls:ucButton x:Name="xPinBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="14" ButtonImageType="Pin" Click="xPinBtn_Click" ToolTip="Dock Window" Margin="0,1,5,0" />
+            <UserControls:ucButton x:Name="xCordBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="13" ButtonImageType="Target" Click="xCordBtn_Click" ToolTip="Show Mouse Coordinates" Margin="45,0,0,0" Visibility="Collapsed" />
+            <UserControls:ucButton x:Name="xSwipeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="13" ButtonImageType="Pointer" Click="xSwipeBtn_Click" ToolTip="Perform Swipe" Margin="25,0,0,0" Visibility="Collapsed" />
+            <UserControls:ucButton x:Name="xPortraiteBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="16" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Portrait" Margin="5,0,0,0" Visibility="Collapsed"/>
+            <UserControls:ucButton x:Name="xLandscapeBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Bottom" ButtonFontImageSize="16" ButtonImageType="Mobile" Click="xOrientationBtn_Click" ToolTip="Switch to Landscape" Margin="5,0,0,0" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
                 <UserControls:ucButton.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -109,7 +110,7 @@
                     </TransformGroup>
                 </UserControls:ucButton.RenderTransform>
             </UserControls:ucButton>
-            <UserControls:ucButton x:Name="xMetricsBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="19" ButtonImageType="Parameter" Click="xMetricsBtn_Click" ToolTip="Show Device Metrics" Margin="0,0,50,0" />
+            <UserControls:ucButton x:Name="xMetricsBtn"  Grid.Row="0" Grid.Column="1" ButtonType="ImageButton" HorizontalAlignment="Right" VerticalAlignment="Bottom" ButtonFontImageSize="15" ButtonImageType="Parameter" Click="xMetricsBtn_Click" ToolTip="Show Device Metrics" Margin="0,0,50,0" />
 
             <!--Sides-->
             <DockPanel Grid.Column="0" Grid.Row="0" Background="Transparent" >
@@ -159,11 +160,15 @@
                            MouseWheel="xDeviceScreenshotImage_MouseWheel"
                            SizeChanged="xDeviceScreenshotImage_SizeChanged">
                     </Image>
-                    <Border x:Name="xHighlighterBorder" BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" BorderThickness="3" Visibility="Collapsed" Margin="3" Panel.ZIndex="1" />
-                    <UserControls:ucButton x:Name="xSwipeUp" Panel.ZIndex="10" Canvas.Top="1"  ButtonType="ImageButton"  ButtonFontImageSize="30" ButtonImageType="AngleArrowUp" Click="xSwipeUp_Click" MouseDoubleClick="xSwipeUp_MouseDoubleClick" ToolTip="Swipe Up (Double Click For Double Swipe Up)" Margin="0,0,0,0" ButtonImageForground="{StaticResource  $HighlightColor_Purple}" Visibility="Collapsed"/>
-                    <UserControls:ucButton x:Name="xSwipeLeft" Panel.ZIndex="10"  Canvas.Left="1"  ButtonType="ImageButton"  ButtonFontImageSize="30" ButtonImageType="AngleArrowLeft" Click="xSwipeLeft_Click" ToolTip="Swipe Left" Margin="0,0,0,0" ButtonImageForground="{StaticResource  $HighlightColor_Purple}" Visibility="Collapsed"/>
-                    <UserControls:ucButton x:Name="xSwipeRight" Panel.ZIndex="10"  Canvas.Right="1" ButtonType="ImageButton"  ButtonFontImageSize="30" ButtonImageType="AngleArrowRight" Click="xSwipeRight_Click" ToolTip="Swipe Right" Margin="0,0,0,0" ButtonImageForground="{StaticResource  $HighlightColor_Purple}" Visibility="Collapsed"/>
-                    <UserControls:ucButton x:Name="xSwipeDown" Panel.ZIndex="10" Canvas.Bottom="1" ButtonType="ImageButton"  ButtonFontImageSize="30" ButtonImageType="AngleArrowDown" Click="xSwipeDown_Click" MouseDoubleClick="xSwipeDown_MouseDoubleClick" ToolTip="Swipe Down (Double Click For Double Swipe Down)" Margin="0,0,0,0" ButtonImageForground="{StaticResource  $HighlightColor_Purple}" Visibility="Collapsed"/>
+                    <Border x:Name="xHighlighterBorder" BorderBrush="{StaticResource $amdocsLogoLinarGradientBrush}" BorderThickness="3" Visibility="Collapsed" Margin="3" Panel.ZIndex="2" />
+                    <UserControls:ucButton x:Name="xSwipeUp" Panel.ZIndex="3" Canvas.Top="1"  ButtonType="ImageButton"  ButtonFontImageSize="30" ButtonImageType="AngleArrowUp" Click="xSwipeUp_Click" MouseDoubleClick="xSwipeUp_MouseDoubleClick" ToolTip="Swipe Up (Double Click For Double Swipe Up)" Margin="0,0,0,0" ButtonImageForground="{StaticResource  $HighlightColor_Purple}" Visibility="Collapsed"/>
+                    <UserControls:ucButton x:Name="xSwipeLeft" Panel.ZIndex="3"  Canvas.Left="1"  ButtonType="ImageButton"  ButtonFontImageSize="30" ButtonImageType="AngleArrowLeft" Click="xSwipeLeft_Click" ToolTip="Swipe Left" Margin="0,0,0,0" ButtonImageForground="{StaticResource  $HighlightColor_Purple}" Visibility="Collapsed"/>
+                    <UserControls:ucButton x:Name="xSwipeRight" Panel.ZIndex="3"  Canvas.Right="1" ButtonType="ImageButton"  ButtonFontImageSize="30" ButtonImageType="AngleArrowRight" Click="xSwipeRight_Click" ToolTip="Swipe Right" Margin="0,0,0,0" ButtonImageForground="{StaticResource  $HighlightColor_Purple}" Visibility="Collapsed"/>
+                    <UserControls:ucButton x:Name="xSwipeDown" Panel.ZIndex="3" Canvas.Bottom="1" ButtonType="ImageButton"  ButtonFontImageSize="30" ButtonImageType="AngleArrowDown" Click="xSwipeDown_Click" MouseDoubleClick="xSwipeDown_MouseDoubleClick" ToolTip="Swipe Down (Double Click For Double Swipe Down)" Margin="0,0,0,0" ButtonImageForground="{StaticResource  $HighlightColor_Purple}" Visibility="Collapsed"/>
+                    <StackPanel x:Name="xCordsStack" Panel.ZIndex="4" Canvas.Left="1" Visibility="Collapsed" MouseEnter="xCordsStack_MouseEnter" Background="{StaticResource $BackgroundColor_White}">
+                        <Label x:Name="xXcord" Foreground="{StaticResource $HighlightColor_Purple}" Content="X: 0" FontSize="12" FontWeight="Bold" HorizontalAlignment="Left" />
+                        <Label x:Name="xYcord" Foreground="{StaticResource $HighlightColor_Purple}" Content="Y: 0"  FontSize="12" FontWeight="Bold" HorizontalAlignment="Left" />
+                    </StackPanel>
                 </Canvas>
             </DockPanel>
 
