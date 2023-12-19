@@ -131,7 +131,7 @@ namespace GingerWPF.TreeViewItemsLib.ApplicationModelsTreeItems
             }
             else
             {
-                AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowRefresh: false, allowDeleteAllItems: true);
+                AddFolderNodeBasicManipulationsOptions(mContextMenu, "API Model", allowAddNew: false, allowRefresh: false);
             }
 
             AddSourceControlOptions(mContextMenu);
