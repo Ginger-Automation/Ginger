@@ -82,7 +82,7 @@ jobs:
 # Publish GingerRuntime
 # ------------------------------------------------------------------------------------------------------
       - name: 'Publish GingerRuntime'
-        run: dotnet publish ./Ginger/GingerRuntime/GingerRuntime.csproj --runtime linux-x64 --self-contained  true -c Release
+        run: dotnet publish ./Ginger/GingerRuntime/GingerRuntime.csproj --runtime linux-musl-x64 --self-contained  true -c Release
   
 # ------------------------------------------------------------------------------------------------------
 # Upload Artifacts 
