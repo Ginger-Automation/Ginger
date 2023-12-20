@@ -1408,6 +1408,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public void SwipeScreen(eSwipeSide side, double impact = 1)
         {
+            impact = 1;
             System.Drawing.Size sz = Driver.Manage().Window.Size;
             double startX;
             double startY;
@@ -1443,14 +1444,13 @@ namespace Amdocs.Ginger.CoreNET
                     throw new ArgumentException("swipeScreen(): dir: '" + side + "' NOT supported");
             }
             TouchAction drag = new TouchAction(Driver);
-            drag.Press(startX, startY).Wait(200).MoveTo(endX, endY).Release().Perform();
+            drag.Press(startX, startY).MoveTo(endX, endY).Release().Perform();
         }
 
         public ITouchAction BuildDragAction(AppiumDriver driver, int startX, int startY, int endX, int endY, int duration)
         {
             ITouchAction touchAction = new TouchAction(driver)
-                .Press(startX, startY)
-                .Wait(duration)
+                .Press(startX, startY)                
                 .MoveTo(endX, endY)
                 .Release();
 
