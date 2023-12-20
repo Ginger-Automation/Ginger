@@ -339,8 +339,6 @@ namespace Ginger.Run
 
             CollectionChangedEventManager.RemoveHandler(source: ((INotifyCollectionChanged)xActivitiesRunnerItemsListView.Items), handler: xActivitiesRunnerItemsListView_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: ((INotifyCollectionChanged)xActivitiesRunnerItemsListView.Items), handler: xActivitiesRunnerItemsListView_CollectionChanged);
-
-            RunnerItemPage.SetRunnerItemEvent(RunnerItem_RunnerItemEvent);
         }
 
         private void AgentsCache_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -576,7 +574,7 @@ namespace Ginger.Run
             }
         }
 
-        private async void RunnerItem_RunnerItemEvent(RunnerItemEventArgs EventArgs)
+        private async void RunnerItem_RunnerItemEvent(object? sender, RunnerItemEventArgs EventArgs)
         {
             Run.GingerExecutionEngine currentSelectedRunner = mCurrentSelectedRunner.ExecutorEngine;
 
@@ -686,7 +684,7 @@ namespace Ginger.Run
                     {
                         gr.Executor = new GingerExecutionEngine(gr);
                     }
-                    RunnerPage runnerPage = new();
+                    RunnerPage runnerPage = new(runnerItemEventHandler: RunnerItem_RunnerItemEvent);
                     runnerPages.Add(runnerPage);
                     InitRunnerFlowElement(runnerPage, (GingerExecutionEngine)gr.Executor, e.NewStartingIndex);
                     GingerRunnerHighlight(runnerPage);
@@ -1436,7 +1434,7 @@ namespace Ginger.Run
             int runnerPageIndex = 0;
             while (mRunSetConfig.GingerRunners.Count > runnerPages.Count)
             {
-                runnerPages.Add(new RunnerPage());
+                runnerPages.Add(new RunnerPage(runnerItemEventHandler: RunnerItem_RunnerItemEvent));
             }
 
             foreach (GingerRunner GR in mRunSetConfig.GingerRunners.ToList())
