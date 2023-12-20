@@ -50,7 +50,6 @@ namespace GingerCoreNET.DataSource
                 }
             }
         }
-       // mFileFullPath = $"filename={value}; mode=Exclusive; upgrade=true";
 
 
         private string ConnectionString
@@ -348,8 +347,7 @@ namespace GingerCoreNET.DataSource
                 if (mark)
                 {
                     string rowID = row["GINGER_ID"].ToString();
-                    //"db." + DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= " + rowID
-                    datatble = GetQueryOutput($"UPDATE {DSTableName} SET GINGER_USED = \"True\" where GINGER_ID = {rowID}");
+                    GetQueryOutput($"UPDATE {DSTableName} SET GINGER_USED = \"True\" where GINGER_ID = {rowID}");
                 }
                 returnVal = Convert.ToString(row[col]);
             }
@@ -456,8 +454,6 @@ namespace GingerCoreNET.DataSource
                         // If we need to run a direct query
                         try
                         {
-                            //var result = new LiteEngine(query);
-
                             // Converting BSON to JSON 
                             JArray array = new ();
                             // This query needs SQL Command
@@ -781,7 +777,6 @@ namespace GingerCoreNET.DataSource
             if (MarkUpdate)
             {
                 string[] tokens = query.Split(new[] { "where" }, StringSplitOptions.None);
-                //string Newquery = "db." + DSTableName + ".update GINGER_USED = \"True\" where " + tokens[1];
                 string Newquery = $"UPDATE {DSTableName} SET GINGER_USED = \"True\" WHERE {tokens[1]}";
                 RunQuery(Newquery);
             }
@@ -839,9 +834,6 @@ namespace GingerCoreNET.DataSource
 
                         var mapper = new BsonMapper();
                         var sd = mapper.ToDocument(dictionary);
-
-                        //var nobj = mapper.ToObject<Dictionary<string, BsonValue>>(doc);
-
                         batch.Add(new BsonDocument(sd));
                         table.Upsert(batch);
                     }
@@ -998,9 +990,7 @@ namespace GingerCoreNET.DataSource
 
                         if (actDSTable.MarkUpdate)
                         {
-                            //"db." + actDSTable.DSTableName + ".find" + tokens[1]
                             string rowID = Convert.ToString(row["GINGER_ID"]);
-                            //string query = "db." + actDSTable.DSTableName + ".update GINGER_USED = \"True\" where GINGER_ID= \"" + rowID + "\"";
                             RunQuery($"UPDATE {actDSTable.DSTableName} SET GINGER_USED = \"True\" WHERE GINGER_ID= \"{rowID}\"");
                         }
                         actDSTable.AddOrUpdateReturnParamActual(actDSTable.VarName, row[0].ToString());
@@ -1018,7 +1008,6 @@ namespace GingerCoreNET.DataSource
                     {
                         string[] tokens = Query.ToLower().Split(new[] { "where" }, StringSplitOptions.None);
                         string updateParamValue = tokens[0].Substring(tokens[0].LastIndexOf(".") + 1) + "= \"" + actDSTable.Value + "\" where";
-                        //"db." + actDSTable.DSTableName + ".update " + updateParamValue + tokens[1]
                         RunQuery($"UPDATE {actDSTable.DSTableName} SET {updateParamValue} {tokens[1]}");
                     }
                     // Customized Query
@@ -1100,11 +1089,9 @@ namespace GingerCoreNET.DataSource
                         }
                         else if (actDSTable.ByNextAvailable)
                         {
-                            //db." + actDSTable.DSTableName + ".find GINGER_USED=\"False\"
                             dt = GetQueryOutput($"SELECT $ FROM {actDSTable.DSTableName} WHERE GINGER_USED=\"False\"");
                             DataRow row = dt.Rows[0];
                             string rowValue = Convert.ToString(row["GINGER_ID"]);
-                            //string query = "db." + actDSTable.DSTableName + ".delete GINGER_ID=" + rowValue;
                             GetResult($"DELETE {actDSTable.DSTableName} WHERE GINGER_ID = {rowValue}");
                             actDSTable.AddOrUpdateReturnParamActual("Output", "Success");
                         }
@@ -1174,9 +1161,7 @@ namespace GingerCoreNET.DataSource
         public override int GetRowCount(string TableName)
         {
             return GetQueryOutput($"SELECT $ FROM {TableName}").Rows.Count;
-/*            using LiteDatabase liteDb = new(ConnectionString);
-            return liteDb.GetCollection(TableName).Count();
-*/        }
+        }
 
         public override string AddNewKeyValueTableQuery()
         {
@@ -1187,7 +1172,6 @@ namespace GingerCoreNET.DataSource
         {
             return ".db";
         }
-        //db.MyKeyValueDataTable.select GINGER_KEY_NAME where GINGER_KEY_NAME != null - GetKeyName -> query for get key name
         public override DataTable GetKeyName(string mDSTableName)
         {
             return GetQueryOutput($"SELECT GINGER_KEY_NAME FROM {mDSTableName} WHERE GINGER_KEY_NAME != NULL");
@@ -1211,21 +1195,8 @@ namespace GingerCoreNET.DataSource
                 var table = db.GetCollection(TName);
 
                 List<string> ColumnList = GetColumnList(table.FindAll().ToList() , TName);
-                //table.Delete(Query.All());
-
                 table.DeleteAll();
                 List<BsonDocument> batch = new List<BsonDocument>();
-
-                //bool b = ColumnList.Any(s => s.Contains("GINGER_USED"));
-                //string[] List = null;
-                //if (b)
-                //{
-                //    List = AddNewCustomizedTableQuery().Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                //}
-                //else
-                //{
-                //    List = AddNewKeyValueTableQuery().Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                //}
 
                 var doc = new BsonDocument();
 
@@ -1265,8 +1236,6 @@ namespace GingerCoreNET.DataSource
                     }
                 }
             }
-            //
-            // query = "db." + Name + ".insert ;
             query = $"INSERT INTO {Name} VALUES {{ {colvalues} GINGER_LAST_UPDATED_BY: \"{System.Environment.UserName}\",GINGER_LAST_UPDATE_DATETIME:\"{ DateTime.Now.ToString()}\"}}";
             return query;
         }

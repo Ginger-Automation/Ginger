@@ -5,7 +5,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 {
     public class LiteDBSQLTranslator
     {
-        private ActDSTableElement actDSTableElement;
+        private readonly ActDSTableElement actDSTableElement;
         private StringBuilder queryBuilder;
         public LiteDBSQLTranslator(ActDSTableElement actDSTableElement)
         {
@@ -14,7 +14,10 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         }
         public string CreateValueExpression()
         {
-            if (actDSTableElement.BySelectedCell) return this.actDSTableElement.ValueExp;
+            if (actDSTableElement.BySelectedCell)
+            {
+                return this.actDSTableElement.ValueExp;
+            }
             
             queryBuilder = new();
             queryBuilder.Append($"DS Name={actDSTableElement.DSName} DST={actDSTableElement.DSTableName} MASD=");
@@ -71,8 +74,6 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                     break;
                 case ActDSTableElement.eControlAction.MarkAllUnUsed:
                     ValueExpressionForMarkAllUnused();
-                    break;
-                default:
                     break;
             }
             queryBuilder.Append('}');
@@ -171,7 +172,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         }
     }
 
-    class GingerKeyValueSQLQuery
+    static class GingerKeyValueSQLQuery
     {
         public static void GetValueForGingerKeyValue(ActDSTableElement actDSTableElement, StringBuilder queryBuilder)
         {
@@ -231,11 +232,14 @@ namespace Amdocs.Ginger.CoreNET.DataSource
     }
 
 
-    class CustomizedSQLQuery
+    static class CustomizedSQLQuery
     {
         public static void InitForCustomized(ActDSTableElement actDSTableElement, StringBuilder queryBuilder)
         {
-            if (!actDSTableElement.Customized) return;
+            if (!actDSTableElement.Customized)
+            {
+                return;
+            }
 
             queryBuilder.Append($" IDEN=Cust ICOLVAL={actDSTableElement.LocateColTitle} IROW=");
 
@@ -310,7 +314,10 @@ namespace Amdocs.Ginger.CoreNET.DataSource
         }
         public static void SetWhereConditions(ActDSTableElement actDSTableElement, StringBuilder queryBuilder)
         {
-            if (actDSTableElement.WhereConditions == null) return;
+            if (actDSTableElement.WhereConditions == null) 
+            {
+                return;
+            }
 
             for (int i = 0; i < actDSTableElement.WhereConditions.Count; i++)
             {
