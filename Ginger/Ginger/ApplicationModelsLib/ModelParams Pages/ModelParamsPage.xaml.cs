@@ -335,7 +335,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
 
         private void DeleteParams_Clicked(object sender, RoutedEventArgs e)
         {
-            DeleteParams(false);
+            DeleteSelectedParam();
         }
 
         private void ClearAllParams_Clicked(object sender, RoutedEventArgs e)
@@ -375,15 +375,19 @@ namespace GingerWPF.ApplicationModelsLib.APIModelWizard
                     ModelParametersGrid.DataSourceList.SaveUndoData();
                     ParamsList.ClearAll();
                 }
-                else
-                {
-                    ModelParametersGrid.DataSourceList.SaveUndoData();
-                    List<object> SelectedItemsList = ModelParametersGrid.Grid.SelectedItems.Cast<object>().ToList();
-                    foreach (object o in SelectedItemsList)
-                    {
-                        ModelParametersGrid.DataSourceList.Remove(o);
-                    }
-                }
+            }
+        }
+
+        /// <summary>
+        /// Deletes only selected parameter in model param list
+        /// </summary>
+        private void DeleteSelectedParam()
+        {
+            ModelParametersGrid.DataSourceList.SaveUndoData();
+            List<object> SelectedItemsList = ModelParametersGrid.Grid.SelectedItems.Cast<object>().ToList();
+            foreach (object o in SelectedItemsList)
+            {
+                ModelParametersGrid.DataSourceList.Remove(o);
             }
         }
 
