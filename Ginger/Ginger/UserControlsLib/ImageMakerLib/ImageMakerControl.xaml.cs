@@ -856,6 +856,10 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MousePointer);
                     break;
 
+                case eImageType.Target:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MousePointer);
+                    break;
+
                 case eImageType.AudioFileOutline:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_FileAudio);
                     break;

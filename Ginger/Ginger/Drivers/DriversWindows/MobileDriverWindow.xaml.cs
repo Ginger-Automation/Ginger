@@ -230,6 +230,8 @@ namespace Ginger.Drivers.DriversWindows
 
                             await RefreshDeviceScreenshotAsync();
                             SetOrientationButton();
+                            xSwipeBtn.Visibility = Visibility.Visible;
+                            xCordBtn.Visibility = Visibility.Visible;
                             DoContinualDeviceScreenshotRefresh();
 
                             Dictionary<string, object> mDeviceGeneralInfo;
@@ -680,6 +682,25 @@ namespace Ginger.Drivers.DriversWindows
                 //it's a drag
                 mIsItDragAction = true;
             }
+
+            if (mCordIsOn)
+            {
+                Point mousePoint;
+                try
+                {
+                    mousePoint = e.GetPosition((System.Windows.Controls.Image)sender);
+                }
+                catch
+                {
+                    mousePoint = e.GetPosition((System.Windows.Shapes.Rectangle)sender);
+                    //convert to image scale
+                    mousePoint.X = mMouseEndPoint.X + mRectangleStartPoint_X;
+                    mousePoint.Y = mMouseEndPoint.Y + mRectangleStartPoint_Y;
+                }
+                Point pointOnMobile = GetPointOnMobile(mousePoint);
+                xXcord.Content = "X: " + (long)pointOnMobile.X;
+                xYcord.Content = "Y: " + (long)pointOnMobile.Y;
+            }
         }
 
 
@@ -849,7 +870,7 @@ namespace Ginger.Drivers.DriversWindows
         {
             if (mSwipeIsOn)
             {
-                //Turn of Swipe
+                //Turn off Swipe
                 xSwipeDown.Visibility = Visibility.Collapsed;
                 xSwipeUp.Visibility = Visibility.Collapsed;
                 xSwipeRight.Visibility = Visibility.Collapsed;
@@ -878,6 +899,26 @@ namespace Ginger.Drivers.DriversWindows
             xSwipeRight.SetValue(Canvas.TopProperty, xDeviceScreenshotCanvas.ActualHeight / 2 - 30);
             xSwipeLeft.Visibility = Visibility.Visible;
             xSwipeLeft.SetValue(Canvas.TopProperty, xDeviceScreenshotCanvas.ActualHeight / 2 - 30);
+        }
+
+        bool mCordIsOn;
+        private void xCordBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (mCordIsOn)
+            {
+                xCordsStack.Visibility = Visibility.Collapsed;
+                xCordBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+                xCordBtn.ToolTip = "Show Mouse Coordinates";
+            }
+            else
+            {
+                //Allow Swipe
+                xCordsStack.Visibility = Visibility.Visible;
+                xCordBtn.ButtonStyle = FindResource("$ImageButtonStyle_Pink") as Style;
+                xCordBtn.ToolTip = "Hide Mouse Coordinates"; ;
+            }
+
+            mCordIsOn = !mCordIsOn;
         }
 
         private void xBackBtn_Click(object sender, RoutedEventArgs e)
@@ -1199,6 +1240,7 @@ namespace Ginger.Drivers.DriversWindows
                 xPinBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xConfigurationsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xSwipeBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
+                xCordBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xPortraiteBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xLandscapeBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
                 xMetricsBtn.ButtonStyle = FindResource("$ImageButtonStyle_WhiteSmoke") as Style;
@@ -1274,9 +1316,7 @@ namespace Ginger.Drivers.DriversWindows
                 {
                     xPortraiteBtn.Visibility = Visibility.Collapsed;
                     xLandscapeBtn.Visibility = Visibility.Visible;
-                }
-
-                xSwipeBtn.Visibility = Visibility.Visible;
+                }                
             }
             catch (Exception ex)
             {
@@ -1684,6 +1724,20 @@ namespace Ginger.Drivers.DriversWindows
                     Reporter.ToUser(eUserMsgKey.MobileDriverNotConnected);
                     break;
             }
+        }
+
+        int mCordsStackZIndex = 1;
+        private void xCordsStack_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (mCordsStackZIndex == 1)
+            {
+                mCordsStackZIndex = 100;
+            }
+            else
+            {
+                mCordsStackZIndex = 1;
+            }
+            Canvas.SetLeft(xCordsStack, mCordsStackZIndex);
         }
     }
 }
