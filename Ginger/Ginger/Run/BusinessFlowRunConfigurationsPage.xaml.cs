@@ -99,28 +99,27 @@ namespace Ginger.Run
             UpdateFlowControlTabVisual();
             CollectionChangedEventManager.AddHandler(source: mBusinessFlow.BFFlowControls, handler: BFFlowControls_CollectionChanged);
 
-            SetViewMode();
+            bool editable = _viewMode != General.eRIPageViewMode.View && _viewMode != General.eRIPageViewMode.ViewAndExecute;
+            SetViewMode(editable);
         }
 
-        private void SetViewMode()
+        private void SetViewMode(bool editable)
         {
-            if(_viewMode == General.eRIPageViewMode.View || _viewMode == General.eRIPageViewMode.ViewAndExecute)
+            btnAutoCreateDescription.IsEnabled = editable;
+            RunDescritpion.IsEnabled = editable;
+            MandatoryBusinessFlowCB.IsEnabled = editable;
+            grdVariables.IsReadOnly = !editable;
+
+            Visibility visibility = editable ? Visibility.Visible : Visibility.Collapsed;
+            grdVariables.ToolsTray.Visibility = visibility;
+
+            if (editable)
             {
-                btnAutoCreateDescription.IsEnabled = false;
-                RunDescritpion.IsEnabled = false;
-                MandatoryBusinessFlowCB.IsEnabled = false;
-                grdVariables.IsReadOnly = true;
-                grdVariables.ToolsTray.Visibility = Visibility.Collapsed;
-                grdVariables.DisableGridColoumns();
+                grdVariables.EnableGridColumns();
             }
             else
             {
-                btnAutoCreateDescription.IsEnabled = true;
-                RunDescritpion.IsEnabled = true;
-                MandatoryBusinessFlowCB.IsEnabled = true;
-                grdVariables.IsReadOnly = false;
-                grdVariables.ToolsTray.Visibility = Visibility.Visible;
-                grdVariables.EnableGridColumns();
+                grdVariables.DisableGridColoumns();
             }
         }
 

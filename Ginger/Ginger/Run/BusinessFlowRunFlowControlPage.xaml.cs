@@ -22,6 +22,7 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
+using NPOI.OpenXmlFormats.Dml;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -78,17 +79,24 @@ namespace Ginger.Run
             FlowControlGrid.SetAllColumnsDefaultView(view);
             FlowControlGrid.InitViewItems();
 
-            if(_viewMode == General.eRIPageViewMode.View || _viewMode == General.eRIPageViewMode.ViewAndExecute)
+            bool editable = _viewMode != General.eRIPageViewMode.View && _viewMode != General.eRIPageViewMode.ViewAndExecute;
+            SetViewMode(editable);
+        }
+
+        private void SetViewMode(bool editable)
+        {
+            FlowControlGrid.IsReadOnly = !editable;
+
+            Visibility visibility = editable ? Visibility.Visible : Visibility.Collapsed;
+            FlowControlGrid.ToolsTray.Visibility = visibility;
+
+            if (editable)
             {
-                FlowControlGrid.IsReadOnly = true;
-                FlowControlGrid.ToolsTray.Visibility = Visibility.Collapsed;
-                FlowControlGrid.DisableGridColoumns();
+                FlowControlGrid.EnableGridColumns();
             }
             else
             {
-                FlowControlGrid.IsReadOnly = false;
-                FlowControlGrid.ToolsTray.Visibility = Visibility.Visible;
-                FlowControlGrid.EnableGridColumns();
+                FlowControlGrid.DisableGridColoumns();
             }
         }
 
