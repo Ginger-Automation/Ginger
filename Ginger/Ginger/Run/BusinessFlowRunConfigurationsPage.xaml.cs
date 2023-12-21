@@ -66,11 +66,14 @@ namespace Ginger.Run
 
         private ProcessInputVariableRule processInputVariable;
 
-        public BusinessFlowRunConfigurationsPage(GingerRunner runner, BusinessFlow businessFlow)
+        private readonly General.eRIPageViewMode _viewMode;
+
+        public BusinessFlowRunConfigurationsPage(GingerRunner runner, BusinessFlow businessFlow, General.eRIPageViewMode viewMode)
         {
             mBusinessFlow = businessFlow;
             InitializeComponent();
 
+            _viewMode = viewMode;
             mWindowMode = eWindowMode.Configuration;
 
             mGingerRunner = runner;
@@ -96,13 +99,35 @@ namespace Ginger.Run
             UpdateFlowControlTabVisual();
             CollectionChangedEventManager.AddHandler(source: mBusinessFlow.BFFlowControls, handler: BFFlowControls_CollectionChanged);
 
+            SetViewMode();
+        }
 
+        private void SetViewMode()
+        {
+            if(_viewMode == General.eRIPageViewMode.View || _viewMode == General.eRIPageViewMode.ViewAndExecute)
+            {
+                btnAutoCreateDescription.IsEnabled = false;
+                RunDescritpion.IsEnabled = false;
+                MandatoryBusinessFlowCB.IsEnabled = false;
+                grdVariables.IsReadOnly = true;
+                grdVariables.ToolsTray.Visibility = Visibility.Collapsed;
+                grdVariables.DisableGridColoumns();
+            }
+            else
+            {
+                btnAutoCreateDescription.IsEnabled = true;
+                RunDescritpion.IsEnabled = true;
+                MandatoryBusinessFlowCB.IsEnabled = true;
+                grdVariables.IsReadOnly = false;
+                grdVariables.ToolsTray.Visibility = Visibility.Visible;
+                grdVariables.EnableGridColumns();
+            }
         }
 
         private void LoadBusinessFlowcontrols(BusinessFlow businessFlow)
         {
             FlowControlFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
-            BusinessFlowRunFlowControlPage BFCP = new BusinessFlowRunFlowControlPage(mGingerRunner, businessFlow);
+            BusinessFlowRunFlowControlPage BFCP = new BusinessFlowRunFlowControlPage(mGingerRunner, businessFlow, _viewMode);
             FlowControlFrame.ClearAndSetContent(BFCP);
 
         }

@@ -2680,7 +2680,16 @@ namespace Ginger.Run
         }
         public void viewBusinessflowConfiguration(BusinessFlow businessFlow)
         {
-            BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mCurrentSelectedRunner.ExecutorEngine.GingerRunner, businessFlow);
+            General.eRIPageViewMode viewMode;
+            if(mEditMode == eEditMode.View)
+            {
+                viewMode = General.eRIPageViewMode.View;
+            }
+            else
+            {
+                viewMode = General.eRIPageViewMode.Standalone;
+            }
+            BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mCurrentSelectedRunner.ExecutorEngine.GingerRunner, businessFlow, viewMode);
             varsPage.EventRaiseVariableEdit += viewBusinessflowConfiguration_RaiseVariableEdit;
             varsPage.ShowAsWindow();
         }

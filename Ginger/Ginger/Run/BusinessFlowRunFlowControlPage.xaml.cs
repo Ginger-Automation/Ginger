@@ -37,11 +37,13 @@ namespace Ginger.Run
         GingerRunner mBfParentRunner = null;
         BusinessFlow mActParentBusinessFlow = null;
         private static readonly List<ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForComboFromList(typeof(eFCOperator), FlowControl.BusinessFlowFlowControls);
+        private readonly General.eRIPageViewMode _viewMode;
 
-        public BusinessFlowRunFlowControlPage(GingerRunner mRunner, BusinessFlow actParentBusinessFlow)
+        public BusinessFlowRunFlowControlPage(GingerRunner mRunner, BusinessFlow actParentBusinessFlow, General.eRIPageViewMode viewMode)
         {
             InitializeComponent();
 
+            _viewMode = viewMode;
             mBfParentRunner = mRunner;
             mActParentBusinessFlow = actParentBusinessFlow;
 
@@ -75,6 +77,19 @@ namespace Ginger.Run
             viewCols.Add(new GridColView() { Field = FlowControl.Fields.Status, WidthWeight = 100 });
             FlowControlGrid.SetAllColumnsDefaultView(view);
             FlowControlGrid.InitViewItems();
+
+            if(_viewMode == General.eRIPageViewMode.View || _viewMode == General.eRIPageViewMode.ViewAndExecute)
+            {
+                FlowControlGrid.IsReadOnly = true;
+                FlowControlGrid.ToolsTray.Visibility = Visibility.Collapsed;
+                FlowControlGrid.DisableGridColoumns();
+            }
+            else
+            {
+                FlowControlGrid.IsReadOnly = false;
+                FlowControlGrid.ToolsTray.Visibility = Visibility.Visible;
+                FlowControlGrid.EnableGridColumns();
+            }
         }
 
         private void GridVEButton_Click(object sender, RoutedEventArgs e)
