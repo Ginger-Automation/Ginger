@@ -133,11 +133,17 @@ namespace Ginger.ConflictResolve
     
         private void OnLeavingForNextPage(WizardEventArgs wizardEventArgs)
         {
-            if(_analyzerPage.TotalHighAndCriticalIssues > 0)
+            bool hasUnhandledMandatoryIssues = GetUnhandledMandatoryIssueCount() > 0;
+            if(hasUnhandledMandatoryIssues)
             {
                 Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
                 wizardEventArgs.CancelEvent = true;
             }
+        }
+
+        public int GetUnhandledMandatoryIssueCount()
+        {
+            return _analyzerPage.TotalHighAndCriticalIssues;
         }
     }
 }
