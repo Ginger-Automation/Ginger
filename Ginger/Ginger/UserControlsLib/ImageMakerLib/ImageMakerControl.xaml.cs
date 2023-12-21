@@ -300,16 +300,16 @@ namespace Amdocs.Ginger.UserControls
                 #region Execution Status Images
                 //############################## Execution Status Images:
                 case eImageType.Passed:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0, "Passed");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0);
                     break;
                 case eImageType.Unknown:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_QuestionCircle, null, 0, "Unknown");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_QuestionCircle, null, 0);
                     break;
                 case eImageType.Failed:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_TimesCircle, (SolidColorBrush)FindResource("$FailedStatusColor"), 0, "Failed");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_TimesCircle, (SolidColorBrush)FindResource("$FailedStatusColor"), 0);
                     break;
                 case eImageType.Pending:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Clock, (SolidColorBrush)FindResource("$PendingStatusColor"), 0, "Pending");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_Clock, (SolidColorBrush)FindResource("$PendingStatusColor"), 0);
                     break;
                 case eImageType.Recording:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Camera, new SolidColorBrush(Color.FromRgb(255, 0, 0)), 0, "Recording...", true);
@@ -321,16 +321,16 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_ThumbsUp, (SolidColorBrush)FindResource("$PendingStatusColor"));
                     break;
                 case eImageType.Stopped:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_StopCircle, (SolidColorBrush)FindResource("$StoppedStatusColor"), 0, "Stopped");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_StopCircle, (SolidColorBrush)FindResource("$StoppedStatusColor"), 0);
                     break;
                 case eImageType.Blocked:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Ban, (SolidColorBrush)FindResource("$BlockedStatusColor"), 0, "Blocked");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Ban, (SolidColorBrush)FindResource("$BlockedStatusColor"), 0);
                     break;
                 case eImageType.Skipped:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MinusCircle, (SolidColorBrush)FindResource("$SkippedStatusColor"), 0, "Skipped");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MinusCircle, (SolidColorBrush)FindResource("$SkippedStatusColor"), 0);
                     break;
                 case eImageType.Running:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Spinner, (SolidColorBrush)FindResource("$RunningStatusColor"), 2, "Running");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Spinner, (SolidColorBrush)FindResource("$RunningStatusColor"), 2);
                     break;
                 case eImageType.Mapped:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckCircle);
