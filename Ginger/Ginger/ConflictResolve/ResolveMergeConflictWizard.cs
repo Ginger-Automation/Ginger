@@ -138,5 +138,19 @@ namespace Ginger.ConflictResolve
                 }
             }
         }
+
+        public override void Cancel()
+        {
+            int unselectedComparisonCount = _conflict.Comparison.UnselectedComparisonCount();
+            bool hasUnselectedComparison = unselectedComparisonCount > 0;
+
+            int unhandledMandatoryIssueCount = _analyzeMergedPage != null ? _analyzeMergedPage.GetUnhandledMandatoryIssueCount() : 0;
+            bool hasUnhandledMandatoryIssues = unhandledMandatoryIssueCount > 0;
+            if (hasUnselectedComparison || hasUnhandledMandatoryIssues)
+            {
+                _conflict.DiscardMergedItem();
+            }
+            base.Cancel();
+        }
     }
 }
