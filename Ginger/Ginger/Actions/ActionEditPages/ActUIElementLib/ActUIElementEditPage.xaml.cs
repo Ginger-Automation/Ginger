@@ -73,7 +73,9 @@ namespace Ginger.Actions._Common.ActUIElementLib
             SetLocateValueFrame();
             ShowPlatformSpecificPage();
             ShowControlSpecificPage();
-            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: ElementLocateByComboBox, eventName: nameof(Selector.SelectionChanged), handler: ElementLocateByComboBox_SelectionChanged);
+            ElementLocateByComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
+            
+
         }
 
         private void BindElementTypeComboBox()
@@ -160,11 +162,10 @@ namespace Ginger.Actions._Common.ActUIElementLib
                 mElementActionsList = mPlatform.GetPlatformWidgetsUIActionsList(mAction.ElementType);
             }
 
-            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: ElementActionComboBox, eventName: nameof(Selector.SelectionChanged), handler: ElementActionComboBox_SelectionChanged);
+            ElementActionComboBox.SelectionChanged -= ElementActionComboBox_SelectionChanged;
             ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
             ElementActionComboBox.SelectedValue = mAction.ElementAction;//need to fix binding to avoid it
-            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: ElementActionComboBox, eventName: nameof(Selector.SelectionChanged), handler: ElementActionComboBox_SelectionChanged);
-
+            ElementActionComboBox.SelectionChanged += ElementActionComboBox_SelectionChanged;
             if (mElementActionsList.Count == 0)
             {
                 mAction.ElementAction = eElementAction.Unknown;
