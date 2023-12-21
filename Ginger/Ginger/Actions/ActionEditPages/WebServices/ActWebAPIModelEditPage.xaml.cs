@@ -115,8 +115,10 @@ namespace Ginger.Actions.WebServices
                     {
                         numOfAPIParams++;
                         EnhancedActInputValue paramToUpdate = OldAPIModelParamsValue.FirstOrDefault(x => x.ParamGuid == AMDP.Guid);
+                        
                         if (paramToUpdate != null) //Param already been in the action list, just update his values
                         {
+                            paramToUpdate.OptionalValues.Clear();
                             string OVDefaultValue = string.Empty;
                             foreach (OptionalValue OP in AMDP.OptionalValuesList)
                             {

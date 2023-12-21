@@ -22,6 +22,7 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.FlowControlLib;
 using GingerCore.GeneralLib;
+using NPOI.OpenXmlFormats.Dml;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,11 +38,13 @@ namespace Ginger.Run
         GingerRunner mBfParentRunner = null;
         BusinessFlow mActParentBusinessFlow = null;
         private static readonly List<ComboEnumItem> OperatorList = GingerCore.General.GetEnumValuesForComboFromList(typeof(eFCOperator), FlowControl.BusinessFlowFlowControls);
+        private readonly General.eRIPageViewMode _viewMode;
 
-        public BusinessFlowRunFlowControlPage(GingerRunner mRunner, BusinessFlow actParentBusinessFlow)
+        public BusinessFlowRunFlowControlPage(GingerRunner mRunner, BusinessFlow actParentBusinessFlow, General.eRIPageViewMode viewMode)
         {
             InitializeComponent();
 
+            _viewMode = viewMode;
             mBfParentRunner = mRunner;
             mActParentBusinessFlow = actParentBusinessFlow;
 
@@ -75,6 +78,26 @@ namespace Ginger.Run
             viewCols.Add(new GridColView() { Field = FlowControl.Fields.Status, WidthWeight = 100 });
             FlowControlGrid.SetAllColumnsDefaultView(view);
             FlowControlGrid.InitViewItems();
+
+            bool editable = _viewMode != General.eRIPageViewMode.View && _viewMode != General.eRIPageViewMode.ViewAndExecute;
+            SetViewMode(editable);
+        }
+
+        private void SetViewMode(bool editable)
+        {
+            FlowControlGrid.IsReadOnly = !editable;
+
+            Visibility visibility = editable ? Visibility.Visible : Visibility.Collapsed;
+            FlowControlGrid.ToolsTray.Visibility = visibility;
+
+            if (editable)
+            {
+                FlowControlGrid.EnableGridColumns();
+            }
+            else
+            {
+                FlowControlGrid.DisableGridColoumns();
+            }
         }
 
         private void GridVEButton_Click(object sender, RoutedEventArgs e)

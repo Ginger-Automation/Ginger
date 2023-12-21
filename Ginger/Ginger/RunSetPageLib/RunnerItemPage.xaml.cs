@@ -47,14 +47,16 @@ namespace Ginger.Run
             Action
         }
 
-        public delegate void RunnerItemEventHandler(RunnerItemEventArgs EventArgs);
-        private static event RunnerItemEventHandler RunnerItemEvent;
+        public event EventHandler<RunnerItemEventArgs> RunnerItemEvent;
+
+        private readonly EventHandler<RunnerItemEventArgs>? _runnerItemEventHandler;
+
         public void OnRunnerItemEvent(RunnerItemEventArgs.eEventType eventType, RunnerItemPage runnerItemPage, eRunnerItemType runnerItemType, Object runnerItemObject)
         {
-            RunnerItemEventHandler handler = RunnerItemEvent;
+            EventHandler<RunnerItemEventArgs> handler = RunnerItemEvent;
             if (handler != null)
             {
-                handler(new RunnerItemEventArgs(eventType, runnerItemPage, runnerItemType, runnerItemObject));
+                handler(sender: this, new RunnerItemEventArgs(eventType, runnerItemPage, runnerItemType, runnerItemObject));
             }
         }
 
@@ -134,14 +136,6 @@ namespace Ginger.Run
             }
         }
 
-        public static void SetRunnerItemEvent(RunnerItemEventHandler runnerItemEvent)
-        {
-            if (RunnerItemEvent == null)
-            {
-                RunnerItemEvent -= runnerItemEvent;
-                RunnerItemEvent += runnerItemEvent;
-            }
-        }
 
         public void ClearItemChilds()
         {
@@ -177,7 +171,7 @@ namespace Ginger.Run
                         continue;//do not show Clean Up Activity for now
                     }
 
-                    RunnerItemPage ri = new RunnerItemPage(ac);
+                    RunnerItemPage ri = new RunnerItemPage(Runnerobj: ac, runnerItemEventHandler: _runnerItemEventHandler);
                     this.Context.BusinessFlow = (BusinessFlow)ItemObject;
                     ri.Context = this.Context;
                     ri.ItemName = ac.ActivityName;
@@ -200,7 +194,7 @@ namespace Ginger.Run
             {
                 foreach (GingerCore.Actions.Act act in ((Activity)ItemObject).Acts)
                 {
-                    RunnerItemPage ri = new RunnerItemPage(act);
+                    RunnerItemPage ri = new RunnerItemPage(Runnerobj: act, runnerItemEventHandler: _runnerItemEventHandler);
                     this.Context.Activity = (Activity)ItemObject;
                     ri.Context = this.Context;
                     act.Context = this.Context;
@@ -214,11 +208,12 @@ namespace Ginger.Run
             }
         }
 
-        public RunnerItemPage(object Runnerobj = null, bool ViewMode = false)
+        public RunnerItemPage(object Runnerobj = null, bool ViewMode = false, EventHandler<RunnerItemEventArgs>? runnerItemEventHandler = null)
         {
             InitializeComponent();
 
             ItemObject = Runnerobj;
+            _runnerItemEventHandler = runnerItemEventHandler;
             if (ItemObject != null)
             {
                 if (ItemObject.GetType() == typeof(GingerCore.BusinessFlow))
@@ -257,6 +252,11 @@ namespace Ginger.Run
                 xRunnerItemMenu.Visibility = Visibility.Collapsed;
             }
 
+            if(_runnerItemEventHandler != null)
+            {
+                WeakEventManager<RunnerItemPage, RunnerItemEventArgs>.RemoveHandler(source: this, eventName: nameof(RunnerItemEvent), handler: _runnerItemEventHandler);
+                WeakEventManager<RunnerItemPage, RunnerItemEventArgs>.AddHandler(source: this, eventName: nameof(RunnerItemEvent), handler: _runnerItemEventHandler);
+            }
         }
 
         private void RunnerItem_ActionPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -506,7 +506,7 @@ namespace Ginger.Run
         }
 
     }
-    public class RunnerItemEventArgs
+    public class RunnerItemEventArgs : EventArgs
     {
         public enum eEventType
         {
