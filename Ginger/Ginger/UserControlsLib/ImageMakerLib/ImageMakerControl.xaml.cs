@@ -300,7 +300,7 @@ namespace Amdocs.Ginger.UserControls
                 #region Execution Status Images
                 //############################## Execution Status Images:
                 case eImageType.Passed:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0, "Passed");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_CheckCircle, (SolidColorBrush)FindResource("$PassedStatusColor"), 0 , "Passed");
                     break;
                 case eImageType.Unknown:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_QuestionCircle, null, 0, "Unknown");
@@ -324,7 +324,7 @@ namespace Amdocs.Ginger.UserControls
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_StopCircle, (SolidColorBrush)FindResource("$StoppedStatusColor"), 0, "Stopped");
                     break;
                 case eImageType.Blocked:
-                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Ban, (SolidColorBrush)FindResource("$BlockedStatusColor"), 0, "Blocked");
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Ban, (SolidColorBrush)FindResource("$BlockedStatusColor"), 0,"Blocked");
                     break;
                 case eImageType.Skipped:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_MinusCircle, (SolidColorBrush)FindResource("$SkippedStatusColor"), 0, "Skipped");
