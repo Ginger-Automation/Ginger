@@ -76,7 +76,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
                 xStatusTri.Visibility = Visibility.Visible;
                 xStatusIcon.Visibility = Visibility.Collapsed;
             }
-           // xStatusIcon.ToolTip = xStatusTri.ToolTip = Status.ToString();
+
             switch (Status)
             {
 
