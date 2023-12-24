@@ -2632,8 +2632,8 @@ namespace Amdocs.Ginger.CoreNET
             if (IsRecording)
             {
                 var mobDevAction = GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.LongPressXY);
-                mobDevAction.X1.ValueForDriver = x.ToString();
-                mobDevAction.Y1.ValueForDriver = y.ToString();
+                mobDevAction.X1.Value = x.ToString();
+                mobDevAction.Y1.Value = y.ToString();
                 RecordingOperations(mobDevAction);
             }
         }
@@ -2646,11 +2646,11 @@ namespace Amdocs.Ginger.CoreNET
             {
                 var mobDevAction = GetMobileActionforRecording(ActMobileDevice.eMobileDeviceAction.DragXYXY);
 
-                mobDevAction.X1.ValueForDriver = start.X.ToString();
-                mobDevAction.Y1.ValueForDriver = start.Y.ToString();
+                mobDevAction.X1.Value = start.X.ToString();
+                mobDevAction.Y1.Value = start.Y.ToString();
 
-                mobDevAction.X2.ValueForDriver = end.X.ToString();
-                mobDevAction.Y2.ValueForDriver = end.Y.ToString();
+                mobDevAction.X2.Value = end.X.ToString();
+                mobDevAction.Y2.Value = end.Y.ToString();
                 RecordingOperations(mobDevAction);
             }
         }
