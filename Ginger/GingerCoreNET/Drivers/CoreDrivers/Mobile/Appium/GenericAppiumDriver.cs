@@ -323,14 +323,16 @@ namespace Amdocs.Ginger.CoreNET
             //User customized capabilities
             foreach (DriverConfigParam UserCapability in AppiumCapabilities)
             {
-                if (String.IsNullOrWhiteSpace(UserCapability.Parameter))
+                if (String.IsNullOrWhiteSpace(UserCapability.Parameter) || String.IsNullOrWhiteSpace(UserCapability.Value))
                 {
+                    Reporter.ToLog(eLogLevel.WARN, string.Format("The Appium Capability '{0}'='{1}' is not valid, avoiding it.", UserCapability.Parameter, UserCapability.Value));
                     continue;
                 }
 
                 if (UserCapability.Parameter.ToLower().Trim() == "defaulturl" || UserCapability.Parameter.ToLower().Trim() == "ginger:defaulturl")
                 {
                     mDefaultURL = UserCapability.Value;
+
                     continue;
                 }
 
@@ -358,19 +360,19 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else
                 {
-                    if (UserCapability.Parameter == "platformName")
+                    if (UserCapability.Parameter == "platformName" || UserCapability.Parameter == "appium:platformName")
                     {
                         driverOptions.PlatformName = UserCapability.Value;
                     }
-                    else if (UserCapability.Parameter == "automationName")
+                    else if (UserCapability.Parameter == "automationName" || UserCapability.Parameter == "appium:automationName")
                     {
                         driverOptions.AutomationName = UserCapability.Value;
                     }
-                    else if (UserCapability.Parameter == "deviceName")
+                    else if (UserCapability.Parameter == "deviceName" || UserCapability.Parameter == "appium:deviceName")
                     {
                         driverOptions.DeviceName = UserCapability.Value;
                     }
-                    else if (UserCapability.Parameter == "browserName")
+                    else if (UserCapability.Parameter == "browserName" || UserCapability.Parameter == "appium:browserName")
                     {
                         driverOptions.BrowserName = UserCapability.Value;
                     }
@@ -605,8 +607,7 @@ namespace Amdocs.Ginger.CoreNET
                         e = LocateElement(act);
                         int x = e.Location.X;
                         int y = e.Location.Y;
-                        TouchAction action = new TouchAction(Driver);
-                        action.Press(x, y).MoveTo(x + 1000, y).Release().Perform();
+                        (BuildTouchAction(Driver, x, y, x + 1000, y, 200)).Perform();
                         break;
 
                     default:
@@ -959,7 +960,7 @@ namespace Amdocs.Ginger.CoreNET
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeByCoordinates:
                         ITouchAction swipe;
-                        swipe = BuildDragAction(Driver,
+                        swipe = BuildTouchAction(Driver,
                             Convert.ToInt32(act.X1.ValueForDriver),
                             Convert.ToInt32(act.Y1.ValueForDriver),
                             Convert.ToInt32(act.X2.ValueForDriver),
@@ -1443,25 +1444,36 @@ namespace Amdocs.Ginger.CoreNET
                 default:
                     throw new ArgumentException("swipeScreen(): dir: '" + side + "' NOT supported");
             }
-            TouchAction drag = new TouchAction(Driver);
-            drag.Press(startX, startY).MoveTo(endX, endY).Release().Perform();
+
+            (BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();            
         }
 
-        public ITouchAction BuildDragAction(AppiumDriver driver, int startX, int startY, int endX, int endY, int duration)
+        public ITouchAction BuildTouchAction(AppiumDriver driver, double startX, double startY, double endX, double endY, int waitDuration=200)
         {
-            ITouchAction touchAction = new TouchAction(driver)
-                .Press(startX, startY)                
+            ITouchAction touchAction;
+            
+            if (DevicePlatformType == eDevicePlatformType.Android)
+            {
+                touchAction = new TouchAction(driver)
+               .Press(startX, startY)
+               .MoveTo(endX, endY)
+               .Release();
+            }
+            else //iOS
+            {
+                touchAction = new TouchAction(driver)
+                .Press(startX, startY)
+                .Wait(waitDuration)
                 .MoveTo(endX, endY)
                 .Release();
+            }
 
             return touchAction;
         }
 
         public void DoDrag(int startX, int startY, int endX, int endY)
         {
-            TouchAction drag = new TouchAction(Driver);
-            drag.Press(startX, startY).MoveTo(endX, endY).Release();
-            drag.Perform();
+            (BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();
         }
 
         private string GetCurrentPackage()
