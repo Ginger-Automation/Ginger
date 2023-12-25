@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
@@ -529,8 +530,8 @@ namespace GingerCore.Drivers
                         }
                         else if (!string.IsNullOrEmpty(ExtensionPath))
                         {
-                            string[] extensionPaths = ExtensionPath.Split(';'); 
-                            options.AddExtensions(extensionPaths);                            
+                            string[] extensionPaths = ExtensionPath.Split(';');
+                            options.AddExtensions(extensionPaths);
                         }
 
                         //setting proxy
@@ -587,7 +588,7 @@ namespace GingerCore.Drivers
                         {
                             options.DebuggerAddress = DebugAddress.Trim();
                         }
-                         driverService = ChromeDriverService.CreateDefaultService();
+                        driverService = ChromeDriverService.CreateDefaultService();
                         if (HideConsoleWindow)
                         {
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
@@ -842,7 +843,6 @@ namespace GingerCore.Drivers
 
                 Driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds((int)PageLoadTimeOut);
 
-
                 DefaultWindowHandler = Driver.CurrentWindowHandle;
                 InitXpathHelper();
             }
@@ -851,8 +851,10 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in start driver", ex);
                 ErrorMessageFromDriver = ex.Message;
 
-                //If driver is mismatched, try renaming the existing driver and let selenium update the driver
-                if (RestartRetry && ex.Message.Contains("session not created: This version of"))
+                CloseDriverProcess(driverService);
+                //If driver is mismatched, use selenium manager to get the latest driver
+                if (RestartRetry && (ex.Message.Contains("session not created: This version of", StringComparison.InvariantCultureIgnoreCase) ||
+                    ex.Message.StartsWith("unable to obtain", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     RestartRetry = false;
                     UpdateDriver(driverService);
@@ -863,27 +865,62 @@ namespace GingerCore.Drivers
 
         private void UpdateDriver(DriverService driverService)
         {
-            //Close launched driver process as it does not gets closed on exception
+            try
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"Mismatch in browser driver versions detected. Attempting to Update {mBrowserTpe} driver to latest....");
+                DriverOptions driverOptions = null;
+
+                if (mBrowserTpe == eBrowserType.Chrome)
+                {
+                    driverOptions = new ChromeOptions();
+                }
+                else if (mBrowserTpe == eBrowserType.Edge)
+                {
+                    driverOptions = new EdgeOptions();
+                }
+                else if (mBrowserTpe == eBrowserType.FireFox)
+                {
+                    driverOptions = new FirefoxOptions();
+                }
+                else
+                {
+                    //Other browsers not supported, return without update
+                    return;
+                }
+
+                //Try get system proxy to send it to Selenium manager to update the driver.
+                string systemProxy = OperatingSystemBase.GetSystemProxy();
+
+                if (!string.IsNullOrEmpty(systemProxy))
+                {
+                    var proxy = new Proxy();
+                    proxy.Kind = ProxyKind.Manual;
+                    proxy.HttpProxy = systemProxy.ToString();
+                    proxy.SslProxy = systemProxy.ToString();
+                    driverOptions.Proxy = proxy;
+                }
+
+                SetBrowserVersion(driverOptions);
+                var driverpath = SeleniumManager.DriverPath(driverOptions);
+                Reporter.ToLog(eLogLevel.INFO, $"Updated {mBrowserTpe} driver to latest");
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update the driver. Please ensure correct proxy settings for auto-download in the Agent configuration or manually download and place the driver in the Ginger application directory ({AppContext.BaseDirectory})");
+                throw;
+            }
+        }
+
+        private static void CloseDriverProcess(DriverService driverService)
+        {
+            //Close launched driver process as it does not gets closed by Selenium in case of exception
             if (driverService?.ProcessId != 0)
             {
                 try
                 {
-                    System.Diagnostics.Process.GetProcessById(driverService.ProcessId)?.Kill();                
+                    System.Diagnostics.Process.GetProcessById(driverService.ProcessId)?.Kill();
                 }
                 catch { }
-            }
-            //Rename driver name
-            if (mBrowserTpe == eBrowserType.Chrome)
-            {
-                GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(CHROME_DRIVER_NAME), GetDriversPathPerOS());
-            }
-            else if (mBrowserTpe == eBrowserType.Edge)
-            {
-                GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(EDGE_DRIVER_NAME), GetDriversPathPerOS());
-            }
-            else if (mBrowserTpe == eBrowserType.FireFox)
-            {
-                GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(FIREFOX_DRIVER_NAME), GetDriversPathPerOS());
             }
         }
 
@@ -9978,13 +10015,13 @@ namespace GingerCore.Drivers
         }
         private void blockOrUnblockUrls()
         {
-            if (mAct != null )
+            if (mAct != null)
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
                 {
                     devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V117.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
                 }
-                else if(mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
+                else if (mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
                 {
                     devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V117.Network.SetBlockedURLsCommandSettings() { Urls = new string[] { } });
                 }
