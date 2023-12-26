@@ -867,7 +867,7 @@ namespace GingerCore.Drivers
         {
             try
             {
-                Reporter.ToLog(eLogLevel.INFO, $"Mismatch in browser driver versions detected. Attempting to Update {mBrowserTpe} driver to latest....");
+                Reporter.ToLog(eLogLevel.INFO, $"Failed to Download latest {mBrowserTpe} driver. Attempting to Update {mBrowserTpe} driver to latest using System Proxy Settings....");
                 DriverOptions driverOptions = null;
 
                 if (mBrowserTpe == eBrowserType.Chrome)
@@ -889,7 +889,15 @@ namespace GingerCore.Drivers
                 }
 
                 //Try get system proxy to send it to Selenium manager to update the driver.
-                string systemProxy = OperatingSystemBase.GetSystemProxy();
+                string systemProxy = null;
+                try
+                {
+                    systemProxy = OperatingSystemBase.GetSystemProxy();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get System Proxy Settings.", ex);
+                }
 
                 if (!string.IsNullOrEmpty(systemProxy))
                 {
@@ -902,11 +910,15 @@ namespace GingerCore.Drivers
 
                 SetBrowserVersion(driverOptions);
                 var driverpath = SeleniumManager.DriverPath(driverOptions);
-                Reporter.ToLog(eLogLevel.INFO, $"Updated {mBrowserTpe} driver to latest");
+                Reporter.ToLog(eLogLevel.INFO, $"Updated {mBrowserTpe} driver to latest and placed in {driverpath}.");
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, $"Failed to Update the driver. Please ensure correct proxy settings for auto-download in the Agent configuration or manually download and place the driver in the Ginger application directory ({AppContext.BaseDirectory})");
+                if (!WorkSpace.Instance.RunningInExecutionMode && !WorkSpace.Instance.RunningFromUnitTest)
+                {
+                    Reporter.ToUser(eUserMsgKey.FailedToDownloadDriver, mBrowserTpe);
+                }
+                Reporter.ToLog(eLogLevel.ERROR, string.Format(Reporter.UserMsgsPool[eUserMsgKey.FailedToDownloadDriver].Message, mBrowserTpe), ex);
                 throw;
             }
         }
@@ -918,6 +930,7 @@ namespace GingerCore.Drivers
             {
                 try
                 {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Closing Driver process which was left open after failure to start driver.");
                     System.Diagnostics.Process.GetProcessById(driverService.ProcessId)?.Kill();
                 }
                 catch { }
