@@ -106,10 +106,9 @@ namespace Ginger.Run
 
             ObservableList<Button> winButtons = new () { doneBtn };
 
-            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: doneBtn, eventName: nameof(ButtonBase.Click), handler: (sender, e) =>
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: doneBtn, eventName: nameof(ButtonBase.Click), handler: (_, e) =>
             {
                 genWin.Close();
-
             });
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, winButtons);
         }
