@@ -1320,7 +1320,7 @@ namespace Ginger.Drivers.DriversWindows
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to set the device orientation", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to set the device orientation, seems like the connection to the device is not valid.", ex);
             }
         }
 
@@ -1434,7 +1434,7 @@ namespace Ginger.Drivers.DriversWindows
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to update the device screenshot, Error:{0}", ex.Message));
+                            Reporter.ToLog(eLogLevel.ERROR,"Failed to update the device screenshot, seems like the connection to the device is not valid.", ex);
 
                             this.Dispatcher.Invoke(() =>
                             {
