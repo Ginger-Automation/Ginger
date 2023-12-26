@@ -8,7 +8,7 @@
         MinHeight="600" MinWidth="300" WindowStyle="SingleBorderWindow"
         WindowStartupLocation="CenterScreen" Closing="Window_Closing" SizeChanged="Window_SizeChanged" Loaded="Window_Loaded"
         Topmost="False" KeyDown="Window_KeyDown">
-    <Grid x:Name="xWindowGrid" Background="DarkGray">
+    <Grid x:Name="xWindowGrid" Background="{StaticResource $BackgroundColor_LightGray}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="xMeticsCol" Width="350"/>
             <ColumnDefinition Width="35*"/>
