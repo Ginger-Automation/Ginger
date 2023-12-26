@@ -895,10 +895,6 @@ namespace GingerCore
                 {
                     Reporter.ToUser(eUserMsgKey.TestagentSucceed);
                 }
-                else if (Driver.ErrorMessageFromDriver != null && Driver.ErrorMessageFromDriver.Contains("session not created: This version of "))
-                {
-                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Browser driver version mismatch. Configure the right proxy settings for auto-download in the Agent configuration, or manually download and place the driver in the Ginger installation directory.");
-                }
                 else
                 {
                     Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Please confirm Agent configurations are valid");
