@@ -24,6 +24,7 @@ using GingerCore.GeneralLib;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.Run
 {
@@ -98,7 +99,19 @@ namespace Ginger.Run
 
         public void ShowAsWindow()
         {
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, Ginger.eWindowShowStyle.Dialog, this.Title, this);
+            Button doneBtn = new()
+            {
+                Content = "Done"
+            };
+
+            ObservableList<Button> winButtons = new () { doneBtn };
+
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: doneBtn, eventName: nameof(ButtonBase.Click), handler: (sender, e) =>
+            {
+                genWin.Close();
+
+            });
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, winButtons);
         }
 
         private void useSpecificEnvChkbox_Checked(object sender, RoutedEventArgs e)
