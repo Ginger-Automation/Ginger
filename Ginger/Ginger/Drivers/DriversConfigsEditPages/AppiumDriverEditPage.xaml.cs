@@ -137,7 +137,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
         private void SetPlatformCapabilities()
         {
             DriverConfigParam platformName = new DriverConfigParam() { Parameter = "platformName", Description = "Which mobile OS platform to use" };
-            DriverConfigParam automationName = new DriverConfigParam() { Parameter = "automationName", Description = "Which automation engine to use" };
+            DriverConfigParam automationName = new DriverConfigParam() { Parameter = "appium:automationName", Description = "Which automation engine to use" };
             if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
             {
                 platformName.Value = "Android";
@@ -237,7 +237,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void SetDeviceCapabilities(bool init = false)
         {
-            DriverConfigParam deviceName = new DriverConfigParam() { Parameter = "deviceName", Value = string.Empty };
+            DriverConfigParam deviceName = new DriverConfigParam() { Parameter = "appium:deviceName", Value = string.Empty };
             DriverConfigParam udid = new DriverConfigParam() { Parameter = "appium:udid", Description = "Unique device identifier of the connected physical device", Value = string.Empty };
             if (mDevicePlatformType.Value == eDevicePlatformType.Android.ToString())
             {
@@ -274,9 +274,10 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void AddOrUpdateCapability(DriverConfigParam capability)
         {
-            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.FirstOrDefault(x => x.Parameter == capability.Parameter);
+            DriverConfigParam existingCap = FindExistingCapability(capability.Parameter);
             if (existingCap != null)
             {
+                existingCap.Parameter = capability.Parameter;
                 existingCap.Value = capability.Value;
                 existingCap.Description = capability.Description;
             }
@@ -301,7 +302,7 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void SetCurrentCapabilityValue(DriverConfigParam capability)
         {
-            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.FirstOrDefault(x => x.Parameter == capability.Parameter);
+            DriverConfigParam existingCap = FindExistingCapability(capability.Parameter);
             if (existingCap != null && string.IsNullOrEmpty(existingCap.Value) == false)
             {
                 capability.Value = existingCap.Value;
@@ -310,11 +311,21 @@ namespace Ginger.Drivers.DriversConfigsEditPages
 
         private void DeleteCapabilityIfExist(string capabilityName)
         {
-            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.FirstOrDefault(x => x.Parameter == capabilityName);
+            DriverConfigParam existingCap = FindExistingCapability(capabilityName);
             if (existingCap != null)
             {
                 mAppiumCapabilities.MultiValues.Remove(existingCap);
+            }            
+        }
+
+        private DriverConfigParam FindExistingCapability(string capabilityName)
+        {
+            DriverConfigParam existingCap = mAppiumCapabilities.MultiValues.FirstOrDefault(x => x.Parameter == capabilityName);
+            if (existingCap == null)
+            {
+                existingCap = mAppiumCapabilities.MultiValues.FirstOrDefault(x => x.Parameter == capabilityName.Replace("appium:", string.Empty));
             }
+            return existingCap;
         }
 
         private void AddCapability(object sender, RoutedEventArgs e)
