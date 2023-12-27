@@ -716,7 +716,7 @@ namespace GingerCore.ALM.RQM
                 }
                 else
                 {
-                    docExecutionRecords.LoadXml(responseDataExecutionRecords.responseText);
+                    docExecutionRecords.LoadXml(!string.IsNullOrEmpty(responseDataExecutionRecords.responseText) ? responseDataExecutionRecords.responseText : string.Empty);
 
                     XmlNamespaceManager nsmgrExecutionRecords = new XmlNamespaceManager(reader.NameTable);
 
@@ -786,6 +786,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
+                erExportID = string.Empty;
                 Reporter.ToLog(eLogLevel.ERROR, $"Execution Records by test Case not found ProjectId {currentProjGuid} TC url {testCaseURLPathVersioned}", ex);
             }
         }
