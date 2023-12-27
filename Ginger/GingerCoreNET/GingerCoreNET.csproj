@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
     <RootNamespace>Amdocs.Ginger.CoreNET</RootNamespace>
