@@ -354,7 +354,7 @@ namespace GingerCore.ALM.RQM
 
                 string testCaseId = GetExportedIDString(activGroup.ExternalIdCalculated, "RQMID");
                 string testScriptId = GetExportedIDString(activGroup.ExternalIdCalculated, "RQMScriptID");
-                string exeRecordId = GetExportedIDString(activGroup.ExternalIdCalculated, "RQMRecordID");
+                string exeRecordId = string.Empty;//Ignore the Provided Record Id
 
                 if (string.IsNullOrEmpty(testCaseId) || testCaseId.Equals("0"))
                 {
