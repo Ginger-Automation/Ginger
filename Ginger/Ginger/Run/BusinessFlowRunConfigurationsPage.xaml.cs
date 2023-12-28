@@ -113,11 +113,7 @@ namespace Ginger.Run
             Visibility visibility = editable ? Visibility.Visible : Visibility.Collapsed;
             grdVariables.ToolsTray.Visibility = visibility;
 
-            if (editable)
-            {
-                grdVariables.EnableGridColumns();
-            }
-            else
+            if (!editable)
             {
                 grdVariables.DisableGridColoumns();
             }
