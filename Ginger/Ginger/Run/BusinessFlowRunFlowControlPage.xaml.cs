@@ -90,11 +90,7 @@ namespace Ginger.Run
             Visibility visibility = editable ? Visibility.Visible : Visibility.Collapsed;
             FlowControlGrid.ToolsTray.Visibility = visibility;
 
-            if (editable)
-            {
-                FlowControlGrid.EnableGridColumns();
-            }
-            else
+            if (!editable)
             {
                 FlowControlGrid.DisableGridColoumns();
             }
