@@ -2713,7 +2713,7 @@ namespace Ginger.Run
             Act act = actiontoView;
             ActionEditPage w = new ActionEditPage(act, General.eRIPageViewMode.View, mCurrentBusinessFlowRunnerItemObject, mCurrentActivityRunnerItemObject);
 
-            w.ShowAsWindow();
+            w.ShowAsWindow(windowStyle: eWindowShowStyle.Dialog);
         }
 
         private void xremoveBusinessflow_Click(object sender, RoutedEventArgs e)
