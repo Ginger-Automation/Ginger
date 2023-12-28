@@ -1039,8 +1039,8 @@ namespace Ginger.Drivers.DriversWindows
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (((Window)sender).IsKeyboardFocused)
-            {
+            //if (((Window)sender).IsKeyboardFocused)
+            //{            
                 mUserClosing = true;
 
                 if (!mSelfClosing)
@@ -1057,7 +1057,7 @@ namespace Ginger.Drivers.DriversWindows
                         }
                     }
                 }
-            }
+            //}
             mWindowIsOpen = false;
         }
 
@@ -1434,7 +1434,7 @@ namespace Ginger.Drivers.DriversWindows
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR,"Failed to update the device screenshot, seems like the connection to the device is not valid.", ex);
+                            Reporter.ToLog(eLogLevel.WARN,"Failed to update the device screenshot, seems like the connection to the device is not valid.", ex);
 
                             this.Dispatcher.Invoke(() =>
                             {
