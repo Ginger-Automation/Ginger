@@ -3312,22 +3312,18 @@
     <Style TargetType="DataGridCell" x:Key="@DataGridCellStyle" >
         <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
+        <Setter Property="BorderThickness" Value="0,1,0,1"/>
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
-                <Setter Property="BorderThickness" Value="0,1,0,1"/>
                 <Setter Property="FontWeight" Value="Bold"/>
             </Trigger>
-            <!--<Trigger Property="IsEditing" Value="True">
-                <Setter Property="Background" Value="{StaticResource $SelectionColor_Pink}"/>
-                -->
-            <!--<Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>-->
-            <!--
-            </Trigger>-->
+            <Trigger Property="IsSelected" Value="False">
+                <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_Gray}"/>
+            </Trigger>
+            <Trigger Property="IsEditing" Value="True">
+                <Setter Property="Background" Value="{StaticResource $BackgroundColor_Gray}"/>
+            </Trigger>
         </Style.Triggers>
     </Style>
 
