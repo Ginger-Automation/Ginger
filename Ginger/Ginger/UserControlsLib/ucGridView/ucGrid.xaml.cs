@@ -641,7 +641,6 @@ namespace Ginger
             {
                 //lblSearch.Visibility = value;
                 txtSearch.Visibility = value;
-                btnClearSearch.Visibility = value;
                 xSearchBtn.Visibility = value;
             }
         }
