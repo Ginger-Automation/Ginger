@@ -174,9 +174,12 @@ namespace Ginger
                 {
                     xAdminModeIcon.ImageType = eImageType.AdminUser;
                     xAdminModeIcon.ToolTip = "Ginger Running In Admin Mode";
-                    xAdminModeIcon.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#109717");
+                    xAdminModeIcon.ImageForeground = (SolidColorBrush)FindResource("$PassedStatusColor");
                 }
-
+                else
+                {
+                    xAdminModeIcon.Foreground = (SolidColorBrush)FindResource("$HighlightColor_Yellow"); 
+                }
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
 
             }
