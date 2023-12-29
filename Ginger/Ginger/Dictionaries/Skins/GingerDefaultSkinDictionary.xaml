@@ -33,7 +33,7 @@
     <SolidColorBrush x:Key="$FailedStatusColor" Color="#D32F2F"/>
     <SolidColorBrush x:Key="$PendingStatusColor" Color="#ED8A02"/>
     <SolidColorBrush x:Key="$RunningStatusColor" Color="#3EA7FC"/>
-    <SolidColorBrush x:Key="$StoppedStatusColor" Color="DarkRed"/>
+    <SolidColorBrush x:Key="$StoppedStatusColor" Color="#E50075"/>
     <SolidColorBrush x:Key="$SkippedStatusColor" Color="#737373"/>
     <SolidColorBrush x:Key="$IgnoredStatusColor" Color="#737373"/>
     <SolidColorBrush x:Key="$BlockedStatusColor" Color="DarkRed"/>
@@ -124,7 +124,7 @@
         <Style.Resources>
             <Style TargetType="{x:Type Border}">
                 <Setter Property="CornerRadius" Value="5" />
-                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
                 <Setter Property="BorderThickness" Value="0.5"/>
             </Style>
         </Style.Resources>
@@ -3312,22 +3312,18 @@
     <Style TargetType="DataGridCell" x:Key="@DataGridCellStyle" >
         <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
+        <Setter Property="BorderThickness" Value="0,1,0,1"/>
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
                 <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
-                <Setter Property="BorderThickness" Value="0,1,0,1"/>
                 <Setter Property="FontWeight" Value="Bold"/>
             </Trigger>
-            <!--<Trigger Property="IsEditing" Value="True">
-                <Setter Property="Background" Value="{StaticResource $SelectionColor_Pink}"/>
-                -->
-            <!--<Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}"/>
-                <Setter Property="BorderBrush" Value="{StaticResource $SelectionColor_Pink}"/>
-                <Setter Property="VerticalAlignment" Value="Center"/>-->
-            <!--
-            </Trigger>-->
+            <Trigger Property="IsSelected" Value="False">
+                <Setter Property="BorderBrush" Value="{StaticResource $BackgroundColor_Gray}"/>
+            </Trigger>
+            <Trigger Property="IsEditing" Value="True">
+                <Setter Property="Background" Value="{StaticResource $BackgroundColor_Gray}"/>
+            </Trigger>
         </Style.Triggers>
     </Style>
 
@@ -3511,14 +3507,10 @@
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Background" Value="White"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource $PrimaryColor_Black}"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
-        <Setter Property="BorderThickness" Value="0.5"/>
         <Style.Resources>
             <Style TargetType="{x:Type Border}">
                 <Setter Property="CornerRadius" Value="5" />
-                <Setter Property="BorderBrush" Value="{DynamicResource $BackgroundColor_Black}"/>
-                <Setter Property="BorderThickness" Value="0.5"/>
             </Style>
         </Style.Resources>
     </Style>
@@ -3560,6 +3552,19 @@
         <Setter Property="Background" Value="White"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="BorderBrush" Value="{DynamicResource $PrimaryColor_Black}"/>
+        <Setter Property="BorderThickness" Value="0.5"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type PasswordBox}">
+                    <Border x:Name="Root" CornerRadius="5" BorderThickness="0.5"
+                            BorderBrush="{DynamicResource $BackgroundColor_Black}">
+                        <ScrollViewer Name="PART_ContentHost" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+
     </Style>
 
     <Style TargetType="TextBox" x:Key="@ToolBarTextBoxStyle" >

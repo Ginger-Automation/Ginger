@@ -37,6 +37,7 @@ namespace Ginger.ConflictResolve
     public class ResolveMergeConflictWizard : WizardBase
     {
         private readonly Conflict _conflict;
+        private AnalyeMergedPage? _analyzeMergedPage;
 
         public override string Title => "Resolve Merge Conflict";
 
@@ -65,11 +66,12 @@ namespace Ginger.ConflictResolve
             Type? conflictedItemType = GetConflictedItemType();
             if(conflictedItemType != null && AnalyeMergedPage.IsTypeSupportedForIsolatedAnalyzation(conflictedItemType))
             {
+                _analyzeMergedPage = new();
                 AddPage(
                 Name: "Analyze",
                 Title: "Analyze",
                 SubTitle: "Analyze Merged Item",
-                Page: new AnalyeMergedPage());
+                Page: _analyzeMergedPage);
             }
 
             AddPage(
@@ -111,11 +113,21 @@ namespace Ginger.ConflictResolve
         public override void Finish()
         {
             int unselectedComparisonCount = _conflict.Comparison.UnselectedComparisonCount();
-            if (unselectedComparisonCount > 0)
+            bool hasUnselectedComparison = unselectedComparisonCount > 0;
+
+            int unhandledMandatoryIssueCount = _analyzeMergedPage != null ? _analyzeMergedPage.GetUnhandledMandatoryIssueCount() : 0;
+            bool hasUnhandledMandatoryIssues = unhandledMandatoryIssueCount > 0;
+            if (hasUnselectedComparison || hasUnhandledMandatoryIssues)
             {
-                //since the currenct state of this conflict has unhandled comparisons, discard the previously created merged item
                 _conflict.DiscardMergedItem();
-                Reporter.ToUser(eUserMsgKey.HasUnhandledConflicts, unselectedComparisonCount);
+                if (hasUnselectedComparison)
+                {
+                    Reporter.ToUser(eUserMsgKey.HasUnhandledConflicts, unselectedComparisonCount);
+                }
+                else
+                {
+                    Reporter.ToUser(eUserMsgKey.HasUnhandledMandatoryIssues, unhandledMandatoryIssueCount);
+                }
             }
             else
             {
@@ -125,6 +137,20 @@ namespace Ginger.ConflictResolve
                     _conflict.TryCreateAndSetMergedItemFromComparison();
                 }
             }
+        }
+
+        public override void Cancel()
+        {
+            int unselectedComparisonCount = _conflict.Comparison.UnselectedComparisonCount();
+            bool hasUnselectedComparison = unselectedComparisonCount > 0;
+
+            int unhandledMandatoryIssueCount = _analyzeMergedPage != null ? _analyzeMergedPage.GetUnhandledMandatoryIssueCount() : 0;
+            bool hasUnhandledMandatoryIssues = unhandledMandatoryIssueCount > 0;
+            if (hasUnselectedComparison || hasUnhandledMandatoryIssues)
+            {
+                _conflict.DiscardMergedItem();
+            }
+            base.Cancel();
         }
     }
 }

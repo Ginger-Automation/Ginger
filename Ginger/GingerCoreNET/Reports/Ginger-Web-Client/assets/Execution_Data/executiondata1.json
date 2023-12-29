@@ -1,0 +1,446 @@
+{
+
+        "Name":"Default Run Set",
+        "GUID":"c1006c36-34f1-4975-b8c2-cec960cb5d64",
+        "StartTimeStamp":"2019-03-11T14:51:22.7026193Z",
+        "EndTimeStamp":"2019-03-11T14:51:29.6216193Z",
+        "MachineName":"",
+        "ExecutedbyUser":"",
+        "Elapsed":6.954,
+        "runners":[
+           {
+              "Seq":1,
+              "Name":"Runner 2",
+              "GUID":"b353b8fe-5e31-423a-a53f-941f62222212",
+              "EnvironmentName":"Default",
+              "StartTimeStamp":"2019-03-11T14:51:22.7876193Z",
+              "EndTimeStamp":"2019-03-11T14:51:29.6206193Z",
+              "Elapsed":6.753,
+              "ApplicationAgentsMappingList":[
+                 "agent 2_:_MyWebApp"
+              ],
+              "businessFlows":
+              [
+                 {
+                    "Seq":1,
+                    "GUID":"aa57bbdb-3137-4eec-88de-d6865ced32ba",
+                    "InstanceGUID":"01404c93-ddc1-4836-aa9a-a28d4d304fbf",
+                    "Name":"MultiTest",
+                    "Environment":"Default",
+                    "StartTimeStamp":"2019-03-11T14:51:22.7906193Z",
+                    "EndTimeStamp":"2019-03-11T14:51:29.5406193Z",
+                    "Elapsed":6.7430000305175781,
+                    "RunStatus":"Passed",
+                    "VariablesBeforeExec":[
+
+                    ],
+                    "VariablesAfterExec":[
+
+                    ],
+                    "SolutionVariablesBeforeExec":[
+
+                    ],
+                    "SolutionVariablesAfterExec":[
+
+                    ],
+                    "BFFlowControls":[
+
+                    ],
+                    "Activites":[
+                       {
+                          "Seq":1,
+                          "GUID":"503d8c14-1461-4154-986a-0f4886d57542",
+                          "ActivityName":"TC01>TC01>enter customer",
+                          "StartTimeStamp":"2019-03-11T14:51:22.8226193Z",
+                          "EndTimeStamp":"2019-03-11T14:51:23.0746193Z",
+                          "Elapsed":242,
+                          "RunStatus":"Passed",
+                          "VariablesBeforeExec":[
+                             "NewVar_:_<Empty>_:_"
+                          ],
+                          "VariablesAfterExec":[
+                             "NewVar_:_<Empty>_:_"
+                          ],
+                          "actions":[
+                             {
+                                "Seq":1,
+                                "GUID":"0914e133-cf70-4ae8-aa4a-bf18c6ad05fd",
+                                "Name":"Dummy Action",
+                                "Description":"Dummy Action",
+                                "ActionType":"Dummy/PlaceHolder",
+                                "StartTimeStamp":"2019-03-11T14:51:22.9666193Z",
+                                "EndTimeStamp":"2019-03-11T14:51:23.0586193Z",
+                                "CurrentRetryIteration":0,
+                                "Elapsed":227,
+                                "Status":"Passed",
+                                "ExInfo":"3/11/2019 4:51:23 PM - ",
+                                "InputValues":[
+                                   "Value_:__:_"
+                                ],
+                                "OutputValues":[
+
+                                ],
+                                "FlowControls":[
+
+                                ],
+                                "ScreenShots":[
+
+                                ]
+                             },
+                             {
+                               "Seq":2,
+                               "GUID":"0914e133-cf70-4ae8-aa4a-bf18c6ad05fd",
+                               "Name":"Dummy Action2",
+                               "Description":"Dummy Action",
+                               "ActionType":"Dummy/PlaceHolder",
+                               "StartTimeStamp":"2019-03-11T14:51:22.9666193Z",
+                               "EndTimeStamp":"2019-03-11T14:51:23.0586193Z",
+                               "CurrentRetryIteration":0,
+                               "Elapsed":227,
+                               "Status":"Passed",
+                               "ExInfo":"3/11/2019 4:51:23 PM - ",
+                               "InputValues":[
+                                  "Value_:__:_"
+                               ],
+                               "OutputValues":[
+
+                               ],
+                               "FlowControls":[
+
+                               ],
+                               "ScreenShots":[
+
+                               ]
+                            }
+                          ]
+                       },
+                       {
+                         "Seq":2,
+                         "GUID":"503d8c14-1461-4154-986a-0f4886d57542",
+                         "ActivityName":"TC02>TC02>enter customer",
+                         "StartTimeStamp":"2019-03-11T14:51:22.8226193Z",
+                         "EndTimeStamp":"2019-03-11T14:51:23.0746193Z",
+                         "Elapsed":242,
+                         "RunStatus":"Passed",
+                         "VariablesBeforeExec":[
+                            "NewVar_:_<Empty>_:_"
+                         ],
+                         "VariablesAfterExec":[
+                            "NewVar_:_<Empty>_:_"
+                         ],
+                         "actions":[
+                            {
+                               "Seq":1,
+                               "GUID":"0914e133-cf70-4ae8-aa4a-bf18c6ad05fd",
+                               "Name":"Dummy Action",
+                               "Description":"Dummy Action",
+                               "ActionType":"Dummy/PlaceHolder",
+                               "StartTimeStamp":"2019-03-11T14:51:22.9666193Z",
+                               "EndTimeStamp":"2019-03-11T14:51:23.0586193Z",
+                               "CurrentRetryIteration":0,
+                               "Elapsed":227,
+                               "Status":"Passed",
+                               "ExInfo":"3/11/2019 4:51:23 PM - ",
+                               "InputValues":[
+                                  "Value_:__:_"
+                               ],
+                               "OutputValues":[
+
+                               ],
+                               "FlowControls":[
+
+                               ],
+                               "ScreenShots":[
+
+                               ]
+                            }
+                         ]
+                      }
+                    ],
+                    
+                   "ActivitiesGroups":
+                   [
+                     {  
+                        "Seq":1,
+                        "ExecutedActivitiesGUID":[  
+                           "503d8c14-1461-4154-986a-0f4886d57542",
+                           "2772661e-f2fa-4ca3-8381-8fa046e3ab3d",
+                           "3314a087-6f68-4cc1-be95-08633a429af0"
+                        ],
+                        "GUID":"065f41df-b579-416b-a94f-828128e0943d",
+                        "Name":"TC01",
+                        "Description":"<p>enter customer details</p>\r\n",
+                        "AutomationPrecentage":"0%",
+                        "StartTimeStamp":"0001-01-01T00:00:00",
+                        "EndTimeStamp":"0001-01-01T00:00:00",
+                        "RunStatus":"Passed"
+                     },
+                     {  
+                        "Seq":3,
+                        "ExecutedActivitiesGUID":[  
+                           "fe0b8381-02b7-4bbe-9811-fbbbb31f5435"
+                        ],
+                        "GUID":"4e95a5e6-67b8-432b-975e-de2029d44c41",
+                        "Name":"TC04fromGinger",
+                        "AutomationPrecentage":"0%",
+                        "StartTimeStamp":"0001-01-01T00:00:00",
+                        "EndTimeStamp":"0001-01-01T00:00:00",
+                        "RunStatus":"Stopped"
+                     }
+                   ]
+                 },
+                 {
+                   "Seq":2,
+                   "GUID":"aa57bbdb-3137-4eec-88de-d6865ced32ba",
+                   "InstanceGUID":"01404c93-ddc1-4836-aa9a-a28d4d304fbf",
+                   "Name":"MultiTest2",
+                   "Environment":"Default",
+                   "StartTimeStamp":"2019-03-11T14:51:22.7906193Z",
+                   "EndTimeStamp":"2019-03-11T14:51:29.5406193Z",
+                   "Elapsed":6.7430000305175781,
+                   "RunStatus":"Stopped",
+                   "VariablesBeforeExec":[
+
+                   ],
+                   "VariablesAfterExec":[
+
+                   ],
+                   "SolutionVariablesBeforeExec":[
+
+                   ],
+                   "SolutionVariablesAfterExec":[
+
+                   ],
+                   "BFFlowControls":[
+
+                   ],
+                   "Activites":[
+                      {
+                         "Seq":1,
+                         "GUID":"503d8c14-1461-4154-986a-0f4886d57542",
+                         "ActivityName":"TC01>TC01>enter customer",
+                         "StartTimeStamp":"2019-03-11T14:51:22.8226193Z",
+                         "EndTimeStamp":"2019-03-11T14:51:23.0746193Z",
+                         "Elapsed":242,
+                         "RunStatus":"Passed",
+                         "VariablesBeforeExec":[
+                            "NewVar_:_<Empty>_:_"
+                         ],
+                         "VariablesAfterExec":[
+                            "NewVar_:_<Empty>_:_"
+                         ],
+                         "actions":[
+                            {
+                               "Seq":1,
+                               "GUID":"0914e133-cf70-4ae8-aa4a-bf18c6ad05fd",
+                               "Name":"Dummy Action",
+                               "Description":"Dummy Action",
+                               "ActionType":"Dummy/PlaceHolder",
+                               "StartTimeStamp":"2019-03-11T14:51:22.9666193Z",
+                               "EndTimeStamp":"2019-03-11T14:51:23.0586193Z",
+                               "CurrentRetryIteration":0,
+                               "Elapsed":227,
+                               "Status":"Passed",
+                               "ExInfo":"3/11/2019 4:51:23 PM - ",
+                               "InputValues":[
+                                  "Value_:__:_"
+                               ],
+                               "OutputValues":[
+
+                               ],
+                               "FlowControls":[
+
+                               ],
+                               "ScreenShots":[
+
+                               ]
+                            }
+                         ]
+                         
+                      },
+                      {
+                        "Seq":2,
+                        "GUID":"503d8c14-1461-4154-986a-0f4886d57542",
+                        "ActivityName":"TC02>TC02>enter customer",
+                        "StartTimeStamp":"2019-03-11T14:51:22.8226193Z",
+                        "EndTimeStamp":"2019-03-11T14:51:23.0746193Z",
+                        "Elapsed":242,
+                        "RunStatus":"Passed",
+                        "VariablesBeforeExec":[
+                           "NewVar_:_<Empty>_:_"
+                        ],
+                        "VariablesAfterExec":[
+                           "NewVar_:_<Empty>_:_"
+                        ],
+                        "actions":[
+                           {
+                              "Seq":1,
+                              "GUID":"0914e133-cf70-4ae8-aa4a-bf18c6ad05fd",
+                              "Name":"Dummy Action",
+                              "Description":"Dummy Action",
+                              "ActionType":"Dummy/PlaceHolder",
+                              "StartTimeStamp":"2019-03-11T14:51:22.9666193Z",
+                              "EndTimeStamp":"2019-03-11T14:51:23.0586193Z",
+                              "CurrentRetryIteration":0,
+                              "Elapsed":227,
+                              "Status":"Passed",
+                              "ExInfo":"3/11/2019 4:51:23 PM - ",
+                              "InputValues":[
+                                 "Value_:__:_"
+                              ],
+                              "OutputValues":[
+
+                              ],
+                              "FlowControls":[
+
+                              ],
+                              "ScreenShots":[
+
+                              ]
+                           }
+                        ]
+                     }
+                   ],
+                   "ActivitiesGroups":
+                   [
+                     {  
+                        "Seq":1,
+                        "ExecutedActivitiesGUID":[  
+                           "503d8c14-1461-4154-986a-0f4886d57542",
+                           "2772661e-f2fa-4ca3-8381-8fa046e3ab3d",
+                           "3314a087-6f68-4cc1-be95-08633a429af0"
+                        ],
+                        "GUID":"065f41df-b579-416b-a94f-828128e0943d",
+                        "Name":"TC01",
+                        "Description":"<p>enter customer details</p>\r\n",
+                        "AutomationPrecentage":"0%",
+                        "StartTimeStamp":"0001-01-01T00:00:00",
+                        "EndTimeStamp":"0001-01-01T00:00:00",
+                        "RunStatus":"Passed"
+                     },
+                     {  
+                        "Seq":3,
+                        "ExecutedActivitiesGUID":[  
+                           "fe0b8381-02b7-4bbe-9811-fbbbb31f5435"
+                        ],
+                        "GUID":"4e95a5e6-67b8-432b-975e-de2029d44c41",
+                        "Name":"TC04fromGinger",
+                        "AutomationPrecentage":"0%",
+                        "StartTimeStamp":"0001-01-01T00:00:00",
+                        "EndTimeStamp":"0001-01-01T00:00:00",
+                        "RunStatus":"Stopped"
+                     }
+                   ]
+                }
+              ]
+           },
+           {
+             "Seq":123,
+             "Name":"Runner 122",
+             "GUID":"b353b8fe-5e31-423a-a53f-941f62222212",
+             "EnvironmentName":"Default",
+             "StartTimeStamp":"2019-03-11T14:51:22.7876193Z",
+             "EndTimeStamp":"2019-03-11T14:51:29.6206193Z",
+             "Elapsed":6.753,
+             "ApplicationAgentsMappingList":[
+                "agent 2_:_MyWebApp"
+             ],
+             "businessFlows":[
+                {
+                   "Seq":1,
+                   "GUID":"aa57bbdb-3137-4eec-88de-d6865ced32ba",
+                   "InstanceGUID":"01404c93-ddc1-4836-aa9a-a28d4d304fbf",
+                   "Name":"MultiTest",
+                   "Environment":"Default",
+                   "StartTimeStamp":"2019-03-11T14:51:22.7906193Z",
+                   "EndTimeStamp":"2019-03-11T14:51:29.5406193Z",
+                   "Elapsed":6.7430000305175781,
+                   "RunStatus":"Stopped",
+                   "VariablesBeforeExec":[],
+                   "VariablesAfterExec":[],
+                   "SolutionVariablesBeforeExec":[],
+                   "SolutionVariablesAfterExec":[],
+                   "BFFlowControls":[],
+                   "Activites":[
+                      {
+                         "Seq":1,
+                         "GUID":"503d8c14-1461-4154-986a-0f4886d57542",
+                         "ActivityName":"TC01>TC01>enter customer",
+                         "StartTimeStamp":"2019-03-11T14:51:22.8226193Z",
+                         "EndTimeStamp":"2019-03-11T14:51:23.0746193Z",
+                         "Elapsed":242,
+                         "RunStatus":"Passed",
+                         "VariablesBeforeExec":[
+                            "NewVar_:_<Empty>_:_"
+                         ],
+                         "VariablesAfterExec":[
+                            "NewVar_:_<Empty>_:_"
+                         ],
+                         "actions":[
+                            {
+                               "Seq":12,
+                               "GUID":"0914e133-cf70-4ae8-aa4a-bf18c6ad05fd",
+                               "Name":"Dummy Action12",
+                               "Description":"Dummy Action",
+                               "ActionType":"Dummy/PlaceHolder",
+                               "StartTimeStamp":"2019-03-11T14:51:22.9666193Z",
+                               "EndTimeStamp":"2019-03-11T14:51:23.0586193Z",
+                               "CurrentRetryIteration":0,
+                               "Elapsed":227,
+                               "Status":"Passed",
+                               "ExInfo":"3/11/2019 4:51:23 PM - ",
+                               "InputValues":[
+                                  "Value_:__:_"
+                               ],
+                               "OutputValues":[
+
+                               ],
+                               "FlowControls":[
+
+                               ],
+                               "ScreenShots":[
+
+                               ]
+                            }
+                         ]
+                      }
+                      
+                      
+                   ],
+                   "ActivitiesGroups":
+                   [
+                     {  
+                        "Seq":1,
+                        "ExecutedActivitiesGUID":[  
+                           "503d8c14-1461-4154-986a-0f4886d57542",
+                           "2772661e-f2fa-4ca3-8381-8fa046e3ab3d",
+                           "3314a087-6f68-4cc1-be95-08633a429af0"
+                        ],
+                        "GUID":"065f41df-b579-416b-a94f-828128e0943d",
+                        "Name":"TC01",
+                        "Description":"<p>enter customer details</p>\r\n",
+                        "AutomationPrecentage":"0%",
+                        "StartTimeStamp":"0001-01-01T00:00:00",
+                        "EndTimeStamp":"0001-01-01T00:00:00",
+                        "RunStatus":"Passed"
+                     },
+                     {  
+                        "Seq":3,
+                        "ExecutedActivitiesGUID":[  
+                           "fe0b8381-02b7-4bbe-9811-fbbbb31f5435"
+                        ],
+                        "GUID":"4e95a5e6-67b8-432b-975e-de2029d44c41",
+                        "Name":"TC04fromGinger",
+                        "AutomationPrecentage":"0%",
+                        "StartTimeStamp":"0001-01-01T00:00:00",
+                        "EndTimeStamp":"0001-01-01T00:00:00",
+                        "RunStatus":"Stopped"
+                     }
+                   ]
+                }
+             ]
+          }
+        ]
+     
+  
+}

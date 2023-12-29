@@ -189,7 +189,6 @@ namespace Ginger.Reports
         [FieldParamsIsSelected(true)]
         public string ExternalID { get { return mExternalId; } set { mExternalId = value; } }
 
-        private string mExternalId2;
 
         [JsonProperty]
         [FieldParams]
