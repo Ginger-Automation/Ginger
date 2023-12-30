@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common.Helpers;
 using System;
 using System.Diagnostics;
+using System.Net;
 using System.Runtime.InteropServices;
 
 namespace Amdocs.Ginger.Common.OS
@@ -71,6 +72,37 @@ namespace Amdocs.Ginger.Common.OS
             {
                 return new LinuxOS();
             }
+        }
+
+        public static string GetSystemProxy()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                // Get the default proxy settings for the machine
+                IWebProxy systemProxy = WebRequest.GetSystemWebProxy();
+
+                var proxy = systemProxy.GetProxy(new Uri("https://ginger.amdocs.com/"));
+
+                return proxy?.ToString();
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                string httpProxy = Environment.GetEnvironmentVariable("HTTP_PROXY");
+
+                if (!string.IsNullOrEmpty(httpProxy))
+                {
+                    return httpProxy;
+                }
+
+                // Retrieve HTTPS proxy settings
+                string httpsProxy = Environment.GetEnvironmentVariable("HTTPS_PROXY");
+
+                if (!string.IsNullOrEmpty(httpsProxy))
+                {
+                    return httpsProxy;
+                }
+            }
+            return null;
         }
 
         //public override string ToString()

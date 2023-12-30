@@ -270,6 +270,7 @@ namespace Amdocs.Ginger.Common.Enums
         Dos,
         Server,
         MousePointer,
+        Target,
         AudioFileOutline,
         ChartLine,
         Suitcase,
