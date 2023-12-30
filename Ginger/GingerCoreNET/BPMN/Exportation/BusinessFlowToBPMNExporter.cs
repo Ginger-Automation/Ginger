@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.CoreNET.BPMN.Conversion;
+#region License
+/*
+Copyright © 2014-2023 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Models;
 using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using GingerCore;
@@ -11,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
 {
     public sealed class BusinessFlowToBPMNExporter
@@ -33,7 +52,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
 
             foreach (ActivitiesGroup activityGroup in _businessFlow.ActivitiesGroups)
             {
-                BPMNFileData activityGroupBPMNFileData = CreateActivityGroupBPMNFileData(activityGroup);
+                BPMNFileData? activityGroupBPMNFileData = CreateActivityGroupBPMNFileData(activityGroup);
+                if(activityGroupBPMNFileData == null)
+                {
+                    continue;
+                }
                 bpmnFiles.Add(activityGroupBPMNFileData);
             }
 
@@ -49,9 +72,14 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             return new BPMNFileData(businessFlowCollaborationBPMNFileName, businessFlowCollaborationXML);
         }
 
-        private BPMNFileData CreateActivityGroupBPMNFileData(ActivitiesGroup activityGroup)
+        private BPMNFileData? CreateActivityGroupBPMNFileData(ActivitiesGroup activityGroup)
         {
-            Collaboration activityGroupCollaboration = CreateCollaborationFromActivityGroup(activityGroup);
+            Collaboration? activityGroupCollaboration = CreateCollaborationFromActivityGroup(activityGroup);
+            if(activityGroupCollaboration == null)
+            {
+                return null;
+            }
+
             string activityGroupCollaborationXML = SerializeCollaborationToXML(activityGroupCollaboration);
             string activityGroupCollaborationBPMNFileName = $"subprocess-{activityGroup.Guid}.bpmn";
             return new BPMNFileData(activityGroupCollaborationBPMNFileName, activityGroupCollaborationXML);
@@ -71,8 +99,14 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             return xml;
         }
 
-        private Collaboration CreateCollaborationFromActivityGroup(ActivitiesGroup activityGroup)
+        private Collaboration? CreateCollaborationFromActivityGroup(ActivitiesGroup activityGroup)
         {
+            bool isEmpty = !activityGroup.ActivitiesIdentifiers.Any();
+            if(isEmpty)
+            {
+                return null;
+            }
+
             CollaborationFromActivityGroupCreator collaborationFromActivityGroupCreator = new(activityGroup);
             Collaboration activityGroupCollaboration = collaborationFromActivityGroupCreator.Create();
             return activityGroupCollaboration;

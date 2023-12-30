@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
     x:Class="Ginger.BusinessFlowWindows.ExecutionSummaryPage"
-    Height="550" Width="600">
+    Height="800" Width="1000">
     
     <Page.Resources>
         <x:ArrayExtension Type="{x:Type Brush}" x:Key="brushes">

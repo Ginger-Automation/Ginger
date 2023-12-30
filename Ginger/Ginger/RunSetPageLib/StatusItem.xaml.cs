@@ -76,6 +76,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
                 xStatusTri.Visibility = Visibility.Visible;
                 xStatusIcon.Visibility = Visibility.Collapsed;
             }
+
             switch (Status)
             {
 
@@ -127,7 +128,7 @@ namespace Ginger.MoveToGingerWPF.Run_Set_Pages
                     if (SetStatusIcon)
                     {
                         xStatusIcon.Foreground = FindResource("$StoppedStatusColor") as Brush;
-                        xStatusIcon.ImageType = eImageType.Stop;
+                        xStatusIcon.ImageType = eImageType.Stopped;
                     }
                     else
                     {

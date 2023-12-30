@@ -174,8 +174,8 @@ namespace Ginger.Actions.UserControls
             ActionValueTextBox.ValueTextBox.Text = FC.Value;
 
             SetActionValueComboData();
-            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: ActionValueComboBox, eventName: nameof(ButtonBase.Click), handler: ActionValueComboBox_SelectionChanged);
-            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: ActionComboBox, eventName: nameof(ButtonBase.Click), handler: ActionComboBox_SelectionChanged);
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: ActionValueComboBox, eventName: nameof(Selector.SelectionChanged), handler: ActionValueComboBox_SelectionChanged);
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: ActionComboBox, eventName: nameof(Selector.SelectionChanged), handler: ActionComboBox_SelectionChanged);
         }
 
         private void ActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

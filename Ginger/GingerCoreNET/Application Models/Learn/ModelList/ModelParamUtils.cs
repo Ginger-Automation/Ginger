@@ -89,6 +89,10 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
 
                 if(newModelGlobalParam.PlaceHolder.Contains(newModelGlobalParam.PlaceHolder))
                 {
+                    while ((mModelsGlobalParamsList.FirstOrDefault(x => x.PlaceHolder == "{" + (!string.IsNullOrEmpty(newModelGlobalParam.PlaceHolder) ? newModelGlobalParam.PlaceHolder.Replace("{", "").Replace("}", "") : newModelGlobalParam.PlaceHolder) + counter.ToString() + "}")) != null)
+                    {
+                        counter++;
+                    }
                     newModelGlobalParam.PlaceHolder = "{" + (!string.IsNullOrEmpty(newModelGlobalParam.PlaceHolder) ? newModelGlobalParam.PlaceHolder.Replace("{", "").Replace("}", "") : newModelGlobalParam.PlaceHolder) + counter.ToString() + "}";
                 }
                 else

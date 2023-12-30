@@ -66,11 +66,14 @@ namespace Ginger.Run
 
         private ProcessInputVariableRule processInputVariable;
 
-        public BusinessFlowRunConfigurationsPage(GingerRunner runner, BusinessFlow businessFlow)
+        private readonly General.eRIPageViewMode _viewMode;
+
+        public BusinessFlowRunConfigurationsPage(GingerRunner runner, BusinessFlow businessFlow, General.eRIPageViewMode viewMode)
         {
             mBusinessFlow = businessFlow;
             InitializeComponent();
 
+            _viewMode = viewMode;
             mWindowMode = eWindowMode.Configuration;
 
             mGingerRunner = runner;
@@ -86,7 +89,7 @@ namespace Ginger.Run
             grdVariables.AddToolbarTool("@Undo_16x16.png", "Reset " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " to Original Configurations", new RoutedEventHandler(ResetBusFlowVariables));
             grdVariables.AddToolbarTool("@Share_16x16.png", "Share Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Value to all Similar " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " in " + GingerDicser.GetTermResValue(eTermResKey.RunSet), new RoutedEventHandler(CopyBusFlowVariables));
             grdVariables.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.Rules, "Rules page", new RoutedEventHandler(ShowRulesPage));
-            WeakEventManager<ucGrid, EventArgs>.AddHandler(source: grdVariables, eventName: nameof(ucGrid.RowDoubleClick), handler: VariablesGrid_grdMain_MouseDoubleClick);
+            grdVariables.RowDoubleClick += VariablesGrid_grdMain_MouseDoubleClick;
 
             SetVariablesGridView();
             LoadGridData();
@@ -96,13 +99,30 @@ namespace Ginger.Run
             UpdateFlowControlTabVisual();
             CollectionChangedEventManager.AddHandler(source: mBusinessFlow.BFFlowControls, handler: BFFlowControls_CollectionChanged);
 
+            bool editable = _viewMode != General.eRIPageViewMode.View && _viewMode != General.eRIPageViewMode.ViewAndExecute;
+            SetViewMode(editable);
+        }
 
+        private void SetViewMode(bool editable)
+        {
+            btnAutoCreateDescription.IsEnabled = editable;
+            RunDescritpion.IsEnabled = editable;
+            MandatoryBusinessFlowCB.IsEnabled = editable;
+            grdVariables.IsReadOnly = !editable;
+
+            Visibility visibility = editable ? Visibility.Visible : Visibility.Collapsed;
+            grdVariables.ToolsTray.Visibility = visibility;
+
+            if (!editable)
+            {
+                grdVariables.DisableGridColoumns();
+            }
         }
 
         private void LoadBusinessFlowcontrols(BusinessFlow businessFlow)
         {
             FlowControlFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
-            BusinessFlowRunFlowControlPage BFCP = new BusinessFlowRunFlowControlPage(mGingerRunner, businessFlow);
+            BusinessFlowRunFlowControlPage BFCP = new BusinessFlowRunFlowControlPage(mGingerRunner, businessFlow, _viewMode);
             FlowControlFrame.ClearAndSetContent(BFCP);
 
         }

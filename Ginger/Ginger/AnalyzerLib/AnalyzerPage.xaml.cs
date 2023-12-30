@@ -26,6 +26,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Helpers;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -299,14 +300,7 @@ namespace Ginger.AnalyzerLib
                     //sort- placing Critical & High on top
                     Dispatcher.Invoke(() =>
                     {
-                        ObservableList<AnalyzerItemBase> SortedList = new ObservableList<AnalyzerItemBase>();
-
-                        foreach (AnalyzerItemBase issue in mIssues.OrderBy(nameof(AnalyzerItemBase.Severity)))
-                        {
-                            SortedList.Add(issue);
-                        }
-
-                        mIssues = SortedList;
+                        ArrayList.Adapter(mIssues).Sort(new AnalyzerItemBaseSeverityComparer());
                         AnalyzerItemsGrid.DataSourceList = mIssues;
                         AnalyzerItemsGrid.Grid.SelectedItem = mIssues[0];
                     });
@@ -323,6 +317,25 @@ namespace Ginger.AnalyzerLib
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while sorting the Analyzer issues", ex);
+            }
+        }
+
+        private sealed class AnalyzerItemBaseSeverityComparer : IComparer
+        {
+            public int Compare(object? x, object? y)
+            {
+                if (x == null || y == null)
+                {
+                    return 0;
+                }
+                else if (x is AnalyzerItemBase xAnalyzerItemBase && y is AnalyzerItemBase yAnalyzerItemBase)
+                {
+                    return xAnalyzerItemBase.Severity - yAnalyzerItemBase.Severity;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 

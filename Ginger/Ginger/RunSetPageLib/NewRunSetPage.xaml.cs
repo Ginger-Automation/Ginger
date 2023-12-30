@@ -339,8 +339,6 @@ namespace Ginger.Run
 
             CollectionChangedEventManager.RemoveHandler(source: ((INotifyCollectionChanged)xActivitiesRunnerItemsListView.Items), handler: xActivitiesRunnerItemsListView_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: ((INotifyCollectionChanged)xActivitiesRunnerItemsListView.Items), handler: xActivitiesRunnerItemsListView_CollectionChanged);
-
-            RunnerItemPage.SetRunnerItemEvent(RunnerItem_RunnerItemEvent);
         }
 
         private void AgentsCache_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -576,7 +574,7 @@ namespace Ginger.Run
             }
         }
 
-        private async void RunnerItem_RunnerItemEvent(RunnerItemEventArgs EventArgs)
+        private async void RunnerItem_RunnerItemEvent(object? sender, RunnerItemEventArgs EventArgs)
         {
             Run.GingerExecutionEngine currentSelectedRunner = mCurrentSelectedRunner.ExecutorEngine;
 
@@ -686,7 +684,7 @@ namespace Ginger.Run
                     {
                         gr.Executor = new GingerExecutionEngine(gr);
                     }
-                    RunnerPage runnerPage = new();
+                    RunnerPage runnerPage = new(runnerItemEventHandler: RunnerItem_RunnerItemEvent);
                     runnerPages.Add(runnerPage);
                     InitRunnerFlowElement(runnerPage, (GingerExecutionEngine)gr.Executor, e.NewStartingIndex);
                     GingerRunnerHighlight(runnerPage);
@@ -1436,7 +1434,7 @@ namespace Ginger.Run
             int runnerPageIndex = 0;
             while (mRunSetConfig.GingerRunners.Count > runnerPages.Count)
             {
-                runnerPages.Add(new RunnerPage());
+                runnerPages.Add(new RunnerPage(runnerItemEventHandler: RunnerItem_RunnerItemEvent));
             }
 
             foreach (GingerRunner GR in mRunSetConfig.GingerRunners.ToList())
@@ -2682,8 +2680,17 @@ namespace Ginger.Run
         }
         public void viewBusinessflowConfiguration(BusinessFlow businessFlow)
         {
-            BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mCurrentSelectedRunner.ExecutorEngine.GingerRunner, businessFlow);
-            WeakEventManager<BusinessFlowRunConfigurationsPage, EventArgs>.AddHandler(source: varsPage, eventName: nameof(BusinessFlowRunConfigurationsPage.EventRaiseVariableEdit), handler: viewBusinessflowConfiguration_RaiseVariableEdit);
+            General.eRIPageViewMode viewMode;
+            if(mEditMode == eEditMode.View)
+            {
+                viewMode = General.eRIPageViewMode.View;
+            }
+            else
+            {
+                viewMode = General.eRIPageViewMode.Standalone;
+            }
+            BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mCurrentSelectedRunner.ExecutorEngine.GingerRunner, businessFlow, viewMode);
+            varsPage.EventRaiseVariableEdit += viewBusinessflowConfiguration_RaiseVariableEdit;
             varsPage.ShowAsWindow();
         }
 
@@ -2706,7 +2713,7 @@ namespace Ginger.Run
             Act act = actiontoView;
             ActionEditPage w = new ActionEditPage(act, General.eRIPageViewMode.View, mCurrentBusinessFlowRunnerItemObject, mCurrentActivityRunnerItemObject);
 
-            w.ShowAsWindow();
+            w.ShowAsWindow(windowStyle: eWindowShowStyle.Dialog);
         }
 
         private void xremoveBusinessflow_Click(object sender, RoutedEventArgs e)
@@ -2975,9 +2982,9 @@ namespace Ginger.Run
         }
         private void SetComboRunnerInitialView()
         {
-            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: xRunnersCombo, eventName: nameof(ButtonBase.Click), handler: xRunnersCombo_SelectionChanged);
+            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: xRunnersCombo, eventName: nameof(Selector.SelectionChanged), handler: xRunnersCombo_SelectionChanged);
             xRunnersCombo.SelectedItem = mCurrentSelectedRunner.ExecutorEngine;
-            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xRunnersCombo, eventName: nameof(ButtonBase.Click), handler: xRunnersCombo_SelectionChanged);
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xRunnersCombo, eventName: nameof(Selector.SelectionChanged), handler: xRunnersCombo_SelectionChanged);
         }
         private void xRunnersCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

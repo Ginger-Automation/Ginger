@@ -166,10 +166,12 @@ namespace Ginger.Run
         public bool ViewMode1 = false;
 
         Context mContext = null;
+        private readonly EventHandler<RunnerItemEventArgs>? _runnerItemEventHandler;
 
-        public RunnerPage()
+        public RunnerPage(EventHandler<RunnerItemEventArgs>? runnerItemEventHandler = null)
         {
             InitializeComponent();
+            _runnerItemEventHandler = runnerItemEventHandler;
         }
 
         public void Init(GingerExecutionEngine runner, Context context, bool Viewmode = false)
@@ -247,7 +249,7 @@ namespace Ginger.Run
 
         private RunnerItemPage CreateBusinessFlowRunnerItem(BusinessFlow bf, bool ViewMode = false)
         {
-            RunnerItemPage ri = new RunnerItemPage(bf, ViewMode1);
+            RunnerItemPage ri = new RunnerItemPage(Runnerobj: bf, ViewMode: ViewMode1, runnerItemEventHandler: _runnerItemEventHandler);
             ri.ItemName = bf.Name;
             ri.ItemTitleTooltip = string.Format(@"{0}\{1}", bf.ContainingFolder, bf.Name);
             if (string.IsNullOrEmpty(bf.Description))

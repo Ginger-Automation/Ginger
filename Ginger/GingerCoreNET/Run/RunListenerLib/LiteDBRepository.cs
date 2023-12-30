@@ -116,9 +116,13 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             liteDbAction.Seq = ++this.actionSeq;
             liteDbAction.Wait = action.Wait;
             liteDbAction.TimeOut = action.Timeout;
-            if (action.LiteDbId != null && executedFrom == eExecutedFrom.Automation)
+            if (action.LiteDbId != null && executedFrom == eExecutedFrom.Automation && action.RetryMechanismCount <= 0)
             {
                 liteDbAction._id = ObjectId.NewObjectId();
+            }
+            else
+            {
+                liteDbAction._id = action.LiteDbId;
             }
 
             //change the paths to Defect suggestion list
@@ -130,7 +134,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
 
             liteDbAction.ScreenShots = action.ScreenShots.ToList();
 
-            liteDbActionList.Add(liteDbAction);
+            if (liteDbActionList.All(liteAct => !ObjectId.Equals(liteAct._id, liteDbAction._id)))
+            {
+                liteDbActionList.Add(liteDbAction);
+            }
             SaveObjToReporsitory(liteDbAction, liteDbManager.NameInDb<LiteDbAction>());
             if (executedFrom == eExecutedFrom.Automation)
             {
