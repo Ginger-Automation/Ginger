@@ -44,7 +44,7 @@ namespace Ginger.SolutionWindows
             InitializeComponent();
 
             string allProperties = string.Empty;
-            PropertyChangedEventManager.AddHandler(source: (INotifyPropertyChanged)WorkSpace.Instance, handler: WorkSpacePropertyChanged, propertyName: allProperties);
+            WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
             WeakEventManager<UIElement, RoutedEventArgs>.AddHandler(source: UCEncryptionKey.UpdateKey, eventName: nameof(UIElement.PreviewMouseDown), handler: ReplaceKeyBtn_Click);
 
             Init();
@@ -175,7 +175,7 @@ namespace Ginger.SolutionWindows
             //replaceKeyBtn.Content = "Update Key";
             //replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
             //winButtons.Add(replaceKeyBtn);
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons, true, "Cancel", CloseBtn_Click);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons, true, "Cancel");
             return IsValidEncryptionKeyAdded;
         }
 
@@ -197,11 +197,6 @@ namespace Ginger.SolutionWindows
             ReplaceEncryptionKeyPage replaceEncryptionKeyPage = new ReplaceEncryptionKeyPage();
             _pageGenericWin.Close();
             IsValidEncryptionKeyAdded = replaceEncryptionKeyPage.ShowAsWindow(mSolution);
-        }
-
-        private void CloseBtn_Click(object sender, RoutedEventArgs e)
-        {
-            IsValidEncryptionKeyAdded = false;
         }
 
         private void SaveKeyBtn_Click(object sender, RoutedEventArgs e)

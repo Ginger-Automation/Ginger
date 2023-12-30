@@ -83,9 +83,9 @@ namespace Ginger.Repository
 
         private void SetActivitiesRepositoryGridView()
         {
-            WeakEventManager<UcListView, EventArgs>.AddHandler(source: xActivitiesGroupsRepositoryListView, eventName: nameof(UcListView.ItemMouseDoubleClick), handler: grdActivitiesGroupsRepository_grdMain_ItemMouseDoubleClick); 
-            WeakEventManager<UcListView, EventArgs>.AddHandler(source: xActivitiesGroupsRepositoryListView, eventName: nameof(UcListView.ItemDropped), handler: grdActivitiesGroupsRepository_ItemDropped);
-            WeakEventManager<UcListView, EventArgs>.AddHandler(source: xActivitiesGroupsRepositoryListView, eventName: nameof(UcListView.PreviewDragItem), handler: grdActivitiesGroupsRepository_PreviewDragItem);
+            WeakEventManager<UcListView, EventArgs>.AddHandler(source: xActivitiesGroupsRepositoryListView, eventName: nameof(UcListView.ItemMouseDoubleClick), handler: grdActivitiesGroupsRepository_grdMain_ItemMouseDoubleClick);
+            xActivitiesGroupsRepositoryListView.ItemDropped += grdActivitiesGroupsRepository_ItemDropped;
+            xActivitiesGroupsRepositoryListView.PreviewDragItem += grdActivitiesGroupsRepository_PreviewDragItem;
 
             xActivitiesGroupsRepositoryListView.xTagsFilter.Visibility = Visibility.Visible;
 

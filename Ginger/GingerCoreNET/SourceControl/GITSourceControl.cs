@@ -38,6 +38,10 @@ namespace GingerCore.SourceControl
 
     public class GITSourceControl : SourceControlBase
     {
+        private const string XMLFileExtension = ".xml";
+        private const string IgnoreFileExtension = ".ignore";
+        private const string ConflictBackupFileExtension = ".conflictBackup";
+
         public override string Name { get { return "GIT"; } }
 
         public override bool IsSupportingLocks { get { return false; } }
@@ -226,7 +230,7 @@ namespace GingerCore.SourceControl
                         {
                             return GetItemStatus(item.State);
                         }
-                        else if (NormalizePath(item.FilePath).Contains(NormalizePath(localFilePath)) && !localFilePath.EndsWith(".xml"))
+                        else if (NormalizePath(item.FilePath).Contains(NormalizePath(localFilePath)) && !localFilePath.EndsWith(XMLFileExtension))
                         {
                             return GetItemStatus(item.State);
                         }
@@ -525,11 +529,41 @@ namespace GingerCore.SourceControl
         {
             try
             {
-                if (System.IO.Path.GetExtension(path) != string.Empty && !System.IO.File.Exists(path.Replace(".xml", ".ignore")))
+                string extension = Path.GetExtension(path);
+
+                //if it is not an XML file then, take the local/remote BLOB file and save it.
+                //if it is an XML file then, read the file content and take the local/remote content within the conflict markers.
+                bool isNotXMLFile = !string.Equals(extension, XMLFileExtension);
+                if (isNotXMLFile)
                 {
-                    if (!System.IO.File.Exists(path.Replace(".xml", ".conflictBackup")))
+                    try
                     {
-                        System.IO.File.Copy(path, path.Replace(".xml", ".conflictBackup"));
+                        using Repository repo = new(RepositoryRootFolder);
+                        using FileStream fileStream = new(path, FileMode.Create);
+                        if (side == eResolveConflictsSide.Local)
+                        {
+                            Blob oursBlob = GetLocalBlobForConflict(repo, path);
+                            oursBlob.GetContentStream().CopyTo(fileStream);
+                        }
+                        else
+                        {
+                            Blob theirsBlob = GetRemoteBlobForConflict(repo, path);
+                            theirsBlob.GetContentStream().CopyTo(fileStream);
+                        }
+                        return true;
+                    }
+                    catch(Exception ex)
+                    {
+                        error = ex.Message + Environment.NewLine + ex.InnerException;
+                        return false;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(extension) && !File.Exists(path.Replace(XMLFileExtension, IgnoreFileExtension)))
+                {
+                    if (!File.Exists(path.Replace(XMLFileExtension, ConflictBackupFileExtension)))
+                    {
+                        File.Copy(path, path.Replace(XMLFileExtension, ConflictBackupFileExtension));
                     }
                 }
 
@@ -596,32 +630,52 @@ namespace GingerCore.SourceControl
 
         public override string GetLocalContentForConflict(string conflictFilePath)
         {
-            conflictFilePath = Path.GetRelativePath(RepositoryRootFolder, conflictFilePath);
-            conflictFilePath = conflictFilePath.Replace(@"\", @"/");
             using Repository repo = new(RepositoryRootFolder);
-            Conflict conflict = repo.Index.Conflicts[conflictFilePath]; //does this return null if no conflict for given path?
-            if(conflict.Ours == null)
+            Blob oursBlob = GetLocalBlobForConflict(repo, conflictFilePath);
+            if(oursBlob == null)
             {
                 return string.Empty;
             }
+            return oursBlob.GetContentText();
+        }
+
+        private Blob GetLocalBlobForConflict(Repository repo, string conflictFilePath)
+        {
+            conflictFilePath = Path.GetRelativePath(RepositoryRootFolder, conflictFilePath);
+            conflictFilePath = conflictFilePath.Replace(@"\", @"/");
+            Conflict conflict = repo.Index.Conflicts[conflictFilePath]; //does this return null if no conflict for given path?
+            if (conflict.Ours == null)
+            {
+                return null;
+            }
 
             Blob oursBlob = (Blob)repo.Lookup(conflict.Ours.Id);
-            return oursBlob.GetContentText();
+            return oursBlob;
         }
 
         public override string GetRemoteContentForConflict(string conflictFilePath)
         {
-            conflictFilePath = Path.GetRelativePath(RepositoryRootFolder, conflictFilePath);
-            conflictFilePath = conflictFilePath.Replace(@"\", @"/");
             using Repository repo = new(RepositoryRootFolder);
-            Conflict conflict = repo.Index.Conflicts[conflictFilePath]; //does this return null if no conflict for given path?
-            if (conflict.Theirs == null)
+            Blob theirsBlob = GetRemoteBlobForConflict(repo, conflictFilePath);
+            if(theirsBlob == null)
             {
                 return string.Empty;
             }
+            return theirsBlob.GetContentText();
+        }
+
+        private Blob GetRemoteBlobForConflict(Repository repo, string conflictFilePath)
+        {
+            conflictFilePath = Path.GetRelativePath(RepositoryRootFolder, conflictFilePath);
+            conflictFilePath = conflictFilePath.Replace(@"\", @"/");
+            Conflict conflict = repo.Index.Conflicts[conflictFilePath]; //does this return null if no conflict for given path?
+            if (conflict.Theirs == null)
+            {
+                return null;
+            }
 
             Blob theirsBlob = (Blob)repo.Lookup(conflict.Theirs.Id);
-            return theirsBlob.GetContentText();
+            return theirsBlob;
         }
 
         private const string ConflictStartMarker = "<<<<<<<";
@@ -825,12 +879,12 @@ namespace GingerCore.SourceControl
 
         private string GetBackupFilePath(string path)
         {
-            return path.Replace(".xml", ".conflictBackup");
+            return path.Replace(XMLFileExtension, ConflictBackupFileExtension);
         }
 
         private string GetIgnoreFilePath(string path)
         {
-            return path.Replace(".xml", ".ignore");
+            return path.Replace(XMLFileExtension, IgnoreFileExtension);
         }
 
         private void CreateBackup(string path)

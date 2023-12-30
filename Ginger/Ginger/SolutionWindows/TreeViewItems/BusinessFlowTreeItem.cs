@@ -48,6 +48,7 @@ using Ginger.Repository.ItemToRepositoryWizard;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
+using Ginger.Repository;
 
 namespace Ginger.SolutionWindows.TreeViewItems
 {
@@ -243,7 +244,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private IEnumerable<ActivitiesGroup> GetActivityGroupsMissingFromSharedRepository()
         {
-            return mBusinessFlow.ActivitiesGroups.Where(ag => !ag.IsSharedRepositoryInstance);
+            ObservableList<ActivitiesGroup> sharedActivitiesGroups = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
+            SharedRepositoryOperations.MarkSharedRepositoryItems((IEnumerable<object>)mBusinessFlow.ActivitiesGroups, (IEnumerable<object>)sharedActivitiesGroups);
+            return mBusinessFlow.ActivitiesGroups.Where(ag =>
+            {
+                bool missingFromSharedRepo = !ag.IsSharedRepositoryInstance;
+                bool hasActivities = ag.ActivitiesIdentifiers.Any();
+                return missingFromSharedRepo && hasActivities;
+            });
         }
 
         private void ExportBPMNMenuItem_Click(object sender, RoutedEventArgs e)
@@ -262,8 +270,8 @@ namespace Ginger.SolutionWindows.TreeViewItems
             try
             { 
                 IEnumerable<ActivitiesGroup> activityGroups = GetActivityGroupsMissingFromSharedRepository();
-                bool hasActivityGroupsMissingFromSharedRepository = activityGroups.Any();
-                if (hasActivityGroupsMissingFromSharedRepository)
+                bool allActivityGroupsAlreadyInSharedRepository = !activityGroups.Any();
+                if (allActivityGroupsAlreadyInSharedRepository)
                 {
                     wasAllAddedToSharedRepository = true;
                     return wasAllAddedToSharedRepository;
