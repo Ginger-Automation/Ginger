@@ -786,6 +786,7 @@ namespace GingerCore.ALM.RQM
             }
             catch (Exception ex)
             {
+                erExportID = string.Empty;
                 Reporter.ToLog(eLogLevel.ERROR, $"Execution Records by test Case not found ProjectId {currentProjGuid} TC url {testCaseURLPathVersioned}", ex);
             }
         }
