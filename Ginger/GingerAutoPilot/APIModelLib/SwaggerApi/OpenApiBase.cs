@@ -318,7 +318,11 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     {
                         ObservableList<OptionalValue> tempList = new ObservableList<OptionalValue>
                         {
-                            new OptionalValue(exampleValue)
+                            new OptionalValue()
+                            {
+                                Value = exampleValue,
+                                IsDefault = true
+                            }
                         };
 
                         item.OptionalValuesList = tempList;

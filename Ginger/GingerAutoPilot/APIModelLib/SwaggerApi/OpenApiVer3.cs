@@ -43,8 +43,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             
             opendoc = Swaggerdoc;
 
-            var listExampleValues = GetExamplesFromOpenApiComponents(opendoc.Components);
-
             foreach (var paths in opendoc.Paths)
             {
                 SwaggerPathItem SPi = paths.Value;
@@ -58,7 +56,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     {
 
                         ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key,opendoc);
-                        SetOptionalValue(basicModal.AppModelParameters,listExampleValues);
+                        SetOptionalValue(basicModal.AppModelParameters,GetExamplesFromOpenApiComponents(opendoc.Components));
                         SwaggerModels.Add(basicModal);
                         GenerateResponse(Operation, basicModal);
                     }
@@ -83,7 +81,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         if (Operation.RequestBody != null)
                                         {
                                             AAM.AppModelParameters.Append(GenerateXMLBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
-                                            SetOptionalValue(AAM.AppModelParameters, listExampleValues);
                                             AAM.Name += "-UrlEncoded";
                                             AAM.Description = "Body Type is UrlEncoded ";
                                         }
@@ -94,7 +91,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         if (Operation.RequestBody != null)
                                         {
                                             AAM.AppModelParameters.Append(GenerateJsonBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
-                                            SetOptionalValue(AAM.AppModelParameters, listExampleValues);
                                             AAM.Name += "-JSON";
                                             AAM.Description = "Body Type is JSON";
                                         }
@@ -106,7 +102,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         if (Operation.RequestBody != null)
                                         {
                                             AAM.AppModelParameters.Append(GenerateXMLBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
-                                            SetOptionalValue(AAM.AppModelParameters, listExampleValues);
                                             AAM.Name += "-XML";
                                             AAM.Description = "Body Type is XML";
                                         }
@@ -117,6 +112,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         break;
 
                                 }
+
+                                SetOptionalValue(AAM.AppModelParameters, GetExamplesFromOpenApiComponents(opendoc.Components));
                             }
                             GenerateResponse(Operation, AAM);
                             SwaggerModels.Add(AAM);
@@ -169,7 +166,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             }
             catch (Exception ex)
             {
-                Reporter.ToLog(eLogLevel.INFO, "Example value was null in one of the tag", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Example values could not be fetched, please check the API", ex);
             }
 
             return exampleValues;
