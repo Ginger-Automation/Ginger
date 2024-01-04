@@ -306,11 +306,6 @@ namespace Ginger.UserControlsLib.UCListView
                         int index = xListView.Items.IndexOf(mObjList.CurrentItem);
                         xListView.SelectedIndex = index;
                         ScrollToViewCurrentItem();
-                        if(index >= 0 && index < xListView.Items.Count)
-                        {
-                            xListView.SelectedIndex = index;
-                            ScrollToViewCurrentItem();
-                        }
                     }
                 }
             });
