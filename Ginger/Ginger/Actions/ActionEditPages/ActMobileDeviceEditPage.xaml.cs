@@ -26,6 +26,7 @@ using GingerCore.GeneralLib;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.Actions
 {
@@ -67,11 +68,12 @@ namespace Ginger.Actions
 
             UpdateBaseLineImage(true);
 
-            xPhotoSumilationTxtBox.ValueTextBox.LostFocus -= ValueTextBox_LostFocus;
-            xPhotoSumilationTxtBox.ValueTextBox.LostFocus += ValueTextBox_LostFocus;
+            
+            WeakEventManager<UIElement, RoutedEventArgs>.RemoveHandler(source: xPhotoSumilationTxtBox.ValueTextBox, eventName: nameof(UIElement.LostFocus), handler: ValueTextBox_LostFocus);
+            WeakEventManager<UIElement, RoutedEventArgs>.AddHandler(source: xPhotoSumilationTxtBox.ValueTextBox, eventName: nameof(UIElement.LostFocus), handler: ValueTextBox_LostFocus);
 
-            xPhotoSumilationTxtBox.OpenExpressionEditorButton.Click -= ValueTextBox_LostFocus;
-            xPhotoSumilationTxtBox.OpenExpressionEditorButton.Click += ValueTextBox_LostFocus;
+            WeakEventManager<ButtonBase, RoutedEventArgs>.RemoveHandler(source: xPhotoSumilationTxtBox.OpenExpressionEditorButton, eventName: nameof(ButtonBase.Click), handler: ValueTextBox_LostFocus);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: xPhotoSumilationTxtBox.OpenExpressionEditorButton, eventName: nameof(ButtonBase.Click), handler: ValueTextBox_LostFocus);
         }
 
         private void ProcessInputForDriver()

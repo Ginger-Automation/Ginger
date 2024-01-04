@@ -104,7 +104,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 path = path.Replace(Match.ToString(), modal);
                 AAM.AppModelParameters.Add(new AppModelParameter(modal, Match.ToString() + "in url", "", "", new ObservableList<OptionalValue>()));
             }
-            AAM.EndpointURL = apidoc.BaseUrl + path;
+            AAM.EndpointURL =  path;
             AAM.APIType = ApplicationAPIUtils.eWebApiType.REST;
             AAM.Name = Operation.Summary;
             if (string.IsNullOrWhiteSpace(AAM.Name))

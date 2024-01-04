@@ -22,6 +22,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository.AddItemToRepositoryWizard;
+using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
 using GingerWPF.DragDropLib;
@@ -117,7 +118,7 @@ namespace Ginger.Repository
 
         private void SetActionsGridView()
         {
-            xActionListView.ItemMouseDoubleClick += grdActions_grdMain_ItemMouseDoubleClick;
+            WeakEventManager<UcListView, EventArgs>.AddHandler(source: xActionListView, eventName: nameof(UcListView.ItemMouseDoubleClick), handler: grdActions_grdMain_ItemMouseDoubleClick);
             xActionListView.ItemDropped += grdActions_ItemDropped;
             xActionListView.PreviewDragItem += grdActions_PreviewDragItem;
             xActionListView.xTagsFilter.Visibility = Visibility.Visible;

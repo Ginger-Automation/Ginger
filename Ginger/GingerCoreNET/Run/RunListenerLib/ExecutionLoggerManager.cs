@@ -174,7 +174,7 @@ namespace Ginger.Run
         public override void ActivityGroupEnd(uint eventTime, ActivitiesGroup activityGroup, bool offlineMode = false)
         {
             //ActivityGroupReport AGR = new ActivityGroupReport(activityGroup, mContext.BusinessFlow);
-            object AGR = mExecutionLogger.SetReportActivityGroup(activityGroup, mContext.BusinessFlow, offlineMode);
+            object AGR = mExecutionLogger.SetReportActivityGroup(mContext, activityGroup, mContext.BusinessFlow, offlineMode);
 
             if (!offlineMode)
             {
@@ -402,7 +402,7 @@ namespace Ginger.Run
         // fix
         public override void ActivityEnd(uint eventTime, Activity activity, bool offlineMode = false)
         {
-            object AR = ((ExecutionLogger)mExecutionLogger).SetReportActivity(activity, mContext, offlineMode, Configuration.ExecutionLoggerConfigurationIsEnabled);
+            object AR = ((ExecutionLogger)mExecutionLogger).SetReportActivity(activity, mContext, ExecutedFrom, offlineMode, Configuration.ExecutionLoggerConfigurationIsEnabled);
 
             if (!offlineMode)
             {

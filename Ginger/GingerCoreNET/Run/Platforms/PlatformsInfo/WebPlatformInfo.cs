@@ -91,6 +91,8 @@ namespace GingerCore.Platforms.PlatformsInfo
             browserActElementList.Add(ActBrowserElement.eControlAction.StartMonitoringNetworkLog);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetNetworkLog);
             browserActElementList.Add(ActBrowserElement.eControlAction.StopMonitoringNetworkLog);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SetBlockedUrls);
+            browserActElementList.Add(ActBrowserElement.eControlAction.UnblockeUrls);
             return browserActElementList;
         }
 

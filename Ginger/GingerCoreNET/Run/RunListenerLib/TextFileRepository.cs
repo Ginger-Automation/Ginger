@@ -117,7 +117,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return AR;
         }
 
-        public override object SetReportActivity(Activity activity, Context context, bool offlineMode, bool isConfEnable)
+        public override object SetReportActivity(Activity activity, Context context, eExecutedFrom executedFrom, bool offlineMode, bool isConfEnable)
         {
             ActivityReport AR = GetActivityReportData(activity, context, offlineMode);
             if (isConfEnable)
@@ -134,9 +134,9 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
             return AR;
         }
 
-        public override object SetReportActivityGroup(ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode)
+        public override object SetReportActivityGroup(IContext context, ActivitiesGroup activityGroup, BusinessFlow businessFlow, bool offlineMode)
         {
-            ActivityGroupReport AGR = GetAGReportData(activityGroup, businessFlow);
+            ActivityGroupReport AGR = GetAGReportData(activityGroup, context);
             //AGR.ReportMapper(activityGroup, businessFlow, ExecutionLogfolder);
             if (offlineMode && activityGroup.ExecutionLogFolder != null)
             {
@@ -281,6 +281,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
                 Reporter.ToLog(eLogLevel.WARN, string.Format("Failed to Clean the Folder '{0}', Issue:'{1}'", logFolder, ex.Message));
             }
 
+        }
+
+        public override void DeleteLocalData(string logFolder, LiteDB.ObjectId runsetId, Guid executionId)
+        {
+            DeleteLocalData(logFolder);
         }
     }
 }

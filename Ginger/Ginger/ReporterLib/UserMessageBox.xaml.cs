@@ -42,6 +42,12 @@ namespace Ginger.ReporterLib
             xMessageTextBlock.Text = txt;
             messageBoxResult = defualtResualt;
 
+            if (txt.Length > 200)
+            { 
+                this.Width = 550;
+                this.Height = 250;
+            }
+
             xOKButton.Visibility = Visibility.Collapsed;
             xYesButton.Visibility = Visibility.Collapsed;
             xNoButton.Visibility = Visibility.Collapsed;

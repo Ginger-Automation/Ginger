@@ -90,7 +90,7 @@ namespace Amdocs.Ginger.Common
         AskIfToGenerateAutoRunDescription,
         MissingApplicationPlatform,
         NoActivitiesGroupWasSelected, ActivitiesGroupActivitiesNotFound, PartOfActivitiesGroupActsNotFound, SureWantToDeleteGroup,
-        ItemNameExistsInRepository, ItemExistsInRepository, ItemExternalExistsInRepository, ItemParentExistsInRepository, AskIfWantsToUpdateRepoItemInstances, AskIfWantsToChangeeRepoItem, AskIfWantsToUpdateAllLinkedRepoItem, AskIfWantsToChangeLinkedRepoItem, GetRepositoryItemUsagesFailed, UpdateRepositoryItemUsagesSuccess, FailedToAddItemToSharedRepository, OfferToUploadAlsoTheActivityGroupToRepository,
+        ItemNameExistsInRepository, ItemExistsInRepository, ItemExternalExistsInRepository, ItemParentExistsInRepository, AskIfWantsToUpdateRepoItemInstances, AskIfWantsToChangeeRepoItem, AskIfWantsToUpdateAllLinkedRepoItem, AskIfWantsToChangeLinkedRepoItem, GetRepositoryItemUsagesFailed, UpdateRepositoryItemUsagesSuccess, FailedToAddItemToSharedRepository, FailedToAddItemsToSharedRepository, OfferToUploadAlsoTheActivityGroupToRepository,
         ConnectionCloseWarning,
         InvalidCharactersWarning,
         InvalidValueExpression,
@@ -171,12 +171,15 @@ namespace Amdocs.Ginger.Common
         NoPublishRepositoryInfo,
         NotAllowedForMappedRuntimeValue,
         HandleConflictsBeforeMovingForward,
-        HasUnhandledConflicts,
+        HasUnhandledConflicts, 
+        HasUnhandledMandatoryIssues,
         UncommitedChangesPreventCheckout,
         ExportToBPMNSuccessful,
         GingerEntityToBPMNConversionError,
         IssueWhileAnalyzingConflict,
-        ConflictsResolvedCount
+        ConflictsResolvedCount,
+        AddActivityGroupsToSharedRepositoryForBPMNConversion,
+        FailedToDownloadDriver
     }
 
     public static class UserMsgsPool
@@ -246,6 +249,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.ItemParentExistsInRepository, new UserMsg(eUserMsgType.WARN, "Add Item to Repository", "The item '{0}' source is from the repository item '{1}'." + Environment.NewLine + Environment.NewLine + "Do you want to overwrite the source repository item?" + Environment.NewLine + Environment.NewLine + "Note:" + Environment.NewLine + "If you select 'No', the item will be added as a new item to the repository." + Environment.NewLine + "If you select 'Yes', backup of the existing repository item will be saved into 'PreVersions' folder.", eUserMsgOption.YesNoCancel, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToAddItemToSharedRepository, new UserMsg(eUserMsgType.ERROR, "Add Item to Repository", "Failed to add the item '{0}' to shared repository." + Environment.NewLine + Environment.NewLine + "Error Details: {1}.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToAddItemsToSharedRepository, new UserMsg(eUserMsgType.ERROR, "Add Item to Repository", "Failed to add the items to shared repository." + Environment.NewLine + Environment.NewLine + "Error Details: {1}.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfWantsToUpdateRepoItemInstances, new UserMsg(eUserMsgType.WARN, "Update Repository Item Usages", "The item '{0}' has {1} instances." + Environment.NewLine + Environment.NewLine + "Do you want to review them and select which one to get updated as well?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfWantsToChangeeRepoItem, new UserMsg(eUserMsgType.WARN, "Change Repository Item", "The item '{0}' is been used in {1} places." + Environment.NewLine + Environment.NewLine + "Are you sure you want to {2} it?" + Environment.NewLine + Environment.NewLine + "Note: Anyway the changes won't affect the linked instances of this item", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfWantsToChangeLinkedRepoItem, new UserMsg(eUserMsgType.WARN, "Change Repository Item", "The item '{0}' may be used as Link in many places. Modifying it will auto update all Linked instances." + Environment.NewLine + Environment.NewLine + "Are you sure you want to {1} it?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -316,9 +320,10 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.SourceControlBranchNameEmpty, new UserMsg(eUserMsgType.ERROR, "Upload Solution", "Branch name cannot be empty.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.HandleConflictsBeforeMovingForward, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "You have {0} unhandled conflicts, please handle them before moving forward.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.HasUnhandledConflicts, new UserMsg(eUserMsgType.ERROR, "Unhandled Conflicts", "Cannot merge since you have {0} unhandled conflicts.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.HasUnhandledMandatoryIssues, new UserMsg(eUserMsgType.ERROR, "Unhandled Issues", "Cannot merge since you have {0} unhandled High/Critical issues.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UncommitedChangesPreventCheckout, new UserMsg(eUserMsgType.ERROR, "Uncommited Changes", "Local branch has uncommited changes, check-in them before getting latest.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.IssueWhileAnalyzingConflict, new UserMsg(eUserMsgType.INFO, "Issues with Analyzer", "{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.ConflictsResolvedCount, new UserMsg(eUserMsgType.INFO, "Conflicts Resolved", "{0} conflicts was resolved", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ConflictsResolvedCount, new UserMsg(eUserMsgType.INFO, "Conflicts Resolved", "{0} conflicted file(s) was resolved.", eUserMsgOption.OK, eUserMsgSelection.OK));
             #endregion SourceControl Messages
 
             #region Validation Messages
@@ -390,6 +395,11 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.IFSaveChangesOfBF, new UserMsg(eUserMsgType.WARN, "Save Current" + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Before Change?", "Do you want to save the changes made in the '{0}' " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + "?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.RecordingStopped, new UserMsg(eUserMsgType.ERROR, "Recording Stopped", "Recording Stopped for the {0} agent." + Environment.NewLine + "Error Details: '{1}'.", eUserMsgOption.OK, eUserMsgSelection.None));
+            
+            Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToDownloadDriver, new UserMsg(eUserMsgType.ERROR, "Failed to Download the Driver",
+                "Oh no! The {0} Driver couldn't be downloaded because we're currently offline.Check your internet connection or update the proxy settings in the Agent config for automatic downloads." + Environment.NewLine +
+                $"If that feels like a puzzle, you can manually grab the driver and drop it into the Ginger installation directory({ AppContext.BaseDirectory})." + Environment.NewLine +"Cheers to problem-solving."
+                , eUserMsgOption.OK, eUserMsgSelection.None));
 
             #endregion Agents/Drivers Messages
 
@@ -586,6 +596,7 @@ namespace Amdocs.Ginger.Common
             #region Otoma
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExportToBPMNSuccessful, new UserMsg(eUserMsgType.INFO, "BPMN Export Successful", "Exported to BPMN file {0} successfully.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.GingerEntityToBPMNConversionError, new UserMsg(eUserMsgType.ERROR, "BPMN Export Failed", "Error occurred while exporting BPMN.\n{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AddActivityGroupsToSharedRepositoryForBPMNConversion, new UserMsg(eUserMsgType.QUESTION, Caption: "Add Missing Activity Groups to Shared Repository", Message: "All the activity groups must be added to shared repository before generating BPMN.\nWould you like to add now?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
             #endregion
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed, new UserMsg(eUserMsgType.INFO, "Remote Data deletion", "Remote Execution Results will not be deleted.", eUserMsgOption.OK, eUserMsgSelection.OK));

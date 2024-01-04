@@ -1,4 +1,24 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2023 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
 using Ginger.AnalyzerLib;
@@ -44,13 +64,17 @@ namespace Ginger.ConflictResolve
                 typeof(RunSetConfig).IsAssignableFrom(type);
         }
 
-        public void WizardEvent(WizardEventArgs WizardEventArgs)
+        public void WizardEvent(WizardEventArgs wizardEventArgs)
         {
-            ResolveMergeConflictWizard wizard = (ResolveMergeConflictWizard)WizardEventArgs.Wizard;
+            ResolveMergeConflictWizard wizard = (ResolveMergeConflictWizard)wizardEventArgs.Wizard;
 
-            if (WizardEventArgs.EventType == EventType.Active)
+            if (wizardEventArgs.EventType == EventType.Active)
             {
                 OnWizardActivePage(wizard);
+            }
+            else if(wizardEventArgs.EventType == EventType.LeavingForNextPage)
+            {
+                OnLeavingForNextPage(wizardEventArgs);
             }
         }
 
@@ -75,9 +99,10 @@ namespace Ginger.ConflictResolve
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            _analyzerPage.Init(mergedRunSetConfig);
+                            _analyzerPage.Init(mergedRunSetConfig, RunSetConfigAnalyzer.Check.All.ExcludeFlags(RunSetConfigAnalyzer.Check.BusinessFlowVariablesAreValid), AnalyzeGingerRunner.Check.None);
                             xAnalyzerPageFrame.ClearAndSetContent(_analyzerPage);
                         });
+                        _analyzerPage.AnalyzeWithUI().Wait();
                     }
                 }
                 HideLoading();
@@ -104,6 +129,21 @@ namespace Ginger.ConflictResolve
                 xLoadingFrame.Visibility = Visibility.Collapsed;
                 xContentGrid.Visibility = Visibility.Visible;
             });
+        }
+    
+        private void OnLeavingForNextPage(WizardEventArgs wizardEventArgs)
+        {
+            bool hasUnhandledMandatoryIssues = GetUnhandledMandatoryIssueCount() > 0;
+            if(hasUnhandledMandatoryIssues)
+            {
+                Reporter.ToUser(eUserMsgKey.AnalyzerFoundIssues);
+                wizardEventArgs.CancelEvent = true;
+            }
+        }
+
+        public int GetUnhandledMandatoryIssueCount()
+        {
+            return _analyzerPage.TotalHighAndCriticalIssues;
         }
     }
 }

@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
+using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
@@ -33,6 +34,7 @@ using GingerCore.Actions.VisualTesting;
 using GingerCore.Drivers.Common;
 using GingerCore.Drivers.CommunicationProtocol;
 using GingerCore.Drivers.Selenium.SeleniumBMP;
+using GingerCore.Environments;
 using GingerCoreNET.Drivers.CommonLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using HtmlAgilityPack;
@@ -40,6 +42,7 @@ using InputSimulatorStandard;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Chromium;
 using OpenQA.Selenium.DevTools;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
@@ -62,7 +65,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V117.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
@@ -121,10 +124,13 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Auto Detect Proxy Setting?")]
         public bool AutoDetect { get; set; }
+
         [UserConfigured]
         [UserConfiguredDefault("")]
         [UserConfiguredDescription("Path to extension to be enabled")]
         public string ExtensionPath { get; set; }
+        // Note: ExtensionPath is a semi-colon delimited string containing one or more extension paths
+
         [UserConfigured]
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Disable Chrome Extension. This feature is not available anymore")]
@@ -139,7 +145,6 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("true")]
         [UserConfiguredDescription("Ignore Internet Explorer protected mode")]
         public bool IgnoreIEProtectedMode { get; set; }
-
 
         [UserConfigured]
         [UserConfiguredDefault("false")]
@@ -175,7 +180,6 @@ namespace GingerCore.Drivers
         [UserConfiguredDefault("false")]
         [UserConfiguredDescription("Only for Edge: Open Edge browser in IE Mode")]
         public bool OpenIEModeInEdge { get; set; }
-
 
         [UserConfigured]
         [UserConfiguredDefault("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")]
@@ -280,6 +284,7 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
         public string UnhandledPromptBehavior { get; set; }
 
+
         protected IWebDriver Driver;
 
         protected eBrowserType mBrowserTpe;
@@ -365,6 +370,8 @@ namespace GingerCore.Drivers
 
         public override void StartDriver()
         {
+            DriverService driverService = null;
+
             if (StartBMP)
             {
                 BMPServer = new Server(StartBMPBATFile, StartBMPPort);
@@ -462,9 +469,9 @@ namespace GingerCore.Drivers
                             ieoptions.BrowserCommandLineArguments += "," + WorkSpace.Instance.Solution.ApplitoolsConfiguration.ApiUrl;
                         }
 
-                        InternetExplorerDriverService IEService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
-                        IEService.HideCommandPromptWindow = HideConsoleWindow;
-                        Driver = new InternetExplorerDriver(IEService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        driverService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
+                        driverService.HideCommandPromptWindow = HideConsoleWindow;
+                        Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         break;
                     #endregion
 
@@ -502,10 +509,10 @@ namespace GingerCore.Drivers
                             FirefoxOption.Profile = profile;
                         }
 
-                        FirefoxDriverService FFService = FirefoxDriverService.CreateDefaultService();
-                        FFService.HideCommandPromptWindow = HideConsoleWindow;
-                        Driver = new FirefoxDriver(FFService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                        this.mDriverProcessId = FFService.ProcessId;
+                        driverService = FirefoxDriverService.CreateDefaultService();
+                        driverService.HideCommandPromptWindow = HideConsoleWindow;
+                        Driver = new FirefoxDriver((FirefoxDriverService)driverService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                        this.mDriverProcessId = driverService.ProcessId;
                         break;
                     #endregion
 
@@ -523,7 +530,8 @@ namespace GingerCore.Drivers
                         }
                         else if (!string.IsNullOrEmpty(ExtensionPath))
                         {
-                            options.AddExtension(Path.GetFullPath(ExtensionPath));
+                            string[] extensionPaths = ExtensionPath.Split(';');
+                            options.AddExtensions(extensionPaths);
                         }
 
                         //setting proxy
@@ -579,18 +587,17 @@ namespace GingerCore.Drivers
                         if (!string.IsNullOrEmpty(DebugAddress))
                         {
                             options.DebuggerAddress = DebugAddress.Trim();
-                            
                         }
-                        ChromeDriverService ChService = ChromeDriverService.CreateDefaultService();
+                        driverService = ChromeDriverService.CreateDefaultService();
                         if (HideConsoleWindow)
                         {
-                            ChService.HideCommandPromptWindow = HideConsoleWindow;
+                            driverService.HideCommandPromptWindow = HideConsoleWindow;
                         }
 
                         try
                         {
-                            Driver = new ChromeDriver(ChService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                            this.mDriverProcessId = ChService.ProcessId;
+                            Driver = new ChromeDriver((ChromeDriverService)driverService, options, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            this.mDriverProcessId = driverService.ProcessId;
                         }
                         catch (Exception ex)
                         {
@@ -675,9 +682,9 @@ namespace GingerCore.Drivers
 
                             SetCurrentPageLoadStrategy(ieOptions);
                             ieOptions.IgnoreZoomLevel = true;
-                            InternetExplorerDriverService IExplorerService = InternetExplorerDriverService.CreateDefaultService();
-                            IExplorerService.HideCommandPromptWindow = HideConsoleWindow;
-                            Driver = new InternetExplorerDriver(IExplorerService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            driverService = InternetExplorerDriverService.CreateDefaultService();
+                            driverService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         }
                         else
 
@@ -694,10 +701,10 @@ namespace GingerCore.Drivers
                             }
 
                             SetCurrentPageLoadStrategy(EDOpts);
-                            EdgeDriverService EDService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
-                            EDService.HideCommandPromptWindow = HideConsoleWindow;
-                            Driver = new EdgeDriver(EDService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
-                            this.mDriverProcessId = EDService.ProcessId;
+                            driverService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
+                            driverService.HideCommandPromptWindow = HideConsoleWindow;
+                            Driver = new EdgeDriver((EdgeDriverService)driverService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            this.mDriverProcessId = driverService.ProcessId;
                         }
 
                         break;
@@ -836,7 +843,6 @@ namespace GingerCore.Drivers
 
                 Driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds((int)PageLoadTimeOut);
 
-
                 DefaultWindowHandler = Driver.CurrentWindowHandle;
                 InitXpathHelper();
             }
@@ -845,26 +851,89 @@ namespace GingerCore.Drivers
                 Reporter.ToLog(eLogLevel.ERROR, "Exception in start driver", ex);
                 ErrorMessageFromDriver = ex.Message;
 
-                //If driver is mismatched, try renaming the existing driver and let selenium update the driver
-                if (RestartRetry && ex.Message.Contains("session not created: This version of "))
+                CloseDriverProcess(driverService);
+                //If driver is mismatched, use selenium manager to get the latest driver
+                if (RestartRetry && (ex.Message.Contains("session not created: This version of", StringComparison.InvariantCultureIgnoreCase) ||
+                    ex.Message.StartsWith("unable to obtain", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     RestartRetry = false;
-
-                    //Rename driver name
-                    if (mBrowserTpe == eBrowserType.Chrome)
-                    {
-                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(CHROME_DRIVER_NAME), GetDriversPathPerOS());
-                    }
-                    else if (mBrowserTpe == eBrowserType.Edge)
-                    {
-                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(EDGE_DRIVER_NAME), GetDriversPathPerOS());
-                    }
-                    else if (mBrowserTpe == eBrowserType.FireFox)
-                    {
-                        GingerUtils.FileUtils.RenameFile(DriverServiceFileNameWithPath(FIREFOX_DRIVER_NAME), GetDriversPathPerOS());
-                    }
+                    UpdateDriver(driverService);
                     StartDriver();
                 }
+            }
+        }
+
+        private void UpdateDriver(DriverService driverService)
+        {
+            try
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"Failed to Download latest {mBrowserTpe} driver. Attempting to Update {mBrowserTpe} driver to latest using System Proxy Settings....");
+                DriverOptions driverOptions = null;
+
+                if (mBrowserTpe == eBrowserType.Chrome)
+                {
+                    driverOptions = new ChromeOptions();
+                }
+                else if (mBrowserTpe == eBrowserType.Edge)
+                {
+                    driverOptions = new EdgeOptions();
+                }
+                else if (mBrowserTpe == eBrowserType.FireFox)
+                {
+                    driverOptions = new FirefoxOptions();
+                }
+                else
+                {
+                    //Other browsers not supported, return without update
+                    return;
+                }
+
+                //Try get system proxy to send it to Selenium manager to update the driver.
+                string systemProxy = null;
+                try
+                {
+                    systemProxy = OperatingSystemBase.GetSystemProxy();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to get System Proxy Settings.", ex);
+                }
+
+                if (!string.IsNullOrEmpty(systemProxy))
+                {
+                    var proxy = new Proxy();
+                    proxy.Kind = ProxyKind.Manual;
+                    proxy.HttpProxy = systemProxy.ToString();
+                    proxy.SslProxy = systemProxy.ToString();
+                    driverOptions.Proxy = proxy;
+                }
+
+                SetBrowserVersion(driverOptions);
+                var driverpath = SeleniumManager.DriverPath(driverOptions);
+                Reporter.ToLog(eLogLevel.INFO, $"Updated {mBrowserTpe} driver to latest and placed in {driverpath}.");
+            }
+            catch (Exception ex)
+            {
+                if (!WorkSpace.Instance.RunningInExecutionMode && !WorkSpace.Instance.RunningFromUnitTest)
+                {
+                    Reporter.ToUser(eUserMsgKey.FailedToDownloadDriver, mBrowserTpe);
+                }
+                Reporter.ToLog(eLogLevel.ERROR, string.Format(Reporter.UserMsgsPool[eUserMsgKey.FailedToDownloadDriver].Message, mBrowserTpe), ex);
+                throw;
+            }
+        }
+
+        private static void CloseDriverProcess(DriverService driverService)
+        {
+            //Close launched driver process as it does not gets closed by Selenium in case of exception
+            if (driverService?.ProcessId != 0)
+            {
+                try
+                {
+                    Reporter.ToLog(eLogLevel.DEBUG, "Closing Driver process which was left open after failure to start driver.");
+                    System.Diagnostics.Process.GetProcessById(driverService.ProcessId)?.Kill();
+                }
+                catch { }
             }
         }
 
@@ -7781,13 +7850,13 @@ namespace GingerCore.Drivers
                     case ActBrowserElement.eControlAction.StartMonitoringNetworkLog:
                         mAct = act;
                         SetUPDevTools(Driver);
-                        StartMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
+                        StartMonitoringNetworkLog(Driver).GetAwaiter().GetResult();
                         break;
                     case ActBrowserElement.eControlAction.GetNetworkLog:
-                        GetNetworkLogAsync(Driver, act).GetAwaiter().GetResult();
+                        GetNetworkLogAsync(act).GetAwaiter().GetResult();
                         break;
                     case ActBrowserElement.eControlAction.StopMonitoringNetworkLog:
-                        StopMonitoringNetworkLog(Driver, act).GetAwaiter().GetResult();
+                        StopMonitoringNetworkLog(act).GetAwaiter().GetResult();
                         break;
                     case ActBrowserElement.eControlAction.NavigateBack:
                         Driver.Navigate().Back();
@@ -7845,7 +7914,12 @@ namespace GingerCore.Drivers
                             return;
                         }
                         break;
-
+                    case ActBrowserElement.eControlAction.SetBlockedUrls:
+                    case ActBrowserElement.eControlAction.UnblockeUrls:
+                        mAct = act;
+                        SetUPDevTools(Driver);
+                        GotoURL(act, Driver.Url);
+                        break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
                 }
@@ -9925,15 +9999,49 @@ namespace GingerCore.Drivers
         {
             //Get DevTools
             devTools = webDriver as IDevTools;
-
-            //DevTool Session 
-            devToolsSession = devTools.GetDevToolsSession(116);
-            devToolsDomains = devToolsSession.GetVersionSpecificDomains<OpenQA.Selenium.DevTools.V116.DevToolsSessionDomains>();
-            devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V116.Network.EnableCommandSettings());
-
+            if (webDriver is ChromiumDriver)
+            {
+                try
+                {
+                    //DevTool Session 
+                    devToolsSession = devTools.GetDevToolsSession(117);
+                    devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
+                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V117.Network.EnableCommandSettings());
+                    blockOrUnblockUrls();
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                    mAct.Error = ex.Message;
+                }
+            }
 
         }
-        public async Task GetNetworkLogAsync(IWebDriver webDriver, ActBrowserElement act)
+        private string[] getBlockedUrlsArray(string sUrlsToBeBlocked)
+        {
+            string[] arrBlockedUrls = new string[] { };
+            if (!string.IsNullOrEmpty(sUrlsToBeBlocked))
+            {
+                arrBlockedUrls = sUrlsToBeBlocked.Trim(',').Split(",");
+            }
+            return arrBlockedUrls;
+        }
+        private void blockOrUnblockUrls()
+        {
+            if (mAct != null)
+            {
+                if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
+                {
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V117.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
+                }
+                else if (mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
+                {
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V117.Network.SetBlockedURLsCommandSettings() { Urls = new string[] { } });
+                }
+                Thread.Sleep(300);
+            }
+        }
+        public async Task GetNetworkLogAsync(ActBrowserElement act)
         {
             if (isNetworkLogMonitoringStarted)
             {
@@ -9957,12 +10065,21 @@ namespace GingerCore.Drivers
 
         }
 
-        public async Task StartMonitoringNetworkLog(IWebDriver webDriver, ActBrowserElement act)
+        public async Task StartMonitoringNetworkLog(IWebDriver webDriver)
         {
-
             networkRequestLogList = new List<Tuple<string, object>>();
             networkResponseLogList = new List<Tuple<string, object>>();
             interceptor = webDriver.Manage().Network;
+
+            ProjEnvironment projEnv = GetCurrentProjectEnvironment();
+
+            ValueExpression VE = new ValueExpression(projEnv, BusinessFlow);
+
+            foreach (ActInputValue item in mAct.UpdateOperationInputValues)
+            {
+                item.Value = item.Param;
+                item.ValueForDriver = VE.Calculate(item.Param);
+            }
 
             interceptor.NetworkRequestSent += OnNetworkRequestSent;
             interceptor.NetworkResponseReceived += OnNetworkResponseReceived;
@@ -9971,7 +10088,20 @@ namespace GingerCore.Drivers
             isNetworkLogMonitoringStarted = true;
         }
 
-        public async Task StopMonitoringNetworkLog(IWebDriver webDriver, ActBrowserElement act)
+        private ProjEnvironment GetCurrentProjectEnvironment()
+        {
+            foreach (ProjEnvironment env in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>())
+            {
+                if (env.Name.Equals(BusinessFlow.Environment))
+                {
+                    return env;
+                }
+            }
+
+            return null;
+        }
+
+        public async Task StopMonitoringNetworkLog(ActBrowserElement act)
         {
             try
             {
@@ -9994,7 +10124,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V116.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V117.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 
@@ -10079,11 +10209,7 @@ namespace GingerCore.Drivers
         {
             try
             {
-                if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.RequestUrl.ToLower().Equals(x.Param.ToLower())))
-                {
-                    networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
-                }
-                else if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
+                if (IsToMonitorAllUrls() || IsToMonitorOnlySelectedUrls(e.RequestUrl))
                 {
                     networkRequestLogList.Add(new Tuple<string, object>("RequestUrl:" + e.RequestUrl, JsonConvert.SerializeObject(e)));
                 }
@@ -10094,31 +10220,30 @@ namespace GingerCore.Drivers
             }
         }
 
+        private bool IsToMonitorAllUrls()
+        {
+            return mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString();
+        }
+
+        private bool IsToMonitorOnlySelectedUrls(string requestUrl)
+        {
+            return mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString()
+                && mAct.UpdateOperationInputValues != null
+                && mAct.UpdateOperationInputValues.Any(x => !string.IsNullOrEmpty(x.ValueForDriver) && requestUrl.ToLower().Contains(x.ValueForDriver.ToLower()));
+        }
+
         private void OnNetworkResponseReceived(object sender, NetworkResponseReceivedEventArgs e)
         {
             try
             {
-                if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.SelectedUrl.ToString() && mAct.UpdateOperationInputValues != null && mAct.UpdateOperationInputValues.Any(x => e.ResponseUrl.ToLower().Equals(x.Param.ToLower())))
-                {
-                    if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
-                    {
-                        if (e.ResponseResourceType == "XHR")
-                        {
-                            networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
-                        }
-                    }
-                    else
-                    {
-                        networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
-                    }
-                }
-                else if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value == ActBrowserElement.eMonitorUrl.AllUrl.ToString())
-                {
-                    if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
-                    {
-                        if (e.ResponseResourceType == "XHR")
-                        {
+                string monitorType = mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eMonitorUrl)).Value;
 
+                if (IsToMonitorAllUrls() || IsToMonitorOnlySelectedUrls(e.ResponseUrl))
+                {
+                    if (mAct.GetOrCreateInputParam(nameof(ActBrowserElement.eRequestTypes)).Value == ActBrowserElement.eRequestTypes.FetchOrXHR.ToString())
+                    {
+                        if (e.ResponseResourceType == "XHR")
+                        {
                             networkResponseLogList.Add(new Tuple<string, object>("ResponseUrl:" + e.ResponseUrl, JsonConvert.SerializeObject(e)));
                         }
                     }

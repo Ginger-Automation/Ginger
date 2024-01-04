@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -80,7 +81,7 @@ namespace Ginger.BusinessFlowWindows
                 {
                     continue;
                 }
-                SeriesActivityCollection.Add(new PieSeries() { Title = v.Description, LabelPosition = PieLabelPosition.OutsideSlice, Foreground = new SolidColorBrush(Colors.Gray), FontSize = 12, FontFamily = new FontFamily("MS Arial"), Fill = GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
+                SeriesActivityCollection.Add(new PieSeries() { Title = v.Description, LabelPosition = PieLabelPosition.OutsideSlice, Foreground = new SolidColorBrush(Colors.Black), FontSize = 12, FontFamily = new FontFamily("MS Arial"), Fill = GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
                 totalActivity += (int)v.Count;
             }
             Activities.Content = GingerDicser.GetTermResValue(eTermResKey.Activities);
@@ -93,7 +94,7 @@ namespace Ginger.BusinessFlowWindows
                 {
                     continue;
                 }
-                SeriesActionCollection.Add(new PieSeries() { Title = v.Description, LabelPosition = PieLabelPosition.OutsideSlice, Foreground = new SolidColorBrush(Colors.Gray), FontSize = 12, FontFamily = new FontFamily("MS Arial"), Fill = GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
+                SeriesActionCollection.Add(new PieSeries() { Title = v.Description, LabelPosition = PieLabelPosition.OutsideSlice, Foreground = new SolidColorBrush(Colors.Black), FontSize = 12, FontFamily = new FontFamily("MS Arial"), Fill = GingerCore.General.SelectColorByCollection(v.Description), Values = new ChartValues<ObservableValue> { new ObservableValue(v.Count) }, DataLabels = true });
                 totalAction += (int)v.Count;
             }
             status = SeriesActionCollection.Select(b => b.Title).Concat(SeriesActionCollection.Select(c => c.Title)).Distinct().ToList();
@@ -162,11 +163,11 @@ namespace Ginger.BusinessFlowWindows
         {
             Button ReportButton = new Button();
             ReportButton.Content = "Generate Report";
-            ReportButton.Click += ReportButton_Click;
+           WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: ReportButton, eventName: nameof(ButtonBase.Click), handler: ReportButton_Click);
 
             Button ExportBtn = new Button();
             ExportBtn.Content = "Export Execution Details";
-            ExportBtn.Click += new RoutedEventHandler(ExportExecutionDetails);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: ExportBtn, eventName: nameof(ButtonBase.Click), handler: ExportExecutionDetails);
 
             GenericWindow genWin = null;
             GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, new ObservableList<Button> { ExportBtn, ReportButton });

@@ -24,6 +24,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.Actions
 {
@@ -50,7 +51,7 @@ namespace Ginger.Actions
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(ScriptNameComboBox, ComboBox.SelectedValueProperty, actScript, nameof(ActScript.ScriptName));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(chkIgnoreScriptErrors, CheckBox.IsCheckedProperty, actScript, nameof(ActScript.IgnoreStdOutErrors));
 
-            ScriptNameComboBox.SelectionChanged += ScriptNameComboBox_SelectionChanged;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: ScriptNameComboBox, eventName: nameof(Selector.SelectionChanged), handler: ScriptNameComboBox_SelectionChanged);
 
             ScriptInterPreter.FileExtensions.Add(".exe");
             ScriptInterPreter.Init(Act, nameof(ActScript.ScriptInterpreter), true);

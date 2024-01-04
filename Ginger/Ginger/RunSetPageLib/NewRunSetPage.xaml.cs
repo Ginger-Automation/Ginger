@@ -23,6 +23,8 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.Actions;
@@ -48,12 +50,14 @@ using GingerWPF.WizardLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -85,6 +89,8 @@ namespace Ginger.Run
         private bool mRunSetBusinessFlowWasChanged = false;
         private bool mSolutionWasChanged = false;
         Context mContext = new Context();
+        private readonly bool _ignoreValidationRules;
+
         public enum eObjectType
         {
             BusinessFlow,
@@ -259,21 +265,33 @@ namespace Ginger.Run
             }
         }
 
-        public NewRunSetPage(RunSetConfig runSetConfig, eEditMode editMode = eEditMode.ExecutionFlow)//when window opened automatically when running from command line
+        public NewRunSetPage(RunSetConfig runSetConfig, eEditMode editMode = eEditMode.ExecutionFlow, bool ignoreValidationRules = false)//when window opened automatically when running from command line
         {
             InitializeComponent();
             //Init
             Init();
 
             mEditMode = editMode;
+            _ignoreValidationRules = ignoreValidationRules;
             if (mEditMode == eEditMode.View)
             {
+                Config.IsEnabled = false;
                 xOperationsPnl.IsEnabled = false;
                 xRunnersCanvasControls.IsEnabled = false;
                 xRunnersExecutionControls.IsEnabled = false;
                 xBusinessFlowsListOperationsPnl.IsEnabled = false;
+                xRunsetOperationsTab.IsEnabled = false;
+                mALMDefectsOpening.IsEnabled = false;
+                mExecutionSummary.IsEnabled = false;
                 LoadRunSetConfig(runSetConfig, false, true);
                 return;
+            }
+            else
+            {
+                Config.IsEnabled = true;
+                xRunsetOperationsTab.IsEnabled = true;
+                mALMDefectsOpening.IsEnabled = true;
+                mExecutionSummary.IsEnabled = true;
             }
 
             if (WorkSpace.Instance.RunningInExecutionMode)
@@ -301,28 +319,26 @@ namespace Ginger.Run
             SetNonSpecificRunSetEventsTracking();
             SetBusinessFlowsChangesLisener();
         }
-
+        string allProperties = string.Empty;
         private void SetNonSpecificRunSetEventsTracking()
         {
             WorkSpace.Instance.PropertyChanged -= WorkSpacePropertyChanged;
             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
 
-            WorkSpace.Instance.RunsetExecutor.PropertyChanged -= RunsetExecutor_PropertyChanged;
-            WorkSpace.Instance.RunsetExecutor.PropertyChanged += RunsetExecutor_PropertyChanged;
+            PropertyChangedEventManager.RemoveHandler(source: WorkSpace.Instance.RunsetExecutor, handler: RunsetExecutor_PropertyChanged, propertyName: allProperties);
+            PropertyChangedEventManager.AddHandler(source: WorkSpace.Instance.RunsetExecutor, handler: RunsetExecutor_PropertyChanged, propertyName: allProperties);
 
-            WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged -= AgentsCache_CollectionChanged;
-            WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().CollectionChanged += AgentsCache_CollectionChanged;
+            CollectionChangedEventManager.RemoveHandler(source: WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>(), handler: AgentsCache_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>(), handler: AgentsCache_CollectionChanged);
 
-            xBusinessflowsRunnerItemsListView.SelectionChanged -= xActivitiesListView_SelectionChanged;
-            xBusinessflowsRunnerItemsListView.SelectionChanged += xActivitiesListView_SelectionChanged;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: xBusinessflowsRunnerItemsListView, eventName: nameof(Selector.SelectionChanged), handler: xActivitiesListView_SelectionChanged);
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xBusinessflowsRunnerItemsListView, eventName: nameof(Selector.SelectionChanged), handler: xActivitiesListView_SelectionChanged);
 
-            xActivitiesRunnerItemsListView.SelectionChanged -= xActionsListView_SelectionChanged;
-            xActivitiesRunnerItemsListView.SelectionChanged += xActionsListView_SelectionChanged;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: xActivitiesRunnerItemsListView, eventName: nameof(Selector.SelectionChanged), handler: xActionsListView_SelectionChanged);
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xActivitiesRunnerItemsListView, eventName: nameof(Selector.SelectionChanged), handler: xActionsListView_SelectionChanged);
 
-            ((INotifyCollectionChanged)xActivitiesRunnerItemsListView.Items).CollectionChanged -= xActivitiesRunnerItemsListView_CollectionChanged;
-            ((INotifyCollectionChanged)xActivitiesRunnerItemsListView.Items).CollectionChanged += xActivitiesRunnerItemsListView_CollectionChanged;
-
-            RunnerItemPage.SetRunnerItemEvent(RunnerItem_RunnerItemEvent);
+            CollectionChangedEventManager.RemoveHandler(source: ((INotifyCollectionChanged)xActivitiesRunnerItemsListView.Items), handler: xActivitiesRunnerItemsListView_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: ((INotifyCollectionChanged)xActivitiesRunnerItemsListView.Items), handler: xActivitiesRunnerItemsListView_CollectionChanged);
         }
 
         private void AgentsCache_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -558,7 +574,7 @@ namespace Ginger.Run
             }
         }
 
-        private async void RunnerItem_RunnerItemEvent(RunnerItemEventArgs EventArgs)
+        private async void RunnerItem_RunnerItemEvent(object? sender, RunnerItemEventArgs EventArgs)
         {
             Run.GingerExecutionEngine currentSelectedRunner = mCurrentSelectedRunner.ExecutorEngine;
 
@@ -668,7 +684,7 @@ namespace Ginger.Run
                     {
                         gr.Executor = new GingerExecutionEngine(gr);
                     }
-                    RunnerPage runnerPage = new();
+                    RunnerPage runnerPage = new(runnerItemEventHandler: RunnerItem_RunnerItemEvent);
                     runnerPages.Add(runnerPage);
                     InitRunnerFlowElement(runnerPage, (GingerExecutionEngine)gr.Executor, e.NewStartingIndex);
                     GingerRunnerHighlight(runnerPage);
@@ -713,7 +729,10 @@ namespace Ginger.Run
         void InitRunSetConfigurations()
         {
             BindingHandler.ObjFieldBinding(xRunSetNameTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
-            xRunSetNameTextBox.AddValidationRule(new RunSetNameValidationRule());
+            if (!_ignoreValidationRules)
+            {
+                xRunSetNameTextBox.AddValidationRule(new RunSetNameValidationRule());
+            }
             xShowIDUC.Init(mRunSetConfig);
             BindingHandler.ObjFieldBinding(xRunSetDescriptionTextBox, TextBox.TextProperty, mRunSetConfig, nameof(RunSetConfig.Description));
             TagsViewer.Init(mRunSetConfig.Tags);
@@ -725,18 +744,22 @@ namespace Ginger.Run
             xSealightsBuildSessionIDTextBox.Init(mContext, mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID));
 
             // check if fields have been populated (front-end validation)
-            xSealightsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
-            xSealightsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsLabId), "Lab ID or Build Session ID must be provided"));
-            xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
+            if (!_ignoreValidationRules)
+            {
+                xSealightsLabIdTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsBuildSessionID), "Lab ID or Build Session ID must be provided"));
+                xSealightsBuildSessionIDTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValueWithDependency(mRunSetConfig, nameof(RunSetConfig.SealightsLabId), "Lab ID or Build Session ID must be provided"));
+                xSealightsTestStageTextBox.ValueTextBox.AddValidationRule(new ValidateEmptyValue("Test Stage cannot be empty"));
+            }
 
-            xDefaultTestStageRadioBtn.Checked += XDefaultTestStageRadioBtn_Checked;
-            xDefaultLabIdRadioBtn.Checked += XDefaultLabIdRadioBtn_Checked;
-            xDefaultSessionIdRadioBtn.Checked += XDefaultSessionIdRadioBtn_Checked;
-            xDefaultTestRecommendationsRadioBtn.Checked += XDefaultTestRecommendationsRadioBtn_Checked;
+            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xDefaultTestStageRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XDefaultTestStageRadioBtn_Checked);
+            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xDefaultLabIdRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XDefaultLabIdRadioBtn_Checked);
+            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xDefaultSessionIdRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XDefaultSessionIdRadioBtn_Checked);
+            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xDefaultTestRecommendationsRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XDefaultTestRecommendationsRadioBtn_Checked);
 
-            xCustomTestStageRadioBtn.Checked += XCustomTestStageRadioBtn_Checked;
-            xCustomLabIdRadioBtn.Checked += XCustomLabIdRadioBtn_Checked;
-            xCustomSessionIdRadioBtn.Checked += XCustomSessionIdRadioBtn_Checked;
+            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xCustomTestStageRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XCustomTestStageRadioBtn_Checked);
+            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xCustomLabIdRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XCustomLabIdRadioBtn_Checked);
+            WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xCustomSessionIdRadioBtn, eventName: nameof(ToggleButton.Checked), handler: XCustomSessionIdRadioBtn_Checked);
+           
 
             if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.SealightsTestStage == null) // init values
             {
@@ -886,8 +909,8 @@ namespace Ginger.Run
                 xCategoriesFrame.ClearAndSetContent(mSolutionCategoriesPage);
             }
             mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mRunSetConfig.CategoriesDefinitions);
-            mRunSetConfig.PropertyChanged += RunSetConfig_PropertyChanged;
-            mRunSetConfig.Tags.CollectionChanged += RunSetTags_CollectionChanged;
+            PropertyChangedEventManager.AddHandler(source: mRunSetConfig, handler: RunSetConfig_PropertyChanged, propertyName: allProperties);
+            CollectionChangedEventManager.AddHandler(source: mRunSetConfig.Tags, handler: RunSetTags_CollectionChanged);
         }
 
         private void RunSetTags_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -1150,8 +1173,8 @@ namespace Ginger.Run
             mCurrentSelectedRunner.RunnerPageListener.UpdateBusinessflowActivities -= UpdateBusinessflowActivities;
             mCurrentSelectedRunner.RunnerPageListener.UpdateBusinessflowActivities += UpdateBusinessflowActivities;
 
-            mCurrentSelectedRunner.CheckIfRunsetDirty -= mCurrentSelectedRunner_CheckIfRunsetDirty;
-            mCurrentSelectedRunner.CheckIfRunsetDirty += mCurrentSelectedRunner_CheckIfRunsetDirty;
+            WeakEventManager<RunnerPage, EventArgs>.RemoveHandler(source: mCurrentSelectedRunner, eventName: nameof(RunnerPage.CheckIfRunsetDirty), handler: mCurrentSelectedRunner_CheckIfRunsetDirty);
+            WeakEventManager<RunnerPage, EventArgs>.AddHandler(source: mCurrentSelectedRunner, eventName: nameof(RunnerPage.CheckIfRunsetDirty), handler: mCurrentSelectedRunner_CheckIfRunsetDirty);
 
             UpdateRunnerTime();
 
@@ -1246,8 +1269,8 @@ namespace Ginger.Run
                 }
                 GC.Collect();//to help with memory free
 
-                mCurrentSelectedRunner.ExecutorEngine.BusinessFlows.CollectionChanged -= BusinessFlows_CollectionChanged;
-                mCurrentSelectedRunner.ExecutorEngine.BusinessFlows.CollectionChanged += BusinessFlows_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mCurrentSelectedRunner.ExecutorEngine.BusinessFlows, handler: BusinessFlows_CollectionChanged);
+                CollectionChangedEventManager.AddHandler(source: mCurrentSelectedRunner.ExecutorEngine.BusinessFlows, handler: BusinessFlows_CollectionChanged);
 
 
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStatus, StatusItem.StatusProperty, mCurrentSelectedRunner.ExecutorEngine, nameof(GingerExecutionEngine.Status), BindingMode.OneWay);
@@ -1325,13 +1348,13 @@ namespace Ginger.Run
         {
             GRP.Init(runner, mContext, ViewMode);
             GRP.Tag = runner.GingerRunner.Guid;
-            GRP.MouseLeftButtonDown += GRP_MouseLeftButtonDown;
+            WeakEventManager<UIElement, MouseButtonEventArgs>.AddHandler(source: GRP, eventName: nameof(UIElement.MouseLeftButtonDown), handler: GRP_MouseLeftButtonDown);
 
             GRP.Width = 515;
             FlowElement RunnerFlowelement = new FlowElement(FlowElement.eElementType.CustomeShape, GRP, mFlowX, mFlowY, 600, 220);
             RunnerFlowelement.OtherInfoVisibility = Visibility.Collapsed;
             RunnerFlowelement.Tag = GRP.Tag;
-            RunnerFlowelement.MouseDoubleClick += RunnerFlowelement_MouseDoubleClick;
+            WeakEventManager<Control, MouseButtonEventArgs>.AddHandler(source: RunnerFlowelement, eventName: nameof(Control.MouseDoubleClick), handler: RunnerFlowelement_MouseDoubleClick);
 
             if (mFlowDiagram.mCurrentFlowElem != null)
             {
@@ -1365,7 +1388,12 @@ namespace Ginger.Run
         private void RunnerFlowelement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             RunnerPage rp = (RunnerPage)((FlowElement)sender).GetCustomeShape().Content;
-            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.ExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext);
+            General.eRIPageViewMode runnerConfigsPage = General.eRIPageViewMode.Standalone;
+            if(mEditMode == eEditMode.View)
+            {
+                runnerConfigsPage = General.eRIPageViewMode.ViewAndExecute;
+            }
+            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.ExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext, runnerConfigsPage);
             PACW.ShowAsWindow();
             rp.ExecutorEngine.GingerRunner.PauseDirtyTracking();
             rp.UpdateRunnerInfo();
@@ -1406,7 +1434,7 @@ namespace Ginger.Run
             int runnerPageIndex = 0;
             while (mRunSetConfig.GingerRunners.Count > runnerPages.Count)
             {
-                runnerPages.Add(new RunnerPage());
+                runnerPages.Add(new RunnerPage(runnerItemEventHandler: RunnerItem_RunnerItemEvent));
             }
 
             foreach (GingerRunner GR in mRunSetConfig.GingerRunners.ToList())
@@ -1440,23 +1468,23 @@ namespace Ginger.Run
                         firstRunnerPage = runnerPage;
                     }
 
-                    GR.PropertyChanged -= Runner_PropertyChanged;
-                    GR.PropertyChanged += Runner_PropertyChanged;
-                    GR.ApplicationAgents.CollectionChanged -= RunnerApplicationAgents_CollectionChanged;
-                    GR.ApplicationAgents.CollectionChanged += RunnerApplicationAgents_CollectionChanged;
-
                     runnerPage.RunnerPageEvent -= RunnerPageEvent;
                     runnerPage.RunnerPageEvent += RunnerPageEvent;
                     runnerPage.RunnerPageListener.UpdateBusinessflowActivities -= UpdateBusinessflowActivities;
                     runnerPage.RunnerPageListener.UpdateBusinessflowActivities += UpdateBusinessflowActivities;
+
+                    PropertyChangedEventManager.RemoveHandler(source: GR, handler: Runner_PropertyChanged, propertyName: allProperties);
+                    PropertyChangedEventManager.AddHandler(source: GR, handler: Runner_PropertyChanged, propertyName: allProperties);
+                    CollectionChangedEventManager.RemoveHandler(source: GR.ApplicationAgents, handler: RunnerApplicationAgents_CollectionChanged);
+                    CollectionChangedEventManager.AddHandler(source: GR.ApplicationAgents, handler: RunnerApplicationAgents_CollectionChanged);
 
                 });
             }
 
             this.Dispatcher.Invoke(() =>
             {
-                mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
-                mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mRunSetConfig.GingerRunners, handler: Runners_CollectionChanged);
+                CollectionChangedEventManager.AddHandler(source: mRunSetConfig.GingerRunners, handler: Runners_CollectionChanged);
 
                 //highlight first Runner
                 if (firstRunnerPage != null)
@@ -1467,7 +1495,8 @@ namespace Ginger.Run
                 SetRunnersCombo();
                 UpdateRunnersTabHeader();
                 UpdateRunnersCanvasSize();
-                xZoomPanel.ZoomSliderContainer.ValueChanged += ZoomSliderContainer_ValueChanged;
+                WeakEventManager<RangeBase, RoutedPropertyChangedEventArgs<double>>.AddHandler(source: xZoomPanel.ZoomSliderContainer, eventName: nameof(RangeBase.ValueChanged), handler: ZoomSliderContainer_ValueChanged);
+
             });
 
             return 1;
@@ -1502,11 +1531,11 @@ namespace Ginger.Run
                 mBusinessFlowsXmlsChangeWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
                 mBusinessFlowsXmlsChangeWatcher.IncludeSubdirectories = true;
 
-                mBusinessFlowsXmlsChangeWatcher.Changed -= new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
-                mBusinessFlowsXmlsChangeWatcher.Changed += new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
+                WeakEventManager<FileSystemWatcher, FileSystemEventArgs>.RemoveHandler(source: mBusinessFlowsXmlsChangeWatcher, eventName: nameof(FileSystemWatcher.Changed), handler: OnBusinessFlowsXmlsChange);
+                WeakEventManager<FileSystemWatcher, FileSystemEventArgs>.AddHandler(source: mBusinessFlowsXmlsChangeWatcher, eventName: nameof(FileSystemWatcher.Changed), handler: OnBusinessFlowsXmlsChange);
 
-                mBusinessFlowsXmlsChangeWatcher.Deleted -= new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
-                mBusinessFlowsXmlsChangeWatcher.Deleted += new FileSystemEventHandler(OnBusinessFlowsXmlsChange);
+                WeakEventManager<FileSystemWatcher, FileSystemEventArgs>.RemoveHandler(source: mBusinessFlowsXmlsChangeWatcher, eventName: nameof(FileSystemWatcher.Deleted), handler: OnBusinessFlowsXmlsChange);
+                WeakEventManager<FileSystemWatcher, FileSystemEventArgs>.AddHandler(source: mBusinessFlowsXmlsChangeWatcher, eventName: nameof(FileSystemWatcher.Deleted), handler: OnBusinessFlowsXmlsChange);
 
                 mBusinessFlowsXmlsChangeWatcher.EnableRaisingEvents = true;
             }
@@ -1599,7 +1628,7 @@ namespace Ginger.Run
                 //show current Run set UI
                 xRunsetPageGrid.Visibility = Visibility.Visible;
 
-                bool isSolutionSame = mRunSetConfig != null ? mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName) : false;
+                bool isSolutionSame = mRunSetConfig != null && mRunSetConfig.ContainingFolderFullPath != null && mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName);
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              
                 if (WorkSpace.Instance.RunsetExecutor.DefectSuggestionsList != null)
                 {
@@ -1687,7 +1716,7 @@ namespace Ginger.Run
                 mRunsetOperations.Init(RunSetConfig);
             }
 
-            RunSetConfig.RunSetActions.CollectionChanged += RunSetActions_CollectionChanged;
+            CollectionChangedEventManager.AddHandler(source: RunSetConfig.RunSetActions, handler: RunSetActions_CollectionChanged);
             UpdateRunsetOperationsTabHeader();
         }
 
@@ -1699,7 +1728,7 @@ namespace Ginger.Run
             {
                 mRunSetsExecutionsPage = new RunSetsExecutionsHistoryPage(RunSetsExecutionsHistoryPage.eExecutionHistoryLevel.SpecificRunSet, RunSetConfig);
                 mExecutionSummary.ClearAndSetContent(mRunSetsExecutionsPage);
-                mRunSetsExecutionsPage.ExecutionsHistoryList.CollectionChanged += ExecutionsHistoryList_CollectionChanged;
+                CollectionChangedEventManager.AddHandler(source: mRunSetsExecutionsPage.ExecutionsHistoryList, handler: ExecutionsHistoryList_CollectionChanged);
             }
             else
             {
@@ -1853,12 +1882,12 @@ namespace Ginger.Run
                     xRunsetSaveBtn.DoClick();
                     return;
                 case eUserMsgSelection.No:
-                    mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
+                    CollectionChangedEventManager.RemoveHandler(source: mRunSetConfig.GingerRunners, handler: Runners_CollectionChanged);
 
                     if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true, true, false))
                     {
                         mRunSetConfig.SaveBackup();
-                        mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                        CollectionChangedEventManager.AddHandler(source: mRunSetConfig.GingerRunners, handler: Runners_CollectionChanged);
                     }
                     mRunSetConfig.DirtyStatus = eDirtyStatus.NoChange;
                     return;
@@ -2572,7 +2601,7 @@ namespace Ginger.Run
 
             bfsFolder = new BusinessFlowsFolderTreeItem(WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>());
             mBusFlowsSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), eImageType.BusinessFlow, bfsFolder, SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
-            mBusFlowsSelectionPage.SelectionDone += MBusFlowsSelectionPage_SelectionDone;
+            WeakEventManager<SingleItemTreeViewSelectionPage, SelectionTreeEventArgs>.AddHandler(source: mBusFlowsSelectionPage, eventName: nameof(SingleItemTreeViewSelectionPage.SelectionDone), handler: MBusFlowsSelectionPage_SelectionDone);
 
             List<object> selectedBfs = mBusFlowsSelectionPage.ShowAsWindow();
             AddSelectedBuinessFlows(selectedBfs);
@@ -2651,7 +2680,16 @@ namespace Ginger.Run
         }
         public void viewBusinessflowConfiguration(BusinessFlow businessFlow)
         {
-            BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mCurrentSelectedRunner.ExecutorEngine.GingerRunner, businessFlow);
+            General.eRIPageViewMode viewMode;
+            if(mEditMode == eEditMode.View)
+            {
+                viewMode = General.eRIPageViewMode.View;
+            }
+            else
+            {
+                viewMode = General.eRIPageViewMode.Standalone;
+            }
+            BusinessFlowRunConfigurationsPage varsPage = new BusinessFlowRunConfigurationsPage(mCurrentSelectedRunner.ExecutorEngine.GingerRunner, businessFlow, viewMode);
             varsPage.EventRaiseVariableEdit += viewBusinessflowConfiguration_RaiseVariableEdit;
             varsPage.ShowAsWindow();
         }
@@ -2675,7 +2713,7 @@ namespace Ginger.Run
             Act act = actiontoView;
             ActionEditPage w = new ActionEditPage(act, General.eRIPageViewMode.View, mCurrentBusinessFlowRunnerItemObject, mCurrentActivityRunnerItemObject);
 
-            w.ShowAsWindow();
+            w.ShowAsWindow(windowStyle: eWindowShowStyle.Dialog);
         }
 
         private void xremoveBusinessflow_Click(object sender, RoutedEventArgs e)
@@ -2944,9 +2982,9 @@ namespace Ginger.Run
         }
         private void SetComboRunnerInitialView()
         {
-            xRunnersCombo.SelectionChanged -= xRunnersCombo_SelectionChanged;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.RemoveHandler(source: xRunnersCombo, eventName: nameof(Selector.SelectionChanged), handler: xRunnersCombo_SelectionChanged);
             xRunnersCombo.SelectedItem = mCurrentSelectedRunner.ExecutorEngine;
-            xRunnersCombo.SelectionChanged += xRunnersCombo_SelectionChanged;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xRunnersCombo, eventName: nameof(Selector.SelectionChanged), handler: xRunnersCombo_SelectionChanged);
         }
         private void xRunnersCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -3183,12 +3221,12 @@ namespace Ginger.Run
                 if (CheckIfExecutionIsInProgress()) { return; }
 
                 IsCalledFromxUndoBtn = true;
-                mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(source: mRunSetConfig.GingerRunners, handler: Runners_CollectionChanged);
 
                 if (Ginger.General.UndoChangesInRepositoryItem(mRunSetConfig, true))
                 {
                     mRunSetConfig.SaveBackup();
-                    mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                    CollectionChangedEventManager.AddHandler(source: mRunSetConfig.GingerRunners, handler: Runners_CollectionChanged);
                     LoadRunSetConfig(mRunSetConfig, true);
                 }
             }
@@ -3200,8 +3238,8 @@ namespace Ginger.Run
             {
                 if (mRunSetConfig != null)
                 {
-                    mRunSetConfig.GingerRunners.CollectionChanged -= Runners_CollectionChanged;
-                    mRunSetConfig.GingerRunners.CollectionChanged += Runners_CollectionChanged;
+                    CollectionChangedEventManager.RemoveHandler(source: mRunSetConfig.GingerRunners, handler: Runners_CollectionChanged);
+                    CollectionChangedEventManager.AddHandler(source: mRunSetConfig.GingerRunners, handler: Runners_CollectionChanged);
                     IsCalledFromxUndoBtn = false;
                 }
             }

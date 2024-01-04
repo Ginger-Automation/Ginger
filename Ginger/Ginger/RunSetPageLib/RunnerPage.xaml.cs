@@ -166,10 +166,12 @@ namespace Ginger.Run
         public bool ViewMode1 = false;
 
         Context mContext = null;
+        private readonly EventHandler<RunnerItemEventArgs>? _runnerItemEventHandler;
 
-        public RunnerPage()
+        public RunnerPage(EventHandler<RunnerItemEventArgs>? runnerItemEventHandler = null)
         {
             InitializeComponent();
+            _runnerItemEventHandler = runnerItemEventHandler;
         }
 
         public void Init(GingerExecutionEngine runner, Context context, bool Viewmode = false)
@@ -189,7 +191,7 @@ namespace Ginger.Run
 
             mDispatcherTimer = new DispatcherTimer();
             mDispatcherTimer.Interval = new TimeSpan(0, 0, 1); // one second
-            mDispatcherTimer.Tick += dispatcherTimerElapsedTick;
+            WeakEventManager<DispatcherTimer, EventArgs>.AddHandler(source: mDispatcherTimer, eventName: nameof(DispatcherTimer.Tick), handler: dispatcherTimerElapsedTick);
             mDispatcherTimer.Start();
             UpdateExecutionStats();
 
@@ -247,7 +249,7 @@ namespace Ginger.Run
 
         private RunnerItemPage CreateBusinessFlowRunnerItem(BusinessFlow bf, bool ViewMode = false)
         {
-            RunnerItemPage ri = new RunnerItemPage(bf, ViewMode1);
+            RunnerItemPage ri = new RunnerItemPage(Runnerobj: bf, ViewMode: ViewMode1, runnerItemEventHandler: _runnerItemEventHandler);
             ri.ItemName = bf.Name;
             ri.ItemTitleTooltip = string.Format(@"{0}\{1}", bf.ContainingFolder, bf.Name);
             if (string.IsNullOrEmpty(bf.Description))
@@ -264,15 +266,18 @@ namespace Ginger.Run
             {
                 ri.xautomateBusinessflow.Visibility = ri.xconfig.Visibility = Visibility.Visible;
                 ri.xBusinessflowActive.Visibility = Visibility.Visible;
-                ri.Click += BusinessflowConfig_Click;
-                ri.ClickAutomate += Businessflow_ClickAutomate;
-                ri.ClickActive += Businessflow_ClickActive;
                 ri.xGenerateReport.Visibility = Visibility.Visible;
-                ri.ClickGenerateReport += Businessflow_ClickGenerateReport;
                 ri.xViewRunnerItem.Visibility = Visibility.Visible;
-                ri.DuplicateClick += Businessflow_DuplicateClick;
-                ri.RemoveClick += Businessflow_RemoveClick;
-                ri.ResetBusinessFlowStatus += BusinessFlow_ResetStatus;
+                WeakEventManager<RunnerItemPage, RoutedEventArgs>.AddHandler(source: ri, eventName: nameof(RunnerItemPage.Click), handler: BusinessflowConfig_Click);
+                WeakEventManager<RunnerItemPage, RoutedEventArgs>.AddHandler(source: ri, eventName: nameof(RunnerItemPage.ClickAutomate), handler: Businessflow_ClickAutomate);
+                WeakEventManager<RunnerItemPage, RoutedEventArgs>.AddHandler(source: ri, eventName: nameof(RunnerItemPage.ClickActive), handler: Businessflow_ClickActive);
+                WeakEventManager<RunnerItemPage, RoutedEventArgs>.AddHandler(source: ri, eventName: nameof(RunnerItemPage.ClickGenerateReport), handler: Businessflow_ClickGenerateReport);
+                WeakEventManager<RunnerItemPage, RoutedEventArgs>.AddHandler(source: ri, eventName: nameof(RunnerItemPage.DuplicateClick), handler: Businessflow_DuplicateClick);
+                WeakEventManager<RunnerItemPage, RoutedEventArgs>.AddHandler(source: ri, eventName: nameof(RunnerItemPage.RemoveClick), handler: Businessflow_RemoveClick);
+                WeakEventManager<RunnerItemPage, RoutedEventArgs>.AddHandler(source: ri, eventName: nameof(RunnerItemPage.ResetBusinessFlowStatus), handler: BusinessFlow_ResetStatus);
+                
+
+
                 ri.xRunnerItemMenu.Visibility = Visibility.Visible;
                 ri.xremoveBusinessflow.Visibility = Visibility.Visible;
                 ri.pageGrid.RowDefinitions[1].Height = new GridLength(30);
@@ -437,7 +442,7 @@ namespace Ginger.Run
                 //runnerFilter._id = new ObjectId();
                 //runSetLast.RunnersColl = new List<LiteDbRunner>() { runnerFilter };
 
-                LiteDbBusinessFlow bfFilter = runnerFilter.BusinessFlowsColl.Find(b => b.GUID.ToString() == bf.Guid.ToString() && b.StartTimeStamp.ToString() == bf.StartTimeStamp.ToLocalTime().ToString());
+                LiteDbBusinessFlow bfFilter = runnerFilter.BusinessFlowsColl.FirstOrDefault(b => b.GUID.ToString() == bf.Guid.ToString() && b.StartTimeStamp.ToString() == bf.StartTimeStamp.ToLocalTime().ToString());
                 if (bfFilter == null)
                 {
                     Reporter.ToUser(eUserMsgKey.BFNotExistInDB);

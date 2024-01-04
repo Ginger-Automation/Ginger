@@ -24,12 +24,12 @@ jobs:
     buildConfiguration: 'Release'	
     solutionDirectory:  'Ginger-Automation/Ginger'    
     testDLLs: |
-      **\GingerUtilsTest\bin\$(buildConfiguration)\net7.0\GingerUtilsTest.dll
-      **\GingerCoreCommonTest\bin\$(buildConfiguration)\net7.0\GingerCoreCommonTest.dll
-      **\GingerCoreNETUnitTest\bin\$(buildConfiguration)\net7.0\GingerCoreNETUnitTest.dll
-      **\GingerConsoleTest\bin\$(buildConfiguration)\net7.0\GingerConsoleTest.dll
-      **\GingerAutoPilotTest\bin\$(buildConfiguration)\net7.0\GingerAutoPilotTest.dll
-      **\GingerPluginCoreTest\bin\$(buildConfiguration)\net7.0\GingerPluginCoreTest.dll                
+      **\GingerUtilsTest\bin\$(buildConfiguration)\net8.0\GingerUtilsTest.dll
+      **\GingerCoreCommonTest\bin\$(buildConfiguration)\net8.0\GingerCoreCommonTest.dll
+      **\GingerCoreNETUnitTest\bin\$(buildConfiguration)\net8.0\GingerCoreNETUnitTest.dll
+      **\GingerConsoleTest\bin\$(buildConfiguration)\net8.0\GingerConsoleTest.dll
+      **\GingerAutoPilotTest\bin\$(buildConfiguration)\net8.0\GingerAutoPilotTest.dll
+      **\GingerPluginCoreTest\bin\$(buildConfiguration)\net8.0\GingerPluginCoreTest.dll                
      
     artifactsFolder: 'D:\a\1\a'      
      
@@ -39,13 +39,13 @@ jobs:
 # ------------------------------------------------------------------------------------------------------
   steps:
 # ------------------------------------------------------------------------------------------------------
-# Install .Net core SDK 7.0.x
+# Install .Net core SDK 8.0.100
 # ------------------------------------------------------------------------------------------------------
 
   - task: UseDotNet@2
     inputs:
         packageType: 'sdk'
-        version: '7.0.x'
+        version: '8.0.100'
 # ------------------------------------------------------------------------------------------------------
 # Install Nuget tool
 # ------------------------------------------------------------------------------------------------------

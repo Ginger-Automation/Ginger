@@ -32,11 +32,13 @@ using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
+using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -98,7 +100,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
         readonly PomAllElementsPage mPomAllElementsPage;
         ePlatformType mAppPlatform;
-        public POMEditPage(ApplicationPOMModel POM, eRIPageViewMode editMode = eRIPageViewMode.View)
+        public POMEditPage(ApplicationPOMModel POM, eRIPageViewMode editMode, bool ignoreValidationRules = false)
         {
             InitializeComponent();
             mPOM = POM;
@@ -111,7 +113,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             xShowIDUC.Init(mPOM);
             xFirstRowExpanderLabel.Content = string.Format("'{0}' Details", mPOM.Name);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xNameTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Name));
-            xNameTextBox.AddValidationRule(new AddEditPOMWizardLib.POMNameValidationRule());
+            if (!ignoreValidationRules)
+            {
+                xNameTextBox.AddValidationRule(new AddEditPOMWizardLib.POMNameValidationRule());
+            }
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xDescriptionTextBox, TextBox.TextProperty, mPOM, nameof(mPOM.Description));
             xPageURLTextBox.Init(null, mPOM, nameof(mPOM.PageURL));
 
@@ -129,9 +134,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
             mScreenShotViewPage = new ScreenShotViewPage(mPOM.Name, source);
             xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
 
-            mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage);
+            mPomAllElementsPage = new PomAllElementsPage(mPOM, PomAllElementsPage.eAllElementsPageContext.POMEditPage, editMode: mEditMode);
             xUIElementsFrame.ClearAndSetContent(mPomAllElementsPage);
             mPomAllElementsPage.raiseUIElementsCountUpdated += UIElementCountUpdatedHandler;
+
             UIElementTabTextBlockUpdate();
 
             mAppPlatform = WorkSpace.Instance.Solution.GetTargetApplicationPlatform(POM.TargetApplicationKey);
@@ -151,6 +157,17 @@ namespace Ginger.ApplicationModelsLib.POMModels
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xEditPageExpander, Expander.IsExpandedProperty, mPOM, nameof(mPOM.IsCollapseDetailsExapander));
 
             SetDefaultPage();
+
+            if(mEditMode == eRIPageViewMode.View || mEditMode == eRIPageViewMode.ViewAndExecute)
+            {
+                xDetailsStackPanel.IsEnabled = false;
+                xScreenshotOperationBtns.IsEnabled = false;
+            }
+            else
+            {
+                xDetailsStackPanel.IsEnabled = true;
+                xScreenshotOperationBtns.IsEnabled = true;
+            }
         }
 
         private void SetDefaultPage()
@@ -215,8 +232,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             xTargetApplicationComboBox.SelectedValuePath = nameof(ApplicationPlatform.Key);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(ApplicationPlatform.AppName);
-
-            WorkSpace.Instance.Solution.ApplicationPlatforms.CollectionChanged += ApplicationPlatforms_CollectionChanged;
+            CollectionChangedEventManager.AddHandler(source: WorkSpace.Instance.Solution.ApplicationPlatforms, handler: ApplicationPlatforms_CollectionChanged);
+            
         }
 
         private void ApplicationPlatforms_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -411,11 +428,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             Button saveButton = new Button();
             saveButton.Content = "Save";
-            saveButton.Click += SaveButton_Click;
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: saveButton, eventName: nameof(ButtonBase.Click), handler: SaveButton_Click);
+            
 
             Button undoButton = new Button();
             undoButton.Content = "Undo & Close";
-            undoButton.Click += UndoButton_Click;
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoButton, eventName: nameof(ButtonBase.Click), handler: UndoButton_Click);
+            
 
             this.Height = 800;
             this.Width = 800;

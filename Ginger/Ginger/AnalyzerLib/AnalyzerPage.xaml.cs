@@ -26,6 +26,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Helpers;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -62,6 +63,8 @@ namespace Ginger.AnalyzerLib
         private Solution? mSolution;
         private BusinessFlow businessFlow;
         private RunSetConfig mRunSetConfig;
+        private RunSetConfigAnalyzer.Check _runSetAnalyzerChecks;
+        private AnalyzeGingerRunner.Check _runnerAnalyzerChecks;
         // ObservableList<DataSourceBase> DSList;
 
         public bool BusyInProcess = false;
@@ -147,15 +150,17 @@ namespace Ginger.AnalyzerLib
             mAnalyzerUtils.SelfHealingAutoFixIssue = selfHealingAutoFixIssue;
         }
 
-        public void Init(RunSetConfig runSetConfig)
+        public void Init(RunSetConfig runSetConfig, RunSetConfigAnalyzer.Check runsetAnalyzerChecks = RunSetConfigAnalyzer.Check.All, AnalyzeGingerRunner.Check runnerAnalyzerChecks = AnalyzeGingerRunner.Check.All)
         {
-            Init(runSetConfig, solution: null);
+            Init(runSetConfig, solution: null, runsetAnalyzerChecks, runnerAnalyzerChecks);
         }
 
-        internal void Init(Run.RunSetConfig RSC, Solution? solution)
+        internal void Init(Run.RunSetConfig RSC, Solution? solution, RunSetConfigAnalyzer.Check checks = RunSetConfigAnalyzer.Check.All, AnalyzeGingerRunner.Check runnerAnalyzerChecks = AnalyzeGingerRunner.Check.All)
         {
             mRunSetConfig = RSC;
             mSolution = solution;
+            _runSetAnalyzerChecks = checks;
+            _runnerAnalyzerChecks = runnerAnalyzerChecks;
             mAnalyzedObject = AnalyzedObject.RunSetConfig;
             AnalyzerItemsGrid.Title = $"'{RSC.Name}' {GingerDicser.GetTermResValue(eTermResKey.RunSet)} Issues";
 
@@ -233,7 +238,7 @@ namespace Ginger.AnalyzerLib
 
                         case AnalyzedObject.RunSetConfig:
                             SetStatus("Analyzing " + GingerDicser.GetTermResValue(eTermResKey.RunSet) + "...");
-                            mAnalyzerUtils.RunRunSetConfigAnalyzer(mRunSetConfig, mSolution, mIssues);
+                            mAnalyzerUtils.RunRunSetConfigAnalyzer(mRunSetConfig, _runSetAnalyzerChecks, _runnerAnalyzerChecks, mSolution, mIssues);
                             break;
                     }
                 });
@@ -295,14 +300,7 @@ namespace Ginger.AnalyzerLib
                     //sort- placing Critical & High on top
                     Dispatcher.Invoke(() =>
                     {
-                        ObservableList<AnalyzerItemBase> SortedList = new ObservableList<AnalyzerItemBase>();
-
-                        foreach (AnalyzerItemBase issue in mIssues.OrderBy(nameof(AnalyzerItemBase.Severity)))
-                        {
-                            SortedList.Add(issue);
-                        }
-
-                        mIssues = SortedList;
+                        ArrayList.Adapter(mIssues).Sort(new AnalyzerItemBaseSeverityComparer());
                         AnalyzerItemsGrid.DataSourceList = mIssues;
                         AnalyzerItemsGrid.Grid.SelectedItem = mIssues[0];
                     });
@@ -319,6 +317,25 @@ namespace Ginger.AnalyzerLib
             catch (Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while sorting the Analyzer issues", ex);
+            }
+        }
+
+        private sealed class AnalyzerItemBaseSeverityComparer : IComparer
+        {
+            public int Compare(object? x, object? y)
+            {
+                if (x == null || y == null)
+                {
+                    return 0;
+                }
+                else if (x is AnalyzerItemBase xAnalyzerItemBase && y is AnalyzerItemBase yAnalyzerItemBase)
+                {
+                    return xAnalyzerItemBase.Severity - yAnalyzerItemBase.Severity;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 

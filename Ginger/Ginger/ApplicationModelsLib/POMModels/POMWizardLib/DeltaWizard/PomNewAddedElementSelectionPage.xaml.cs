@@ -20,9 +20,11 @@ using Amdocs.Ginger.Common.UIElement;
 using GingerCore;
 using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 {
@@ -58,7 +60,8 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
             // set LiveSpy Agent
             xLiveSpy.DriverAgent = mAgent;
-            xLiveSpy.PropertyChanged += XLiveSpy_PropertyChanged;
+            string allProperties = string.Empty;
+            PropertyChangedEventManager.AddHandler(source: mAgent, handler: XLiveSpy_PropertyChanged, propertyName: allProperties);
 
         }
 
@@ -95,7 +98,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
             Button selectBtn = new Button();
             selectBtn.Content = "Select";
-            selectBtn.Click += new RoutedEventHandler(selectBtn_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: selectBtn, eventName: nameof(ButtonBase.Click), handler: selectBtn_Click);
             windowButtons.Add(selectBtn);
             this.Height = 600;
             this.Width = 800;

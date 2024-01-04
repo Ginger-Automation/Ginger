@@ -100,8 +100,7 @@
         <Grid x:Name="MainAreaGrid">
             <!-- Data Grid -->
             <DataGrid x:Name="grdMain" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Loaded="grdMain_Loaded"                   
-                  AllowDrop="True" 
-                  
+                  AllowDrop="True"                   
                   AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserSortColumns="False" CanUserResizeColumns="True" 
                   CanUserResizeRows="True" AreRowDetailsFrozen="True" CanUserAddRows="False" 
                   PreviewMouseDown="grdMain_SelectionChanged" SelectionChanged="grdMain_SelectionChanged" SelectionMode="Extended"  SelectionUnit="FullRow" 
@@ -121,17 +120,6 @@
                     <Style TargetType="{x:Type DataGridRow}">
                         <Setter Property="MaxHeight" Value="70"/>
                         <EventSetter Event="MouseDoubleClick" Handler="Row_DoubleClick"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="{StaticResource $BackgroundColor_White}"/>
-                            </Trigger>
-                            <Trigger Property="ItemsControl.AlternationIndex" Value="0">
-                                <Setter Property="Background" Value="#FFE0E0E0"></Setter>
-                            </Trigger>
-                            <Trigger Property="ItemsControl.AlternationIndex" Value="1">
-                                <Setter Property="Background" Value="#FFBFBFBF"></Setter>
-                            </Trigger>
-                        </Style.Triggers>
                     </Style>
                 </DataGrid.RowStyle>
                 <DataGrid.RowHeaderStyle>

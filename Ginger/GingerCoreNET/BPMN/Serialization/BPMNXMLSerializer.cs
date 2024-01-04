@@ -222,6 +222,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
                 processElement.AppendChild(exclusiveGatewayElement);
             }
 
+            foreach (CallActivity callActivity in process.GetChildEntitiesByType<CallActivity>())
+            {
+                XmlElement callActivityElement = CreateCallActivityElement(xmlDocument, callActivity);
+                processElement.AppendChild(callActivityElement);
+            }
+
             if (process.StartEvent != null)
             {
                 XmlElement startEventElement = CreateStartEventElement(xmlDocument, process.StartEvent);
@@ -424,6 +430,33 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             }
 
             return exclusiveGatewayElement;
+        }
+
+        private XmlElement CreateCallActivityElement(XmlDocument xmlDocument, CallActivity callActivity)
+        {
+            XmlElement callActivityElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "callActivity", BPMN_XML_URI);
+
+            callActivityElement.SetAttribute("completionQuantity", "1"); //static value
+            callActivityElement.SetAttribute("id", callActivity.Id);
+            callActivityElement.SetAttribute("processRef", IG_XML_URI, callActivity.ProcessRef);
+            callActivityElement.SetAttribute("isForCompensation", "false"); //static value
+            callActivityElement.SetAttribute("name", callActivity.Name);
+            callActivityElement.SetAttribute("startQuantity", "1"); //static value
+            callActivityElement.AppendChild(CreateDocumentationElement(xmlDocument));
+
+            foreach (Flow incomingFlow in callActivity.IncomingFlows)
+            {
+                XmlElement incomingFlowElement = CreateIncomingFlowElement(xmlDocument, incomingFlow);
+                callActivityElement.AppendChild(incomingFlowElement);
+            }
+
+            foreach (Flow outgoingFlow in callActivity.OutgoingFlows)
+            {
+                XmlElement outgoingFlowElement = CreateOutgoingFlowElement(xmlDocument, outgoingFlow);
+                callActivityElement.AppendChild(outgoingFlowElement);
+            }
+
+            return callActivityElement;
         }
 
         private XmlElement CreateIncomingFlowElement(XmlDocument xmlDocument, Flow incomingFlow)
