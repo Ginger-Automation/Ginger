@@ -134,7 +134,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         public static Dictionary<string, string> GetExamplesFromOpenApiComponents(OpenApiComponents apiComponents)
         {
 
-            //ObservableList<OptionalValue> exampleValues = new ObservableList<OptionalValue>();
             Dictionary<string, string> exampleValues = new Dictionary<string, string>();
             try
             {

@@ -187,7 +187,7 @@ namespace UnitTests.NonUITests.AutoPilot
             SwaggerParser parserForBillingAccount = new SwaggerParser();
             string createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"Swagger" + Path.DirectorySeparatorChar + "petstore_versionthree.json");
             ObservableList<ApplicationAPIModel> requests = new ObservableList<ApplicationAPIModel>();
-            ObservableList<OptionalValue> optionalValueContainer = new ObservableList<OptionalValue>();
+            ObservableList<OptionalValue> optionalValueContainer;
             ApplicationAPIModel RequestToTest;
 
             //Act   

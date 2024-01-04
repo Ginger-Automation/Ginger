@@ -189,7 +189,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         public static Dictionary<string, string> GetExamplesFromDefinitions(SwaggerDocument apidoc)
         {
 
-            //ObservableList<OptionalValue> exampleValues = new ObservableList<OptionalValue>();
             Dictionary<string, string> exampleValues = new Dictionary<string, string>();
             try
             {
@@ -200,19 +199,25 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                         string schemaName = schemaEntry.Key;
                         var schemaDefinition = schemaEntry.Value;
 
-                        // Check if the schema has properties and 'ActualProperty' property
                         if (schemaDefinition.ActualProperties != null && schemaDefinition.ActualProperties.Count > 0)
                         {
                             foreach (var item in schemaDefinition.ActualProperties)
                             {
-                                var actualName = item.Key;
-                                var actualDefinition = item.Value.Example;
-                                if (actualDefinition != null)
+                                var actualName = item.Key.ToLower();
+                                var actualDefinition = item.Value.Example?.ToString();
+                                if (actualDefinition != null  && !exampleValues.ContainsKey(actualName.ToLower()))
                                 {
                                   
                                     exampleValues.Add(actualName,actualDefinition.ToString());
                                 }
 
+                            }
+                        }
+                        else if (schemaDefinition.Example != null)
+                        {
+                            if (!exampleValues.ContainsKey(schemaName.ToLower()))
+                            {
+                                exampleValues.Add(schemaName.ToLower(), schemaDefinition.Example.ToString());
                             }
                         }
                     }

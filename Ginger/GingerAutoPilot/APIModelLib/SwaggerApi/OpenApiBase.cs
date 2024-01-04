@@ -314,9 +314,13 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 {
                     string parameterName = (item.ElementName.TrimStart('<', '{','[').TrimEnd('>', '}',']')).ToLower();
 
-                    if (parameterName != null && listExampleValues.TryGetValue(parameterName, out string exampleValue))
+                    if (!string.IsNullOrEmpty(parameterName) && listExampleValues.TryGetValue(parameterName, out string exampleValue))
                     {
-                        ObservableList<OptionalValue> tempList = new ObservableList<OptionalValue>() { new OptionalValue(exampleValue) { } };
+                        ObservableList<OptionalValue> tempList = new ObservableList<OptionalValue>
+                        {
+                            new OptionalValue(exampleValue)
+                        };
+
                         item.OptionalValuesList = tempList;
                     }
                 }
