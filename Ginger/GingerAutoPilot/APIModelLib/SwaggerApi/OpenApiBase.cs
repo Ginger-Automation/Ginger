@@ -306,6 +306,21 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             return lstOptions;
         }
 
-        
+        public void SetOptionalValue(ObservableList<AppModelParameter> AppModelParameters, Dictionary<string, string> listExampleValues)
+        {
+            if (AppModelParameters.Count > 0)
+            {
+                foreach (var item in AppModelParameters)
+                {
+                    string parameterName = (item.ElementName.TrimStart('<', '{','[').TrimEnd('>', '}',']')).ToLower();
+
+                    if (parameterName != null && listExampleValues.TryGetValue(parameterName, out string exampleValue))
+                    {
+                        ObservableList<OptionalValue> tempList = new ObservableList<OptionalValue>() { new OptionalValue(exampleValue) { } };
+                        item.OptionalValuesList = tempList;
+                    }
+                }
+            }
+        }
     }
 }

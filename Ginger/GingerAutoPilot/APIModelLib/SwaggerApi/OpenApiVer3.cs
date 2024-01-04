@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.APIModelLib;
 using Amdocs.Ginger.Repository;
+using GingerCore.Variables;
 using Newtonsoft.Json;
 using NJsonSchema;
 using NSwag;
@@ -28,6 +29,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mime;
 using System.Reflection;
+using System.Reflection.Metadata;
 
 namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi
 {
@@ -40,8 +42,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         {
             
             opendoc = Swaggerdoc;
-            
-            
+
+            var listExampleValues = GetExamplesFromOpenApiComponents(opendoc.Components);
 
             foreach (var paths in opendoc.Paths)
             {
@@ -56,6 +58,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     {
 
                         ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key,opendoc);
+                        SetOptionalValue(basicModal.AppModelParameters,listExampleValues);
                         SwaggerModels.Add(basicModal);
                         GenerateResponse(Operation, basicModal);
                     }
@@ -80,6 +83,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         if (Operation.RequestBody != null)
                                         {
                                             AAM.AppModelParameters.Append(GenerateXMLBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
+                                            SetOptionalValue(AAM.AppModelParameters, listExampleValues);
                                             AAM.Name += "-UrlEncoded";
                                             AAM.Description = "Body Type is UrlEncoded ";
                                         }
@@ -90,7 +94,9 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         if (Operation.RequestBody != null)
                                         {
                                             AAM.AppModelParameters.Append(GenerateJsonBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
-                                            AAM.Name += "-JSON"; AAM.Description = "Body Type is JSON";
+                                            SetOptionalValue(AAM.AppModelParameters, listExampleValues);
+                                            AAM.Name += "-JSON";
+                                            AAM.Description = "Body Type is JSON";
                                         }
 
                                         break;
@@ -100,6 +106,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         if (Operation.RequestBody != null)
                                         {
                                             AAM.AppModelParameters.Append(GenerateXMLBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
+                                            SetOptionalValue(AAM.AppModelParameters, listExampleValues);
                                             AAM.Name += "-XML";
                                             AAM.Description = "Body Type is XML";
                                         }
@@ -124,7 +131,50 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             return SwaggerModels;
         }
 
-        
+        public static Dictionary<string, string> GetExamplesFromOpenApiComponents(OpenApiComponents apiComponents)
+        {
+
+            //ObservableList<OptionalValue> exampleValues = new ObservableList<OptionalValue>();
+            Dictionary<string, string> exampleValues = new Dictionary<string, string>();
+            try
+            {
+                if (apiComponents.Schemas != null && apiComponents.Schemas.Count != 0)
+                {
+                    foreach (var schemaEntry in apiComponents.Schemas)
+                    {
+                        string schemaName = schemaEntry.Key;
+                        var schemaDefinition = schemaEntry.Value;
+
+                        if (schemaDefinition.ActualProperties != null && schemaDefinition.ActualProperties.Count > 0)
+                        {
+                            foreach (var item in schemaDefinition.ActualProperties)
+                            {
+                                var actualName = item.Key;
+                                var actualDefinition = item.Value.Example?.ToString();
+                                if (actualDefinition != null && !exampleValues.ContainsKey(actualName.ToLower()))
+                                {
+                                    exampleValues.Add(actualName.ToLower(), actualDefinition);
+                                }
+
+                            }
+                        }
+                        else if (schemaDefinition.Example != null)
+                        {
+                            if (!exampleValues.ContainsKey(schemaName.ToLower()))
+                            {
+                                exampleValues.Add(schemaName.ToLower(), schemaDefinition.Example.ToString());
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.INFO, "Example value was null in one of the tag", ex);
+            }
+
+            return exampleValues;
+        }
 
     }
 }

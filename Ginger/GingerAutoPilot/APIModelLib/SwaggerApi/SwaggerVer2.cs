@@ -36,6 +36,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         public ObservableList<ApplicationAPIModel> SwaggerTwo(SwaggerDocument Swaggerdoc, ObservableList<ApplicationAPIModel> SwaggerModels)
         {
             swagTwo = Swaggerdoc;
+            var listofExamples = GetExamplesFromDefinitions(swagTwo);
+
             foreach (var paths in swagTwo.Paths)
             {
                 SwaggerPathItem SPi = paths.Value;
@@ -49,6 +51,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     {
 
                         ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key, swagTwo);
+                        SetOptionalValue(basicModal.AppModelParameters, listofExamples);
                         SwaggerModels.Add(basicModal);
                         GenerateResponse(Operation, basicModal);
                     }
@@ -80,6 +83,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         if (Operation.RequestBody != null)
                                         {
                                             AAM.AppModelParameters.Append(GenerateJsonBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
+                                            SetOptionalValue(AAM.AppModelParameters, listofExamples);
+
                                         }
                                         if (Operation.ActualConsumes.Count() > 1)
                                         {
@@ -93,6 +98,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         if (Operation.RequestBody != null)
                                         {
                                             AAM.AppModelParameters.Append(GenerateXMLBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
+                                            SetOptionalValue(AAM.AppModelParameters, listofExamples);
                                         }
                                         if (Operation.ActualConsumes.Count() > 1)
                                         {
@@ -127,9 +133,11 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                             {
                                 case "application/x-www-form-urlencoded":
                                     GenerateFormParameters(AAM, Operation);
+                                    SetOptionalValue(AAM.AppModelParameters, listofExamples);
                                     break;
                                 case "multipart/form-data":
                                     GenerateFormParameters(AAM, Operation, true);
+                                    SetOptionalValue(AAM.AppModelParameters, listofExamples);
                                     break;
                                 case "application/json":
                                     AAM.ContentType = ApplicationAPIUtils.eContentType.JSon;
@@ -137,6 +145,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                     if (Operation.RequestBody != null)
                                     {
                                         AAM.AppModelParameters.Append(GenerateJsonBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
+                                        SetOptionalValue(AAM.AppModelParameters, listofExamples);
                                     }
                                     if (Operation.ActualConsumes.Count() > 1)
                                     {
@@ -151,6 +160,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                     if (Operation.RequestBody != null)
                                     {
                                         AAM.AppModelParameters.Append(GenerateXMLBody(AAM, Operation.RequestBody.Content.ElementAt(0).Value.Schema));
+                                        SetOptionalValue(AAM.AppModelParameters, listofExamples);
                                     }
                                     if (Operation.ActualConsumes.Count() > 1)
                                     {
@@ -175,6 +185,45 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 }
             }
             return SwaggerModels;
+        }
+        public static Dictionary<string, string> GetExamplesFromDefinitions(SwaggerDocument apidoc)
+        {
+
+            //ObservableList<OptionalValue> exampleValues = new ObservableList<OptionalValue>();
+            Dictionary<string, string> exampleValues = new Dictionary<string, string>();
+            try
+            {
+                if (apidoc.Definitions != null && apidoc.Definitions.Count != 0)
+                {
+                    foreach (var schemaEntry in apidoc.Definitions)
+                    {
+                        string schemaName = schemaEntry.Key;
+                        var schemaDefinition = schemaEntry.Value;
+
+                        // Check if the schema has properties and 'ActualProperty' property
+                        if (schemaDefinition.ActualProperties != null && schemaDefinition.ActualProperties.Count > 0)
+                        {
+                            foreach (var item in schemaDefinition.ActualProperties)
+                            {
+                                var actualName = item.Key;
+                                var actualDefinition = item.Value.Example;
+                                if (actualDefinition != null)
+                                {
+                                  
+                                    exampleValues.Add(actualName,actualDefinition.ToString());
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.INFO, "Example value was null in one of the tag", ex);
+            }
+
+            return exampleValues;
         }
 
     }
