@@ -298,12 +298,20 @@ namespace Ginger.UserControlsLib.UCListView
         {
             this.Dispatcher.Invoke(() =>
             {
-                if (mObjList.CurrentItem != xListView.SelectedItem)
+                if(mObjList.CurrentItem != null && xListView.Items.Count > 0)
                 {
-                    xListView.SelectedItem = mObjList.CurrentItem;
-                    int index = xListView.Items.IndexOf(mObjList.CurrentItem);
-                    xListView.SelectedIndex = index;
-                    ScrollToViewCurrentItem();
+                    if (mObjList.CurrentItem != xListView.SelectedItem)
+                    {
+                        xListView.SelectedItem = mObjList.CurrentItem;
+                        int index = xListView.Items.IndexOf(mObjList.CurrentItem);
+                        xListView.SelectedIndex = index;
+                        ScrollToViewCurrentItem();
+                        if(index >= 0 && index < xListView.Items.Count)
+                        {
+                            xListView.SelectedIndex = index;
+                            ScrollToViewCurrentItem();
+                        }
+                    }
                 }
             });
         }
