@@ -1119,8 +1119,7 @@ namespace Ginger.WindowExplorer
 
             /// UnComment later after complete Implementation of functionalities over all platforms.
             //if(IsWebMobJavaPlatform)
-            mWindowExplorerDriver.UnHighLightElements();
-            
+            mWindowExplorerDriver.UnHighLightElements();            
             try
             {
                 LoadPageSourceDoc = mWindowExplorerDriver.SupportedViews().Contains(eTabView.PageSource);
@@ -1135,7 +1134,7 @@ namespace Ginger.WindowExplorer
                     mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, (mWindowExplorerDriver as DriverBase).ScreenShotInitialZoom());
 
                     mScreenShotViewPage.ImageMouseCursor = Cursors.Hand;
-                    /// UnComment to allow Element detection on hover
+                    ///TODO UnComment to allow Element detection on hover
                     //if (mPlatform.PlatformType() == ePlatformType.Web)
                     //{
                     //    mScreenShotViewPage.xMainImage.MouseMove += XMainImage_MouseMove;

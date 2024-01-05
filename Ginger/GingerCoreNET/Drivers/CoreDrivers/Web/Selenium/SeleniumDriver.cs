@@ -1610,6 +1610,11 @@ namespace GingerCore.Drivers
                 act.ScreenShotsNames.Add(Driver.Title);
                 act.ScreenShots.Add(filepath);   
             }
+            catch(Exception ex)
+            {
+                act.Error = "Failed to create Selenuim WebDriver browser page screenshot. Error= " + ex.Message;
+                return;
+            }
             finally
             {
                 bitmapsToMerge.Clear();
