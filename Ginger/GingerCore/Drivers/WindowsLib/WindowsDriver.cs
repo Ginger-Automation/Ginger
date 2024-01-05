@@ -1573,8 +1573,6 @@ namespace GingerCore.Drivers.WindowsLib
 
         public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
-            //Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
-            //return bmp;
             return mUIAutomationHelper.GetCurrentWindowBitmap();
         }
 

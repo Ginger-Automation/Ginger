@@ -1254,8 +1254,6 @@ namespace GingerCore.Drivers.PBDriver
         /// <returns>Application Screenshot in Bitmap format</returns>
         public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
-            //Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
-            //return bmp;
             return mUIAutomationHelper.GetCurrentWindowBitmap();
 
         }
