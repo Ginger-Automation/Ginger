@@ -1120,7 +1120,7 @@ namespace Ginger.WindowExplorer
             /// UnComment later after complete Implementation of functionalities over all platforms.
             //if(IsWebMobJavaPlatform)
             mWindowExplorerDriver.UnHighLightElements();
-
+            
             try
             {
                 LoadPageSourceDoc = mWindowExplorerDriver.SupportedViews().Contains(eTabView.PageSource);
@@ -1130,22 +1130,24 @@ namespace Ginger.WindowExplorer
                     return;
                 }
 
-                Bitmap ScreenShotBitmap = ((IVisualTestingDriver)((AgentOperations)mApplicationAgent.Agent.AgentOperations).Driver).GetScreenShot();
-                mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, (mWindowExplorerDriver as DriverBase).ScreenShotInitialZoom());
+                using (Bitmap ScreenShotBitmap = ((IVisualTestingDriver)((AgentOperations)mApplicationAgent.Agent.AgentOperations).Driver).GetScreenShot())
+                {
+                    mScreenShotViewPage = new ScreenShotViewPage("", ScreenShotBitmap, (mWindowExplorerDriver as DriverBase).ScreenShotInitialZoom());
 
-                mScreenShotViewPage.ImageMouseCursor = Cursors.Hand;
-                /// UnComment to allow Element detection on hover
-                //if (mPlatform.PlatformType() == ePlatformType.Web)
-                //{
-                //    mScreenShotViewPage.xMainImage.MouseMove += XMainImage_MouseMove;
-                //}
+                    mScreenShotViewPage.ImageMouseCursor = Cursors.Hand;
+                    /// UnComment to allow Element detection on hover
+                    //if (mPlatform.PlatformType() == ePlatformType.Web)
+                    //{
+                    //    mScreenShotViewPage.xMainImage.MouseMove += XMainImage_MouseMove;
+                    //}
 
-                mScreenShotViewPage.xMainImage.MouseLeftButtonDown += XMainImage_MouseLeftButtonDown;
+                    mScreenShotViewPage.xMainImage.MouseLeftButtonDown += XMainImage_MouseLeftButtonDown;
 
-                xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
-                //xDeviceImage.Source = General.ToBitmapSource(ScreenShotBitmap);
+                    xScreenShotFrame.ClearAndSetContent(mScreenShotViewPage);
+                    //xDeviceImage.Source = General.ToBitmapSource(ScreenShotBitmap);
 
-                xScreenShotFrame.Visibility = Visibility.Visible;
+                    xScreenShotFrame.Visibility = Visibility.Visible;
+                }
             }
             catch (Exception exc)
             {

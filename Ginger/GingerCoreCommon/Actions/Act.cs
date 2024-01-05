@@ -987,8 +987,11 @@ namespace GingerCore.Actions
         {
             try
             {
-                ScreenShots.Add(SaveScreenshotToTempFile(bmp));
-                ScreenShotsNames.Add(Name);
+                using (bmp)
+                {
+                    ScreenShots.Add(SaveScreenshotToTempFile(bmp));
+                    ScreenShotsNames.Add(Name);
+                }        
             }
             catch (Exception ex)
             {

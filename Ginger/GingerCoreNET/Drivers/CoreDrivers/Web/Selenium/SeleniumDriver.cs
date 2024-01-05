@@ -684,7 +684,7 @@ namespace GingerCore.Drivers
                             ieOptions.IgnoreZoomLevel = true;
                             driverService = InternetExplorerDriverService.CreateDefaultService();
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
-                            Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
+                            Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));                           
                         }
                         else
 
@@ -1546,8 +1546,7 @@ namespace GingerCore.Drivers
                 }
                 else if (act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
                 {
-                    Bitmap img = GetScreenShot(true);
-                    act.AddScreenShot(img, Driver.Title);
+                    AddScreenshotIntoAct(act,true);
                 }
                 else if (act.WindowsToCapture == Act.eWindowsToCapture.FullPageWithUrlAndTimestamp)
                 {
@@ -1579,21 +1578,42 @@ namespace GingerCore.Drivers
         private void TakeFullPageWithDesktopScreenScreenShot(Act act)
         {
             List<Bitmap> bitmapsToMerge = new();
-            Bitmap browserHeaderScreenshot = GetBrowserHeaderScreenShot();
-            if (browserHeaderScreenshot != null)
+            try
             {
-                bitmapsToMerge.Add(browserHeaderScreenshot);
+                using (Bitmap browserHeaderScreenshot = GetBrowserHeaderScreenShot())
+                {
+                    if (browserHeaderScreenshot != null)
+                    {
+                        bitmapsToMerge.Add(browserHeaderScreenshot);
+                    }
+                }
+
+                using (Bitmap browserFullPageScreenshot = GetScreenShot(true))
+                {
+                    if (browserFullPageScreenshot != null)
+                    {
+                        bitmapsToMerge.Add(browserFullPageScreenshot);
+                    }
+                }
+
+
+                using (Bitmap taskbarScreenshot = TargetFrameworkHelper.Helper.GetTaskbarScreenshot())
+                {
+                    if (taskbarScreenshot != null)
+                    {
+                        bitmapsToMerge.Add(taskbarScreenshot);
+                    }
+                }
+                    
+                string filepath = TargetFrameworkHelper.Helper.MergeVerticallyAndSaveBitmaps(bitmapsToMerge.ToArray());
+
+                act.ScreenShotsNames.Add(Driver.Title);
+                act.ScreenShots.Add(filepath);   
             }
-
-            Bitmap browserFullPageScreenshot = GetScreenShot(true);
-            bitmapsToMerge.Add(browserFullPageScreenshot);
-            Bitmap taskbarScreenshot = TargetFrameworkHelper.Helper.GetTaskbarScreenshot();
-            bitmapsToMerge.Add(taskbarScreenshot);
-
-            string filepath = TargetFrameworkHelper.Helper.MergeVerticallyAndSaveBitmaps(bitmapsToMerge.ToArray());
-
-            act.ScreenShotsNames.Add(Driver.Title);
-            act.ScreenShots.Add(filepath);
+            finally
+            {
+                bitmapsToMerge.Clear();
+            }
         }
 
         private Bitmap GetBrowserHeaderScreenShot()
@@ -1631,7 +1651,7 @@ namespace GingerCore.Drivers
         private void AddCurrentScreenShot(ActScreenShot act)
         {
             Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-            act.AddScreenShot(ss.AsByteArray, Driver.Title);
+            act.AddScreenShot(ss.AsByteArray, Driver.Title);               
         }
 
 
@@ -8785,6 +8805,46 @@ namespace GingerCore.Drivers
             return bitmapImage;
 
         }
+
+        public void AddScreenshotIntoAct(ActScreenShot act,bool IsFullPageScreenshot = false)
+        {
+
+            if (!IsFullPageScreenshot)
+            {
+                // return screenshot of what's visible currently in the viewport
+                var screenshot = ((ITakesScreenshot)Driver).GetScreenshot();
+                act.AddScreenShot(screenshot.AsByteArray, Driver.Title);
+            }
+            switch (mBrowserTpe)
+            {
+                case eBrowserType.FireFox:
+                    var screenShot = ((FirefoxDriver)Driver).GetFullPageScreenshot();
+                    act.AddScreenShot(screenShot.AsByteArray, Driver.Title);
+                    break;
+                case eBrowserType.Edge:
+                case eBrowserType.Chrome:
+                    if (Driver is InternetExplorerDriver)
+                    {
+                        using (Bitmap bitmapImage = CaptureFullPageScreenshot())
+                        {
+                            act.AddScreenShot(bitmapImage, Driver.Title);
+                        }
+                    }
+                    else
+                    {
+                        var screenshot = ((OpenQA.Selenium.Chromium.ChromiumDriver)Driver).GetFullPageScreenshot();
+                        act.AddScreenShot(screenshot.AsByteArray, Driver.Title);
+                    }
+                    break;
+                default:
+                    using (Bitmap bitmapImage = CaptureFullPageScreenshot())
+                    {
+                        act.AddScreenShot(bitmapImage, Driver.Title);
+                    }
+                    break;
+            }
+        }
+
         private Bitmap ScreenshotToImage(Screenshot screenshot)
         {
             TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));
