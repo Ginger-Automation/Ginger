@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>RepositorySerializerBenchmarks.Benchmarks.SerializerBenchmark-20240104-235258</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.13.11, Windows 10 (10.0.19044.3693/21H2/November2021Update)
+11th Gen Intel Core i7-1185G7 3.00GHz, 1 CPU, 8 logical and 4 physical cores
+.NET SDK 8.0.100
+  [Host]     : .NET 8.0.0 (8.0.23.53103), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+  Job-NIXVFF : .NET 8.0.0 (8.0.23.53103), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+</code></pre>
+<pre><code>MaxIterationCount=100  MinIterationCount=15  
+</code></pre>
+
+<table>
+<thead><tr><th>Method              </th><th>TestDataSize</th><th>Mean   </th><th>Error</th><th>StdDev</th><th>Min    </th><th>Max    </th><th>Gen0 </th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>NewRepositorySerializer</td><td>1</td><td>138.993 ms</td><td>2.6370 ms</td><td>6.6156 ms</td><td>130.862 ms</td><td>170.773 ms</td><td>2000.0000</td><td>-</td><td>-</td><td>16.63 MB</td>
+</tr><tr><td>BetterRepositorySerializer</td><td>1</td><td>2.188 ms</td><td>0.0406 ms</td><td>0.0379 ms</td><td>2.110 ms</td><td>2.254 ms</td><td>296.8750</td><td>296.8750</td><td>296.8750</td><td>1.91 MB</td>
+</tr><tr><td>NewRepositorySerializer</td><td>10</td><td>1,323.827 ms</td><td>23.6790 ms</td><td>22.1493 ms</td><td>1,275.803 ms</td><td>1,362.072 ms</td><td>26000.0000</td><td>1000.0000</td><td>1000.0000</td><td>163.73 MB</td>
+</tr><tr><td>BetterRepositorySerializer</td><td>10</td><td>33.737 ms</td><td>0.6370 ms</td><td>0.5958 ms</td><td>32.416 ms</td><td>34.592 ms</td><td>2600.0000</td><td>2066.6667</td><td>1066.6667</td><td>19.09 MB</td>
+</tr><tr><td>NewRepositorySerializer</td><td>100</td><td>13,502.035 ms</td><td>196.6609 ms</td><td>174.3348 ms</td><td>13,328.532 ms</td><td>13,908.159 ms</td><td>259000.0000</td><td>1000.0000</td><td>1000.0000</td><td>1633.93 MB</td>
+</tr><tr><td>BetterRepositorySerializer</td><td>100</td><td>215.604 ms</td><td>4.2215 ms</td><td>4.8615 ms</td><td>208.863 ms</td><td>227.121 ms</td><td>16000.0000</td><td>11000.0000</td><td>1000.0000</td><td>190.87 MB</td>
+</tr></tbody></table>
+</body>
+</html>

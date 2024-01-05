@@ -885,13 +885,14 @@ namespace Amdocs.Ginger.Repository
             mMemberDefaultDictionary.Add(type, list);
         }
 
-        static Dictionary<string, Type> mClassDictionary = new Dictionary<string, Type>();
+        public static Dictionary<string, Type> mClassDictionary = new Dictionary<string, Type>();
 
         static List<Assembly> mAssemblies = new List<Assembly>();
         public enum eAssemblyType { Ginger, GingerCore, GingerCoreCommon, GingerCoreCommonTest, GingerCoreNET }
         public static void AddClassesFromAssembly(eAssemblyType assemblyType)
         {
             Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().Where(x => x.FullName.Contains(assemblyType.ToString() + ",")).FirstOrDefault();
+            string[] assemblyNames = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.FullName).ToArray();
             if (assembly == null)
             {
                 string err = string.Format("Failed to load the assembly '{0}' into NewRepositorySerializer", assemblyType.ToString());
