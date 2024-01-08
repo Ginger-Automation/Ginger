@@ -1,11 +1,15 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.UserControls;
 using Ginger.Repository;
+using Ginger.UserControlsLib;
 using GingerCore;
+using GingerCore.Activities;
 using GingerCore.GeneralLib;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -241,6 +245,10 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 
             public Activity Activity { get; }
 
+            public IEnumerable<Node> ConsumerOptions { get; }
+
+            public bool ShowConsumerOptions { get; }
+
             public string Name
             {
                 get => Activity.ActivityName;
@@ -261,10 +269,94 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 }
             }
 
+            public bool Mandatory
+            {
+                get => Activity.Mandatory;
+                set
+                {
+                    Activity.Mandatory = value;
+                    IsModified = true;
+                }
+            }
+
             public ActivityBulkUpdateListItem(Activity activity)
             {
                 Activity = activity;
                 AttachActivityPropertyChangedHandler();
+                TargetBase targetApp = GetTargetApplication(activity.TargetApplication);
+                ConsumerOptions = GetConsumerOptions(targetApp);
+                ShowConsumerOptions = IsWebServicesTargetApplication(targetApp);
+            }
+
+            private TargetBase GetTargetApplication(string targetApplicationName)
+            {
+                return WorkSpace
+                    .Instance
+                    .Solution
+                    .GetSolutionTargetApplications()
+                    .First(targetApp => string.Equals(targetApp.Name, targetApplicationName));
+            }
+
+            private IEnumerable<Node> GetConsumerOptions(TargetBase targetApp)
+            {
+                IEnumerable<TargetBase> solutionTargetApps = WorkSpace
+                    .Instance
+                    .Solution
+                    .GetSolutionTargetApplications();
+
+                return
+                    solutionTargetApps
+                    .Where(t => t.Guid != targetApp.Guid)
+                    .Select(t => new Consumer()
+                    {
+                        Name = t.Name,
+                        ConsumerGuid = t.Guid,
+                    })
+                    .Select(consumer =>
+                    {
+                        Node node = new(title: consumer.Name) { Tag = consumer };
+                        node.PropertyChanged += ConsumerMultiSelectComboBoxNode_PropertyChanged;
+
+                        return node;
+                    })
+                    .ToArray();
+            }
+
+            private void ConsumerMultiSelectComboBoxNode_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+            {
+                if (sender == null)
+                {
+                    return;
+                }
+                if (!string.Equals(e.PropertyName, nameof(Node.IsSelected)))
+                {
+                    return;
+                }
+
+                Node senderNode = (Node)sender;
+                if (senderNode.Tag == null)
+                {
+                    return;
+                }
+
+                if (senderNode.IsSelected)
+                {
+                    Activity.ConsumerApplications.Add((Consumer)senderNode.Tag);
+                }
+                else
+                {
+                    Activity.ConsumerApplications.Remove((Consumer)senderNode.Tag);
+                }
+
+            }
+
+            private bool IsWebServicesTargetApplication(TargetBase targetApp)
+            {
+                return
+                    WorkSpace
+                    .Instance
+                    .Solution
+                    .GetApplicationPlatformForTargetApp(targetApp.Name) == ePlatformType.WebServices;
             }
 
             private void AttachActivityPropertyChangedHandler()
@@ -282,6 +374,10 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 else if (string.Equals(e.PropertyName, nameof(Activity.Publish)))
                 {
                     OnPropertyChanged(nameof(Publish));
+                }
+                else if (string.Equals(e.PropertyName, nameof(Activity.Mandatory)))
+                {
+                    OnPropertyChanged(nameof(Mandatory));
                 }
             }
 

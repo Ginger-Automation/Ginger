@@ -5,6 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:uc="clr-namespace:Amdocs.Ginger.UserControls"
+    xmlns:uclib="clr-namespace:Ginger.UserControlsLib"
     xmlns:ginger="clr-namespace:Ginger"
     xmlns:local="clr-namespace:Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
@@ -45,6 +46,8 @@
                 Property="Foreground"
                 Value="{StaticResource $amdocsLogoLinarGradientBrush}" />
         </Style>
+        <BooleanToVisibilityConverter
+            x:Key="BoolToVisibility" />
     </Page.Resources>
     <Grid
         Background="{StaticResource $BackgroundColor_White}">
@@ -76,6 +79,10 @@
                                 Width="150" />
                             <ColumnDefinition
                                 Width="60" />
+                            <ColumnDefinition
+                                Width="80" />
+                            <ColumnDefinition
+                                Width="150" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition
@@ -96,8 +103,7 @@
                                 Style="{StaticResource InputFieldLabelStyle}" />
                             <TextBox
                                 Text="{Binding Name}"
-                                Style="{StaticResource TextBoxStyle}"
-                                IsEnabled="False" />
+                                Style="{StaticResource TextBoxStyle}" />
                         </StackPanel>
                         <StackPanel
                             Grid.Column="2"
@@ -109,6 +115,27 @@
                                 IsChecked="{Binding Publish}"
                                 Style="{StaticResource @CheckBoxStyle}"
                                 HorizontalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel
+                            Grid.Column="3"
+                            Orientation="Vertical">
+                            <Label
+                                Content="Mandatory"
+                                Style="{StaticResource InputFieldLabelStyle}" />
+                            <CheckBox
+                                IsChecked="{Binding Mandatory}"
+                                Style="{StaticResource @CheckBoxStyle}"
+                                HorizontalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel
+                            Grid.Column="4"
+                            Orientation="Vertical"
+                            Visibility="{Binding Path=ShowConsumerOptions, Converter={StaticResource BoolToVisibility}}">
+                            <Label
+                                Content="Consumers"
+                                Style="{StaticResource InputFieldLabelStyle}" />
+                            <uclib:MultiSelectComboBox
+                                ItemsSource="{Binding ConsumerOptions}"/>
                         </StackPanel>
                     </Grid>
                 </DataTemplate>

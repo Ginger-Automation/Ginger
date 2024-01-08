@@ -309,6 +309,8 @@ namespace Ginger.UserControlsLib
                 NotifyPropertyChanged("IsSelected");
             }
         }
+        
+        public object? Tag { get; set; }
         #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
