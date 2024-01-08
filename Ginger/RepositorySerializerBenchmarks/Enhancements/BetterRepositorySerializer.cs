@@ -27,12 +27,12 @@ namespace RepositorySerializerBenchmarks.Enhancements
             else
                 businessFlow.UpdateHeader();
 
-            RepositoryItemHeaderXMLSerializer repositoryItemHeaderXMLSerializer = new(xmlDocument);
-            XmlElement repositoryItemHeaderElement = repositoryItemHeaderXMLSerializer.Serialize(businessFlow.RepositoryItemHeader!);
+            RepositoryItemHeaderXMLSerializer repositoryItemHeaderXMLSerializer = new();
+            XmlElement repositoryItemHeaderElement = repositoryItemHeaderXMLSerializer.Serialize(businessFlow.RepositoryItemHeader!, xmlDocument);
             gingerRepositoryItemElement.AppendChild(repositoryItemHeaderElement);
 
-            BusinessFlowXMLSerializer businessFlowXMLSerializer = new(xmlDocument);
-            XmlElement businessFlowElement = businessFlowXMLSerializer.Serialize(businessFlow);
+            BusinessFlowXMLSerializer businessFlowXMLSerializer = new();
+            XmlElement businessFlowElement = businessFlowXMLSerializer.Serialize(businessFlow, xmlDocument);
             gingerRepositoryItemElement.AppendChild(businessFlowElement);
 
             xmlDocument.AppendChild(gingerRepositoryItemElement);
@@ -42,7 +42,7 @@ namespace RepositorySerializerBenchmarks.Enhancements
 
         public TRepositoryItemBase Deserialize<TRepositoryItemBase>(string repositoryItemBaseXML) where TRepositoryItemBase : RepositoryItemBase
         {
-            if(typeof(TRepositoryItemBase).IsAssignableTo(typeof(BusinessFlow)))
+            if(!typeof(TRepositoryItemBase).IsAssignableTo(typeof(BusinessFlow)))
                 throw new NotImplementedException($"{nameof(BetterRepositorySerializer)} implementation for type {typeof(TRepositoryItemBase).FullName} is not implemented yet.");
 
             XmlDocument xmlDocument = new XmlDocument();

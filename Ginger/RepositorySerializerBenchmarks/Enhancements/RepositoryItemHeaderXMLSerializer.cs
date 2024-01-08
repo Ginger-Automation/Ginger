@@ -12,16 +12,11 @@ namespace RepositorySerializerBenchmarks.Enhancements
     {
         private const string HeaderXMLElementName = "Header";
 
-        private readonly XmlDocument _xmlDocument;
+        public RepositoryItemHeaderXMLSerializer() { }
 
-        public RepositoryItemHeaderXMLSerializer(XmlDocument xmlDocument)
+        public XmlElement Serialize(RepositoryItemHeader repositoryItemHeader, XmlDocument xmlDocument)
         {
-            _xmlDocument = xmlDocument;
-        }
-
-        public XmlElement Serialize(RepositoryItemHeader repositoryItemHeader)
-        {
-            XmlElement repositoryItemHeaderElement = _xmlDocument.CreateElement(HeaderXMLElementName);
+            XmlElement repositoryItemHeaderElement = xmlDocument.CreateElement(HeaderXMLElementName);
 
             repositoryItemHeaderElement.SetAttribute(nameof(RepositoryItemHeader.ItemGuid), repositoryItemHeader.ItemGuid.ToString());
             
@@ -44,6 +39,33 @@ namespace RepositorySerializerBenchmarks.Enhancements
             repositoryItemHeaderElement.SetAttribute(nameof(RepositoryItemHeader.LastUpdate), repositoryItemHeader.LastUpdate.ToString("yyyyMMddHHmm"));
 
             return repositoryItemHeaderElement;
+        }
+
+        public RepositoryItemHeader Deserialize(XmlElement repositoryItemHeaderElement)
+        {
+            RepositoryItemHeader repositoryItemHeader = new();
+
+            foreach(XmlAttribute attribute in repositoryItemHeaderElement.Attributes)
+            {
+                if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.ItemGuid)))
+                    repositoryItemHeader.ItemGuid = Guid.Parse(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.ItemType)))
+                    repositoryItemHeader.ItemType = attribute.Value;
+                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.CreatedBy)))
+                    repositoryItemHeader.CreatedBy = attribute.Value;
+                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.Created)))
+                    repositoryItemHeader.Created = DateTime.ParseExact(attribute.Value, "yyyyMMddHHmm", provider: null);
+                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.GingerVersion)))
+                    repositoryItemHeader.GingerVersion = attribute.Value;
+                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.Version)))
+                    repositoryItemHeader.Version = int.Parse(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.LastUpdateBy)))
+                    repositoryItemHeader.LastUpdateBy = attribute.Value;
+                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.LastUpdate)))
+                    repositoryItemHeader.LastUpdate = DateTime.ParseExact(attribute.Value, "yyyyMMddHHmm", provider: null);
+            }
+
+            return repositoryItemHeader;
         }
     }
 }

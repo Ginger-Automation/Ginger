@@ -10,16 +10,11 @@ namespace RepositorySerializerBenchmarks.Enhancements
 {
     public sealed class TargetApplicationXMLSerializer
     {
-        private readonly XmlDocument _xmlDocument;
+        public TargetApplicationXMLSerializer() { }
 
-        public TargetApplicationXMLSerializer(XmlDocument xmlDocument)
+        public XmlElement Serialize(TargetApplication targetApplication, XmlDocument xmlDocument)
         {
-            _xmlDocument = xmlDocument;
-        }
-
-        public XmlElement Serialize(TargetApplication targetApplication)
-        {
-            XmlElement targetApplicationElement = _xmlDocument.CreateElement(nameof(TargetApplication));
+            XmlElement targetApplicationElement = xmlDocument.CreateElement(nameof(TargetApplication));
             
             if(!string.IsNullOrEmpty(targetApplication.AppName))
                 targetApplicationElement.SetAttribute(nameof(TargetApplication.AppName), targetApplication.AppName);
@@ -32,6 +27,23 @@ namespace RepositorySerializerBenchmarks.Enhancements
             targetApplicationElement.SetAttribute(nameof(TargetApplication.ParentGuid), targetApplication.ParentGuid.ToString());
             
             return targetApplicationElement;
+        }
+
+        public TargetApplication Deserialize(XmlElement targetApplicationElement)
+        {
+            TargetApplication targetApplication = new();
+
+            foreach(XmlAttribute attribute in targetApplicationElement.Attributes)
+            {
+                if (string.Equals(attribute.Name, nameof(TargetApplication.AppName)))
+                    targetApplication.AppName = attribute.Value;
+                else if (string.Equals(attribute.Name, nameof(TargetApplication.Guid)))
+                    targetApplication.Guid = Guid.Parse(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(TargetApplication.ParentGuid)))
+                    targetApplication.ParentGuid = Guid.Parse(attribute.Value);
+            }
+
+            return targetApplication;
         }
     }
 }

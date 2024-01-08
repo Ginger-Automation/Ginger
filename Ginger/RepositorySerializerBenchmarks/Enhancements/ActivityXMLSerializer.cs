@@ -1,4 +1,5 @@
-﻿using GingerCore;
+﻿using Amdocs.Ginger.Repository;
+using GingerCore;
 using GingerCore.Actions;
 using System;
 using System.Collections.Generic;
@@ -11,16 +12,11 @@ namespace RepositorySerializerBenchmarks.Enhancements
 {
     public sealed class ActivityXMLSerializer
     {
-        private readonly XmlDocument _xmlDocument;
+        public ActivityXMLSerializer() { }
 
-        public ActivityXMLSerializer(XmlDocument xmlDocument)
+        public XmlElement Serialize(Activity activity, XmlDocument xmlDocument)
         {
-            _xmlDocument = xmlDocument;
-        }
-
-        public XmlElement Serialize(Activity activity)
-        {
-            XmlElement activityElement = _xmlDocument.CreateElement(nameof(Activity));
+            XmlElement activityElement = xmlDocument.CreateElement(nameof(Activity));
 
             if(activity.ActionRunOption != null)
                 activityElement.SetAttribute(nameof(Activity.ActionRunOption), activity.ActionRunOption.ToString());
@@ -57,17 +53,67 @@ namespace RepositorySerializerBenchmarks.Enhancements
 
             if (activity.Acts.Any())
             {
-                XmlElement actsElement = _xmlDocument.CreateElement(nameof(Activity.Acts));
-                ActXMLSerializer actXMLSerializer = new(_xmlDocument);
+                XmlElement actsElement = xmlDocument.CreateElement(nameof(Activity.Acts));
+                ActXMLSerializer actXMLSerializer = new();
                 foreach (Act act in activity.Acts)
                 {
-                    XmlElement actElement = actXMLSerializer.Serialize(act);
+                    XmlElement actElement = actXMLSerializer.Serialize(act, xmlDocument);
                     actsElement.AppendChild(actElement);
                 }
                 activityElement.AppendChild(actsElement);
             }
 
             return activityElement;
+        }
+
+        public Activity Deserialize(XmlElement activityElement)
+        {
+            Activity activity = new();
+
+            foreach(XmlAttribute attribute in activityElement.Attributes)
+            {
+                if (string.Equals(attribute.Name, nameof(Activity.ActionRunOption)))
+                    activity.ActionRunOption = Enum.Parse<eActionRunOption>(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(Activity.Active)))
+                    activity.Active = bool.Parse(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(Activity.ActivitiesGroupID)))
+                    activity.ActivitiesGroupID = attribute.Value;
+                else if (string.Equals(attribute.Name, nameof(Activity.ActivityName)))
+                    activity.ActivityName = attribute.Value;
+                else if (string.Equals(attribute.Name, nameof(Activity.AutomationStatus)))
+                    activity.AutomationStatus = Enum.Parse<eActivityAutomationStatus>(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(Activity.ErrorHandlerMappingType)))
+                    activity.ErrorHandlerMappingType = Enum.Parse<eHandlerMappingType>(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(Activity.Guid)))
+                    activity.Guid = Guid.Parse(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(Activity.ParentGuid)))
+                    activity.ParentGuid = Guid.Parse(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(Activity.PercentAutomated)))
+                    activity.PercentAutomated = attribute.Value;
+                else if (string.Equals(attribute.Name, nameof(Activity.POMMetaDataId)))
+                    activity.POMMetaDataId = Guid.Parse(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(Activity.TargetApplication)))
+                    activity.TargetApplication = attribute.Value;
+                else if (string.Equals(attribute.Name, nameof(Activity.Type)))
+                    activity.Type = Enum.Parse<eSharedItemType>(attribute.Value);
+            }
+
+            foreach(XmlElement childElement in activityElement.ChildNodes.Cast<XmlElement>())
+            {
+                if(string.Equals(childElement.Name, nameof(Activity.Acts)))
+                {
+                    ActXMLSerializer actXMLSerializer = new();
+                    List<Act> acts = new();
+                    foreach(XmlElement actElement in childElement.ChildNodes.Cast<XmlElement>())
+                    {
+                        Act act = actXMLSerializer.Deserialize(actElement);
+                        acts.Add(act);
+                    }
+                    activity.Acts = new(acts);
+                }
+            }
+
+            return activity;
         }
     }
 }

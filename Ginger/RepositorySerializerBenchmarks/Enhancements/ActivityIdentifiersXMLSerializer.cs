@@ -1,4 +1,6 @@
-﻿using GingerCore.Activities;
+﻿using GingerCore;
+using GingerCore.Activities;
+using OpenQA.Selenium.DevTools.V115.Target;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +12,11 @@ namespace RepositorySerializerBenchmarks.Enhancements
 {
     public sealed class ActivityIdentifiersXMLSerializer
     {
-        private readonly XmlDocument _xmlDocument;
+        public ActivityIdentifiersXMLSerializer() { }
 
-        public ActivityIdentifiersXMLSerializer(XmlDocument xmlDocument)
+        public XmlElement Serialize(ActivityIdentifiers activityIdentifiers, XmlDocument xmlDocument)
         {
-            _xmlDocument = xmlDocument;
-        }
-
-        public XmlElement Serialize(ActivityIdentifiers activityIdentifiers)
-        {
-            XmlElement activityIdentifiersElement = _xmlDocument.CreateElement(nameof(ActivityIdentifiers));
+            XmlElement activityIdentifiersElement = xmlDocument.CreateElement(nameof(ActivityIdentifiers));
 
             if(activityIdentifiers.ActivityAutomationStatus != null)
                 activityIdentifiersElement.SetAttribute(nameof(ActivityIdentifiers.ActivityAutomationStatus), activityIdentifiers.ActivityAutomationStatus.ToString());
@@ -36,6 +33,29 @@ namespace RepositorySerializerBenchmarks.Enhancements
             activityIdentifiersElement.SetAttribute(nameof(ActivityIdentifiers.ParentGuid), activityIdentifiers.ParentGuid.ToString());
 
             return activityIdentifiersElement;
+        }
+
+        public ActivityIdentifiers Deserialize(XmlElement activityIdentifiersElement)
+        {
+            ActivityIdentifiers activityIdentifiers = new();
+
+            foreach(XmlAttribute attribute in activityIdentifiersElement.Attributes)
+            {
+                if (string.Equals(attribute.Name, nameof(ActivityIdentifiers.ActivityAutomationStatus)))
+                    activityIdentifiers.ActivityAutomationStatus = Enum.Parse<eActivityAutomationStatus>(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(ActivityIdentifiers.ActivityGuid)))
+                    activityIdentifiers.ActivityGuid = Guid.Parse(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(ActivityIdentifiers.ActivityName)))
+                    activityIdentifiers.ActivityName = attribute.Value;
+                else if (string.Equals(attribute.Name, nameof(ActivityIdentifiers.ActivityParentGuid)))
+                    activityIdentifiers.ActivityParentGuid = Guid.Parse(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(ActivityIdentifiers.Guid)))
+                    activityIdentifiers.Guid = Guid.Parse(attribute.Value);
+                else if (string.Equals(attribute.Name, nameof(ActivityIdentifiers.ParentGuid)))
+                    activityIdentifiers.ParentGuid = Guid.Parse(attribute.Value);
+            }
+
+            return activityIdentifiers;
         }
     }
 }

@@ -13,21 +13,21 @@ using System.Threading.Tasks;
 
 namespace RepositorySerializerBenchmarks.Benchmarks
 {
-    public class SerializerBenchmarkConfig : ManualConfig
+    public class SerializationBenchmarkConfig : ManualConfig
     {
-        public SerializerBenchmarkConfig()
+        public SerializationBenchmarkConfig()
         {
 
         }
     }
 
-    [Config(typeof(SerializerBenchmarkConfig))]
+    [Config(typeof(SerializationBenchmarkConfig))]
     [MemoryDiagnoser]
     [MinColumn]
     [MaxColumn]
     [RPlotExporter]
     [ShortRunJob]
-    public class SerializerBenchmark
+    public class SerializationBenchmark
     {
         private NewRepositorySerializer _newRepositorySerializer = null!;
         private BetterRepositorySerializer _betterRepositorySerializer = null!;
@@ -42,7 +42,7 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         {
             _newRepositorySerializer = new();
             _betterRepositorySerializer = new();
-            TestData = TestDataGenerator.Generate(TestDataSize);
+            TestData = TestDataGenerator.GenerateRIBs(TestDataSize);
         }
 
         [Benchmark(Baseline = true)]
