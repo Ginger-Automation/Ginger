@@ -121,8 +121,11 @@ namespace Ginger.UserControlsLib.UCListView
                 Tags = new ObservableList<Guid>();
             }
 
-            xTagsFilter.Init(Tags);
-            xTagsFilter.TagsStackPanlChanged += TagsFilter_TagsStackPanlChanged;
+            if (xTagsFilter != null)
+            {
+                xTagsFilter.Init(Tags);
+                xTagsFilter.TagsStackPanlChanged += TagsFilter_TagsStackPanlChanged;
+            }
         }
 
         private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)

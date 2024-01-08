@@ -655,6 +655,7 @@
 
   <ItemGroup>
     <Folder Include="ProjectDll\" />
+    <Folder Include="SolutionWindows\TreeViewItems\NewFolder\" />
   </ItemGroup>
 
   <ItemGroup>
