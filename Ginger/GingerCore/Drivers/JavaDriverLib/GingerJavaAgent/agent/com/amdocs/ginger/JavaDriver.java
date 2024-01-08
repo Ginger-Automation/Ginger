@@ -2571,8 +2571,42 @@ private PayLoad TypeKeys(Component c,String Value) {
 		return PayLoad.OK("Done");
 	}
 
-	
+	private PayLoad ContextMenuClickComponent(final Component c) {
+		//Only For Table Cell Action
+		Runnable r = new Runnable() {
+			public void run() 
+			{
+				JComponent b = (JComponent)c;
+				JComponent d = b.getComponentPopupMenu();
+				for (int i = 0; i < d.getComponents().length; i++) {
+					if (mValue != null && mValue.equals(((JMenuItem) b.getComponentPopupMenu().getComponents()[i]).getText())){
+						((JMenuItem) b.getComponentPopupMenu().getComponents()[i])
+						.doClick();
+					}
+				}   
+			}
+		};
+		if (SwingUtilities.isEventDispatchThread())
+		{
+			GingerAgent.WriteLog("\n***************\nSendKeyPressRelease-already in EDT\n***************");
+			r.run();
+		}
+		else
+		{
+			GingerAgent.WriteLog("\n***************\nSendKeyPressRelease-run in EDT\n***************");
+			try {
+				SunToolkit.executeOnEDTAndWait(c, r);
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return PayLoad.OK("Done");	
+		
+}
 
+	
 	private PayLoad HandleWindowAction(String locateBy, String locateValue,
 			String controlAction) 
 	{		
@@ -4756,6 +4790,7 @@ private PayLoad SetComponentFocus(Component c)
 				|| controlAction.equalsIgnoreCase("SendKeys")
 				|| controlAction.equalsIgnoreCase("IsChecked")
 				|| controlAction.equalsIgnoreCase("RightClick")
+				|| controlAction.equalsIgnoreCase("ContextMenuClick")
 			) 
 			
 		{
@@ -5197,6 +5232,11 @@ private PayLoad SetComponentFocus(Component c)
 			rect.y += rect.height/2;
 			return RightClickComponent(CurrentTable, rect.x + "," + rect.y,1);
 
+		}
+		else if(controlAction.equals("ContextMenuClick"))
+		{
+			GingerAgent.WriteLog("ContextMenuClick - CellComponent ");
+			return ContextMenuClickComponent(CurrentTable);
 		}
 		else if(controlAction.equals("IsChecked"))
 		{

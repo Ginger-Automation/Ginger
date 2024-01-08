@@ -468,6 +468,7 @@ namespace GingerCore.Actions
                 case eGenElementAction.FireMouseEvent:
                 case eGenElementAction.ScrollDown:
                 case eGenElementAction.ScrollUp:
+                case eGenElementAction.ContextMenuClick:
                     currentType = typeof(ActUIElement);
                     break;
 
@@ -637,7 +638,9 @@ namespace GingerCore.Actions
             [EnumValueDescription("Set Attribute Value")]
             SetAttributeValue = 66,
             [EnumValueDescription("Expand Drop Down")]
-            Expand = 67
+            Expand = 67,
+            [EnumValueDescription("Context Menu Click")]
+            ContextMenuClick = 68
         }
 
         [IsSerializedForLocalRepository]
