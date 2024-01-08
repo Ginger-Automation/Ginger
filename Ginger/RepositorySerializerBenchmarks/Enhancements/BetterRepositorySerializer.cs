@@ -40,11 +40,11 @@ namespace RepositorySerializerBenchmarks.Enhancements
             return XmlDocumentToString(xmlDocument);
         }
 
-        public TRepositoryItemBase Deserialize<TRepositoryItemBase>(string repositoryItemBaseXML) where TRepositoryItemBase : RepositoryItemBase
+        public TRepositoryItemBase DeserializeViaXmlDocument<TRepositoryItemBase>(string repositoryItemBaseXML, bool lazyLoad) where TRepositoryItemBase : RepositoryItemBase
         {
             if(!typeof(TRepositoryItemBase).IsAssignableTo(typeof(BusinessFlow)))
                 throw new NotImplementedException($"{nameof(BetterRepositorySerializer)} implementation for type {typeof(TRepositoryItemBase).FullName} is not implemented yet.");
-
+            
             XmlDocument xmlDocument = new XmlDocument();
             xmlDocument.Load(new StringReader(repositoryItemBaseXML));
 
@@ -56,7 +56,55 @@ namespace RepositorySerializerBenchmarks.Enhancements
 
             XmlElement businessFlowElement = (XmlElement)gingerRepositoryItemElement.ChildNodes[1]!;
             BusinessFlowXMLSerializer businessFlowXMLSerializer = new();
-            BusinessFlow businessFlow = businessFlowXMLSerializer.Deserialize(businessFlowElement);
+            BusinessFlow businessFlow = businessFlowXMLSerializer.Deserialize(businessFlowElement, lazyLoad);
+
+            businessFlow.RepositoryItemHeader = repositoryItemHeader;
+
+            return (TRepositoryItemBase)(RepositoryItemBase)businessFlow;
+        }
+
+        public TRepositoryItemBase DeserializeViaXmlReader<TRepositoryItemBase>(string repositoryItemBaseXML, bool lazyLoad) where TRepositoryItemBase : RepositoryItemBase
+        {
+            if (!typeof(TRepositoryItemBase).IsAssignableTo(typeof(BusinessFlow)))
+                throw new NotImplementedException($"{nameof(BetterRepositorySerializer)} implementation for type {typeof(TRepositoryItemBase).FullName} is not implemented yet.");
+
+            RepositoryItemHeader repositoryItemHeader = null!;
+            BusinessFlow businessFlow = null!;
+
+            using XmlReader xmlReader = XmlReader.Create(new StringReader(repositoryItemBaseXML));
+            
+            xmlReader.MoveToContent();
+            if (xmlReader.NodeType != XmlNodeType.Element)
+                throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
+            if (!string.Equals(xmlReader.Name, GingerRepositoryItemXMLElementName))
+                throw new Exception($"Expected element {GingerRepositoryItemXMLElementName} but found {xmlReader.Name}.");
+
+            int startDepth = xmlReader.Depth;
+            while(xmlReader.Read())
+            {
+                bool reachedEndOfFile = xmlReader.EOF;
+                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, GingerRepositoryItemXMLElementName);
+                bool reachedParent = xmlReader.Depth < startDepth;
+                if (reachedEndOfFile || reachedSibling || reachedParent)
+                    break;
+
+                if (xmlReader.NodeType != XmlNodeType.Element)
+                    continue;
+
+                if (xmlReader.Depth != startDepth + 1)
+                    continue;
+
+                if (string.Equals(xmlReader.Name, "Header"))
+                {
+                    RepositoryItemHeaderXMLSerializer repositoryItemHeaderXMLSerializer = new();
+                    repositoryItemHeader = repositoryItemHeaderXMLSerializer.Deserialize(xmlReader);
+                }
+                else if (string.Equals(xmlReader.Name, nameof(BusinessFlow)))
+                {
+                    BusinessFlowXMLSerializer businessFlowXMLSerializer = new();
+                    businessFlow = businessFlowXMLSerializer.Deserialize(xmlReader, lazyLoad);
+                }
+            }
 
             businessFlow.RepositoryItemHeader = repositoryItemHeader;
 

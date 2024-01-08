@@ -17,7 +17,10 @@ namespace RepositorySerializerBenchmarks.Benchmarks
     {
         public DeserializationBenchmarkConfig()
         {
-
+            SummaryStyle = 
+                BenchmarkDotNet.Reports.SummaryStyle.Default
+                .WithTimeUnit(Perfolizer.Horology.TimeUnit.Millisecond)
+                .WithSizeUnit(BenchmarkDotNet.Columns.SizeUnit.MB);
         }
     }
 
@@ -46,26 +49,38 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         }
 
         [Benchmark(Baseline = true)]
-        public void NewRepositorySerializer()
+        public void Old_Lazy()
         {
             foreach (string repositoryItemBaseXML in TestData)
                 Amdocs.Ginger.Repository.NewRepositorySerializer.DeserializeFromText(repositoryItemBaseXML);
         }
 
         [Benchmark]
-        public void BetterRepositorySerializer()
+        public void New_Full_XmlDocument()
         {
-            BusinessFlowXMLSerializer.LazyLoad = false;
             foreach (string repositoryItemBaseXML in TestData)
-                _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
+                _betterRepositorySerializer.DeserializeViaXmlDocument<BusinessFlow>(repositoryItemBaseXML, lazyLoad: false);
         }
 
         [Benchmark]
-        public void BetterRepositorySerializer_Lazy()
+        public void New_Lazy_XmlDocument()
         {
-            BusinessFlowXMLSerializer.LazyLoad = true;
             foreach (string repositoryItemBaseXML in TestData)
-                _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
+                _betterRepositorySerializer.DeserializeViaXmlDocument<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
+        }
+
+        [Benchmark]
+        public void New_Full_XmlReader()
+        {
+            foreach (string repositoryItemBaseXML in TestData)
+                _betterRepositorySerializer.DeserializeViaXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: false);
+        }
+
+        [Benchmark]
+        public void New_Lazy_XmlReader()
+        {
+            foreach (string repositoryItemBaseXML in TestData)
+                _betterRepositorySerializer.DeserializeViaXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
         }
     }
 }

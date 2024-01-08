@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Repository;
 using GingerCore;
 using GingerCore.Actions;
+using Org.BouncyCastle.Asn1.Cms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -71,32 +72,7 @@ namespace RepositorySerializerBenchmarks.Enhancements
             Activity activity = new();
 
             foreach(XmlAttribute attribute in activityElement.Attributes)
-            {
-                if (string.Equals(attribute.Name, nameof(Activity.ActionRunOption)))
-                    activity.ActionRunOption = Enum.Parse<eActionRunOption>(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(Activity.Active)))
-                    activity.Active = bool.Parse(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(Activity.ActivitiesGroupID)))
-                    activity.ActivitiesGroupID = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(Activity.ActivityName)))
-                    activity.ActivityName = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(Activity.AutomationStatus)))
-                    activity.AutomationStatus = Enum.Parse<eActivityAutomationStatus>(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(Activity.ErrorHandlerMappingType)))
-                    activity.ErrorHandlerMappingType = Enum.Parse<eHandlerMappingType>(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(Activity.Guid)))
-                    activity.Guid = Guid.Parse(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(Activity.ParentGuid)))
-                    activity.ParentGuid = Guid.Parse(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(Activity.PercentAutomated)))
-                    activity.PercentAutomated = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(Activity.POMMetaDataId)))
-                    activity.POMMetaDataId = Guid.Parse(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(Activity.TargetApplication)))
-                    activity.TargetApplication = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(Activity.Type)))
-                    activity.Type = Enum.Parse<eSharedItemType>(attribute.Value);
-            }
+                SetActivityPropertyFromAttribute(activity, attribute.Name, attribute.Value);
 
             foreach(XmlElement childElement in activityElement.ChildNodes.Cast<XmlElement>())
             {
@@ -114,6 +90,104 @@ namespace RepositorySerializerBenchmarks.Enhancements
             }
 
             return activity;
+        }
+
+        private void SetActivityPropertyFromAttribute(Activity activity, string attributeName, string attributeValue)
+        {
+            if (string.Equals(attributeName, nameof(Activity.ActionRunOption)))
+                activity.ActionRunOption = Enum.Parse<eActionRunOption>(attributeValue);
+            else if (string.Equals(attributeName, nameof(Activity.Active)))
+                activity.Active = bool.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(Activity.ActivitiesGroupID)))
+                activity.ActivitiesGroupID = attributeValue;
+            else if (string.Equals(attributeName, nameof(Activity.ActivityName)))
+                activity.ActivityName = attributeValue;
+            else if (string.Equals(attributeName, nameof(Activity.AutomationStatus)))
+                activity.AutomationStatus = Enum.Parse<eActivityAutomationStatus>(attributeValue);
+            else if (string.Equals(attributeName, nameof(Activity.ErrorHandlerMappingType)))
+                activity.ErrorHandlerMappingType = Enum.Parse<eHandlerMappingType>(attributeValue);
+            else if (string.Equals(attributeName, nameof(Activity.Guid)))
+                activity.Guid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(Activity.ParentGuid)))
+                activity.ParentGuid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(Activity.PercentAutomated)))
+                activity.PercentAutomated = attributeValue;
+            else if (string.Equals(attributeName, nameof(Activity.POMMetaDataId)))
+                activity.POMMetaDataId = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(Activity.TargetApplication)))
+                activity.TargetApplication = attributeValue;
+            else if (string.Equals(attributeName, nameof(Activity.Type)))
+                activity.Type = Enum.Parse<eSharedItemType>(attributeValue);
+        }
+
+        public Activity Deserialize(XmlReader xmlReader)
+        {
+            if (xmlReader.NodeType != XmlNodeType.Element)
+                throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
+            if (!string.Equals(xmlReader.Name, nameof(Activity)))
+                throw new Exception($"Expected element {nameof(Activity)} but found {xmlReader.Name}.");
+
+            Activity activity = new();
+
+            for (int attrIndex = 0; attrIndex < xmlReader.AttributeCount; attrIndex++)
+            {
+                xmlReader.MoveToAttribute(attrIndex);
+                SetActivityPropertyFromAttribute(activity, attributeName: xmlReader.Name, attributeValue: xmlReader.Value);
+            }
+            xmlReader.MoveToElement();
+
+            int startDepth = xmlReader.Depth;
+            while (xmlReader.Read())
+            {
+                bool reachedEndOfFile = xmlReader.EOF;
+                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(Activity));
+                bool reachedParent = xmlReader.Depth < startDepth;
+                if (reachedEndOfFile || reachedSibling || reachedParent)
+                    break;
+
+                if (xmlReader.NodeType != XmlNodeType.Element)
+                    continue;
+
+                if (xmlReader.Depth != startDepth + 1)
+                    continue;
+
+                if (string.Equals(xmlReader.Name, nameof(Activity.Acts)))
+                    activity.Acts = new(DeserializeActsElement(xmlReader));
+            }
+
+            return activity;
+        }
+
+        private IEnumerable<Act> DeserializeActsElement(XmlReader xmlReader)
+        {
+            if (xmlReader.NodeType != XmlNodeType.Element)
+                throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
+            if (!string.Equals(xmlReader.Name, nameof(Activity.Acts)))
+                throw new Exception($"Expected element {nameof(Activity.Acts)} but found {xmlReader.Name}.");
+
+            List<Act> acts = new();
+            ActXMLSerializer actXMLSerializer = new();
+
+            int startDepth = xmlReader.Depth;
+            while (xmlReader.Read())
+            {
+                bool reachedEndOfFile = xmlReader.EOF;
+                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(Activity.Acts));
+                bool reachedParent = xmlReader.Depth < startDepth;
+                if (reachedEndOfFile || reachedSibling || reachedParent)
+                    break;
+
+                if (xmlReader.NodeType != XmlNodeType.Element)
+                    continue;
+
+                if (xmlReader.Depth != startDepth + 1)
+                    continue;
+
+                Act act = actXMLSerializer.Deserialize(xmlReader);
+                acts.Add(act);
+            }
+
+            return acts;
         }
     }
 }

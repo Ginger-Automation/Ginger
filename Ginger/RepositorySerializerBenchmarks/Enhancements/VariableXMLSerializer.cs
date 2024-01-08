@@ -1,7 +1,10 @@
 ﻿using Amdocs.Ginger.Repository;
+using GingerCore.Actions;
 using GingerCore.Variables;
+using Org.BouncyCastle.Asn1.Cms;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,24 +64,67 @@ namespace RepositorySerializerBenchmarks.Enhancements
         {
             VariableString variableString = new();
 
-            foreach(XmlAttribute attribute in variableStringElement.Attributes)
+            foreach (XmlAttribute attribute in variableStringElement.Attributes)
+                SetVariableStringPropertyFromAttribute(variableString, attribute.Name, attribute.Value);
+
+            return variableString;
+        }
+
+        private void SetVariableStringPropertyFromAttribute(VariableString variableString, string attributeName, string attributeValue)
+        {
+            if (string.Equals(attributeName, nameof(VariableString.Description)))
+                variableString.Description = attributeValue;
+            else if (string.Equals(attributeName, nameof(VariableString.Guid)))
+                variableString.Guid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(VariableString.InitialStringValue)))
+                variableString.InitialStringValue = attributeValue;
+            else if (string.Equals(attributeName, nameof(VariableString.MappedOutputType)))
+                variableString.MappedOutputType = Enum.Parse<VariableString.eOutputType>(attributeValue);
+            else if (string.Equals(attributeName, nameof(VariableString.Name)))
+                variableString.Name = attributeValue;
+            else if (string.Equals(attributeName, nameof(VariableString.ParentGuid)))
+                variableString.ParentGuid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(VariableString.ParentName)))
+                variableString.ParentName = attributeValue;
+            else if (string.Equals(attributeName, nameof(VariableString.ParentType)))
+                variableString.ParentType = attributeValue;
+        }
+    
+        public VariableBase Deserialize(XmlReader xmlReader)
+        {
+            if (xmlReader.NodeType != XmlNodeType.Element)
+                throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
+            if (string.Equals(xmlReader.Name, nameof(VariableString)))
+                return DeserializeVariableString(xmlReader);
+            else
+                throw new NotImplementedException($"{nameof(VariableXMLSerializer)} implementation for type {xmlReader.Name} is not implemented yet.");
+        }
+
+        private VariableString DeserializeVariableString(XmlReader xmlReader)
+        {
+            if (xmlReader.NodeType != XmlNodeType.Element)
+                throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
+            if (!string.Equals(xmlReader.Name, nameof(VariableString)))
+                throw new Exception($"Expected element {nameof(VariableString)} but found {xmlReader.Name}.");
+
+            VariableString variableString = new();
+
+            for (int attrIndex = 0; attrIndex < xmlReader.AttributeCount; attrIndex++)
             {
-                if (string.Equals(attribute.Name, nameof(VariableString.Description)))
-                    variableString.Description = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(VariableString.Guid)))
-                    variableString.Guid = Guid.Parse(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(VariableString.InitialStringValue)))
-                    variableString.InitialStringValue = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(VariableString.MappedOutputType)))
-                    variableString.MappedOutputType = Enum.Parse<VariableString.eOutputType>(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(VariableString.Name)))
-                    variableString.Name = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(VariableString.ParentGuid)))
-                    variableString.ParentGuid = Guid.Parse(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(VariableString.ParentName)))
-                    variableString.ParentName = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(VariableString.ParentType)))
-                    variableString.ParentType = attribute.Value;
+                xmlReader.MoveToAttribute(attrIndex);
+                SetVariableStringPropertyFromAttribute(variableString, attributeName: xmlReader.Name, attributeValue: xmlReader.Value);
+            }
+            xmlReader.MoveToElement();
+
+            int startDepth = xmlReader.Depth;
+            while (xmlReader.Read())
+            {
+                bool reachedEndOfFile = xmlReader.EOF;
+                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(VariableString));
+                bool reachedParent = xmlReader.Depth < startDepth;
+                if (reachedEndOfFile || reachedSibling || reachedParent)
+                    break;
+
             }
 
             return variableString;

@@ -1,8 +1,10 @@
 ﻿using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
+using GingerCore;
 using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using NpgsqlTypes;
+using Org.BouncyCastle.Asn1.Cms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,25 +76,8 @@ namespace RepositorySerializerBenchmarks.Enhancements
         {
             ActDummy actDummy = new();
 
-            foreach(XmlAttribute attribute in actDummyElement.Attributes)
-            {
-                if (string.Equals(attribute.Name, nameof(ActDummy.Active)))
-                    actDummy.Active = bool.Parse(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(ActDummy.Description)))
-                    actDummy.Description = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(ActDummy.Guid)))
-                    actDummy.Guid = Guid.Parse(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(ActDummy.ParentGuid)))
-                    actDummy.ParentGuid = Guid.Parse(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(ActDummy.Platform)))
-                    actDummy.Platform = Enum.Parse<ePlatformType>(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(ActDummy.RetryMechanismInterval)))
-                    actDummy.RetryMechanismInterval = int.Parse(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(ActDummy.StatusConverter)))
-                    actDummy.StatusConverter = Enum.Parse<eStatusConverterOptions>(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(ActDummy.WindowsToCapture)))
-                    actDummy.WindowsToCapture= Enum.Parse<Act.eWindowsToCapture>(attribute.Value);
-            }
+            foreach (XmlAttribute attribute in actDummyElement.Attributes)
+                SetActDummyPropertyFromAttribute(actDummy, attribute.Name, attribute.Value);
 
             foreach(XmlElement childElement in actDummyElement.ChildNodes.Cast<XmlElement>())
             {
@@ -110,6 +95,106 @@ namespace RepositorySerializerBenchmarks.Enhancements
             }
 
             return actDummy;
+        }
+
+        private void SetActDummyPropertyFromAttribute(ActDummy actDummy, string attributeName, string attributeValue)
+        {
+            if (string.Equals(attributeName, nameof(ActDummy.Active)))
+                actDummy.Active = bool.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(ActDummy.Description)))
+                actDummy.Description = attributeValue;
+            else if (string.Equals(attributeName, nameof(ActDummy.Guid)))
+                actDummy.Guid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(ActDummy.ParentGuid)))
+                actDummy.ParentGuid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(ActDummy.Platform)))
+                actDummy.Platform = Enum.Parse<ePlatformType>(attributeValue);
+            else if (string.Equals(attributeName, nameof(ActDummy.RetryMechanismInterval)))
+                actDummy.RetryMechanismInterval = int.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(ActDummy.StatusConverter)))
+                actDummy.StatusConverter = Enum.Parse<eStatusConverterOptions>(attributeValue);
+            else if (string.Equals(attributeName, nameof(ActDummy.WindowsToCapture)))
+                actDummy.WindowsToCapture = Enum.Parse<Act.eWindowsToCapture>(attributeValue);
+        }
+
+        public Act Deserialize(XmlReader xmlReader)
+        {
+            if (xmlReader.NodeType != XmlNodeType.Element)
+                throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
+            if (string.Equals(xmlReader.Name, nameof(ActDummy)))
+                return DeserializeActDummy(xmlReader);
+            else
+                throw new NotImplementedException($"{nameof(ActXMLSerializer)} implementation for type {xmlReader.Name} is not implemented yet.");
+        }
+
+        private ActDummy DeserializeActDummy(XmlReader xmlReader)
+        {
+            if (xmlReader.NodeType != XmlNodeType.Element)
+                throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
+            if (!string.Equals(xmlReader.Name, nameof(ActDummy)))
+                throw new Exception($"Expected element {nameof(ActDummy)} but found {xmlReader.Name}.");
+
+            ActDummy actDummy = new();
+
+            for (int attrIndex = 0; attrIndex < xmlReader.AttributeCount; attrIndex++)
+            {
+                xmlReader.MoveToAttribute(attrIndex);
+                SetActDummyPropertyFromAttribute(actDummy, attributeName: xmlReader.Name, attributeValue: xmlReader.Value);
+            }
+            xmlReader.MoveToElement();
+
+            int startDepth = xmlReader.Depth;
+            while (xmlReader.Read())
+            {
+                bool reachedEndOfFile = xmlReader.EOF;
+                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(ActDummy));
+                bool reachedParent = xmlReader.Depth < startDepth;
+                if (reachedEndOfFile || reachedSibling || reachedParent)
+                    break;
+
+                if (xmlReader.NodeType != XmlNodeType.Element)
+                    continue;
+
+                if (xmlReader.Depth != startDepth + 1)
+                    continue;
+
+                if (string.Equals(xmlReader.Name, nameof(Act.InputValues)))
+                    actDummy.InputValues = new(DeserializeInputValuesElement(xmlReader));
+            }
+
+            return actDummy;
+        }
+
+        private IEnumerable<ActInputValue> DeserializeInputValuesElement(XmlReader xmlReader)
+        {
+            if (xmlReader.NodeType != XmlNodeType.Element)
+                throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
+            if (!string.Equals(xmlReader.Name, nameof(Act.InputValues)))
+                throw new Exception($"Expected element {nameof(Act.InputValues)} but found {xmlReader.Name}.");
+
+            List<ActInputValue> actInputValues = new();
+            ActInputValueXMLSerializer actInputValueXMLSerializer = new();
+
+            int startDepth = xmlReader.Depth;
+            while (xmlReader.Read())
+            {
+                bool reachedEndOfFile = xmlReader.EOF;
+                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(Act.InputValues));
+                bool reachedParent = xmlReader.Depth < startDepth;
+                if (reachedEndOfFile || reachedSibling || reachedParent)
+                    break;
+
+                if (xmlReader.NodeType != XmlNodeType.Element)
+                    continue;
+
+                if (xmlReader.Depth != startDepth + 1)
+                    continue;
+
+                ActInputValue actInputValue = actInputValueXMLSerializer.Deserialize(xmlReader);
+                actInputValues.Add(actInputValue);
+            }
+
+            return actInputValues;
         }
     }
 }

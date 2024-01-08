@@ -1,4 +1,7 @@
-﻿using GingerCore.Platforms;
+﻿using GingerCore;
+using GingerCore.Platforms;
+using LiteDB;
+using Org.BouncyCastle.Asn1.Cms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,14 +36,47 @@ namespace RepositorySerializerBenchmarks.Enhancements
         {
             TargetApplication targetApplication = new();
 
-            foreach(XmlAttribute attribute in targetApplicationElement.Attributes)
+            foreach (XmlAttribute attribute in targetApplicationElement.Attributes)
+                SetTargetApplicationPropertyFromAttribute(targetApplication, attribute.Name, attribute.Value);
+
+            return targetApplication;
+        }
+
+        private void SetTargetApplicationPropertyFromAttribute(TargetApplication targetApplication, string attributeName, string attributeValue)
+        {
+            if (string.Equals(attributeName, nameof(TargetApplication.AppName)))
+                targetApplication.AppName = attributeValue;
+            else if (string.Equals(attributeName, nameof(TargetApplication.Guid)))
+                targetApplication.Guid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(TargetApplication.ParentGuid)))
+                targetApplication.ParentGuid = Guid.Parse(attributeValue);
+        }
+
+        public TargetApplication Deserialize(XmlReader xmlReader)
+        {
+            if (xmlReader.NodeType != XmlNodeType.Element)
+                throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
+            if (!string.Equals(xmlReader.Name, nameof(TargetApplication)))
+                throw new Exception($"Expected element {nameof(TargetApplication)} but found {xmlReader.Name}.");
+
+            TargetApplication targetApplication = new();
+
+            for (int attrIndex = 0; attrIndex < xmlReader.AttributeCount; attrIndex++)
             {
-                if (string.Equals(attribute.Name, nameof(TargetApplication.AppName)))
-                    targetApplication.AppName = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(TargetApplication.Guid)))
-                    targetApplication.Guid = Guid.Parse(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(TargetApplication.ParentGuid)))
-                    targetApplication.ParentGuid = Guid.Parse(attribute.Value);
+                xmlReader.MoveToAttribute(attrIndex);
+                SetTargetApplicationPropertyFromAttribute(targetApplication, attributeName: xmlReader.Name, attributeValue: xmlReader.Value);
+            }
+            xmlReader.MoveToElement();
+
+            int startDepth = xmlReader.Depth;
+            while (xmlReader.Read())
+            {
+                bool reachedEndOfFile = xmlReader.EOF;
+                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(TargetApplication));
+                bool reachedParent = xmlReader.Depth < startDepth;
+                if (reachedEndOfFile || reachedSibling || reachedParent)
+                    break;
+
             }
 
             return targetApplication;

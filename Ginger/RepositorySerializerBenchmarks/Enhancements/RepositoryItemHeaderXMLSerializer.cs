@@ -1,4 +1,6 @@
 ﻿using Amdocs.Ginger.Repository;
+using GingerCore;
+using Org.BouncyCastle.Asn1.Cms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,26 +47,48 @@ namespace RepositorySerializerBenchmarks.Enhancements
         {
             RepositoryItemHeader repositoryItemHeader = new();
 
-            foreach(XmlAttribute attribute in repositoryItemHeaderElement.Attributes)
-            {
-                if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.ItemGuid)))
-                    repositoryItemHeader.ItemGuid = Guid.Parse(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.ItemType)))
-                    repositoryItemHeader.ItemType = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.CreatedBy)))
-                    repositoryItemHeader.CreatedBy = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.Created)))
-                    repositoryItemHeader.Created = DateTime.ParseExact(attribute.Value, "yyyyMMddHHmm", provider: null);
-                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.GingerVersion)))
-                    repositoryItemHeader.GingerVersion = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.Version)))
-                    repositoryItemHeader.Version = int.Parse(attribute.Value);
-                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.LastUpdateBy)))
-                    repositoryItemHeader.LastUpdateBy = attribute.Value;
-                else if (string.Equals(attribute.Name, nameof(RepositoryItemHeader.LastUpdate)))
-                    repositoryItemHeader.LastUpdate = DateTime.ParseExact(attribute.Value, "yyyyMMddHHmm", provider: null);
-            }
+            foreach (XmlAttribute attribute in repositoryItemHeaderElement.Attributes)
+                SetRepositoryItemHeaderPropertyFromAttribute(repositoryItemHeader, attribute.Name, attribute.Value);
 
+            return repositoryItemHeader;
+        }
+
+        private void SetRepositoryItemHeaderPropertyFromAttribute(RepositoryItemHeader repositoryItemHeader, string attributeName, string attributeValue)
+        {
+            if (string.Equals(attributeName, nameof(RepositoryItemHeader.ItemGuid)))
+                repositoryItemHeader.ItemGuid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(RepositoryItemHeader.ItemType)))
+                repositoryItemHeader.ItemType = attributeValue;
+            else if (string.Equals(attributeName, nameof(RepositoryItemHeader.CreatedBy)))
+                repositoryItemHeader.CreatedBy = attributeValue;
+            else if (string.Equals(attributeName, nameof(RepositoryItemHeader.Created)))
+                repositoryItemHeader.Created = DateTime.ParseExact(attributeValue, "yyyyMMddHHmm", provider: null);
+            else if (string.Equals(attributeName, nameof(RepositoryItemHeader.GingerVersion)))
+                repositoryItemHeader.GingerVersion = attributeValue;
+            else if (string.Equals(attributeName, nameof(RepositoryItemHeader.Version)))
+                repositoryItemHeader.Version = int.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(RepositoryItemHeader.LastUpdateBy)))
+                repositoryItemHeader.LastUpdateBy = attributeValue;
+            else if (string.Equals(attributeName, nameof(RepositoryItemHeader.LastUpdate)))
+                repositoryItemHeader.LastUpdate = DateTime.ParseExact(attributeValue, "yyyyMMddHHmm", provider: null);
+        }
+
+        public RepositoryItemHeader Deserialize(XmlReader xmlReader)
+        {
+            if (xmlReader.NodeType != XmlNodeType.Element)
+                throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
+            if (!string.Equals(xmlReader.Name, HeaderXMLElementName))
+                throw new Exception($"Expected element {HeaderXMLElementName} but found {xmlReader.Name}.");
+
+            RepositoryItemHeader repositoryItemHeader = new();
+
+            for (int attrIndex = 0; attrIndex < xmlReader.AttributeCount; attrIndex++)
+            {
+                xmlReader.MoveToAttribute(attrIndex);
+                SetRepositoryItemHeaderPropertyFromAttribute(repositoryItemHeader, attributeName: xmlReader.Name, attributeValue: xmlReader.Value);
+            }
+            xmlReader.MoveToElement();
+            
             return repositoryItemHeader;
         }
     }

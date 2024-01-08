@@ -17,7 +17,10 @@ namespace RepositorySerializerBenchmarks.Benchmarks
     {
         public SerializationBenchmarkConfig()
         {
-
+            SummaryStyle =
+                BenchmarkDotNet.Reports.SummaryStyle.Default
+                .WithTimeUnit(Perfolizer.Horology.TimeUnit.Millisecond)
+                .WithSizeUnit(BenchmarkDotNet.Columns.SizeUnit.MB);
         }
     }
 
@@ -46,14 +49,14 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         }
 
         [Benchmark(Baseline = true)]
-        public void NewRepositorySerializer()
+        public void Old()
         {
             foreach (RepositoryItemBase repositoryItemBase in TestData)
                 _newRepositorySerializer.SerializeToString(repositoryItemBase);
         }
 
         [Benchmark]
-        public void BetterRepositorySerializer()
+        public void New()
         {
             foreach (RepositoryItemBase repositoryItemBase in TestData)
                 _betterRepositorySerializer.Serialize(repositoryItemBase);
