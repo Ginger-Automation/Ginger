@@ -105,7 +105,7 @@ namespace RepositorySerializerBenchmarks.Enhancements
 
             foreach(XmlElement childElement in businessFlowElement.ChildNodes.Cast<XmlElement>())
             {
-                if(string.Equals(childElement.Name, nameof(BusinessFlow.Activities)) && LazyLoad)
+                if(string.Equals(childElement.Name, nameof(BusinessFlow.Activities)) && !LazyLoad)
                 {
                     ActivityXMLSerializer activityXMLSerializer = new();
                     List<Activity> activities = new();
@@ -116,7 +116,7 @@ namespace RepositorySerializerBenchmarks.Enhancements
                     }
                     businessFlow.Activities = new(activities);
                 }
-                else if(string.Equals(childElement.Name, nameof(BusinessFlow.ActivitiesGroups)) && LazyLoad)
+                else if(string.Equals(childElement.Name, nameof(BusinessFlow.ActivitiesGroups)) && !LazyLoad)
                 {
                     ActivitiesGroupXMLSerializer activitiesGroupXMLSerializer = new();
                     List<ActivitiesGroup> activitiesGroups = new();
@@ -127,7 +127,7 @@ namespace RepositorySerializerBenchmarks.Enhancements
                     }
                     businessFlow.ActivitiesGroups = new(activitiesGroups);
                 }
-                else if(string.Equals(childElement.Name, nameof(BusinessFlow.TargetApplications)) && LazyLoad)
+                else if(string.Equals(childElement.Name, nameof(BusinessFlow.TargetApplications)) && !LazyLoad)
                 {
                     TargetApplicationXMLSerializer targetApplicationXMLSerializer = new();
                     List<TargetApplication> targetApplications = new();
@@ -138,7 +138,7 @@ namespace RepositorySerializerBenchmarks.Enhancements
                     }
                     businessFlow.TargetApplications = new(targetApplications);
                 }
-                else if(string.Equals(childElement.Name, nameof(BusinessFlow.Variables)) && LazyLoad)
+                else if(string.Equals(childElement.Name, nameof(BusinessFlow.Variables)) && !LazyLoad)
                 {
                     VariableXMLSerializer variableXMLSerializer = new();
                     List<VariableBase> variables = new();
