@@ -27,11 +27,11 @@ jobs:
             - name: Make Ginger Runtime file executable 
               run: | 
                   ls -altr
-                  find ./Ginger/GingerRuntime/bin/Release/net7.0/linux-x64/selenium-manager -type f -print0 | xargs -0 chmod +x
+                  find ./Ginger/GingerRuntime/bin/Release/net8.0/linux-x64/selenium-manager -type f -print0 | xargs -0 chmod +x
    
             -   uses: sibiraj-s/action-archiver@v1
                 with:
-                  path: './Ginger/GingerRuntime/bin/Release/net7.0/linux-x64'
+                  path: './Ginger/GingerRuntime/bin/Release/net8.0/linux-x64'
                   format: tar
                   gzip: true
                   output: ./Runtime/GingerRuntime.tar.gz
@@ -79,13 +79,13 @@ jobs:
                         true       
 
             -   name: 'delete Help\Library'
-                run: rmdir /s /q Ginger\Ginger\bin\Release\net7.0-windows\Help\Library
+                run: rmdir /s /q Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Help\Library
                 shell: cmd
                 
             -   name: 'add help Library'
                 shell: cmd
                 run: |
-                    cd Ginger\Ginger\bin\Release\net7.0-windows\Help
+                    cd Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\Help
                     git clone https://github.com/Ginger-Automation/Ginger-Web-Help.git
                     move Ginger-Web-Help\docs .
                     rename docs Library
@@ -93,7 +93,7 @@ jobs:
 
             -   uses: nadeemjazmawe/Sign-action-signtool.exe@v1.0.beta1
                 with: 
-                  Directorypath: 'D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net7.0-windows\'   
+                  Directorypath: 'D:\a\Ginger\Ginger\Ginger\Ginger\bin\Release\net8.0-windows10.0.17763.0\'   
                   certificate: ${{ secrets.PEM }}
                   cert-password: ${{ secrets.PEM_PASS }}
                   

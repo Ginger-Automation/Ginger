@@ -22,13 +22,13 @@ jobs:
   steps:
   
 # ------------------------------------------------------------------------------------------------------
-# installs version 7.0.x latest
+# installs version 8.0.100 latest
 # ------------------------------------------------------------------------------------------------------  
   - task: UseDotNet@2
-    displayName: 'Use .NET Core sdk 7.0.x'
+    displayName: 'Use .NET Core sdk 8.0.100'
     inputs:
       packageType: sdk
-      version: 7.0.x
+      version: 8.0.100
       installationPath: $(Agent.ToolsDirectory)/dotnet
 
 
