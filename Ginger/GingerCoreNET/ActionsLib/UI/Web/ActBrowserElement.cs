@@ -43,6 +43,7 @@ namespace GingerCore.Actions
             public static string ImplicitWait = "ImplicitWait";
             public static string URLSrc = "URLSrc";
             public static string PomGUID = "PomGUID";
+            public static string BlockedUrls = "sBlockedUrls";
         }
 
         public override string ActionDescription { get { return "Browser Action"; } }
@@ -174,7 +175,11 @@ namespace GingerCore.Actions
             [EnumValueDescription("Get Network Logs")]
             GetNetworkLog,
             [EnumValueDescription("Stop Monitoring Network Logs")]
-            StopMonitoringNetworkLog
+            StopMonitoringNetworkLog,
+            [EnumValueDescription("Set Blocked Urls")]
+            SetBlockedUrls,
+            [EnumValueDescription("Unblock Urls")]
+            UnblockeUrls
         }
 
         //TODO: For ActBroswer ObjectLocatrosConfigNeeded is false 
@@ -386,9 +391,9 @@ namespace GingerCore.Actions
 
         public enum eMonitorUrl
         {
-            [EnumValueDescription("All URLs")]
+            [EnumValueDescription("All")]
             AllUrl,
-            [EnumValueDescription("Selected URLs")]
+            [EnumValueDescription("Specific URLs")]
             SelectedUrl,
         }
 
@@ -403,6 +408,19 @@ namespace GingerCore.Actions
 
         [IsSerializedForLocalRepository]
         public ObservableList<ActInputValue> UpdateOperationInputValues = new ObservableList<ActInputValue>();
+        public string sBlockedUrls
+        {
+            get
+            {
+                string value = GetOrCreateInputParam(nameof(sBlockedUrls)).Value;
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(sBlockedUrls), value);
+                OnPropertyChanged(nameof(sBlockedUrls));
+            }
+        }
 
     }
 }

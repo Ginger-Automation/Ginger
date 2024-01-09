@@ -59,7 +59,8 @@ namespace Amdocs.Ginger.Common
         GingerLoadingInfo,
         StaticStatusMessage, StaticStatusProcess, PasteProcess, CreatingBackupProcess,
         NewVersionAvailable, CleaningLegacyActions, PublishingToCentralDB,
-        ExportingToBPMNFile
+        ExportingToBPMNFile,
+        ExportingToBPMNZIP
     }
 
     public static class StatusMsgsPool
@@ -123,6 +124,7 @@ namespace Amdocs.Ginger.Common
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExportItemToALM, new StatusMsg(eStatusMsgType.PROCESS, "Exporting to ALM", "Exporting the item: '{0}'"));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ALMTestSetMap, new StatusMsg(eStatusMsgType.PROCESS, "Mapping To ALM Wizard upload", "Prepares 'Map To ALM' Wizard data."));
             Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExportingToBPMNFile, new StatusMsg(eStatusMsgType.PROCESS, "Exporting BPMN", "Exporting BPMN File"));
+            Reporter.StatusMsgsPool.Add(eStatusMsgKey.ExportingToBPMNZIP, new StatusMsg(eStatusMsgType.PROCESS, "Exporting BPMN", "Exporting as Otoma Use Case Zip file"));
             #endregion Import/Export Messages
 
             #region BusinessFlows Messages

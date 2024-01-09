@@ -29,7 +29,9 @@ using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.BusinessFlowPages
 {
@@ -72,12 +74,20 @@ namespace Ginger.BusinessFlowPages
 
             //List Items
             ActivitiesListViewHelper activityListItemInfo = new ActivitiesListViewHelper(mContext, mPageViewMode);
+            
             activityListItemInfo.ActivityListItemEvent += ActivityListItemInfo_ActivityListItemEvent;
+
+
             xActivitiesListView.SetDefaultListDataTemplate(activityListItemInfo);
 
             xActivitiesListView.PreviewDragItem += ActivitiesListView_PreviewDragItem;
             xActivitiesListView.ItemDropped += ActivitiesListView_ItemDropped;
             xActivitiesListView.SameFrameItemDropped += ActivitiesListView_SameFrameItemDropped;
+
+
+
+
+
 
             // Disable ScrollViewer's CanContentScroll property for smooth scrolling 
             xActivitiesListView.List.SetValue(ScrollViewer.CanContentScrollProperty, false);

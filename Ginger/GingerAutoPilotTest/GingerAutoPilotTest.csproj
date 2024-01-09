@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
 
     <ApplicationIcon />
@@ -25,7 +25,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
-    <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -16,7 +16,7 @@
             Remove this element if your application requires this virtualization for backwards
             compatibility.
         -->
-        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel level="highestAvailable" uiAccess="false" />
       </requestedPrivileges>
       <applicationRequestMinimum>
         <PermissionSet class="System.Security.PermissionSet" version="1" Unrestricted="true" ID="Custom" SameSite="site" />

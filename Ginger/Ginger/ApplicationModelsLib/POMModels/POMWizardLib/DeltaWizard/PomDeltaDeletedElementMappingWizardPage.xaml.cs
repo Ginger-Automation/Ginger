@@ -26,6 +26,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
 namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
@@ -89,7 +90,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
             xDeletedElementsMappingGrid.btnRefresh.Visibility = Visibility.Visible;
             xDeletedElementsMappingGrid.btnRefresh.AddHandler(Button.ClickEvent, new RoutedEventHandler(ResetMappingElementInfo));
 
-            xDeletedElementsMappingGrid.Grid.SelectionChanged += Grid_SelectionChanged;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xDeletedElementsMappingGrid.Grid, eventName: nameof(Selector.SelectionChanged), handler: Grid_SelectionChanged);
         }
 
         private void Grid_SelectionChanged(object sender, SelectionChangedEventArgs e)

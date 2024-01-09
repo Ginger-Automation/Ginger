@@ -33,6 +33,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using static GingerCore.Actions.Common.ActUIElement;
@@ -73,6 +74,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ShowPlatformSpecificPage();
             ShowControlSpecificPage();
             ElementLocateByComboBox.SelectionChanged += ElementLocateByComboBox_SelectionChanged;
+            
+
         }
 
         private void BindElementTypeComboBox()
@@ -163,7 +166,6 @@ namespace Ginger.Actions._Common.ActUIElementLib
             ElementActionComboBox.BindControl(mAction, nameof(ActUIElement.ElementAction), mElementActionsList);
             ElementActionComboBox.SelectedValue = mAction.ElementAction;//need to fix binding to avoid it
             ElementActionComboBox.SelectionChanged += ElementActionComboBox_SelectionChanged;
-
             if (mElementActionsList.Count == 0)
             {
                 mAction.ElementAction = eElementAction.Unknown;

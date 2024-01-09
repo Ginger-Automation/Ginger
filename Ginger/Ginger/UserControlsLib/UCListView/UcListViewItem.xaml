@@ -17,12 +17,12 @@
         <Border.Style>
             <Style TargetType="Border">
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
                         <Setter Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
                         <Setter Property="BorderThickness" Value="0,3,0,0"/>
                         <Setter Property="CornerRadius" Value="10,10,0,0"/>
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
                         <Setter Property="BorderBrush" Value="LightGray"/>
                         <Setter Property="BorderThickness" Value="0,1,0,0"/>
                         <Setter Property="CornerRadius" Value="9,10,0,0"/>
@@ -32,9 +32,6 @@
         </Border.Style>
 
         <Border x:Name="xMainBorder" BorderThickness="1,0,1,1" CornerRadius="10,10,10,10" BorderBrush="LightGray" Background="White">
-            <!--<Border.Effect>
-                <DropShadowEffect BlurRadius="5" Direction ="180" ShadowDepth ="1" Color ="LightGray"/>
-            </Border.Effect>-->
             <Grid x:Name="xListItemGrid" Background="Transparent" MouseLeftButtonDown="XListItemGrid_MouseLeftButtonDown" MouseEnter="XListItemGrid_MouseEnter" MouseLeave="XListItemGrid_MouseLeave">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="25"/>
@@ -55,11 +52,11 @@
                             <Setter Property="BorderThickness" Value="0.5"/>
                             <Setter Property="CornerRadius" Value="7,0,10,0"/>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
                                     <Setter Property="Background" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
                                     <Setter Property="BorderBrush" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
                                     <Setter Property="Background" Value="Transparent"/>
                                     <Setter Property="BorderBrush" Value="Transparent"/>
                                 </DataTrigger>
@@ -75,11 +72,11 @@
                                 <Setter Property="FontSize" Value="12"/>
                                 <Setter Property="FontWeight" Value="Bold"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
                                         <Setter Property="Foreground" Value="White"/>
                                         <Setter Property="Background" Value="{StaticResource $amdocsLogoLinarGradientBrush}"/>
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
                                         <Setter Property="Foreground" Value="{StaticResource $PrimaryColor_Black}"/>
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -112,11 +109,11 @@
                                 <Setter Property="Margin" Value="2,0,0,0"/>
                                 <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
                                         <Setter Property="FontWeight" Value="Bold"/>
                                         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
                                     </DataTrigger>
-                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
                                         <Setter Property="FontWeight" Value="Normal"/>
                                         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
                                     </DataTrigger>

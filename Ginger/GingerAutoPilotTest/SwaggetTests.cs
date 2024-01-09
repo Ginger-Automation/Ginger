@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.SwaggerApi;
 using Amdocs.Ginger.Repository;
+using GingerCore.GeneralLib;
 using GingerTestHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NuGet.Frameworks;
@@ -111,7 +112,7 @@ namespace UnitTests.NonUITests.AutoPilot
 
             RequestToTest = requests.Where(x => x.Name == @"Add a new pet to the store-JSON").ElementAt(0);
             Assert.AreEqual(8, RequestToTest.ReturnValues.Count(), "SwaggerCheckResponseParameterCount");
-            Assert.AreEqual("/api/v3/pet", RequestToTest.EndpointURL);
+            Assert.AreEqual("/pet", RequestToTest.EndpointURL);
 
             RequestToTest = requests.Where(x => x.Name == @"Place an order for a pet-JSON").ElementAt(0);
             requestBody = @"{" + Environment.NewLine + "\"id\": <ID>," + Environment.NewLine + "\"petId\": <PETID>," + Environment.NewLine + "\"quantity\": <QUANTITY>," + Environment.NewLine + "\"shipDate\": \"<SHIPDATE>\"," + Environment.NewLine + "\"status\": \"<STATUS>\"," + Environment.NewLine + "\"complete\": <COMPLETE>" + Environment.NewLine + "}";
@@ -176,6 +177,34 @@ namespace UnitTests.NonUITests.AutoPilot
             Assert.AreEqual(requestBody.Replace(" ", ""), RequestToTest.RequestBody.Replace(" ", ""), "CheckResponseBody");
 
 
+        }
+
+        [TestMethod]
+        [Timeout(60000)]
+        public void ApiModelsOptionalValuesModelParamTest()
+        {
+            //Arrange
+            SwaggerParser parserForBillingAccount = new SwaggerParser();
+            string createPaymentProfileFileName = TestResources.GetTestResourcesFile(@"Swagger" + Path.DirectorySeparatorChar + "petstore_versionthree.json");
+            ObservableList<ApplicationAPIModel> requests = new ObservableList<ApplicationAPIModel>();
+            ObservableList<OptionalValue> optionalValueContainer;
+            ApplicationAPIModel RequestToTest;
+
+            //Act   
+            requests = parserForBillingAccount.ParseDocument(createPaymentProfileFileName, requests);
+            RequestToTest = requests.Where(x => x.Name == @"Create user-JSON").ElementAt(0);
+            optionalValueContainer = RequestToTest.AppModelParameters.ElementAt(4).OptionalValuesList;
+
+            //Assert
+            Assert.IsTrue(optionalValueContainer.Any(item => item.Value == "john@email.com"));
+
+
+            //Act
+            RequestToTest = requests.Where(x => x.Name == @"Place an order for a pet-XML").ElementAt(0);
+            optionalValueContainer = RequestToTest.AppModelParameters.ElementAt(1).OptionalValuesList;
+
+            //Assert
+            Assert.IsTrue(optionalValueContainer.Any(item => item.Value == "198772"));
         }
     }
 }

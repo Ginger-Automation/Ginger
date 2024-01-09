@@ -1,6 +1,24 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2023 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
-using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using GingerCore;
 using GingerCore.Activities;
 using System;
@@ -21,17 +39,23 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Utils
         /// <exception cref="BPMNConversionException">If <see cref="ActivitiesGroup"/> is empty or no <see cref="Activity"/> is eligible for conversion.</exception>
         internal static IEnumerable<Activity> GetActivities(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade)
         {
+            IEnumerable<Activity> activities = GetActivitiesOrEmpty(activityGroup, solutionFacade);
+
+            if (!activities.Any())
+            {
+                throw new BPMNConversionException($"No eligible {GingerDicser.GetTermResValue(eTermResKey.Activity)} found for creating BPMN in {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} '{activityGroup.Name}'.\n\nHINT: Make sure {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} contains at least one active {GingerDicser.GetTermResValue(eTermResKey.Activity)}.");
+            }
+
+            return activities;
+        }
+
+        private static IEnumerable<Activity> GetActivitiesOrEmpty(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade)
+        {
             AttachIdentifiersToActivities(activityGroup, solutionFacade);
             IEnumerable<Activity> activities = activityGroup
                     .ActivitiesIdentifiers
                     .Select(identifier => identifier.IdentifiedActivity)
                     .Where(activity => activity != null && activity.Active);
-
-            if (!activities.Any())
-            {
-                throw new BPMNConversionException($"No eligible {GingerDicser.GetTermResValue(eTermResKey.Activity)} found for creating BPMN.");
-            }
-
             return activities;
         }
 
@@ -80,6 +104,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Utils
             }
 
             return activityInRepository;
+        }
+
+        internal static bool IsActive(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade)
+        {
+            return GetActivitiesOrEmpty(activityGroup, solutionFacade).All(activity => activity.Active);
         }
     }
 }

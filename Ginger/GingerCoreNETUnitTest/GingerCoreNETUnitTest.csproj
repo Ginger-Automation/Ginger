@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
 	  <IsPackable>false</IsPackable>
     <OutputType>Library</OutputType>
     <StartupObject />
@@ -86,14 +86,14 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.4.3" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.5.1" />
     <PackageReference Include="GingerTestHelper" Version="2.0.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.0" />
     <PackageReference Include="Moq" Version="4.20.69" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
-    <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

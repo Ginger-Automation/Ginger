@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Run;
+using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerWPF.DragDropLib;
 using GingerWPF.WizardLib;
@@ -32,6 +33,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.Repository
 {
@@ -140,9 +142,10 @@ namespace Ginger.Repository
 
         private void SetActivitiesRepositoryListView()
         {
-            xActivitiesRepositoryListView.ItemMouseDoubleClick += grdActivitiesRepository_grdMain_ItemMouseDoubleClick;
+            WeakEventManager<UcListView, EventArgs>.AddHandler(source: xActivitiesRepositoryListView, eventName: nameof(UcListView.ItemMouseDoubleClick), handler: grdActivitiesRepository_grdMain_ItemMouseDoubleClick);
             xActivitiesRepositoryListView.ItemDropped += grdActivitiesRepository_ItemDropped;
             xActivitiesRepositoryListView.PreviewDragItem += grdActivitiesRepository_PreviewDragItem;
+
             xActivitiesRepositoryListView.xTagsFilter.Visibility = Visibility.Visible;
         }
 
@@ -215,7 +218,7 @@ namespace Ginger.Repository
             {
                 Button addButton = new Button();
                 addButton.Content = "Add Selected";
-                addButton.Click += SendSelected;
+                WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: addButton, eventName: nameof(ButtonBase.Click), handler: SendSelected);
 
                 winButtons.Add(addButton);
                 xActivitiesRepositoryListView.AddHandler(DataGridRow.MouseDoubleClickEvent, new RoutedEventHandler(SendSelected));

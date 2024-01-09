@@ -41,15 +41,15 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             var activityMapper = dbConnector.GetMapper<LiteDbActivity>();
             var action = dbConnector.GetMapper<LiteDbAction>();
 
-            activityMapper.DbRef(rf => rf.ActionsColl, NameInDb<LiteDbAction>());
+            activityMapper.DbRef(rf => rf.AllActionsColl, NameInDb<LiteDbAction>());
 
-            agMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
+            agMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
 
             bfMapper.DbRef(rf => rf.ActivitiesGroupsColl, NameInDb<LiteDbActivityGroup>());
 
-            bfMapper.DbRef(rf => rf.ActivitiesColl, NameInDb<LiteDbActivity>());
+            bfMapper.DbRef(rf => rf.AllActivitiesColl, NameInDb<LiteDbActivity>());
 
-            runnerMapper.DbRef(rf => rf.BusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
+            runnerMapper.DbRef(rf => rf.AllBusinessFlowsColl, NameInDb<LiteDbBusinessFlow>());
 
             runSetMapper.DbRef(rf => rf.RunnersColl, NameInDb<LiteDbRunner>());
         }
@@ -65,17 +65,17 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             List<LiteDbRunSet> filterData = null;
             if (!string.IsNullOrEmpty(runsetId))
             {
-                filterData = result.IncludeAll().Find(a => a._id.ToString() == runsetId).ToList();
+                filterData = LiteDbRunSet.IncludeAllReferences(result).Find(a => a._id.Equals(new ObjectId(runsetId))).ToList();
             }
             else
             {
-                runsetId = result.IncludeAll().Max(x => x._id).AsString;
-                filterData = result.IncludeAll().Find(a => a._id.ToString() == runsetId).ToList();
+                ObjectId runsetObjectID = LiteDbRunSet.IncludeAllReferences(result).Max(x => x._id);
+                filterData = LiteDbRunSet.IncludeAllReferences(result).Find(a => a._id.Equals(runsetObjectID)).ToList();
             }
             return filterData.Last();
         }
 
-        public List<T> FilterCollection<T>(LiteCollection<T> baseColl, Query query)
+        public List<T> FilterCollection<T>(ILiteCollection<T> baseColl, Query query)
         {
             return dbConnector.FilterCollection(baseColl, query);
         }
@@ -85,32 +85,32 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             return dbConnector.DeleteDocumentByLiteDbRunSet(liteDbRunSet);
         }
 
-        public LiteCollection<LiteDbReportBase> GetObjectLiteData(string reportLevelName)
+        public ILiteCollection<LiteDbReportBase> GetObjectLiteData(string reportLevelName)
         {
             return dbConnector.GetCollection<LiteDbReportBase>(reportLevelName);
         }
-        public LiteCollection<LiteDbRunSet> GetRunSetLiteData()
+        public ILiteCollection<LiteDbRunSet> GetRunSetLiteData()
         {
             return dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
         }
-        public LiteCollection<LiteDbRunner> GetRunnerLiteData()
+        public ILiteCollection<LiteDbRunner> GetRunnerLiteData()
         {
             return dbConnector.GetCollection<LiteDbRunner>(NameInDb<LiteDbRunner>());
         }
-        public LiteCollection<LiteDbBusinessFlow> GetBfLiteData()
+        public ILiteCollection<LiteDbBusinessFlow> GetBfLiteData()
         {
             return dbConnector.GetCollection<LiteDbBusinessFlow>(NameInDb<LiteDbBusinessFlow>());
         }
 
-        private LiteCollection<LiteDbActivityGroup> GetActGrLiteData()
+        private ILiteCollection<LiteDbActivityGroup> GetActGrLiteData()
         {
             return dbConnector.GetCollection<LiteDbActivityGroup>(NameInDb<LiteDbActivityGroup>());
         }
-        public LiteCollection<LiteDbActivity> GetActivitiesLiteData()
+        public ILiteCollection<LiteDbActivity> GetActivitiesLiteData()
         {
             return dbConnector.GetCollection<LiteDbActivity>(NameInDb<LiteDbActivity>());
         }
-        public LiteCollection<LiteDbAction> GetActionsLiteData()
+        public ILiteCollection<LiteDbAction> GetActionsLiteData()
         {
             return dbConnector.GetCollection<LiteDbAction>(NameInDb<LiteDbAction>());
         }
@@ -175,7 +175,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 item.Name = ($"name.{a.ToString()}");
                 item.Description = ($"description.{a.ToString()}");
                 item.RunStatus = "run";
-                item.BusinessFlowsColl = bfsData;
+                item.AllBusinessFlowsColl = bfsData;
                 data.Add(item);
             }
             return data;
@@ -195,7 +195,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 item.Elapsed = 17;
                 item.RunStatus = "run";
                 item.ActivitiesGroupsColl = acGrpData;
-                item.ActivitiesColl = activitiesColl;
+                item.AllActivitiesColl = activitiesColl;
                 data.Add(item);
             }
             return data;
@@ -211,7 +211,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 item.Description = ($"description.{a.ToString()}");
                 item.GUID = Guid.NewGuid();
                 item.RunStatus = "run";
-                item.ActivitiesColl = activitiesColl;
+                item.AllActivitiesColl = activitiesColl;
                 data.Add(item);
             }
             return data;
@@ -230,7 +230,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 item.EndTimeStamp = DateTime.Today;
                 item.Elapsed = 17;
                 item.RunStatus = "run";
-                item.ActionsColl = actionsColl;
+                item.AllActionsColl = actionsColl;
                 data.Add(item);
             }
             return data;

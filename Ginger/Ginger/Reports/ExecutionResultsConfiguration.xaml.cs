@@ -100,6 +100,8 @@ namespace Ginger.Reports
             xPublishLogToCentralDBRadioButton.Init(typeof(ExecutionLoggerConfiguration.ePublishToCentralDB),
                 xPublishLogToCentralDBRadioBtnPanel, _selectedExecutionLoggerConfiguration,
                 nameof(ExecutionLoggerConfiguration.PublishLogToCentralDB), PublishLogToCentralDBRadioButton_CheckedHandler);
+            xDeleteLocalDataRadioButton.Init(typeof(ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish), xDeleteLocalDataOnPublishPanel, _selectedExecutionLoggerConfiguration,nameof(ExecutionLoggerConfiguration.DeleteLocalDataOnPublish));
+
 
         }
 

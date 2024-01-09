@@ -104,7 +104,7 @@ namespace Ginger.Run
             grdExecutionsHistory.AddToolbarTool("@Open_16x16.png", "Open Execution Results Main Folder", new RoutedEventHandler(GetExecutionResultsFolder));
             grdExecutionsHistory.AddToolbarTool("@Delete_16x16.png", "Delete Selected Execution Results", new RoutedEventHandler(DeleteSelectedExecutionResults));
             grdExecutionsHistory.AddToolbarTool("@Trash_16x16.png", "Delete All Execution Results", new RoutedEventHandler(DeleteAllSelectedExecutionResults));
-            grdExecutionsHistory.RowDoubleClick += OpenExecutionResultsFolder;
+            WeakEventManager<ucGrid, RoutedEventArgs>.AddHandler(source: grdExecutionsHistory, eventName: nameof(ucGrid.RowDoubleClick), handler: OpenExecutionResultsFolder);
 
             if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
             {
@@ -253,8 +253,7 @@ namespace Ginger.Run
                 {
                     LiteDbManager dbManager = new LiteDbManager(executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
                     var result = dbManager.GetRunSetLiteData();
-                    List<LiteDbRunSet> filterData = null;
-                    filterData = result.IncludeAll().Find(a => a._id.ToString() == runSetReport.GUID).ToList();
+                    List<LiteDbRunSet> filterData = LiteDbRunSet.IncludeAllReferences(result).Find(a => a._id.Equals(new LiteDB.ObjectId(runSetReport.GUID))).ToList();
 
                     LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "GingerExecutionResults.db"));
                     dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0]);

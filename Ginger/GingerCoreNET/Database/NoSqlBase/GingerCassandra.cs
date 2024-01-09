@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace GingerCore.NoSqlBase
 {
@@ -163,7 +164,7 @@ namespace GingerCore.NoSqlBase
             return table;
         }
 
-        public override List<string> GetColumnList(string tablename)
+        public override  Task<List<string>> GetColumnList(string tablename)
         {
             Connect();
 
@@ -176,7 +177,7 @@ namespace GingerCore.NoSqlBase
             {
                 cols.Add(col.Name);
             }
-            return cols;
+            return Task.FromResult(cols);
         }
 
         private void Disconnect()

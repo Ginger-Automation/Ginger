@@ -104,7 +104,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 path = path.Replace(Match.ToString(), modal);
                 AAM.AppModelParameters.Add(new AppModelParameter(modal, Match.ToString() + "in url", "", "", new ObservableList<OptionalValue>()));
             }
-            AAM.EndpointURL = apidoc.BaseUrl + path;
+            AAM.EndpointURL =  path;
             AAM.APIType = ApplicationAPIUtils.eWebApiType.REST;
             AAM.Name = Operation.Summary;
             if (string.IsNullOrWhiteSpace(AAM.Name))
@@ -306,6 +306,29 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             return lstOptions;
         }
 
-        
+        public void SetOptionalValue(ObservableList<AppModelParameter> AppModelParameters, Dictionary<string, string> listExampleValues)
+        {
+            if (AppModelParameters.Count > 0)
+            {
+                foreach (var item in AppModelParameters)
+                {
+                    string parameterName = (item.ElementName.TrimStart('<', '{','[').TrimEnd('>', '}',']')).ToLower();
+
+                    if (!string.IsNullOrEmpty(parameterName) && listExampleValues.TryGetValue(parameterName, out string exampleValue))
+                    {
+                        ObservableList<OptionalValue> tempList = new ObservableList<OptionalValue>
+                        {
+                            new OptionalValue()
+                            {
+                                Value = exampleValue,
+                                IsDefault = true
+                            }
+                        };
+
+                        item.OptionalValuesList = tempList;
+                    }
+                }
+            }
+        }
     }
 }

@@ -28,7 +28,7 @@ namespace GingerCoreNETUnitTest.LiteDb
         public void ReadAndUpdateLiteDbData()
         {
             var bfLiteColl = dbConector.GetCollection<GingerBusinessFlow>("BusinessFlows");
-            var filterData = dbConector.FilterCollection(bfLiteColl, Query.Contains("Name", "bf name"));
+            var filterData = dbConector.FilterCollection(GingerBusinessFlow.IncludeAllReferences(bfLiteColl), Query.Contains("Name", "bf name"));
             filterData.ForEach(a => a.Name = a.Name + " Modified BF");
             dbConector.SetCollection(bfLiteColl, filterData);
             Assert.IsTrue(bfLiteColl.Count() > 0);
@@ -83,12 +83,12 @@ namespace GingerCoreNETUnitTest.LiteDb
 
         }
 
-        private LiteCollection<GingerBusinessFlow> GetBfLiteData()
+        private ILiteCollection<GingerBusinessFlow> GetBfLiteData()
         {
             return dbConector.GetCollection<GingerBusinessFlow>("BusinessFlows");
         }
 
-        private LiteCollection<GingerActvityGroup> GetActGrLiteData()
+        private ILiteCollection<GingerActvityGroup> GetActGrLiteData()
         {
             return dbConector.GetCollection<GingerActvityGroup>("ActivityGroups");
         }

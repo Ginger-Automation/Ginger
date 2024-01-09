@@ -22,8 +22,10 @@ using Ginger.SolutionCategories;
 using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib;
 using GingerCore.GeneralLib;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.SolutionWindows
 {
@@ -41,8 +43,9 @@ namespace Ginger.SolutionWindows
         {
             InitializeComponent();
 
+            string allProperties = string.Empty;
             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
-            UCEncryptionKey.UpdateKey.PreviewMouseDown += ReplaceKeyBtn_Click;
+            WeakEventManager<UIElement, RoutedEventArgs>.AddHandler(source: UCEncryptionKey.UpdateKey, eventName: nameof(UIElement.PreviewMouseDown), handler: ReplaceKeyBtn_Click);
 
             Init();
         }
@@ -114,11 +117,11 @@ namespace Ginger.SolutionWindows
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button SaveBtn = new Button();
             SaveBtn.Content = "Save";
-            SaveBtn.Click += new RoutedEventHandler(SaveBtn_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: SaveBtn, eventName: nameof(ButtonBase.Click), handler: SaveBtn_Click);
             winButtons.Add(SaveBtn);
             Button undoBtn = new Button();
             undoBtn.Content = "Undo & Close";
-            undoBtn.Click += new RoutedEventHandler(UndoBtn_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtn, eventName: nameof(ButtonBase.Click), handler: UndoBtn_Click);
             winButtons.Add(undoBtn);
             //Button replaceKeyBtn = new Button();
             //replaceKeyBtn.Content = "Update Key";
@@ -166,13 +169,13 @@ namespace Ginger.SolutionWindows
             ObservableList<Button> winButtons = new ObservableList<Button>();
             Button uSaveKeyBtn = new Button();
             uSaveKeyBtn.Content = "Ok";
-            uSaveKeyBtn.Click += new RoutedEventHandler(SaveKeyBtn_Click);
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: uSaveKeyBtn, eventName: nameof(ButtonBase.Click), handler: SaveKeyBtn_Click);
             winButtons.Add(uSaveKeyBtn);
             //Button replaceKeyBtn = new Button();
             //replaceKeyBtn.Content = "Update Key";
             //replaceKeyBtn.Click += new RoutedEventHandler(ReplaceKeyBtn_Click);
             //winButtons.Add(replaceKeyBtn);
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons, true, "Cancel", CloseBtn_Click);
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, "Solution Details", this, winButtons, true, "Cancel");
             return IsValidEncryptionKeyAdded;
         }
 
@@ -194,11 +197,6 @@ namespace Ginger.SolutionWindows
             ReplaceEncryptionKeyPage replaceEncryptionKeyPage = new ReplaceEncryptionKeyPage();
             _pageGenericWin.Close();
             IsValidEncryptionKeyAdded = replaceEncryptionKeyPage.ShowAsWindow(mSolution);
-        }
-
-        private void CloseBtn_Click(object sender, RoutedEventArgs e)
-        {
-            IsValidEncryptionKeyAdded = false;
         }
 
         private void SaveKeyBtn_Click(object sender, RoutedEventArgs e)

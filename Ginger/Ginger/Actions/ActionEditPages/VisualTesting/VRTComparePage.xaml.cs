@@ -27,9 +27,11 @@ using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.Actions.VisualTesting
 {
@@ -47,13 +49,13 @@ namespace Ginger.Actions.VisualTesting
             InitializeComponent();
             this.mAct = mAct;
             xVRTActionComboBox.Init(mAct.GetOrCreateInputParam(VRTAnalyzer.VRTAction, VRTAnalyzer.eVRTAction.Track.ToString()), typeof(VRTAnalyzer.eVRTAction), false);
-            xVRTActionComboBox.ComboBox.SelectionChanged += VRTAction_Changed;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xVRTActionComboBox.ComboBox, eventName: nameof(Selector.SelectionChanged), handler: VRTAction_Changed);
 
             xActionByComboBox.Init(mAct.GetOrCreateInputParam(VRTAnalyzer.ActionBy, VRTAnalyzer.eActionBy.Window.ToString()), typeof(VRTAnalyzer.eActionBy), false);
-            xActionByComboBox.ComboBox.SelectionChanged += ActionBy_Changed;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xActionByComboBox.ComboBox, eventName: nameof(Selector.SelectionChanged), handler: ActionBy_Changed);
 
             xVRTImageNameActionComboBox.Init(mAct.GetOrCreateInputParam(VRTAnalyzer.ImageNameBy, VRTAnalyzer.eImageNameBy.ActionName.ToString()), typeof(VRTAnalyzer.eImageNameBy), false);
-            xVRTImageNameActionComboBox.ComboBox.SelectionChanged += ImageNameBy_Changed;
+            WeakEventManager<Selector, SelectionChangedEventArgs>.AddHandler(source: xVRTImageNameActionComboBox.ComboBox, eventName: nameof(Selector.SelectionChanged), handler: ImageNameBy_Changed);
             xImageNameUCVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.ImageName, mAct.Description));
 
             InitLayout();
@@ -77,7 +79,8 @@ namespace Ginger.Actions.VisualTesting
             List<eLocateBy> LocateByList = mPlatform.GetPlatformUIElementLocatorsList();
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy, LocateByList);
             xLocateValueVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(Act.Fields.LocateValue));
-            mAct.PropertyChanged += mAct_PropertyChanged;
+            string allProperties = string.Empty;
+            PropertyChangedEventManager.AddHandler(source: mAct, handler: mAct_PropertyChanged, propertyName: allProperties);
             SetLocateValueControls();
         }
 

@@ -37,6 +37,8 @@ using System.Windows.Media;
 using static Ginger.Variables.InputVariableRule;
 using Amdocs.Ginger.CoreNET;
 using GingerCore.GeneralLib;
+using System.Collections.Specialized;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.Run
 {
@@ -64,11 +66,14 @@ namespace Ginger.Run
 
         private ProcessInputVariableRule processInputVariable;
 
-        public BusinessFlowRunConfigurationsPage(GingerRunner runner, BusinessFlow businessFlow)
+        private readonly General.eRIPageViewMode _viewMode;
+
+        public BusinessFlowRunConfigurationsPage(GingerRunner runner, BusinessFlow businessFlow, General.eRIPageViewMode viewMode)
         {
             mBusinessFlow = businessFlow;
             InitializeComponent();
 
+            _viewMode = viewMode;
             mWindowMode = eWindowMode.Configuration;
 
             mGingerRunner = runner;
@@ -92,13 +97,32 @@ namespace Ginger.Run
 
             LoadBusinessFlowcontrols(businessFlow);
             UpdateFlowControlTabVisual();
-            mBusinessFlow.BFFlowControls.CollectionChanged += BFFlowControls_CollectionChanged;            
+            CollectionChangedEventManager.AddHandler(source: mBusinessFlow.BFFlowControls, handler: BFFlowControls_CollectionChanged);
+
+            bool editable = _viewMode != General.eRIPageViewMode.View && _viewMode != General.eRIPageViewMode.ViewAndExecute;
+            SetViewMode(editable);
+        }
+
+        private void SetViewMode(bool editable)
+        {
+            btnAutoCreateDescription.IsEnabled = editable;
+            RunDescritpion.IsEnabled = editable;
+            MandatoryBusinessFlowCB.IsEnabled = editable;
+            grdVariables.IsReadOnly = !editable;
+
+            Visibility visibility = editable ? Visibility.Visible : Visibility.Collapsed;
+            grdVariables.ToolsTray.Visibility = visibility;
+
+            if (!editable)
+            {
+                grdVariables.DisableGridColoumns();
+            }
         }
 
         private void LoadBusinessFlowcontrols(BusinessFlow businessFlow)
         {
             FlowControlFrame.NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden;
-            BusinessFlowRunFlowControlPage BFCP = new BusinessFlowRunFlowControlPage(mGingerRunner, businessFlow);
+            BusinessFlowRunFlowControlPage BFCP = new BusinessFlowRunFlowControlPage(mGingerRunner, businessFlow, _viewMode);
             FlowControlFrame.ClearAndSetContent(BFCP);
 
         }
@@ -386,10 +410,10 @@ namespace Ginger.Run
                 case eWindowMode.Configuration:
                     Button okBtn = new Button();
                     okBtn.Content = "Ok";
-                    okBtn.Click += new RoutedEventHandler(okBtn_Click);
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: okBtn_Click);
                     Button undoBtn = new Button();
                     undoBtn.Content = "Undo & Close";
-                    undoBtn.Click += new RoutedEventHandler(undoBtn_Click);
+                    WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: undoBtn, eventName: nameof(ButtonBase.Click), handler: undoBtn_Click);
                     ObservableList<Button> winButtons = new ObservableList<Button>();
                     winButtons.Add(okBtn);
                     winButtons.Add(undoBtn);

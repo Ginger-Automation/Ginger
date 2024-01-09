@@ -577,6 +577,7 @@ namespace Ginger.ApplicationModelsLib.APIModels.APIModelWizard
                 SwaggerParser swaggerParser = new SwaggerParser();
                 ObservableList<ApplicationAPIModel> swaggerList = new ObservableList<ApplicationAPIModel>();
                 swaggerList = swaggerParser.ParseDocument(fileName, swaggerList);
+                AddAPIModelWizard.InfoTitle = swaggerParser.getInfoTitle();
                 if (swaggerList == null || swaggerList.Count == 0)
                 {
                     return false;

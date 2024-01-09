@@ -1,6 +1,24 @@
-﻿using Amdocs.Ginger.Common.Repository;
+#region License
+/*
+Copyright © 2014-2023 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.CoreNET.BPMN.Conversion;
 using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
-using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using GingerCore;
 using System;
 using System.Collections.Generic;
@@ -27,6 +45,25 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Utils
             if (targetApp == null)
             {
                 throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found with name '{targetAppName}'");
+            }
+
+            return targetApp;
+        }
+
+        /// <summary>
+        /// Get <see cref="TargetBase"/> whose Guid matches the given <paramref name="targetAppGuid"/>.
+        /// </summary>
+        /// <param name="targetAppGuid">Guid of the <see cref="TargetBase"/> to search for.</param>
+        /// <returns><see cref="TargetBase"/> with Guid matching the given <paramref name="targetAppGuid"/>.</returns>
+        /// <exception cref="BPMNConversionException">If no <see cref="TargetBase"/> is found with Guid matching the given <paramref name="targetAppGuid"/>.</exception>
+        internal static TargetBase GetTargetApplicationByGuid(Guid targetAppGuid, ISolutionFacadeForBPMN solutionFacade)
+        {
+            IEnumerable<TargetBase> targetApplications = solutionFacade.GetTargetApplications();
+            TargetBase? targetApp = targetApplications.FirstOrDefault(targetApp => targetApp.Guid == targetAppGuid);
+
+            if (targetApp == null)
+            {
+                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} found with Guid '{targetAppGuid}'");
             }
 
             return targetApp;

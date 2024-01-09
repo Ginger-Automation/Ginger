@@ -26,6 +26,7 @@ using GingerCore;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,6 +46,7 @@ namespace Ginger.SolutionWindows
             InitializeComponent();
 
             mSolution = WorkSpace.Instance.Solution;
+            string allProperties = string.Empty;
             WorkSpace.Instance.PropertyChanged += WorkSpacePropertyChanged;
             CurrentItemToSave = mSolution;
 
@@ -76,8 +78,8 @@ namespace Ginger.SolutionWindows
             xTargetApplicationsGrid.SetAllColumnsDefaultView(view);
             xTargetApplicationsGrid.InitViewItems();
 
-            xTargetApplicationsGrid.Grid.PreparingCellForEdit += ApplicationGrid_PreparingCellForEdit;
-            xTargetApplicationsGrid.Grid.CellEditEnding += ApplicationGrid_CellEditEnding;
+            WeakEventManager<DataGrid, DataGridPreparingCellForEditEventArgs>.AddHandler(source: xTargetApplicationsGrid.Grid, eventName: nameof(DataGrid.PreparingCellForEdit), handler: ApplicationGrid_PreparingCellForEdit);
+            WeakEventManager<DataGrid, DataGridCellEditEndingEventArgs>.AddHandler(source: xTargetApplicationsGrid.Grid, eventName: nameof(DataGrid.CellEditEnding), handler: ApplicationGrid_CellEditEnding);
 
             xTargetApplicationsGrid.AddToolbarTool(Amdocs.Ginger.Common.Enums.eImageType.ID, "Copy selected item ID", CopySelectedItemID);
 
