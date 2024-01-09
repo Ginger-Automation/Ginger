@@ -1201,8 +1201,10 @@ namespace GingerCore.Drivers
 
         internal void AddScreenShot(Act act)
         {
-            Bitmap tempBmp = GetScreenShot();
-            act.AddScreenShot(tempBmp);
+            using (Bitmap tempBmp = GetScreenShot())
+            {
+                act.AddScreenShot(tempBmp);
+            }
         }
 
         internal void GotoURL(string p)

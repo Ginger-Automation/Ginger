@@ -2571,8 +2571,55 @@ private PayLoad TypeKeys(Component c,String Value) {
 		return PayLoad.OK("Done");
 	}
 
-	
+	private PayLoad ContextMenuClickComponent(final Component c) {
+		//Only For Table Cell Action
+		Runnable r = new Runnable() {
+			public void run() 
+			{
+				JComponent b = null;
+				if ((JComponent)c  != null ){
+					b = (JComponent)c;
+				}else{
+					GingerAgent.WriteLog("ContextMenuClickComponent: Component is null");
+					return;
+				}
+				if (popupMenu == null) {
+				    // Handled the case where there is no pop-up menu
+					GingerAgent.WriteLog("ContextMenuClickComponent: Context Menu Not Found");
+					return;
+				}
+				Component[] menuItems = popupMenu.getComponents();
+				for (int i = 0; i < menuItems.length; i++) {
+					JMenuItem menuItem = (JMenuItem) menuItems[i];
+					if (mValue != null && mValue.equals(menuItem.getText())) {
+						menuItem.doClick();
+						GingerAgent.WriteLog("ContextMenuClickComponent: Value ('"+ mValue + "') Clicked");
+						break;
+					}
+				}   
+			}
+		};
+		if (SwingUtilities.isEventDispatchThread())
+		{
+			GingerAgent.WriteLog("ContextMenuClickComponent: Running in EDT");
+			r.run();
+		}
+		else
+		{
+			GingerAgent.WriteLog("ContextMenuClickComponent: Scheduling to run in EDT");
+			try {
+				SunToolkit.executeOnEDTAndWait(c, r);
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		return PayLoad.OK("Done");	
+		
+}
 
+	
 	private PayLoad HandleWindowAction(String locateBy, String locateValue,
 			String controlAction) 
 	{		
@@ -4756,6 +4803,7 @@ private PayLoad SetComponentFocus(Component c)
 				|| controlAction.equalsIgnoreCase("SendKeys")
 				|| controlAction.equalsIgnoreCase("IsChecked")
 				|| controlAction.equalsIgnoreCase("RightClick")
+				|| controlAction.equalsIgnoreCase("ContextMenuClick")
 			) 
 			
 		{
@@ -5197,6 +5245,11 @@ private PayLoad SetComponentFocus(Component c)
 			rect.y += rect.height/2;
 			return RightClickComponent(CurrentTable, rect.x + "," + rect.y,1);
 
+		}
+		else if(controlAction.equals("ContextMenuClick"))
+		{
+			GingerAgent.WriteLog("ContextMenuClick - CellComponent ");
+			return ContextMenuClickComponent(CurrentTable);
 		}
 		else if(controlAction.equals("IsChecked"))
 		{
