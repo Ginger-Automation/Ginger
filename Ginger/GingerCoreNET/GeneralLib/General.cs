@@ -475,10 +475,11 @@ namespace GingerCoreNET.GeneralLib
 
         public static string CreateTempTextFile(string content)
         {
+            byte[] bytes = null;
             try
             {
                 string filePath = System.IO.Path.GetTempFileName();
-                byte[] bytes = System.Text.Encoding.Default.GetBytes(content);
+                bytes = System.Text.Encoding.Default.GetBytes(content);
                 File.WriteAllBytes(filePath, bytes);
                 return filePath;
             }
@@ -486,6 +487,10 @@ namespace GingerCoreNET.GeneralLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to create temp text file", ex);
                 return null;
+            }
+            finally
+            {
+                Array.Clear(bytes);
             }
         }
 

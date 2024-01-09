@@ -130,6 +130,7 @@ namespace Amdocs.Ginger.CoreNET.Platform
                 {
                     byte[] bytes = Encoding.Default.GetBytes(fileContent);
                     File.WriteAllBytes(fullFileName, bytes);
+                    Array.Clear(bytes);
                 }
             }
 

@@ -1094,14 +1094,26 @@ namespace Amdocs.Ginger.CoreNET
         }
         public string CameraAndBarcodeSimulationRequest(Bitmap picture, ImageFormat format, string contentType, string fileName, string action)
         {
-            MemoryStream ms = new MemoryStream();
             string encodeString = "0";
-            if (picture != null)
+            Byte[] bytes = null;
+            try
             {
-                picture.Save(ms, format);
-                Byte[] bytes = ms.ToArray();
-                encodeString = Convert.ToBase64String(bytes);
+                using (MemoryStream ms = new MemoryStream())
+                {
+
+                    if (picture != null)
+                    {
+                        picture.Save(ms, format);
+                        bytes = ms.ToArray();
+                        encodeString = Convert.ToBase64String(bytes);
+                    }
+                }
             }
+            finally
+            {
+                Array.Clear(bytes);
+            }
+            
             Dictionary<string, string> sensorSimulationMap = new Dictionary<string, string>
             {
                 { "uploadMedia", encodeString },
