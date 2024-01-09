@@ -47,7 +47,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol
             // Run the server on its own thread
             mTask = new Task(() =>
             {
-                DoStartServer(port);
+                //DoStartServer(port);
             });
             mTask.Start();
             Stopwatch st = Stopwatch.StartNew();
