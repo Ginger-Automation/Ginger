@@ -254,7 +254,7 @@
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   
     <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.278" />
-	<PackageReference Include="LiteDB" Version="4.1.4" />
+	<PackageReference Include="LiteDB" Version="5.0.17" />
   
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
   
