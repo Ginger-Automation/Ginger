@@ -1111,7 +1111,10 @@ namespace Amdocs.Ginger.CoreNET
             }
             finally
             {
-                Array.Clear(bytes);
+                if (bytes != null)
+                {
+                    Array.Clear(bytes);
+                }
             }
             
             Dictionary<string, string> sensorSimulationMap = new Dictionary<string, string>

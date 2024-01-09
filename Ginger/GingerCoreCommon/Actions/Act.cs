@@ -1022,7 +1022,11 @@ namespace GingerCore.Actions
             }
             finally
             {
-                Array.Clear(bytes);
+                if(bytes != null)
+                {
+                    Array.Clear(bytes);
+                }
+                
             }
         }
 
@@ -1044,7 +1048,10 @@ namespace GingerCore.Actions
             }
             finally
             {
-                Array.Clear(bytes);
+                if (bytes != null)
+                {
+                    Array.Clear(bytes);
+                }
             }
         }
 

@@ -749,7 +749,10 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             finally
             {
-                Array.Clear(bytes);
+                if (bytes != null)
+                {
+                    Array.Clear(bytes);
+                }
             }
         }
         private void WriteThreeBytesToStream(MemoryStream stream, int value, int offset)
@@ -768,7 +771,10 @@ namespace Amdocs.Ginger.CoreNET.DiameterLib
             }
             finally
             {
-                Array.Clear(bytes);
+                if (bytes != null)
+                {
+                    Array.Clear(bytes);
+                }
             }
         }
         private void WriteBytesToStream(MemoryStream stream, byte[] data, int seekPosition, int offsetInData = 0, int byteCount = 0)

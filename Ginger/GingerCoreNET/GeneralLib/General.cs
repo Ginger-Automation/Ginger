@@ -490,7 +490,10 @@ namespace GingerCoreNET.GeneralLib
             }
             finally
             {
-                Array.Clear(bytes);
+                if (bytes != null)
+                {
+                    Array.Clear(bytes);
+                }
             }
         }
 
