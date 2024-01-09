@@ -5,6 +5,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.UserControls;
 using Ginger.Repository;
+using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Activities;
@@ -44,7 +45,9 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
         {
             InitializeComponent();
             _activityBulkUpdateListItems = GetSharedRepositoryActivitiesAsBulkUpdateListItems();
-            SetBulkUpdateListViewItems(_activityBulkUpdateListItems);
+            //SetBulkUpdateListViewItems(_activityBulkUpdateListItems);
+            InitBulkUpdateUCGrid();
+            SetBulkUpdateUCGridItems(_activityBulkUpdateListItems);
             UpdateUIForPageMode();
         }
 
@@ -55,10 +58,60 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
             return activityBulkUpdateListItems.ToList();
         }
 
-        private void SetBulkUpdateListViewItems(IEnumerable<ActivityBulkUpdateListItem> activityBulkUpdateListItems)
-        {            
-            ActivityBulkUpdateListView.ItemsSource = activityBulkUpdateListItems;
+        private void InitBulkUpdateUCGrid()
+        {
+            GridViewDef gridViewDef = new(GridViewDef.DefaultViewName)
+            {
+                GridColsView = new()
+                {
+                    new GridColView()
+                    {
+                        Header = nameof(ActivityBulkUpdateListItem.Name),
+                        Field = nameof(ActivityBulkUpdateListItem.Name),
+                        WidthWeight = 80,
+                        BindingMode = BindingMode.TwoWay
+                    },
+                    new GridColView()
+                    {
+                        Header = nameof(ActivityBulkUpdateListItem.Publish),
+                        Field = nameof(ActivityBulkUpdateListItem.Publish),
+                        StyleType = GridColView.eGridColStyleType.CheckBox,
+                        WidthWeight = 60,
+                        BindingMode = BindingMode.TwoWay
+                    },
+                    new GridColView()
+                    {
+                        Header = nameof(ActivityBulkUpdateListItem.Mandatory),
+                        Field = nameof(ActivityBulkUpdateListItem.Mandatory),
+                        StyleType = GridColView.eGridColStyleType.CheckBox,
+                        WidthWeight = 60,
+                        BindingMode = BindingMode.TwoWay
+                    },
+                    new GridColView()
+                    {
+                        Header = nameof(ActivityBulkUpdateListItem.TargetApplication),
+                        Field = nameof(ActivityBulkUpdateListItem.TargetApplication),
+                        CellValuesList = WorkSpace.Instance.Solution.GetSolutionTargetApplications().Select(targetApp => new ComboEnumItem(){ text = targetApp.Name, Value = targetApp.Name }),
+                        StyleType = GridColView.eGridColStyleType.ComboBox,
+                        WidthWeight = 60,
+                        BindingMode = BindingMode.TwoWay
+                    },
+                }
+            };
+            BulkUpdateUCGrid.Title = "Bulk Update Shared Activities";
+            BulkUpdateUCGrid.SetAllColumnsDefaultView(gridViewDef);
+            BulkUpdateUCGrid.InitViewItems();
         }
+
+        private void SetBulkUpdateUCGridItems(IEnumerable<ActivityBulkUpdateListItem> activityBulkUpdateListItems)
+        {
+            BulkUpdateUCGrid.DataSourceList = new ObservableList<ActivityBulkUpdateListItem>(activityBulkUpdateListItems);
+        }
+
+        //private void SetBulkUpdateListViewItems(IEnumerable<ActivityBulkUpdateListItem> activityBulkUpdateListItems)
+        //{            
+        //    ActivityBulkUpdateListView.ItemsSource = activityBulkUpdateListItems;
+        //}
 
         public void ShowAsWindow()
         {
@@ -279,6 +332,18 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 }
             }
 
+            public string TargetApplication
+            {
+                get => Activity.TargetApplication;
+                set
+                {
+                    Activity.TargetApplication = value;
+                    IsModified = true;
+                }
+            }
+
+            public IEnumerable<string> TargetApplicationOptions { get; }
+
             public ActivityBulkUpdateListItem(Activity activity)
             {
                 Activity = activity;
@@ -286,6 +351,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 TargetBase targetApp = GetTargetApplication(activity.TargetApplication);
                 ConsumerOptions = GetConsumerOptions(targetApp);
                 ShowConsumerOptions = IsWebServicesTargetApplication(targetApp);
+                TargetApplicationOptions = GetTargetApplicationOptions();
             }
 
             private TargetBase GetTargetApplication(string targetApplicationName)
@@ -350,6 +416,22 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 
             }
 
+            private IEnumerable<string> GetTargetApplicationOptions()
+            {
+                ePlatformType activityPlatform = GetTargetApplicationPlatform(Activity.TargetApplication);
+                return GetTargetApplicationWithPlatform(activityPlatform).Select(t => t.Name);
+            }
+
+            private IEnumerable<TargetBase> GetTargetApplicationWithPlatform(ePlatformType platform)
+            {
+                return
+                    WorkSpace
+                    .Instance
+                    .Solution
+                    .GetSolutionTargetApplications()
+                    .Where(t => GetTargetApplicationPlatform(t.Name) == platform);
+            }
+
             private bool IsWebServicesTargetApplication(TargetBase targetApp)
             {
                 return
@@ -357,6 +439,15 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     .Instance
                     .Solution
                     .GetApplicationPlatformForTargetApp(targetApp.Name) == ePlatformType.WebServices;
+            }
+
+            private ePlatformType GetTargetApplicationPlatform(string targetAppName)
+            {
+                return
+                    WorkSpace
+                       .Instance
+                       .Solution
+                       .GetApplicationPlatformForTargetApp(targetAppName);
             }
 
             private void AttachActivityPropertyChangedHandler()
@@ -378,6 +469,10 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 else if (string.Equals(e.PropertyName, nameof(Activity.Mandatory)))
                 {
                     OnPropertyChanged(nameof(Mandatory));
+                }
+                else if (string.Equals(e.PropertyName, nameof(Activity.TargetApplication)))
+                {
+                    OnPropertyChanged(nameof(TargetApplication));
                 }
             }
 

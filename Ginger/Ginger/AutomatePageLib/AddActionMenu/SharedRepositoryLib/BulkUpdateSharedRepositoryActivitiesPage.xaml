@@ -57,7 +57,9 @@
             <RowDefinition
                 Height="Auto" />
         </Grid.RowDefinitions>
-        <ListView
+        <ginger:ucGrid 
+            x:Name="BulkUpdateUCGrid"/>
+        <!--<ListView
             x:Name="ActivityBulkUpdateListView"
             Grid.Row="0">
             <ListView.ItemTemplate>
@@ -140,7 +142,7 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-        </ListView>
+        </ListView>-->
         <Grid
             x:Name="FooterGrid"
             Grid.Row="1">
