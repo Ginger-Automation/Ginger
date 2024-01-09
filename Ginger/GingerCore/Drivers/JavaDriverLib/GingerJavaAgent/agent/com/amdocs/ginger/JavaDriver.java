@@ -2577,23 +2577,31 @@ private PayLoad TypeKeys(Component c,String Value) {
 			public void run() 
 			{
 				JComponent b = (JComponent)c;
-				JComponent d = b.getComponentPopupMenu();
-				for (int i = 0; i < d.getComponents().length; i++) {
-					if (mValue != null && mValue.equals(((JMenuItem) b.getComponentPopupMenu().getComponents()[i]).getText())){
-						((JMenuItem) b.getComponentPopupMenu().getComponents()[i])
-						.doClick();
+				JPopupMenu popupMenu = b.getComponentPopupMenu();
+				if (popupMenu == null) {
+				    // Handled the case where there is no pop-up menu
+					GingerAgent.WriteLog("ContextMenuClickComponent: Context Menu Not Found");
+					return;
+				}
+				Component[] menuItems = popupMenu.getComponents();
+				for (int i = 0; i < menuItems.length; i++) {
+					JMenuItem menuItem = (JMenuItem) menuItems[i];
+					if (mValue != null && mValue.equals(menuItem.getText())) {
+						menuItem.doClick();
+						GingerAgent.WriteLog("ContextMenuClickComponent: Value ('"+ mValue + "') Clicked");
+						break;
 					}
 				}   
 			}
 		};
 		if (SwingUtilities.isEventDispatchThread())
 		{
-			GingerAgent.WriteLog("\n***************\nSendKeyPressRelease-already in EDT\n***************");
+			GingerAgent.WriteLog("ContextMenuClickComponent: Running in EDT");
 			r.run();
 		}
 		else
 		{
-			GingerAgent.WriteLog("\n***************\nSendKeyPressRelease-run in EDT\n***************");
+			GingerAgent.WriteLog("ContextMenuClickComponent: Scheduling to run in EDT");
 			try {
 				SunToolkit.executeOnEDTAndWait(c, r);
 			} catch (InvocationTargetException e) {
