@@ -2576,8 +2576,13 @@ private PayLoad TypeKeys(Component c,String Value) {
 		Runnable r = new Runnable() {
 			public void run() 
 			{
-				JComponent b = (JComponent)c;
-				JPopupMenu popupMenu = b.getComponentPopupMenu();
+				JComponent b = null;
+				if ((JComponent)c  != null ){
+					b = (JComponent)c;
+				}else{
+					GingerAgent.WriteLog("ContextMenuClickComponent: Component is null");
+					return;
+				}
 				if (popupMenu == null) {
 				    // Handled the case where there is no pop-up menu
 					GingerAgent.WriteLog("ContextMenuClickComponent: Context Menu Not Found");
