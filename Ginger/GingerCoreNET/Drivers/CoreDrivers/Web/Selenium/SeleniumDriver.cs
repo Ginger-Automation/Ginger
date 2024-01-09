@@ -4401,64 +4401,54 @@ namespace GingerCore.Drivers
                     int count = 0;
                     ///IAsyncResult result;
                     //Action action = () =>
-                    var action = Task.Run(() =>
+                    try
                     {
-                        try
-                        {
-                            Thread.Sleep(100);
-                            count = Driver.WindowHandles.Count;
-                        }
-                        catch (System.InvalidCastException ex)
-                        {
-                            exceptioncount = 0;
-                            count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred while casting when we are checking IsRunning", ex);
-                        }
-                        catch (System.NullReferenceException ex)
-                        {
-                            count = Driver.CurrentWindowHandle.Count();
-                            Reporter.ToLog(eLogLevel.DEBUG, "Null reference exception occurred when we are checking IsRunning", ex);
-                        }
-                        catch (System.ObjectDisposedException ex)
-                        {
-                            ErrorMessageFromDriver = "Agent is closed. Action on closed agent is not allowed.";
-                            Reporter.ToLog(eLogLevel.DEBUG, "Driver object is already disposed ", ex);
-                        }
-                        catch (Exception ex)
-                        {
-                            //throw exception to outer catch
-                            Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex);
-                            throw;
-                        }
-                    });
+                        count = Driver.WindowHandles.Count;
+                    }
+                    catch (System.InvalidCastException ex)
+                    {
+                        exceptioncount = 0;
+                        count = Driver.CurrentWindowHandle.Count();
+                        Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred while casting when we are checking IsRunning", ex);
+                    }
+                    catch (System.NullReferenceException ex)
+                    {
+                        count = Driver.CurrentWindowHandle.Count();
+                        Reporter.ToLog(eLogLevel.DEBUG, "Null reference exception occurred when we are checking IsRunning", ex);
+                    }
+                    catch (System.ObjectDisposedException ex)
+                    {
+                        ErrorMessageFromDriver = "Agent is closed. Action on closed agent is not allowed.";
+                        Reporter.ToLog(eLogLevel.DEBUG, "Driver object is already disposed ", ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        //throw exception to outer catch
+                        Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex);
+                        throw;
+                    }
 
                     //result = action.BeginInvoke(null, null);
                     //if (result.AsyncWaitHandle.WaitOne(10000, true))  
 
-                    if (action.Wait(10000))
+                    if (count == 0)
                     {
-                        if (count == 0)
-                        {
-                            return false;
-                        }
-
-                        if (count > 0)
-                        {
-                            return true;
-                        }
+                        return false;
                     }
-                    else
+
+                    if (count > 0)
                     {
-                        if (exceptioncount < 5)
-                        {
-                            exceptioncount++;
-                            return (IsRunning());
-                        }
-                        var currentWindow = Driver.CurrentWindowHandle;
-                        if (!string.IsNullOrEmpty(currentWindow))
-                        {
-                            return true;
-                        }
+                        return true;
+                    }
+                    if (exceptioncount < 5)
+                    {
+                        exceptioncount++;
+                        return (IsRunning());
+                    }
+                    var currentWindow = Driver.CurrentWindowHandle;
+                    if (!string.IsNullOrEmpty(currentWindow))
+                    {
+                        return true;
                     }
                     if (count == 0)
                     {
@@ -6689,7 +6679,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        void CheckifPageLoaded()
+/*        void CheckifPageLoaded()
         {
             //TODO: slow function, try to check alternatives or let the user config wait for
             try
@@ -6723,6 +6713,20 @@ namespace GingerCore.Drivers
             {
                 // Do nothing...
             }
+        }
+*/
+        void CheckifPageLoaded()
+        {
+            WebDriverWait webDriverWait = new WebDriverWait(Driver , TimeSpan.FromSeconds(ImplicitWait));
+            webDriverWait.Until((driver) =>
+            {
+                object jQuery = ((IJavaScriptExecutor)driver).ExecuteScript("return window.jQuery && jQuery.active == 0");
+
+                bool IsJqueryCompleted = jQuery == null ? true : jQuery.Equals(true);
+                return 
+                ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete") && IsJqueryCompleted;
+            }); 
+
         }
 
         String GetInjectJSSCript(string script)

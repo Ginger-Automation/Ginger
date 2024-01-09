@@ -105,12 +105,7 @@ namespace GingerCore
 
                 if (Driver == null) { return Agent.eStatus.NotStarted; }
                 //TODO: fixme  running called too many - and get stuck
-                bool DriverIsRunning = false;
-                lock (thisLock)
-                {
-                    DriverIsRunning = Driver.IsRunning();
-                    //Reporter.ToLog(eAppReporterLogLevel.INFO, $"Method - {"get Status"}, IsRunning - {DriverIsRunning}"); //TODO: if needed so need to be more informative including Agent type & name and to be written only in Debug mode of Log
-                }
+                bool DriverIsRunning = Driver.IsRunning();
                 if (DriverIsRunning) { return Agent.eStatus.Running; }
 
                 return Agent.eStatus.NotStarted;
@@ -233,7 +228,7 @@ namespace GingerCore
                             if (Driver != null)
                             {
                                 // Give the driver time to start            
-                                Thread.Sleep(1000);
+                                //Thread.Sleep(1000);
                                 Driver.IsDriverRunning = true;
                                 Driver.DriverMessageEvent += driverMessageEventHandler;
                             }

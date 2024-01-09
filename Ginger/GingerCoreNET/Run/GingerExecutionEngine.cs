@@ -434,7 +434,6 @@ namespace Ginger.Run
             return result;
         }
 
-        
 
 
         public void RunRunner(bool doContinueRun = false)
@@ -740,7 +739,7 @@ namespace Ginger.Run
         }
 
 
-
+        private static readonly SemaphoreSlim semaphoreSlim = new(1, 1);
         private void SetupVirtualAgents()
         {
             if (WorkSpace.Instance != null && WorkSpace.Instance.RunsetExecutor != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null)
@@ -757,36 +756,43 @@ namespace Ginger.Run
                         {
                             ObservableList<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
 
-                            var agent = (from a in agents where a.Name == applicationAgent.AgentName select a).FirstOrDefault();
-
-                            if (agent != null)
+                            var agent = agents.FirstOrDefault(a => a.Name.Equals(applicationAgent.AgentName));
+                            try
                             {
-                                if (agent.AgentOperations == null)
+                                semaphoreSlim.Wait();
+                                if (agent != null)
                                 {
-                                    AgentOperations agentOperations = new AgentOperations(agent);
-                                    agent.AgentOperations = agentOperations;
+                                    if (agent.AgentOperations == null)
+                                    {
+                                        AgentOperations agentOperations = new AgentOperations(agent);
+                                        agent.AgentOperations = agentOperations;
+                                    }
+                                    //logic for if need to assign virtual agent
+                                    if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Any(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)))
+                                    {
+                                        var virtualagent = agent.CreateCopy(true) as Agent;
+                                        virtualagent.AgentOperations = new AgentOperations(virtualagent);
+                                        virtualagent.ParentGuid = agent.Guid;
+                                        virtualagent.Name = agent.Name + " Virtual";
+                                        virtualagent.IsVirtual = true;
+                                        virtualagent.DriverClass = agent.DriverClass;
+                                        virtualagent.DriverType = agent.DriverType;
+                                        applicationAgent.Agent = virtualagent;
+                                        virtualagent.DriverConfiguration = agent.DriverConfiguration;
+                                    }
                                 }
-                                //logic for if need to assign virtual agent
-                                if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Any(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)))
+
+
+                                if (applicationAgent.Agent != null)
                                 {
-                                    var virtualagent = agent.CreateCopy(true) as Agent;
-                                    virtualagent.AgentOperations = new AgentOperations(virtualagent);
-                                    virtualagent.ParentGuid = agent.Guid;
-                                    virtualagent.Name = agent.Name + " Virtual";
-                                    virtualagent.IsVirtual = true;
-                                    virtualagent.DriverClass = agent.DriverClass;
-                                    virtualagent.DriverType = agent.DriverType;
-                                    applicationAgent.Agent = virtualagent;
-                                    virtualagent.DriverConfiguration = agent.DriverConfiguration;
+                                    runSetConfig.ActiveAgentList.Add(applicationAgent.Agent);
                                 }
+
                             }
-
-
-                            if (applicationAgent.Agent != null)
+                            finally
                             {
-                                runSetConfig.ActiveAgentList.Add(applicationAgent.Agent);
+                                semaphoreSlim.Release();
                             }
-
                         }
                     }
 
@@ -2435,15 +2441,15 @@ namespace Ginger.Run
             {
                 Task task = Task.Factory.StartNew(() =>
                         {
-                            codeBlock();
+                codeBlock();
                         }
                     );
 
                 while (!task.IsCompleted && st.ElapsedMilliseconds < timeSpan.TotalMilliseconds && !mStopRun)
                 {
                     task.Wait(500);  // Give user feedback every 500ms
-                    act.Elapsed = st.ElapsedMilliseconds;
-                    GiveUserFeedback();
+                act.Elapsed = st.ElapsedMilliseconds;
+                GiveUserFeedback();
                 }
                 bool bCompleted = task.IsCompleted;
 
