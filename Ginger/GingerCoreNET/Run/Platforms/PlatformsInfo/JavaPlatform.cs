@@ -1008,6 +1008,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     list.Add(ActUIElement.eTableAction.MousePressAndRelease);
                     list.Add(ActUIElement.eTableAction.IsChecked);
                     list.Add(ActUIElement.eTableAction.RightClick);
+                    list.Add(ActUIElement.eTableAction.ContextMenuClick);
                     break;
                 case ActUIElement.eElementAction.TableRowAction:
                     list.Add(ActUIElement.eTableAction.GetSelectedRow);
