@@ -697,7 +697,12 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 try
                 {
+                    AlignGridandTextWidth();
+                    xDetailsGrid.SizeChanged -= XDetailsGrid_SizeChanged;
+                    xDetailsGrid.SizeChanged += XDetailsGrid_SizeChanged;
                     xItemNameTxtBlock.Text = string.Empty;
+                    xItemExtraInfoTxtBlock.Text = string.Empty;
+                    xItemExtraInfoTxtBlock.Visibility = Visibility.Collapsed;
                     string fullname = string.Empty;
                     if (!string.IsNullOrEmpty(mItemNameField))
                     {
@@ -709,7 +714,6 @@ namespace Ginger.UserControlsLib.UCListView
                                 FontSize = 15,
                                 Text = name.ToString()
                             });
-
                             fullname += name;
                         }
                     }
@@ -718,7 +722,8 @@ namespace Ginger.UserControlsLib.UCListView
                         bool isMandatory = (bool)Item.GetType().GetProperty(mItemMandatoryField).GetValue(Item);
                         if (isMandatory)
                         {
-                            xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
+                            xItemExtraInfoTxtBlock.Visibility = Visibility.Visible;
+                            xItemExtraInfoTxtBlock.Inlines.Add(new System.Windows.Documents.Run
                             {
                                 FontSize = 18,
                                 Text = "*",
@@ -733,7 +738,8 @@ namespace Ginger.UserControlsLib.UCListView
                         Object extension = Item.GetType().GetProperty(mItemNameExtentionField).GetValue(Item);
                         if (extension != null)
                         {
-                            xItemNameTxtBlock.Inlines.Add(new System.Windows.Documents.Run
+                            xItemExtraInfoTxtBlock.Visibility = Visibility.Visible;
+                            xItemExtraInfoTxtBlock.Inlines.Add(new System.Windows.Documents.Run
                             {
                                 FontSize = 11,
                                 Text = string.Format(" [{0}]", extension.ToString())
@@ -744,6 +750,7 @@ namespace Ginger.UserControlsLib.UCListView
                     }
 
                     xItemNameTxtBlock.ToolTip = fullname;
+                    xItemExtraInfoTxtBlock.ToolTip = fullname;
                 }
                 catch (Exception ex)
                 {
@@ -751,6 +758,20 @@ namespace Ginger.UserControlsLib.UCListView
                     Reporter.ToLog(eLogLevel.ERROR, "Failed to set ListViewItem Name", ex);
                 }
             });
+        }
+
+        private void AlignGridandTextWidth()
+        {
+            if (xItemNameColumn.ActualWidth > 200)
+            {
+                xItemNameTxtBlock.MaxWidth = xItemNameColumn.ActualWidth - 100;
+                xItemDescriptionTxtBlock.MaxWidth = xItemNameTxtBlock.MaxWidth;
+            }           
+        }
+
+        private void XDetailsGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            AlignGridandTextWidth();
         }
 
         private void SetItemDescription()
