@@ -36,54 +36,11 @@ namespace GingerCoreNET.DataSource
     public class GingerLiteDB : DataSourceBase
     {
         int count = 1;
-        private LiteDatabase _database;
-
-        private LiteDatabase Database
-        {
-            get => _database;
-            set
-            {
-                if (_database != value)
-                {
-                    _database = value;
-                    FillDataGridView(null);
-                }
-            }
-        }
-
-
         private string ConnectionString
         {
             get
             {
                 return $"filename={FileFullPath}; connection=Shared; upgrade=true";
-            }
-        }
-        public void FillDataGridView(IEnumerable<BsonDocument> documents)
-        {
-            if (documents != null)
-            {
-                var dt = new LiteDataTable(documents.ToString());
-                foreach (var doc in documents)
-                {
-                    var dr = dt.NewRow() as LiteDataRow;
-                    if (dr != null)
-                    {
-                        dr.UnderlyingValue = doc;
-                        foreach (var property in doc.RawValue)
-                        {
-                            if (!property.Value.IsMaxValue && !property.Value.IsMinValue)
-                            {
-                                if (!dt.Columns.Contains(property.Key))
-                                {
-                                    dt.Columns.Add(new DataColumn(property.Key, typeof(string)));
-                                }
-                                SetDataRow(dr, property);
-                            }
-                        }
-                        dt.Rows.Add(dr);
-                    }
-                }
             }
         }
         public override void AddColumn(string tableName, string columnName, string columnType)

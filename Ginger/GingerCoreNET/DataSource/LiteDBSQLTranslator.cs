@@ -1,14 +1,21 @@
 ﻿using GingerCore.Actions;
+using System;
 using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.DataSource
 {
+    /// <summary>
+    /// Purpose of this class is to convert the previous liteDB version's Shell command to SQL like command along with creating queries in 
+    /// accordance with the LiteDB version 5.0.17 
+    /// The translated queries are subsequently used in the LiteDB.cs class
+    /// </summary>
     public class LiteDBSQLTranslator
     {
         private readonly ActDSTableElement actDSTableElement;
         private StringBuilder queryBuilder;
         public LiteDBSQLTranslator(ActDSTableElement actDSTableElement)
         {
+            ArgumentNullException.ThrowIfNull(actDSTableElement);
             this.actDSTableElement = actDSTableElement;
             queryBuilder = new ();
         }

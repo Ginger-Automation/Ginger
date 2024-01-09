@@ -466,7 +466,7 @@ namespace Ginger.Run
             }
             catch (Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to generate business flow report", ex);
             }
         }
 
