@@ -20,7 +20,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
+using System.Xml;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
@@ -45,6 +47,8 @@ namespace GingerCore
         {
 
         }
+
+        public BusinessFlow(RIBXmlReader reader) : base(reader) { }
 
         public BusinessFlow(string sName)
         {
@@ -1911,6 +1915,61 @@ namespace GingerCore
                 ve.Value = ExternalID;
                 ExternalIdCalCulated = ve.ValueCalculated;
             }
+        }
+
+        public static bool LazyLoad { get; set; }
+
+        protected override void ParseAttribute(string attributeName, string attributeValue)
+        {
+            base.ParseAttribute(attributeName, attributeValue);
+            if (string.Equals(attributeName, nameof(Name)))
+                Name = attributeValue;
+            else if (string.Equals(attributeName, nameof(Source)))
+                Source = Enum.Parse<eSource>(attributeValue);
+            else if (string.Equals(attributeName, nameof(Status)))
+                Status = Enum.Parse<eBusinessFlowStatus>(attributeValue);
+        }
+
+        //protected override void ParseElement(string elementName, RIBXmlReader reader)
+        //{
+        //    base.ParseElement(elementName, reader);
+        //    if (string.Equals(reader.Name, nameof(Activities)))
+        //        Activities = new(reader.ForEachChild(childReader => new Activity(childReader)));
+        //    else if (string.Equals(reader.Name, nameof(ActivitiesGroups)))
+        //        ActivitiesGroups = new(reader.ForEachChild(childReader => new ActivitiesGroup(childReader)));
+        //    else if (string.Equals(reader.Name, nameof(TargetApplications)))
+        //        TargetApplications = new(reader.ForEachChild(TargetBase.Create));
+        //    else if (string.Equals(reader.Name, nameof(Variables)))
+        //        Variables = new(reader.ForEachChild(VariableBase.Create));
+        //}
+
+        protected override void ParseElement(string elementName, RIBXmlReader reader)
+        {
+            base.ParseElement(elementName, reader);
+            if (LazyLoad)
+                return;
+            else if (string.Equals(reader.Name, nameof(Activities)))
+                Activities = new(ParseEachChild<Activity>(nameof(Activities), reader));
+            else if (string.Equals(reader.Name, nameof(ActivitiesGroups)))
+                ActivitiesGroups = new(ParseEachChild<ActivitiesGroup>(nameof(ActivitiesGroups), reader));
+            else if (string.Equals(reader.Name, nameof(TargetApplications)))
+                TargetApplications = new(ParseEachChild<TargetBase>(nameof(TargetApplications), reader));
+            else if (string.Equals(reader.Name, nameof(Variables)))
+                Variables = new(ParseEachChild<VariableBase>(nameof(Variables), reader));
+        }
+
+        protected override object ChildParser(string collectionName, RIBXmlReader reader)
+        {
+            if (string.Equals(collectionName, nameof(Activities)))
+                return new Activity(reader);
+            else if (string.Equals(collectionName, nameof(ActivitiesGroups)))
+                return new ActivitiesGroup(reader);
+            else if (string.Equals(collectionName, nameof(TargetApplications)))
+                return TargetBase.Create(reader);
+            else if (string.Equals(collectionName, nameof(Variables)))
+                return VariableBase.Create(reader);
+            else
+                throw new Exception();
         }
     }
 }

@@ -17,6 +17,8 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 
@@ -63,6 +65,17 @@ namespace GingerCore.Platforms
                     OnPropertyChanged(nameof(Name));
                 }
             }
+        }
+
+        public TargetApplication() { }
+
+        public TargetApplication(RIBXmlReader reader) : base(reader) { }
+
+        protected override void ParseAttribute(string attributeName, string attributeValue)
+        {
+            base.ParseAttribute(attributeName, attributeValue);
+            if (string.Equals(attributeName, nameof(AppName)))
+                AppName = attributeValue;
         }
     }
 }

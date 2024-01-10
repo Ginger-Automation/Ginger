@@ -1,6 +1,7 @@
 ﻿using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
 using Org.BouncyCastle.Asn1.Cms;
+using RepositorySerializerBenchmarks.Enhancements.LiteXML;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,21 +65,36 @@ namespace RepositorySerializerBenchmarks.Enhancements
             }
             xmlReader.MoveToElement();
 
-            int startDepth = xmlReader.Depth;
-            while (xmlReader.Read())
+            if (!xmlReader.IsEmptyElement)
             {
-                bool reachedEndOfFile = xmlReader.EOF;
-                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(ActInputValue));
-                bool reachedParent = xmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
-                    break;
+                int startDepth = xmlReader.Depth;
+                while (xmlReader.Read())
+                {
+                    xmlReader.MoveToContent();
 
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
+                    bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+                    if (reachedEndOfElement)
+                        break;
 
-                if (xmlReader.Depth != startDepth + 1)
-                    continue;
+                    if (!xmlReader.IsStartElement())
+                        continue;
+
+                    bool isGrandChild = xmlReader.Depth > startDepth + 1;
+                    if (isGrandChild)
+                        continue;
+
+                }
             }
+
+            return actInputValue;
+        }
+
+        public ActInputValue Deserialize(LiteXMLElement actInputValueElement)
+        {
+            ActInputValue actInputValue = new();
+
+            foreach (LiteXMLAttribute attribute in actInputValueElement.Attributes)
+                SetActInputValuePropertyFromAttribute(actInputValue, attribute.Name, attribute.Value);
 
             return actInputValue;
         }

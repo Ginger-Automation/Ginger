@@ -2,6 +2,7 @@
 using GingerCore.Actions;
 using GingerCore.Variables;
 using Org.BouncyCastle.Asn1.Cms;
+using RepositorySerializerBenchmarks.Enhancements.LiteXML;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -116,16 +117,44 @@ namespace RepositorySerializerBenchmarks.Enhancements
             }
             xmlReader.MoveToElement();
 
-            int startDepth = xmlReader.Depth;
-            while (xmlReader.Read())
+            if (!xmlReader.IsEmptyElement)
             {
-                bool reachedEndOfFile = xmlReader.EOF;
-                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(VariableString));
-                bool reachedParent = xmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
-                    break;
+                int startDepth = xmlReader.Depth;
+                while (xmlReader.Read())
+                {
+                    xmlReader.MoveToContent();
 
+                    bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+                    if (reachedEndOfElement)
+                        break;
+
+                    if (!xmlReader.IsStartElement())
+                        continue;
+
+                    bool isGrandChild = xmlReader.Depth > startDepth + 1;
+                    if (isGrandChild)
+                        continue;
+
+                }
             }
+
+            return variableString;
+        }
+
+        public VariableBase Deserialize(LiteXMLElement variableElement)
+        {
+            if (string.Equals(variableElement.Name, nameof(VariableBase)))
+                return DeserializeVariableString(variableElement);
+            else
+                throw new NotImplementedException($"{nameof(VariableXMLSerializer)} implementation for type {variableElement.Name} is not implemented yet.");
+        }
+
+        private VariableString DeserializeVariableString(LiteXMLElement variableStringElement)
+        {
+            VariableString variableString = new();
+
+            foreach (LiteXMLAttribute attribute in variableStringElement.Attributes)
+                SetVariableStringPropertyFromAttribute(variableString, attribute.Name, attribute.Value);
 
             return variableString;
         }

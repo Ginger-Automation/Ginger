@@ -1,10 +1,13 @@
 ﻿using Amdocs.Ginger.Repository;
 using BenchmarkDotNet.Toolchains.CsProj;
 using GingerCore;
+using GingerCore.Actions;
 using GingerCore.Activities;
 using GingerCore.Platforms;
 using GingerCore.Variables;
+using LiteDB;
 using Org.BouncyCastle.Asn1.Cms;
+using RepositorySerializerBenchmarks.Enhancements.LiteXML;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -156,35 +159,110 @@ namespace RepositorySerializerBenchmarks.Enhancements
                 businessFlow.Status = Enum.Parse<BusinessFlow.eBusinessFlowStatus>(attributeValue);
         }
 
+        //public BusinessFlow Deserialize(XmlReader xmlReader, bool lazyLoad)
+        //{
+        //    if (xmlReader.NodeType != XmlNodeType.Element)
+        //        throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
+        //    if(!string.Equals(xmlReader.Name, nameof(BusinessFlow)))
+        //        throw new Exception($"Expected element {nameof(BusinessFlow)} but found {xmlReader.Name}.");
+
+        //    BusinessFlow businessFlow = new();
+
+        //    for (int attrIndex = 0; attrIndex < xmlReader.AttributeCount; attrIndex++)
+        //    {
+        //        xmlReader.MoveToAttribute(attrIndex);
+        //        SetBusinessFlowPropertyFromAttribute(businessFlow, attributeName: xmlReader.Name, attributeValue: xmlReader.Value);
+        //    }
+        //    xmlReader.MoveToElement();
+
+        //    //if (lazyLoad)
+        //    //    return businessFlow;
+
+        //    int startDepth = xmlReader.Depth;
+        //    while (xmlReader.Read())
+        //    {
+        //        bool reachedEndOfFile = xmlReader.EOF;
+        //        bool reachedSibling = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.Element;
+        //        bool reachedParent = xmlReader.Depth < startDepth;
+        //        if (reachedEndOfFile || reachedSibling || reachedParent)
+        //            break;
+
+        //        if (xmlReader.NodeType != XmlNodeType.Element)
+        //            continue;
+
+        //        if (xmlReader.Depth != startDepth + 1)
+        //            continue;
+
+        //        if (lazyLoad)
+        //            continue;
+        //        else if (string.Equals(xmlReader.Name, nameof(BusinessFlow.Activities)))
+        //            businessFlow.Activities = new(DeserializeActivitiesElement(xmlReader));
+
+        //        else if (string.Equals(xmlReader.Name, nameof(BusinessFlow.ActivitiesGroups)))
+        //            businessFlow.ActivitiesGroups = new(DeserializeActivitiesGroupsElement(xmlReader));
+
+        //        else if (string.Equals(xmlReader.Name, nameof(BusinessFlow.TargetApplications)))
+        //            businessFlow.TargetApplications = new(DeserializeTargetApplicationsElement(xmlReader));
+
+        //        else if (string.Equals(xmlReader.Name, nameof(BusinessFlow.Variables)))
+        //            businessFlow.Variables = new(DeserializeVariablesElement(xmlReader));
+        //    }
+
+        //    return businessFlow;
+        //}
+
         public BusinessFlow Deserialize(XmlReader xmlReader, bool lazyLoad)
         {
-            if (xmlReader.NodeType != XmlNodeType.Element)
-                throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
-            if(!string.Equals(xmlReader.Name, nameof(BusinessFlow)))
-                throw new Exception($"Expected element {nameof(BusinessFlow)} but found {xmlReader.Name}.");
+            if (!xmlReader.IsStartElement())
+                throw new Exception($"Expected a start element.");
+
+            BusinessFlow.LazyLoad = lazyLoad;
 
             BusinessFlow businessFlow = new();
 
-            for (int attrIndex = 0; attrIndex < xmlReader.AttributeCount; attrIndex++)
-            {
-                xmlReader.MoveToAttribute(attrIndex);
-                SetBusinessFlowPropertyFromAttribute(businessFlow, attributeName: xmlReader.Name, attributeValue: xmlReader.Value);
-            }
-            xmlReader.MoveToElement();
+            ReadAttributes(xmlReader, businessFlow);
+            ReadChildElements(xmlReader, businessFlow);
 
-            if (lazyLoad)
-                return businessFlow;
+            return businessFlow;
+        }
+
+        private void ReadAttributes(XmlReader xmlReader, BusinessFlow businessFlow)
+        {
+            if (!xmlReader.HasAttributes)
+                return;
+
+            while (xmlReader.MoveToNextAttribute())
+            {
+                SetBusinessFlowPropertyFromAttribute(businessFlow, xmlReader.Name, xmlReader.Value);
+            }
+
+            xmlReader.MoveToElement();
+        }
+
+        private void ReadChildElements(XmlReader xmlReader, BusinessFlow businessFlow)
+        {
+            if (xmlReader.IsEmptyElement)
+                return;
 
             int startDepth = xmlReader.Depth;
             while (xmlReader.Read())
             {
-                bool reachedEndOfFile = xmlReader.EOF;
-                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(BusinessFlow));
-                bool reachedParent = xmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
+                xmlReader.MoveToContent();
+
+                bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+                if (reachedEndOfElement)
                     break;
 
-                if (string.Equals(xmlReader.Name, nameof(BusinessFlow.Activities)))
+                if (!xmlReader.IsStartElement())
+                    continue;
+
+                bool isGrandChild = xmlReader.Depth > startDepth + 1;
+                if (isGrandChild)
+                    continue;
+
+                if (BusinessFlow.LazyLoad)
+                    continue;
+                else if (string.Equals(xmlReader.Name, nameof(BusinessFlow.Activities)))
                     businessFlow.Activities = new(DeserializeActivitiesElement(xmlReader));
 
                 else if (string.Equals(xmlReader.Name, nameof(BusinessFlow.ActivitiesGroups)))
@@ -196,8 +274,6 @@ namespace RepositorySerializerBenchmarks.Enhancements
                 else if (string.Equals(xmlReader.Name, nameof(BusinessFlow.Variables)))
                     businessFlow.Variables = new(DeserializeVariablesElement(xmlReader));
             }
-
-            return businessFlow;
         }
 
         private IEnumerable<Activity> DeserializeActivitiesElement(XmlReader xmlReader)
@@ -207,22 +283,26 @@ namespace RepositorySerializerBenchmarks.Enhancements
             if (!string.Equals(xmlReader.Name, nameof(BusinessFlow.Activities)))
                 throw new Exception($"Expected element {nameof(BusinessFlow.Activities)} but found {xmlReader.Name}.");
 
+            if (xmlReader.IsEmptyElement)
+                return Array.Empty<Activity>();
+
             List<Activity> activities = new();
             ActivityXMLSerializer activityXMLSerializer = new();
 
             int startDepth = xmlReader.Depth;
             while (xmlReader.Read())
             {
-                bool reachedEndOfFile = xmlReader.EOF;
-                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(BusinessFlow.Activities));
-                bool reachedParent = xmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
+                xmlReader.MoveToContent();
+
+                bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+                if (reachedEndOfElement)
                     break;
 
-                if (xmlReader.NodeType != XmlNodeType.Element)
+                if (!xmlReader.IsStartElement())
                     continue;
 
-                if (xmlReader.Depth != startDepth + 1)
+                bool isGrandChild = xmlReader.Depth > startDepth + 1;
+                if (isGrandChild)
                     continue;
 
                 if (string.Equals(xmlReader.Name, nameof(Activity)))
@@ -242,22 +322,26 @@ namespace RepositorySerializerBenchmarks.Enhancements
             if (!string.Equals(xmlReader.Name, nameof(BusinessFlow.ActivitiesGroups)))
                 throw new Exception($"Expected element {nameof(BusinessFlow.ActivitiesGroups)} but found {xmlReader.Name}.");
 
+            if (xmlReader.IsEmptyElement)
+                return Array.Empty<ActivitiesGroup>();
+
             List<ActivitiesGroup> activitiesGroups = new();
             ActivitiesGroupXMLSerializer activitiesGroupXMLSerializer = new();
 
             int startDepth = xmlReader.Depth;
             while (xmlReader.Read())
             {
-                bool reachedEndOfFile = xmlReader.EOF;
-                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(BusinessFlow.ActivitiesGroups));
-                bool reachedParent = xmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
+                xmlReader.MoveToContent();
+
+                bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+                if (reachedEndOfElement)
                     break;
 
-                if (xmlReader.NodeType != XmlNodeType.Element)
+                if (!xmlReader.IsStartElement())
                     continue;
 
-                if (xmlReader.Depth != startDepth + 1)
+                bool isGrandChild = xmlReader.Depth > startDepth + 1;
+                if (isGrandChild)
                     continue;
 
                 if (string.Equals(xmlReader.Name, nameof(ActivitiesGroup)))
@@ -277,22 +361,26 @@ namespace RepositorySerializerBenchmarks.Enhancements
             if (!string.Equals(xmlReader.Name, nameof(BusinessFlow.TargetApplications)))
                 throw new Exception($"Expected element {nameof(BusinessFlow.TargetApplications)} but found {xmlReader.Name}.");
 
+            if (xmlReader.IsEmptyElement)
+                return Array.Empty<TargetApplication>();
+
             List<TargetApplication> targetApplications = new();
             TargetApplicationXMLSerializer targetApplicationXMLSerializer = new();
 
             int startDepth = xmlReader.Depth;
             while (xmlReader.Read())
             {
-                bool reachedEndOfFile = xmlReader.EOF;
-                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(BusinessFlow.TargetApplications));
-                bool reachedParent = xmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
+                xmlReader.MoveToContent();
+
+                bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+                if (reachedEndOfElement)
                     break;
 
-                if (xmlReader.NodeType != XmlNodeType.Element)
+                if (!xmlReader.IsStartElement())
                     continue;
 
-                if (xmlReader.Depth != startDepth + 1)
+                bool isGrandChild = xmlReader.Depth > startDepth + 1;
+                if (isGrandChild)
                     continue;
 
                 if (string.Equals(xmlReader.Name, nameof(TargetApplication)))
@@ -312,22 +400,26 @@ namespace RepositorySerializerBenchmarks.Enhancements
             if (!string.Equals(xmlReader.Name, nameof(BusinessFlow.Variables)))
                 throw new Exception($"Expected element {nameof(BusinessFlow.Variables)} but found {xmlReader.Name}.");
 
+            if (xmlReader.IsEmptyElement)
+                return Array.Empty<VariableBase>();
+
             List<VariableBase> variables = new();
             VariableXMLSerializer variableXMLSerializer = new();
 
             int startDepth = xmlReader.Depth;
             while (xmlReader.Read())
             {
-                bool reachedEndOfFile = xmlReader.EOF;
-                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(BusinessFlow.Variables));
-                bool reachedParent = xmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
+                xmlReader.MoveToContent();
+
+                bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+                if (reachedEndOfElement)
                     break;
 
-                if (xmlReader.NodeType != XmlNodeType.Element)
+                if (!xmlReader.IsStartElement())
                     continue;
 
-                if (xmlReader.Depth != startDepth + 1)
+                bool isGrandChild = xmlReader.Depth > startDepth + 1;
+                if (isGrandChild)
                     continue;
 
                 VariableBase variable = variableXMLSerializer.Deserialize(xmlReader);
@@ -337,5 +429,53 @@ namespace RepositorySerializerBenchmarks.Enhancements
             return variables;
         }
 
+        public BusinessFlow Deserialize(LiteXMLElement businessFlowElement, bool lazyLoad)
+        {
+            BusinessFlow businessFlow = new();
+
+            foreach (LiteXMLAttribute attribute in businessFlowElement.Attributes)
+                SetBusinessFlowPropertyFromAttribute(businessFlow, attribute.Name, attribute.Value);
+
+            if (lazyLoad)
+                return businessFlow;
+
+            foreach(LiteXMLElement childElement in businessFlowElement.ChildElements)
+            {
+                if(string.Equals(childElement.Name, nameof(BusinessFlow.Activities)))
+                {
+                    List<Activity> activities = new();
+                    ActivityXMLSerializer activityXMLSerializer = new();
+                    foreach (LiteXMLElement activityElement in childElement.ChildElements)
+                        activities.Add(activityXMLSerializer.Deserialize(activityElement));
+                    businessFlow.Activities = new(activities);
+                }
+                if (string.Equals(childElement.Name, nameof(BusinessFlow.ActivitiesGroups)))
+                {
+                    List<ActivitiesGroup> activitiesGroups = new();
+                    ActivitiesGroupXMLSerializer activitiesGroupXMLSerializer = new();
+                    foreach (LiteXMLElement activitiesGroupElement in childElement.ChildElements)
+                        activitiesGroups.Add(activitiesGroupXMLSerializer.Deserialize(activitiesGroupElement));
+                    businessFlow.ActivitiesGroups = new(activitiesGroups);
+                }
+                if (string.Equals(childElement.Name, nameof(BusinessFlow.TargetApplications)))
+                {
+                    List<TargetApplication> targetApplications = new();
+                    TargetApplicationXMLSerializer targetApplicationXMLSerializer = new();
+                    foreach (LiteXMLElement targetApplicationElement in childElement.ChildElements)
+                        targetApplications.Add(targetApplicationXMLSerializer.Deserialize(targetApplicationElement));
+                    businessFlow.TargetApplications = new(targetApplications);
+                }
+                if (string.Equals(childElement.Name, nameof(BusinessFlow.Variables)))
+                {
+                    List<VariableBase> variables = new();
+                    VariableXMLSerializer variableXMLSerializer = new();
+                    foreach (LiteXMLElement variableElement in childElement.ChildElements)
+                        variables.Add(variableXMLSerializer.Deserialize(variableElement));
+                    businessFlow.Variables = new(variables);
+                }
+            }
+
+            return businessFlow;
+        }
     }
 }

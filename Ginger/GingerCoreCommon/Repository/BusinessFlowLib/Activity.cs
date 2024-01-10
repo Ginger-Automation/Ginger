@@ -18,6 +18,8 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -127,6 +129,8 @@ namespace GingerCore
             mActionRunOption = eActionRunOption.StopActionsRunOnFailure;
             Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Tags));
         }
+
+        public Activity(RIBXmlReader reader) : base(reader) { }
 
         public override string ToString()
         {
@@ -1146,5 +1150,59 @@ namespace GingerCore
         }
 
         public bool IsAutoLearned { get; set; }
+
+        protected override void ParseAttribute(string attributeName, string attributeValue)
+        {
+            base.ParseAttribute(attributeName, attributeValue);
+            if (string.Equals(attributeName, nameof(ActionRunOption)))
+                ActionRunOption = Enum.Parse<eActionRunOption>(attributeValue);
+            else if (string.Equals(attributeName, nameof(Active)))
+                Active = bool.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(ActivitiesGroupID)))
+                ActivitiesGroupID = attributeValue;
+            else if (string.Equals(attributeName, nameof(ActivityName)))
+                ActivityName = attributeValue;
+            else if (string.Equals(attributeName, nameof(AutomationStatus)))
+                AutomationStatus = Enum.Parse<eActivityAutomationStatus>(attributeValue);
+            else if (string.Equals(attributeName, nameof(ErrorHandlerMappingType)))
+                ErrorHandlerMappingType = Enum.Parse<eHandlerMappingType>(attributeValue);
+            else if (string.Equals(attributeName, nameof(Guid)))
+                Guid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(ParentGuid)))
+                ParentGuid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(PercentAutomated)))
+                PercentAutomated = attributeValue;
+            else if (string.Equals(attributeName, nameof(POMMetaDataId)))
+                POMMetaDataId = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(TargetApplication)))
+                TargetApplication = attributeValue;
+            else if (string.Equals(attributeName, nameof(Type)))
+                Type = Enum.Parse<eSharedItemType>(attributeValue);
+        }
+
+        //protected override void ParseElement(string elementName, RIBXmlReader reader)
+        //{
+        //    base.ParseElement(elementName, reader);
+        //    if (string.Equals(elementName, nameof(Acts)))
+        //        Acts = new(reader.ForEachChild(Act.Create));
+        //}
+
+        protected override void ParseElement(string elementName, RIBXmlReader reader)
+        {
+            base.ParseElement(elementName, reader);
+            if (string.Equals(elementName, nameof(Acts)))
+                Acts = new(ParseEachChild<IAct>(nameof(Acts), reader));
+        }
+
+        protected override object ChildParser(string collectionName, RIBXmlReader reader)
+        {
+            if (string.Equals(collectionName, nameof(Acts)))
+            {
+                //return new ActLogAction(reader);
+                return Act.Create(reader);
+            }
+            else
+                throw new Exception();
+        }
     }
 }

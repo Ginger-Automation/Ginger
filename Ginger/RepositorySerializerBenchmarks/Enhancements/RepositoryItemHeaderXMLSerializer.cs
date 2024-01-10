@@ -1,6 +1,8 @@
 ﻿using Amdocs.Ginger.Repository;
 using GingerCore;
+using NPOI.OpenXmlFormats.Dml;
 using Org.BouncyCastle.Asn1.Cms;
+using RepositorySerializerBenchmarks.Enhancements.LiteXML;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,23 +23,23 @@ namespace RepositorySerializerBenchmarks.Enhancements
             XmlElement repositoryItemHeaderElement = xmlDocument.CreateElement(HeaderXMLElementName);
 
             repositoryItemHeaderElement.SetAttribute(nameof(RepositoryItemHeader.ItemGuid), repositoryItemHeader.ItemGuid.ToString());
-            
-            if(!string.IsNullOrEmpty(repositoryItemHeader.ItemType))
+
+            if (!string.IsNullOrEmpty(repositoryItemHeader.ItemType))
                 repositoryItemHeaderElement.SetAttribute(nameof(RepositoryItemHeader.ItemType), repositoryItemHeader.ItemType);
-            
-            if(!string.IsNullOrEmpty(repositoryItemHeader.CreatedBy))
+
+            if (!string.IsNullOrEmpty(repositoryItemHeader.CreatedBy))
                 repositoryItemHeaderElement.SetAttribute(nameof(RepositoryItemHeader.CreatedBy), repositoryItemHeader.CreatedBy);
-            
+
             repositoryItemHeaderElement.SetAttribute(nameof(RepositoryItemHeader.Created), repositoryItemHeader.Created.ToString("yyyyMMddHHmm"));
-            
-            if(!string.IsNullOrEmpty(repositoryItemHeader.GingerVersion))
+
+            if (!string.IsNullOrEmpty(repositoryItemHeader.GingerVersion))
                 repositoryItemHeaderElement.SetAttribute(nameof(RepositoryItemHeader.GingerVersion), repositoryItemHeader.GingerVersion);
-            
+
             repositoryItemHeaderElement.SetAttribute(nameof(RepositoryItemHeader.Version), repositoryItemHeader.Version.ToString());
-            
-            if(!string.IsNullOrEmpty(repositoryItemHeader.LastUpdateBy))
+
+            if (!string.IsNullOrEmpty(repositoryItemHeader.LastUpdateBy))
                 repositoryItemHeaderElement.SetAttribute(nameof(RepositoryItemHeader.LastUpdateBy), repositoryItemHeader.LastUpdateBy);
-            
+
             repositoryItemHeaderElement.SetAttribute(nameof(RepositoryItemHeader.LastUpdate), repositoryItemHeader.LastUpdate.ToString("yyyyMMddHHmm"));
 
             return repositoryItemHeaderElement;
@@ -88,8 +90,23 @@ namespace RepositorySerializerBenchmarks.Enhancements
                 SetRepositoryItemHeaderPropertyFromAttribute(repositoryItemHeader, attributeName: xmlReader.Name, attributeValue: xmlReader.Value);
             }
             xmlReader.MoveToElement();
-            
+
             return repositoryItemHeader;
+        }
+
+        public RepositoryItemHeader Deserialize(LiteXMLElement repositoryItemHeaderElement)
+        {
+            RepositoryItemHeader repositoryItemHeader = new();
+
+            foreach (LiteXMLAttribute attribute in repositoryItemHeaderElement.Attributes)
+                SetRepositoryItemHeaderPropertyFromAttribute(repositoryItemHeader, attribute.Name, attribute.Value);
+
+            return repositoryItemHeader;
+        }
+
+        public RepositoryItemHeader Deserialize(RIBXmlReader reader)
+        {
+            return Deserialize(reader.XmlReader);
         }
     }
 }

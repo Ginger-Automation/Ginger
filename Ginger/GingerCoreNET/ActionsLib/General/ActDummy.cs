@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -62,6 +63,10 @@ namespace GingerCore.Actions
         }
 
         public override eImageType Image { get { return eImageType.Smile; } }
+
+        public ActDummy() { }
+
+        public ActDummy(RIBXmlReader reader) : base(reader) { }
 
         public override void Execute()
         {

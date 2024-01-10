@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Repository;
+using GingerCore.Platforms;
 
 namespace Amdocs.Ginger.Common.Repository
 {
@@ -40,5 +41,17 @@ namespace Amdocs.Ginger.Common.Repository
         // Save the last agent who executed on this Target
         [IsSerializedForLocalRepository]
         public string LastExecutingAgentName { get; set; }
+
+        public TargetBase() { }
+
+        public TargetBase(RIBXmlReader reader) : base(reader) { }
+
+        public static TargetBase Create(RIBXmlReader reader)
+        {
+            if (string.Equals(reader.Name, nameof(TargetApplication)))
+                return new TargetApplication(reader);
+            else
+                throw new System.Exception($"Unknown {nameof(TargetBase)} subclass.");
+        }
     }
 }

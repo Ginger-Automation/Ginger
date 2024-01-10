@@ -33,8 +33,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Repository\TempSerializers\**" />
+    <EmbeddedResource Remove="Repository\TempSerializers\**" />
+    <None Remove="Repository\TempSerializers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Ginger.External" Version="1.0.0" />
     <PackageReference Include="LiteDB" Version="4.1.4" />
+    <PackageReference Include="MethodTimer.Fody" Version="3.2.2" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="3.7.0" />    
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.7.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.7.0" />

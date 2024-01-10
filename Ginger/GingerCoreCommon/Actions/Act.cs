@@ -23,6 +23,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Xml;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Enums;
@@ -696,6 +697,54 @@ namespace GingerCore.Actions
             }
         }
 
+        public Act() { }
+
+        public Act(RIBXmlReader reader) : base(reader) { }
+
+        public static IAct Create(RIBXmlReader reader)
+        {
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            if (!_isGingerCoreNETLoaded)
+            {
+                try
+                {
+                    Assembly.Load("GingerCoreNET");
+                    assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                    _isGingerCoreNETLoaded = true;
+                }
+                catch (Exception) { }
+            }
+
+            if (actDummyType == null)
+            {
+                Assembly gingerCoreNETAssembly = assemblies.FirstOrDefault(a => a.FullName.Contains("GingerCoreNET"));
+                actDummyType = gingerCoreNETAssembly?.GetType("GingerCore.Actions.ActDummy");
+            }
+            return (Act)Activator.CreateInstance(actDummyType, args: new object[] { reader });
+
+            //string actTypeName = $"GingerCore.Actions.{reader.Name}";
+            //Type actType;
+            
+            //Assembly gingerCoreCommonAssembly = assemblies.FirstOrDefault(a => a.FullName.Contains("GingerCoreCommon"));
+            //actType = gingerCoreCommonAssembly?.GetType(actTypeName);
+            //if(gingerCoreCommonAssembly != null && actType != null)
+            //{
+            //    return (Act)Activator.CreateInstance(actType, args: new object[] { reader });
+            //}
+
+            //Assembly gingerCoreNETAssembly = assemblies.FirstOrDefault(a => a.FullName.Contains("GingerCoreNET"));
+            //actType = gingerCoreNETAssembly?.GetType(actTypeName);
+            //if(gingerCoreNETAssembly != null && actType != null)
+            //{
+            //    return (Act)Activator.CreateInstance(actType, args: new object[] { reader });
+            //}
+
+            //throw new Exception($"Unknown {nameof(Act)} subclass.");
+        }
+
+        private static Type actDummyType;
+
+        private static bool _isGingerCoreNETLoaded = false;
 
         #region ActInputValues
         public void AddInputValueParam(string ParamName)
@@ -1999,6 +2048,43 @@ namespace GingerCore.Actions
             return "Action";
         }
 
+        protected override void ParseAttribute(string attributeName, string attributeValue)
+        {
+            base.ParseAttribute(attributeName, attributeValue);
+            if (string.Equals(attributeName, nameof(Active)))
+                Active = bool.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(Description)))
+                Description = attributeValue;
+            else if (string.Equals(attributeName, nameof(Platform)))
+                Platform = Enum.Parse<ePlatformType>(attributeValue);
+            else if (string.Equals(attributeName, nameof(RetryMechanismInterval)))
+                RetryMechanismInterval = int.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(StatusConverter)))
+                StatusConverter = Enum.Parse<eStatusConverterOptions>(attributeValue);
+            else if (string.Equals(attributeName, nameof(WindowsToCapture)))
+                WindowsToCapture = Enum.Parse<Act.eWindowsToCapture>(attributeValue);
+        }
 
+        //protected override void ParseElement(string elementName, RIBXmlReader reader)
+        //{
+        //    base.ParseElement(elementName, reader);
+        //    if (string.Equals(elementName, nameof(InputValues)))
+        //        InputValues = new(reader.ForEachChild(childReader => new ActInputValue(childReader)));
+        //}
+
+        protected override void ParseElement(string elementName, RIBXmlReader reader)
+        {
+            base.ParseElement(elementName, reader);
+            if (string.Equals(elementName, nameof(InputValues)))
+                InputValues = new(ParseEachChild<ActInputValue>(nameof(InputValues), reader));
+        }
+
+        protected override object ChildParser(string collectionName, RIBXmlReader reader)
+        {
+            if (string.Equals(collectionName, nameof(InputValues)))
+                return new ActInputValue(reader);
+            else
+                throw new Exception();
+        }
     }
 }

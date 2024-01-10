@@ -26,16 +26,16 @@ namespace RepositorySerializerBenchmarks.Benchmarks
 
     [Config(typeof(DeserializationBenchmarkConfig))]
     [MemoryDiagnoser]
-    [MinColumn]
-    [MaxColumn]
-    [RPlotExporter]
-    [ShortRunJob]
+    //[MinColumn]
+    //[MaxColumn]
+    //[RPlotExporter]
+    [MediumRunJob]
     public class DeserializationBenchmark
     {
         private NewRepositorySerializer _newRepositorySerializer = null!;
         private BetterRepositorySerializer _betterRepositorySerializer = null!;
 
-        [Params(1, 10, 100)]
+        [Params(100)]
         public int TestDataSize { get; set; }
 
         private string[] TestData { get; set; } = [];
@@ -55,19 +55,19 @@ namespace RepositorySerializerBenchmarks.Benchmarks
                 Amdocs.Ginger.Repository.NewRepositorySerializer.DeserializeFromText(repositoryItemBaseXML);
         }
 
-        [Benchmark]
-        public void New_Full_XmlDocument()
-        {
-            foreach (string repositoryItemBaseXML in TestData)
-                _betterRepositorySerializer.DeserializeViaXmlDocument<BusinessFlow>(repositoryItemBaseXML, lazyLoad: false);
-        }
+        //[Benchmark]
+        //public void New_Full_XmlDocument()
+        //{
+        //    foreach (string repositoryItemBaseXML in TestData)
+        //        _betterRepositorySerializer.DeserializeViaXmlDocument<BusinessFlow>(repositoryItemBaseXML, lazyLoad: false);
+        //}
 
-        [Benchmark]
-        public void New_Lazy_XmlDocument()
-        {
-            foreach (string repositoryItemBaseXML in TestData)
-                _betterRepositorySerializer.DeserializeViaXmlDocument<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
-        }
+        //[Benchmark]
+        //public void New_Lazy_XmlDocument()
+        //{
+        //    foreach (string repositoryItemBaseXML in TestData)
+        //        _betterRepositorySerializer.DeserializeViaXmlDocument<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
+        //}
 
         [Benchmark]
         public void New_Full_XmlReader()
@@ -81,6 +81,34 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         {
             foreach (string repositoryItemBaseXML in TestData)
                 _betterRepositorySerializer.DeserializeViaXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
+        }
+
+        //[Benchmark]
+        //public void New_Full_LiteXMLElement()
+        //{
+        //    foreach (string repositoryItemBaseXML in TestData)
+        //        _betterRepositorySerializer.DeserializeViaLiteXMLElement<BusinessFlow>(repositoryItemBaseXML, lazyLoad: false);
+        //}
+
+        //[Benchmark]
+        //public void New_Lazy_LiteXMLElement()
+        //{
+        //    foreach (string repositoryItemBaseXML in TestData)
+        //        _betterRepositorySerializer.DeserializeViaLiteXMLElement<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
+        //}
+
+        [Benchmark]
+        public void New_Full_RIBXmlReader()
+        {
+            foreach (string repositoryItemBaseXML in TestData)
+                _betterRepositorySerializer.DeserializeViaRIBXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: false);
+        }
+
+        [Benchmark]
+        public void New_Lazy_RIBXmlReader()
+        {
+            foreach (string repositoryItemBaseXML in TestData)
+                _betterRepositorySerializer.DeserializeViaRIBXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
         }
     }
 }

@@ -19,6 +19,7 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
@@ -52,6 +53,8 @@ namespace GingerCore.Activities
         public ActivitiesGroup()
         {
         }
+
+        public ActivitiesGroup(RIBXmlReader reader) : base(reader) { }
 
         private string mName;
         [IsSerializedForLocalRepository]
@@ -521,5 +524,33 @@ namespace GingerCore.Activities
             }
         }
 
+        protected override void ParseAttribute(string attributeName, string attributeValue)
+        {
+            base.ParseAttribute(attributeName, attributeValue);
+            if (string.Equals(attributeName, nameof(Name)))
+                Name = attributeValue;
+        }
+
+        //protected override void ParseElement(string elementName, RIBXmlReader reader)
+        //{
+        //    base.ParseElement(elementName, reader);
+        //    if (string.Equals(reader.Name, nameof(ActivitiesIdentifiers)))
+        //        ActivitiesIdentifiers = new(reader.ForEachChild(childReader => new ActivityIdentifiers(childReader)));
+        //}
+
+        protected override void ParseElement(string elementName, RIBXmlReader reader)
+        {
+            base.ParseElement(elementName, reader);
+            if (string.Equals(reader.Name, nameof(ActivitiesIdentifiers)))
+                ActivitiesIdentifiers = new(ParseEachChild<ActivityIdentifiers>(nameof(ActivitiesIdentifiers), reader));
+        }
+
+        protected override object ChildParser(string collectionName, RIBXmlReader reader)
+        {
+            if (string.Equals(collectionName, nameof(ActivitiesIdentifiers)))
+                return new ActivityIdentifiers(reader);
+            else
+                throw new Exception();
+        }
     }
 }

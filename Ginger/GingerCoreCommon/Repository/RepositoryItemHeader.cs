@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -17,6 +17,11 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Xml;
+using Amdocs.Ginger.Common.Repository;
+using GingerCore;
+using Microsoft.CodeAnalysis.Operations;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -57,6 +62,115 @@ namespace Amdocs.Ginger.Repository
         //TODO: External ID - for example to QC - need to be only in class itself not here, BF only?
         // public string ExternalID { get; set; }
 
+        public RepositoryItemHeader() { }
 
+        public RepositoryItemHeader(RIBXmlReader reader)
+        {
+            Load(reader);
+        }
+
+        private void Load2(RIBXmlReader reader)
+        {
+            XmlReader xmlReader = reader.XmlReader;
+            if (xmlReader.NodeType != XmlNodeType.Element)
+                throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
+
+            for (int attrIndex = 0; attrIndex < xmlReader.AttributeCount; attrIndex++)
+            {
+                xmlReader.MoveToAttribute(attrIndex);
+                ParseAttribute(attributeName: xmlReader.Name, attributeValue: xmlReader.Value);
+            }
+            xmlReader.MoveToElement();
+
+            int startDepth = xmlReader.Depth;
+            while (xmlReader.Read())
+            {
+                bool reachedEndOfFile = xmlReader.EOF;
+                bool reachedSibling = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.Element;
+                bool reachedParent = xmlReader.Depth < startDepth;
+                if (reachedEndOfFile || reachedSibling || reachedParent)
+                    break;
+
+                if (xmlReader.NodeType != XmlNodeType.Element)
+                    continue;
+
+                if (xmlReader.Depth != startDepth + 1)
+                    continue;
+
+                ParseElement(elementName: xmlReader.Name, reader);
+            }
+        }
+
+        private void Load(RIBXmlReader reader)
+        {
+            if (!reader.XmlReader.IsStartElement())
+                throw new Exception($"Expected a start element.");
+
+            ReadAttributes(reader);
+            ReadChildElements(reader);
+        }
+
+        private void ReadAttributes(RIBXmlReader reader)
+        {
+            if (!reader.XmlReader.HasAttributes)
+                return;
+
+            while (reader.XmlReader.MoveToNextAttribute())
+            {
+                ParseAttribute(reader.XmlReader.Name, reader.XmlReader.Value);
+            }
+
+            reader.XmlReader.MoveToElement();
+        }
+
+        private void ReadChildElements(RIBXmlReader reader)
+        {
+            if (reader.XmlReader.IsEmptyElement)
+                return;
+
+            int startDepth = reader.XmlReader.Depth;
+            while (reader.XmlReader.Read())
+            {
+                reader.XmlReader.MoveToContent();
+
+                bool reachedEndOfElement = reader.XmlReader.Depth == startDepth && reader.XmlReader.NodeType == XmlNodeType.EndElement;
+                if (reachedEndOfElement)
+                    break;
+
+                if (!reader.XmlReader.IsStartElement())
+                    continue;
+
+                bool isGrandChild = reader.XmlReader.Depth > startDepth + 1;
+                if (isGrandChild)
+                    continue;
+
+                ParseElement(reader.Name, reader);
+            }
+        }
+
+        private void ParseAttribute(string attributeName, string attributeValue)
+        {
+            if (string.Equals(attributeName, nameof(ItemGuid)))
+                ItemGuid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(ItemType)))
+                ItemType = attributeValue;
+            else if (string.Equals(attributeName, nameof(CreatedBy)))
+                CreatedBy = attributeValue;
+            else if (string.Equals(attributeName, nameof(Created)))
+                Created = DateTime.ParseExact(attributeValue, "yyyyMMddHHmm", provider: null);
+            else if (string.Equals(attributeName, nameof(GingerVersion)))
+                GingerVersion = attributeValue;
+            else if (string.Equals(attributeName, nameof(Version)))
+                Version = int.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(LastUpdateBy)))
+                LastUpdateBy = attributeValue;
+            else if (string.Equals(attributeName, nameof(LastUpdate)))
+                LastUpdate = DateTime.ParseExact(attributeValue, "yyyyMMddHHmm", provider: null);
+        }
+
+        private void ParseElement(string elementName, RIBXmlReader reader)
+        {
+
+        }
     }
 }

@@ -2,6 +2,7 @@
 using GingerCore;
 using GingerCore.Actions;
 using Org.BouncyCastle.Asn1.Cms;
+using RepositorySerializerBenchmarks.Enhancements.LiteXML;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -122,6 +123,7 @@ namespace RepositorySerializerBenchmarks.Enhancements
 
         public Activity Deserialize(XmlReader xmlReader)
         {
+            //return new Activity(new RIBXmlReader(xmlReader));
             if (xmlReader.NodeType != XmlNodeType.Element)
                 throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
             if (!string.Equals(xmlReader.Name, nameof(Activity)))
@@ -136,25 +138,29 @@ namespace RepositorySerializerBenchmarks.Enhancements
             }
             xmlReader.MoveToElement();
 
-            int startDepth = xmlReader.Depth;
-            while (xmlReader.Read())
+            if (!xmlReader.IsEmptyElement)
             {
-                bool reachedEndOfFile = xmlReader.EOF;
-                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(Activity));
-                bool reachedParent = xmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
-                    break;
+                int startDepth = xmlReader.Depth;
+                while (xmlReader.Read())
+                {
+                    xmlReader.MoveToContent();
 
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
+                    bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+                    if (reachedEndOfElement)
+                        break;
 
-                if (xmlReader.Depth != startDepth + 1)
-                    continue;
+                    if (!xmlReader.IsStartElement())
+                        continue;
 
-                if (string.Equals(xmlReader.Name, nameof(Activity.Acts)))
-                    activity.Acts = new(DeserializeActsElement(xmlReader));
+                    bool isGrandChild = xmlReader.Depth > startDepth + 1;
+                    if (isGrandChild)
+                        continue;
+
+                    if (string.Equals(xmlReader.Name, nameof(Activity.Acts)))
+                        activity.Acts = new(DeserializeActsElement(xmlReader));
+                }
             }
-
+            
             return activity;
         }
 
@@ -165,22 +171,26 @@ namespace RepositorySerializerBenchmarks.Enhancements
             if (!string.Equals(xmlReader.Name, nameof(Activity.Acts)))
                 throw new Exception($"Expected element {nameof(Activity.Acts)} but found {xmlReader.Name}.");
 
+            if (xmlReader.IsEmptyElement)
+                return Array.Empty<Act>();
+
             List<Act> acts = new();
             ActXMLSerializer actXMLSerializer = new();
 
             int startDepth = xmlReader.Depth;
             while (xmlReader.Read())
             {
-                bool reachedEndOfFile = xmlReader.EOF;
-                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(Activity.Acts));
-                bool reachedParent = xmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
+                xmlReader.MoveToContent();
+
+                bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+                if (reachedEndOfElement)
                     break;
 
-                if (xmlReader.NodeType != XmlNodeType.Element)
+                if (!xmlReader.IsStartElement())
                     continue;
 
-                if (xmlReader.Depth != startDepth + 1)
+                bool isGrandChild = xmlReader.Depth > startDepth + 1;
+                if (isGrandChild)
                     continue;
 
                 Act act = actXMLSerializer.Deserialize(xmlReader);
@@ -188,6 +198,31 @@ namespace RepositorySerializerBenchmarks.Enhancements
             }
 
             return acts;
+        }
+
+        public Activity Deserialize(LiteXMLElement activityElement)
+        {
+            Activity activity = new();
+
+            foreach (LiteXMLAttribute attribute in activityElement.Attributes)
+                SetActivityPropertyFromAttribute(activity, attribute.Name, attribute.Value);
+
+            foreach(LiteXMLElement childElement in activityElement.ChildElements)
+            {
+                if (string.Equals(childElement.Name, nameof(Activity.Acts)))
+                {
+                    List<Act> acts = new();
+                    ActXMLSerializer actXMLSerializer = new();
+                    foreach (LiteXMLElement actElement in childElement.ChildElements)
+                    {
+                        Act act = actXMLSerializer.Deserialize(actElement);
+                        acts.Add(act);
+                    }
+                    activity.Acts = new(acts);
+                }
+            }
+
+            return activity;
         }
     }
 }

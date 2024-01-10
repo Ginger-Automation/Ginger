@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.11" />
+    <PackageReference Include="MethodTimer.Fody" Version="3.2.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,12 +17,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Benchmarks\Resources\dummy.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Benchmarks\Resources\TestBusinessFlow.Ginger.BusinessFlow.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Benchmarks\Resources\TestBusinessFlow.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Enhancements\NewFolder1\" />
+    <Folder Include="Enhancements\NewFolder\" />
+    <Folder Include="Enhancements\Wrappers\" />
   </ItemGroup>
 
 </Project>

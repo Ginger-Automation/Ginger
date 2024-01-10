@@ -30,6 +30,7 @@ using System.Xml.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using MethodTimer;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -523,7 +524,7 @@ namespace Amdocs.Ginger.Repository
         }
 
 
-
+        [Time]
         public static RepositoryItemBase DeserializeFromText(string xml, RepositoryItemBase targetObj = null, string filePath = "")
         {
             string encoding = "utf-8"; // make it static or remove string creation

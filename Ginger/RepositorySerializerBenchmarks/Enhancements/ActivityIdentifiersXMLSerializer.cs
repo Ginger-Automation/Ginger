@@ -1,9 +1,12 @@
-﻿using GingerCore;
+﻿using Amdocs.Ginger.Repository;
+using GingerCore;
 using GingerCore.Activities;
 using OpenQA.Selenium.DevTools.V115.Target;
 using Org.BouncyCastle.Asn1.Cms;
+using RepositorySerializerBenchmarks.Enhancements.LiteXML;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -78,16 +81,36 @@ namespace RepositorySerializerBenchmarks.Enhancements
             }
             xmlReader.MoveToElement();
 
-            int startDepth = xmlReader.Depth;
-            while (xmlReader.Read())
+            if (!xmlReader.IsEmptyElement)
             {
-                bool reachedEndOfFile = xmlReader.EOF;
-                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(ActivityIdentifiers));
-                bool reachedParent = xmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
-                    break;
+                int startDepth = xmlReader.Depth;
+                while (xmlReader.Read())
+                {
+                    xmlReader.MoveToContent();
 
+                    bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+                    if (reachedEndOfElement)
+                        break;
+
+                    if (!xmlReader.IsStartElement())
+                        continue;
+
+                    bool isGrandChild = xmlReader.Depth > startDepth + 1;
+                    if (isGrandChild)
+                        continue;
+
+                }
             }
+
+            return activityIdentifiers;
+        }
+
+        public ActivityIdentifiers Deserialize(LiteXMLElement activityIdentifiersElement)
+        {
+            ActivityIdentifiers activityIdentifiers = new();
+
+            foreach (LiteXMLAttribute attribute in activityIdentifiersElement.Attributes)
+                SetActivityIdentifiersPropertyFromAttribute(activityIdentifiers, attribute.Name, attribute.Value);
 
             return activityIdentifiers;
         }

@@ -1,7 +1,9 @@
-﻿using GingerCore;
+﻿using Amdocs.Ginger.Repository;
+using GingerCore;
 using GingerCore.Platforms;
 using LiteDB;
 using Org.BouncyCastle.Asn1.Cms;
+using RepositorySerializerBenchmarks.Enhancements.LiteXML;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,16 +70,36 @@ namespace RepositorySerializerBenchmarks.Enhancements
             }
             xmlReader.MoveToElement();
 
-            int startDepth = xmlReader.Depth;
-            while (xmlReader.Read())
+            if (!xmlReader.IsEmptyElement)
             {
-                bool reachedEndOfFile = xmlReader.EOF;
-                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(TargetApplication));
-                bool reachedParent = xmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
-                    break;
+                int startDepth = xmlReader.Depth;
+                while (xmlReader.Read())
+                {
+                    xmlReader.MoveToContent();
 
+                    bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+                    if (reachedEndOfElement)
+                        break;
+
+                    if (!xmlReader.IsStartElement())
+                        continue;
+
+                    bool isGrandChild = xmlReader.Depth > startDepth + 1;
+                    if (isGrandChild)
+                        continue;
+
+                }
             }
+
+            return targetApplication;
+        }
+
+        public TargetApplication Deserialize(LiteXMLElement targetApplicationElement)
+        {
+            TargetApplication targetApplication = new();
+
+            foreach (LiteXMLAttribute attribute in targetApplicationElement.Attributes)
+                SetTargetApplicationPropertyFromAttribute(targetApplication, attribute.Name, attribute.Value);
 
             return targetApplication;
         }

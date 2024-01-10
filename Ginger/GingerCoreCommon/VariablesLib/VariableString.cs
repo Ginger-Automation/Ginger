@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -16,8 +16,11 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
@@ -97,5 +100,14 @@ namespace GingerCore.Variables
         public override bool SupportResetValue { get { return true; } }
 
         public override bool SupportAutoValue { get { return false; } }
+
+        public VariableString(RIBXmlReader reader) : base(reader) { }
+
+        protected override void ParseAttribute(string attributeName, string attributeValue)
+        {
+            base.ParseAttribute(attributeName, attributeValue);
+            if (string.Equals(attributeName, nameof(InitialStringValue)))
+                InitialStringValue = attributeValue;
+        }
     }
 }

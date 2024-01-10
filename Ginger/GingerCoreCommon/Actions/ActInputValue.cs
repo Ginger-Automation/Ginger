@@ -18,7 +18,10 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using Newtonsoft.Json;
 
@@ -224,5 +227,15 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public ActInputValue() { }
+
+        public ActInputValue(RIBXmlReader reader) : base(reader) { }
+
+        protected override void ParseAttribute(string attributeName, string attributeValue)
+        {
+            base.ParseAttribute(attributeName, attributeValue);
+            if (string.Equals(attributeName, nameof(Param)))
+                Param = attributeValue;
+        }
     }
 }

@@ -96,6 +96,10 @@ namespace GingerCore.Actions
 
         public override eImageType Image { get { return eImageType.File; } }
 
+        public ActLogAction() { }
+
+        public ActLogAction(RIBXmlReader reader) : base(reader) { }
+
         eLogLevel GetLogLevel(eActionLogLevels loglevel)
         {
             eLogLevel logLevel;

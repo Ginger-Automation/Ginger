@@ -17,6 +17,9 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Activities
@@ -26,6 +29,8 @@ namespace GingerCore.Activities
         public ActivityIdentifiers()
         {
         }
+
+        public ActivityIdentifiers(RIBXmlReader reader) : base(reader) { }
 
         [IsSerializedForLocalRepository]
         public string ActivityName { get; set; }
@@ -135,6 +140,19 @@ namespace GingerCore.Activities
             {
                 return ItemName;
             }
+        }
+
+        protected override void ParseAttribute(string attributeName, string attributeValue)
+        {
+            base.ParseAttribute(attributeName, attributeValue);
+            if (string.Equals(attributeName, nameof(ActivityAutomationStatus)))
+                ActivityAutomationStatus = Enum.Parse<eActivityAutomationStatus>(attributeValue);
+            else if (string.Equals(attributeName, nameof(ActivityGuid)))
+                ActivityGuid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(ActivityName)))
+                ActivityName = attributeValue;
+            else if (string.Equals(attributeName, nameof(ActivityParentGuid)))
+                ActivityParentGuid = Guid.Parse(attributeValue);
         }
     }
 }

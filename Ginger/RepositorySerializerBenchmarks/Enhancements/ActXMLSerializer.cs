@@ -5,9 +5,12 @@ using GingerCore.Actions;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using NpgsqlTypes;
 using Org.BouncyCastle.Asn1.Cms;
+using RepositorySerializerBenchmarks.Enhancements.LiteXML;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -119,6 +122,7 @@ namespace RepositorySerializerBenchmarks.Enhancements
 
         public Act Deserialize(XmlReader xmlReader)
         {
+            //return (Act)Act.Create(new RIBXmlReader(xmlReader));
             if (xmlReader.NodeType != XmlNodeType.Element)
                 throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
             if (string.Equals(xmlReader.Name, nameof(ActDummy)))
@@ -135,6 +139,9 @@ namespace RepositorySerializerBenchmarks.Enhancements
                 throw new Exception($"Expected element {nameof(ActDummy)} but found {xmlReader.Name}.");
 
             ActDummy actDummy = new();
+            //Assembly gingerCoreNETAssembly = AppDomain.CurrentDomain.GetAssemblies().First(a => a.FullName!.Contains("GingerCoreNET"));
+            //Type? actDummyType = gingerCoreNETAssembly.GetType($"GingerCore.Actions.{nameof(ActDummy)}");
+            //ActDummy actDummy = (ActDummy)Activator.CreateInstance(actDummyType!)!;
 
             for (int attrIndex = 0; attrIndex < xmlReader.AttributeCount; attrIndex++)
             {
@@ -143,23 +150,27 @@ namespace RepositorySerializerBenchmarks.Enhancements
             }
             xmlReader.MoveToElement();
 
-            int startDepth = xmlReader.Depth;
-            while (xmlReader.Read())
+            if (!xmlReader.IsEmptyElement)
             {
-                bool reachedEndOfFile = xmlReader.EOF;
-                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(ActDummy));
-                bool reachedParent = xmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
-                    break;
+                int startDepth = xmlReader.Depth;
+                while (xmlReader.Read())
+                {
+                    xmlReader.MoveToContent();
 
-                if (xmlReader.NodeType != XmlNodeType.Element)
-                    continue;
+                    bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+                    if (reachedEndOfElement)
+                        break;
 
-                if (xmlReader.Depth != startDepth + 1)
-                    continue;
+                    if (!xmlReader.IsStartElement())
+                        continue;
 
-                if (string.Equals(xmlReader.Name, nameof(Act.InputValues)))
-                    actDummy.InputValues = new(DeserializeInputValuesElement(xmlReader));
+                    bool isGrandChild = xmlReader.Depth > startDepth + 1;
+                    if (isGrandChild)
+                        continue;
+
+                    if (string.Equals(xmlReader.Name, nameof(Act.InputValues)))
+                        actDummy.InputValues = new(DeserializeInputValuesElement(xmlReader));
+                }
             }
 
             return actDummy;
@@ -175,19 +186,23 @@ namespace RepositorySerializerBenchmarks.Enhancements
             List<ActInputValue> actInputValues = new();
             ActInputValueXMLSerializer actInputValueXMLSerializer = new();
 
+            if (xmlReader.IsEmptyElement)
+                return Array.Empty<ActInputValue>();
+
             int startDepth = xmlReader.Depth;
             while (xmlReader.Read())
             {
-                bool reachedEndOfFile = xmlReader.EOF;
-                bool reachedSibling = xmlReader.Depth == startDepth && !string.Equals(xmlReader.Name, nameof(Act.InputValues));
-                bool reachedParent = xmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
+                xmlReader.MoveToContent();
+
+                bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+                if (reachedEndOfElement)
                     break;
 
-                if (xmlReader.NodeType != XmlNodeType.Element)
+                if (!xmlReader.IsStartElement())
                     continue;
 
-                if (xmlReader.Depth != startDepth + 1)
+                bool isGrandChild = xmlReader.Depth > startDepth + 1;
+                if (isGrandChild)
                     continue;
 
                 ActInputValue actInputValue = actInputValueXMLSerializer.Deserialize(xmlReader);
@@ -195,6 +210,39 @@ namespace RepositorySerializerBenchmarks.Enhancements
             }
 
             return actInputValues;
+        }
+
+        public Act Deserialize(LiteXMLElement actElement)
+        {
+            if (string.Equals(actElement.Name, nameof(ActDummy)))
+                return DeserializeActDummy(actElement);
+            else
+                throw new NotImplementedException($"{nameof(ActXMLSerializer)} implementation for type {actElement.Name} is not implemented yet.");
+        }
+
+        private ActDummy DeserializeActDummy(LiteXMLElement actDummyElement)
+        {
+            ActDummy actDummy = new();
+
+            foreach (LiteXMLAttribute attribute in actDummyElement.Attributes)
+                SetActDummyPropertyFromAttribute(actDummy, attribute.Name, attribute.Value);
+
+            foreach (LiteXMLElement childElement in actDummyElement.ChildElements)
+            {
+                if (string.Equals(childElement.Name, InputValueXMLElementName))
+                {
+                    List<ActInputValue> actInputValues = new();
+                    ActInputValueXMLSerializer actInputValueXMLSerializer = new();
+                    foreach (LiteXMLElement actInputValueElement in childElement.ChildElements)
+                    {
+                        ActInputValue actInputValue = actInputValueXMLSerializer.Deserialize(actInputValueElement);
+                        actInputValues.Add(actInputValue);
+                    }
+                    actDummy.InputValues = new(actInputValues);
+                }
+            }
+
+            return actDummy;
         }
     }
 }

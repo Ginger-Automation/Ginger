@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
+using GingerCore.Platforms;
 
 namespace GingerCore.Variables
 {
@@ -241,6 +242,18 @@ namespace GingerCore.Variables
                 return mDiffrentFromOrigin;
             }
             set { if (mDiffrentFromOrigin != value) { mDiffrentFromOrigin = value; OnPropertyChanged(nameof(DiffrentFromOrigin)); } }
+        }
+
+        public VariableBase() { }
+
+        public VariableBase(RIBXmlReader reader) : base(reader) { }
+
+        public static VariableBase Create(RIBXmlReader reader)
+        {
+            if (string.Equals(reader.Name, nameof(VariableString)))
+                return new VariableString(reader);
+            else
+                throw new Exception($"Unknown {nameof(VariableBase)} subclass.");
         }
 
         public string NameBeforeEdit;
@@ -696,6 +709,21 @@ namespace GingerCore.Variables
                 variables.Move(indx, 0);
             }
             return variables;
+        }
+
+        protected override void ParseAttribute(string attributeName, string attributeValue)
+        {
+            base.ParseAttribute(attributeName, attributeValue);
+            if (string.Equals(attributeName, nameof(Name)))
+                Name = attributeValue;
+            else if (string.Equals(attributeName, nameof(Description)))
+                Description = attributeValue;
+            else if (string.Equals(attributeName, nameof(MappedOutputType)))
+                MappedOutputType = Enum.Parse<eOutputType>(attributeValue);
+            else if (string.Equals(attributeName, nameof(ParentName)))
+                ParentName = attributeValue;
+            else if (string.Equals(attributeName, nameof(ParentType)))
+                ParentType = attributeValue;
         }
     }
 }

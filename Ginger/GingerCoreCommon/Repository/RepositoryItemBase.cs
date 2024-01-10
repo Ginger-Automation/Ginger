@@ -26,12 +26,18 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Xml;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
+using GingerCore;
+using GingerCore.Actions;
 using GingerCore.GeneralLib;
+using Newtonsoft.Json.Linq;
+using static Amdocs.Ginger.Common.Repository.RIBXmlReaderProcessor;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -123,6 +129,13 @@ namespace Amdocs.Ginger.Repository
                 // like APIModel - SOAP/REST we want both file name to be with same extension - ApplicationAPIModel
                 return RepositorySerializer.FileExt(this);
             }
+        }
+
+        public RepositoryItemBase() { }
+
+        public RepositoryItemBase(RIBXmlReader reader)
+        {
+            Load(reader);
         }
 
         public static string FolderName(Type T)
@@ -1533,5 +1546,140 @@ namespace Amdocs.Ginger.Repository
 
         public Guid ExecutionParentGuid { get; set; } = Guid.Empty;
 
+        private void Load2(RIBXmlReader reader)
+        {
+            XmlReader xmlReader = reader.XmlReader;
+            if (xmlReader.NodeType != XmlNodeType.Element)
+                throw new Exception($"Expected a element node type but found {xmlReader.NodeType}.");
+
+            for (int attrIndex = 0; attrIndex < xmlReader.AttributeCount; attrIndex++)
+            {
+                xmlReader.MoveToAttribute(attrIndex);
+                ParseAttribute(attributeName: xmlReader.Name, attributeValue: xmlReader.Value);
+            }
+            xmlReader.MoveToElement();
+
+            int startDepth = xmlReader.Depth;
+            while (xmlReader.Read())
+            {
+                bool reachedEndOfFile = xmlReader.EOF;
+                bool reachedSibling = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.Element;
+                bool reachedParent = xmlReader.Depth < startDepth;
+                if (reachedEndOfFile || reachedSibling || reachedParent)
+                    break;
+
+                if (xmlReader.NodeType != XmlNodeType.Element)
+                    continue;
+
+                if (xmlReader.Depth != startDepth + 1)
+                    continue;
+
+                ParseElement(elementName: xmlReader.Name, reader);
+            }
+        }
+
+        private void Load(RIBXmlReader reader)
+        {
+            if (!reader.XmlReader.IsStartElement())
+                throw new Exception($"Expected a start element.");
+
+            ReadAttributes(reader);
+            ReadChildElements(reader);   
+        }
+
+        private void ReadAttributes(RIBXmlReader reader)
+        {
+            if (!reader.XmlReader.HasAttributes)
+                return;
+
+            while(reader.XmlReader.MoveToNextAttribute())
+            {
+                ParseAttribute(reader.XmlReader.Name, reader.XmlReader.Value);
+            }
+
+            reader.XmlReader.MoveToElement();
+        }
+
+        private void ReadChildElements(RIBXmlReader reader)
+        {
+            if (reader.XmlReader.IsEmptyElement)
+                return;
+
+            int startDepth = reader.XmlReader.Depth;
+            while (reader.XmlReader.Read())
+            {
+                reader.XmlReader.MoveToContent();
+
+                bool reachedEndOfElement = reader.XmlReader.Depth == startDepth && reader.XmlReader.NodeType == XmlNodeType.EndElement;
+                if (reachedEndOfElement)
+                    break;
+
+                if (!reader.XmlReader.IsStartElement())
+                    continue;
+
+                bool isGrandChild = reader.XmlReader.Depth > startDepth + 1;
+                if (isGrandChild)
+                    continue;
+
+                ParseElement(reader.Name, reader);
+            }
+        }
+
+        protected virtual void ParseAttribute(string attributeName, string attributeValue)
+        {
+            if (string.Equals(attributeName, nameof(Guid)))
+                Guid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(ParentGuid)))
+                ParentGuid = Guid.Parse(attributeValue);
+            else if (string.Equals(attributeName, nameof(ExternalID)))
+                ExternalID = attributeValue;
+            else if (string.Equals(attributeName, nameof(ExternalID2)))
+                ExternalID2 = attributeValue;
+            else if (string.Equals(attributeName, nameof(Publish)))
+                Publish = bool.Parse(attributeValue);
+
+        }
+
+        protected virtual void ParseElement(string elementName, RIBXmlReader reader)
+        {
+            
+        }
+
+        protected IEnumerable<T> ParseEachChild<T>(string collectionName, RIBXmlReader reader)
+        {
+            if (!reader.XmlReader.IsStartElement())
+                throw new Exception($"Expected a start element.");
+
+            if (reader.XmlReader.IsEmptyElement)
+                return Array.Empty<T>();
+
+            List<T> children = [];
+
+            int startDepth = reader.XmlReader.Depth;
+            while (reader.XmlReader.Read())
+            {
+                reader.XmlReader.MoveToContent();
+
+                bool reachedEndOfElement = reader.XmlReader.Depth == startDepth && reader.XmlReader.NodeType == XmlNodeType.EndElement;
+                if (reachedEndOfElement)
+                    break;
+
+                if (!reader.XmlReader.IsStartElement())
+                    continue;
+
+                bool isGrandChild = reader.XmlReader.Depth > startDepth + 1;
+                if (isGrandChild)
+                    continue;
+
+                children.Add((T)ChildParser(collectionName, reader));
+            }
+
+            return children;
+        }
+
+        protected virtual object ChildParser(string collectionName, RIBXmlReader reader)
+        {
+            throw new Exception();
+        }
     }
 }
