@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -263,6 +264,18 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             GingerVersion = ApplicationInfo.ApplicationUIversion;
             RunStatus = (runSetReport.RunSetExecutionStatus == eRunStatus.Automated) ? eRunStatus.Automated.ToString() : SetStatus(RunnersColl);
         }
+        public static ILiteCollection<LiteDbRunSet> IncludeAllReferences(ILiteCollection<LiteDbRunSet> liteCollection)
+        {
+            return liteCollection
+                .Include(runset => runset.RunnersColl)
+                .Include(runset => runset.RunnersColl.Select((runner) => runner.AllBusinessFlowsColl))
+                .Include(runset => runset.RunnersColl.Select((runner) => runner.AllBusinessFlowsColl.Select(businessFlow => businessFlow.AllActivitiesColl)))
+                .Include(runset => runset.RunnersColl.Select((runner) => runner.AllBusinessFlowsColl.Select(businessFlow => businessFlow.ActivitiesGroupsColl)))
+                .Include(runset => runset.RunnersColl.Select((runner) => runner.AllBusinessFlowsColl.Select(businessFlow => businessFlow.AllActivitiesColl.Select(activity => activity.AllActionsColl))))
+                .Include(runset => runset.RunnersColl.Select((runner) => runner.AllBusinessFlowsColl.Select(businessFlow => businessFlow.ActivitiesGroupsColl.Select(activityGroup => activityGroup.AllActivitiesColl.Select(activity => activity.AllActionsColl)))))
+                ;
+
+        }
     }
     public class LiteDbRunner : LiteDbReportBase
     {
@@ -351,6 +364,14 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             ApplicationAgentsMappingList = gingerReport.ApplicationAgentsMappingList;
             RunStatus = SetStatus(BusinessFlowsColl);
         }
+        public static ILiteCollection<LiteDbRunner> IncludeAllReferences(ILiteCollection<LiteDbRunner> liteCollection)
+        {
+            return liteCollection
+                .Include((runner) => runner.BusinessFlowsColl)
+                .Include((runner) => runner.AllBusinessFlowsColl.Select((businessFlow) => businessFlow.AllActivitiesColl.Select((activity) => activity.AllActionsColl)))
+                .Include((runner) => runner.AllBusinessFlowsColl.Select((businessFlow) => businessFlow.ActivitiesGroupsColl.Select((activityGroup) => activityGroup.AllActivitiesColl.Select((activity) => activity.AllActionsColl))));
+        }
+
     }
     public class LiteDbBusinessFlow : LiteDbReportBase
     {
@@ -492,6 +513,15 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             ExternalID2 = bfReport.ExternalID2;
 
         }
+        public static ILiteCollection<LiteDbBusinessFlow> IncludeAllReferences(ILiteCollection<LiteDbBusinessFlow> liteCollection)
+        {
+            return liteCollection
+                .Include((businessFlow) => businessFlow.ActivitiesGroupsColl)
+                .Include((businessFlow) => businessFlow.AllActivitiesColl)
+                .Include((businessFlow) => businessFlow.ActivitiesGroupsColl.Select((activityGroup) => activityGroup.AllActivitiesColl.Select((activity) => activity.AllActionsColl)))
+                .Include((businessFlow) => businessFlow.AllActivitiesColl.Select((activity) => activity.AllActionsColl));
+        }
+
     }
 
     public class LiteDbActivityGroup : LiteDbReportBase
@@ -584,6 +614,13 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             ExternalID = agReport.ExternalID;
             ExternalID2 = agReport.ExternalID2;
         }
+        public static ILiteCollection<LiteDbActivityGroup> IncludeAllReferences(ILiteCollection<LiteDbActivityGroup> liteCollection)
+        {
+            return liteCollection
+                .Include((activityGroup) => activityGroup.AllActivitiesColl)
+                .Include((activityGroup) => activityGroup.AllActivitiesColl.Select((activity) => activity.AllActionsColl));
+        }
+
     }
     public class LiteDbActivity : LiteDbReportBase
     {
@@ -688,6 +725,11 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             ExternalID = activityReport.ExternalID;
             ExternalID2 = activityReport.ExternalID2;
         }
+        public static ILiteCollection<LiteDbActivity> IncludeAllReferences(ILiteCollection<LiteDbActivity> liteCollection)
+        {
+            return liteCollection.Include((activity) => activity.AllActionsColl);
+        }
+
     }
 
     public class LiteDbAction : LiteDbReportBase

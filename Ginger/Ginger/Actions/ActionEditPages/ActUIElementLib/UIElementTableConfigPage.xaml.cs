@@ -555,7 +555,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             if (ControlActionComboBox.ComboBox.SelectedItem != null && ControlActionComboBox.ComboBox.SelectedValue != null)
             {
                 if (ControlActionComboBox.ComboBox.SelectedValue.ToString() == ActUIElement.eElementAction.SetValue.ToString() || ControlActionComboBox.ComboBox.SelectedValue.ToString() == ActUIElement.eElementAction.SetText.ToString() ||
-                    ControlActionComboBox.ComboBox.SelectedValue.ToString() == ActUIElement.eElementAction.SendKeyPressRelease.ToString())
+                    ControlActionComboBox.ComboBox.SelectedValue.ToString() == ActUIElement.eElementAction.SendKeyPressRelease.ToString() || ControlActionComboBox.ComboBox.SelectedValue.ToString() == ActUIElement.eElementAction.ContextMenuClick.ToString())
                 {
                     Ginger.Actions.UCValueExpression textboxControlAction = new Ginger.Actions.UCValueExpression()
                     {

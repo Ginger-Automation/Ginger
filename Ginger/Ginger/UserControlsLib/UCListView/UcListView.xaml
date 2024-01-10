@@ -55,7 +55,7 @@
         <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0" IsEnabled="False" Background="LightGray" />
 
         <Border Grid.Row="3" Background="{StaticResource $BackgroundColor_VeryLightGray}" BorderThickness="10" CornerRadius="20" >
-            <ScrollViewer Margin="5"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer Margin="5"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                 <ListView x:Name="xListView" 
                   Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" Visibility="Visible" 
                   VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.IsContainerVirtualizable="True" 
