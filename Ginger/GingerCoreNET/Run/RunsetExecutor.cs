@@ -16,12 +16,8 @@ limitations under the License.
 */
 #endregion
 
-using AccountReport.Contracts;
-using AccountReport.Contracts.Helpers;
-using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
@@ -29,7 +25,6 @@ using Amdocs.Ginger.CoreNET.Run.ExecutionSummary;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
-using AutoMapper;
 using Ginger.Configurations;
 using Ginger.Reports;
 using Ginger.Run.RunSetActions;
@@ -38,12 +33,7 @@ using GingerCore.DataSource;
 using GingerCore.Environments;
 using GingerCore.Platforms;
 using GingerCore.Variables;
-using Microsoft.Azure.Cosmos.Serialization.HybridRow;
-using NJsonSchema.Infrastructure;
-using NUglify.Helpers;
-using OfficeOpenXml.Drawing.Slicer.Style;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -543,7 +533,7 @@ namespace Ginger.Run
 
                         Task t = new Task(() =>
                         {
-                        if (doContinueRun == false)
+                        if (!doContinueRun)
                         {
                             GR.Executor.RunRunner();
                         }
@@ -556,9 +546,6 @@ namespace Ginger.Run
                         }, TaskCreationOptions.LongRunning);
                         runnersTasks.Add(t);
                         t.Start();
-
-                        // Wait one second before starting another runner
-                        //Thread.Sleep(1000);
                     }
                 }
                 else

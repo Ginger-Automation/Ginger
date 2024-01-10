@@ -4418,12 +4418,10 @@ namespace GingerCore.Drivers
 
                         try
                         {
-                            //Thread.Sleep(100);
                             count = Driver.WindowHandles.Count;
                         }
                         catch (System.InvalidCastException ex)
                         {
-                            attemptCount = 0;
                             count = Driver.CurrentWindowHandle.Count();
                             Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred while casting when we are checking IsRunning", ex);
                         }
