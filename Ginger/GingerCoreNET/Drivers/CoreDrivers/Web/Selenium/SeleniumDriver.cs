@@ -1578,6 +1578,7 @@ namespace GingerCore.Drivers
         private void TakeFullPageWithDesktopScreenScreenShot(Act act)
         {
             List<Bitmap> bitmapsToMerge = new();
+            string filepath = null;
             try
             {
                 using (Bitmap browserHeaderScreenshot = GetBrowserHeaderScreenShot())
@@ -1586,31 +1587,26 @@ namespace GingerCore.Drivers
                     {
                         bitmapsToMerge.Add(browserHeaderScreenshot);
                     }
-                }
-
-                using (Bitmap browserFullPageScreenshot = GetScreenShot(true))
-                {
-                    if (browserFullPageScreenshot != null)
+                    using (Bitmap browserFullPageScreenshot = GetScreenShot(true))
                     {
-                        bitmapsToMerge.Add(browserFullPageScreenshot);
+                        if (browserFullPageScreenshot != null)
+                        {
+                            bitmapsToMerge.Add(browserFullPageScreenshot);
+                        }
+                        using (Bitmap taskbarScreenshot = TargetFrameworkHelper.Helper.GetTaskbarScreenshot())
+                        {
+                            if (taskbarScreenshot != null)
+                            {
+                                bitmapsToMerge.Add(taskbarScreenshot);
+                            }
+                            filepath = TargetFrameworkHelper.Helper.MergeVerticallyAndSaveBitmaps(bitmapsToMerge.ToArray());
+                        }
                     }
                 }
-
-
-                using (Bitmap taskbarScreenshot = TargetFrameworkHelper.Helper.GetTaskbarScreenshot())
-                {
-                    if (taskbarScreenshot != null)
-                    {
-                        bitmapsToMerge.Add(taskbarScreenshot);
-                    }
-                }
-                    
-                string filepath = TargetFrameworkHelper.Helper.MergeVerticallyAndSaveBitmaps(bitmapsToMerge.ToArray());
-
                 act.ScreenShotsNames.Add(Driver.Title);
-                act.ScreenShots.Add(filepath);   
+                act.ScreenShots.Add(filepath);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 act.Error = "Failed to create Selenuim WebDriver browser page screenshot. Error= " + ex.Message;
                 return;
