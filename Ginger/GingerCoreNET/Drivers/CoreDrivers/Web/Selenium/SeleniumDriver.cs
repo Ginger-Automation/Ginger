@@ -1603,8 +1603,11 @@ namespace GingerCore.Drivers
                         }
                     }
                 }
-                act.ScreenShotsNames.Add(Driver.Title);
-                act.ScreenShots.Add(filepath);
+                if (!string.IsNullOrEmpty(filepath))
+                {
+                    act.ScreenShotsNames.Add(Driver.Title);
+                    act.ScreenShots.Add(filepath);
+                }
             }
             catch (Exception ex)
             {
