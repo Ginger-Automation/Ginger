@@ -11,6 +11,7 @@ using GingerCore;
 using GingerCore.Activities;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using NPOI.OpenXmlFormats.Wordprocessing;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -91,11 +92,24 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     {
                         Header = nameof(ActivityBulkUpdateListItem.TargetApplication),
                         Field = nameof(ActivityBulkUpdateListItem.TargetApplication),
-                        CellValuesList = WorkSpace.Instance.Solution.GetSolutionTargetApplications().Select(targetApp => new ComboEnumItem(){ text = targetApp.Name, Value = targetApp.Name }),
+                        CellValuesList = WorkSpace.Instance.Solution.GetSolutionTargetApplications().Select(targetApp => new ComboEnumItem()
+                        { 
+                            text = targetApp.Name, 
+                            Value = targetApp.Name 
+                        }),
                         StyleType = GridColView.eGridColStyleType.ComboBox,
                         WidthWeight = 60,
                         BindingMode = BindingMode.TwoWay
                     },
+                    new GridColView()
+                    {
+                        Header = "Consumers",
+                        Field = nameof(ActivityBulkUpdateListItem.Consumers),
+                        CellTemplate = (DataTemplate)FindResource("ConsumerCellTemplate"),
+                        StyleType = GridColView.eGridColStyleType.Template,
+                        WidthWeight = 60,
+                        BindingMode = BindingMode.TwoWay,
+                    }
                 }
             };
             BulkUpdateUCGrid.Title = "Bulk Update Shared Activities";
@@ -298,7 +312,17 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 
             public Activity Activity { get; }
 
-            public IEnumerable<Node> ConsumerOptions { get; }
+            public ObservableList<Consumer> ConsumerOptions { get; }
+
+            public ObservableList<Consumer> Consumers
+            {
+                get => Activity.ConsumerApplications;
+                set
+                {
+                    Activity.ConsumerApplications = value;
+                    IsModified = true;
+                }
+            }
 
             public bool ShowConsumerOptions { get; }
 
@@ -349,7 +373,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 Activity = activity;
                 AttachActivityPropertyChangedHandler();
                 TargetBase targetApp = GetTargetApplication(activity.TargetApplication);
-                ConsumerOptions = GetConsumerOptions(targetApp);
+                ConsumerOptions = new(GetConsumerOptions(targetApp));
                 ShowConsumerOptions = IsWebServicesTargetApplication(targetApp);
                 TargetApplicationOptions = GetTargetApplicationOptions();
             }
@@ -363,7 +387,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     .First(targetApp => string.Equals(targetApp.Name, targetApplicationName));
             }
 
-            private IEnumerable<Node> GetConsumerOptions(TargetBase targetApp)
+            private IEnumerable<Consumer> GetConsumerOptions(TargetBase targetApp)
             {
                 IEnumerable<TargetBase> solutionTargetApps = WorkSpace
                     .Instance
@@ -378,42 +402,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                         Name = t.Name,
                         ConsumerGuid = t.Guid,
                     })
-                    .Select(consumer =>
-                    {
-                        Node node = new(title: consumer.Name) { Tag = consumer };
-                        node.PropertyChanged += ConsumerMultiSelectComboBoxNode_PropertyChanged;
-
-                        return node;
-                    })
                     .ToArray();
-            }
-
-            private void ConsumerMultiSelectComboBoxNode_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-            {
-                if (sender == null)
-                {
-                    return;
-                }
-                if (!string.Equals(e.PropertyName, nameof(Node.IsSelected)))
-                {
-                    return;
-                }
-
-                Node senderNode = (Node)sender;
-                if (senderNode.Tag == null)
-                {
-                    return;
-                }
-
-                if (senderNode.IsSelected)
-                {
-                    Activity.ConsumerApplications.Add((Consumer)senderNode.Tag);
-                }
-                else
-                {
-                    Activity.ConsumerApplications.Remove((Consumer)senderNode.Tag);
-                }
-
             }
 
             private IEnumerable<string> GetTargetApplicationOptions()
@@ -473,6 +462,10 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 else if (string.Equals(e.PropertyName, nameof(Activity.TargetApplication)))
                 {
                     OnPropertyChanged(nameof(TargetApplication));
+                }
+                else if (string.Equals(e.PropertyName, nameof(Activity.ConsumerApplications)))
+                {
+                    OnPropertyChanged(nameof(Consumers));
                 }
             }
 

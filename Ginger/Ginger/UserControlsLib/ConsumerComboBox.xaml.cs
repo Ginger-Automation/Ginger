@@ -99,12 +99,17 @@ namespace Ginger.UserControlsLib
         #endregion
 
         #region Events
+
+        private bool firstTime = true;
+
         private static void OnConsumerSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ConsumerComboBox control = (ConsumerComboBox)d;
             control.DisplayInConsumer();
             control.SelectNodes();
-            control.SetSelectedConsumer();
+            if(!control.firstTime)
+                control.SetSelectedConsumer();
+            control.firstTime = false;
         }
 
         private static void OnSelectedConsumerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
