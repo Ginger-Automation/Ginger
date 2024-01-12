@@ -14,6 +14,7 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using NPOI.OpenXmlFormats.Wordprocessing;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -42,21 +43,13 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
         private Observable<string>? _observableLoaderLabel;
         private GenericWindow? _window;
 
-        public BulkUpdateSharedRepositoryActivitiesPage()
+        public BulkUpdateSharedRepositoryActivitiesPage(IEnumerable<Activity> activities)
         {
             InitializeComponent();
-            _activityBulkUpdateListItems = GetSharedRepositoryActivitiesAsBulkUpdateListItems();
-            //SetBulkUpdateListViewItems(_activityBulkUpdateListItems);
+            _activityBulkUpdateListItems = activities.Select(activity => new ActivityBulkUpdateListItem(activity));
             InitBulkUpdateUCGrid();
             SetBulkUpdateUCGridItems(_activityBulkUpdateListItems);
             UpdateUIForPageMode();
-        }
-
-        private IEnumerable<ActivityBulkUpdateListItem> GetSharedRepositoryActivitiesAsBulkUpdateListItems()
-        {
-            IEnumerable<Activity> sharedRepositoryActivities = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>();
-            IEnumerable<ActivityBulkUpdateListItem> activityBulkUpdateListItems = sharedRepositoryActivities.Select(activity => new ActivityBulkUpdateListItem(activity));
-            return activityBulkUpdateListItems.ToList();
         }
 
         private void InitBulkUpdateUCGrid()
@@ -113,6 +106,12 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 }
             };
             BulkUpdateUCGrid.Title = "Bulk Update Shared Activities";
+            BulkUpdateUCGrid.ShowRefresh = Visibility.Collapsed;
+            BulkUpdateUCGrid.ShowAdd = Visibility.Collapsed;
+            BulkUpdateUCGrid.ShowClearAll = Visibility.Collapsed;
+            BulkUpdateUCGrid.ShowEdit = Visibility.Collapsed;
+            BulkUpdateUCGrid.ShowDelete = Visibility.Collapsed;
+            BulkUpdateUCGrid.ShowUpDown = Visibility.Collapsed;
             BulkUpdateUCGrid.SetAllColumnsDefaultView(gridViewDef);
             BulkUpdateUCGrid.InitViewItems();
         }
@@ -121,11 +120,6 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
         {
             BulkUpdateUCGrid.DataSourceList = new ObservableList<ActivityBulkUpdateListItem>(activityBulkUpdateListItems);
         }
-
-        //private void SetBulkUpdateListViewItems(IEnumerable<ActivityBulkUpdateListItem> activityBulkUpdateListItems)
-        //{            
-        //    ActivityBulkUpdateListView.ItemsSource = activityBulkUpdateListItems;
-        //}
 
         public void ShowAsWindow()
         {
@@ -306,6 +300,8 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 
         public sealed class ActivityBulkUpdateListItem : INotifyPropertyChanged
         {
+            private bool _showConsumerOptions = false;
+
             public event PropertyChangedEventHandler? PropertyChanged;
 
             public bool IsModified { get; set; }
@@ -324,7 +320,15 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 }
             }
 
-            public bool ShowConsumerOptions { get; }
+            public bool ShowConsumerOptions
+            {
+                get => _showConsumerOptions;
+                set
+                {
+                    _showConsumerOptions = value;
+                    OnPropertyChanged(nameof(ShowConsumerOptions));
+                }
+            }
 
             public string Name
             {
@@ -362,6 +366,16 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 set
                 {
                     Activity.TargetApplication = value;
+                    if (IsWebServicesTargetApplication(Activity.TargetApplication))
+                    {
+                        SetConsumerOptions(Activity.TargetApplication);
+                        ShowConsumerOptions = true;
+                    }
+                    else
+                    {
+                        ConsumerOptions.ClearAll();
+                        ShowConsumerOptions = false;
+                    }
                     IsModified = true;
                 }
             }
@@ -372,37 +386,37 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
             {
                 Activity = activity;
                 AttachActivityPropertyChangedHandler();
-                TargetBase targetApp = GetTargetApplication(activity.TargetApplication);
-                ConsumerOptions = new(GetConsumerOptions(targetApp));
-                ShowConsumerOptions = IsWebServicesTargetApplication(targetApp);
+                ConsumerOptions = new();
+                if (IsWebServicesTargetApplication(Activity.TargetApplication))
+                {
+                    ShowConsumerOptions = true;
+                    SetConsumerOptions(Activity.TargetApplication);
+                }
                 TargetApplicationOptions = GetTargetApplicationOptions();
             }
 
-            private TargetBase GetTargetApplication(string targetApplicationName)
-            {
-                return WorkSpace
-                    .Instance
-                    .Solution
-                    .GetSolutionTargetApplications()
-                    .First(targetApp => string.Equals(targetApp.Name, targetApplicationName));
-            }
-
-            private IEnumerable<Consumer> GetConsumerOptions(TargetBase targetApp)
+            private void SetConsumerOptions(string targetAppName)
             {
                 IEnumerable<TargetBase> solutionTargetApps = WorkSpace
                     .Instance
                     .Solution
                     .GetSolutionTargetApplications();
 
-                return
+                IEnumerable<Consumer> consumerOptions = 
                     solutionTargetApps
-                    .Where(t => t.Guid != targetApp.Guid)
+                    .Where(t => !string.Equals(t.Name, targetAppName))
                     .Select(t => new Consumer()
                     {
                         Name = t.Name,
                         ConsumerGuid = t.Guid,
                     })
                     .ToArray();
+
+                ConsumerOptions.ClearAll();
+                foreach(Consumer consumerOption in consumerOptions)
+                {
+                    ConsumerOptions.Add(consumerOption);
+                }
             }
 
             private IEnumerable<string> GetTargetApplicationOptions()
@@ -421,13 +435,13 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     .Where(t => GetTargetApplicationPlatform(t.Name) == platform);
             }
 
-            private bool IsWebServicesTargetApplication(TargetBase targetApp)
+            private bool IsWebServicesTargetApplication(string targetAppName)
             {
                 return
                     WorkSpace
                     .Instance
                     .Solution
-                    .GetApplicationPlatformForTargetApp(targetApp.Name) == ePlatformType.WebServices;
+                    .GetApplicationPlatformForTargetApp(targetAppName) == ePlatformType.WebServices;
             }
 
             private ePlatformType GetTargetApplicationPlatform(string targetAppName)
@@ -443,6 +457,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
             {
                 string allProperties = string.Empty;
                 PropertyChangedEventManager.AddHandler(source: Activity, handler: OnActivityPropertyChanged, propertyName: allProperties);
+                CollectionChangedEventManager.AddHandler(source: Activity.ConsumerApplications, handler: OnActivityConsumerApplicationsCollectionChanged);
             }
 
             private void OnActivityPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -467,6 +482,11 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 {
                     OnPropertyChanged(nameof(Consumers));
                 }
+            }
+
+            private void OnActivityConsumerApplicationsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+            {
+                IsModified = true;
             }
 
             private void OnPropertyChanged(string propertyName)

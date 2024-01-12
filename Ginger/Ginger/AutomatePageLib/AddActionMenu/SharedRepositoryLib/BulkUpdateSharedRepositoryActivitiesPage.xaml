@@ -18,7 +18,7 @@
             x:Key="BoolToVisibility" />
         <DataTemplate x:Key="ConsumerCellTemplate">
             <uclib:ConsumerComboBox
-                SelectedConsumer="{Binding Path=Consumers, Mode=TwoWay}"
+                SelectedConsumer="{Binding Consumers}"
                 ConsumerSource="{Binding ConsumerOptions}"
                 Visibility="{Binding 
                     Path=ShowConsumerOptions, 
@@ -67,90 +67,6 @@
         </Grid.RowDefinitions>
         <ginger:ucGrid 
             x:Name="BulkUpdateUCGrid"/>
-        <!--<ListView
-            x:Name="ActivityBulkUpdateListView"
-            Grid.Row="0">
-            <ListView.ItemTemplate>
-                <DataTemplate
-                    DataType="local:BulkUpdateSharedRepositoryActivitiesPage+ActivityBulkUpdateListItem">
-                    <Grid>
-                        <Grid.Resources>
-                            <Style
-                                TargetType="StackPanel">
-                                <Setter
-                                    Property="Margin"
-                                    Value="4 0 4 0" />
-                            </Style>
-                        </Grid.Resources>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition
-                                Width="Auto" />
-                            <ColumnDefinition
-                                Width="150" />
-                            <ColumnDefinition
-                                Width="60" />
-                            <ColumnDefinition
-                                Width="80" />
-                            <ColumnDefinition
-                                Width="150" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition
-                                Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <StackPanel
-                            Grid.Column="0"
-                            Orientation="Vertical">
-                            <CheckBox
-                                Margin="0 6"
-                                Style="{StaticResource @CheckBoxStyle}" />
-                        </StackPanel>
-                        <StackPanel
-                            Grid.Column="1"
-                            Orientation="Vertical">
-                            <Label
-                                Content="Name"
-                                Style="{StaticResource InputFieldLabelStyle}" />
-                            <TextBox
-                                Text="{Binding Name}"
-                                Style="{StaticResource TextBoxStyle}" />
-                        </StackPanel>
-                        <StackPanel
-                            Grid.Column="2"
-                            Orientation="Vertical">
-                            <Label
-                                Content="Publish"
-                                Style="{StaticResource InputFieldLabelStyle}" />
-                            <CheckBox
-                                IsChecked="{Binding Publish}"
-                                Style="{StaticResource @CheckBoxStyle}"
-                                HorizontalAlignment="Center" />
-                        </StackPanel>
-                        <StackPanel
-                            Grid.Column="3"
-                            Orientation="Vertical">
-                            <Label
-                                Content="Mandatory"
-                                Style="{StaticResource InputFieldLabelStyle}" />
-                            <CheckBox
-                                IsChecked="{Binding Mandatory}"
-                                Style="{StaticResource @CheckBoxStyle}"
-                                HorizontalAlignment="Center" />
-                        </StackPanel>
-                        <StackPanel
-                            Grid.Column="4"
-                            Orientation="Vertical"
-                            Visibility="{Binding Path=ShowConsumerOptions, Converter={StaticResource BoolToVisibility}}">
-                            <Label
-                                Content="Consumers"
-                                Style="{StaticResource InputFieldLabelStyle}" />
-                            <uclib:MultiSelectComboBox
-                                ItemsSource="{Binding ConsumerOptions}"/>
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>-->
         <Grid
             x:Name="FooterGrid"
             Grid.Row="1">
