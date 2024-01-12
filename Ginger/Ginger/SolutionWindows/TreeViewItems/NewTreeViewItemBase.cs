@@ -522,7 +522,7 @@ namespace GingerWPF.TreeViewItemsLib
             CollectionChangedEventManager.RemoveHandler(source: subFolders, handler: TreeFolderItems_CollectionChanged); // track sub folders
             CollectionChangedEventManager.AddHandler(source: subFolders, handler: TreeFolderItems_CollectionChanged); // track sub folders
 
-            //Add direct children's        
+            //Add direct children's  
             ObservableList<T> folderItems = RF.GetFolderItems();
             // why we need -? in case we did refresh and reloaded the item TODO: research, make children called once
             CollectionChangedEventManager.RemoveHandler(source: folderItems, handler: TreeFolderItems_CollectionChanged);

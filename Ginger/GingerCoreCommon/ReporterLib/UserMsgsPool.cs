@@ -25,6 +25,7 @@ namespace Amdocs.Ginger.Common
 {
     public enum eUserMsgKey
     {
+        AllBusinessFlowLoadTime,
         GeneralErrorOccured, MissingImplementation, MissingImplementation2, ApplicationInitError, PageLoadError, UserProfileLoadError, ItemToSaveWasNotSelected, ToSaveChanges, SaveLocalChanges, LooseLocalChanges,
         RegistryValuesCheckFailed, AddRegistryValue, AddRegistryValueSucceed, AddRegistryValueFailed,
         NoItemWasSelected, AskToAddCheckInComment, FailedToGetProjectsListFromSVN, AskToSelectSolution, UpdateToRevision, CommitedToRevision, GitUpdateState, SourceControlConnFaild, SourceControlRemoteCannotBeAccessed, SourceControlUnlockFaild, SourceControlConnSucss, SourceControlLockSucss, SourceControlUnlockSucss, SourceControlConnMissingConnInputs, SourceControlConnMissingLocalFolderInput,
@@ -188,6 +189,8 @@ namespace Amdocs.Ginger.Common
         {
             //Initialize the pool
             Reporter.UserMsgsPool = new Dictionary<eUserMsgKey, UserMsg>();
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AllBusinessFlowLoadTime, new UserMsg(eUserMsgType.INFO, "BusinessFlows Load Time", "All Business Flows loaded in {0}s.", eUserMsgOption.OK, eUserMsgSelection.OK));
 
             //Add user messages to the pool
             #region General Application Messages

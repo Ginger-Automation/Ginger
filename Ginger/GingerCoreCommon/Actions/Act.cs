@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Xml;
 using Amdocs.Ginger.Common;
@@ -709,7 +710,45 @@ namespace GingerCore.Actions
 
         public Act(RIBXmlReader reader) : base(reader) { }
 
+        private static Dictionary<string, Func<RIBXmlReader, Act>> _nameToActConstructorMap = new();
+
         public static IAct Create(RIBXmlReader reader)
+        {
+            string actName = $"GingerCore.Actions.{reader.Name}";
+
+            if (!_nameToActConstructorMap.TryGetValue(actName, out Func<RIBXmlReader,Act> constructor))
+            {
+                constructor = GetActConstructor(actName);
+                _nameToActConstructorMap.Add(actName, constructor);
+            }
+
+            return constructor.Invoke(reader);
+        }
+
+        private static Func<RIBXmlReader,Act> GetActConstructor(string actName)
+        {
+            Type actType = FindActTypeInAssemblies(actName);
+
+            if (actType == null)
+            {
+                throw new Exception($"No action found with name '{actName}'.");
+            }
+
+            Type[] constructorParamType = new Type[] { typeof(RIBXmlReader) };
+            ConstructorInfo constructorInfo = actType.GetConstructor(constructorParamType);
+
+            if (constructorInfo == null)
+            {
+                throw new Exception($"No constructor found in action '{actType.FullName}'.");
+            }
+
+            ParameterExpression paramExpression = Expression.Parameter(typeof(RIBXmlReader), name: "reader");
+            NewExpression newExpression = Expression.New(constructorInfo, paramExpression);
+            Expression<Func<RIBXmlReader,Act>> lambdaExpression = Expression.Lambda<Func<RIBXmlReader, Act>>(newExpression, paramExpression);
+            return lambdaExpression.Compile();
+        }
+
+        public static IAct Create2(RIBXmlReader reader)
         {
             string actName = $"GingerCore.Actions.{reader.Name}";
 
@@ -759,7 +798,7 @@ namespace GingerCore.Actions
             throw new NotImplementedException();
         }
 
-        public static IAct Create2(RIBXmlReader reader)
+        public static IAct Create3(RIBXmlReader reader)
         {
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             if (!_isGingerCoreNETLoaded)
@@ -2175,6 +2214,26 @@ namespace GingerCore.Actions
         {
             base.ParseElement(elementName, reader);
             if (string.Equals(elementName, nameof(InputValues)))
+                InputValues = new(reader.ForEachChild(childReader => new ActInputValue(childReader)));
+        }
+
+        protected override void DeserializeProperty(RIBXmlReader reader)
+        {
+            base.DeserializeProperty(reader);
+
+            if (reader.IsName(nameof(Active)))
+                Active = bool.Parse(reader.Value);
+            else if (reader.IsName(nameof(Description)))
+                Description = reader.Value;
+            else if (reader.IsName(nameof(Platform)))
+                Platform = Enum.Parse<ePlatformType>(reader.Value);
+            else if (reader.IsName(nameof(RetryMechanismInterval)))
+                RetryMechanismInterval = int.Parse(reader.Value);
+            else if (reader.IsName(nameof(StatusConverter)))
+                StatusConverter = Enum.Parse<eStatusConverterOptions>(reader.Value);
+            else if (reader.IsName(nameof(WindowsToCapture)))
+                WindowsToCapture = Enum.Parse<Act.eWindowsToCapture>(reader.Value);
+            else if (reader.IsName(nameof(InputValues)))
                 InputValues = new(reader.ForEachChild(childReader => new ActInputValue(childReader)));
         }
 

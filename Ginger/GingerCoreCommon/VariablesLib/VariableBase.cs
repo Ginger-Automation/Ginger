@@ -748,5 +748,21 @@ namespace GingerCore.Variables
             else if (string.Equals(attributeName, nameof(ParentType)))
                 ParentType = attributeValue;
         }
+
+        protected override void DeserializeProperty(RIBXmlReader reader)
+        {
+            base.DeserializeProperty(reader);
+
+            if (reader.IsName(nameof(Name)))
+                Name = reader.Value;
+            else if (reader.IsName(nameof(Description)))
+                Description = reader.Value;
+            else if (reader.IsName(nameof(MappedOutputType)))
+                MappedOutputType = Enum.Parse<eOutputType>(reader.Value);
+            else if (reader.IsName(nameof(ParentName)))
+                ParentName = reader.Value;
+            else if (reader.IsName(nameof(ParentType)))
+                ParentType = reader.Value;
+        }
     }
 }

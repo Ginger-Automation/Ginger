@@ -252,5 +252,13 @@ namespace Amdocs.Ginger.Repository
             if (string.Equals(attributeName, nameof(Param)))
                 Param = attributeValue;
         }
+
+        protected override void DeserializeProperty(RIBXmlReader reader)
+        {
+            base.DeserializeProperty(reader);
+
+            if (reader.IsName(nameof(Param)))
+                Param = reader.Value;
+        }
     }
 }

@@ -92,5 +92,13 @@ namespace GingerCore.Platforms
             if (string.Equals(attributeName, nameof(AppName)))
                 AppName = attributeValue;
         }
+
+        protected override void DeserializeProperty(RIBXmlReader reader)
+        {
+            base.DeserializeProperty(reader);
+
+            if (reader.IsName(nameof(AppName)))
+                AppName = reader.Value;
+        }
     }
 }

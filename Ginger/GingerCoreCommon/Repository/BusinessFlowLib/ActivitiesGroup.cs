@@ -576,6 +576,16 @@ namespace GingerCore.Activities
                 ActivitiesIdentifiers = new(reader.ForEachChild(childReader => new ActivityIdentifiers(childReader)));
         }
 
+        protected override void DeserializeProperty(RIBXmlReader reader)
+        {
+            base.DeserializeProperty(reader);
+
+            if (reader.IsName(nameof(Name)))
+                Name = reader.Value;
+            else if (reader.IsName(nameof(ActivitiesIdentifiers)))
+                ActivitiesIdentifiers = new(reader.ForEachChild(childReader => new ActivityIdentifiers(childReader)));
+        }
+
         //protected override void ParseElement(string elementName, RIBXmlReader reader)
         //{
         //    base.ParseElement(elementName, reader);

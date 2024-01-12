@@ -37,6 +37,7 @@ using Amdocs.Ginger.Common.WorkSpaceLib;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Newtonsoft.Json.Linq;
 using NJsonSchema.Infrastructure;
 using static Amdocs.Ginger.Common.Repository.RIBXmlReaderProcessor;
@@ -137,7 +138,8 @@ namespace Amdocs.Ginger.Repository
 
         public RepositoryItemBase(RIBXmlReader reader)
         {
-            Load(reader);
+            //Load(reader);
+            reader.Load(DeserializeProperty);
         }
 
         public static string FolderName(Type T)
@@ -1599,7 +1601,10 @@ namespace Amdocs.Ginger.Repository
             while (reader.XmlReader.MoveToNextAttribute())
             {
                 if (!UsePropertyParsers)
-                    ParseAttribute(reader.XmlReader.Name, reader.XmlReader.Value);
+                {
+                    //ParseAttribute(reader.XmlReader.Name, reader.XmlReader.Value);
+                    DeserializeProperty(reader);
+                }
                 else
                 {
                     //foreach (PropertyParser<string> attributeParser in AttributeParsers())
@@ -1612,6 +1617,7 @@ namespace Amdocs.Ginger.Repository
                         }
                     }
                 }
+                
             }
 
             reader.XmlReader.MoveToElement();
@@ -1636,11 +1642,15 @@ namespace Amdocs.Ginger.Repository
 
                 bool isGrandChild = reader.XmlReader.Depth > startDepth + 1;
                 if (isGrandChild)
-                    continue;
+                {
+                    //continue;
+                    reader.XmlReader.Skip();
+                }
 
                 if (!UsePropertyParsers)
                 {
-                    ParseElement(reader.Name, reader);
+                    //ParseElement(reader.Name, reader);
+                    DeserializeProperty(reader);
                 }
                 else
                 {
@@ -1707,6 +1717,21 @@ namespace Amdocs.Ginger.Repository
         protected virtual void ParseElement(string elementName, RIBXmlReader reader)
         {
             
+        }
+
+        protected virtual void DeserializeProperty(RIBXmlReader reader)
+        {
+            if (reader.IsName(nameof(Guid)))
+                Guid = Guid.Parse(reader.Value);
+            else if (reader.IsName(nameof(ParentGuid)))
+                ParentGuid = Guid.Parse(reader.Value);
+            else if (reader.IsName(nameof(ExternalID)))
+                ExternalID = reader.Value;
+            else if (reader.IsName(nameof(ExternalID2)))
+                ExternalID2 = reader.Value;
+            else if (reader.IsName(nameof(Publish)))
+                Publish = bool.Parse(reader.Value);
+
         }
 
         protected IEnumerable<T> ParseEachChild<T>(string collectionName, RIBXmlReader reader)

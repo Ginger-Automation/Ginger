@@ -277,6 +277,8 @@ namespace Amdocs.Ginger.Repository
 
             string[] fileEntries = FileSystem.GetDirectoryFiles(FullPath, mSolutionRepositoryItemInfo.Pattern);
 
+            System.Diagnostics.Stopwatch stopwatch = new();
+            stopwatch.Start();
             Parallel.ForEach(fileEntries, FileName =>
             {
                 try
@@ -303,6 +305,8 @@ namespace Amdocs.Ginger.Repository
                     }
                 }
             });
+            stopwatch.Stop();
+            Debug.WriteLine($"All BusinessFlow xmls loaded in {new DateTime(stopwatch.Elapsed.Ticks).ToString("ss.fff")}s");
 
             return new ObservableList<T>(list); //TODO: order by name .OrderBy(x => ((RepositoryItem)x).FilePath)); ??
         }

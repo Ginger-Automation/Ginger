@@ -2021,6 +2021,29 @@ namespace GingerCore
                 Variables = new(reader.ForEachChild(VariableBase.Create));
         }
 
+        protected override void DeserializeProperty(RIBXmlReader reader)
+        {
+            base.DeserializeProperty(reader);
+
+            if (reader.IsName(nameof(Name)))
+                Name = reader.Value;
+            else if (reader.IsName(nameof(Source)))
+                Source = Enum.Parse<eSource>(reader.Value);
+            else if (reader.IsName(nameof(Status)))
+                Status = Enum.Parse<eBusinessFlowStatus>(reader.Value);
+            else if (!LazyLoad)
+            {
+                if (reader.IsName(nameof(Activities)))
+                    Activities = new(reader.ForEachChild(childReader => new Activity(childReader)));
+                else if (reader.IsName(nameof(ActivitiesGroups)))
+                    ActivitiesGroups = new(reader.ForEachChild(childReader => new ActivitiesGroup(childReader)));
+                else if (reader.IsName(nameof(TargetApplications)))
+                    TargetApplications = new(reader.ForEachChild(TargetBase.Create));
+                else if (reader.IsName(nameof(Variables)))
+                    Variables = new(reader.ForEachChild(VariableBase.Create));
+            }
+        }
+
         //protected override void ParseElement(string elementName, RIBXmlReader reader)
         //{
         //    base.ParseElement(elementName, reader);

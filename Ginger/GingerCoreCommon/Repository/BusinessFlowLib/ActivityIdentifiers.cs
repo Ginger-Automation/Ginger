@@ -154,6 +154,20 @@ namespace GingerCore.Activities
             //});
         }
 
+        protected override void DeserializeProperty(RIBXmlReader reader)
+        {
+            base.DeserializeProperty(reader);
+
+            if (reader.IsName(nameof(ActivityAutomationStatus)))
+                ActivityAutomationStatus = Enum.Parse<eActivityAutomationStatus>(reader.Value);
+            else if (reader.IsName(nameof(ActivityGuid)))
+                ActivityGuid = Guid.Parse(reader.Value);
+            else if (reader.IsName(nameof(ActivityName)))
+                ActivityName = reader.Value;
+            else if (reader.IsName(nameof(ActivityParentGuid)))
+                ActivityParentGuid = Guid.Parse(reader.Value);
+        }
+
         protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,string>> _attributeParsers =
             RepositoryItemBase._attributeParsers.Concat(new List<PropertyParser<RepositoryItemBase,string>>()
             {

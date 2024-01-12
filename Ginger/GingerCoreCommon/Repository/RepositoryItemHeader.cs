@@ -68,7 +68,8 @@ namespace Amdocs.Ginger.Repository
 
         public RepositoryItemHeader(RIBXmlReader reader)
         {
-            Load(reader);
+            //Load(reader);
+            reader.Load(DeserializeProperty);
         }
 
         private void Load2(RIBXmlReader reader)
@@ -121,11 +122,14 @@ namespace Amdocs.Ginger.Repository
             while (reader.XmlReader.MoveToNextAttribute())
             {
                 if (!UsePropertyParsers)
-                    ParseAttribute(reader.XmlReader.Name, reader.XmlReader.Value);
+                {
+                    //ParseAttribute(reader.XmlReader.Name, reader.XmlReader.Value);
+                    DeserializeProperty(reader);
+                }
                 else
                 {
                     //foreach (PropertyParser<string> attributeParser in AttributeParsers())
-                    foreach (PropertyParser<RepositoryItemHeader,string> attributeParser in AttributeParsers())
+                    foreach (PropertyParser<RepositoryItemHeader, string> attributeParser in AttributeParsers())
                     {
                         if (string.Equals(attributeParser.Name, reader.Name))
                         {
@@ -158,11 +162,15 @@ namespace Amdocs.Ginger.Repository
 
                 bool isGrandChild = reader.XmlReader.Depth > startDepth + 1;
                 if (isGrandChild)
-                    continue;
+                {
+                    //continue;
+                    reader.XmlReader.Skip();
+                }
 
                 if (!UsePropertyParsers)
                 {
                     ParseElement(reader.Name, reader);
+                    DeserializeProperty(reader);
                 }
                 else
                 {
@@ -236,6 +244,26 @@ namespace Amdocs.Ginger.Repository
         private void ParseElement(string elementName, RIBXmlReader reader)
         {
 
+        }
+
+        private void DeserializeProperty(RIBXmlReader reader)
+        {
+            if (reader.IsName(nameof(ItemGuid)))
+                ItemGuid = Guid.Parse(reader.Value);
+            else if (reader.IsName(nameof(ItemType)))
+                ItemType = reader.Value;
+            else if (reader.IsName(nameof(CreatedBy)))
+                CreatedBy = reader.Value;
+            else if (reader.IsName(nameof(Created)))
+                Created = DateTime.ParseExact(reader.Value, "yyyyMMddHHmm", provider: null);
+            else if (reader.IsName(nameof(GingerVersion)))
+                GingerVersion = reader.Value;
+            else if (reader.IsName(nameof(Version)))
+                Version = int.Parse(reader.Value);
+            else if (reader.IsName(nameof(LastUpdateBy)))
+                LastUpdateBy = reader.Value;
+            else if (reader.IsName(nameof(LastUpdate)))
+                LastUpdate = DateTime.ParseExact(reader.Value, "yyyyMMddHHmm", provider: null);
         }
     }
 }

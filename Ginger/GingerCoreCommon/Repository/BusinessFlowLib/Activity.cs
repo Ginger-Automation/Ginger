@@ -1241,6 +1241,34 @@ namespace GingerCore
                 Acts = new(reader.ForEachChild(Act.Create));
         }
 
+        protected override void DeserializeProperty(RIBXmlReader reader)
+        {
+            base.DeserializeProperty(reader);
+
+            if (reader.IsName(nameof(ActionRunOption)))
+                ActionRunOption = Enum.Parse<eActionRunOption>(reader.Value);
+            else if (reader.IsName(nameof(Active)))
+                Active = bool.Parse(reader.Value);
+            else if (reader.IsName(nameof(ActivitiesGroupID)))
+                ActivitiesGroupID = reader.Value;
+            else if (reader.IsName(nameof(ActivityName)))
+                ActivityName = reader.Value;
+            else if (reader.IsName(nameof(AutomationStatus)))
+                AutomationStatus = Enum.Parse<eActivityAutomationStatus>(reader.Value);
+            else if (reader.IsName(nameof(ErrorHandlerMappingType)))
+                ErrorHandlerMappingType = Enum.Parse<eHandlerMappingType>(reader.Value);
+            else if (reader.IsName(nameof(PercentAutomated)))
+                PercentAutomated = reader.Value;
+            else if (reader.IsName(nameof(POMMetaDataId)))
+                POMMetaDataId = Guid.Parse(reader.Value);
+            else if (reader.IsName(nameof(TargetApplication)))
+                TargetApplication = reader.Value;
+            else if (reader.IsName(nameof(Type)))
+                Type = Enum.Parse<eSharedItemType>(reader.Value); 
+            else if (reader.IsName(nameof(Acts)))
+                Acts = new(reader.ForEachChild(Act.Create));
+        }
+
         //protected override void ParseElement(string elementName, RIBXmlReader reader)
         //{
         //    base.ParseElement(elementName, reader);

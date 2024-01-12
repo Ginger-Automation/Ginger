@@ -124,5 +124,13 @@ namespace GingerCore.Variables
             if (string.Equals(attributeName, nameof(InitialStringValue)))
                 InitialStringValue = attributeValue;
         }
+
+        protected override void DeserializeProperty(RIBXmlReader reader)
+        {
+            base.DeserializeProperty(reader);
+
+            if (reader.IsName(nameof(InitialStringValue)))
+                InitialStringValue = reader.Value;
+        }
     }
 }
