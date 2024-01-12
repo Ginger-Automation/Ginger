@@ -142,12 +142,17 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         private static readonly SemaphoreSlim semaphore = new(1,1);
         public void WriteToLiteDb(string reportLevelName, List<LiteDbReportBase> objectColl)
         {
-            semaphore.Wait();
-            var objectLiteColl = GetObjectLiteData(reportLevelName);
-            //var objectColl = this.GetGingerObject(reportLevelName, gingerObject);
-            dbConnector.SetCollection(objectLiteColl, objectColl);
-            semaphore.Release();
-
+            try
+            {
+                semaphore.Wait();
+                var objectLiteColl = GetObjectLiteData(reportLevelName);
+                //var objectColl = this.GetGingerObject(reportLevelName, gingerObject);
+                dbConnector.SetCollection(objectLiteColl, objectColl);
+            }
+            finally
+            {
+                semaphore.Release();
+            }
         }
         private List<LiteDbRunSet> GetGingerRunSet(List<LiteDbRunner> runnersData)
         {

@@ -22,13 +22,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
+
+    //TODO: manaska: Need to check when LiteDB will appropriately handle multi access of db files.
+    //As of now we are manually using Locks to handle multithreading but in the future.
+    //Need to make sure that LiteDb handles it internally
     public class LiteDbConnector
     {
-        private static readonly object readLock = new();
         public string ConnectionString { get; set; }
         public LiteDbConnector(string filePath)
         {
@@ -132,7 +134,8 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             try
             {
-               baseColl.Upsert(updateData);
+                using var db = new LiteDatabase(this.ConnectionString);
+                baseColl.Upsert(updateData);
             }
             catch (Exception ex)
             {

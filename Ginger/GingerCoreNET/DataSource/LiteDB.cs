@@ -67,7 +67,7 @@ namespace GingerCoreNET.DataSource
             }
             finally
             {
-                LiteDBLock.Wait();
+                LiteDBLock.Release();
             }
         }
 
