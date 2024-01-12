@@ -22,11 +22,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
     public class LiteDbConnector
     {
+        private static readonly object readLock = new();
         public string ConnectionString { get; set; }
         public LiteDbConnector(string filePath)
         {
@@ -39,19 +41,21 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         }
         public ILiteCollection<T> GetCollection<T>(string collectionName)
         {
-            ILiteCollection<T> collection = null;
-            try
-            {
-                using (var db = new LiteDatabase(this.ConnectionString))
-                {
-                    collection = db.GetCollection<T>(collectionName);
-                }
-            }
-            catch (Exception)
-            {
+                ILiteCollection<T> collection = null;
 
-            }
-            return collection;
+                try
+                {
+                    using (var db = new LiteDatabase(this.ConnectionString))
+                    {
+                        collection = db.GetCollection<T>(collectionName);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to Get Collection: {collectionName}", ex);
+                }
+             
+                return collection;
         }
 
 /*        
@@ -128,10 +132,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             try
             {
-                using (var db = new LiteDatabase(this.ConnectionString))
-                {
-                    baseColl.Upsert(updateData);
-                }
+               baseColl.Upsert(updateData);
             }
             catch (Exception ex)
             {
