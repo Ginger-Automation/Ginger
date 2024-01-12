@@ -2600,13 +2600,15 @@ private PayLoad TypeKeys(Component c,String Value) {
 
 	private PayLoad ContextMenuClickComponent(final Component c) {
 		//Only For Table Cell Action
+		final boolean[] wasContextMenuFound = new boolean[1];
+		wasContextMenuFound[0] = false;
 		Runnable r = new Runnable() {
 			public void run() 
 			{
 				JComponent b = null;
 				if ((JComponent)c  != null ){
 					b = (JComponent)c;
-					}else{
+				}else{
 					GingerAgent.WriteLog("ContextMenuClickComponent: Component is null");
 					return;
 				}
@@ -2616,15 +2618,16 @@ private PayLoad TypeKeys(Component c,String Value) {
 					GingerAgent.WriteLog("ContextMenuClickComponent: Context Menu Not Found");
 					return;
 				}
-				Component[] menuItems = popupMenu.getComponents();
+				Component[] menuItems = popupMenu.getComponents();			
 				for (int i = 0; i < menuItems.length; i++) {
 					JMenuItem menuItem = (JMenuItem) menuItems[i];
 					if (mValue != null && mValue.equals(menuItem.getText())) {
 						menuItem.doClick();
 						GingerAgent.WriteLog("ContextMenuClickComponent: Value ('"+ mValue + "') Clicked");
+						wasContextMenuFound[0] = true;
 						break;
 					}
-				}   
+				}
 			}
 		};
 		if (SwingUtilities.isEventDispatchThread())
@@ -2642,6 +2645,9 @@ private PayLoad TypeKeys(Component c,String Value) {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		}
+		if(!wasContextMenuFound[0]){
+			return PayLoad.Error(PayLoad.ErrorCode.ElementNotFound.GetErrorCode(),"Context Menu not found with title : " + mValue);	
 		}
 		return PayLoad.OK("Done");	
 		
