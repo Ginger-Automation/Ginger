@@ -55,8 +55,8 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"Failed to Get Collection: {collectionName}", ex);
+                    throw;
                 }
-             
                 return collection;
         }
 
