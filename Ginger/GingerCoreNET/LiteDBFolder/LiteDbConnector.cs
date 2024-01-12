@@ -25,6 +25,10 @@ using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
+
+    //TODO: manaska: Need to check when LiteDB will appropriately handle multi access of db files.
+    //As of now we are manually using Locks to handle multithreading but in the future.
+    //Need to make sure that LiteDb handles it internally
     public class LiteDbConnector
     {
         public string ConnectionString { get; set; }
@@ -39,19 +43,21 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         }
         public ILiteCollection<T> GetCollection<T>(string collectionName)
         {
-            ILiteCollection<T> collection = null;
-            try
-            {
-                using (var db = new LiteDatabase(this.ConnectionString))
-                {
-                    collection = db.GetCollection<T>(collectionName);
-                }
-            }
-            catch (Exception)
-            {
+                ILiteCollection<T> collection = null;
 
-            }
-            return collection;
+                try
+                {
+                    using (var db = new LiteDatabase(this.ConnectionString))
+                    {
+                        collection = db.GetCollection<T>(collectionName);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to Get Collection: {collectionName}", ex);
+                    throw;
+                }
+                return collection;
         }
 
 /*        
@@ -128,10 +134,8 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
         {
             try
             {
-                using (var db = new LiteDatabase(this.ConnectionString))
-                {
-                    baseColl.Upsert(updateData);
-                }
+                using var db = new LiteDatabase(this.ConnectionString);
+                baseColl.Upsert(updateData);
             }
             catch (Exception ex)
             {
