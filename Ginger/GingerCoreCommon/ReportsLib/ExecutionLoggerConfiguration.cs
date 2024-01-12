@@ -143,7 +143,7 @@ namespace Ginger.Reports
             }
         }
 
-        private eDeleteLocalDataOnPublish mDeleteLocalDataOnPublish = eDeleteLocalDataOnPublish.No;
+        private eDeleteLocalDataOnPublish mDeleteLocalDataOnPublish = eDeleteLocalDataOnPublish.Yes;
 
         [IsSerializedForLocalRepository]
         public eDeleteLocalDataOnPublish DeleteLocalDataOnPublish
