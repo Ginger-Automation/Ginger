@@ -71,6 +71,21 @@ namespace GingerCore.Platforms
 
         public TargetApplication(RIBXmlReader reader) : base(reader) { }
 
+        protected override IEnumerable<PropertyParser<RepositoryItemBase,string>> AttributeParsers()
+        {
+            return _attributeParsers;
+            //return base.AttributeParsers().Concat(new List<PropertyParser<string>>()
+            //{
+            //    new(nameof(AppName), value => AppName = value)
+            //});
+        }
+
+        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,string>> _attributeParsers =
+            TargetBase._attributeParsers.Concat(new List<PropertyParser<RepositoryItemBase,string>>()
+            {
+                new(nameof(AppName), (rib,value) => ((TargetApplication)rib).AppName = value)
+            });
+
         protected override void ParseAttribute(string attributeName, string attributeValue)
         {
             base.ParseAttribute(attributeName, attributeValue);

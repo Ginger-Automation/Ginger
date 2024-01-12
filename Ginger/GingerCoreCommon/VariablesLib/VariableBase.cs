@@ -711,6 +711,29 @@ namespace GingerCore.Variables
             return variables;
         }
 
+        protected override IEnumerable<PropertyParser<RepositoryItemBase,string>> AttributeParsers()
+        {
+            return _attributeParsers;
+            //return base.AttributeParsers().Concat(new List<PropertyParser<string>>()
+            //{
+            //    new(nameof(Name), value => Name = value),
+            //    new(nameof(Description), value => Description = value),
+            //    new(nameof(MappedOutputType), value => MappedOutputType = Enum.Parse<eOutputType>(value)),
+            //    new(nameof(ParentName), value => ParentName = value),
+            //    new(nameof(ParentType), value => ParentType = value)
+            //});
+        }
+
+        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,string>> _attributeParsers =
+            RepositoryItemBase._attributeParsers.Concat(new List<PropertyParser<RepositoryItemBase, string>>()
+            {
+                new(nameof(Name), (rib,value) => ((VariableBase)rib).Name = value),
+                new(nameof(Description), (rib,value) => ((VariableBase)rib).Description = value),
+                new(nameof(MappedOutputType), (rib,value) => ((VariableBase)rib).MappedOutputType = Enum.Parse<eOutputType>(value)),
+                new(nameof(ParentName), (rib,value) => ((VariableBase)rib).ParentName = value),
+                new(nameof(ParentType), (rib,value) => ((VariableBase)rib).ParentType = value)
+            });
+
         protected override void ParseAttribute(string attributeName, string attributeValue)
         {
             base.ParseAttribute(attributeName, attributeValue);

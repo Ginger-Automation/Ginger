@@ -142,6 +142,27 @@ namespace GingerCore.Activities
             }
         }
 
+        protected override IEnumerable<PropertyParser<RepositoryItemBase,string>> AttributeParsers()
+        {
+            return _attributeParsers;
+            //return base.AttributeParsers().Concat(new List<PropertyParser<string>>()
+            //{
+            //    new(nameof(ActivityAutomationStatus), value => ActivityAutomationStatus = Enum.Parse<eActivityAutomationStatus>(value)),
+            //    new(nameof(ActivityGuid), value => ActivityGuid = Guid.Parse(value)),
+            //    new(nameof(ActivityName), value => ActivityName = value),
+            //    new(nameof(ActivityParentGuid), value => ActivityParentGuid = Guid.Parse(value))
+            //});
+        }
+
+        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,string>> _attributeParsers =
+            RepositoryItemBase._attributeParsers.Concat(new List<PropertyParser<RepositoryItemBase,string>>()
+            {
+                new(nameof(ActivityAutomationStatus), (rib,value) => ((ActivityIdentifiers)rib).ActivityAutomationStatus = Enum.Parse<eActivityAutomationStatus>(value)),
+                new(nameof(ActivityGuid), (rib,value) => ((ActivityIdentifiers)rib).ActivityGuid = Guid.Parse(value)),
+                new(nameof(ActivityName), (rib,value) => ((ActivityIdentifiers)rib).ActivityName = value),
+                new(nameof(ActivityParentGuid), (rib,value) => ((ActivityIdentifiers)rib).ActivityParentGuid = Guid.Parse(value))
+            });
+
         protected override void ParseAttribute(string attributeName, string attributeValue)
         {
             base.ParseAttribute(attributeName, attributeValue);

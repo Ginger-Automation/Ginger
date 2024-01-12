@@ -2,6 +2,7 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using GingerCore;
+using GingerCore.Actions;
 using Org.BouncyCastle.Asn1.Bsi;
 using RepositorySerializerBenchmarks.Benchmarks.Util;
 using RepositorySerializerBenchmarks.Enhancements;
@@ -26,8 +27,8 @@ namespace RepositorySerializerBenchmarks.Benchmarks
 
     [Config(typeof(DeserializationBenchmarkConfig))]
     [MemoryDiagnoser]
-    //[MinColumn]
-    //[MaxColumn]
+    [MinColumn]
+    [MaxColumn]
     //[RPlotExporter]
     [MediumRunJob]
     public class DeserializationBenchmark
@@ -45,7 +46,13 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         {
             _newRepositorySerializer = new();
             _betterRepositorySerializer = new();
+            LoadGingerCoreNETDLLIntoAppDomain();
             TestData = TestDataGenerator.GenerateXMLs(TestDataSize);
+        }
+
+        private void LoadGingerCoreNETDLLIntoAppDomain()
+        {
+            new ActDummy();
         }
 
         [Benchmark(Baseline = true)]
@@ -98,17 +105,39 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         //}
 
         [Benchmark]
-        public void New_Full_RIBXmlReader()
+        public void New_Full_RIBXmlReader_PropertyParser()
         {
+            RepositoryItemBase.UsePropertyParsers = true;
+            RepositoryItemHeader.UsePropertyParsers = true;
             foreach (string repositoryItemBaseXML in TestData)
                 _betterRepositorySerializer.DeserializeViaRIBXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: false);
         }
 
         [Benchmark]
-        public void New_Lazy_RIBXmlReader()
+        public void New_Lazy_RIBXmlReader_PropertyParser()
         {
+            RepositoryItemBase.UsePropertyParsers = true;
+            RepositoryItemHeader.UsePropertyParsers = true;
             foreach (string repositoryItemBaseXML in TestData)
                 _betterRepositorySerializer.DeserializeViaRIBXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
         }
+
+        //[Benchmark]
+        //public void New_Full_RIBXmlReader()
+        //{
+        //    RepositoryItemBase.UsePropertyParsers = false;
+        //    RepositoryItemHeader.UsePropertyParsers = false;
+        //    foreach (string repositoryItemBaseXML in TestData)
+        //        _betterRepositorySerializer.DeserializeViaRIBXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: false);
+        //}
+
+        //[Benchmark]
+        //public void New_Lazy_RIBXmlReader()
+        //{
+        //    RepositoryItemBase.UsePropertyParsers = false;
+        //    RepositoryItemHeader.UsePropertyParsers = false;
+        //    foreach (string repositoryItemBaseXML in TestData)
+        //        _betterRepositorySerializer.DeserializeViaRIBXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
+        //}
     }
 }

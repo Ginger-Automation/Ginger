@@ -20,8 +20,10 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.SourceControlLib;
 using GingerCore;
 using Microsoft.CodeAnalysis.Operations;
+using Newtonsoft.Json.Linq;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -109,6 +111,7 @@ namespace Amdocs.Ginger.Repository
             ReadAttributes(reader);
             ReadChildElements(reader);
         }
+        public static bool UsePropertyParsers { get; set; }
 
         private void ReadAttributes(RIBXmlReader reader)
         {
@@ -117,7 +120,20 @@ namespace Amdocs.Ginger.Repository
 
             while (reader.XmlReader.MoveToNextAttribute())
             {
-                ParseAttribute(reader.XmlReader.Name, reader.XmlReader.Value);
+                if (!UsePropertyParsers)
+                    ParseAttribute(reader.XmlReader.Name, reader.XmlReader.Value);
+                else
+                {
+                    //foreach (PropertyParser<string> attributeParser in AttributeParsers())
+                    foreach (PropertyParser<RepositoryItemHeader,string> attributeParser in AttributeParsers())
+                    {
+                        if (string.Equals(attributeParser.Name, reader.Name))
+                        {
+                            attributeParser.Parser.Invoke(this, reader.XmlReader.Value);
+                            break;
+                        }
+                    }
+                }
             }
 
             reader.XmlReader.MoveToElement();
@@ -144,8 +160,57 @@ namespace Amdocs.Ginger.Repository
                 if (isGrandChild)
                     continue;
 
-                ParseElement(reader.Name, reader);
+                if (!UsePropertyParsers)
+                {
+                    ParseElement(reader.Name, reader);
+                }
+                else
+                {
+                    //foreach (PropertyParser<RIBXmlReader> elementParser in ElementParsers())
+                    foreach (PropertyParser<RepositoryItemHeader,RIBXmlReader> elementParser in ElementParsers())
+                    {
+                        if (string.Equals(elementParser.Name, reader.Name))
+                        {
+                            elementParser.Parser.Invoke(this, reader);
+                            break;
+                        }
+                    }
+                }
             }
+        }
+
+        private IEnumerable<PropertyParser<RepositoryItemHeader,string>> AttributeParsers()
+        {
+            return _attributeParsers;
+            //return new List<PropertyParser<string>>()
+            //{
+            //    new(nameof(ItemGuid), value => ItemGuid = Guid.Parse(value)),
+            //    new(nameof(ItemType), value => ItemType = value),
+            //    new(nameof(CreatedBy), value => CreatedBy = value),
+            //    new(nameof(Created), value => Created = DateTime.ParseExact(value, "yyyyMMddHHmm", provider: null)),
+            //    new(nameof(GingerVersion), value => GingerVersion = value),
+            //    new(nameof(Version), value => Version = int.Parse(value)),
+            //    new(nameof(LastUpdateBy), value => LastUpdateBy = value),
+            //    new(nameof(LastUpdate), value => LastUpdate = DateTime.ParseExact(value, "yyyyMMddHHmm", provider: null))
+            //};
+        }
+
+        protected static readonly IEnumerable<PropertyParser<RepositoryItemHeader,string>> _attributeParsers =
+            new List<PropertyParser<RepositoryItemHeader,string>>()
+            {
+                new(nameof(ItemGuid), (rih,value) => rih.ItemGuid = Guid.Parse(value)),
+                new(nameof(ItemType), (rih,value) => rih.ItemType = value),
+                new(nameof(CreatedBy), (rih,value) => rih.CreatedBy = value),
+                new(nameof(Created), (rih,value) => rih.Created = DateTime.ParseExact(value, "yyyyMMddHHmm", provider: null)),
+                new(nameof(GingerVersion), (rih,value) => rih.GingerVersion = value),
+                new(nameof(Version), (rih,value) => rih.Version = int.Parse(value)),
+                new(nameof(LastUpdateBy), (rih,value) => rih.LastUpdateBy = value),
+                new(nameof(LastUpdate), (rih,value) => rih.LastUpdate = DateTime.ParseExact(value, "yyyyMMddHHmm", provider: null))
+            };
+
+        private IEnumerable<PropertyParser<RepositoryItemHeader,RIBXmlReader>> ElementParsers()
+        {
+            return Array.Empty<PropertyParser<RepositoryItemHeader,RIBXmlReader>>();
         }
 
         private void ParseAttribute(string attributeName, string attributeValue)

@@ -24,6 +24,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml;
@@ -37,6 +38,7 @@ using GingerCore;
 using GingerCore.Actions;
 using GingerCore.GeneralLib;
 using Newtonsoft.Json.Linq;
+using NJsonSchema.Infrastructure;
 using static Amdocs.Ginger.Common.Repository.RIBXmlReaderProcessor;
 
 namespace Amdocs.Ginger.Repository
@@ -1578,13 +1580,15 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public static bool UsePropertyParsers { get; set; }
+
         private void Load(RIBXmlReader reader)
         {
             if (!reader.XmlReader.IsStartElement())
                 throw new Exception($"Expected a start element.");
 
             ReadAttributes(reader);
-            ReadChildElements(reader);   
+            ReadChildElements(reader);
         }
 
         private void ReadAttributes(RIBXmlReader reader)
@@ -1592,9 +1596,22 @@ namespace Amdocs.Ginger.Repository
             if (!reader.XmlReader.HasAttributes)
                 return;
 
-            while(reader.XmlReader.MoveToNextAttribute())
+            while (reader.XmlReader.MoveToNextAttribute())
             {
-                ParseAttribute(reader.XmlReader.Name, reader.XmlReader.Value);
+                if (!UsePropertyParsers)
+                    ParseAttribute(reader.XmlReader.Name, reader.XmlReader.Value);
+                else
+                {
+                    //foreach (PropertyParser<string> attributeParser in AttributeParsers())
+                    foreach (PropertyParser<RepositoryItemBase, string> attributeParser in AttributeParsers())
+                    {
+                        if (string.Equals(attributeParser.Name, reader.Name))
+                        {
+                            attributeParser.Parser.Invoke(this, reader.XmlReader.Value);
+                            break;
+                        }
+                    }
+                }
             }
 
             reader.XmlReader.MoveToElement();
@@ -1621,10 +1638,57 @@ namespace Amdocs.Ginger.Repository
                 if (isGrandChild)
                     continue;
 
-                ParseElement(reader.Name, reader);
+                if (!UsePropertyParsers)
+                {
+                    ParseElement(reader.Name, reader);
+                }
+                else
+                {
+                    //foreach (PropertyParser<RIBXmlReader> elementParser in ElementParsers())
+                    foreach (PropertyParser<RepositoryItemBase,RIBXmlReader> elementParser in ElementParsers())
+                    {
+                        if (string.Equals(elementParser.Name, reader.Name))
+                        {
+                            elementParser.Parser.Invoke(this, reader);
+                            break;
+                        }
+                    }
+                }
             }
         }
 
+        protected virtual IEnumerable<PropertyParser<RepositoryItemBase,string>> AttributeParsers()
+        {
+            return _attributeParsers;
+            //return new List<PropertyParser<string>>()
+            //{
+            //    new(nameof(Guid), value => Guid = Guid.Parse(value)),
+            //    new(nameof(ParentGuid), value => ParentGuid = Guid.Parse(value)),
+            //    new(nameof(ExternalID), value => ExternalID = value),
+            //    new(nameof(ExternalID2), value => ExternalID2 = value),
+            //    new(nameof(Publish), value => Publish = bool.Parse(value))
+            //};
+        }
+
+        protected static readonly IEnumerable<PropertyParser<RepositoryItemBase, string>> _attributeParsers =
+            new List<PropertyParser<RepositoryItemBase, string>>()
+            {
+                new(nameof(Guid), (rib,value) => rib.Guid = Guid.Parse(value)),
+                new(nameof(ParentGuid), (rib,value) => rib.ParentGuid = Guid.Parse(value)),
+                new(nameof(ExternalID), (rib,value) => rib.ExternalID = value),
+                new(nameof(ExternalID2), (rib,value) => rib.ExternalID2 = value),
+                new(nameof(Publish), (rib,value) => rib.Publish = bool.Parse(value))
+            };
+
+        protected virtual IEnumerable<PropertyParser<RepositoryItemBase, RIBXmlReader>> ElementParsers()
+        {
+            return _elementParsers;
+            //return Array.Empty<PropertyParser<RIBXmlReader>>();
+        }
+
+        protected static readonly IEnumerable<PropertyParser<RepositoryItemBase, RIBXmlReader>> _elementParsers =
+            Array.Empty<PropertyParser<RepositoryItemBase, RIBXmlReader>>();
+ 
         protected virtual void ParseAttribute(string attributeName, string attributeValue)
         {
             if (string.Equals(attributeName, nameof(Guid)))

@@ -231,6 +231,21 @@ namespace Amdocs.Ginger.Repository
 
         public ActInputValue(RIBXmlReader reader) : base(reader) { }
 
+        protected override IEnumerable<PropertyParser<RepositoryItemBase,string>> AttributeParsers()
+        {
+            return _attributeParsers;
+            //return base.AttributeParsers().Concat(new List<PropertyParser<string>>()
+            //{
+            //    new(nameof(Param), value => Param = value)
+            //});
+        }
+
+        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,string>> _attributeParsers = 
+            RepositoryItemBase._attributeParsers.Concat(new List<PropertyParser<RepositoryItemBase,string>>()
+            {
+                new(nameof(Param), (rib,value) => ((ActInputValue)rib).Param = value)
+            });
+
         protected override void ParseAttribute(string attributeName, string attributeValue)
         {
             base.ParseAttribute(attributeName, attributeValue);

@@ -73,5 +73,10 @@ namespace GingerCore.Actions
 
 
         }
+
+        protected override Act CreateNewInstance(RIBXmlReader reader)
+        {
+            return new ActDummy(reader);
+        }
     }
 }

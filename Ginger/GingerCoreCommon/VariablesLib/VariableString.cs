@@ -103,6 +103,21 @@ namespace GingerCore.Variables
 
         public VariableString(RIBXmlReader reader) : base(reader) { }
 
+        protected override IEnumerable<PropertyParser<RepositoryItemBase,string>> AttributeParsers()
+        {
+            return _attributeParsers;
+            //return base.AttributeParsers().Concat(new List<PropertyParser<string>>()
+            //{
+            //    new(nameof(InitialStringValue), value => InitialStringValue = value)
+            //});
+        }
+
+        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,string>> _attributeParsers =
+            VariableBase._attributeParsers.Concat(new List<PropertyParser<RepositoryItemBase,string>>()
+            {
+                new(nameof(InitialStringValue), (rib,value) => ((VariableString)rib).InitialStringValue = value)
+            });
+
         protected override void ParseAttribute(string attributeName, string attributeValue)
         {
             base.ParseAttribute(attributeName, attributeValue);

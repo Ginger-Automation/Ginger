@@ -25,21 +25,22 @@ namespace Amdocs.Ginger.Repository
             if (XmlReader.NodeType != XmlNodeType.Element)
                 throw new Exception($"Expected a element node type but found {XmlReader.NodeType}.");
 
-            List<T> children = new();
+            List<T> children = [];
 
             int startDepth = XmlReader.Depth;
             while (XmlReader.Read())
             {
-                bool reachedEndOfFile = XmlReader.EOF;
-                bool reachedSibling = XmlReader.Depth == startDepth && XmlReader.NodeType == XmlNodeType.Element;
-                bool reachedParent = XmlReader.Depth < startDepth;
-                if (reachedEndOfFile || reachedSibling || reachedParent)
+                XmlReader.MoveToContent();
+
+                bool reachedEndOfElement = XmlReader.Depth == startDepth && XmlReader.NodeType == XmlNodeType.EndElement;
+                if (reachedEndOfElement)
                     break;
 
-                if (XmlReader.NodeType != XmlNodeType.Element)
+                if (!XmlReader.IsStartElement())
                     continue;
 
-                if (XmlReader.Depth != startDepth + 1)
+                bool isGrandChild = XmlReader.Depth > startDepth + 1;
+                if (isGrandChild)
                     continue;
 
                 children.Add(childParser(this));

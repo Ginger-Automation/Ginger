@@ -21,10 +21,14 @@ Summary summary = BenchmarkRunner.Run<DeserializationBenchmark>();
 //</ActDummy>";
 //using XmlReader xmlReader = XmlReader.Create(new StringReader(xml));
 
+//_ = new ActDummy();
 //string xml = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Benchmarks", "Resources", "TestBusinessFlow.Ginger.BusinessFlow.xml"));
 //TestDataGenerator.GenerateRIBs(1);
 
+//await Task.Delay(5000);
 //var b = new BetterRepositorySerializer().DeserializeViaRIBXmlReader<BusinessFlow>(xml, lazyLoad: false);
+//Console.WriteLine("Deserialization Done");
+//await Task.Delay(5000);
 //string reXml = new BetterRepositorySerializer().Serialize(b);
 //new BetterRepositorySerializer().DeserializeViaRIBXmlReader<BusinessFlow>(xml, lazyLoad: true);
 //new BetterRepositorySerializer().DeserializeViaRIBXmlReader<BusinessFlow>(xml, lazyLoad: true);

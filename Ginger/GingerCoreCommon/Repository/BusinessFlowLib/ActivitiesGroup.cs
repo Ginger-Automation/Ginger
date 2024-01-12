@@ -524,6 +524,44 @@ namespace GingerCore.Activities
             }
         }
 
+        protected override IEnumerable<PropertyParser<RepositoryItemBase,string>> AttributeParsers()
+        {
+            return _attributeParsers;
+            //return base.AttributeParsers().Concat(new List<PropertyParser<string>>()
+            //{
+            //    new(nameof(Name), value => Name = value)
+            //});
+        }
+
+        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,string>> _attributeParsers =
+            RepositoryItemBase._attributeParsers.Concat(new List<PropertyParser<RepositoryItemBase,string>>()
+            {
+                new(nameof(Name), (rib,value) => ((ActivitiesGroup)rib).Name = value)
+            });
+
+        protected override IEnumerable<PropertyParser<RepositoryItemBase,RIBXmlReader>> ElementParsers()
+        {
+            return _elementParsers;
+            //return base.ElementParsers().Concat(new List<PropertyParser<RIBXmlReader>>()
+            //{
+            //    new()
+            //    {
+            //        Name = nameof(ActivitiesIdentifiers),
+            //        Parser = reader => ActivitiesIdentifiers = new(reader.ForEachChild(childReader => new ActivityIdentifiers(childReader)))
+            //    }
+            //});
+        }
+
+        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase, RIBXmlReader>> _elementParsers =
+            RepositoryItemBase._elementParsers.Concat(new List<PropertyParser<RepositoryItemBase, RIBXmlReader>>()
+            {
+                new()
+                {
+                    Name = nameof(ActivitiesIdentifiers),
+                    Parser = (rib,reader) => ((ActivitiesGroup)rib).ActivitiesIdentifiers = new(reader.ForEachChild(childReader => new ActivityIdentifiers(childReader)))
+                }
+            });
+
         protected override void ParseAttribute(string attributeName, string attributeValue)
         {
             base.ParseAttribute(attributeName, attributeValue);
@@ -531,26 +569,26 @@ namespace GingerCore.Activities
                 Name = attributeValue;
         }
 
-        //protected override void ParseElement(string elementName, RIBXmlReader reader)
-        //{
-        //    base.ParseElement(elementName, reader);
-        //    if (string.Equals(reader.Name, nameof(ActivitiesIdentifiers)))
-        //        ActivitiesIdentifiers = new(reader.ForEachChild(childReader => new ActivityIdentifiers(childReader)));
-        //}
-
         protected override void ParseElement(string elementName, RIBXmlReader reader)
         {
             base.ParseElement(elementName, reader);
             if (string.Equals(reader.Name, nameof(ActivitiesIdentifiers)))
-                ActivitiesIdentifiers = new(ParseEachChild<ActivityIdentifiers>(nameof(ActivitiesIdentifiers), reader));
+                ActivitiesIdentifiers = new(reader.ForEachChild(childReader => new ActivityIdentifiers(childReader)));
         }
 
-        protected override object ChildParser(string collectionName, RIBXmlReader reader)
-        {
-            if (string.Equals(collectionName, nameof(ActivitiesIdentifiers)))
-                return new ActivityIdentifiers(reader);
-            else
-                throw new Exception();
-        }
+        //protected override void ParseElement(string elementName, RIBXmlReader reader)
+        //{
+        //    base.ParseElement(elementName, reader);
+        //    if (string.Equals(reader.Name, nameof(ActivitiesIdentifiers)))
+        //        ActivitiesIdentifiers = new(ParseEachChild<ActivityIdentifiers>(nameof(ActivitiesIdentifiers), reader));
+        //}
+
+        //protected override object ChildParser(string collectionName, RIBXmlReader reader)
+        //{
+        //    if (string.Equals(collectionName, nameof(ActivitiesIdentifiers)))
+        //        return new ActivityIdentifiers(reader);
+        //    else
+        //        throw new Exception();
+        //}
     }
 }
