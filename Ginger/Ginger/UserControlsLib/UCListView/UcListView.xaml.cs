@@ -941,6 +941,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)
         {
+
             if (string.IsNullOrWhiteSpace(xSearchTextBox.Text))
             {
                 xSearchClearBtn.Visibility = Visibility.Collapsed;
@@ -969,7 +970,7 @@ namespace Ginger.UserControlsLib.UCListView
 
             if (mObjList is null)
             {
-                Reporter.ToUser(eUserMsgKey.POMElementNotSelected);
+                Reporter.ToUser(eUserMsgKey.ElementNotSelected);
                 return;
             }
             CollectFilterData();
