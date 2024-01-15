@@ -27,6 +27,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             }
             
             queryBuilder = new();
+            queryBuilder.Append('{');
             queryBuilder.Append($"DS Name={actDSTableElement.DSName} DST={actDSTableElement.DSTableName} MASD=");
             if (actDSTableElement.MarkUpdate)
             {
@@ -175,7 +176,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
         private void ValueExpressionForMarkAllUnused()
         {
-            queryBuilder.Append($"UPDATE {actDSTableElement.DSTableName} SET GINGER_USED = \"True\"");
+            queryBuilder.Append($"UPDATE {actDSTableElement.DSTableName} SET GINGER_USED = \"False\"");
         }
     }
 
