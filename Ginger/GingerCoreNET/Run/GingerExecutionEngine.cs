@@ -460,7 +460,12 @@ namespace Ginger.Run
                 mGingerRunner.Status = eRunStatus.Started;
                 IsRunning = true;
                 mStopRun = false;
-                SetupVirtualAgents();
+
+                if(doContinueRun == false)
+                {
+                    SetupVirtualAgents();
+                }
+                
                 if (doContinueRun == false)
                 {
                     RunnerExecutionWatch.StartRunWatch();
