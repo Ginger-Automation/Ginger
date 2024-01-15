@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.DataSource;
 using Amdocs.Ginger.Repository;
@@ -32,6 +33,9 @@ namespace GingerCore.Actions
     public class ActDSTableElement : ActWithoutDriver
     {
         public override string ActionDescription { get { return "Data Source Action"; } }
+
+        public override eImageType Image { get { return eImageType.DataTable; } }
+
         public override string ActionUserDescription { get { return "Data Source Action"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
