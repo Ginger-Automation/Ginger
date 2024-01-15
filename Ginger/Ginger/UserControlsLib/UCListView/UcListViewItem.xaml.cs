@@ -816,7 +816,10 @@ namespace Ginger.UserControlsLib.UCListView
 
 
                         xItemDescriptionTxtBlock.Text = fullDesc;
-                        xItemDescriptionTxtBlock.ToolTip = fullDesc;
+                        if (!string.IsNullOrEmpty(fullDesc))
+                        {
+                            xItemDescriptionTxtBlock.ToolTip = fullDesc;
+                        }
                     }
                 }
                 catch (Exception ex)
