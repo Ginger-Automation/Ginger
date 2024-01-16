@@ -728,7 +728,7 @@ namespace GingerCore.Actions
             ADSC.wCondition = wCond;
             ADSC.wTableColumn = wColName;
             ADSC.wOperator = wOper;
-            ADSC.wValue = wValue;
+            ADSC.wValue = wValue.Replace("\"", string.Empty);
         }
 
         public void UpdateDSConditionColumns(List<string> mColName)
