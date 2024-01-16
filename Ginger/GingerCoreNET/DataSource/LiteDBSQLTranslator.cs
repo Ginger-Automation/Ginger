@@ -333,7 +333,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                 string wCond = actDSTableElement.WhereConditions[i].wCondition.ToString().ToLower();
                 string wColVal = actDSTableElement.WhereConditions[i].wTableColumn.ToString().Trim();
                 string wOpr = actDSTableElement.WhereConditions[i].wOperator.ToString();
-                string wRowVal = actDSTableElement.WhereConditions[i].wValue.ToString();
+                string wRowVal = actDSTableElement.WhereConditions[i].wValue.Replace("\"", string.Empty);
 
                 if (wCond == "empty")
                 {
