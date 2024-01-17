@@ -46,7 +46,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
         public BulkUpdateSharedRepositoryActivitiesPage(IEnumerable<Activity> activities)
         {
             InitializeComponent();
-            _activityBulkUpdateListItems = activities.Select(activity => new ActivityBulkUpdateListItem(activity));
+            _activityBulkUpdateListItems = activities.Select(activity => new ActivityBulkUpdateListItem(activity)).ToList();
             InitBulkUpdateUCGrid();
             SetBulkUpdateUCGridItems(_activityBulkUpdateListItems);
             UpdateUIForPageMode();
@@ -155,6 +155,14 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
             FooterGrid.Visibility = Visibility.Collapsed;
         }
 
+        private void CloseWindow()
+        {
+            if (_window != null)
+            {
+                PerformUIOperation(() => _window.Close());
+            }
+        }
+
         private void Window_Closing(object? sender, CancelEventArgs e)
         {
             _window = null;
@@ -224,6 +232,11 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     ShowLoading("saving modified");
                     await saveAllTask;
                     HideLoading();
+                    CloseWindow();
+                }
+                else
+                {
+                    CloseWindow();
                 }
             });
         }
