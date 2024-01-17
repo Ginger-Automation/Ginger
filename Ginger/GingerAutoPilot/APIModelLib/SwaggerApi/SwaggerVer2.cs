@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         public ObservableList<ApplicationAPIModel> SwaggerTwo(SwaggerDocument Swaggerdoc, ObservableList<ApplicationAPIModel> SwaggerModels)
         {
             swagTwo = Swaggerdoc;
-
+            var enumExampleList = SetEnumsValue(swagTwo);
             foreach (var paths in swagTwo.Paths)
             {
                 SwaggerPathItem SPi = paths.Value;
@@ -50,7 +50,10 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     {
 
                         ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key, swagTwo);
-                        SetOptionalValue(basicModal.AppModelParameters, GetExamplesFromDefinitions(swagTwo));
+                        //SetOptionalValue(basicModal.AppModelParameters, ExampleValueDict(Operation));
+
+
+                        SetOptionalValue(basicModal.AppModelParameters, GetExamplesFromDefinitions(swagTwo), enumExampleList);
                         SwaggerModels.Add(basicModal);
                         GenerateResponse(Operation, basicModal);
                     }
@@ -108,8 +111,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         break;
 
                                 }
+                                SetOptionalValue(AAM.AppModelParameters, ExampleValueDict(Operation), enumExampleList);
 
-                                SetOptionalValue(AAM.AppModelParameters, GetExamplesFromDefinitions(swagTwo));
                             }
                             GenerateResponse(Operation, AAM);
                             SwaggerModels.Add(AAM);
@@ -166,8 +169,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                     break;
 
                             }
+                            SetOptionalValue(AAM.AppModelParameters, ExampleValueDict(Operation),enumExampleList);
 
-                            SetOptionalValue(AAM.AppModelParameters, GetExamplesFromDefinitions(swagTwo));
                         }
                         GenerateResponse(Operation, AAM);
 
@@ -201,10 +204,10 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                             {
                                 var actualName = item.Key.ToLower();
                                 var actualDefinition = item.Value.Example?.ToString();
-                                if (actualDefinition != null  && !exampleValues.ContainsKey(actualName.ToLower()))
+                                if (actualDefinition != null && !exampleValues.ContainsKey(actualName.ToLower()))
                                 {
-                                  
-                                    exampleValues.Add(actualName,actualDefinition.ToString());
+
+                                    exampleValues.Add(actualName, actualDefinition.ToString());
                                 }
 
                             }
@@ -226,6 +229,5 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
             return exampleValues;
         }
-
     }
 }

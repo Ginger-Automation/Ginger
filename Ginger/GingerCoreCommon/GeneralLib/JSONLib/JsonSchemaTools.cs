@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NJsonSchema;
@@ -167,11 +168,26 @@ namespace Amdocs.Ginger.Common
                         {
                             key = jkp.Value.Xml.Name;
                         }
-                        ReferenceStack.Add(jkp.Value);
+                        if(jkp.Value.ActualSchema != null)
+                        {
+                            if(jkp.Value.ActualSchema.Enumeration.Count>0)
+                            {
+                              
+                                ReferenceStack.Add(jkp.Value.ActualSchema.Enumeration.FirstOrDefault());
+                            }
+                            else if (jkp.Value.ActualSchema.Example !=null)
+                            {
+                                ReferenceStack.Add(jkp.Value.ActualSchema.Example);
+                            }
+                            else
+                            {
+                                ReferenceStack.Add(jkp.Value);
+                            }
+                        }
+
                         PrivateStack.Add(jkp.Value);
                         object JObject = GenerateJsonObjectFromJsonSchema4(jkp.Value, ReferenceStack, UseXMlNames);
                         JsonBody.Add(key, JsonConvert.SerializeObject(JObject));
-
                     }
                     output = JsonBody;
                     break;
@@ -234,13 +250,18 @@ namespace Amdocs.Ginger.Common
                     break;
 
                 case JsonObjectType.String:
-                    output = new JValue("<name>");
+                    if (value.Example == null && value.IsEnumeration && value.Enumeration?.Count  >0)
+                    {
+                        output = new JValue(value.Enumeration.FirstOrDefault());
+                        break;
+                    }
+                    output = new JValue(value.Example ?? $"<{value.Type}>");
                     break;
                 case JsonObjectType.Number:
                     output = new JValue(1);
                     break;
                 case JsonObjectType.Integer:
-                    output = new JValue(1);
+                    output = new JValue(value.Example ?? 1);
                     break;
                 case JsonObjectType.Boolean:
                     output = new JValue(false);
@@ -248,7 +269,20 @@ namespace Amdocs.Ginger.Common
                 case JsonObjectType.Null:
                     output = JValue.CreateNull();
                     break;
+                case JsonObjectType.None:
+                    if(value.ActualSchema.Example != null || value.ActualSchema.IsEnumeration == true)
+                    {
+                        if (value.ActualSchema.Enumeration.Count > 0)
+                        {
 
+                            output = value.ActualSchema.Enumeration.FirstOrDefault();
+                        }
+                        else
+                        {
+                            output = value.ActualSchema.Example;
+                        }
+                    }
+                    break;
                 default:
                     output = new JValue(""); ;
                     break;

@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.APIModelLib;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
 using Microsoft.CodeAnalysis;
 using Newtonsoft.Json;
@@ -37,6 +38,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
         public void GenerateResponse(SwaggerOperation operation, ApplicationAPIModel basicModal)
         {
+            
             if (operation.Responses.Count > 0 && operation.Responses.Keys.Any(x => x.StartsWith("2")))
             {
                 //handling only the first sucess response code need to be improved
@@ -73,6 +75,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                             arv.DoNotConsiderAsTemp = true;
                             basicModal.ReturnValues.Add(arv);
                         }
+                        var test = operation.RequestBody.Content;
                     }
                     else if (basicModal.ContentType == ApplicationAPIUtils.eContentType.JSon ||
                             basicModal.ContentType == ApplicationAPIUtils.eContentType.FormData)
@@ -207,6 +210,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             aAM.RequestBodyType = ApplicationAPIUtils.eRequestBodyType.FreeText;
             aam.ContentType = ApplicationAPIUtils.eContentType.XML;
             return aam.AppModelParameters;
+
         }
 
         public static ObservableList<AppModelParameter> GenerateJsonBody(ApplicationAPIModel aAM, JsonSchema4 operation)
@@ -281,11 +285,12 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                         {
                             Value = item.ToString(),
                             ItemName = item.ToString(),
+                            IsDefault = true
                         };
                         lstOptions.Add(value);
                     }
                 }
-                if (swaggerParameter.Enumeration != null && swaggerParameter.Enumeration.Count > 0)
+                else if (swaggerParameter.Enumeration != null && swaggerParameter.Enumeration.Count > 0)
                 {
                     foreach (object item in swaggerParameter.Enumeration)
                     {
@@ -293,10 +298,44 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                         {
                             Value = item.ToString(),
                             ItemName = item.ToString(),
+                            IsDefault = true
                         };
                         lstOptions.Add(value);
                     }
 
+                }
+                else if (swaggerParameter.ActualSchema.ActualProperties.Count>0 || swaggerParameter.ActualSchema.Enumeration.Count>0)
+                {
+                    if(swaggerParameter.ActualSchema.ActualProperties.Count > 0)
+                    {
+                        foreach (var cnt in swaggerParameter.ActualSchema.ActualProperties)
+                        {
+                            if (cnt.Value.IsEnumeration == true || cnt.Value.Enumeration.Count > 0)
+                            {
+                                foreach (object item in cnt.Value.Enumeration)
+                                {
+                                    OptionalValue value = new OptionalValue()
+                                    {
+                                        Value = item.ToString(),
+
+                                    };
+                                    lstOptions.Add(value);
+                                }
+                            }
+                        }
+                    }
+                    else if (swaggerParameter.ActualSchema.Enumeration.Count > 0)
+                    {
+                        foreach (var cnt in swaggerParameter.ActualSchema.Enumeration)
+                        {
+                            OptionalValue value = new OptionalValue()
+                            {
+                                Value = cnt.ToString(),
+
+                            };
+                            lstOptions.Add(value);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -306,13 +345,54 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             return lstOptions;
         }
 
-        public void SetOptionalValue(ObservableList<AppModelParameter> AppModelParameters, Dictionary<string, string> listExampleValues)
+        public static Dictionary<string, string> ExampleValueDict(SwaggerOperation operations)
+        {
+
+            Dictionary<string, string> exampleValues = new Dictionary<string, string>();
+            
+            try
+            {
+                if (operations.RequestBody.Content.ElementAt(0).Value.Examples != null && operations.RequestBody != null)
+                {
+                    foreach (var schemaEntry in operations.RequestBody.Content.ElementAt(0).Value.Examples.Values)
+                    {
+                        var jsonValue = JsonConvert.SerializeObject(schemaEntry.Value);
+                        JsonExtended je4Jn = new JsonExtended(jsonValue);
+                        IEnumerable<JsonExtended> EEEL = je4Jn.GetEndingNodes();
+                        if (EEEL.FirstOrDefault() != null)
+                        {
+                            foreach (var cnt in EEEL)
+                            {
+                                if (!exampleValues.ContainsKey(cnt.Name.ToLower()))
+                                {
+                                    exampleValues.Add(cnt.Name.ToLower(), cnt.JsonString);
+                                }
+                            }
+                        }
+
+                    }
+                }
+                else if (operations.RequestBody == null)
+                {
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Example values could not be fetched, please check the API", ex);
+            }
+
+            return exampleValues;
+
+        }
+
+        public void SetOptionalValue(ObservableList<AppModelParameter> AppModelParameters, Dictionary<string, string> listExampleValues, Dictionary<string, List<string>> enumExampleList)
         {
             if (AppModelParameters.Count > 0)
             {
                 foreach (var item in AppModelParameters)
                 {
-                    string parameterName = (item.ElementName.TrimStart('<', '{','[').TrimEnd('>', '}',']')).ToLower();
+                    string parameterName = (item.ElementName.TrimStart('<', '{', '[').TrimEnd('>', '}', ']')).ToLower();
 
                     if (!string.IsNullOrEmpty(parameterName) && listExampleValues.TryGetValue(parameterName, out string exampleValue))
                     {
@@ -327,7 +407,68 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
                         item.OptionalValuesList = tempList;
                     }
+
+                    if (!string.IsNullOrEmpty(parameterName) && enumExampleList.TryGetValue(parameterName, out List<string> enumExampleValue))
+                    {
+                        ObservableList<OptionalValue> tempList = new ObservableList<OptionalValue>();
+
+                        foreach (var value in enumExampleValue)
+                        {
+                            tempList.Add(new OptionalValue
+                            {
+                                Value = value,
+                            });
+                            item.OptionalValuesList = tempList;
+                        }
+
+                        
+                    }
+
+
                 }
+            }
+
+        }
+
+        public  Dictionary<string,List<string>> SetEnumsValue(SwaggerDocument sd)
+        {
+
+            Dictionary<string,List<string>> exampleValuesEnums = new Dictionary<string,List<string>>();
+
+            if (sd.Definitions.Count > 0)
+            {
+                foreach (var definition in sd.Definitions.Values)
+                {
+                    if(definition.ActualProperties.Count > 0)
+                    {
+                        //var keyValue = definition.
+                        foreach (var cnt in definition.ActualProperties)
+                        {
+                            if(cnt.Value.IsEnumeration == true && cnt.Value.Enumeration.Count>0)
+                            {
+                                foreach(var ent in cnt.Value.Enumeration)
+                                {
+                                    AddValueForKey(exampleValuesEnums, cnt.Key, ent.ToString());
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+            return exampleValuesEnums;
+            
+        }
+
+        public void AddValueForKey(Dictionary<string,List<string>> dictionary, string key, string value)
+        {
+            if (!dictionary.ContainsKey(key))
+            {
+                dictionary[key] = new List<string> { value };
+            }
+            else
+            {
+                dictionary[key].Add(value);
             }
         }
     }
