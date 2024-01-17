@@ -45,7 +45,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         {
             
             opendoc = Swaggerdoc;
-            var EnumValuesListAMP = SetEnumsValue(opendoc);
+            var enumValuesListAMP = SetEnumsValue(opendoc);
+            var reqBodyNullExampleList = GetExamplesFromDefinitions(opendoc);
             foreach (var paths in opendoc.Paths)
             {
                 SwaggerPathItem SPi = paths.Value;
@@ -59,9 +60,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     {
 
                         ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key,opendoc);
-                        //SetOptionalValueForBodyNull(basicModal.AppModelParameters,opendoc);
-                        //SetOptionalValue(basicModal.AppModelParameters, ExampleValueDict(Operation));
-                        SetOptionalValue(basicModal.AppModelParameters, GetExamplesFromOpenApiComponents(opendoc.Components), EnumValuesListAMP);
+                        SetOptionalValue(basicModal.AppModelParameters, reqBodyNullExampleList, enumValuesListAMP);
                         SwaggerModels.Add(basicModal);
                         GenerateResponse(Operation, basicModal);
                     }
@@ -118,7 +117,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
                                 }
 
-                                SetOptionalValue(AAM.AppModelParameters, ExampleValueDict(Operation), EnumValuesListAMP);
+                                SetOptionalValue(AAM.AppModelParameters, ExampleValueDict(Operation), enumValuesListAMP);
                             }
                             GenerateResponse(Operation, AAM);
                             SwaggerModels.Add(AAM);

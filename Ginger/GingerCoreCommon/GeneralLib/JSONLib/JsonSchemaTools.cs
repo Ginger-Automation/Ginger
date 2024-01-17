@@ -270,7 +270,7 @@ namespace Amdocs.Ginger.Common
                     output = JValue.CreateNull();
                     break;
                 case JsonObjectType.None:
-                    if(value.ActualSchema.Example != null || value.ActualSchema.IsEnumeration == true)
+                    if(value.ActualSchema.IsEnumeration == true)
                     {
                         if (value.ActualSchema.Enumeration.Count > 0)
                         {

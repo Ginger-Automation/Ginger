@@ -310,7 +310,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     {
                         foreach (var cnt in swaggerParameter.ActualSchema.ActualProperties)
                         {
-                            if (cnt.Value.IsEnumeration == true || cnt.Value.Enumeration.Count > 0)
+                            if (cnt.Value.Enumeration.Count > 0)
                             {
                                 foreach (object item in cnt.Value.Enumeration)
                                 {
@@ -371,10 +371,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                         }
 
                     }
-                }
-                else if (operations.RequestBody == null)
-                {
-
                 }
             }
             catch (Exception ex)
@@ -441,10 +437,9 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 {
                     if(definition.ActualProperties.Count > 0)
                     {
-                        //var keyValue = definition.
                         foreach (var cnt in definition.ActualProperties)
                         {
-                            if(cnt.Value.IsEnumeration == true && cnt.Value.Enumeration.Count>0)
+                            if(cnt.Value.Enumeration.Count>0)
                             {
                                 foreach(var ent in cnt.Value.Enumeration)
                                 {
@@ -470,6 +465,56 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             {
                 dictionary[key].Add(value);
             }
+        }
+
+        /// <summary>
+        /// For Request Body null apis
+        /// </summary>
+        /// <param name="apidoc"></param>
+        /// <returns></returns>
+        public static Dictionary<string, string> GetExamplesFromDefinitions(SwaggerDocument apidoc)
+        {
+
+            Dictionary<string, string> exampleValues = new Dictionary<string, string>();
+            try
+            {
+                if (apidoc.Definitions != null && apidoc.Definitions.Count != 0)
+                {
+                    foreach (var schemaEntry in apidoc.Definitions)
+                    {
+                        string schemaName = schemaEntry.Key;
+                        var schemaDefinition = schemaEntry.Value;
+
+                        if (schemaDefinition.ActualProperties != null && schemaDefinition.ActualProperties.Count > 0)
+                        {
+                            foreach (var item in schemaDefinition.ActualProperties)
+                            {
+                                var actualName = item.Key.ToLower();
+                                var actualDefinition = item.Value.Example?.ToString();
+                                if (actualDefinition != null && !exampleValues.ContainsKey(actualName.ToLower()))
+                                {
+
+                                    exampleValues.Add(actualName, actualDefinition.ToString());
+                                }
+
+                            }
+                        }
+                        else if (schemaDefinition.Example != null)
+                        {
+                            if (!exampleValues.ContainsKey(schemaName.ToLower()))
+                            {
+                                exampleValues.Add(schemaName.ToLower(), schemaDefinition.Example.ToString());
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Example values could not be fetched, please check the API", ex);
+            }
+
+            return exampleValues;
         }
     }
 }
