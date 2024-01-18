@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -167,6 +167,8 @@ namespace Amdocs.Ginger.Common
         public static Dictionary<eStatusMsgKey, StatusMsg> StatusMsgsPool { get; set; }
         static Stopwatch mLastStatusTime = new Stopwatch();
 
+        // this function has a bug
+        // when messageToShow is null it goes inside a if block and then is never suppressed immediately in the if block therefore it comes out of
         public static void ToStatus(eStatusMsgKey messageKey, object btnHandler = null, params object[] messageArgs)
         {
             StatusMsg messageToShow = null;
@@ -190,6 +192,7 @@ namespace Amdocs.Ginger.Common
                     }
                     ToUser(eUserMsgKey.StaticErrorMessage, "Cannot find Status message key: " + messageKey);
                     ToLog(eLogLevel.ERROR, "The Status message with key: '" + messageKey + "' was not found! and won't show to the user!");
+                    return;
                 }
                 messageContent = messageToShow.MsgContent;
 

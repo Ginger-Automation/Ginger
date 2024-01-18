@@ -425,7 +425,7 @@ namespace amdocs.ginger.GingerCoreNET
 
                 //Cleaning previous Solution load
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Cleaning previous Solution items");
-                CloseSolution();
+                //CloseSolution();
 
                 //Load Solution file
                 //Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Opening Solution located at: " + solutionFolder);

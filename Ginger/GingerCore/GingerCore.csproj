@@ -544,6 +544,7 @@
     <PackageReference Include="AutoMapper">
       <Version>12.0.1</Version>
     </PackageReference>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.0" />
     <PackageReference Include="BouncyCastle.NetCore" Version="1.8.10" />
     <PackageReference Include="CassandraCSharpDriver">
       <Version>3.19.5</Version>
