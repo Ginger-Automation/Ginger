@@ -69,7 +69,6 @@ namespace Amdocs.Ginger.Repository
             {
 
                 string UniqPlaceHolder = "{" + GetPlaceHolderName(XDN.LocalName.ToUpper()) + "}";
-                //XDN.Value = UniqPlaceHolder;
                 AMPList.Add(new AppModelParameter(UniqPlaceHolder, string.Empty, XDN.LocalName, XDN.XPath, new ObservableList<OptionalValue> { new OptionalValue() { Value = XDN.Value } }));
 
                 if (XDN.Attributes != null && XDN.Attributes.Count > 0)
@@ -82,7 +81,6 @@ namespace Amdocs.Ginger.Repository
                         }
 
                         string UniqAttributePlaceHolder = "{" + GetPlaceHolderName(XmlAttribute.LocalName.ToUpper()) + "}";
-                        //XmlAttribute.Value = UniqAttributePlaceHolder;
                         AMPList.Add(new AppModelParameter(UniqAttributePlaceHolder, string.Empty, XmlAttribute.LocalName, XDN.XPath, new ObservableList<OptionalValue> { new OptionalValue() { Value = XmlAttribute.Value} }));
                     }
                 }
