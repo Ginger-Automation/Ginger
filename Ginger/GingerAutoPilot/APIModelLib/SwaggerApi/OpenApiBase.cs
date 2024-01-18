@@ -75,7 +75,6 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                             arv.DoNotConsiderAsTemp = true;
                             basicModal.ReturnValues.Add(arv);
                         }
-                        var test = operation.RequestBody.Content;
                     }
                     else if (basicModal.ContentType == ApplicationAPIUtils.eContentType.JSon ||
                             basicModal.ContentType == ApplicationAPIUtils.eContentType.FormData)
@@ -324,7 +323,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                             }
                         }
                     }
-                    else if (swaggerParameter.ActualSchema.Enumeration.Count > 0)
+                    else 
                     {
                         foreach (var cnt in swaggerParameter.ActualSchema.Enumeration)
                         {
@@ -352,24 +351,27 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             
             try
             {
-                if (operations.RequestBody.Content.ElementAt(0).Value.Examples != null && operations.RequestBody != null)
+                if (operations.RequestBody != null)
                 {
-                    foreach (var schemaEntry in operations.RequestBody.Content.ElementAt(0).Value.Examples.Values)
+                    if (operations.RequestBody.Content.ElementAt(0).Value.Examples != null)
                     {
-                        var jsonValue = JsonConvert.SerializeObject(schemaEntry.Value);
-                        JsonExtended je4Jn = new JsonExtended(jsonValue);
-                        IEnumerable<JsonExtended> EEEL = je4Jn.GetEndingNodes();
-                        if (EEEL.FirstOrDefault() != null)
+                        foreach (var schemaEntry in operations.RequestBody.Content.ElementAt(0).Value.Examples.Values)
                         {
-                            foreach (var cnt in EEEL)
+                            var jsonValue = JsonConvert.SerializeObject(schemaEntry.Value);
+                            JsonExtended je4Jn = new JsonExtended(jsonValue);
+                            IEnumerable<JsonExtended> EEEL = je4Jn.GetEndingNodes();
+                            if (EEEL.FirstOrDefault() != null)
                             {
-                                if (!exampleValues.ContainsKey(cnt.Name.ToLower()))
+                                foreach (var cnt in EEEL)
                                 {
-                                    exampleValues.Add(cnt.Name.ToLower(), cnt.JsonString);
+                                    if (!exampleValues.ContainsKey(cnt.Name.ToLower()))
+                                    {
+                                        exampleValues.Add(cnt.Name.ToLower(), cnt.JsonString);
+                                    }
                                 }
                             }
-                        }
 
+                        }
                     }
                 }
             }

@@ -258,13 +258,13 @@ namespace Amdocs.Ginger.Common
                     output = new JValue(value.Example ?? $"<{value.Type}>");
                     break;
                 case JsonObjectType.Number:
-                    output = new JValue(1);
+                    output = new JValue(value.Example ?? 1);
                     break;
                 case JsonObjectType.Integer:
                     output = new JValue(value.Example ?? 1);
                     break;
                 case JsonObjectType.Boolean:
-                    output = new JValue(false);
+                    output = new JValue(value.Example ?? false);
                     break;
                 case JsonObjectType.Null:
                     output = JValue.CreateNull();
@@ -284,7 +284,7 @@ namespace Amdocs.Ginger.Common
                     }
                     break;
                 default:
-                    output = new JValue(""); ;
+                    output = new JValue(value.Example ?? "");
                     break;
 
             }
