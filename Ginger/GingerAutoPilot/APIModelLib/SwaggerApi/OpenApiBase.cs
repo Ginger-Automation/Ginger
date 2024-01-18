@@ -413,6 +413,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                             tempList.Add(new OptionalValue
                             {
                                 Value = value,
+                                IsDefault=true
                             });
                             item.OptionalValuesList = tempList;
                         }
