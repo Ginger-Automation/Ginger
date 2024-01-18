@@ -86,7 +86,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.0" />
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.5.1" />
     <PackageReference Include="GingerTestHelper" Version="2.0.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.7.0" />
