@@ -26,22 +26,18 @@ namespace Amdocs.Ginger
 
         public void OpenAddAPIModelWizard()
         {
-            throw new NotImplementedException();
         }
 
         public void SetSolutionSourceControl(Solution solution, ref string repositoryRootFolder)
         {
-            throw new NotImplementedException();
         }
 
         public void ShowBusinessFlows()
         {
-            throw new NotImplementedException();
         }
 
         public void ShowDebugConsole(bool visible = true)
         {
-            throw new NotImplementedException();
         }
 
         public void ShowUpgradeGinger(string solutionFolder, List<string> higherVersionFiles)
@@ -56,18 +52,17 @@ namespace Amdocs.Ginger
 
         public void SolutionClosed()
         {
-            throw new NotImplementedException();
         }
 
 
         public bool OpenEncryptionKeyHandler(Solution solution)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public string GetClipboardText()
         {
-            throw new NotImplementedException();
+            return "Clipboard Text";
         }
     }
 }

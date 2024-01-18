@@ -45,9 +45,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
 
         public async Task ExecuteArgs(string[] args)
         {
+            ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
+            TargetFrameworkHelper.Helper = new DotNetFramework();
+            Reporter.WorkSpaceReporter = new UnitTestWorkspaceReporter();
+            WorkSpace.Init(consoleWorkspaceEventHandler, false);
+
             WorkSpace.Instance.RunningInExecutionMode = true;
             Reporter.ReportAllAlsoToConsole = true;
-            ConsoleWorkspaceEventHandler consoleWorkspaceEventHandler = new ConsoleWorkspaceEventHandler();
 
             // auto convert old args if detected to new args then run unified processing
             // Support backward compatibility 
@@ -364,6 +368,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib
         private async Task<int> HandleRunOptions(RunOptions runOptions)
         {
             WorkSpace.Instance.GingerCLIMode = eGingerCLIMode.run;
+            if (WorkSpace.Instance.UserProfile == null)
+            {
+                WorkSpace.Instance.UserProfile = new UserProfile();
+                UserProfileOperations userProfileOperations = new UserProfileOperations(WorkSpace.Instance.UserProfile);
+                WorkSpace.Instance.UserProfile.UserProfileOperations = userProfileOperations;
+            }
+
             SetVerboseLevel(runOptions.VerboseLevel);
 
             Reporter.ToLog(eLogLevel.INFO, string.Format("######## Starting Automatic {0} Execution Process ########", GingerDicser.GetTermResValue(eTermResKey.RunSet)));
