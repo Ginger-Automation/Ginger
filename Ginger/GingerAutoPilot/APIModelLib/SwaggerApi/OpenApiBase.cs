@@ -303,38 +303,36 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     }
 
                 }
-                else if (swaggerParameter.ActualSchema.ActualProperties.Count>0 || swaggerParameter.ActualSchema.Enumeration.Count>0)
+                else if(swaggerParameter.ActualSchema.ActualProperties.Count > 0)
                 {
-                    if(swaggerParameter.ActualSchema.ActualProperties.Count > 0)
+                    foreach (var cnt in swaggerParameter.ActualSchema.ActualProperties)
                     {
-                        foreach (var cnt in swaggerParameter.ActualSchema.ActualProperties)
+                        if (cnt.Value.Enumeration.Count > 0)
                         {
-                            if (cnt.Value.Enumeration.Count > 0)
+                            foreach (object item in cnt.Value.Enumeration)
                             {
-                                foreach (object item in cnt.Value.Enumeration)
+                                OptionalValue value = new OptionalValue()
                                 {
-                                    OptionalValue value = new OptionalValue()
-                                    {
-                                        Value = item.ToString(),
+                                    Value = item.ToString(),
 
-                                    };
-                                    lstOptions.Add(value);
-                                }
+                                };
+                                lstOptions.Add(value);
                             }
                         }
                     }
-                    else 
+                }
+                else if(swaggerParameter.ActualSchema.Enumeration.Count > 0)
+                {
+                    foreach (var cnt in swaggerParameter.ActualSchema.Enumeration)
                     {
-                        foreach (var cnt in swaggerParameter.ActualSchema.Enumeration)
+                        OptionalValue value = new OptionalValue()
                         {
-                            OptionalValue value = new OptionalValue()
-                            {
-                                Value = cnt.ToString(),
+                            Value = cnt.ToString(),
 
-                            };
-                            lstOptions.Add(value);
-                        }
+                        };
+                        lstOptions.Add(value);
                     }
+                
                 }
             }
             catch (Exception ex)
