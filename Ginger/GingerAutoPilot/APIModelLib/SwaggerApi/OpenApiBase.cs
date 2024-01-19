@@ -395,7 +395,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                         {
                             new OptionalValue()
                             {
-                                Value = exampleValue.ToString(),
+                                Value = exampleValue,
                                 IsDefault = true
                             }
                         };
@@ -411,7 +411,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                         {
                             tempList.Add(new OptionalValue
                             {
-                                Value = value.ToString(),
+                                Value = value,
                                 IsDefault = IsDefaultValueCheck
                         });
                             IsDefaultValueCheck = false;
