@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
@@ -25,6 +26,8 @@ namespace Ginger.Reports
 {
     public class ExecutionLoggerConfiguration : RepositoryItemBase
     {
+        public delegate void DataRepositoryChangedEvent();
+        public event DataRepositoryChangedEvent DataRepositoryChanged;
         public static partial class Fields
         {
             public static string Parameter = "Parameter";
@@ -362,6 +365,7 @@ namespace Ginger.Reports
                 {
                     mDataRepositoryMethod = value;
                     OnPropertyChanged(nameof(SelectedDataRepositoryMethod));
+                    DataRepositoryChanged?.Invoke();
                 }
             }
         }
