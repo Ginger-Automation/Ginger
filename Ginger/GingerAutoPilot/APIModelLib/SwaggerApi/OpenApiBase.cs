@@ -309,12 +309,13 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     {
                         if (cnt.Value.Enumeration.Count > 0)
                         {
-                            foreach (object item in cnt.Value.Enumeration)
+                            foreach (var item in cnt.Value.Enumeration)
                             {
                                 OptionalValue value = new OptionalValue()
                                 {
                                     Value = item.ToString(),
-
+                                    ItemName = item.ToString(),
+                                    IsDefault = true
                                 };
                                 lstOptions.Add(value);
                             }
@@ -323,12 +324,13 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                 }
                 else if(swaggerParameter.ActualSchema.Enumeration.Count > 0)
                 {
-                    foreach (var cnt in swaggerParameter.ActualSchema.Enumeration)
+                    foreach (var item in swaggerParameter.ActualSchema.Enumeration)
                     {
                         OptionalValue value = new OptionalValue()
                         {
-                            Value = cnt.ToString(),
-
+                            Value = item.ToString(),
+                            ItemName = item.ToString(),
+                            IsDefault = true
                         };
                         lstOptions.Add(value);
                     }
