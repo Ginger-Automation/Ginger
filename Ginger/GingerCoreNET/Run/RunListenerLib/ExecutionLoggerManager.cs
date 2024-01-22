@@ -244,7 +244,7 @@ namespace Ginger.Run
             RunSetReport.Description = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Description;
 
 
-            if (WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription.Contains('{'))
+            if (!string.IsNullOrEmpty(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription) && WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription.Contains('{'))
             {
                 IValueExpression mVE = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mCurrentBusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false)
                 {
