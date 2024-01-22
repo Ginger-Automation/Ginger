@@ -45,7 +45,7 @@ namespace Ginger.SolutionGeneral
         public static Solution LoadSolution(string solutionFileName, bool startDirtyTracking = true, string encryptionKey = null)
         {
             string txt = File.ReadAllText(solutionFileName);
-            Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
+            Solution solution = DeserializeSolution(txt);
             solution.FilePath = solutionFileName;
             solution.Folder = Path.GetDirectoryName(solutionFileName);
             solution.EncryptionKey = encryptionKey ?? GetEncryptionKey(solution.Guid.ToString());
@@ -53,6 +53,24 @@ namespace Ginger.SolutionGeneral
             {
                 solution.StartDirtyTracking();
             }
+            return solution;
+        }
+        public static Solution LoadSolution(string txt , string solutionFileName , bool startDirtyTracking = true , string encryptionKey = null)
+        {
+            Solution solution = DeserializeSolution(txt);
+            solution.FilePath = solutionFileName;
+            solution.Folder = Path.GetDirectoryName(solutionFileName);
+            solution.EncryptionKey = encryptionKey ?? GetEncryptionKey(solution.Guid.ToString());
+            if (startDirtyTracking)
+            {
+                solution.StartDirtyTracking();
+            }
+            return solution;
+        }
+
+        public static Solution DeserializeSolution(string txt)
+        {
+            Solution solution = (Solution)NewRepositorySerializer.DeserializeFromText(txt);
             return solution;
         }
 

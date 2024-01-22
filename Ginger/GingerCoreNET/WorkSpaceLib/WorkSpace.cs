@@ -462,7 +462,8 @@ namespace amdocs.ginger.GingerCoreNET
                 }
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Loading Solution file xml into object");
-                Solution solution = SolutionOperations.LoadSolution(solutionFile, true, encryptionKey);
+                string txt = File.ReadAllText(solutionFile);
+                Solution solution = SolutionOperations.LoadSolution(txt,solutionFile, true, encryptionKey);
                 SolutionOperations solutionOperations = new SolutionOperations(solution);
                 solution.SolutionOperations = solutionOperations;
 
@@ -524,7 +525,7 @@ namespace amdocs.ginger.GingerCoreNET
                 BusinessFlow.SolutionVariables = solution.Variables;
                 solution.SolutionOperations.SetReportsConfigurations();
                 Solution = solution;
-
+                SolutionOperations.DeserializeSolution(txt);
                 UserProfile.UserProfileOperations.LoadRecentAppAgentMapping();
 
                 if (!RunningInExecutionMode)
