@@ -47,20 +47,12 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         GingerCore.Activity mActivity;
         Act mAct;
         SolutionRepository mSolutionRepository;
-        DataSourceBase dataSourceBase;
 
         [TestInitialize]
         public void TestInitialize()
         {
             WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
-
-            dataSourceBase = new GingerLiteDB();
-            string ConnectionString = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "DataSources" + Path.DirectorySeparatorChar + "LiteDB.db");
-            dataSourceBase.FileFullPath = ConnectionString;
-            dataSourceBase.AddColumn("MyCustomizedDataTable", "New", "Text");
-            dataSourceBase.GetQueryOutput("update MyCustomizedDataTable SET New = \"Manas\" WHERE GINGER_ID = 1");
-            dataSourceBase.Name = "LiteDataBase";
 
             // Init SR
             mSolutionRepository = WorkSpace.Instance.SolutionRepository;
@@ -121,9 +113,6 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             activity.Acts.Add(dummy);
             activity.Acts.CurrentItem = dummy;
             BF1.AddActivity(activity);
-            dataSourceBase.DSType = DataSourceBase.eDSType.LiteDataBase;
-            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(dataSourceBase);
-            var result = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
         }
 
         [TestCleanup]
@@ -184,6 +173,16 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         [TestMethod]
         public void DataSourceBaseTest()
         {
+            DataSourceBase dataSourceBase = new GingerLiteDB();
+            string ConnectionString = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "DataSources" + Path.DirectorySeparatorChar + "LiteDB.db");
+            dataSourceBase.FileFullPath = ConnectionString;
+            dataSourceBase.AddColumn("MyCustomizedDataTable", "New", "Text");
+            dataSourceBase.GetQueryOutput("update MyCustomizedDataTable SET New = \"Manas\" WHERE GINGER_ID = 1");
+            dataSourceBase.Name = "LiteDataBase";
+
+            dataSourceBase.DSType = DataSourceBase.eDSType.LiteDataBase;
+            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(dataSourceBase);
+
             ActDSTableElement actDSTableElement = new();
             actDSTableElement.DSTableName = "MyCustomizedDataTable";
             actDSTableElement.DSName = "LiteDataBase";
