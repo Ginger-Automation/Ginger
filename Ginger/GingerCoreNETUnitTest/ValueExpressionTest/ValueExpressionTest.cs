@@ -17,13 +17,17 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.DataSource;
 using Amdocs.Ginger.CoreNET.Repository;
 using Amdocs.Ginger.Repository;
 using Ginger.Run;
 using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.DataSource;
 using GingerCore.Environments;
+using GingerCoreNET.DataSource;
 using GingerCoreNET.RosLynLib;
 using GingerCoreNETUnitTest.RunTestslib;
 using GingerTestHelper;
@@ -43,12 +47,20 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
         GingerCore.Activity mActivity;
         Act mAct;
         SolutionRepository mSolutionRepository;
+        DataSourceBase dataSourceBase;
 
         [TestInitialize]
         public void TestInitialize()
         {
             WorkSpace.Init(new WorkSpaceEventHandler());
             WorkSpace.Instance.SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
+
+            dataSourceBase = new GingerLiteDB();
+            string ConnectionString = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "DataSources" + Path.DirectorySeparatorChar + "LiteDB.db");
+            dataSourceBase.FileFullPath = ConnectionString;
+            dataSourceBase.AddColumn("MyCustomizedDataTable", "New", "Text");
+            dataSourceBase.GetQueryOutput("update MyCustomizedDataTable SET New = \"Manas\" WHERE GINGER_ID = 1");
+            dataSourceBase.Name = "LiteDataBase";
 
             // Init SR
             mSolutionRepository = WorkSpace.Instance.SolutionRepository;
@@ -109,6 +121,9 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             activity.Acts.Add(dummy);
             activity.Acts.CurrentItem = dummy;
             BF1.AddActivity(activity);
+            dataSourceBase.DSType = DataSourceBase.eDSType.LiteDataBase;
+            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(dataSourceBase);
+            var result = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
         }
 
         [TestCleanup]
@@ -166,6 +181,29 @@ namespace GingerCoreNETUnitTests.ValueExpressionTest
             Assert.AreEqual(10, rc);
         }
 
+        [TestMethod]
+        public void DataSourceBaseTest()
+        {
+            ActDSTableElement actDSTableElement = new();
+            actDSTableElement.DSTableName = "MyCustomizedDataTable";
+            actDSTableElement.DSName = "LiteDataBase";
+            actDSTableElement.ByRowNum = true;
+            actDSTableElement.LocateRowValue = "0";
+            actDSTableElement.ControlAction = ActDSTableElement.eControlAction.GetValue;
+            actDSTableElement.LocateColTitle = "New";
+            actDSTableElement.Customized = true;
+            LiteDBSQLTranslator liteDBTranslator = new(actDSTableElement);
+            string ValueExpression = liteDBTranslator.CreateValueExpression();
+            IValueExpression mVE = new ValueExpression(mEnv, mBF, new ObservableList<DataSourceBase>(), false, "", false)
+            {
+                Value = ValueExpression
+            };
+
+            string result = mVE.ValueCalculated;
+            WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(dataSourceBase);
+
+            Assert.AreEqual(result, "Manas");
+        }
         [TestMethod]
         [Timeout(60000)]
         public void Comparison()

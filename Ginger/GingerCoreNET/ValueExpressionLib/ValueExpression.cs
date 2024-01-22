@@ -649,7 +649,7 @@ namespace GingerCore
 
             string DSName = p.Substring(9, p.IndexOf(" DST=") - 9);
 
-            if (DSList == null)
+            if (DSList == null || !DSList.Any())
             {
                 DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             }
@@ -1065,7 +1065,7 @@ namespace GingerCore
                             Markasdone = true;
                         }
                         // Get Value query
-                        if (litedbquery.Contains(".find") || litedbquery.Contains(".select $ where"))
+                        if (litedbquery.Contains("select", StringComparison.CurrentCultureIgnoreCase))
                         {
                             // Use Replace because incase, if it is used with something else for example xpath (//*[text() = "<DataSource Query>"]) the whole string should be the output instead of just the result
                             // data source query
@@ -1073,9 +1073,9 @@ namespace GingerCore
                         }
 
                         // Set value Query
-                        else if (litedbquery.Contains(".update") && this.updateValue != null)
+                        else if (litedbquery.Contains("update", StringComparison.CurrentCultureIgnoreCase) && this.updateValue != null)
                         {
-                            if (litedbquery.Contains("where"))
+                            if (litedbquery.Contains("where", StringComparison.CurrentCultureIgnoreCase))
                             {
                                 string[] querysplit = litedbquery.Split(new[] { "where" }, StringSplitOptions.None);
                                 char[] split = { ' ' };
