@@ -16,21 +16,29 @@
     <Page.Resources>
         <BooleanToVisibilityConverter
             x:Key="BoolToVisibility" />
-        <DataTemplate x:Key="ConsumerCellTemplate">
+        <DataTemplate
+            x:Key="ViewDetailsCellTemplate">
+            <uc:ucButton
+                ButtonImageType="View"
+                ButtonFontImageSize="12"
+                Click="ViewDetailsUCButton_Click"
+                Tag="{Binding Path=.}" />
+        </DataTemplate>
+        <DataTemplate
+            x:Key="TargetApplicationCellTemplate">
+            <ComboBox
+                ItemsSource="{Binding TargetApplicationOptions}"
+                SelectedItem="{Binding TargetApplication}"
+                Style="{StaticResource @InputComboBoxStyle}"/>
+        </DataTemplate>
+        <DataTemplate 
+            x:Key="ConsumerCellTemplate">
             <uclib:ConsumerComboBox
                 SelectedConsumer="{Binding Consumers}"
                 ConsumerSource="{Binding ConsumerOptions}"
                 Visibility="{Binding 
                     Path=ShowConsumerOptions, 
                     Converter={StaticResource BoolToVisibility}}" />
-        </DataTemplate>
-        <DataTemplate
-            x:Key="ViewDetailsCellTemplate">
-            <uc:ucButton 
-                ButtonImageType="View"
-                ButtonFontImageSize="12"
-                Click="ViewDetailsUCButton_Click"
-                Tag="{Binding Path=.}"/>
         </DataTemplate>
         <Style
             x:Key="InputFieldLabelStyle"

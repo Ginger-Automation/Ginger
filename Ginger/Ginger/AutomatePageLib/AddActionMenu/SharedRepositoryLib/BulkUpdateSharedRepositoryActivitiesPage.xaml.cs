@@ -49,9 +49,29 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
         {
             InitializeComponent();
             _activityBulkUpdateListItems = activities.Select(activity => new ActivityBulkUpdateListItem(activity)).ToList();
+            AttachSyncPropertyChangedEventHandlers();
             InitBulkUpdateUCGrid();
             SetBulkUpdateUCGridItems(_activityBulkUpdateListItems);
             UpdateUIForPageMode();
+        }
+
+        private void AttachSyncPropertyChangedEventHandlers()
+        {
+            foreach (ActivityBulkUpdateListItem item in _activityBulkUpdateListItems)
+            {
+                item.SynchronisedPropertyChanged += BulkUpdateItem_SynchronisedPropertyChanged;
+            }
+        }
+
+        private void BulkUpdateItem_SynchronisedPropertyChanged(ActivityBulkUpdateListItem sender, string propertyName)
+        {
+            foreach (ActivityBulkUpdateListItem item in _activityBulkUpdateListItems)
+            {
+                if (item.SelectedForSync)
+                {
+                    sender.SyncSiblingProperty(item, propertyName);
+                }
+            }
         }
 
         private void InitBulkUpdateUCGrid()
@@ -60,6 +80,14 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
             {
                 GridColsView = new()
                 {
+                    new GridColView()
+                    {
+                        Header = "Sync Changes",
+                        Field = nameof(ActivityBulkUpdateListItem.SelectedForSync),
+                        WidthWeight = 40,
+                        StyleType = GridColView.eGridColStyleType.CheckBox,
+                        BindingMode = BindingMode.TwoWay
+                    },
                     new GridColView()
                     {
                         Header = "Name",
@@ -95,12 +123,13 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     {
                         Header = GingerDicser.GetTermResValue(eTermResKey.TargetApplication),
                         Field = nameof(ActivityBulkUpdateListItem.TargetApplication),
-                        CellValuesList = WorkSpace.Instance.Solution.GetSolutionTargetApplications().Select(targetApp => new ComboEnumItem()
-                        { 
-                            text = targetApp.Name, 
-                            Value = targetApp.Name 
-                        }),
-                        StyleType = GridColView.eGridColStyleType.ComboBox,
+                        //CellValuesList = WorkSpace.Instance.Solution.GetSolutionTargetApplications().Select(targetApp => new ComboEnumItem()
+                        //{ 
+                        //    text = targetApp.Name, 
+                        //    Value = targetApp.Name 
+                        //}),
+                        CellTemplate = (DataTemplate)FindResource("TargetApplicationCellTemplate"),
+                        StyleType = GridColView.eGridColStyleType.Template,
                         WidthWeight = 60,
                         BindingMode = BindingMode.TwoWay
                     },
@@ -305,17 +334,19 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 
         private Task SaveModifiedActivitiesAsync()
         {
-            IEnumerable<ActivityBulkUpdateListItem> modifiedActivityBulkUpdateListItems = _activityBulkUpdateListItems
-                .Where(activityBulkUpdateListItem => activityBulkUpdateListItem.IsModified);
+            IEnumerable<ActivityBulkUpdateListItem> modifiedActivityBulkUpdateListItems = 
+                _activityBulkUpdateListItems
+                .Where(item => item.IsModified);
 
             List<Task> saveTasks = [];
-            foreach(ActivityBulkUpdateListItem activityBulkUpdateListItem in modifiedActivityBulkUpdateListItems)
+            foreach(ActivityBulkUpdateListItem item in modifiedActivityBulkUpdateListItems)
             {
-                Task saveTask = Task.Run(() => SaveHandler.Save(activityBulkUpdateListItem.Activity));
-                saveTask = saveTask.ContinueWith(_ =>
+                Task saveTask = Task.Run(() =>
                 {
-                    activityBulkUpdateListItem.IsModified = false;
-                }, TaskContinuationOptions.OnlyOnRanToCompletion);
+                    item.CommitChanges();
+                    SaveHandler.Save(item.Activity); 
+                    item.IsModified = false;
+                });
                 saveTasks.Add(saveTask);
             }
             return Task.WhenAll(saveTasks);
@@ -346,10 +377,19 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 
         public sealed class ActivityBulkUpdateListItem : INotifyPropertyChanged
         {
-            private bool _isModified = false;
-            private bool _showConsumerOptions = false;
+            private bool _isModified;
+            private string _name;
+            private bool _publish;
+            private bool _mandatory;
+            private string _targetApplication;
+            private ObservableList<Consumer> _consumers;
+            private bool _showConsumerOptions;
+            private bool _selectedForSync;
+
+            public delegate void SynchronisedPropertyChangedEventHandler(ActivityBulkUpdateListItem sender, string propertyName);
 
             public event PropertyChangedEventHandler? PropertyChanged;
+            public event SynchronisedPropertyChangedEventHandler? SynchronisedPropertyChanged;
 
             public bool IsModified 
             {
@@ -357,20 +397,66 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 set
                 {
                     _isModified = value;
-                    OnPropertyChanged(nameof(IsModified));
+                    RaisePropertyChanged(nameof(IsModified));
                 }
             }
 
             public Activity Activity { get; }
 
-            public ObservableList<Consumer> ConsumerOptions { get; }
-
-            public ObservableList<Consumer> Consumers
+            public string Name
             {
-                get => Activity.ConsumerApplications;
+                get => _name;
                 set
                 {
-                    Activity.ConsumerApplications = value;
+                    _name = value;
+                    IsModified = true;
+                    RaisePropertyChanged(nameof(Name));
+                }
+            }
+
+            public bool Publish
+            {
+                get => _publish;
+                set
+                {
+                    _publish = value;
+                    IsModified = true;
+                    RaisePropertyChanged(nameof(Publish));
+                    RaiseSynchronisedPropertyChanged(nameof(Publish));
+                }
+            }
+
+            public bool Mandatory
+            {
+                get => _mandatory;
+                set
+                {
+                    _mandatory = value;
+                    IsModified = true;
+                    RaisePropertyChanged(nameof(Mandatory));
+                    RaiseSynchronisedPropertyChanged(nameof(Mandatory));
+                }
+            }
+
+            public IEnumerable<string> TargetApplicationOptions { get; }
+
+            public string TargetApplication
+            {
+                get => _targetApplication;
+                set
+                {
+                    _targetApplication = value;
+                    if (GetApplicationPlatform(_targetApplication) == ePlatformType.WebServices)
+                    {
+                        ConsumersOptions = GetConsumersOptions();
+                        ShowConsumerOptions = true;
+                    }
+                    else
+                    {
+                        ConsumersOptions = Array.Empty<Consumer>();
+                        ShowConsumerOptions = false;
+                    }
+                    RaisePropertyChanged(nameof(TargetApplication));
                     IsModified = true;
                 }
             }
@@ -381,173 +467,131 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 set
                 {
                     _showConsumerOptions = value;
-                    OnPropertyChanged(nameof(ShowConsumerOptions));
+                    RaisePropertyChanged(nameof(ShowConsumerOptions));
                 }
             }
 
-            public string Name
+            public IEnumerable<Consumer> ConsumersOptions { get; private set; }
+
+            public ObservableList<Consumer> Consumers
             {
-                get => Activity.ActivityName;
+                get => _consumers;
                 set
                 {
-                    Activity.ActivityName = value;
+                    _consumers = value;
                     IsModified = true;
+                    RaisePropertyChanged(nameof(Consumers));
                 }
             }
 
-            public bool Publish
+            public bool SelectedForSync
             {
-                get => Activity.Publish;
+                get => _selectedForSync;
                 set
                 {
-                    Activity.Publish = value;
-                    IsModified = true;
+                    _selectedForSync = value;
+                    RaisePropertyChanged(nameof(SelectedForSync));
                 }
             }
-
-            public bool Mandatory
-            {
-                get => Activity.Mandatory;
-                set
-                {
-                    Activity.Mandatory = value;
-                    IsModified = true;
-                }
-            }
-
-            public string TargetApplication
-            {
-                get => Activity.TargetApplication;
-                set
-                {
-                    Activity.TargetApplication = value;
-                    if (IsWebServicesTargetApplication(Activity.TargetApplication))
-                    {
-                        SetConsumerOptions(Activity.TargetApplication);
-                        ShowConsumerOptions = true;
-                    }
-                    else
-                    {
-                        ConsumerOptions.ClearAll();
-                        ShowConsumerOptions = false;
-                    }
-                    IsModified = true;
-                }
-            }
-
-            public IEnumerable<string> TargetApplicationOptions { get; }
 
             public ActivityBulkUpdateListItem(Activity activity)
             {
                 Activity = activity;
-                AttachActivityPropertyChangedHandler();
-                ConsumerOptions = new();
-                if (IsWebServicesTargetApplication(Activity.TargetApplication))
+
+                _name = Activity.ActivityName;
+                _publish = Activity.Publish;
+                _mandatory = Activity.Mandatory;
+                _targetApplication = Activity.TargetApplication;
+                _consumers = Activity.ConsumerApplications;
+
+                ConsumersOptions = GetConsumersOptions();
+                if (GetApplicationPlatform(Activity.TargetApplication) == ePlatformType.WebServices)
                 {
                     ShowConsumerOptions = true;
-                    SetConsumerOptions(Activity.TargetApplication);
+                }
+                else
+                {
+                    ShowConsumerOptions = false;
                 }
                 TargetApplicationOptions = GetTargetApplicationOptions();
             }
 
-            private void SetConsumerOptions(string targetAppName)
+            private Consumer[] GetConsumersOptions()
             {
-                IEnumerable<TargetBase> solutionTargetApps = WorkSpace
+                return WorkSpace
                     .Instance
                     .Solution
-                    .GetSolutionTargetApplications();
-
-                IEnumerable<Consumer> consumerOptions = 
-                    solutionTargetApps
-                    .Where(t => !string.Equals(t.Name, targetAppName))
+                    .GetSolutionTargetApplications()
+                    .Where(t => !string.Equals(t.Name, _targetApplication))
+                    .Where(t => GetApplicationPlatform(t.Name) != ePlatformType.WebServices)
                     .Select(t => new Consumer()
                     {
                         Name = t.Name,
                         ConsumerGuid = t.Guid,
                     })
                     .ToArray();
-
-                ConsumerOptions.ClearAll();
-                foreach(Consumer consumerOption in consumerOptions)
-                {
-                    ConsumerOptions.Add(consumerOption);
-                }
             }
 
-            private IEnumerable<string> GetTargetApplicationOptions()
+            private string[] GetTargetApplicationOptions()
             {
-                ePlatformType activityPlatform = GetTargetApplicationPlatform(Activity.TargetApplication);
-                return GetTargetApplicationWithPlatform(activityPlatform).Select(t => t.Name);
-            }
-
-            private IEnumerable<TargetBase> GetTargetApplicationWithPlatform(ePlatformType platform)
-            {
+                ePlatformType activityPlatform = GetApplicationPlatform(Activity.TargetApplication);
                 return
                     WorkSpace
                     .Instance
                     .Solution
                     .GetSolutionTargetApplications()
-                    .Where(t => GetTargetApplicationPlatform(t.Name) == platform);
+                    .Where(t => GetApplicationPlatform(t.Name) == activityPlatform)
+                    .Select(t => t.Name)
+                    .ToArray();
             }
 
-            private bool IsWebServicesTargetApplication(string targetAppName)
+            private static ePlatformType GetApplicationPlatform(string targetAppName)
             {
                 return
                     WorkSpace
                     .Instance
                     .Solution
-                    .GetApplicationPlatformForTargetApp(targetAppName) == ePlatformType.WebServices;
+                    .GetApplicationPlatformForTargetApp(targetAppName);
             }
 
-            private ePlatformType GetTargetApplicationPlatform(string targetAppName)
-            {
-                return
-                    WorkSpace
-                       .Instance
-                       .Solution
-                       .GetApplicationPlatformForTargetApp(targetAppName);
-            }
-
-            private void AttachActivityPropertyChangedHandler()
-            {
-                string allProperties = string.Empty;
-                PropertyChangedEventManager.AddHandler(source: Activity, handler: OnActivityPropertyChanged, propertyName: allProperties);
-                CollectionChangedEventManager.AddHandler(source: Activity.ConsumerApplications, handler: OnActivityConsumerApplicationsCollectionChanged);
-            }
-
-            private void OnActivityPropertyChanged(object? sender, PropertyChangedEventArgs e)
-            {
-                if (string.Equals(e.PropertyName, nameof(Activity.ActivityName)))
-                {
-                    OnPropertyChanged(nameof(Name));
-                }
-                else if (string.Equals(e.PropertyName, nameof(Activity.Publish)))
-                {
-                    OnPropertyChanged(nameof(Publish));
-                }
-                else if (string.Equals(e.PropertyName, nameof(Activity.Mandatory)))
-                {
-                    OnPropertyChanged(nameof(Mandatory));
-                }
-                else if (string.Equals(e.PropertyName, nameof(Activity.TargetApplication)))
-                {
-                    OnPropertyChanged(nameof(TargetApplication));
-                }
-                else if (string.Equals(e.PropertyName, nameof(Activity.ConsumerApplications)))
-                {
-                    OnPropertyChanged(nameof(Consumers));
-                }
-            }
-
-            private void OnActivityConsumerApplicationsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-            {
-                IsModified = true;
-            }
-
-            private void OnPropertyChanged(string propertyName)
+            private void RaisePropertyChanged(string propertyName)
             {
                 PropertyChangedEventHandler? handler = PropertyChanged;
                 handler?.Invoke(sender: this, new PropertyChangedEventArgs(propertyName));
+            }
+
+            private void RaiseSynchronisedPropertyChanged(string propertyName)
+            {
+                SynchronisedPropertyChangedEventHandler? handler = SynchronisedPropertyChanged;
+                handler?.Invoke(sender: this, propertyName);
+            }
+
+            public void SyncSiblingProperty(ActivityBulkUpdateListItem sibling, string propertyName)
+            {
+                if (sibling == this)
+                {
+                    return;
+                }
+
+                if (string.Equals(propertyName, nameof(Publish)))
+                {
+                    sibling._publish = _publish;
+                    sibling.RaisePropertyChanged(nameof(Publish));
+                }
+                else if (string.Equals(propertyName, nameof(Mandatory)))
+                {
+                    sibling._mandatory = _mandatory;
+                    sibling.RaisePropertyChanged(nameof(Mandatory));
+                }
+            }
+
+            public void CommitChanges()
+            {
+                Activity.ActivityName = _name;
+                Activity.Mandatory = _mandatory;
+                Activity.Publish = _publish;
+                Activity.TargetApplication = _targetApplication;
+                Activity.ConsumerApplications = _consumers;
             }
         }
     }
