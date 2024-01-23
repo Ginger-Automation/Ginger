@@ -9,8 +9,51 @@ using RepositorySerializerBenchmarks.Enhancements;
 using RepositorySerializerBenchmarks.Enhancements.LiteXML;
 using System.Xml;
 
+Console.WriteLine("Starting Benchmarking...");
+Summary summary = BenchmarkRunner.Run<SerializationBenchmark>();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //Summary summary = BenchmarkRunner.Run<SerializationBenchmark>();
-Summary summary = BenchmarkRunner.Run<DeserializationBenchmark>();
+//Summary summary = BenchmarkRunner.Run<DeserializationBenchmark>();
 
 //Summary summary = BenchmarkRunner.Run<XmlParseBenchmark>();
 
