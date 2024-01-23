@@ -9,6 +9,7 @@ using GingerCore.ALM;
 using GingerCore.Environments;
 using GingerCoreNET.ALMLib;
 using GingerCoreNET.SourceControl;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -160,7 +161,7 @@ namespace GingerCoreNETUnitTest.RunTestslib
 
         public DbConnection GetOracleConnection(string ConnectionString)
         {
-            throw new NotImplementedException();
+            return new OracleConnection(ConnectionString);
         }
 
         public bool IsSharedRepositoryItem(RepositoryItemBase item)
