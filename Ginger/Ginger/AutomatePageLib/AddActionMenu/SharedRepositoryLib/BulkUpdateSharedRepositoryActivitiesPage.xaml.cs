@@ -123,11 +123,6 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     {
                         Header = GingerDicser.GetTermResValue(eTermResKey.TargetApplication),
                         Field = nameof(ActivityBulkUpdateListItem.TargetApplication),
-                        //CellValuesList = WorkSpace.Instance.Solution.GetSolutionTargetApplications().Select(targetApp => new ComboEnumItem()
-                        //{ 
-                        //    text = targetApp.Name, 
-                        //    Value = targetApp.Name 
-                        //}),
                         CellTemplate = (DataTemplate)FindResource("TargetApplicationCellTemplate"),
                         StyleType = GridColView.eGridColStyleType.Template,
                         WidthWeight = 60,
@@ -448,12 +443,12 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     _targetApplication = value;
                     if (GetApplicationPlatform(_targetApplication) == ePlatformType.WebServices)
                     {
-                        ConsumersOptions = GetConsumersOptions();
+                        ConsumersOptions = new(GetConsumersOptions());
                         ShowConsumerOptions = true;
                     }
                     else
                     {
-                        ConsumersOptions = Array.Empty<Consumer>();
+                        ConsumersOptions = new(Array.Empty<Consumer>());
                         ShowConsumerOptions = false;
                     }
                     RaisePropertyChanged(nameof(TargetApplication));
@@ -471,7 +466,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 }
             }
 
-            public IEnumerable<Consumer> ConsumersOptions { get; private set; }
+            public ObservableList<Consumer> ConsumersOptions { get; private set; }
 
             public ObservableList<Consumer> Consumers
             {
@@ -504,7 +499,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 _targetApplication = Activity.TargetApplication;
                 _consumers = Activity.ConsumerApplications;
 
-                ConsumersOptions = GetConsumersOptions();
+                ConsumersOptions = new(GetConsumersOptions());
                 if (GetApplicationPlatform(Activity.TargetApplication) == ePlatformType.WebServices)
                 {
                     ShowConsumerOptions = true;
@@ -518,6 +513,11 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 
             private Consumer[] GetConsumersOptions()
             {
+                if (GetApplicationPlatform(_targetApplication) != ePlatformType.WebServices)
+                {
+                    return [];
+                }
+
                 return WorkSpace
                     .Instance
                     .Solution
@@ -534,7 +534,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 
             private string[] GetTargetApplicationOptions()
             {
-                ePlatformType activityPlatform = GetApplicationPlatform(Activity.TargetApplication);
+                ePlatformType activityPlatform = GetApplicationPlatform(_targetApplication);
                 return
                     WorkSpace
                     .Instance
