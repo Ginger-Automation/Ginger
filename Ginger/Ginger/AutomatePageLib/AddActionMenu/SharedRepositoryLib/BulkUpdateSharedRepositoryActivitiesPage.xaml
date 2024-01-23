@@ -24,6 +24,14 @@
                     Path=ShowConsumerOptions, 
                     Converter={StaticResource BoolToVisibility}}" />
         </DataTemplate>
+        <DataTemplate
+            x:Key="ViewDetailsCellTemplate">
+            <uc:ucButton 
+                ButtonImageType="View"
+                ButtonFontImageSize="12"
+                Click="ViewDetailsUCButton_Click"
+                Tag="{Binding Path=.}"/>
+        </DataTemplate>
         <Style
             x:Key="InputFieldLabelStyle"
             TargetType="Label"

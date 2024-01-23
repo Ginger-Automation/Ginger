@@ -4,6 +4,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.UserControls;
+using Ginger.BusinessFlowPages;
 using Ginger.Repository;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
@@ -29,6 +30,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 {
@@ -60,30 +62,38 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 {
                     new GridColView()
                     {
-                        Header = nameof(ActivityBulkUpdateListItem.Name),
+                        Header = "Name",
                         Field = nameof(ActivityBulkUpdateListItem.Name),
                         WidthWeight = 80,
                         BindingMode = BindingMode.TwoWay
                     },
                     new GridColView()
                     {
-                        Header = nameof(ActivityBulkUpdateListItem.Publish),
+                        Header = "View Details",
+                        Field = string.Empty,
+                        WidthWeight = 50,
+                        StyleType = GridColView.eGridColStyleType.Template,
+                        CellTemplate = (DataTemplate)FindResource("ViewDetailsCellTemplate")
+                    },
+                    new GridColView()
+                    {
+                        Header = "Publish",
                         Field = nameof(ActivityBulkUpdateListItem.Publish),
                         StyleType = GridColView.eGridColStyleType.CheckBox,
-                        WidthWeight = 60,
+                        WidthWeight = 40,
                         BindingMode = BindingMode.TwoWay
                     },
                     new GridColView()
                     {
-                        Header = nameof(ActivityBulkUpdateListItem.Mandatory),
+                        Header = "Mandatory",
                         Field = nameof(ActivityBulkUpdateListItem.Mandatory),
                         StyleType = GridColView.eGridColStyleType.CheckBox,
-                        WidthWeight = 60,
+                        WidthWeight = 40,
                         BindingMode = BindingMode.TwoWay
                     },
                     new GridColView()
                     {
-                        Header = nameof(ActivityBulkUpdateListItem.TargetApplication),
+                        Header = GingerDicser.GetTermResValue(eTermResKey.TargetApplication),
                         Field = nameof(ActivityBulkUpdateListItem.TargetApplication),
                         CellValuesList = WorkSpace.Instance.Solution.GetSolutionTargetApplications().Select(targetApp => new ComboEnumItem()
                         { 
@@ -311,13 +321,45 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
             return Task.WhenAll(saveTasks);
         }
 
+        private void ViewDetailsUCButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender == null || sender is not ucButton viewDetailsUCButton)
+            {
+                return;
+            }
+
+            if (viewDetailsUCButton.Tag == null || viewDetailsUCButton.Tag is not ActivityBulkUpdateListItem activityBulkUpdateListItem)
+            {
+                return;
+            }
+
+            Activity activity = activityBulkUpdateListItem.Activity;
+            ActivityDetailsPage activityDetailsPage = new(activity, new Context() { Activity = activity }, General.eRIPageViewMode.View);
+            GenericWindow? genericWindow = null;
+            GingerCore.General.LoadGenericWindow(
+                ref genericWindow!, 
+                owner: App.MainWindow, 
+                windowStyle: eWindowShowStyle.Dialog, 
+                windowTitle: "Activity Details", 
+                activityDetailsPage);
+        }
+
         public sealed class ActivityBulkUpdateListItem : INotifyPropertyChanged
         {
+            private bool _isModified = false;
             private bool _showConsumerOptions = false;
 
             public event PropertyChangedEventHandler? PropertyChanged;
 
-            public bool IsModified { get; set; }
+            public bool IsModified 
+            {
+                get => _isModified;
+                set
+                {
+                    _isModified = value;
+                    OnPropertyChanged(nameof(IsModified));
+                }
+            }
 
             public Activity Activity { get; }
 
