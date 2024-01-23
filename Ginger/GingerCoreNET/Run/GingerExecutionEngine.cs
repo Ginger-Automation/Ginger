@@ -268,10 +268,13 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
+            InitializeAccountReportExecutionLogger();
 
-            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes)
+            if (WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
-                RunListeners.Add(new AccountReportExecutionLogger(mContext));
+                WorkSpace.Instance.Solution.LoggerConfigurations.PublishToCentralizedDbChanged -= InitializeAccountReportExecutionLogger;
+
+                WorkSpace.Instance.Solution.LoggerConfigurations.PublishToCentralizedDbChanged += InitializeAccountReportExecutionLogger;
             }
 
             if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
@@ -280,6 +283,15 @@ namespace Ginger.Run
             }
         }
 
+        public void InitializeAccountReportExecutionLogger()
+        {
+            if (mSelectedExecutionLoggerConfiguration != null 
+                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && 
+                !RunListeners.Any((runListeners)=>runListeners.GetType() == typeof(AccountReportExecutionLogger)))
+            {
+                RunListeners.Add(new AccountReportExecutionLogger(mContext));
+            }
+        }
         public GingerExecutionEngine(GingerRunner GingerRunner, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             mGingerRunner = GingerRunner;

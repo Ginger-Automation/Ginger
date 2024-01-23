@@ -36,7 +36,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
     {
 
 
-        private string EndPointUrl { get; set; }
+        public string EndPointUrl { get; set; }
 
         RestClient restClient;
         private const string SEND_RUNSET_EXECUTION_DATA = "api/AccountReport/runset/";

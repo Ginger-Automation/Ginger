@@ -26,8 +26,10 @@ namespace Ginger.Reports
 {
     public class ExecutionLoggerConfiguration : RepositoryItemBase
     {
-        public delegate void DataRepositoryChangedEvent();
-        public event DataRepositoryChangedEvent DataRepositoryChanged;
+        public delegate void LoggerConfigurationChangedEvent();
+        public event LoggerConfigurationChangedEvent DataRepositoryChanged;
+
+        public event LoggerConfigurationChangedEvent PublishToCentralizedDbChanged;
         public static partial class Fields
         {
             public static string Parameter = "Parameter";
@@ -142,6 +144,10 @@ namespace Ginger.Reports
                 {
                     mPublishLogToCentralDB = value;
                     OnPropertyChanged(nameof(PublishLogToCentralDB));
+                    if(mPublishLogToCentralDB == ePublishToCentralDB.Yes)
+                    {
+                        PublishToCentralizedDbChanged?.Invoke();
+                    }
                 }
             }
         }
