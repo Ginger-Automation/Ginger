@@ -1031,7 +1031,7 @@ namespace GingerCore
                     bool Markasdone = false;
 
                     string litedbquery = p.Substring(p.IndexOf("QUERY=") + 6, p.Length - (p.IndexOf("QUERY=") + 7));
-
+                    bool IsQueryOld = IsQueryFromOldVersion(litedbquery);
                     // Query is with Customized option
                     if (p.Contains("ICOLVAL="))
                     {
@@ -1054,11 +1054,28 @@ namespace GingerCore
                         if (IRow == "NxtAvail")
                         {
                             rowNumber = 0;
+                            if (IsQueryOld)
+                            {
+                                litedbquery = $"SELECT $ FROM {tableName[0]} where GINGER_USED =\"False\"";
+                            }
                         }
                         else if (IRow == "RowNum")
                         {
                             string[] rownum = Name[2].Split(new[] { "ROWNUM=" }, StringSplitOptions.None)[1].Split(splitchar);
                             rowNumber = Int32.Parse(rownum[0]);
+
+                            if (IsQueryOld)
+                            {
+                                litedbquery = $"SELECT $ FROM {tableName[0]}";
+                            }
+                        }
+
+                        else if (IRow.ToLower().Equals("where"))
+                        {
+                            if (IsQueryOld)
+                            {
+                                litedbquery = $"SELECT $ FROM {tableName[0]} {litedbquery[litedbquery.IndexOf("where", StringComparison.CurrentCultureIgnoreCase)..]}";
+                            }
                         }
                         if (markasdone[0] == "Y")
                         {
@@ -1146,6 +1163,14 @@ namespace GingerCore
             }
         }
 
+        private static bool IsQueryFromOldVersion(string Query)
+        {
+            if(Query.Contains(".find", StringComparison.CurrentCultureIgnoreCase) || Query.Contains(".select", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return true;
+            }
+            return false;
+        }
 
 
         private void CalculateComplexFormulas()
