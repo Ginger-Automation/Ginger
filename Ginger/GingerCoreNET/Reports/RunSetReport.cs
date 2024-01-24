@@ -213,7 +213,7 @@ namespace Ginger.Reports
             }
         }
         private Amdocs.Ginger.CoreNET.Execution.eRunStatus runSetExecutionStatus;
-
+        public string RunDescription { get; set; }
         public void SetDataForAutomateTab()
         {
             Name = "Automate Run Set";
