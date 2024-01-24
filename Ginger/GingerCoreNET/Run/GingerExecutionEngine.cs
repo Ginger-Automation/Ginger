@@ -269,29 +269,64 @@ namespace Ginger.Run
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
             InitializeAccountReportExecutionLogger();
+            InitializeSealightReportExecutionLogger();
 
             if (WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
                 WorkSpace.Instance.Solution.LoggerConfigurations.PublishToCentralizedDbChanged -= InitializeAccountReportExecutionLogger;
-
                 WorkSpace.Instance.Solution.LoggerConfigurations.PublishToCentralizedDbChanged += InitializeAccountReportExecutionLogger;
             }
 
-            if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
+            if(WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.SealightsConfiguration!=null)
             {
-                RunListeners.Add(new SealightsReportExecutionLogger(mContext));
+                WorkSpace.Instance.Solution.SealightsConfiguration.SealightsConfigChanged -= InitializeSealightReportExecutionLogger;
+                WorkSpace.Instance.Solution.SealightsConfiguration.SealightsConfigChanged += InitializeSealightReportExecutionLogger;
             }
         }
 
         public void InitializeAccountReportExecutionLogger()
         {
+            var accountReportExecutionLogger = RunListeners.Find((runListeners) => runListeners.GetType() == typeof(AccountReportExecutionLogger));
+
             if (mSelectedExecutionLoggerConfiguration != null 
-                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes && 
-                !RunListeners.Any((runListeners)=>runListeners.GetType() == typeof(AccountReportExecutionLogger)))
+                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes &&
+                accountReportExecutionLogger == null)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
+            
+            else if (
+                mSelectedExecutionLoggerConfiguration != null
+                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.No &&
+                accountReportExecutionLogger!=null
+                )
+            {
+                RunListeners.Remove(accountReportExecutionLogger);
+            }
         }
+
+        public void InitializeSealightReportExecutionLogger()
+        {
+            var seaLightReportExecutionLogger = RunListeners.Find((runListeners) => runListeners.GetType() == typeof(SealightsReportExecutionLogger));
+
+            if(mSelectedExecutionLoggerConfiguration!=null &&
+               WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes &&
+                seaLightReportExecutionLogger == null
+                )
+            {
+                RunListeners.Add(new SealightsReportExecutionLogger(mContext));
+            }
+
+            else if(
+                mSelectedExecutionLoggerConfiguration != null &&
+               WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.No &&
+                seaLightReportExecutionLogger != null
+                )
+            {
+                RunListeners.Remove(seaLightReportExecutionLogger);
+            }
+        }
+
         public GingerExecutionEngine(GingerRunner GingerRunner, Amdocs.Ginger.Common.eExecutedFrom executedFrom)
         {
             mGingerRunner = GingerRunner;

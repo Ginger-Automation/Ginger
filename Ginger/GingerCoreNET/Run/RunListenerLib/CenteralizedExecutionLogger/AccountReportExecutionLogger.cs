@@ -39,7 +39,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         {
             get
             {
-                if (mAccountReportApiHandler == null || !mAccountReportApiHandler.EndPointUrl.Equals(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl))
+                if (mAccountReportApiHandler == null || !mAccountReportApiHandler.IsConfigurationChanged())
                 {
                     mAccountReportApiHandler = new AccountReportApiHandler(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
                 }

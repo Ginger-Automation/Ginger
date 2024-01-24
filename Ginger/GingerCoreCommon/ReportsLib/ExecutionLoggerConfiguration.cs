@@ -144,10 +144,7 @@ namespace Ginger.Reports
                 {
                     mPublishLogToCentralDB = value;
                     OnPropertyChanged(nameof(PublishLogToCentralDB));
-                    if(mPublishLogToCentralDB == ePublishToCentralDB.Yes)
-                    {
-                        PublishToCentralizedDbChanged?.Invoke();
-                    }
+                    PublishToCentralizedDbChanged?.Invoke();
                 }
             }
         }
@@ -223,7 +220,7 @@ namespace Ginger.Reports
             }
             set
             {
-                mSealightsLog = value;
+                    mSealightsLog = value;
             }
         }
 
