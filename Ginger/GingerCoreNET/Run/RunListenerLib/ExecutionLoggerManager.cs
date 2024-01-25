@@ -240,7 +240,23 @@ namespace Ginger.Run
             {
                 RunSetReport.Name = defaultRunTabLogName;
             }
+
             RunSetReport.Description = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Description;
+
+
+            if (!string.IsNullOrEmpty(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription) && WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription.Contains('{'))
+            {
+                IValueExpression mVE = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mCurrentBusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false)
+                {
+                    Value = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription
+                };
+                RunSetReport.RunDescription = mVE.ValueCalculated;
+            }
+            else
+            {
+                RunSetReport.RunDescription = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription;
+
+            }
             RunSetReport.GUID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid.ToString();
             RunSetReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
             RunSetReport.Watch.Start();
