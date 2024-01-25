@@ -30,6 +30,7 @@ using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore.GeneralLib;
 using GingerWPF.DragDropLib;
+using NPOI.OpenXmlFormats.Dml;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -87,6 +88,9 @@ namespace Ginger
                 handler(selectedItem);
             }
         }
+
+        public delegate bool TextFilterCallback(object item, string searchText);
+        public TextFilterCallback TextFilter;
 
         public bool ActiveStatus = false;
         private bool UsingDataTableAsSource = false;
@@ -196,7 +200,17 @@ namespace Ginger
             //Filter by search text            
             if (!string.IsNullOrEmpty(mFilterSearchText))
             {
-                if (TextFilter(obj, mFilterSearchText) == true)
+                bool matchedSearchText;
+                if (TextFilter != null)
+                {
+                    matchedSearchText = TextFilter.Invoke(obj, mFilterSearchText);
+                }
+                else
+                {
+                    matchedSearchText = DefaultTextFilter(obj, mFilterSearchText);
+                }
+
+                if (matchedSearchText)
                 {
                     return true;
                 }
@@ -214,7 +228,7 @@ namespace Ginger
             return false;
         }
 
-        private bool TextFilter(object obj, string textFilterValue)
+        private bool DefaultTextFilter(object obj, string textFilterValue)
         {
             string ObjTxt = ObjToString(obj);
 

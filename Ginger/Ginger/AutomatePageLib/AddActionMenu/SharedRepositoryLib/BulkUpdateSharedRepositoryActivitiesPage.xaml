@@ -23,7 +23,7 @@
                 ButtonFontImageSize="12"
                 MaxHeight="24"
                 Click="ViewDetailsUCButton_Click"
-                HorizontalAlignment="Left"
+                HorizontalAlignment="Center"
                 Tag="{Binding Path=.}"/>
         </DataTemplate>
         <DataTemplate
@@ -32,7 +32,8 @@
                 SelectedValue="{Binding 
                     Path=TargetApplication, 
                     UpdateSourceTrigger=PropertyChanged}"
-                ItemsSource="{Binding TargetApplicationOptions}"/>
+                ItemsSource="{Binding TargetApplicationOptions}"
+                Style="{StaticResource $FlatEditInputComboBoxStyle}"/>
         </DataTemplate>
         <DataTemplate 
             x:Key="ConsumerCellTemplate">
@@ -50,7 +51,7 @@
                 SetAsFontImageWithSize="12"
                 MaxHeight="25"
                 Foreground="Red"
-                HorizontalAlignment="Right"
+                HorizontalAlignment="Center"
                 Visibility="{Binding 
                     Path=IsModified,
                     Converter={StaticResource BoolToVisibility}}" />
@@ -61,7 +62,7 @@
                 IsChecked="{Binding 
                     Path=SelectedForSync, 
                     UpdateSourceTrigger=PropertyChanged}"
-                HorizontalAlignment="Left"
+                HorizontalAlignment="Center"
                 Style="{StaticResource @GridCellCheckBoxStyle}" />
         </DataTemplate>
         <DataTemplate
@@ -70,7 +71,7 @@
                 IsChecked="{Binding 
                     Path=Publish, 
                     UpdateSourceTrigger=PropertyChanged}"
-                HorizontalAlignment="Left"
+                HorizontalAlignment="Center"
                 Style="{StaticResource @GridCellCheckBoxStyle}"/>
         </DataTemplate>
         <DataTemplate
@@ -79,7 +80,7 @@
                 IsChecked="{Binding 
                     Path=Mandatory, 
                     UpdateSourceTrigger=PropertyChanged}"
-                HorizontalAlignment="Left"
+                HorizontalAlignment="Center"
                 Style="{StaticResource @GridCellCheckBoxStyle}" />
         </DataTemplate>
         <Style

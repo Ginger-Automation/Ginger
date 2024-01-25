@@ -63,9 +63,9 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 {
                     new GridColView()
                     {
-                        Header = "Sync Changes",
+                        Header = "Selected",
                         Field = nameof(ActivityBulkUpdateListItem.SelectedForSync),
-                        WidthWeight = 45,
+                        WidthWeight = 30,
                         StyleType = GridColView.eGridColStyleType.Template,
                         CellTemplate = (DataTemplate)FindResource("SyncChangesCellTemplate")
                     },
@@ -82,7 +82,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                         Field = nameof(ActivityBulkUpdateListItem.Publish),
                         StyleType = GridColView.eGridColStyleType.Template,
                         CellTemplate = (DataTemplate)FindResource("PublishCellTemplate"),
-                        WidthWeight = 40,
+                        WidthWeight = 30,
                     },
                     new GridColView()
                     {
@@ -113,7 +113,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     {
                         Header = "View Details",
                         Field = string.Empty,
-                        WidthWeight = 50,
+                        WidthWeight = 45,
                         StyleType = GridColView.eGridColStyleType.Template,
                         CellTemplate = (DataTemplate)FindResource("ViewDetailsCellTemplate")
                     }
@@ -141,6 +141,8 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 eImageType.Application, 
                 "Set highlighted Target Application for all", 
                 BulkUpdateUCGrid_Toolbar_SyncTargetApplication);
+
+            BulkUpdateUCGrid.TextFilter = BulkUpdateUCGrid_TextFilter;
 
             BulkUpdateUCGrid.ShowRefresh = Visibility.Collapsed;
             BulkUpdateUCGrid.ShowAdd = Visibility.Collapsed;
@@ -236,6 +238,14 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     item.TargetApplication = highlightedItem.TargetApplication;
                 }
             }
+        }
+
+        private bool BulkUpdateUCGrid_TextFilter(object obj, string searchText)
+        {
+            ActivityBulkUpdateListItem item = (ActivityBulkUpdateListItem)obj;
+            return
+                (item.Name != null && item.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase)) ||
+                (item.TargetApplication != null && item.TargetApplication.Contains(searchText, StringComparison.OrdinalIgnoreCase));
         }
 
         private void SetBulkUpdateUCGridItems(IEnumerable<ActivityBulkUpdateListItem> activityBulkUpdateListItems)
