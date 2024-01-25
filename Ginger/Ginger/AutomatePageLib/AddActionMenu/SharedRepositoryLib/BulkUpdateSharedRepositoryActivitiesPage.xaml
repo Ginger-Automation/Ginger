@@ -21,24 +21,66 @@
             <uc:ucButton
                 ButtonImageType="View"
                 ButtonFontImageSize="12"
+                MaxHeight="24"
                 Click="ViewDetailsUCButton_Click"
-                Tag="{Binding Path=.}" />
+                HorizontalAlignment="Left"
+                Tag="{Binding Path=.}"/>
         </DataTemplate>
         <DataTemplate
             x:Key="TargetApplicationCellTemplate">
             <ComboBox
-                ItemsSource="{Binding TargetApplicationOptions}"
-                SelectedItem="{Binding TargetApplication}"
-                Style="{StaticResource @InputComboBoxStyle}"/>
+                SelectedValue="{Binding 
+                    Path=TargetApplication, 
+                    UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding TargetApplicationOptions}"/>
         </DataTemplate>
         <DataTemplate 
             x:Key="ConsumerCellTemplate">
             <uclib:ConsumerComboBox
                 SelectedConsumer="{Binding Consumers}"
-                ConsumerSource="{Binding ConsumerOptions}"
+                ConsumerSource="{Binding ConsumersOptions}"
                 Visibility="{Binding 
                     Path=ShowConsumerOptions, 
                     Converter={StaticResource BoolToVisibility}}" />
+        </DataTemplate>
+        <DataTemplate
+            x:Key="ModifiedCellTemplate">
+            <uc:ImageMakerControl
+                ImageType="ItemModified"
+                SetAsFontImageWithSize="12"
+                MaxHeight="25"
+                Foreground="Red"
+                HorizontalAlignment="Right"
+                Visibility="{Binding 
+                    Path=IsModified,
+                    Converter={StaticResource BoolToVisibility}}" />
+        </DataTemplate>
+        <DataTemplate
+            x:Key="SyncChangesCellTemplate">
+            <CheckBox
+                IsChecked="{Binding 
+                    Path=SelectedForSync, 
+                    UpdateSourceTrigger=PropertyChanged}"
+                HorizontalAlignment="Left"
+                Style="{StaticResource @GridCellCheckBoxStyle}" />
+        </DataTemplate>
+        <DataTemplate
+            x:Key="PublishCellTemplate">
+            <CheckBox
+                IsChecked="{Binding 
+                    Path=Publish, 
+                    UpdateSourceTrigger=PropertyChanged}"
+                HorizontalAlignment="Left"
+                Style="{StaticResource @GridCellCheckBoxStyle}"/>
+        </DataTemplate>
+        <DataTemplate
+            x:Key="MandatoryCellTemplate">
+            <CheckBox
+                IsChecked="{Binding 
+                    Path=Mandatory, 
+                    UpdateSourceTrigger=PropertyChanged}"
+                HorizontalAlignment="Left"
+                Style="{StaticResource @GridCellCheckBoxStyle}" />
         </DataTemplate>
         <Style
             x:Key="InputFieldLabelStyle"
@@ -77,15 +119,28 @@
         Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
             <RowDefinition
+                Height="Auto" />
+            <RowDefinition
                 Height="*" />
             <RowDefinition
                 Height="Auto" />
         </Grid.RowDefinitions>
-        <ginger:ucGrid 
-            x:Name="BulkUpdateUCGrid"/>
+        <TextBlock
+            FontSize="10">
+            <TextBlock.Inlines>
+                <Run
+                    Text="NOTE: "
+                    FontWeight="Bold" />
+                <Run
+                    Text="Selected items can synchronised using the toolbar buttons." />
+            </TextBlock.Inlines>
+        </TextBlock>
+        <ginger:ucGrid
+            x:Name="BulkUpdateUCGrid" 
+            Grid.Row="1"/>
         <Grid
             x:Name="FooterGrid"
-            Grid.Row="1">
+            Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition
                     Width="*" />

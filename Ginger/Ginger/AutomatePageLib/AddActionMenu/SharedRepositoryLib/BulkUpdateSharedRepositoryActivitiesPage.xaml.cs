@@ -13,6 +13,7 @@ using GingerCore.Activities;
 using GingerCore.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using NPOI.OpenXmlFormats.Wordprocessing;
+using Org.BouncyCastle.Asn1.Crmf;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -49,29 +50,9 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
         {
             InitializeComponent();
             _activityBulkUpdateListItems = activities.Select(activity => new ActivityBulkUpdateListItem(activity)).ToList();
-            AttachSyncPropertyChangedEventHandlers();
             InitBulkUpdateUCGrid();
             SetBulkUpdateUCGridItems(_activityBulkUpdateListItems);
             UpdateUIForPageMode();
-        }
-
-        private void AttachSyncPropertyChangedEventHandlers()
-        {
-            foreach (ActivityBulkUpdateListItem item in _activityBulkUpdateListItems)
-            {
-                item.SynchronisedPropertyChanged += BulkUpdateItem_SynchronisedPropertyChanged;
-            }
-        }
-
-        private void BulkUpdateItem_SynchronisedPropertyChanged(ActivityBulkUpdateListItem sender, string propertyName)
-        {
-            foreach (ActivityBulkUpdateListItem item in _activityBulkUpdateListItems)
-            {
-                if (item.SelectedForSync)
-                {
-                    sender.SyncSiblingProperty(item, propertyName);
-                }
-            }
         }
 
         private void InitBulkUpdateUCGrid()
@@ -84,9 +65,9 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     {
                         Header = "Sync Changes",
                         Field = nameof(ActivityBulkUpdateListItem.SelectedForSync),
-                        WidthWeight = 40,
-                        StyleType = GridColView.eGridColStyleType.CheckBox,
-                        BindingMode = BindingMode.TwoWay
+                        WidthWeight = 45,
+                        StyleType = GridColView.eGridColStyleType.Template,
+                        CellTemplate = (DataTemplate)FindResource("SyncChangesCellTemplate")
                     },
                     new GridColView()
                     {
@@ -97,27 +78,19 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     },
                     new GridColView()
                     {
-                        Header = "View Details",
-                        Field = string.Empty,
-                        WidthWeight = 50,
-                        StyleType = GridColView.eGridColStyleType.Template,
-                        CellTemplate = (DataTemplate)FindResource("ViewDetailsCellTemplate")
-                    },
-                    new GridColView()
-                    {
                         Header = "Publish",
                         Field = nameof(ActivityBulkUpdateListItem.Publish),
-                        StyleType = GridColView.eGridColStyleType.CheckBox,
+                        StyleType = GridColView.eGridColStyleType.Template,
+                        CellTemplate = (DataTemplate)FindResource("PublishCellTemplate"),
                         WidthWeight = 40,
-                        BindingMode = BindingMode.TwoWay
                     },
                     new GridColView()
                     {
                         Header = "Mandatory",
                         Field = nameof(ActivityBulkUpdateListItem.Mandatory),
-                        StyleType = GridColView.eGridColStyleType.CheckBox,
-                        WidthWeight = 40,
-                        BindingMode = BindingMode.TwoWay
+                        StyleType = GridColView.eGridColStyleType.Template,
+                        CellTemplate = (DataTemplate)FindResource("MandatoryCellTemplate"),
+                        WidthWeight = 40
                     },
                     new GridColView()
                     {
@@ -125,8 +98,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                         Field = nameof(ActivityBulkUpdateListItem.TargetApplication),
                         CellTemplate = (DataTemplate)FindResource("TargetApplicationCellTemplate"),
                         StyleType = GridColView.eGridColStyleType.Template,
-                        WidthWeight = 60,
-                        BindingMode = BindingMode.TwoWay
+                        WidthWeight = 60
                     },
                     new GridColView()
                     {
@@ -136,18 +108,134 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                         StyleType = GridColView.eGridColStyleType.Template,
                         WidthWeight = 60,
                         BindingMode = BindingMode.TwoWay,
+                    },
+                    new GridColView()
+                    {
+                        Header = "View Details",
+                        Field = string.Empty,
+                        WidthWeight = 50,
+                        StyleType = GridColView.eGridColStyleType.Template,
+                        CellTemplate = (DataTemplate)FindResource("ViewDetailsCellTemplate")
                     }
                 }
             };
             BulkUpdateUCGrid.Title = "Bulk Update Shared Activities";
+
+            BulkUpdateUCGrid.AddToolbarTool(
+                "@CheckAllRow_16x16.png", 
+                "Select All", 
+                BulkUpdateUCGrid_Toolbar_SelectAllForSync);
+            BulkUpdateUCGrid.AddToolbarTool(
+                "@UnCheckAllRow_16x16.png", 
+                "Unselect All", 
+                BulkUpdateUCGrid_Toolbar_UnselectAllForSync);
+            BulkUpdateUCGrid.AddToolbarTool(
+                eImageType.Share, 
+                "Set highlighted Publish for all", 
+                BulkUpdateUCGrid_Toolbar_SyncPublish);
+            BulkUpdateUCGrid.AddToolbarTool(
+                eImageType.Mandatory, 
+                "Set highlighted Mandatoryfor all", 
+                BulkUpdateUCGrid_Toolbar_SyncMandatory);
+            BulkUpdateUCGrid.AddToolbarTool(
+                eImageType.Application, 
+                "Set highlighted Target Application for all", 
+                BulkUpdateUCGrid_Toolbar_SyncTargetApplication);
+
             BulkUpdateUCGrid.ShowRefresh = Visibility.Collapsed;
             BulkUpdateUCGrid.ShowAdd = Visibility.Collapsed;
             BulkUpdateUCGrid.ShowClearAll = Visibility.Collapsed;
             BulkUpdateUCGrid.ShowEdit = Visibility.Collapsed;
             BulkUpdateUCGrid.ShowDelete = Visibility.Collapsed;
             BulkUpdateUCGrid.ShowUpDown = Visibility.Collapsed;
+
             BulkUpdateUCGrid.SetAllColumnsDefaultView(gridViewDef);
+
             BulkUpdateUCGrid.InitViewItems();
+        }
+
+        private void BulkUpdateUCGrid_Toolbar_SelectAllForSync(object? sender, RoutedEventArgs e)
+        {
+            IEnumerable<ActivityBulkUpdateListItem> visibleItems = BulkUpdateUCGrid
+                .GetVisibileGridItems()
+                .Cast<ActivityBulkUpdateListItem>();
+
+            foreach (ActivityBulkUpdateListItem item in visibleItems)
+            {
+                item.SelectedForSync = true;
+            }
+        }
+
+        private void BulkUpdateUCGrid_Toolbar_UnselectAllForSync(object? sender, RoutedEventArgs e)
+        {
+            IEnumerable<ActivityBulkUpdateListItem> visibleItems = BulkUpdateUCGrid
+                .GetVisibileGridItems()
+                .Cast<ActivityBulkUpdateListItem>();
+
+            foreach (ActivityBulkUpdateListItem item in visibleItems)
+            {
+                item.SelectedForSync = false;
+            }
+        }
+
+        private void BulkUpdateUCGrid_Toolbar_SyncPublish(object? sender, RoutedEventArgs e)
+        {
+            IEnumerable<ActivityBulkUpdateListItem> visibleItems = BulkUpdateUCGrid
+                .GetVisibileGridItems()
+                .Cast<ActivityBulkUpdateListItem>();
+
+            ActivityBulkUpdateListItem highlightedItem = (ActivityBulkUpdateListItem)BulkUpdateUCGrid.CurrentItem;
+
+            foreach (ActivityBulkUpdateListItem item in visibleItems)
+            {
+                if (item.SelectedForSync)
+                {
+                    item.Publish = highlightedItem.Publish;
+                }
+            }
+        }
+
+        private void BulkUpdateUCGrid_Toolbar_SyncMandatory(object? sender, RoutedEventArgs e)
+        {
+            IEnumerable<ActivityBulkUpdateListItem> visibleItems = BulkUpdateUCGrid
+                .GetVisibileGridItems()
+                .Cast<ActivityBulkUpdateListItem>();
+
+            ActivityBulkUpdateListItem highlightedItem = (ActivityBulkUpdateListItem)BulkUpdateUCGrid.CurrentItem;
+
+            foreach (ActivityBulkUpdateListItem item in visibleItems)
+            {
+                if (item.SelectedForSync)
+                {
+                    item.Mandatory = highlightedItem.Mandatory;
+                }
+            }
+        }
+
+        private void BulkUpdateUCGrid_Toolbar_SyncTargetApplication(object? sender, RoutedEventArgs e)
+        {
+            IEnumerable<ActivityBulkUpdateListItem> visibleItems = BulkUpdateUCGrid
+                .GetVisibileGridItems()
+                .Cast<ActivityBulkUpdateListItem>();
+
+            ActivityBulkUpdateListItem highlightedItem = (ActivityBulkUpdateListItem)BulkUpdateUCGrid.CurrentItem;
+
+            foreach (ActivityBulkUpdateListItem item in visibleItems)
+            {
+                if (!item.SelectedForSync)
+                {
+                    continue;
+                }
+
+                bool highlightedTargetAppIsValid = item
+                    .TargetApplicationOptions
+                    .Any(t => string.Equals(t, highlightedItem.TargetApplication));
+
+                if (highlightedTargetAppIsValid)
+                {
+                    item.TargetApplication = highlightedItem.TargetApplication;
+                }
+            }
         }
 
         private void SetBulkUpdateUCGridItems(IEnumerable<ActivityBulkUpdateListItem> activityBulkUpdateListItems)
@@ -381,10 +469,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
             private bool _showConsumerOptions;
             private bool _selectedForSync;
 
-            public delegate void SynchronisedPropertyChangedEventHandler(ActivityBulkUpdateListItem sender, string propertyName);
-
             public event PropertyChangedEventHandler? PropertyChanged;
-            public event SynchronisedPropertyChangedEventHandler? SynchronisedPropertyChanged;
 
             public bool IsModified 
             {
@@ -417,7 +502,6 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     _publish = value;
                     IsModified = true;
                     RaisePropertyChanged(nameof(Publish));
-                    RaiseSynchronisedPropertyChanged(nameof(Publish));
                 }
             }
 
@@ -429,7 +513,6 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     _mandatory = value;
                     IsModified = true;
                     RaisePropertyChanged(nameof(Mandatory));
-                    RaiseSynchronisedPropertyChanged(nameof(Mandatory));
                 }
             }
 
@@ -473,7 +556,15 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 get => _consumers;
                 set
                 {
+                    if (_consumers != null)
+                    {
+                        _consumers.CollectionChanged -= _consumers_CollectionChanged;
+                    }
                     _consumers = value;
+                    if (_consumers != null)
+                    {
+                        _consumers.CollectionChanged += _consumers_CollectionChanged;
+                    }
                     IsModified = true;
                     RaisePropertyChanged(nameof(Consumers));
                 }
@@ -497,7 +588,8 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 _publish = Activity.Publish;
                 _mandatory = Activity.Mandatory;
                 _targetApplication = Activity.TargetApplication;
-                _consumers = Activity.ConsumerApplications;
+                _consumers = new(Activity.ConsumerApplications);
+                _consumers.CollectionChanged += _consumers_CollectionChanged;
 
                 ConsumersOptions = new(GetConsumersOptions());
                 if (GetApplicationPlatform(Activity.TargetApplication) == ePlatformType.WebServices)
@@ -509,6 +601,50 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                     ShowConsumerOptions = false;
                 }
                 TargetApplicationOptions = GetTargetApplicationOptions();
+            }
+
+            private void _consumers_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+            {
+                if(IsModified)
+                {
+                    return;
+                }
+
+                if (e.OldItems == null && e.NewItems == null)
+                {
+                    return;
+                }
+
+                if (e.OldItems == null || e.NewItems == null)
+                {
+                    IsModified = true;
+                    return;
+                }
+
+                if (e.OldItems.Count == 0 && e.NewItems.Count == 0)
+                {
+                    return;
+                }
+
+                if (e.OldItems.Count != e.NewItems.Count)
+                {
+                    IsModified = true;
+                    return;
+                }
+
+                bool someOldItemsMissing = 
+                    e.OldItems
+                    .Cast<Consumer>()
+                    .Any(oldConsumer => 
+                        e.NewItems
+                        .Cast<Consumer>()
+                        .All(newConsumer => oldConsumer.ConsumerGuid != newConsumer.ConsumerGuid));
+                
+                if (someOldItemsMissing)
+                {
+                    IsModified = true;
+                    return;
+                }
             }
 
             private Consumer[] GetConsumersOptions()
@@ -560,38 +696,24 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
                 handler?.Invoke(sender: this, new PropertyChangedEventArgs(propertyName));
             }
 
-            private void RaiseSynchronisedPropertyChanged(string propertyName)
-            {
-                SynchronisedPropertyChangedEventHandler? handler = SynchronisedPropertyChanged;
-                handler?.Invoke(sender: this, propertyName);
-            }
-
-            public void SyncSiblingProperty(ActivityBulkUpdateListItem sibling, string propertyName)
-            {
-                if (sibling == this)
-                {
-                    return;
-                }
-
-                if (string.Equals(propertyName, nameof(Publish)))
-                {
-                    sibling._publish = _publish;
-                    sibling.RaisePropertyChanged(nameof(Publish));
-                }
-                else if (string.Equals(propertyName, nameof(Mandatory)))
-                {
-                    sibling._mandatory = _mandatory;
-                    sibling.RaisePropertyChanged(nameof(Mandatory));
-                }
-            }
-
             public void CommitChanges()
             {
                 Activity.ActivityName = _name;
                 Activity.Mandatory = _mandatory;
                 Activity.Publish = _publish;
                 Activity.TargetApplication = _targetApplication;
-                Activity.ConsumerApplications = _consumers;
+                if (Activity.ConsumerApplications == null)
+                {
+                    Activity.ConsumerApplications = new();
+                }
+                else
+                {
+                    Activity.ConsumerApplications.ClearAll();
+                }
+                foreach (Consumer consumer in _consumers)
+                {
+                    Activity.ConsumerApplications.Add(consumer);
+                }
             }
         }
     }
