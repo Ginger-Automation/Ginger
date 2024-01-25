@@ -78,7 +78,7 @@ namespace Ginger.UserControlsLib
             get { return (ObservableList<Consumer>)GetValue(ConsumerSourceProperty); }
             set
             {
-                SetValue(ConsumerSourceProperty, value); 
+                SetValue(ConsumerSourceProperty, value);
             }
         }
 
@@ -112,8 +112,15 @@ namespace Ginger.UserControlsLib
             control.DisplayInConsumer();
             control.SelectNodes();
             control.SetSelectedConsumer();
+
+            if (e.OldValue != null && e.OldValue is ObservableList<Consumer> oldConsumerSource)
+            {
+                oldConsumerSource.CollectionChanged -= control.ConsumerSource_CollectionChanged;
+            }
+
             if (control.ConsumerSource != null)
             {
+                
                 control.ConsumerSource.CollectionChanged += control.ConsumerSource_CollectionChanged;
             }
         }
@@ -183,16 +190,16 @@ namespace Ginger.UserControlsLib
             ObservableList<Consumer> temp = new ObservableList<Consumer>();
             foreach (Node node in _nodeList)
             {
-               
-                    if (node.IsSelected)
-                    {
-                       temp.Add(node.Consumer);
-                    }
-                
+                if (node.IsSelected)
+                {
+                    temp.Add(node.Consumer);
+                }
             }
             SelectedConsumer.ClearAll();
             foreach (Consumer consumer in temp)
+            {
                 SelectedConsumer.Add(consumer);
+            }
         }
 
         private void DisplayInConsumer()
@@ -290,11 +297,6 @@ namespace Ginger.UserControlsLib
                     PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
                 }
             }
-
-        }
-
-        private void ConsumerCombo_MouseEnter(object sender, MouseEventArgs e)
-        {
 
         }
     }

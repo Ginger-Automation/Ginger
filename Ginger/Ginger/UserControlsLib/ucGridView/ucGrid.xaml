@@ -13,7 +13,7 @@
     </UserControl.Resources>
     <DockPanel x:Name="mainDockPanel" HorizontalAlignment="Stretch" LastChildFill="true" Margin="0,0,0,0" VerticalAlignment="Stretch" Background="{StaticResource $BackgroundColor_White}">
         <!-- Grid Title -->
-        <Border x:Name="xSimpleHeader" DockPanel.Dock="Top" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Black}"  >
+        <Border x:Name="xSimpleHeader" DockPanel.Dock="Top" Visibility="{Binding ElementName=lblTitle, Path=Visibility}" Background="{Binding ElementName=lblTitle, Path=Background}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Black}"  >
             <Label x:Name="xSimpleHeaderTitle" Style="{DynamicResource $ucGridTitleLightStyle}" Margin="0,1,0,1">Grid Title</Label>
         </Border>
         <DockPanel x:Name="xEnhancedHeader" DockPanel.Dock="Top" VerticalAlignment="Center" Background="{StaticResource $BackgroundColor_White}" Visibility="Collapsed">

@@ -30,7 +30,6 @@ using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore.GeneralLib;
 using GingerWPF.DragDropLib;
-using NPOI.OpenXmlFormats.Dml;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -96,7 +95,7 @@ namespace Ginger
         private bool UsingDataTableAsSource = false;
 
         public ObservableList<Guid> Tags = null;
-        ICollectionView mCollectionView;
+        private ICollectionView mCollectionView;
 
         List<Button> mFloatingButtons = new List<Button>();
 
@@ -1202,6 +1201,15 @@ namespace Ginger
         private int GetCurrentRow()
         {
             return grdMain.Items.IndexOf(grdMain.CurrentItem);
+        }
+
+        public IEnumerable<object> GetFilteredItems()
+        {
+            if (mCollectionView == null)
+            {
+                return [];
+            }
+            return mCollectionView.Cast<object>();
         }
 
         public IEnumerable<DataGridRow> GetDataGridRows(DataGrid grid)

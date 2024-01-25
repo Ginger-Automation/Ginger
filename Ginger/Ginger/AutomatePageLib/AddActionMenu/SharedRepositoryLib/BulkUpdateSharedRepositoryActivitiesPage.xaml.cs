@@ -159,7 +159,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
         private void BulkUpdateUCGrid_Toolbar_SelectAllForSync(object? sender, RoutedEventArgs e)
         {
             IEnumerable<ActivityBulkUpdateListItem> visibleItems = BulkUpdateUCGrid
-                .GetVisibileGridItems()
+                .GetFilteredItems()
                 .Cast<ActivityBulkUpdateListItem>();
 
             foreach (ActivityBulkUpdateListItem item in visibleItems)
@@ -171,7 +171,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
         private void BulkUpdateUCGrid_Toolbar_UnselectAllForSync(object? sender, RoutedEventArgs e)
         {
             IEnumerable<ActivityBulkUpdateListItem> visibleItems = BulkUpdateUCGrid
-                .GetVisibileGridItems()
+                .GetFilteredItems()
                 .Cast<ActivityBulkUpdateListItem>();
 
             foreach (ActivityBulkUpdateListItem item in visibleItems)
@@ -183,7 +183,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
         private void BulkUpdateUCGrid_Toolbar_SyncPublish(object? sender, RoutedEventArgs e)
         {
             IEnumerable<ActivityBulkUpdateListItem> visibleItems = BulkUpdateUCGrid
-                .GetVisibileGridItems()
+                .GetFilteredItems()
                 .Cast<ActivityBulkUpdateListItem>();
 
             ActivityBulkUpdateListItem highlightedItem = (ActivityBulkUpdateListItem)BulkUpdateUCGrid.CurrentItem;
@@ -200,7 +200,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
         private void BulkUpdateUCGrid_Toolbar_SyncMandatory(object? sender, RoutedEventArgs e)
         {
             IEnumerable<ActivityBulkUpdateListItem> visibleItems = BulkUpdateUCGrid
-                .GetVisibileGridItems()
+                .GetFilteredItems()
                 .Cast<ActivityBulkUpdateListItem>();
 
             ActivityBulkUpdateListItem highlightedItem = (ActivityBulkUpdateListItem)BulkUpdateUCGrid.CurrentItem;
@@ -217,7 +217,7 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
         private void BulkUpdateUCGrid_Toolbar_SyncTargetApplication(object? sender, RoutedEventArgs e)
         {
             IEnumerable<ActivityBulkUpdateListItem> visibleItems = BulkUpdateUCGrid
-                .GetVisibileGridItems()
+                .GetFilteredItems()
                 .Cast<ActivityBulkUpdateListItem>();
 
             ActivityBulkUpdateListItem highlightedItem = (ActivityBulkUpdateListItem)BulkUpdateUCGrid.CurrentItem;
@@ -309,7 +309,8 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
         {
             StackPanel loadingStackPanel = new()
             {
-                Orientation = Orientation.Horizontal
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center
             };
             Binding loadingStackPanelVisibilityBinding = new()
             {
