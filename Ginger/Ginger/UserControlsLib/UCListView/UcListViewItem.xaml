@@ -99,10 +99,10 @@
                         <ColumnDefinition x:Name="xItemNotificationsClm" Width="0"/>
                         <ColumnDefinition x:Name="xItemStatusClm"  Width="25"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock x:Name="xItemNameTxtBlock" Grid.Column="0" Text="Title">
+                    <TextBlock x:Name="xItemNameTxtBlock" Grid.Column="0" Text="Title" MaxWidth="400">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                                <Setter Property="HorizontalAlignment" Value="Left"/>
                                 <Setter Property="VerticalAlignment" Value="Center"/>
                                 <Setter Property="FontSize" Value="15"/>
                                 <Setter Property="FontWeight" Value="Normal"/>
@@ -132,7 +132,7 @@
                         <!--to set width per need like for notifications-->
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock x:Name="xItemDescriptionTxtBlock" Grid.Column="0" Text="Description" FontSize="11" Margin="2 0 0 0" Foreground="{StaticResource $BackgroundColor_DarkGray}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                    <TextBlock x:Name="xItemDescriptionTxtBlock" Grid.Column="0" Text="Description" FontSize="11" Margin="2 0 0 0" Foreground="{StaticResource $BackgroundColor_DarkGray}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" HorizontalAlignment="Left" VerticalAlignment="Center" MaxWidth="400" />
 
                     <DockPanel x:Name="xItemOperationsMainPnl" Grid.Column="1" HorizontalAlignment="Right" Visibility="Collapsed">
                         <StackPanel x:Name="xItemExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right"/>

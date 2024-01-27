@@ -1409,7 +1409,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public void SwipeScreen(eSwipeSide side, double impact = 1)
         {
-            impact = 1;
+            impact = 1; //avoiding to support Appium 2.0
             System.Drawing.Size sz = Driver.Manage().Window.Size;
             double startX;
             double startY;
@@ -1430,15 +1430,15 @@ namespace Amdocs.Ginger.CoreNET
                     endY = sz.Height * 0.3;
                     break;
                 case eSwipeSide.Right: // center of left side
-                    startX = sz.Width * 0.8 * impact;
+                    startX = sz.Width * 0.7 * impact;
                     startY = sz.Height * 0.5;
-                    endX = sz.Width * 0.1;
+                    endX = sz.Width * 0.3;
                     endY = sz.Height * 0.5;
                     break;
                 case eSwipeSide.Left: // center of right side
-                    startX = sz.Width * 0.1;
+                    startX = sz.Width * 0.3;
                     startY = sz.Height * 0.5;
-                    endX = sz.Width * 0.8 * impact;
+                    endX = sz.Width * 0.7 * impact;
                     endY = sz.Height * 0.5;
                     break;
                 default:
@@ -1448,25 +1448,15 @@ namespace Amdocs.Ginger.CoreNET
             (BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();            
         }
 
-        public ITouchAction BuildTouchAction(AppiumDriver driver, double startX, double startY, double endX, double endY, int waitDuration=200)
+        public ITouchAction BuildTouchAction(AppiumDriver driver, double startX, double startY, double endX, double endY, int waitDuration = 200)
         {
             ITouchAction touchAction;
-            
-            if (DevicePlatformType == eDevicePlatformType.Android)
-            {
-                touchAction = new TouchAction(driver)
-               .Press(startX, startY)
-               .MoveTo(endX, endY)
-               .Release();
-            }
-            else //iOS
-            {
-                touchAction = new TouchAction(driver)
-                .Press(startX, startY)
-                .Wait(waitDuration)
-                .MoveTo(endX, endY)
-                .Release();
-            }
+
+            touchAction = new TouchAction(driver)
+            .Press(startX, startY)
+            .Wait(waitDuration)
+            .MoveTo(endX, endY)
+            .Release();
 
             return touchAction;
         }
