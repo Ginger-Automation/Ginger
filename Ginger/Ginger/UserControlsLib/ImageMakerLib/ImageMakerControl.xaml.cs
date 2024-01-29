@@ -613,6 +613,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.DataTable:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Table);
                     break;
+                case eImageType.Robot:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Robot);
+                    break;
                 case eImageType.Parameter:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_SlidersH);
                     break;
