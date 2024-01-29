@@ -236,6 +236,10 @@
   
     <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
   
+    <PackageReference Include="Deque.AxeCore.Commons" Version="4.8.0" />
+  
+    <PackageReference Include="Deque.AxeCore.Selenium" Version="4.8.0" />
+  
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling" Version="6.0.1304" />
   
     <PackageReference Include="EPPlus" Version="6.0.4" />

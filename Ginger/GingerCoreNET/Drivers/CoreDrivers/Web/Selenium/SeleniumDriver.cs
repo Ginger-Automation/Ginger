@@ -22,12 +22,15 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+using Deque.AxeCore.Commons;
+using Deque.AxeCore.Selenium;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
@@ -1531,9 +1534,121 @@ namespace GingerCore.Drivers
                 ActAgentManipulationHandler((ActAgentManipulation)act);
                 return;
             }
-
+            if(WorkSpace.Instance.BetaFeatures.ShowAccessibilityTesting)
+            {
+                if (act is ActAccessibilityTesting actAccessibilityTesting)
+                {
+                    ActAccessibility(actAccessibilityTesting);
+                    return;
+                }
+            }
             act.Error = "Run Action Failed due to unrecognized action type - " + ActType.ToString();
             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+        }
+
+        private void ActAccessibility(ActAccessibilityTesting act)
+        {
+            string gotoUrl = string.Empty;
+            IWebElement e = null;
+            if ((act.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
+            {
+                if (act.LocateBy != eLocateBy.NA )
+                {
+                    e = LocateElement(act);
+                        if (e == null)
+                        {
+                            act.Error += "Element not found: " + act.LocateBy + "=" + act.LocateValueCalculated;
+                            return;
+                        }
+                }
+            }
+            else
+            {
+                gotoUrl = act.GetInputParamCalculatedValue("Value");
+                if (string.IsNullOrEmpty(gotoUrl))
+                {
+                    act.Error = "Error: Provided URL is empty. Please provide valid URL.";
+                    return;
+
+                }
+                GotoURL(act, gotoUrl);
+            }
+            AxeBuilder axeBuilder = null;
+            try
+            {
+               axeBuilder = CreateAxeBuilder(act);
+
+
+                AxeResult axeResult = null;
+
+                if ((act.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
+                {
+                    axeResult = axeBuilder.Analyze(e);
+                }
+                else
+                {
+                    axeResult = axeBuilder.Analyze();
+                }
+                SetAxeResultToAction(act, axeResult);
+            }
+            catch(Exception ex)
+            {
+                act.Error = "Error: Provided URL is empty. Please provide valid URL." + ex.InnerException;
+                return;
+            }
+               
+            
+        }
+
+        private AxeBuilder CreateAxeBuilder(ActAccessibilityTesting act)
+        {
+            AxeBuilder axeBuilder = null;
+                axeBuilder = new AxeBuilder(Driver)
+                .WithOptions(new AxeRunOptions()
+                {
+                    XPath = true
+                });
+
+            if (act.Standard != null)
+            {
+                axeBuilder.WithTags(act.Standard.ToString());
+            }
+
+            return axeBuilder;
+        }
+
+        private void SetAxeResultToAction(ActAccessibilityTesting act, AxeResult axeResult)
+        {
+            bool hasAnyViolations = axeResult.Violations.Any();
+            var jsonresponse = JsonConvert.SerializeObject(axeResult);
+            act.RawResponseValues = jsonresponse;
+            act.AddOrUpdateReturnParamActual(ParamName: "Raw Response", ActualValue: jsonresponse);
+            if (hasAnyViolations)
+            {
+                act.Status = eRunStatus.Failed;
+                act.Error = $"Accessibility testing resulted in violations.";
+                act.AddOrUpdateReturnParamActual(ParamName: "ViolationCount", ActualValue: axeResult.Violations.Length.ToString());
+                act.AddOrUpdateReturnParamActual(ParamName: "ViolationList", ActualValue: String.Join(",", axeResult.Violations.Select(x => x.Id)));
+                int violatedNodeIndex = 0;
+                foreach (AxeResultItem violation in axeResult.Violations)
+                {
+                    foreach (AxeResultNode node in violation.Nodes)
+                    {
+                        violatedNodeIndex++;
+                        act.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationId", ActualValue: violation.Id, violatedNodeIndex.ToString());
+                        if(node.XPath != null)
+                        {
+                            act.AddOrUpdateReturnParamActualWithPath(ParamName: "NodeXPath", ActualValue: node.XPath.ToString(), violatedNodeIndex.ToString());
+                        }
+                        
+                        act.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationHelp", ActualValue: violation.Help, violatedNodeIndex.ToString());
+                    }
+                }
+            }
+            else
+            {
+                act.Status = eRunStatus.Passed;
+            }
         }
 
         private void ScreenshotHandler(ActScreenShot act)
@@ -3697,7 +3812,7 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                POMExecutionUtils pomExcutionUtil = new POMExecutionUtils(act, act is ActUIElement ? ((ActUIElement)act).ElementLocateValue : ((ActVisualTesting)act).LocateValue);
+                POMExecutionUtils pomExcutionUtil = new POMExecutionUtils(act, act is ActUIElement ? ((ActUIElement)act).ElementLocateValue : (act is ActAccessibilityTesting ? ((ActAccessibilityTesting)act).LocateValue : ((ActVisualTesting)act).LocateValue));
 
                 var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
