@@ -122,7 +122,7 @@
                                 </Style>
                             </TextBlock.Style>
                         </TextBlock>
-                        <TextBlock x:Name="xItemExtraInfoTxtBlock" Text="[ExtraInfo]" MaxWidth="100" >
+                        <TextBlock x:Name="xItemExtraInfoTxtBlock" Text="[ExtraInfo]"  >
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Left"/>
