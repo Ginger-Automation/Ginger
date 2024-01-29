@@ -230,7 +230,7 @@
   
     <PackageReference Include="CassandraCSharpDriver" Version="3.19.5" />
   
-    <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
   
     <PackageReference Include="AutoMapper" Version="12.0.1" />
   
@@ -292,15 +292,15 @@
     <PackageReference Include="protobuf-net.Core" Version="3.2.26" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="108.0.3" />
-    <PackageReference Include="Selenium.Support" Version="4.13.1" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.13.1" />
+    <PackageReference Include="Selenium.Support" Version="4.17.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.17.0" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="4.1.0" />
     <PackageReference Include="SharpAdbClient" Version="2.3.23" />
     <PackageReference Include="SSH.NET" Version="2023.0.1" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.1" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
