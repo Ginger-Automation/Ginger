@@ -6403,10 +6403,7 @@ namespace GingerCore.Drivers
                 InjectSpyIfNotIngected();
                 if (mListnerCanBeStarted)
                 {
-                    string XPoint = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.GetXPoint();");
-                    string YPoint = (string)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.GetYPoint();");
-                    el = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return document.elementFromPoint(" + XPoint + ", " + YPoint + ");");
-
+                    el = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return GingerLibLiveSpy.ElementFromPoint()");
                 }
                 else
                 {
@@ -6531,15 +6528,38 @@ namespace GingerCore.Drivers
         //    return EI;
         //}
 
-        public string GenerateXpathForIWebElement(IWebElement IWE, string current)
+        public string GenerateXpathForIWebElement(ISearchContext IWE, string current)
         {
-            if (IWE.TagName == "html")
+            string tagName = string.Empty;
+            ReadOnlyCollection<IWebElement> childrenElements =  null;
+            ISearchContext parentElement = null;
+
+            if (IWE is IWebElement)
             {
-                return "/" + IWE.TagName + "[1]" + current;
+                tagName = ((IWebElement)IWE).TagName;
+                if (tagName.Equals("html"))
+                {
+                    return "/" + tagName + "[1]" + current;
+                }
+                parentElement = (ISearchContext)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].parentNode", IWE);
+                if(parentElement is ShadowRoot)
+                {
+                    childrenElements = parentElement.FindElements(By.CssSelector(tagName));
+                }
+                else
+                {
+                    childrenElements = parentElement.FindElements(By.XPath("./" + tagName));
+                }
+
+            }
+            else if(IWE is ShadowRoot)
+            {
+                parentElement = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].host", IWE);
+
+                childrenElements = parentElement.FindElements(By.XPath("./child::*"));
             }
 
-            IWebElement parentElement = IWE.FindElement(By.XPath(".."));
-            ReadOnlyCollection<IWebElement> childrenElements = parentElement.FindElements(By.XPath("./" + IWE.TagName));
+
             int count = 1;
             foreach (IWebElement childElement in childrenElements)
             {
@@ -6547,7 +6567,16 @@ namespace GingerCore.Drivers
                 {
                     if (IWE.Equals(childElement))
                     {
-                        return GenerateXpathForIWebElement(parentElement, "/" + IWE.TagName + "[" + count + "]" + current);
+                        string resultXPath = string.Empty;
+                        if (string.IsNullOrEmpty(tagName))
+                        {
+                            resultXPath = current;
+                        }
+                        else
+                        {
+                            resultXPath = "/" + tagName + "[" + count + "]" + current;
+                        }
+                        return GenerateXpathForIWebElement(parentElement, resultXPath);
                     }
                     else
                     {
@@ -6567,7 +6596,7 @@ namespace GingerCore.Drivers
                 }
 
             }
-            return "";
+            return current;
         }
 
         public async Task<string> GenerateXpathForIWebElementAsync(IWebElement IWE, string current)
