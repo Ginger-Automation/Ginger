@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.DiameterLib;
 using Amdocs.Ginger.Repository;
@@ -51,6 +52,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.Webservices.Diameter
         public override string ActionEditPage { get { return "WebServices.ActDiameterEditPage"; } }
 
         public override string ActionUserDescription { get { return "Performs Diameter action"; } }
+
+        public override eImageType Image { get { return eImageType.Exchange; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {

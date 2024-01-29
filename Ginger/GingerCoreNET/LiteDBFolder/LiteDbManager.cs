@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
@@ -138,11 +139,20 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             dbConnector.SetCollection(activitiesLiteColl, activitiesColl);
             dbConnector.SetCollection(actionsLiteColl, actionsColl);
         }
+        private static readonly SemaphoreSlim semaphore = new(1,1);
         public void WriteToLiteDb(string reportLevelName, List<LiteDbReportBase> objectColl)
         {
-            var objectLiteColl = GetObjectLiteData(reportLevelName);
-            //var objectColl = this.GetGingerObject(reportLevelName, gingerObject);
-            dbConnector.SetCollection(objectLiteColl, objectColl);
+            try
+            {
+                semaphore.Wait();
+                var objectLiteColl = GetObjectLiteData(reportLevelName);
+                //var objectColl = this.GetGingerObject(reportLevelName, gingerObject);
+                dbConnector.SetCollection(objectLiteColl, objectColl);
+            }
+            finally
+            {
+                semaphore.Release();
+            }
         }
         private List<LiteDbRunSet> GetGingerRunSet(List<LiteDbRunner> runnersData)
         {
