@@ -65,17 +65,17 @@ namespace GingerCoreNETUnitTest.DatabaseTest
                 var buckets = clusterManager.ListBuckets().Value;
                 //var result = clusterManager.CreateBucket(new BucketSettings() { Name = "GingerBucket", BucketType = Couchbase.Core.Buckets.BucketTypeEnum.Couchbase, AuthType = Couchbase.Authentication.AuthType.None });
                 //var bucket = cluster.OpenBucket("GingerBucket");
-
+                var bucket  = cluster.OpenBucket(_couchbaseContainer.Buckets.FirstOrDefault().Name);
                 //// Insert sample data
-                //var document = new Document<dynamic>
-                //{
-                //    Id = "Customer",
-                //    Content = new[]{
-                //    new { Name = "Mahesh", Value = 1 , Dept = "AQE I&T"},
-                //    new { Name = "Jinendra", Value = 2, Dept = "AQE I&T"}
-                //},
-                //};
-                //var upsertResult = await bucket.UpsertAsync(document);
+                var document = new Document<dynamic>
+                {
+                    Id = "Customer",
+                    Content = new[]{
+                    new { Name = "Mahesh", Value = 1 , Dept = "AQE I&T"},
+                    new { Name = "Jinendra", Value = 2, Dept = "AQE I&T"}
+                },
+                };
+                var upsertResult = await bucket.UpsertAsync(document);
             }
             catch (Exception ex)
             {

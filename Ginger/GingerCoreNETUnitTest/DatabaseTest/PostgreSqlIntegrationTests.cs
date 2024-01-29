@@ -38,8 +38,8 @@ namespace GingerCoreNETUnitTest.DatabaseTest
                 using (var command = connection.CreateCommand())
                 {
                     command.CommandText = "CREATE TABLE Customer (Id serial PRIMARY KEY, Name varchar(255));" +
-                                          "INSERT INTO Customer (Name) VALUES ('1'), ('Mahesh');" +
-                                          "INSERT INTO Customer (Name) VALUES ('1'), ('Kale');";
+                                          "INSERT INTO Customer (Name) VALUES ('1'), ('Mahesh kale');" +
+                                          "INSERT INTO Customer (Name) VALUES ('1'), ('Jinendra Ghodke');";
                     await command.ExecuteNonQueryAsync();
                 }
             }
