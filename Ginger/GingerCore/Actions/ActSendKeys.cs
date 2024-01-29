@@ -18,6 +18,7 @@ limitations under the License.
 
 extern alias UIAComWrapperNetstandard;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.UIElement;
 using GingerCore.Actions;
@@ -38,6 +39,8 @@ namespace Ginger.Actions
     {
 
         public override string ActionDescription { get { return "Send Keys Action"; } }
+
+        public override eImageType Image { get { return eImageType.KeyboardLayout; } }
         public override string ActionUserDescription { get { return "Send Keys to specific window"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)

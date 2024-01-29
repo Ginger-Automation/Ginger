@@ -124,7 +124,7 @@
                                 <Frame x:Name="xActionPrivateConfigsFrame" DockPanel.Dock="Top" Margin="0,0,0,0"  Content="Action private configurations Frame" NavigationUIVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True"/>
 
                                 <DockPanel Name="xInputValuesEditControlsPnl" DockPanel.Dock="Top" >
-                                    <Ginger:ucGrid x:Name="xInputValuesGrid" DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed" HorizontalAlignment="Stretch" Title="Input Value(s)" Height="156"/>
+                                    <Ginger:ucGrid x:Name="xInputValuesGrid" DockPanel.Dock="Top" Margin="0,10,0,0" Visibility="Collapsed" HorizontalAlignment="Stretch" Title="Input Value(s)"/>
                                     <DockPanel Name="xValueBoxPnl" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,10,0,0" Height="25">
                                         <Label Name="xValueLbl" DockPanel.Dock="Left" Style="{StaticResource $LabelStyle}" Content="Value:"/>
                                         <Actions:UCValueExpression x:Name="xValueVE" DockPanel.Dock="Left" Margin="10,0,0,0" ToolTip="Value to Set"/>
