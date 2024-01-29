@@ -224,7 +224,7 @@
 
   <ItemGroup>
   
-    <PackageReference Include="Appium.WebDriver" Version="5.0.0-beta01" />
+    <PackageReference Include="Appium.WebDriver" Version="5.0.0-rc.1" />
   
     <PackageReference Include="Azure.Identity" Version="1.10.4" />
   

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -191,24 +191,27 @@ namespace Amdocs.Ginger.Common
                     ToUser(eUserMsgKey.StaticErrorMessage, "Cannot find Status message key: " + messageKey);
                     ToLog(eLogLevel.ERROR, "The Status message with key: '" + messageKey + "' was not found! and won't show to the user!");
                 }
-                messageContent = messageToShow.MsgContent;
-
-                //enter message args if exist
-                if (messageArgs.Length > 0)
+                else
                 {
-                    messageContent = string.Format(messageContent, messageArgs);
-                }
+                    messageContent = messageToShow.MsgContent;
 
-                if (AppLoggingLevel == eAppReporterLoggingLevel.Debug)
-                {
-                    ToLog(eLogLevel.INFO, "Showing Status Message: " + messageContent);
-                }
-                else if (ReportAllAlsoToConsole)
-                {
-                    ToConsole(eLogLevel.INFO, "Showing Status Message: " + messageContent);
-                }
+                    //enter message args if exist
+                    if (messageArgs.Length > 0)
+                    {
+                        messageContent = string.Format(messageContent, messageArgs);
+                    }
 
-                WorkSpaceReporter.ToStatus(messageToShow.MessageType, messageContent);
+                    if (AppLoggingLevel == eAppReporterLoggingLevel.Debug)
+                    {
+                        ToLog(eLogLevel.INFO, "Showing Status Message: " + messageContent);
+                    }
+                    else if (ReportAllAlsoToConsole)
+                    {
+                        ToConsole(eLogLevel.INFO, "Showing Status Message: " + messageContent);
+                    }
+
+                    WorkSpaceReporter.ToStatus(messageToShow.MessageType, messageContent);
+                }
                 mLastStatusTime.Start();
             }
             catch (Exception ex)
