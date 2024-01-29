@@ -203,7 +203,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mActionsListHelper.ListView = ucListView;
 
 
-            WeakEventManager<UcListView, EventArgs>.AddHandler(source: ucListView, eventName: nameof(UcListView.ItemMouseDoubleClick), handler: ActionsListViewItem_MouseDoubleClick);
+            ucListView.ItemMouseDoubleClick += ActionsListViewItem_MouseDoubleClick;
         }
 
         private void SetActionsListViewData(UcListView ucListView, ObservableList<Act> dataSource)
