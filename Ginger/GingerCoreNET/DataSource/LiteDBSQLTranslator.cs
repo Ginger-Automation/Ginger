@@ -27,6 +27,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
             }
             
             queryBuilder = new();
+            queryBuilder.Append('{');
             queryBuilder.Append($"DS Name={actDSTableElement.DSName} DST={actDSTableElement.DSTableName} MASD=");
             if (actDSTableElement.MarkUpdate)
             {
@@ -175,7 +176,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
 
         private void ValueExpressionForMarkAllUnused()
         {
-            queryBuilder.Append($"UPDATE {actDSTableElement.DSTableName} SET GINGER_USED = \"True\"");
+            queryBuilder.Append($"UPDATE {actDSTableElement.DSTableName} SET GINGER_USED = \"False\"");
         }
     }
 
@@ -332,7 +333,7 @@ namespace Amdocs.Ginger.CoreNET.DataSource
                 string wCond = actDSTableElement.WhereConditions[i].wCondition.ToString().ToLower();
                 string wColVal = actDSTableElement.WhereConditions[i].wTableColumn.ToString().Trim();
                 string wOpr = actDSTableElement.WhereConditions[i].wOperator.ToString();
-                string wRowVal = actDSTableElement.WhereConditions[i].wValue.ToString();
+                string wRowVal = actDSTableElement.WhereConditions[i].wValue.Replace("\"", string.Empty);
 
                 if (wCond == "empty")
                 {

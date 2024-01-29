@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.Actions;
 using GingerCore.GingerOCR;
@@ -42,6 +43,8 @@ namespace GingerCore
                 return "Read Text Using OCR";
             }
         }
+
+        public override eImageType Image { get { return eImageType.PDFFile; } }
 
         public override bool ObjectLocatorConfigsNeeded
         {

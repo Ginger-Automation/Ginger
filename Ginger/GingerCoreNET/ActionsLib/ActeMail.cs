@@ -33,12 +33,14 @@ using System.Security.Cryptography.X509Certificates;
 using File = System.IO.File;
 using Microsoft.Graph;
 using Amdocs.Ginger.CoreNET.GeneralLib;
+using Amdocs.Ginger.Common.Enums;
 
 namespace GingerCore.Actions.Communication
 {
     public class ActeMail : ActWithoutDriver
     {
         public override string ActionDescription { get { return "Email Action"; } }
+        public override eImageType Image { get { return eImageType.Email; } }
         public override string ActionUserDescription { get { return "Email Action"; } }
         HttpClientHandler Handler = null;
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)

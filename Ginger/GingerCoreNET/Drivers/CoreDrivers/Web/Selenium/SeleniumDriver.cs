@@ -68,7 +68,7 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using DevToolsDomains = OpenQA.Selenium.DevTools.V117.DevToolsSessionDomains;
+using DevToolsDomains = OpenQA.Selenium.DevTools.V121.DevToolsSessionDomains;
 
 namespace GingerCore.Drivers
 {
@@ -685,7 +685,7 @@ namespace GingerCore.Drivers
 
                             SetCurrentPageLoadStrategy(ieOptions);
                             ieOptions.IgnoreZoomLevel = true;
-                            driverService = InternetExplorerDriverService.CreateDefaultService();
+                            driverService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
                             Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));                           
                         }
@@ -1693,6 +1693,7 @@ namespace GingerCore.Drivers
         private void TakeFullPageWithDesktopScreenScreenShot(Act act)
         {
             List<Bitmap> bitmapsToMerge = new();
+            string filepath = null;
             try
             {
                 using (Bitmap browserHeaderScreenshot = GetBrowserHeaderScreenShot())
@@ -1701,31 +1702,29 @@ namespace GingerCore.Drivers
                     {
                         bitmapsToMerge.Add(browserHeaderScreenshot);
                     }
-                }
-
-                using (Bitmap browserFullPageScreenshot = GetScreenShot(true))
-                {
-                    if (browserFullPageScreenshot != null)
+                    using (Bitmap browserFullPageScreenshot = GetScreenShot(true))
                     {
-                        bitmapsToMerge.Add(browserFullPageScreenshot);
+                        if (browserFullPageScreenshot != null)
+                        {
+                            bitmapsToMerge.Add(browserFullPageScreenshot);
+                        }
+                        using (Bitmap taskbarScreenshot = TargetFrameworkHelper.Helper.GetTaskbarScreenshot())
+                        {
+                            if (taskbarScreenshot != null)
+                            {
+                                bitmapsToMerge.Add(taskbarScreenshot);
+                            }
+                            filepath = TargetFrameworkHelper.Helper.MergeVerticallyAndSaveBitmaps(bitmapsToMerge.ToArray());
+                        }
                     }
                 }
-
-
-                using (Bitmap taskbarScreenshot = TargetFrameworkHelper.Helper.GetTaskbarScreenshot())
+                if (!string.IsNullOrEmpty(filepath))
                 {
-                    if (taskbarScreenshot != null)
-                    {
-                        bitmapsToMerge.Add(taskbarScreenshot);
-                    }
+                    act.ScreenShotsNames.Add(Driver.Title);
+                    act.ScreenShots.Add(filepath);
                 }
-                    
-                string filepath = TargetFrameworkHelper.Helper.MergeVerticallyAndSaveBitmaps(bitmapsToMerge.ToArray());
-
-                act.ScreenShotsNames.Add(Driver.Title);
-                act.ScreenShots.Add(filepath);   
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 act.Error = "Failed to create Selenuim WebDriver browser page screenshot. Error= " + ex.Message;
                 return;
@@ -9041,7 +9040,7 @@ namespace GingerCore.Drivers
                     parentElementLocation.X += elemInfo.X;
                     parentElementLocation.Y += elemInfo.Y;
 
-                    Point p_Pos = GetElementPosition((RemoteWebElement)ele);
+                    Point p_Pos = GetElementPosition((IWebElement)ele);
                     ptX -= p_Pos.X;
                     ptY -= p_Pos.Y;
 
@@ -9060,13 +9059,13 @@ namespace GingerCore.Drivers
             }
         }
 
-        public RemoteWebElement GetElementFromPoint(long X, long Y)
+        public IWebElement GetElementFromPoint(long X, long Y)
         {
             while (true)
             {
                 String s_Script = "return document.elementFromPoint(arguments[0], arguments[1]);";
 
-                RemoteWebElement i_Elem = (RemoteWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, X, Y);
+                IWebElement i_Elem = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript(s_Script, X, Y);
                 if (i_Elem == null)
                 {
                     return null;
@@ -9085,7 +9084,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        public Point GetElementPosition(RemoteWebElement i_Elem)
+        public Point GetElementPosition(IWebElement i_Elem)
         {
             String s_Script = "var X, Y; "
                             + "if (window.pageYOffset) " // supported by most browsers 
@@ -9102,7 +9101,7 @@ namespace GingerCore.Drivers
                             + "} "
                             + "return new Array(X, Y);";
 
-            RemoteWebDriver i_Driver = (RemoteWebDriver)((RemoteWebElement)i_Elem).WrappedDriver;
+            RemoteWebDriver i_Driver = (RemoteWebDriver)((WebElement)i_Elem).WrappedDriver;
             IList<Object> i_Coord = (IList<Object>)i_Driver.ExecuteScript(s_Script);
 
             int s32_ScrollX = Convert.ToInt32(i_Coord[0]);
@@ -10184,9 +10183,9 @@ namespace GingerCore.Drivers
                 try
                 {
                     //DevTool Session 
-                    devToolsSession = devTools.GetDevToolsSession(117);
+                    devToolsSession = devTools.GetDevToolsSession(121);
                     devToolsDomains = devToolsSession.GetVersionSpecificDomains<DevToolsDomains>();
-                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V117.Network.EnableCommandSettings());
+                    devToolsDomains.Network.Enable(new OpenQA.Selenium.DevTools.V121.Network.EnableCommandSettings());
                     blockOrUnblockUrls();
                 }
                 catch (Exception ex)
@@ -10212,11 +10211,11 @@ namespace GingerCore.Drivers
             {
                 if (mAct.ControlAction == ActBrowserElement.eControlAction.SetBlockedUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V117.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V121.Network.SetBlockedURLsCommandSettings() { Urls = getBlockedUrlsArray(mAct.GetInputParamCalculatedValue("sBlockedUrls")) });
                 }
                 else if (mAct.ControlAction == ActBrowserElement.eControlAction.UnblockeUrls)
                 {
-                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V117.Network.SetBlockedURLsCommandSettings() { Urls = new string[] { } });
+                    devToolsDomains.Network.SetBlockedURLs(new OpenQA.Selenium.DevTools.V121.Network.SetBlockedURLsCommandSettings() { Urls = new string[] { } });
                 }
                 Thread.Sleep(300);
             }
@@ -10304,7 +10303,7 @@ namespace GingerCore.Drivers
                         act.AddOrUpdateReturnParamActual(act.ControlAction.ToString() + " " + val.Item1.ToString(), Convert.ToString(val.Item2));
                     }
 
-                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V117.Network.DisableCommandSettings());
+                    await devToolsDomains.Network.Disable(new OpenQA.Selenium.DevTools.V121.Network.DisableCommandSettings());
                     devToolsSession.Dispose();
                     devTools.CloseDevToolsSession();
 

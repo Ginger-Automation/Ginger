@@ -83,7 +83,7 @@ namespace Ginger.Repository
 
         private void SetActivitiesRepositoryGridView()
         {
-            WeakEventManager<UcListView, EventArgs>.AddHandler(source: xActivitiesGroupsRepositoryListView, eventName: nameof(UcListView.ItemMouseDoubleClick), handler: grdActivitiesGroupsRepository_grdMain_ItemMouseDoubleClick);
+            xActivitiesGroupsRepositoryListView.ItemMouseDoubleClick += grdActivitiesGroupsRepository_grdMain_ItemMouseDoubleClick;
             xActivitiesGroupsRepositoryListView.ItemDropped += grdActivitiesGroupsRepository_ItemDropped;
             xActivitiesGroupsRepositoryListView.PreviewDragItem += grdActivitiesGroupsRepository_PreviewDragItem;
 
