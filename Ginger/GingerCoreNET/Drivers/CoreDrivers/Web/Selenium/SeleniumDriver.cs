@@ -682,7 +682,7 @@ namespace GingerCore.Drivers
 
                             SetCurrentPageLoadStrategy(ieOptions);
                             ieOptions.IgnoreZoomLevel = true;
-                            driverService = InternetExplorerDriverService.CreateDefaultService();
+                            driverService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
                             Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));                           
                         }
