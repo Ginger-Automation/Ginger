@@ -263,6 +263,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             ExecutedbyUser = System.Environment.UserName.ToString();
             GingerVersion = ApplicationInfo.ApplicationUIversion;
             RunStatus = (runSetReport.RunSetExecutionStatus == eRunStatus.Automated) ? eRunStatus.Automated.ToString() : SetStatus(RunnersColl);
+            RunDescription = runSetReport.RunDescription;
         }
         public static ILiteCollection<LiteDbRunSet> IncludeAllReferences(ILiteCollection<LiteDbRunSet> liteCollection)
         {
