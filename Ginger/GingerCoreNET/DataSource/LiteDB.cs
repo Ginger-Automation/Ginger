@@ -29,6 +29,7 @@ using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using static GingerCore.Actions.ActDSTableElement;
 
 namespace GingerCoreNET.DataSource
@@ -36,6 +37,7 @@ namespace GingerCoreNET.DataSource
     public class GingerLiteDB : DataSourceBase
     {
         int count = 1;
+        private static readonly SemaphoreSlim LiteDBLock = new(1, 1);
         private string ConnectionString
         {
             get
@@ -47,6 +49,7 @@ namespace GingerCoreNET.DataSource
         {
             try
             {
+                LiteDBLock.Wait();
                 using (var db = new LiteDatabase(ConnectionString))
                 {
                     var results = db.GetCollection(tableName).Find(Query.All(), 0).ToList();
@@ -62,34 +65,47 @@ namespace GingerCoreNET.DataSource
             {
                 Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please enter valid column name");
             }
+            finally
+            {
+                LiteDBLock.Release();
+            }
         }
 
         public override void AddTable(string tableName, string columnList = "")
         {
-            using (var db = new LiteDatabase(ConnectionString))
+            try
             {
-                var table = db.GetCollection(tableName);
-
-                string[] List = columnList.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                var doc = new BsonDocument();
-                if (columnList.Contains("KEY_VAL"))
+                LiteDBLock.Wait();
+                using (var db = new LiteDatabase(ConnectionString))
                 {
-                    doc[List[0]] = 1;
-                    doc[List[1]] = "";
-                    doc[List[2]] = "";
-                    doc[List[3]] = "";
-                    doc[List[4]] = DateTime.Now.ToString();
+                    var table = db.GetCollection(tableName);
 
+                    string[] List = columnList.Split(new char[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    var doc = new BsonDocument();
+                    if (columnList.Contains("KEY_VAL"))
+                    {
+                        doc[List[0]] = 1;
+                        doc[List[1]] = "";
+                        doc[List[2]] = "";
+                        doc[List[3]] = "";
+                        doc[List[4]] = DateTime.Now.ToString();
+
+                    }
+                    else
+                    {
+                        doc[List[0]] = 1;
+                        doc[List[1]] = "False";
+                        doc[List[2]] = "";
+                        doc[List[3]] = DateTime.Now.ToString();
+                    }
+                    table.Insert(doc);
                 }
-                else
-                {
-                    doc[List[0]] = 1;
-                    doc[List[1]] = "False";
-                    doc[List[2]] = "";
-                    doc[List[3]] = DateTime.Now.ToString();
-                }
-                table.Insert(doc);
             }
+            finally
+            {
+                LiteDBLock.Release();
+            }
+
         }
 
         public override string CopyTable(string tableName)
@@ -102,14 +118,22 @@ namespace GingerCoreNET.DataSource
             }
             if (CopyTableName != tableName)
             {
-                using (var db = new LiteDatabase(ConnectionString))
+                try
                 {
-                    var CopyTable = db.GetCollection(CopyTableName);
-                    var table = db.GetCollection(tableName);
+                    LiteDBLock.Wait();
+                    using (var db = new LiteDatabase(ConnectionString))
+                    {
+                        var CopyTable = db.GetCollection(CopyTableName);
+                        var table = db.GetCollection(tableName);
 
-                    DataTable dtChange = new DataTable(CopyTableName);
-                    dtChange = datatable(table.FindAll() , CopyTableName);
-                    SaveTable(dtChange , CopyTable);
+                        DataTable dtChange = new DataTable(CopyTableName);
+                        dtChange = datatable(table.FindAll(), CopyTableName);
+                        SaveTable(dtChange, CopyTable);
+                    }
+                }
+                finally
+                {
+                    LiteDBLock.Release();
                 }
             }
 
@@ -173,9 +197,17 @@ namespace GingerCoreNET.DataSource
 
         public override void DeleteTable(string tableName)
         {
-            using (var db = new LiteDatabase(ConnectionString))
+            try
             {
-                db.DropCollection(tableName);
+                LiteDBLock.Wait();
+                using (var db = new LiteDatabase(ConnectionString))
+                {
+                    db.DropCollection(tableName);
+                }
+            }
+            finally
+            {
+                LiteDBLock.Release();
             }
         }
 
@@ -222,18 +254,26 @@ namespace GingerCoreNET.DataSource
 
         public override List<string> GetColumnList(string tableName)
         {
-            List<string> mColumnNames = new ();
-            using (var db = new LiteDatabase(ConnectionString))
+            try
             {
-                if (tableName == "")
-                { return mColumnNames; }
+                LiteDBLock.Wait();
+                List<string> mColumnNames = new();
+                using (var db = new LiteDatabase(ConnectionString))
+                {
+                    if (tableName == "")
+                    { return mColumnNames; }
 
-                var results = db.GetCollection(tableName).Find(Query.All(), 0).ToList();
-                mColumnNames = GetColumnList(results, tableName);
-                //var name = mColumnNames.RemoveAll(i => i.Contains("Name")); Commented this as we are not able to see columnNames which contain "Name" keyword in it.
+                    var results = db.GetCollection(tableName).Find(Query.All(), 0).ToList();
+                    mColumnNames = GetColumnList(results, tableName);
+                    //var name = mColumnNames.RemoveAll(i => i.Contains("Name")); Commented this as we are not able to see columnNames which contain "Name" keyword in it.
 
+                }
+                return mColumnNames;
             }
-            return mColumnNames;
+            finally
+            {
+                LiteDBLock.Release();
+            }
         }
 
         private List<string> GetColumnList(IList<BsonDocument> results , string tableName)
@@ -317,190 +357,199 @@ namespace GingerCoreNET.DataSource
 
         public override DataTable GetQueryOutput(string query)
         {
-            List<string> mColumnNames = new List<string>();
-            DataTable dataTable = new DataTable();
-            bool duplicate = false;
-            using (var db = new LiteDatabase(ConnectionString))
+            try
             {
-                var results = db.GetCollection(query).Find(Query.All(), 0).ToList();
-                try
+                LiteDBLock.Wait();
+                List<string> mColumnNames = new List<string>();
+                DataTable dataTable = new DataTable();
+                bool duplicate = false;
+                using (var db = new LiteDatabase(ConnectionString))
                 {
-                    if (results.Count > 0)
+                    var results = db.GetCollection(query).Find(Query.All(), 0).ToList();
+                    try
                     {
-                        var result = db.GetCollection<BsonDocument>(query);
-
-                        var dt = new LiteDataTable(results.ToString());
-                        foreach (var doc in results)
+                        if (results.Count > 0)
                         {
-                            var dr = dt.NewRow() as LiteDataRow;
-                            if (dr != null)
+                            var result = db.GetCollection<BsonDocument>(query);
+
+                            var dt = new LiteDataTable(results.ToString());
+                            foreach (var doc in results)
                             {
-                                dr.UnderlyingValue = doc;
-                                foreach (var property in doc.RawValue)
+                                var dr = dt.NewRow() as LiteDataRow;
+                                if (dr != null)
                                 {
-                                    if (!property.Value.IsMaxValue && !property.Value.IsMinValue)
+                                    dr.UnderlyingValue = doc;
+                                    foreach (var property in doc.RawValue)
                                     {
-                                        if (!dt.Columns.Contains(property.Key))
+                                        if (!property.Value.IsMaxValue && !property.Value.IsMinValue)
                                         {
-                                            dt.Columns.Add(property.Key, typeof(string));
-                                        }
-                                        if(property.Value.RawValue != null)
-                                        {
-                                            if (property.Value.RawValue.ToString() == "System.Collections.Generic.Dictionary`2[System.String,BsonValue]" || property.Value.RawValue.ToString() == "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
+                                            if (!dt.Columns.Contains(property.Key))
                                             {
-                                                dr[property.Key] = "";
+                                                dt.Columns.Add(property.Key, typeof(string));
                                             }
-                                            else if (property.Value.RawValue.ToString() == "System.Data.DataRowCollection" || property.Value.RawValue.ToString() == "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
+                                            if (property.Value.RawValue != null)
                                             {
-                                                duplicate = true;
+                                                if (property.Value.RawValue.ToString() == "System.Collections.Generic.Dictionary`2[System.String,BsonValue]" || property.Value.RawValue.ToString() == "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
+                                                {
+                                                    dr[property.Key] = "";
+                                                }
+                                                else if (property.Value.RawValue.ToString() == "System.Data.DataRowCollection" || property.Value.RawValue.ToString() == "System.Collections.Generic.Dictionary`2[System.String,LiteDB.BsonValue]")
+                                                {
+                                                    duplicate = true;
+                                                }
+                                                else
+                                                {
+                                                    dr[property.Key] = property.Value.RawValue.ToString();
+                                                }
                                             }
                                             else
                                             {
-                                                dr[property.Key] = property.Value.RawValue.ToString();
+                                                dr[property.Key] = string.Empty;
+
                                             }
                                         }
-                                        else
-                                        {
-                                            dr[property.Key] = string.Empty;
-
-                                        }
                                     }
+                                    dt.Rows.Add(dr);
                                 }
-                                dt.Rows.Add(dr);
                             }
-                        }
 
-                        DataTable aa = dt;
-                        bool dosort = true;
-                        if (duplicate)
-                        {
-                            dt.Rows.RemoveAt(dt.Rows.Count - 1);
-                        }
-                        DataTable dt2 = dt.Clone();
-                        dt2.Columns["GINGER_ID"].DataType = Type.GetType("System.Int32");
-
-                        foreach (DataRow dr in dt.Rows)
-                        {
-                            if (Convert.ToString(dr["GINGER_ID"]) == "")
+                            DataTable aa = dt;
+                            bool dosort = true;
+                            if (duplicate)
                             {
-                                dosort = false;
+                                dt.Rows.RemoveAt(dt.Rows.Count - 1);
                             }
-                            else
-                            {
-                                dt2.ImportRow(dr);
-                            }
-                        }
-                        if (dosort)
-                        {
-                            dt2.AcceptChanges();
-                            DataView dv = dt2.DefaultView;
-                            dv.Sort = "GINGER_ID ASC";
+                            DataTable dt2 = dt.Clone();
+                            dt2.Columns["GINGER_ID"].DataType = Type.GetType("System.Int32");
 
-                            aa = dv.ToTable();
-                        }
-                        else
-                        {
-                            aa.Rows.RemoveAt(0);
-                        }
-
-                        aa.TableName = query;
-                        dataTable = aa;
-                    }
-                    else
-                    {
-                        // If we need to run a direct query
-                        try
-                        {
-                            // Converting BSON to JSON 
-                            JArray array = new ();
-                            // This query needs SQL Command
-                            BsonValue[] result = db.Execute(query).ToArray();
-                            foreach (BsonValue bs in result)
+                            foreach (DataRow dr in dt.Rows)
                             {
-                                string js = LiteDB.JsonSerializer.Serialize(bs);
-                                if (js == "0" || js == "1")
+                                if (Convert.ToString(dr["GINGER_ID"]) == "")
                                 {
-                                    return dataTable;
-                                }
-                                JObject jo = JObject.Parse(js);
-                                JObject jo2 = new JObject();
-                                foreach (JToken jt in jo.Children())
-                                {
-                                    if ((jt as JProperty).Name != "_id")
-                                    {
-                                        string sData = jt.ToString();
-                                        Regex regex = new Regex(@": {(\r|\n| )*""_type"": ""System.DBNull*");
-                                        Match match = regex.Match(sData);
-                                        if (match.Success)
-                                        {
-                                            if (jt.HasValues)
-                                            {
-                                                string name = (jt as JProperty).Name;
-                                                var aa = jt as JProperty;
-                                                aa.Value = "";
-                                            }
-                                            jo2.Add(jt);
-                                        }
-                                        else
-                                        {
-                                            jo2.Add(jt);
-                                        }
-                                    }
-                                }
-                                array.Add(jo2);
-                            }
-                            // JSON to Datatable
-                            dataTable = JsonConvert.DeserializeObject<DataTable>(array.ToString());
-                            if (dataTable != null && dataTable.Columns.Count > 0)
-                            {
-                                DataTable dt = dataTable;
-                                bool dosort = true;
-                                DataTable dt2 = dataTable.Clone();
-                                foreach (DataRow dr in dataTable.Rows)
-                                {
-                                    if (Convert.ToString(dr["GINGER_ID"]) == "")
-                                    {
-                                        dosort = false;
-                                    }
-                                    else
-                                    {
-                                        dt2.ImportRow(dr);
-                                    }
-                                }
-                                if (dosort)
-                                {
-                                    dt2.AcceptChanges();
-                                    DataView dv = dt2.DefaultView;
-                                    dv.Sort = "GINGER_ID ASC";
-
-                                    dt = dv.ToTable();
+                                    dosort = false;
                                 }
                                 else
                                 {
-                                    dt.Rows.RemoveAt(0);
+                                    dt2.ImportRow(dr);
                                 }
-                                dt.TableName = query;
-                                dataTable = dt;
-                                var json = JsonConvert.SerializeObject(array);
+                            }
+                            if (dosort)
+                            {
+                                dt2.AcceptChanges();
+                                DataView dv = dt2.DefaultView;
+                                dv.Sort = "GINGER_ID ASC";
+
+                                aa = dv.ToTable();
+                            }
+                            else
+                            {
+                                aa.Rows.RemoveAt(0);
+                            }
+
+                            aa.TableName = query;
+                            dataTable = aa;
+                        }
+                        else
+                        {
+                            // If we need to run a direct query
+                            try
+                            {
+                                // Converting BSON to JSON 
+                                JArray array = new();
+                                // This query needs SQL Command
+                                BsonValue[] result = db.Execute(query).ToArray();
+                                foreach (BsonValue bs in result)
+                                {
+                                    string js = LiteDB.JsonSerializer.Serialize(bs);
+                                    if (js == "0" || js == "1")
+                                    {
+                                        return dataTable;
+                                    }
+                                    JObject jo = JObject.Parse(js);
+                                    JObject jo2 = new JObject();
+                                    foreach (JToken jt in jo.Children())
+                                    {
+                                        if ((jt as JProperty).Name != "_id")
+                                        {
+                                            string sData = jt.ToString();
+                                            Regex regex = new Regex(@": {(\r|\n| )*""_type"": ""System.DBNull*");
+                                            Match match = regex.Match(sData);
+                                            if (match.Success)
+                                            {
+                                                if (jt.HasValues)
+                                                {
+                                                    string name = (jt as JProperty).Name;
+                                                    var aa = jt as JProperty;
+                                                    aa.Value = "";
+                                                }
+                                                jo2.Add(jt);
+                                            }
+                                            else
+                                            {
+                                                jo2.Add(jt);
+                                            }
+                                        }
+                                    }
+                                    array.Add(jo2);
+                                }
+                                // JSON to Datatable
+                                dataTable = JsonConvert.DeserializeObject<DataTable>(array.ToString());
+                                if (dataTable != null && dataTable.Columns.Count > 0)
+                                {
+                                    DataTable dt = dataTable;
+                                    bool dosort = true;
+                                    DataTable dt2 = dataTable.Clone();
+                                    foreach (DataRow dr in dataTable.Rows)
+                                    {
+                                        if (Convert.ToString(dr["GINGER_ID"]) == "")
+                                        {
+                                            dosort = false;
+                                        }
+                                        else
+                                        {
+                                            dt2.ImportRow(dr);
+                                        }
+                                    }
+                                    if (dosort)
+                                    {
+                                        dt2.AcceptChanges();
+                                        DataView dv = dt2.DefaultView;
+                                        dv.Sort = "GINGER_ID ASC";
+
+                                        dt = dv.ToTable();
+                                    }
+                                    else
+                                    {
+                                        dt.Rows.RemoveAt(0);
+                                    }
+                                    dt.TableName = query;
+                                    dataTable = dt;
+                                    var json = JsonConvert.SerializeObject(array);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Reporter.ToLog(eLogLevel.WARN, "Exception Occurred while doing LiteDB GetQueryOutput", ex);
+                                db.Dispose();
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            Reporter.ToLog(eLogLevel.WARN, "Exception Occurred while doing LiteDB GetQueryOutput", ex);
-                            db.Dispose();
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Exception Occurred while doing LiteDB GetQueryOutput", ex);
+                        db.Dispose();
+
                     }
                 }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception Occurred while doing LiteDB GetQueryOutput", ex);
-                    db.Dispose();
-                
-                }
+                dataTable.AcceptChanges();
+                return dataTable;
             }
-            dataTable.AcceptChanges();
-            return dataTable;
+            finally
+            {
+                LiteDBLock.Release();
+            }
         }
+
 
 
         private DataSourceTable CheckDSTableDesign(DataTable dtTable)
@@ -533,59 +582,84 @@ namespace GingerCoreNET.DataSource
 
         public override ObservableList<DataSourceTable> GetTablesList()
         {
-            DataTable Datatable = new DataTable();
-            ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
-            using (var db = new LiteDatabase(ConnectionString))
+            try
             {
-                IEnumerable<string> Tables = db.GetCollectionNames();
-                foreach (string table in Tables)
+                LiteDBLock.Wait();
+                DataTable Datatable = new DataTable();
+                ObservableList<DataSourceTable> mDataSourceTableDetails = new ObservableList<DataSourceTable>();
+                using (var db = new LiteDatabase(ConnectionString))
                 {
-                    var results = db.GetCollection(table).Find(Query.All(), 0).ToList();
-                    var dt = new LiteDataTable(results.ToString());
-                    foreach (var doc in results)
+                    IEnumerable<string> Tables = db.GetCollectionNames();
+                    foreach (string table in Tables)
                     {
-                        var dr = dt.NewRow() as LiteDataRow;
-                        if (dr != null)
+                        var results = db.GetCollection(table).Find(Query.All(), 0).ToList();
+                        var dt = new LiteDataTable(results.ToString());
+                        foreach (var doc in results)
                         {
-                            dr.UnderlyingValue = doc;
-                            foreach (var property in doc.RawValue)
+                            var dr = dt.NewRow() as LiteDataRow;
+                            if (dr != null)
                             {
-                                if (!property.Value.IsMaxValue && !property.Value.IsMinValue)
+                                dr.UnderlyingValue = doc;
+                                foreach (var property in doc.RawValue)
                                 {
-                                    if (!dt.Columns.Contains(property.Key))
+                                    if (!property.Value.IsMaxValue && !property.Value.IsMinValue)
                                     {
-                                        dt.Columns.Add(property.Key, typeof(string));
+                                        if (!dt.Columns.Contains(property.Key))
+                                        {
+                                            dt.Columns.Add(property.Key, typeof(string));
+                                        }
+                                        dr[property.Key] = property.Value.RawValue == null ? string.Empty : property.Value.RawValue.ToString();
                                     }
-                                    dr[property.Key] = property.Value.RawValue == null ? string.Empty : property.Value.RawValue.ToString();
                                 }
+                                dt.Rows.Add(dr);
                             }
-                            dt.Rows.Add(dr);
+                            Datatable = dt;
+                            Datatable.TableName = table;
                         }
-                        Datatable = dt;
-                        Datatable.TableName = table;
+                        mDataSourceTableDetails.Add(CheckDSTableDesign(Datatable));
                     }
-                    mDataSourceTableDetails.Add(CheckDSTableDesign(Datatable));
                 }
+                return mDataSourceTableDetails;
+
             }
-            return mDataSourceTableDetails;
+            finally
+            {
+                LiteDBLock.Release();
+            }
         }
         public override bool IsTableExist(string tableName)
         {
-            using var db = new LiteDatabase(ConnectionString);
-            return db.CollectionExists(tableName);
+            try
+            {
+                LiteDBLock.Wait();
+                using var db = new LiteDatabase(ConnectionString);
+                return db.CollectionExists(tableName);
+            }
+            finally
+            {
+                LiteDBLock.Release();
+            }
         }
 
         public override void RemoveColumn(string tableName, string columnName)
         {
-            using (var db = new LiteDatabase(ConnectionString))
+            try
             {
-                var results = db.GetCollection(tableName).Find(Query.All(), 0).ToList();
-                var table = db.GetCollection(tableName);
-                foreach (var doc in results)
+                LiteDBLock.Wait();
+                using (var db = new LiteDatabase(ConnectionString))
                 {
-                    doc.Remove(columnName);
-                    table.Update(doc);
+                    var results = db.GetCollection(tableName).Find(Query.All(), 0).ToList();
+                    var table = db.GetCollection(tableName);
+                    foreach (var doc in results)
+                    {
+                        doc.Remove(columnName);
+                        table.Update(doc);
+                    }
                 }
+            }
+            finally
+            {
+                LiteDBLock.Release();
             }
         }
 
@@ -594,7 +668,8 @@ namespace GingerCoreNET.DataSource
             bool renameSuccess = false;
             bool tableExist = false;
             try
-            {                
+            {
+                LiteDBLock.Wait();
                 using (var db = new LiteDatabase(ConnectionString))
                 {
                     tableExist = db.CollectionExists(newTableName);
@@ -616,17 +691,29 @@ namespace GingerCoreNET.DataSource
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while renaming the table {tableName}", ex);                
             }
+            finally
+            {
+                LiteDBLock.Release();
+            }
         }
 
         public override bool RunQuery(string query)
         {
-            using (LiteDatabase db = new LiteDatabase(ConnectionString))
+            try
             {
-                // SQL Command needed here:
-                var result = db.Execute(query);
-            }
+                LiteDBLock.Wait();
+                using (LiteDatabase db = new LiteDatabase(ConnectionString))
+                {
+                    // SQL Command needed here:
+                    var result = db.Execute(query);
+                }
 
-            return true;
+                return true;
+            }
+            finally
+            {
+                LiteDBLock.Release();
+            }
         }
 
         public void RunQuery(string query, int LocateRowValue, string DSTableName, bool MarkUpdate = false, bool NextAvai = false)
@@ -691,37 +778,54 @@ namespace GingerCoreNET.DataSource
 
         public string GetResultString(string query)
         {
-            string result = null;
-            using (LiteDatabase db = new LiteDatabase(ConnectionString))
+            try
             {
-                // SQL query needed here
-                var resultdxs = db.Execute(query).ToArray();
-                foreach (BsonValue bs in resultdxs)
+                LiteDBLock.Wait();
+                string result = null;
+                using (LiteDatabase db = new LiteDatabase(ConnectionString))
                 {
-                    BsonDocument aa = bs.AsDocument;
-                    foreach (KeyValuePair<string, BsonValue> keyval in aa.RawValue)
+                    // SQL query needed here
+                    var resultdxs = db.Execute(query).ToArray();
+                    foreach (BsonValue bs in resultdxs)
                     {
-                        result = keyval.Value.RawValue.ToString();
+                        BsonDocument aa = bs.AsDocument;
+                        foreach (KeyValuePair<string, BsonValue> keyval in aa.RawValue)
+                        {
+                            result = keyval.Value.RawValue.ToString();
+                        }
                     }
                 }
+                return result;
             }
-            return result;
+            finally
+            {
+                LiteDBLock.Release();
+            }
         }
 
         public object GetResult(string query)
         {
-            object result = null;
-            using (LiteDatabase db = new LiteDatabase(ConnectionString))
+            try
             {
-                //SQL command needed here
-                
-                var resultdxs = db.Execute(query).ToArray();
-                foreach (BsonValue bs in resultdxs)
+                LiteDBLock.Wait();
+                object result = null;
+                using (LiteDatabase db = new LiteDatabase(ConnectionString))
                 {
-                    result = bs.RawValue;
+                    //SQL command needed here
+
+                    var resultdxs = db.Execute(query).ToArray();
+                    foreach (BsonValue bs in resultdxs)
+                    {
+                        result = bs.RawValue;
+                    }
                 }
+                return result;
+
             }
-            return result;
+            finally
+            {
+                LiteDBLock.Release();
+            }
         }
 
 
@@ -748,11 +852,19 @@ namespace GingerCoreNET.DataSource
                 dataTable.AcceptChanges();
             }
 
-            using (LiteDatabase db = new LiteDatabase(ConnectionString))
+            try
             {
-                dataTable.DefaultView.Sort = "GINGER_ID";
-                var table = db.GetCollection(dataTable.ToString());
-                SaveTable(dataTable , table);
+                LiteDBLock.Wait();
+                using (LiteDatabase db = new LiteDatabase(ConnectionString))
+                {
+                    dataTable.DefaultView.Sort = "GINGER_ID";
+                    var table = db.GetCollection(dataTable.ToString());
+                    SaveTable(dataTable, table);
+                }
+            }
+            finally
+            {
+                LiteDBLock.Release();
             }
         }
         private void SaveTable(DataTable dataTable, ILiteCollection<BsonDocument> table)
@@ -1147,25 +1259,34 @@ namespace GingerCoreNET.DataSource
 
         public void DeleteDBTableContents(string TName)
         {
-            using (LiteDatabase db = new LiteDatabase(ConnectionString))
+            try
             {
-                var table = db.GetCollection(TName);
-
-                List<string> ColumnList = GetColumnList(table.FindAll().ToList() , TName);
-                table.DeleteAll();
-                List<BsonDocument> batch = new List<BsonDocument>();
-
-                var doc = new BsonDocument();
-
-                for (int i = 0; i < ColumnList.Count; i++)
+                LiteDBLock.Wait();
+                using (LiteDatabase db = new LiteDatabase(ConnectionString))
                 {
-                    doc[ColumnList[i]] = "";
+                    var table = db.GetCollection(TName);
+
+                    List<string> ColumnList = GetColumnList(table.FindAll().ToList(), TName);
+                    table.DeleteAll();
+                    List<BsonDocument> batch = new List<BsonDocument>();
+
+                    var doc = new BsonDocument();
+
+                    for (int i = 0; i < ColumnList.Count; i++)
+                    {
+                        doc[ColumnList[i]] = "";
+                    }
+                    table.Insert(doc);
+
                 }
-                table.Insert(doc);
+
+                isDeleteAllExecuted = false;
+            }
+            finally
+            {
+                LiteDBLock.Release();
 
             }
-
-            isDeleteAllExecuted = false;
         }
 
         public override string AddColumnName(string colName)

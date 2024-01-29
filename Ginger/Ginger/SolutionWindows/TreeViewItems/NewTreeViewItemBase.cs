@@ -98,7 +98,9 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 if (!deleteWithoutAsking)
                 {
-                    if (Reporter.ToUser(eUserMsgKey.DeleteItem, repoItem.GetNameForFileName()) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    var result = Reporter.ToUser(eUserMsgKey.DeleteItem, repoItem.GetNameForFileName());
+                    // None = when user clicks on the cross button
+                    if ( result.Equals(eUserMsgSelection.No) || result.Equals(eUserMsgSelection.None))
                     {
                         return false;
                     }

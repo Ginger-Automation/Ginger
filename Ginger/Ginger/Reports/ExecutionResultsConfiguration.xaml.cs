@@ -232,6 +232,9 @@ namespace Ginger.Reports
             else
             {
                 xCentralExecutionLoggerGrid.Visibility = Visibility.Collapsed;
+                _selectedExecutionLoggerConfiguration.DeleteLocalDataOnPublish = ExecutionLoggerConfiguration.eDeleteLocalDataOnPublish.Yes;
+                _selectedExecutionLoggerConfiguration.CentralizedHtmlReportServiceURL = string.Empty;
+                _selectedExecutionLoggerConfiguration.CentralLoggerEndPointUrl = string.Empty;
             }
         }
 

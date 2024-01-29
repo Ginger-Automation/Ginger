@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run;
@@ -36,6 +37,9 @@ namespace GingerCore.Actions.WebServices
     public class ActWebAPIBase : Act, IActPluginPostRun
     {
         public override string ActionDescription { get { return "WebAPI Action"; } }
+
+        public override eImageType Image { get { return eImageType.Exchange; } }
+
         public override string ActionUserDescription { get { return "Performs REST/SOAP actions"; } }
         public override string ActionEditPage { get { return "WebServices.ActWebAPIEditPage"; } }
         public override bool ValueConfigsNeeded { get { return false; } }
