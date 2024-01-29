@@ -155,7 +155,7 @@ namespace Ginger.Run
             mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
             ExecutedFrom = executedFrom;
 
-            if (WorkSpace.Instance.Solution != null)
+            if (WorkSpace.Instance!=null && WorkSpace.Instance.Solution != null)
             {
                 WorkSpace.Instance.Solution.LoggerConfigurations.DataRepositoryChanged -= InitializeExecutionLogger;
                 WorkSpace.Instance.Solution.LoggerConfigurations.DataRepositoryChanged += InitializeExecutionLogger;

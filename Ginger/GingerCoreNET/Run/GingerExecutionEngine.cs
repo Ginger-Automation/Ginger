@@ -271,13 +271,13 @@ namespace Ginger.Run
             InitializeAccountReportExecutionLogger();
             InitializeSealightReportExecutionLogger();
 
-            if (WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
+            if (WorkSpace.Instance!=null && WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
                 WorkSpace.Instance.Solution.LoggerConfigurations.PublishToCentralizedDbChanged -= InitializeAccountReportExecutionLogger;
                 WorkSpace.Instance.Solution.LoggerConfigurations.PublishToCentralizedDbChanged += InitializeAccountReportExecutionLogger;
             }
 
-            if(WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.SealightsConfiguration!=null)
+            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.SealightsConfiguration!=null)
             {
                 WorkSpace.Instance.Solution.SealightsConfiguration.SealightsConfigChanged -= InitializeSealightReportExecutionLogger;
                 WorkSpace.Instance.Solution.SealightsConfiguration.SealightsConfigChanged += InitializeSealightReportExecutionLogger;
