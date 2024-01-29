@@ -10,7 +10,7 @@
         mc:Ignorable="d" 
         d:DesignHeight="750" d:DesignWidth="1500"
         Title="ActDiameterEditPage">
-    <Grid x:Name="xPageGrid" Background="{StaticResource $BackgroundColor_LightGray}" Grid.IsSharedSizeScope="True">
+    <Grid x:Name="xPageGrid" Grid.IsSharedSizeScope="True">
         <StackPanel>
             <Grid>
                 <Grid.ColumnDefinitions>

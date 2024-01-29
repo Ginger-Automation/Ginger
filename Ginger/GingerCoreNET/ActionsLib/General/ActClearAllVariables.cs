@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -25,6 +26,7 @@ namespace GingerCore.Actions
     public class ActClearAllVariables : ActWithoutDriver
     {
         public override string ActionDescription { get { return "Clear All " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Action"; } }
+        public override eImageType Image { get { return eImageType.Delete; } }
         public override string ActionUserDescription { get { return "Resets all " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " value"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
