@@ -462,8 +462,7 @@ namespace amdocs.ginger.GingerCoreNET
                 }
 
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Loading Solution file xml into object");
-                string txt = File.ReadAllText(solutionFile);
-                Solution solution = SolutionOperations.LoadSolution(txt,solutionFile, true, encryptionKey);
+                Solution solution = SolutionOperations.LoadSolution(solutionFile, true, encryptionKey);
                 SolutionOperations solutionOperations = new SolutionOperations(solution);
                 solution.SolutionOperations = solutionOperations;
 
