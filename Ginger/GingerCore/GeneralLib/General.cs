@@ -54,7 +54,7 @@ namespace GingerCore
     public class General
     {
         public static void LoadGenericWindow(ref GenericWindow genWindow, System.Windows.Window owner, eWindowShowStyle windowStyle, string windowTitle, Page windowPage,
-                                            ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset = false, UserControl loaderElement = null)
+                                            ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, bool startupLocationWithOffset = false, FrameworkElement loaderElement = null)
         {
             genWindow = null;
             eWindowShowStyle winStyle;
