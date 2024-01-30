@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
@@ -30,6 +31,7 @@ namespace GingerCore.Actions
     public class ActReadTextFile : ActWithoutDriver
     {
         public override string ActionDescription { get { return "Text File Operations"; } }
+        public override eImageType Image { get { return eImageType.File; } }
         public override string ActionUserDescription { get { return "Read/Write/Append on text file"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)

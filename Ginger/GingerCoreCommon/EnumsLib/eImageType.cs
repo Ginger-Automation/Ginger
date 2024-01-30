@@ -335,6 +335,7 @@ namespace Amdocs.Ginger.Common.Enums
         Bug,
         PlusSquare,
         DataTable,
+        Robot,
 
         #region Comparison Status Images
         Unchanged,
