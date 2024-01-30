@@ -156,9 +156,6 @@ namespace Ginger.Reports
             {
                 if (name == "CentralizedHtmlReportServiceURL" && !string.IsNullOrEmpty(value) )
                 {
-                    /*                    GingerCoreCommonWorkSpace.Instance.Solution.
-                                            ExecutionLoggerConfigurationSetList.FirstOrDefault((executionLogger)=>executionLogger.IsSelected).CentralizedHtmlReportServiceURL = value;
-                    */
                     CentralizedHTMLURL = value;    
                     return true;
                 }
