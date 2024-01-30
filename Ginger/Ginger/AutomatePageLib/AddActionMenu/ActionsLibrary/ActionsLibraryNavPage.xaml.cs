@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages;
@@ -182,7 +183,18 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     else
                     {
-                        platformActions.Add(cA);
+                        if(cA is ActAccessibilityTesting)
+                        {
+                            if(WorkSpace.Instance.BetaFeatures.ShowAccessibilityTesting)
+                            {
+                                platformActions.Add(cA);
+                            }
+                        }
+                        else
+                        {
+                            platformActions.Add(cA);
+                        }
+                        
                     }
                 }
             }
@@ -203,7 +215,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mActionsListHelper.ListView = ucListView;
 
 
-            WeakEventManager<UcListView, EventArgs>.AddHandler(source: ucListView, eventName: nameof(UcListView.ItemMouseDoubleClick), handler: ActionsListViewItem_MouseDoubleClick);
+            ucListView.ItemMouseDoubleClick += ActionsListViewItem_MouseDoubleClick;
         }
 
         private void SetActionsListViewData(UcListView ucListView, ObservableList<Act> dataSource)

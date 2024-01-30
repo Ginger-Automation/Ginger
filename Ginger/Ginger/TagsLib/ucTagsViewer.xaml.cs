@@ -60,7 +60,7 @@ namespace Ginger
 
         private void BaseInit(ObservableList<RepositoryItemTag> fullTagsList = null)
         {
-            if (WorkSpace.Instance.Solution == null)
+            if (WorkSpace.Instance == null || WorkSpace.Instance.Solution == null)
             {
                 return;
             }
