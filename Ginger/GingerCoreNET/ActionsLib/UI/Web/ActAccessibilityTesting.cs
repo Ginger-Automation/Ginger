@@ -132,13 +132,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
         public enum eTags
         {
-            [EnumValueDescription("wcag2a")]
+            [EnumValueDescription("WCAG 2.0 Level A")]
             wcag2a,
-            [EnumValueDescription("wcag2aa")]
+            [EnumValueDescription("WCAG 2.0 Level AA")]
             wcag2aa,
-            [EnumValueDescription("wcag21a")]
+            [EnumValueDescription("WCAG 2.1 Level A")]
             wcag21a,
-            [EnumValueDescription("wcag21aa")]
+            [EnumValueDescription("WCAG 2.1 Level AA")]
             wcag21aa,
         }
 
