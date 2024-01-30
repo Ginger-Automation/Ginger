@@ -2689,7 +2689,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
             string filename = Path.GetTempFileName();
-            ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
+            ss.SaveAsFile(filename);
             return new System.Drawing.Bitmap(filename);
         }
 
