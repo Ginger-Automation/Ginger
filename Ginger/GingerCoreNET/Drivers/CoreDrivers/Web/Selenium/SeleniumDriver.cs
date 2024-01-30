@@ -1578,7 +1578,6 @@ namespace GingerCore.Drivers
             {
                axeBuilder = CreateAxeBuilder(act);
 
-
                 AxeResult axeResult = null;
 
                 if ((act.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
@@ -1593,7 +1592,7 @@ namespace GingerCore.Drivers
             }
             catch(Exception ex)
             {
-                act.Error = "Error: during accessibility testing:" + ex.InnerException;
+                act.Error = "Error: during accessibility testing:" + ex.Message;
                 Reporter.ToLog(eLogLevel.ERROR, "Error: during accessibility testing", ex);
                 return;
             }
