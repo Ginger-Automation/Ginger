@@ -1593,7 +1593,8 @@ namespace GingerCore.Drivers
             }
             catch(Exception ex)
             {
-                act.Error = "Error: Provided URL is empty. Please provide valid URL." + ex.InnerException;
+                act.Error = "Error: during accessibility testing:" + ex.InnerException;
+                Reporter.ToLog(eLogLevel.ERROR, "Error: during accessibility testing", ex);
                 return;
             }
                
