@@ -55,7 +55,7 @@ namespace Ginger
         private bool OwnerWindowClosing = false;
 
         public GenericWindow(Window Owner, eWindowShowStyle windowStyle, string windowTitle,
-                                Page windowPage, ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, UserControl loaderElement = null)
+                                Page windowPage, ObservableList<Button> windowBtnsList = null, bool showClosebtn = true, string closeBtnText = "Close", RoutedEventHandler closeEventHandler = null, FrameworkElement loaderElement = null)
         {
             InitializeComponent();
             this.Owner = Owner;
