@@ -35,6 +35,7 @@ using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.Common;
 using GingerCore.Activities;
 using GingerCore.Platforms;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.UserControlsLib
 {
@@ -48,6 +49,11 @@ namespace Ginger.UserControlsLib
         {
             InitializeComponent();
             _nodeList = new ObservableCollection<Node>();
+            if (ConsumerSource != null)
+            {
+                ConsumerSource.CollectionChanged += ConsumerSource_CollectionChanged;
+            }
+            SetText();
         }
 
         #region Dependency Properties
@@ -99,12 +105,31 @@ namespace Ginger.UserControlsLib
         #endregion
 
         #region Events
+
         private static void OnConsumerSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ConsumerComboBox control = (ConsumerComboBox)d;
             control.DisplayInConsumer();
             control.SelectNodes();
             control.SetSelectedConsumer();
+
+            if (e.OldValue != null && e.OldValue is ObservableList<Consumer> oldConsumerSource)
+            {
+                oldConsumerSource.CollectionChanged -= control.ConsumerSource_CollectionChanged;
+            }
+
+            if (control.ConsumerSource != null)
+            {
+                
+                control.ConsumerSource.CollectionChanged += control.ConsumerSource_CollectionChanged;
+            }
+        }
+
+        private void ConsumerSource_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            DisplayInConsumer();
+            SelectNodes();
+            SetSelectedConsumer();
         }
 
         private static void OnSelectedConsumerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -157,17 +182,24 @@ namespace Ginger.UserControlsLib
 
         private void SetSelectedConsumer()
         {
+            if (SelectedConsumer == null)
+            {
+                return;
+            }
+
             ObservableList<Consumer> temp = new ObservableList<Consumer>();
             foreach (Node node in _nodeList)
             {
-               
-                    if (node.IsSelected)
-                    {
-                       temp.Add(node.Consumer);
-                    }
-                
+                if (node.IsSelected)
+                {
+                    temp.Add(node.Consumer);
+                }
             }
-            SelectedConsumer = new ObservableList<Consumer>(temp);
+            SelectedConsumer.ClearAll();
+            foreach (Consumer consumer in temp)
+            {
+                SelectedConsumer.Add(consumer);
+            }
         }
 
         private void DisplayInConsumer()
@@ -187,13 +219,14 @@ namespace Ginger.UserControlsLib
             if (this.SelectedConsumer != null)
             {
                 StringBuilder displayText = new StringBuilder();
-                foreach (Node s in _nodeList)
+                foreach (Consumer consumer in SelectedConsumer)
                 {
-                     if (s.IsSelected)
+                    if (consumer.Name == null)
                     {
-                        displayText.Append(s.Title);
-                        displayText.Append(',');
+                        consumer.Name = GetConsumerName(consumer.ConsumerGuid);
                     }
+                    displayText.Append(consumer.Name);
+                    displayText.Append(',');
                 }
                 Text = displayText.ToString().TrimEnd(',');
             }
@@ -202,6 +235,17 @@ namespace Ginger.UserControlsLib
             {
                 Text = DefaultText;
             }
+        }
+
+        private string? GetConsumerName(Guid consumerGuid)
+        {
+            return 
+                WorkSpace
+                .Instance
+                .Solution
+                .GetSolutionTargetApplications()
+                .FirstOrDefault(targetApp => targetApp.Guid == consumerGuid)
+                ?.Name;
         }
 
 
