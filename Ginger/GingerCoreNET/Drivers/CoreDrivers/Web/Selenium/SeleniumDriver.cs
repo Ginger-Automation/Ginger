@@ -1552,7 +1552,7 @@ namespace GingerCore.Drivers
             IWebElement e = null;
             if ((act.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
             {
-                if (act.LocateBy != eLocateBy.NA )
+                if (!string.IsNullOrEmpty(act.LocateValueCalculated) && act.LocateBy != eLocateBy.NA )
                 {
                     e = LocateElement(act);
                         if (e == null)
