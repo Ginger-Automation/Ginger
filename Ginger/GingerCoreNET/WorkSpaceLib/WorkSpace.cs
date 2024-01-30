@@ -525,7 +525,6 @@ namespace amdocs.ginger.GingerCoreNET
                 BusinessFlow.SolutionVariables = solution.Variables;
                 solution.SolutionOperations.SetReportsConfigurations();
                 Solution = solution;
-                SolutionOperations.DeserializeSolution(txt);
                 UserProfile.UserProfileOperations.LoadRecentAppAgentMapping();
 
                 if (!RunningInExecutionMode)
