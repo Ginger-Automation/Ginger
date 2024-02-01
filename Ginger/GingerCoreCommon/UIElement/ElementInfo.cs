@@ -545,6 +545,10 @@ namespace Amdocs.Ginger.Common.UIElement
 
             return eImageType.Element;
         }
+        public static bool CheckIfParentNodeExists(ElementInfo elementInfo)
+        {
+            return elementInfo != null && elementInfo.ParentContext != null;
+        }
     }
 
     public enum eLocateBy
@@ -702,5 +706,4 @@ namespace Amdocs.Ginger.Common.UIElement
         [EnumValueDescription("Near")]
         near
     }
-
 }

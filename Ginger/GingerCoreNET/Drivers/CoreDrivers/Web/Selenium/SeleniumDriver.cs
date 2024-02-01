@@ -3836,7 +3836,7 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-                    elem = LocateElementByLocator(locator, friendlyLocatorElementlist, true);
+                    elem = LocateElementByLocator(locator, friendlyLocatorElementlist, true, currentPOMElementInfo);
                 }
 
                 if (elem != null)
@@ -3854,8 +3854,13 @@ namespace GingerCore.Drivers
             return elem;
         }
 
+        public IWebElement FindElement(By by , ElementInfo elementInfo)
+        {
+            ISearchContext searchContext = ElementInfo.CheckIfParentNodeExists(elementInfo) ? (ISearchContext)elementInfo.ParentContext : Driver;
+            return searchContext.FindElement(by);
+        }
 
-        public IWebElement LocateElementByLocator(ElementLocator locator, List<FriendlyLocatorElement> friendlyLocatorElements = null, bool AlwaysReturn = true)
+        public IWebElement LocateElementByLocator(ElementLocator locator, List<FriendlyLocatorElement> friendlyLocatorElements = null, bool AlwaysReturn = true , ElementInfo elementInfo = null)
         {
             IWebElement elem = null;
             locator.StatusError = "";
@@ -3920,7 +3925,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            elem = Driver.FindElement(By.Id(locator.LocateValue));
+                            elem = FindElement(By.Id(locator.LocateValue) , elementInfo);
                         }
                     }
 
@@ -3941,7 +3946,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            elem = Driver.FindElement(By.Name(locator.LocateValue));
+                            elem = FindElement(By.Name(locator.LocateValue) , elementInfo);
                         }
                     }
 
@@ -4049,7 +4054,7 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        elem = Driver.FindElement(By.XPath(locator.LocateValue));
+                        elem = FindElement(By.XPath(locator.LocateValue) , elementInfo);
                     }
                 }
 
