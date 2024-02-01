@@ -35,7 +35,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             var runSetReports = new List<RunSetReport>();
             var baseURI = GetReportDataServiceUrl();
-            if (!string.IsNullOrEmpty(baseURI))
+            if (!string.IsNullOrEmpty(baseURI) && WorkSpace.Instance.Solution.LoggerConfigurations.PublishLogToCentralDB == ExecutionLoggerConfiguration.ePublishToCentralDB.Yes)
             {
                 using (var httpClient = new HttpClient())
                 {
@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.CoreNET
                     var response = httpClient.GetAsync(endpoint).Result;
                     if (!response.IsSuccessStatusCode)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                        Reporter.ToLog(eLogLevel.INFO, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
                     }
                     else
                     {
@@ -66,7 +66,7 @@ namespace Amdocs.Ginger.CoreNET
                     var response = httpClient.GetAsync(endpoint).Result;
                     if (!response.IsSuccessStatusCode)
                     {
-                        Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetRunsetExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                        Reporter.ToLog(eLogLevel.INFO, "Error occurred during GetRunsetExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
                     }
                     else
                     {
