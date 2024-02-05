@@ -155,6 +155,7 @@ namespace Ginger.UserControlsLib
 
         private void ConsumerGrid_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            //to handle click of entire ComboBox item we also intercept Grid MouseUp event
             Grid grid = (Grid)sender;
             CheckBox checkBox = (CheckBox)grid.Children[0];
             if (checkBox.IsChecked == null)
