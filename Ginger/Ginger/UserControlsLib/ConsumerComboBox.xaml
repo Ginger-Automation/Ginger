@@ -18,10 +18,24 @@
         IsSynchronizedWithCurrentItem="True" Style="{StaticResource $FlatInputComboBoxStyle}">
         <ComboBox.ItemTemplate>
             <DataTemplate>
-                <CheckBox Content="{Binding Title}"
-                    IsChecked="{Binding Path=IsSelected, Mode=TwoWay}"
-                    Tag="{RelativeSource FindAncestor, AncestorType={x:Type ComboBox}}"
-                    Click="ConsumerCheckBox_Click" />
+                <Grid
+                    MouseUp="ConsumerGrid_MouseUp">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition
+                            Width="Auto" />
+                        <ColumnDefinition
+                            Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <CheckBox
+                        Grid.Column="0"
+                        IsChecked="{Binding Path=IsSelected, Mode=TwoWay}"
+                        Tag="{RelativeSource FindAncestor, AncestorType={x:Type ComboBox}}"
+                        Checked="CheckBox_CheckedUnchecked"
+                        Unchecked="CheckBox_CheckedUnchecked"/>
+                    <TextBlock
+                        Grid.Column="1"
+                        Text="{Binding Title}"/>
+                </Grid>
             </DataTemplate>
         </ComboBox.ItemTemplate>
         <ComboBox.ItemContainerStyle>

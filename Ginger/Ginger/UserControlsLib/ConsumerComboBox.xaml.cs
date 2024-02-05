@@ -37,6 +37,8 @@ using GingerCore.Activities;
 using GingerCore.Platforms;
 using amdocs.ginger.GingerCoreNET;
 using System.Collections.Specialized;
+using Windows.ApplicationModel.Chat;
+using System.Security.Cryptography;
 
 namespace Ginger.UserControlsLib
 {
@@ -152,16 +154,26 @@ namespace Ginger.UserControlsLib
             }
         }
 
-        private void ConsumerCheckBox_Click(object sender, RoutedEventArgs e)
+        private void ConsumerGrid_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            CheckBox clickedBox = (CheckBox)sender;
+            Grid grid = (Grid)sender;
+            CheckBox checkBox = (CheckBox)grid.Children[0];
+            if (checkBox.IsChecked == null)
+                return;
 
+            bool isChecked = (bool)checkBox.IsChecked;
+            checkBox.IsChecked = !isChecked;
+            if (isChecked)
+                checkBox.RaiseEvent(new RoutedEventArgs(CheckBox.UncheckedEvent));
+            else
+                checkBox.RaiseEvent(new RoutedEventArgs(CheckBox.CheckedEvent));
+            e.Handled = true;
+        }
 
-
-
+        private void CheckBox_CheckedUnchecked(object sender, RoutedEventArgs e)
+        {
             SetSelectedConsumer();
             SetText();
-
         }
         #endregion
 
