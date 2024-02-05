@@ -36,6 +36,7 @@ using Amdocs.Ginger.Common;
 using GingerCore.Activities;
 using GingerCore.Platforms;
 using amdocs.ginger.GingerCoreNET;
+using System.Collections.Specialized;
 
 namespace Ginger.UserControlsLib
 {
@@ -51,7 +52,8 @@ namespace Ginger.UserControlsLib
             _nodeList = new ObservableCollection<Node>();
             if (ConsumerSource != null)
             {
-                ConsumerSource.CollectionChanged += ConsumerSource_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(ConsumerSource, ConsumerSource_CollectionChanged);
+                CollectionChangedEventManager.AddHandler(ConsumerSource, ConsumerSource_CollectionChanged);
             }
             SetText();
         }
@@ -115,13 +117,13 @@ namespace Ginger.UserControlsLib
 
             if (e.OldValue != null && e.OldValue is ObservableList<Consumer> oldConsumerSource)
             {
-                oldConsumerSource.CollectionChanged -= control.ConsumerSource_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(oldConsumerSource, control.ConsumerSource_CollectionChanged);
             }
 
             if (control.ConsumerSource != null)
             {
-                
-                control.ConsumerSource.CollectionChanged += control.ConsumerSource_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(control.ConsumerSource, control.ConsumerSource_CollectionChanged);
+                CollectionChangedEventManager.AddHandler(control.ConsumerSource, control.ConsumerSource_CollectionChanged);
             }
         }
 
@@ -140,10 +142,10 @@ namespace Ginger.UserControlsLib
         }
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         public void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            PropertyChangedEventHandler? handler = PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
@@ -154,9 +156,9 @@ namespace Ginger.UserControlsLib
         {
             CheckBox clickedBox = (CheckBox)sender;
 
-               
-                
-            
+
+
+
             SetSelectedConsumer();
             SetText();
 

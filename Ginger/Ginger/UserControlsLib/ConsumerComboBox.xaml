@@ -19,11 +19,19 @@
         <ComboBox.ItemTemplate>
             <DataTemplate>
                 <CheckBox Content="{Binding Title}"
-                          IsChecked="{Binding Path=IsSelected, Mode=TwoWay}"
-                          Tag="{RelativeSource FindAncestor, AncestorType={x:Type ComboBox}}"
-                           Click="ConsumerCheckBox_Click" />
+                    IsChecked="{Binding Path=IsSelected, Mode=TwoWay}"
+                    Tag="{RelativeSource FindAncestor, AncestorType={x:Type ComboBox}}"
+                    Click="ConsumerCheckBox_Click" />
             </DataTemplate>
         </ComboBox.ItemTemplate>
+        <ComboBox.ItemContainerStyle>
+            <Style
+                TargetType="{x:Type ComboBoxItem}">
+                <Setter
+                    Property="HorizontalContentAlignment"
+                    Value="Stretch" />
+            </Style>
+        </ComboBox.ItemContainerStyle>
         <ComboBox.Template>
             <ControlTemplate TargetType="ComboBox">
                 <Grid>
