@@ -54,7 +54,6 @@ namespace Ginger.UserControlsLib
             _nodeList = new ObservableCollection<Node>();
             if (ConsumerSource != null)
             {
-                CollectionChangedEventManager.RemoveHandler(ConsumerSource, ConsumerSource_CollectionChanged);
                 CollectionChangedEventManager.AddHandler(ConsumerSource, ConsumerSource_CollectionChanged);
             }
             SetText();
