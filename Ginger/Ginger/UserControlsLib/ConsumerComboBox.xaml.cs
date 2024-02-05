@@ -167,6 +167,8 @@ namespace Ginger.UserControlsLib
                 checkBox.RaiseEvent(new RoutedEventArgs(CheckBox.UncheckedEvent));
             else
                 checkBox.RaiseEvent(new RoutedEventArgs(CheckBox.CheckedEvent));
+
+            //prevent ComboBox dropdown from closing after clicking an item
             e.Handled = true;
         }
 
