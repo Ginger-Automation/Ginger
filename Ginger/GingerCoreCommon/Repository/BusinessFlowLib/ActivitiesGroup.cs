@@ -521,5 +521,12 @@ namespace GingerCore.Activities
             }
         }
 
+        public static explicit operator ActivitiesGroup(string v)
+        {
+            ActivitiesGroup mactivitiesGroup = new ActivitiesGroup();
+            mactivitiesGroup.Name = v;
+            return mactivitiesGroup;
+
+        }
     }
 }
