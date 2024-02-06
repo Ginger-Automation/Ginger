@@ -27,6 +27,7 @@ using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
+using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Deque.AxeCore.Commons;
@@ -289,6 +290,7 @@ namespace GingerCore.Drivers
 
 
         protected IWebDriver Driver;
+        protected Agent Agent;
 
         protected eBrowserType mBrowserTpe;
         protected NgWebDriver ngDriver;
@@ -348,6 +350,7 @@ namespace GingerCore.Drivers
 
         public override void InitDriver(Agent agent)
         {
+            this.Agent = agent;
             if (agent.DriverType == Agent.eDriverType.SeleniumRemoteWebDriver)
             {
                 if (agent.DriverConfiguration == null)
@@ -364,6 +367,11 @@ namespace GingerCore.Drivers
         public IWebDriver GetWebDriver()
         {
             return Driver;
+        }
+
+        public Agent GetAgent()
+        {
+            return Agent;
         }
 
         public eBrowserType GetBrowserType()
@@ -7934,7 +7942,10 @@ namespace GingerCore.Drivers
                         CloseAllTabsExceptOne(act);
                         break;
                     case ActBrowserElement.eControlAction.CloseAll:
-                        Driver.Quit();
+                        await System.Threading.Tasks.Task.Run(() =>
+                        {
+                            Agent.AgentOperations.Close();
+                        });
                         break;
                     case ActBrowserElement.eControlAction.GetBrowserLog:
 
