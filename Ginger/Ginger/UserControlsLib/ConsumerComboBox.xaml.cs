@@ -159,14 +159,20 @@ namespace Ginger.UserControlsLib
             Grid grid = (Grid)sender;
             CheckBox checkBox = (CheckBox)grid.Children[0];
             if (checkBox.IsChecked == null)
+            {
                 return;
+            }
 
             bool isChecked = (bool)checkBox.IsChecked;
             checkBox.IsChecked = !isChecked;
             if (isChecked)
+            {
                 checkBox.RaiseEvent(new RoutedEventArgs(CheckBox.UncheckedEvent));
+            }
             else
+            {
                 checkBox.RaiseEvent(new RoutedEventArgs(CheckBox.CheckedEvent));
+            }
 
             //prevent ComboBox dropdown from closing after clicking an item
             e.Handled = true;
