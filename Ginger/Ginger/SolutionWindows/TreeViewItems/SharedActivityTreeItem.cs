@@ -93,7 +93,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                 TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
 
-                TreeViewUtils.AddMenuItem(mContextMenu, "Publish To " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), ShowErrorHandlerPublishInfo, null, eImageType.Link);
+                TreeViewUtils.AddMenuItem(mContextMenu, "Publish To " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), ShowErrorHandlerPublishInfo, null, eImageType.Link);
 
                 AddSourceControlOptions(mContextMenu);
             }
