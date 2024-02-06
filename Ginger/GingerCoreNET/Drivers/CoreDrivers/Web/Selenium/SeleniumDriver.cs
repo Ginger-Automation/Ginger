@@ -64,6 +64,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -87,9 +88,6 @@ namespace GingerCore.Drivers
         private const string CHROME_DRIVER_NAME = "chromedriver";
         private const string EDGE_DRIVER_NAME = "msedgedriver";
         private const string FIREFOX_DRIVER_NAME = "geckodriver";
-
-        private readonly Stack<string> XPathBeforeShadowRoot = new ();
-        private readonly Stack<string> XPathAfterShadowRoot = new();
         public enum eBrowserType
         {
             IE,
@@ -3746,7 +3744,7 @@ namespace GingerCore.Drivers
                 ElementLocator locator = new ElementLocator();
                 locator.LocateBy = locateBy;
                 locator.LocateValue = locateValue;
-                elem = LocateElementByLocator(locator, null, AlwaysReturn);
+                elem = LocateElementByLocator(locator,null, null, AlwaysReturn);
                 if (elem == null)
                 {
                     act.ExInfo += string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
@@ -3817,7 +3815,7 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            targetElement = LocateElementByLocator(FLocator);
+                            targetElement = LocateElementByLocator(FLocator, (HTMLElementInfo) currentPOMElementInfo);
                         }
                         if (targetElement != null)
                         {
@@ -3836,7 +3834,7 @@ namespace GingerCore.Drivers
                 }
                 else
                 {
-                    elem = LocateElementByLocator(locator, friendlyLocatorElementlist, true, currentPOMElementInfo);
+                    elem = LocateElementByLocator(locator, currentPOMElementInfo, friendlyLocatorElementlist, true);
                 }
 
                 if (elem != null)
@@ -3854,13 +3852,7 @@ namespace GingerCore.Drivers
             return elem;
         }
 
-        public IWebElement FindElement(By by , ElementInfo elementInfo)
-        {
-            ISearchContext searchContext = ElementInfo.CheckIfParentNodeExists(elementInfo) ? (ISearchContext)elementInfo.ParentContext : Driver;
-            return searchContext.FindElement(by);
-        }
-
-        public IWebElement LocateElementByLocator(ElementLocator locator, List<FriendlyLocatorElement> friendlyLocatorElements = null, bool AlwaysReturn = true , ElementInfo elementInfo = null)
+        public IWebElement LocateElementByLocator(ElementLocator locator, ElementInfo elementInfo = null, List<FriendlyLocatorElement> friendlyLocatorElements = null, bool AlwaysReturn = true)
         {
             IWebElement elem = null;
             locator.StatusError = "";
@@ -3925,7 +3917,8 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            elem = FindElement(By.Id(locator.LocateValue) , elementInfo);
+                            //elem = Driver.FindElement(By.Id(locator.LocateValue));
+                            elem = SearchElementsFromDOM.FindElement(elementInfo?.XPath ?? locator.LocateValue, Driver, By.Id(locator.LocateValue));
                         }
                     }
 
@@ -3946,7 +3939,8 @@ namespace GingerCore.Drivers
                         }
                         else
                         {
-                            elem = FindElement(By.Name(locator.LocateValue) , elementInfo);
+                            // elem = Driver.FindElement(By.Name(locator.LocateValue));
+                            elem = SearchElementsFromDOM.FindElement(elementInfo?.XPath ?? locator.LocateValue, Driver, By.Name(locator.LocateValue));
                         }
                     }
 
@@ -4054,7 +4048,7 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        elem = FindElement(By.XPath(locator.LocateValue) , elementInfo);
+                        elem = SearchElementsFromDOM.FindElement(elementInfo?.XPath ?? locator.LocateValue, Driver, By.XPath(locator.LocateValue));
                     }
                 }
 
@@ -4135,7 +4129,7 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        elem = Driver.FindElement(By.TagName(locator.LocateValue));
+                        elem = SearchElementsFromDOM.FindElement(elementInfo?.XPath ?? locator.LocateValue, Driver, By.TagName(locator.LocateValue));
                     }
 
                 }
@@ -4629,7 +4623,7 @@ namespace GingerCore.Drivers
                     List<ElementInfo> list = new List<ElementInfo>();
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    list = General.ConvertObservableListToList<ElementInfo>(detectDOMElements.GetAllElementsFromPage("", pomSetting, foundElementsList, PomMetaData));
+                    list = General.ConvertObservableListToList<ElementInfo>(detectDOMElements.FindAllElementsFromPOM("", pomSetting, foundElementsList, PomMetaData));
                     for (int i = 0; i < list.Count; i++)
                     {
                         ElementInfo elementInfo = list[i];
@@ -4987,11 +4981,11 @@ namespace GingerCore.Drivers
             {
                 if (string.IsNullOrWhiteSpace(EI.Path) || (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe")))
                 {
-                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, string.Empty);
+                    EI.XPath = GenerateXpathForIWebElement((HTMLElementInfo)EI, string.Empty);
                 }
                 else
                 {
-                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
+                    EI.XPath = GenerateXpathForIWebElement((HTMLElementInfo)EI, EI.Path);
                 }
             }
 
@@ -5011,40 +5005,6 @@ namespace GingerCore.Drivers
 
             return EI;
         }
-
-        //private HTMLElementInfo GetElementInfoWithIWebElement(IWebElement el, HtmlNode elNode, string path, bool setFullElementInfoDetails = false)
-        //{
-        //    HTMLElementInfo EI = new HTMLElementInfo();
-        //    EI.WindowExplorer = this;
-        //    EI.ElementTitle = GenerateElementTitle(el);
-        //    EI.ID = GenerateElementID(el);
-        //    EI.Value = GenerateElementValue(el);
-        //    EI.Name = GenerateElementName(el);
-        //    EI.ElementType = GenerateElementType(el);
-        //    EI.ElementTypeEnum = GetElementTypeEnum(el).Item2;
-        //    EI.Path = path;
-        //    if (elNode != null)
-        //    {
-        //        EI.XPath = elNode.XPath;
-        //    }
-        //    else
-        //    {
-        //        EI.XPath = string.Empty;
-        //    }
-        //    EI.ElementObject = el;
-        //    EI.HTMLElementObject = elNode;
-
-        //    if (setFullElementInfoDetails)
-        //    {
-        //        EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
-        //        EI.ElementName = GetElementName(EI);
-        //        EI.Locators = ((IWindowExplorer)this).GetElementLocators(EI);
-        //        ((IWindowExplorer)this).UpdateElementInfoFields(EI);
-        //        EI.Properties = ((IWindowExplorer)this).GetElementProperties(EI);
-        //    }
-
-        //    return EI;
-        //}
 
         string GetElementName(HTMLElementInfo EI)
         {
@@ -5127,7 +5087,6 @@ namespace GingerCore.Drivers
 
         private ElementInfo GetElementInfoWithIWebElementWithXpath(IWebElement el, string path)
         {
-            string xPath = GenerateXpathForIWebElement(el, "");
             HTMLElementInfo EI = new HTMLElementInfo();
             EI.ElementTitle = GenerateElementTitle(el);
             EI.WindowExplorer = this;
@@ -5137,8 +5096,8 @@ namespace GingerCore.Drivers
             EI.ElementType = GenerateElementType(el);
             EI.ElementTypeEnum = GetElementTypeEnum(el).Item2;
             EI.Path = path;
-            EI.XPath = xPath;
             EI.ElementObject = el;
+            EI.XPath = GenerateXpathForIWebElement(EI, "");
             return EI;
         }
 
@@ -5595,10 +5554,9 @@ namespace GingerCore.Drivers
 
         void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
         {
-
+            
             HighlightElement(ElementInfo, locateElementByItLocators);
         }
-
 
 
         private void HighlightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
@@ -5628,7 +5586,7 @@ namespace GingerCore.Drivers
                 {
                     if (string.IsNullOrEmpty(ElementInfo.XPath))
                     {
-                        ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                        ElementInfo.XPath = GenerateXpathForIWebElement((HTMLElementInfo)ElementInfo, "");
                     }
                     if (ElementInfo is HTMLElementInfo && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).RelXpath))
                     {
@@ -5636,7 +5594,8 @@ namespace GingerCore.Drivers
                     }
                     if (!string.IsNullOrEmpty(ElementInfo.XPath))
                     {
-                        ElementInfo.ElementObject = ((ISearchContext)ElementInfo.ParentContext).FindElement(By.XPath(ElementInfo.XPath));
+                        // ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                        ElementInfo.ElementObject = SearchElementsFromDOM.FindElement(ElementInfo.XPath, Driver, By.XPath(ElementInfo.XPath));
                     }
                 }
                 if ((IWebElement)ElementInfo.ElementObject == null)
@@ -5660,30 +5619,6 @@ namespace GingerCore.Drivers
                 Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
             }
 
-            int GetElementPosition(string xpath)
-            {
-                string[] individualPaths = xpath.Split('/');
-                if (individualPaths.Length < 2) return -1;
-                string firstPath = individualPaths[1];
-                int startIndex = firstPath.IndexOf('[');
-                int lastIndex = firstPath.IndexOf(']');
-
-                return Int32.Parse(firstPath.Substring(startIndex+1 , (lastIndex - startIndex)-1)) - 1;
-            }
-
-            string GetXpathForChildShadowRoot(string xpath)
-            {
-                string[] individualPaths = xpath.Split('/');
-                if (individualPaths.Length < 3)
-                {
-                    return string.Empty;
-                }
-
-                string firstXpath = individualPaths[1];
-                int lastIndex = firstXpath.Length;
-
-                return xpath.Substring(lastIndex+2);
-            }
         }
 
 
@@ -5733,7 +5668,7 @@ namespace GingerCore.Drivers
                 {
                     if (string.IsNullOrEmpty(ElementInfo.XPath))
                     {
-                        ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                        ElementInfo.XPath = GenerateXpathForIWebElement((HTMLElementInfo)ElementInfo, "");
                     }
 
                     el = Driver.FindElement(By.XPath(ElementInfo.XPath));
@@ -5882,7 +5817,7 @@ namespace GingerCore.Drivers
 
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
-            IWebElement e = Driver.FindElement(By.XPath(ElementInfo.XPath));
+            IWebElement e = SearchElementsFromDOM.FindElement(ElementInfo.XPath,Driver,By.XPath(ElementInfo.XPath));
             if (e.TagName == "select")  // combo box
             {
                 return GetComboValues(ElementInfo);
@@ -6277,7 +6212,7 @@ namespace GingerCore.Drivers
                 if (el.TagName == "iframe" || el.TagName == "frame")
                 {
                     foundElemntInfo.Path = string.Empty;
-                    foundElemntInfo.XPath = GenerateXpathForIWebElement(el, "");
+                    foundElemntInfo.XPath = GenerateXpathForIWebElement(foundElemntInfo, "");
                     return GetElementFromIframe(foundElemntInfo);
                 }
                 return foundElemntInfo;
@@ -6362,7 +6297,7 @@ namespace GingerCore.Drivers
                     Driver.SwitchTo().DefaultContent();
                 }
 
-                foundElemntInfo.XPath = GenerateXpathForIWebElement(elInsideIframe, "");
+                foundElemntInfo.XPath = GenerateXpathForIWebElement(foundElemntInfo, "");
                 return GetElementFromIframe(foundElemntInfo);
             }
 
@@ -6386,78 +6321,16 @@ namespace GingerCore.Drivers
         //    EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
         //    return EI;
         //}
-
-        public string GenerateXpathForIWebElement(ISearchContext IWE, string current)
+        public string GenerateXpathForIWebElement(HTMLElementInfo ElementInfo , string currentXpath)
         {
-            string tagName = string.Empty;
-            ReadOnlyCollection<IWebElement> childrenElements =  null;
-            ISearchContext parentElement = null;
-
-            if (IWE is IWebElement)
+            StringBuilder XPathsForDetectedShadowElement = new ();
+            string NonShadowDOMXpath = RenderXPath.GenerateXPathForDOMElement((ISearchContext)ElementInfo.ElementObject, Driver, currentXpath, XPathsForDetectedShadowElement, mBrowserTpe == eBrowserType.FireFox);
+            if(XPathsForDetectedShadowElement.Length == 0)
             {
-                tagName = ((IWebElement)IWE).TagName;
-                if (tagName.Equals("html"))
-                {
-                    return "/" + tagName + "[1]" + current;
-                }
-                parentElement = (ISearchContext)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].parentNode", IWE);
-                if(parentElement is ShadowRoot)
-                {
-                    childrenElements = parentElement.FindElements(By.CssSelector(tagName));
-                }
-                else
-                {
-                    childrenElements = parentElement.FindElements(By.XPath("./" + tagName));
-                }
-
-            }
-            else if(IWE is ShadowRoot)
-            {
-                parentElement = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].host", IWE);
-                XPathAfterShadowRoot.Push(current);
-                string xpathBeforeCurrentShadowRoot =  GenerateXpathForIWebElement(parentElement, current);
-                XPathBeforeShadowRoot.Push(xpathBeforeCurrentShadowRoot[..xpathBeforeCurrentShadowRoot.IndexOf(current)]);
-                return xpathBeforeCurrentShadowRoot;
+                return NonShadowDOMXpath;
             }
 
-
-            int count = 1;
-            foreach (IWebElement childElement in childrenElements)
-            {
-                try
-                {
-                    if (IWE.Equals(childElement))
-                    {
-                        string resultXPath = string.Empty;
-                        if (string.IsNullOrEmpty(tagName))
-                        {
-                            resultXPath = current;
-                        }
-                        else
-                        {
-                            resultXPath = "/" + tagName + "[" + count + "]" + current;
-                        }
-                        return GenerateXpathForIWebElement(parentElement, resultXPath);
-                    }
-                    else
-                    {
-                        count++;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (mBrowserTpe == eBrowserType.FireFox && ex.Message != null && ex.Message.Contains("did not match a known command"))
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        throw ex;
-                    }
-                }
-
-            }
-            return current;
+            return XPathsForDetectedShadowElement.ToString();
         }
 
         public async Task<string> GenerateXpathForIWebElementAsync(IWebElement IWE, string current)
@@ -8791,7 +8664,7 @@ namespace GingerCore.Drivers
                         elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
                         elemInfo.ElementObject = ele;
                         elemInfo.Path = iframeXPath;
-                        elemInfo.XPath = string.IsNullOrEmpty(elemId) ? GenerateXpathForIWebElement(ele, string.Empty) : elemNode.XPath;
+                        elemInfo.XPath = string.IsNullOrEmpty(elemId) ? GenerateXpathForIWebElement(elemInfo, string.Empty) : elemNode.XPath;
                         elemInfo.HTMLElementObject = elemNode;
 
                         ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
@@ -9090,7 +8963,7 @@ namespace GingerCore.Drivers
 
             if (string.IsNullOrEmpty(EI.XPath))
             {
-                EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, "");
+                EI.XPath = GenerateXpathForIWebElement((HTMLElementInfo)EI, "");
             }
 
             IWebElement e = (IWebElement)EI.ElementObject;
@@ -9522,7 +9395,7 @@ namespace GingerCore.Drivers
                             }
                             else
                             {
-                                targetElement = LocateElementByLocator(FLocator);
+                                targetElement = LocateElementByLocator(FLocator, (HTMLElementInfo)EI);
                             }
                             if (targetElement != null)
                             {
@@ -9540,7 +9413,8 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        webElement = LocateElementByLocator(el, friendlyLocatorElementlist, true);
+                        // make changes here
+                        webElement = LocateElementByLocator(el,EI ,friendlyLocatorElementlist, true);
                     }
                     if (webElement != null)
                     {
@@ -9584,7 +9458,7 @@ namespace GingerCore.Drivers
             ElementLocator evaluatedLocator = el.CreateInstance() as ElementLocator;
             ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
             evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
-            return LocateElementByLocator(evaluatedLocator, friendlyLocatorElements, true);
+            return LocateElementByLocator(evaluatedLocator,null ,friendlyLocatorElements, true);
         }
         private bool IsUserProfileFolderPathValid()
         {
@@ -9671,9 +9545,9 @@ namespace GingerCore.Drivers
         {
             if (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe"))
             {
-                return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, string.Empty);
+                return GenerateXpathForIWebElement((HTMLElementInfo)EI, string.Empty);
             }
-            return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
+            return GenerateXpathForIWebElement((HTMLElementInfo)EI, EI.Path);
         }
 
         public string GetInnerHtml(ElementInfo elementInfo)

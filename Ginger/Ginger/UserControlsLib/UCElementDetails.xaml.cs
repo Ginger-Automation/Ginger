@@ -32,11 +32,13 @@ using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
+using OpenQA.Selenium.Appium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -1051,9 +1053,20 @@ namespace Ginger
                         testElement = htmlElementInfo;
                         testElement.Properties = SelectedElement.Properties;
                     }
+                    WindowExplorerDriver.TestElementLocators(testElement);
+
+                }
+                else if (Platform.PlatformType() == ePlatformType.Web && SelectedElement.GetType().Equals(typeof(HTMLElementInfo)))
+                {
+                    var htmlElementInfo = new HTMLElementInfo() { Path = testElement.Path, Locators = testElement.Locators};
+                    WindowExplorerDriver.TestElementLocators(htmlElementInfo);
                 }
 
-                WindowExplorerDriver.TestElementLocators(testElement);
+                else
+                {
+                    WindowExplorerDriver.TestElementLocators(testElement);
+
+                }
             }
         }
 
