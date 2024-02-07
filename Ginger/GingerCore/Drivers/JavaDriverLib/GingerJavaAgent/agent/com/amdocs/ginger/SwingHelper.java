@@ -63,6 +63,15 @@ public class SwingHelper implements IXPath {
 	private XPathHelper mXPathHelper= new XPathHelper(this);
 	
 	public Window getCurrentWindow() {
+		
+		if(CurrentWindow == null){
+			Window result = null;
+			for(Window window : Window.getWindows()){
+				if(window.isShowing()) result = window;
+			}
+			return result;
+		}
+		
 		return CurrentWindow;
 	}
 
@@ -76,6 +85,8 @@ public class SwingHelper implements IXPath {
 	public Component getBrowserComponentFromCurrentWindow()
 	{
 		GingerAgent.WriteLog("CheckJExplorerExists()");
+		// if as suggested in the next line CurrentWindow could be null why would we "getName()" here, this could crash our Driver
+		
 		GingerAgent.WriteLog("Current Window Title = " + CurrentWindow.getName());
 		
 		if (CurrentWindow != null)		

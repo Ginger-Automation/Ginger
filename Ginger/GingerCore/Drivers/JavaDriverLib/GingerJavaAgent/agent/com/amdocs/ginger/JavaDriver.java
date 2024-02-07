@@ -1397,12 +1397,14 @@ public PayLoad ProcessCommand(final PayLoad PL) {
 		{
 			Window window = null;
 			window = mSwingHelper.getCurrentWindow();
-				
+			if(window != null){
 				data = ConvertWindowTobyte(window);		
 				PayLoad f = new PayLoad("ScreenShot");
 				f.AddBytes(data);
 				f.ClosePackage();
 				list.add(f);			
+			}
+			
 		}
 	
 
