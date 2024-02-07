@@ -93,34 +93,58 @@
 
                 <usercontrols:ImageMakerControl x:Name="xItemIcon" Grid.RowSpan="2" Grid.Column="3" ImageToolTip="" ImageType="Null" ImageForeground="{StaticResource $BackgroundColor_DarkGray}" SetAsFontImageWithSize="17" Height="20" Width="20" HorizontalAlignment="Center" Margin="0,0,0,0"/>
 
-                <Grid x:Name="xDetailsGrid" Grid.Row="0" Grid.Column="4" >
+                <Grid x:Name="xDetailsGrid" Grid.Row="0" Grid.Column="4" HorizontalAlignment="Stretch" >
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100*" MinWidth="100"/>
+                        <ColumnDefinition x:Name="xItemNameColumn" Width="100*" MinWidth="100"/>
                         <ColumnDefinition x:Name="xItemNotificationsClm" Width="0"/>
                         <ColumnDefinition x:Name="xItemStatusClm"  Width="25"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock x:Name="xItemNameTxtBlock" Grid.Column="0" Text="Title">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
-                                <Setter Property="VerticalAlignment" Value="Center"/>
-                                <Setter Property="FontSize" Value="15"/>
-                                <Setter Property="FontWeight" Value="Normal"/>
-                                <Setter Property="Margin" Value="2,0,0,0"/>
-                                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
-                                        <Setter Property="FontWeight" Value="Bold"/>
-                                        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
-                                        <Setter Property="FontWeight" Value="Normal"/>
-                                        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                    </TextBlock>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" >
+                        <TextBlock x:Name="xItemNameTxtBlock" Text="Title" >
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="FontSize" Value="15"/>
+                                    <Setter Property="FontWeight" Value="Normal"/>
+                                    <Setter Property="Margin" Value="2,0,0,0"/>
+                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                            <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                            <Setter Property="FontWeight" Value="Normal"/>
+                                            <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock x:Name="xItemExtraInfoTxtBlock" Text="[ExtraInfo]"  >
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Left"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="FontSize" Value="15"/>
+                                    <Setter Property="FontWeight" Value="Normal"/>
+                                    <Setter Property="Margin" Value="2,0,0,0"/>
+                                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                            <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}, Path=IsSelected, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                                            <Setter Property="FontWeight" Value="Normal"/>
+                                            <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
                     <StackPanel x:Name="xItemNotificationsPnl" Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Right" Margin="10,0,0,0" />
                     <uclistview:UcItemExecutionStatus x:Name="xItemStatusImage" StatusViewMode="Image"  StatusSize="16" VerticalAlignment="Center" Grid.Column="2"/>
                 </Grid>
@@ -132,7 +156,7 @@
                         <!--to set width per need like for notifications-->
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock x:Name="xItemDescriptionTxtBlock" Grid.Column="0" Text="Description" FontSize="11" Margin="2 0 0 0" Foreground="{StaticResource $BackgroundColor_DarkGray}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                    <TextBlock x:Name="xItemDescriptionTxtBlock" Grid.Column="0" Text="Description" FontSize="11" Margin="2 0 0 0" Foreground="{StaticResource $BackgroundColor_DarkGray}" FontStyle="Normal" FontWeight="Normal" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" HorizontalAlignment="left" VerticalAlignment="Center" />
 
                     <DockPanel x:Name="xItemOperationsMainPnl" Grid.Column="1" HorizontalAlignment="Right" Visibility="Collapsed">
                         <StackPanel x:Name="xItemExecutionOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Right"/>
