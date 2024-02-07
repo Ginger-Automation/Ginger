@@ -43,7 +43,14 @@ namespace Amdocs.Ginger.CoreNET
                     var response = httpClient.GetAsync(endpoint).Result;
                     if (!response.IsSuccessStatusCode)
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                        if(response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                        {
+                            Reporter.ToLog(eLogLevel.INFO, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                        }
                     }
                     else
                     {
@@ -66,7 +73,14 @@ namespace Amdocs.Ginger.CoreNET
                     var response = httpClient.GetAsync(endpoint).Result;
                     if (!response.IsSuccessStatusCode)
                     {
-                        Reporter.ToLog(eLogLevel.INFO, "Error occurred during GetRunsetExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                        {
+                            Reporter.ToLog(eLogLevel.INFO, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                        }
+                        else
+                        {
+                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                        }
                     }
                     else
                     {
