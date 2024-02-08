@@ -45,12 +45,13 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         if(response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.INFO, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                            Reporter.ToLog(eLogLevel.INFO, "Not found Execution Info againts solutionGuid  :" + soluionGuid);
                         }
                         else
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
                         }
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
                     }
                     else
                     {
@@ -75,12 +76,14 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.INFO, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                            Reporter.ToLog(eLogLevel.INFO, "Not found Execution Info againts runsetGuid  :" + runsetGuid);
+                            
                         }
                         else
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
                         }
+                        Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
                     }
                     else
                     {
