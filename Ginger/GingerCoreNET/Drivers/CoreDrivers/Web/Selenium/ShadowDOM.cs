@@ -4,12 +4,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 {
     public class ShadowDOM
     {
-        public static ISearchContext GetShadowRootIfExists(IWebElement webElement)
+        public static ISearchContext GetShadowRootIfExists(ISearchContext webElement)
         {
+
+            if (webElement is not IWebElement) return null;
+
 
             try
             {
-                return webElement.GetShadowRoot();
+                return ((IWebElement)webElement).GetShadowRoot();
             }
             catch
             {
@@ -20,6 +23,18 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
         {
 
             return (string)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].outerHTML", root);
+        }
+
+        public static IWebElement FindShadowRootDirectChild(ISearchContext shadowRoot , string cssSelector, IWebDriver Driver)
+        {
+            try
+            {
+                return (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].querySelector(arguments[1])" , shadowRoot , cssSelector);
+            }
+            catch 
+            { 
+                return null; 
+            }
         }
     }
 

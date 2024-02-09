@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.UIElement;
 using OpenQA.Selenium;
+using System.Collections.Generic;
 
 namespace GingerCoreNET.Drivers.CommonLib
 {
@@ -26,5 +27,10 @@ namespace GingerCoreNET.Drivers.CommonLib
         public ePosition position { get; set; }
 
         public IWebElement FriendlyElement { get; set; }
+
+        public static bool DoesFriendlyLocatorListExist(IList<FriendlyLocatorElement> friendlyLocatorElements)
+        {
+            return friendlyLocatorElements != null && friendlyLocatorElements.Count > 0;
+        }
     }
 }

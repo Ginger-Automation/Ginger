@@ -19,6 +19,10 @@ limitations under the License.
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using HtmlAgilityPack;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GingerCore.Drivers.Common
 {
@@ -26,6 +30,8 @@ namespace GingerCore.Drivers.Common
     {
 
 
+        [IsSerializedForLocalRepository]
+        public Guid ParentPomElementGuid { get; set; } = Guid.Empty;
 
         [IsSerializedForLocalRepository]
         public string TagName { get; set; }
@@ -118,6 +124,17 @@ namespace GingerCore.Drivers.Common
         public HtmlNode BelowHTMLElementObject { get; set; }
 
         public HtmlNode NearHTMLElementObject { get; set; }
+
+
+        public static HTMLElementInfo FindParentElementUsingGuid(HTMLElementInfo ChildElement, IList<ElementInfo> AllElements)
+        {
+            if (AllElements == null) return ChildElement;
+            
+            var ParentElement = AllElements.FirstOrDefault((element) => element.Guid.Equals(ChildElement.ParentPomElementGuid));
+            if (ParentElement == null) return ChildElement;
+
+            return (HTMLElementInfo)ParentElement;
+        }
 
     }
 }

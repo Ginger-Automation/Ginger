@@ -99,7 +99,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             return ResultXPath.ToString();
         }
 
-        public static void AddToXPathIfParentXPathExists(HTMLElementInfo foundElementInfo, string ParentXPath)
+/*        public static void AddToXPathIfParentXPathExists(HTMLElementInfo foundElementInfo, string ParentXPath)
         {
 
             if (!string.IsNullOrEmpty(ParentXPath))
@@ -108,7 +108,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 
             }
         }
-
+*/
         public static string ChangeXPathIfShadowDomExists(string Xpath, bool isShadowRootDetected)
         {
             if (isShadowRootDetected)

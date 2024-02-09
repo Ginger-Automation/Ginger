@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels.POMWizardLib;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;

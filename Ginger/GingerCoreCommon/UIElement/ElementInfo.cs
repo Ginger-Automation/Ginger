@@ -42,10 +42,7 @@ namespace Amdocs.Ginger.Common.UIElement
         [IsSerializedForLocalRepository]
         public ObservableList<ElementLocator> FriendlyLocators = new ObservableList<ElementLocator>();
 
-        // ISearchContext
-        [IsSerializedForLocalRepository]
-        public object ParentContext { get; set; }
-
+        
 
         string mScreenShotImage;
         [IsSerializedForLocalRepository]
@@ -544,10 +541,6 @@ namespace Amdocs.Ginger.Common.UIElement
             }
 
             return eImageType.Element;
-        }
-        public static bool CheckIfParentNodeExists(ElementInfo elementInfo)
-        {
-            return elementInfo != null && elementInfo.ParentContext != null;
         }
     }
 

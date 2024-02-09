@@ -38,6 +38,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
@@ -167,6 +168,7 @@ namespace Amdocs.Ginger.CoreNET
 
         private AppiumDriver Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
+        private LocateWebElement locateWebElement;
 
         public override bool StopProcess
         {
@@ -255,6 +257,7 @@ namespace Amdocs.Ginger.CoreNET
                 if (!(Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device"))
                 {
                     mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
+                    locateWebElement = new(mSeleniumDriver);
                     mSeleniumDriver.StopProcess = this.StopProcess;
                     mSeleniumDriver.BusinessFlow = this.BusinessFlow;
 
@@ -2483,7 +2486,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     default:
-                        elem = mSeleniumDriver.LocateElementByLocator(EL);
+                        elem = locateWebElement.LocateElementByLocator(EL, mSeleniumDriver.mDriver); 
                         break;
                 }
             }

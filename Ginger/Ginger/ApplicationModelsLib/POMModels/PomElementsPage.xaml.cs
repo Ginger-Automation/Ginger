@@ -30,6 +30,7 @@ using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.DataSource;
+using GingerCore.Drivers;
 using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
@@ -879,7 +880,14 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.HighLightElement(mSelectedElement, true);
+                if(mWinExplorer is SeleniumDriver selenium)
+                {
+                    selenium.HighlightPomWebElement(mSelectedElement, mPOM?.MappedUIElements, true);
+                }
+                else
+                {
+                    mWinExplorer.HighLightElement(mSelectedElement, true);
+                }
             }
         }
 
