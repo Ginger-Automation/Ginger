@@ -273,14 +273,6 @@ namespace GingerCore.Variables
                 ParentType = property.GetValue();
         }
 
-        //public static VariableBase Create(RIBXmlReader reader)
-        //{
-        //    if (string.Equals(reader.Name, nameof(VariableString)))
-        //        return new VariableString(reader);
-        //    else
-        //        throw new Exception($"Unknown {nameof(VariableBase)} subclass.");
-        //}
-
         public string NameBeforeEdit;
 
         public static void UpdateVariableNameChangeInItem(object item, string prevVarName, string newVarName, ref bool namechange)
