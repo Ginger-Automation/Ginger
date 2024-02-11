@@ -131,9 +131,8 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
                         ListName = _reader.Name,
                         LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData
                     },
-                    //DataAsString = _reader.ReadOuterXml()
+                    DataAsString = _reader.ReadOuterXml()
                 };
-                XElement.ReadFrom(_reader);
                 return details;
             }
         }
