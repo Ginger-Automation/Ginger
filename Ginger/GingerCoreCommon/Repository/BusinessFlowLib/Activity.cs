@@ -28,6 +28,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
@@ -132,7 +133,50 @@ namespace GingerCore
             Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Tags));
         }
 
-        public Activity(RIBXmlReader reader) : base(reader) { }
+        public Activity(DeserializedSnapshot snapshot) : base(snapshot) { }
+
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder builder)
+        {
+            return base.WriteSnapshotProperties(builder)
+                .WithValue(nameof(ActionRunOption), ActionRunOption.ToString())
+                .WithValue(nameof(Active), Active.ToString())
+                .WithValue(nameof(ActivitiesGroupID), ActivitiesGroupID)
+                .WithValue(nameof(ActivityName), ActivityName)
+                .WithValue(nameof(AutomationStatus), AutomationStatus.ToString())
+                .WithValue(nameof(ErrorHandlerMappingType), ErrorHandlerMappingType.ToString())
+                .WithValue(nameof(PercentAutomated), PercentAutomated)
+                .WithValue(nameof(POMMetaDataId), POMMetaDataId.ToString())
+                .WithValue(nameof(TargetApplication), TargetApplication)
+                .WithValue(nameof(Type), Type.ToString())
+                .WithValues(nameof(Acts), Acts.Cast<RepositoryItemBase>());
+        }
+
+        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
+        {
+            base.ReadSnapshotProperties(property);
+            if (property.HasName(nameof(ActionRunOption)))
+                ActionRunOption = property.GetValueAsEnum<eActionRunOption>();
+            else if (property.HasName(nameof(Active)))
+                Active = property.GetValueAsBool();
+            else if (property.HasName(nameof(ActivitiesGroupID)))
+                ActivitiesGroupID = property.GetValue();
+            else if (property.HasName(nameof(ActivityName)))
+                ActivityName = property.GetValue();
+            else if (property.HasName(nameof(AutomationStatus)))
+                AutomationStatus = property.GetValueAsEnum<eActivityAutomationStatus>();
+            else if (property.HasName(nameof(ErrorHandlerMappingType)))
+                ErrorHandlerMappingType = property.GetValueAsEnum<eHandlerMappingType>();
+            else if (property.HasName(nameof(PercentAutomated)))
+                PercentAutomated = property.GetValue();
+            else if (property.HasName(nameof(POMMetaDataId)))
+                POMMetaDataId = property.GetValueAsGuid();
+            else if (property.HasName(nameof(TargetApplication)))
+                TargetApplication = property.GetValue();
+            else if (property.HasName(nameof(Type)))
+                Type = property.GetValueAsEnum<eSharedItemType>();
+            else if (property.HasName(nameof(Acts)))
+                Acts = new(property.GetValues<Act>());
+        }
 
         public override string ToString()
         {
@@ -1152,139 +1196,5 @@ namespace GingerCore
         }
 
         public bool IsAutoLearned { get; set; }
-
-        protected override IEnumerable<PropertyParser<RepositoryItemBase,string>> AttributeParsers()
-        {
-            return _attributeParsers;
-            //return base.AttributeParsers().Concat(new List<PropertyParser<string>>()
-            //{
-            //    new(nameof(ActionRunOption), value => ActionRunOption = Enum.Parse<eActionRunOption>(value)),
-            //    new(nameof(Active), value => Active = bool.Parse(value)),
-            //    new(nameof(ActivitiesGroupID), value => ActivitiesGroupID = value),
-            //    new(nameof(ActivityName), value => ActivityName = value),
-            //    new(nameof(AutomationStatus), value => AutomationStatus = Enum.Parse<eActivityAutomationStatus>(value)),
-            //    new(nameof(ErrorHandlerMappingType), value => ErrorHandlerMappingType = Enum.Parse<eHandlerMappingType>(value)),
-            //    new(nameof(PercentAutomated), value => PercentAutomated = value),
-            //    new(nameof(POMMetaDataId), value => POMMetaDataId = Guid.Parse(value)),
-            //    new(nameof(TargetApplication), value => TargetApplication = value),
-            //    new(nameof(Type), value => Type = Enum.Parse<eSharedItemType>(value))
-            //});
-        }
-
-        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,string>> _attributeParsers =
-            RepositoryItemBase._attributeParsers.Concat(new List<PropertyParser<RepositoryItemBase,string>>()
-            {
-                new(nameof(ActionRunOption), (rib,value) => ((Activity)rib).ActionRunOption = Enum.Parse<eActionRunOption>(value)),
-                new(nameof(Active), (rib,value) => ((Activity)rib).Active = bool.Parse(value)),
-                new(nameof(ActivitiesGroupID), (rib,value) => ((Activity)rib).ActivitiesGroupID = value),
-                new(nameof(ActivityName), (rib,value) => ((Activity)rib).ActivityName = value),
-                new(nameof(AutomationStatus), (rib,value) => ((Activity)rib).AutomationStatus = Enum.Parse<eActivityAutomationStatus>(value)),
-                new(nameof(ErrorHandlerMappingType), (rib,value) => ((Activity)rib).ErrorHandlerMappingType = Enum.Parse<eHandlerMappingType>(value)),
-                new(nameof(PercentAutomated), (rib,value) => ((Activity)rib).PercentAutomated = value),
-                new(nameof(POMMetaDataId), (rib,value) => ((Activity)rib).POMMetaDataId = Guid.Parse(value)),
-                new(nameof(TargetApplication), (rib,value) => ((Activity)rib).TargetApplication = value),
-                new(nameof(Type), (rib,value) => ((Activity)rib).Type = Enum.Parse<eSharedItemType>(value))
-            });
-
-        protected override IEnumerable<PropertyParser<RepositoryItemBase,RIBXmlReader>> ElementParsers()
-        {
-            return _elementParsers;
-            //return base.ElementParsers().Concat(new List<PropertyParser<RIBXmlReader>>()
-            //{
-            //    new()
-            //    {
-            //        Name = nameof(Acts),
-            //        Parser = reader => Acts = new(reader.ForEachChild(Act.Create))
-            //    }
-            //});
-        }
-
-        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,RIBXmlReader>> _elementParsers =
-            RepositoryItemBase._elementParsers.Concat(new List<PropertyParser<RepositoryItemBase,RIBXmlReader>>()
-            {
-                new()
-                {
-                    Name = nameof(Acts),
-                    Parser = (rib,reader) => ((Activity)rib).Acts = new(reader.ForEachChild(Act.Create))
-                }
-            });
-
-        protected override void ParseAttribute(string attributeName, string attributeValue)
-        {
-            base.ParseAttribute(attributeName, attributeValue);
-            if (string.Equals(attributeName, nameof(ActionRunOption)))
-                ActionRunOption = Enum.Parse<eActionRunOption>(attributeValue);
-            else if (string.Equals(attributeName, nameof(Active)))
-                Active = bool.Parse(attributeValue);
-            else if (string.Equals(attributeName, nameof(ActivitiesGroupID)))
-                ActivitiesGroupID = attributeValue;
-            else if (string.Equals(attributeName, nameof(ActivityName)))
-                ActivityName = attributeValue;
-            else if (string.Equals(attributeName, nameof(AutomationStatus)))
-                AutomationStatus = Enum.Parse<eActivityAutomationStatus>(attributeValue);
-            else if (string.Equals(attributeName, nameof(ErrorHandlerMappingType)))
-                ErrorHandlerMappingType = Enum.Parse<eHandlerMappingType>(attributeValue);
-            else if (string.Equals(attributeName, nameof(PercentAutomated)))
-                PercentAutomated = attributeValue;
-            else if (string.Equals(attributeName, nameof(POMMetaDataId)))
-                POMMetaDataId = Guid.Parse(attributeValue);
-            else if (string.Equals(attributeName, nameof(TargetApplication)))
-                TargetApplication = attributeValue;
-            else if (string.Equals(attributeName, nameof(Type)))
-                Type = Enum.Parse<eSharedItemType>(attributeValue);
-        }
-
-        protected override void ParseElement(string elementName, RIBXmlReader reader)
-        {
-            base.ParseElement(elementName, reader);
-            if (string.Equals(elementName, nameof(Acts)))
-                Acts = new(reader.ForEachChild(Act.Create));
-        }
-
-        protected override void DeserializeProperty(RIBXmlReader reader)
-        {
-            base.DeserializeProperty(reader);
-
-            if (reader.IsName(nameof(ActionRunOption)))
-                ActionRunOption = Enum.Parse<eActionRunOption>(reader.Value);
-            else if (reader.IsName(nameof(Active)))
-                Active = bool.Parse(reader.Value);
-            else if (reader.IsName(nameof(ActivitiesGroupID)))
-                ActivitiesGroupID = reader.Value;
-            else if (reader.IsName(nameof(ActivityName)))
-                ActivityName = reader.Value;
-            else if (reader.IsName(nameof(AutomationStatus)))
-                AutomationStatus = Enum.Parse<eActivityAutomationStatus>(reader.Value);
-            else if (reader.IsName(nameof(ErrorHandlerMappingType)))
-                ErrorHandlerMappingType = Enum.Parse<eHandlerMappingType>(reader.Value);
-            else if (reader.IsName(nameof(PercentAutomated)))
-                PercentAutomated = reader.Value;
-            else if (reader.IsName(nameof(POMMetaDataId)))
-                POMMetaDataId = Guid.Parse(reader.Value);
-            else if (reader.IsName(nameof(TargetApplication)))
-                TargetApplication = reader.Value;
-            else if (reader.IsName(nameof(Type)))
-                Type = Enum.Parse<eSharedItemType>(reader.Value); 
-            else if (reader.IsName(nameof(Acts)))
-                Acts = new(reader.ForEachChild(Act.Create));
-        }
-
-        //protected override void ParseElement(string elementName, RIBXmlReader reader)
-        //{
-        //    base.ParseElement(elementName, reader);
-        //    if (string.Equals(elementName, nameof(Acts)))
-        //        Acts = new(ParseEachChild<IAct>(nameof(Acts), reader));
-        //}
-
-        //protected override object ChildParser(string collectionName, RIBXmlReader reader)
-        //{
-        //    if (string.Equals(collectionName, nameof(Acts)))
-        //    {
-        //        //return new ActLogAction(reader);
-        //        return Act.Create(reader);
-        //    }
-        //    else
-        //        throw new Exception();
-        //}
     }
 }

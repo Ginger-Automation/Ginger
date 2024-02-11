@@ -18,7 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
@@ -66,17 +66,12 @@ namespace GingerCore.Actions
 
         public ActDummy() { }
 
-        public ActDummy(RIBXmlReader reader) : base(reader) { }
+        public ActDummy(DeserializedSnapshot snapshot) : base(snapshot) { }
 
         public override void Execute()
         {
 
 
-        }
-
-        protected override Act CreateNewInstance(RIBXmlReader reader)
-        {
-            return new ActDummy(reader);
         }
     }
 }

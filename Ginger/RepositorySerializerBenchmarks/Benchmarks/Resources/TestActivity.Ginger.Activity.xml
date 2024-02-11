@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GingerRepositoryItem>
+	<Header ItemGuid="4a3dc6b6-139f-4be9-abf7-0c75980873b6" ItemType="Activity" CreatedBy="harsisin" Created="202402080732" GingerVersion="24.1.1.1" Version="1" LastUpdateBy="harsisin" LastUpdate="202402080732" />
+	<Activity ActionRunOption="StopActionsRunOnFailure" ActivityName="Activity_1144483485" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="4a3dc6b6-139f-4be9-abf7-0c75980873b6" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="0%" POMMetaDataId="00000000-0000-0000-0000-000000000000" Type="Regular">
+		<Acts>
+			<ActDummy Description="Dummy_1613357852" Guid="539b3e7a-5041-4c2c-bd61-7782dd989312" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+			<ActDummy Description="Dummy_1215908265" Guid="b77946e2-aa7d-4b10-98ce-1c5add794e50" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+			<ActDummy Description="Dummy_315131990" Guid="be0c8de1-b2c7-48ed-81d1-98f052af983c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+			<ActDummy Description="Dummy_1850256826" Guid="c91dcadc-3e54-4a03-9e67-f2c5e4f585e8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+			<ActDummy Description="Dummy_1223274589" Guid="1fb1563e-6ecc-459c-832d-810446ecbf60" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+			<ActDummy Description="Dummy_468104871" Guid="5bd1eff7-cbb1-4cde-904f-14df7f7ae185" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+			<ActDummy Description="Dummy_1359379943" Guid="a5e1758f-d80b-4bfc-97b2-ad5375866000" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+			<ActDummy Description="Dummy_1985818129" Guid="aeea0ee4-9f0f-4f8a-ab79-be1aace7b7b7" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+			<ActDummy Description="Dummy_2056827180" Guid="406fcba0-c733-40a8-801a-af514b495484" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+			<ActDummy Description="Dummy_1443961167" Guid="301200cf-b785-4713-9a35-a43df38d7ea7" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow" />
+		</Acts>
+	</Activity>
+</GingerRepositoryItem>

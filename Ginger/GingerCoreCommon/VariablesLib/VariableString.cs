@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
@@ -101,36 +102,19 @@ namespace GingerCore.Variables
 
         public override bool SupportAutoValue { get { return false; } }
 
-        public VariableString(RIBXmlReader reader) : base(reader) { }
+        public VariableString(DeserializedSnapshot snapshot) : base(snapshot) { }
 
-        protected override IEnumerable<PropertyParser<RepositoryItemBase,string>> AttributeParsers()
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
-            return _attributeParsers;
-            //return base.AttributeParsers().Concat(new List<PropertyParser<string>>()
-            //{
-            //    new(nameof(InitialStringValue), value => InitialStringValue = value)
-            //});
+            return base.WriteSnapshotProperties(snapshotBuilder)
+                .WithValue(nameof(InitialStringValue), InitialStringValue);
         }
 
-        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,string>> _attributeParsers =
-            VariableBase._attributeParsers.Concat(new List<PropertyParser<RepositoryItemBase,string>>()
-            {
-                new(nameof(InitialStringValue), (rib,value) => ((VariableString)rib).InitialStringValue = value)
-            });
-
-        protected override void ParseAttribute(string attributeName, string attributeValue)
+        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
         {
-            base.ParseAttribute(attributeName, attributeValue);
-            if (string.Equals(attributeName, nameof(InitialStringValue)))
-                InitialStringValue = attributeValue;
-        }
-
-        protected override void DeserializeProperty(RIBXmlReader reader)
-        {
-            base.DeserializeProperty(reader);
-
-            if (reader.IsName(nameof(InitialStringValue)))
-                InitialStringValue = reader.Value;
+            base.ReadSnapshotProperties(property);
+            if (property.HasName(nameof(InitialStringValue)))
+                InitialStringValue = property.GetValue();
         }
     }
 }

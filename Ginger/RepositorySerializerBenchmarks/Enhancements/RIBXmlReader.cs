@@ -8,10 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Amdocs.Ginger.Repository
+namespace Amdocs.Ginger.Common.Repository.Serialization
 {
     public sealed class RIBXmlReader
     {
+        private readonly DeserializePropertyInfo _deserializePropertyInfo;
+
         public string Name => XmlReader.Name;
 
         public string Value => XmlReader.Value;
@@ -20,29 +22,30 @@ namespace Amdocs.Ginger.Repository
 
         public RIBXmlReader(XmlReader xmlReader)
         {
+            _deserializePropertyInfo = new(this);
             XmlReader = xmlReader;
         }
 
-        public IEnumerable<T> ForEachChild<T>(Func<RIBXmlReader,T> childParser)
+        public IEnumerable<T> ForEachChild<T>(Func<RIBXmlReader, T> childParser)
         {
             if (XmlReader.NodeType != XmlNodeType.Element)
                 throw new Exception($"Expected a element node type but found {XmlReader.NodeType}.");
 
             List<T> children = [];
 
-            int startDepth = XmlReader.Depth;
+            var startDepth = XmlReader.Depth;
             while (XmlReader.Read())
             {
                 XmlReader.MoveToContent();
 
-                bool reachedEndOfElement = XmlReader.Depth == startDepth && XmlReader.NodeType == XmlNodeType.EndElement;
+                var reachedEndOfElement = XmlReader.Depth == startDepth && XmlReader.NodeType == XmlNodeType.EndElement;
                 if (reachedEndOfElement)
                     break;
 
                 if (!XmlReader.IsStartElement())
                     continue;
 
-                bool isGrandChild = XmlReader.Depth > startDepth + 1;
+                var isGrandChild = XmlReader.Depth > startDepth + 1;
                 if (isGrandChild)
                     continue;
 
@@ -57,7 +60,7 @@ namespace Amdocs.Ginger.Repository
             return string.Equals(name, Name);
         }
 
-        public void Load(Action<RIBXmlReader> deserializeProperty)
+        public void Load(Action<DeserializePropertyInfo> deserializeProperty)
         {
             if (!XmlReader.IsStartElement())
                 throw new Exception($"Expected a start element.");
@@ -66,44 +69,44 @@ namespace Amdocs.Ginger.Repository
             ReadChildElements(deserializeProperty);
         }
 
-        private void ReadAttributes(Action<RIBXmlReader> deserializeProperty)
+        private void ReadAttributes(Action<DeserializePropertyInfo> deserializeProperty)
         {
             if (!XmlReader.HasAttributes)
                 return;
 
             while (XmlReader.MoveToNextAttribute())
             {
-                deserializeProperty.Invoke(this);
+                deserializeProperty.Invoke(_deserializePropertyInfo);
             }
 
             XmlReader.MoveToElement();
         }
 
-        private void ReadChildElements(Action<RIBXmlReader> deserializeProperty)
+        private void ReadChildElements(Action<DeserializePropertyInfo> deserializeProperty)
         {
             if (XmlReader.IsEmptyElement)
                 return;
 
-            int startDepth = XmlReader.Depth;
+            var startDepth = XmlReader.Depth;
             while (XmlReader.Read())
             {
                 XmlReader.MoveToContent();
 
-                bool reachedEndOfElement = XmlReader.Depth == startDepth && XmlReader.NodeType == XmlNodeType.EndElement;
+                var reachedEndOfElement = XmlReader.Depth == startDepth && XmlReader.NodeType == XmlNodeType.EndElement;
                 if (reachedEndOfElement)
                     break;
 
                 if (!XmlReader.IsStartElement())
                     continue;
 
-                bool isGrandChild = XmlReader.Depth > startDepth + 1;
+                var isGrandChild = XmlReader.Depth > startDepth + 1;
                 if (isGrandChild)
                 {
-                    //continue;
                     XmlReader.Skip();
+                    continue;
                 }
 
-                deserializeProperty.Invoke(this);
+                 deserializeProperty.Invoke(_deserializePropertyInfo);
             }
         }
     }

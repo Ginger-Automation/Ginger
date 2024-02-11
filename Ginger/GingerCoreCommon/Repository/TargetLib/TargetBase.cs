@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Repository;
 using GingerCore.Platforms;
 
@@ -44,14 +45,11 @@ namespace Amdocs.Ginger.Common.Repository
 
         public TargetBase() { }
 
-        public TargetBase(RIBXmlReader reader) : base(reader) { }
+        public TargetBase(DeserializedSnapshot snapshot) : base(snapshot) { }
 
-        public static TargetBase Create(RIBXmlReader reader)
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
-            if (string.Equals(reader.Name, nameof(TargetApplication)))
-                return new TargetApplication(reader);
-            else
-                throw new System.Exception($"Unknown {nameof(TargetBase)} subclass.");
+            return base.WriteSnapshotProperties(snapshotBuilder);
         }
     }
 }

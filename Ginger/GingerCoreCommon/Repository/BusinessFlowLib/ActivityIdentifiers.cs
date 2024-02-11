@@ -20,17 +20,39 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Repository;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace GingerCore.Activities
 {
     public class ActivityIdentifiers : RepositoryItemBase
     {
-        public ActivityIdentifiers()
+        public ActivityIdentifiers() { }
+
+        public ActivityIdentifiers(DeserializedSnapshot snapshot) : base(snapshot) { }
+
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
+            return base.WriteSnapshotProperties(snapshotBuilder)
+                .WithValue(nameof(ActivityAutomationStatus), ActivityAutomationStatus.ToString())
+                .WithValue(nameof(ActivityGuid), ActivityGuid.ToString())
+                .WithValue(nameof(ActivityName), ActivityName)
+                .WithValue(nameof(ActivityParentGuid), ActivityParentGuid.ToString());
         }
 
-        public ActivityIdentifiers(RIBXmlReader reader) : base(reader) { }
+        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
+        {
+            base.ReadSnapshotProperties(property);
+            if (property.HasName(nameof(ActivityAutomationStatus)))
+                ActivityAutomationStatus = property.GetValueAsEnum<eActivityAutomationStatus>();
+            else if (property.HasName(nameof(ActivityGuid)))
+                ActivityGuid = property.GetValueAsGuid();
+            else if (property.HasName(nameof(ActivityName)))
+                ActivityName = property.GetValue();
+            else if (property.HasName(nameof(ActivityParentGuid)))
+                ActivityParentGuid = property.GetValueAsGuid();
+        }
 
         [IsSerializedForLocalRepository]
         public string ActivityName { get; set; }
@@ -140,54 +162,6 @@ namespace GingerCore.Activities
             {
                 return ItemName;
             }
-        }
-
-        protected override IEnumerable<PropertyParser<RepositoryItemBase,string>> AttributeParsers()
-        {
-            return _attributeParsers;
-            //return base.AttributeParsers().Concat(new List<PropertyParser<string>>()
-            //{
-            //    new(nameof(ActivityAutomationStatus), value => ActivityAutomationStatus = Enum.Parse<eActivityAutomationStatus>(value)),
-            //    new(nameof(ActivityGuid), value => ActivityGuid = Guid.Parse(value)),
-            //    new(nameof(ActivityName), value => ActivityName = value),
-            //    new(nameof(ActivityParentGuid), value => ActivityParentGuid = Guid.Parse(value))
-            //});
-        }
-
-        protected override void DeserializeProperty(RIBXmlReader reader)
-        {
-            base.DeserializeProperty(reader);
-
-            if (reader.IsName(nameof(ActivityAutomationStatus)))
-                ActivityAutomationStatus = Enum.Parse<eActivityAutomationStatus>(reader.Value);
-            else if (reader.IsName(nameof(ActivityGuid)))
-                ActivityGuid = Guid.Parse(reader.Value);
-            else if (reader.IsName(nameof(ActivityName)))
-                ActivityName = reader.Value;
-            else if (reader.IsName(nameof(ActivityParentGuid)))
-                ActivityParentGuid = Guid.Parse(reader.Value);
-        }
-
-        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,string>> _attributeParsers =
-            RepositoryItemBase._attributeParsers.Concat(new List<PropertyParser<RepositoryItemBase,string>>()
-            {
-                new(nameof(ActivityAutomationStatus), (rib,value) => ((ActivityIdentifiers)rib).ActivityAutomationStatus = Enum.Parse<eActivityAutomationStatus>(value)),
-                new(nameof(ActivityGuid), (rib,value) => ((ActivityIdentifiers)rib).ActivityGuid = Guid.Parse(value)),
-                new(nameof(ActivityName), (rib,value) => ((ActivityIdentifiers)rib).ActivityName = value),
-                new(nameof(ActivityParentGuid), (rib,value) => ((ActivityIdentifiers)rib).ActivityParentGuid = Guid.Parse(value))
-            });
-
-        protected override void ParseAttribute(string attributeName, string attributeValue)
-        {
-            base.ParseAttribute(attributeName, attributeValue);
-            if (string.Equals(attributeName, nameof(ActivityAutomationStatus)))
-                ActivityAutomationStatus = Enum.Parse<eActivityAutomationStatus>(attributeValue);
-            else if (string.Equals(attributeName, nameof(ActivityGuid)))
-                ActivityGuid = Guid.Parse(attributeValue);
-            else if (string.Equals(attributeName, nameof(ActivityName)))
-                ActivityName = attributeValue;
-            else if (string.Equals(attributeName, nameof(ActivityParentGuid)))
-                ActivityParentGuid = Guid.Parse(attributeValue);
         }
     }
 }

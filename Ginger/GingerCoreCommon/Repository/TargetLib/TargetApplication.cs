@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Platforms
@@ -69,36 +70,19 @@ namespace GingerCore.Platforms
 
         public TargetApplication() { }
 
-        public TargetApplication(RIBXmlReader reader) : base(reader) { }
+        public TargetApplication(DeserializedSnapshot snapshot) { }
 
-        protected override IEnumerable<PropertyParser<RepositoryItemBase,string>> AttributeParsers()
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
-            return _attributeParsers;
-            //return base.AttributeParsers().Concat(new List<PropertyParser<string>>()
-            //{
-            //    new(nameof(AppName), value => AppName = value)
-            //});
+            return base.WriteSnapshotProperties(snapshotBuilder)
+                .WithValue(nameof(AppName), AppName);
         }
 
-        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,string>> _attributeParsers =
-            TargetBase._attributeParsers.Concat(new List<PropertyParser<RepositoryItemBase,string>>()
-            {
-                new(nameof(AppName), (rib,value) => ((TargetApplication)rib).AppName = value)
-            });
-
-        protected override void ParseAttribute(string attributeName, string attributeValue)
+        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
         {
-            base.ParseAttribute(attributeName, attributeValue);
-            if (string.Equals(attributeName, nameof(AppName)))
-                AppName = attributeValue;
-        }
-
-        protected override void DeserializeProperty(RIBXmlReader reader)
-        {
-            base.DeserializeProperty(reader);
-
-            if (reader.IsName(nameof(AppName)))
-                AppName = reader.Value;
+            base.ReadSnapshotProperties(property);
+            if (property.HasName(nameof(AppName)))
+                AppName = property.GetValue();
         }
     }
 }

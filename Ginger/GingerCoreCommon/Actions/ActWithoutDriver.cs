@@ -18,7 +18,7 @@ limitations under the License.
 
 
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 
@@ -32,7 +32,7 @@ namespace GingerCore.Actions
 
         public ActWithoutDriver() { }
 
-        public ActWithoutDriver(RIBXmlReader reader) : base(reader) { }
+        public ActWithoutDriver(DeserializedSnapshot snapshot) : base(snapshot) { }
 
         public abstract void Execute();
     }

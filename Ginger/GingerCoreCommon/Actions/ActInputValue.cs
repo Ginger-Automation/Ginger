@@ -22,6 +22,7 @@ using System.Drawing;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using Newtonsoft.Json;
 
@@ -229,36 +230,19 @@ namespace Amdocs.Ginger.Repository
 
         public ActInputValue() { }
 
-        public ActInputValue(RIBXmlReader reader) : base(reader) { }
+        public ActInputValue(DeserializedSnapshot snapshot) : base(snapshot) { }
 
-        protected override IEnumerable<PropertyParser<RepositoryItemBase,string>> AttributeParsers()
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
-            return _attributeParsers;
-            //return base.AttributeParsers().Concat(new List<PropertyParser<string>>()
-            //{
-            //    new(nameof(Param), value => Param = value)
-            //});
+            return base.WriteSnapshotProperties(snapshotBuilder)
+                .WithValue(nameof(Param), Param);
         }
 
-        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,string>> _attributeParsers = 
-            RepositoryItemBase._attributeParsers.Concat(new List<PropertyParser<RepositoryItemBase,string>>()
-            {
-                new(nameof(Param), (rib,value) => ((ActInputValue)rib).Param = value)
-            });
-
-        protected override void ParseAttribute(string attributeName, string attributeValue)
+        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
         {
-            base.ParseAttribute(attributeName, attributeValue);
-            if (string.Equals(attributeName, nameof(Param)))
-                Param = attributeValue;
-        }
-
-        protected override void DeserializeProperty(RIBXmlReader reader)
-        {
-            base.DeserializeProperty(reader);
-
-            if (reader.IsName(nameof(Param)))
-                Param = reader.Value;
+            base.ReadSnapshotProperties(property);
+            if (property.HasName(nameof(Param)))
+                Param = property.GetValue();
         }
     }
 }

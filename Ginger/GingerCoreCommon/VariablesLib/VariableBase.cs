@@ -23,8 +23,8 @@ using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Repository;
-using GingerCore.Platforms;
 
 namespace GingerCore.Variables
 {
@@ -246,15 +246,40 @@ namespace GingerCore.Variables
 
         public VariableBase() { }
 
-        public VariableBase(RIBXmlReader reader) : base(reader) { }
+        public VariableBase(DeserializedSnapshot snapshot) : base(snapshot) { }
 
-        public static VariableBase Create(RIBXmlReader reader)
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
-            if (string.Equals(reader.Name, nameof(VariableString)))
-                return new VariableString(reader);
-            else
-                throw new Exception($"Unknown {nameof(VariableBase)} subclass.");
+            return base.WriteSnapshotProperties(snapshotBuilder)
+                .WithValue(nameof(Name), Name)
+                .WithValue(nameof(Description), Description)
+                .WithValue(nameof(MappedOutputType), MappedOutputType.ToString())
+                .WithValue(nameof(ParentName), ParentName)
+                .WithValue(nameof(ParentType), ParentType);
         }
+
+        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
+        {
+            base.ReadSnapshotProperties(property);
+            if (property.HasName(nameof(Name)))
+                Name = property.GetValue();
+            else if (property.HasName(nameof(Description)))
+                Description = property.GetValue();
+            else if (property.HasName(nameof(MappedOutputType)))
+                MappedOutputType = property.GetValueAsEnum<eOutputType>();
+            else if (property.HasName(nameof(ParentName)))
+                ParentName = property.GetValue();
+            else if (property.HasName(nameof(ParentType)))
+                ParentType = property.GetValue();
+        }
+
+        //public static VariableBase Create(RIBXmlReader reader)
+        //{
+        //    if (string.Equals(reader.Name, nameof(VariableString)))
+        //        return new VariableString(reader);
+        //    else
+        //        throw new Exception($"Unknown {nameof(VariableBase)} subclass.");
+        //}
 
         public string NameBeforeEdit;
 
@@ -709,60 +734,6 @@ namespace GingerCore.Variables
                 variables.Move(indx, 0);
             }
             return variables;
-        }
-
-        protected override IEnumerable<PropertyParser<RepositoryItemBase,string>> AttributeParsers()
-        {
-            return _attributeParsers;
-            //return base.AttributeParsers().Concat(new List<PropertyParser<string>>()
-            //{
-            //    new(nameof(Name), value => Name = value),
-            //    new(nameof(Description), value => Description = value),
-            //    new(nameof(MappedOutputType), value => MappedOutputType = Enum.Parse<eOutputType>(value)),
-            //    new(nameof(ParentName), value => ParentName = value),
-            //    new(nameof(ParentType), value => ParentType = value)
-            //});
-        }
-
-        protected static new readonly IEnumerable<PropertyParser<RepositoryItemBase,string>> _attributeParsers =
-            RepositoryItemBase._attributeParsers.Concat(new List<PropertyParser<RepositoryItemBase, string>>()
-            {
-                new(nameof(Name), (rib,value) => ((VariableBase)rib).Name = value),
-                new(nameof(Description), (rib,value) => ((VariableBase)rib).Description = value),
-                new(nameof(MappedOutputType), (rib,value) => ((VariableBase)rib).MappedOutputType = Enum.Parse<eOutputType>(value)),
-                new(nameof(ParentName), (rib,value) => ((VariableBase)rib).ParentName = value),
-                new(nameof(ParentType), (rib,value) => ((VariableBase)rib).ParentType = value)
-            });
-
-        protected override void ParseAttribute(string attributeName, string attributeValue)
-        {
-            base.ParseAttribute(attributeName, attributeValue);
-            if (string.Equals(attributeName, nameof(Name)))
-                Name = attributeValue;
-            else if (string.Equals(attributeName, nameof(Description)))
-                Description = attributeValue;
-            else if (string.Equals(attributeName, nameof(MappedOutputType)))
-                MappedOutputType = Enum.Parse<eOutputType>(attributeValue);
-            else if (string.Equals(attributeName, nameof(ParentName)))
-                ParentName = attributeValue;
-            else if (string.Equals(attributeName, nameof(ParentType)))
-                ParentType = attributeValue;
-        }
-
-        protected override void DeserializeProperty(RIBXmlReader reader)
-        {
-            base.DeserializeProperty(reader);
-
-            if (reader.IsName(nameof(Name)))
-                Name = reader.Value;
-            else if (reader.IsName(nameof(Description)))
-                Description = reader.Value;
-            else if (reader.IsName(nameof(MappedOutputType)))
-                MappedOutputType = Enum.Parse<eOutputType>(reader.Value);
-            else if (reader.IsName(nameof(ParentName)))
-                ParentName = reader.Value;
-            else if (reader.IsName(nameof(ParentType)))
-                ParentType = reader.Value;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Repository;
+﻿using Amdocs.Ginger.Common.Repository.Serialization;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 using NPOI.OpenXmlFormats.Dml;
 using Org.BouncyCastle.Asn1.Cms;
@@ -104,9 +105,9 @@ namespace RepositorySerializerBenchmarks.Enhancements
             return repositoryItemHeader;
         }
 
-        public RepositoryItemHeader Deserialize(RIBXmlReader reader)
-        {
-            return Deserialize(reader.XmlReader);
-        }
+        //public RepositoryItemHeader Deserialize(RIBXmlReader reader)
+        //{
+        //    return Deserialize(reader.XmlReader);
+        //}
     }
 }

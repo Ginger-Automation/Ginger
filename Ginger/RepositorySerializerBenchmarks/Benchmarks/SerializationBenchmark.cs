@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Repository;
+﻿using Amdocs.Ginger.Common.Repository.Serialization;
+using Amdocs.Ginger.Repository;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Exporters;
@@ -29,8 +30,6 @@ namespace RepositorySerializerBenchmarks.Benchmarks
     [MinColumn]
     [MaxColumn]
     [RPlotExporter]
-    //[SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net70)]
-    //[SimpleJob(BenchmarkDotNet.Jobs.RuntimeMoniker.Net80)]
     [SimpleJob]
     public class SerializationBenchmark
     {

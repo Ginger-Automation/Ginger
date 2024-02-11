@@ -30,6 +30,7 @@ using System.Xml.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using GingerCore;
 using LiteDB;
 using MethodTimer;
@@ -525,65 +526,64 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        private static RepositoryItemBase BetterDeserializeFromText(string xml, RepositoryItemBase targetObj, string filePath)
-        {
-            if (!filePath.EndsWith(".BusinessFlow.xml", StringComparison.OrdinalIgnoreCase))
-                throw new NotImplementedException($"{nameof(BetterDeserializeFromText)} implementation for this type is not implemented yet.");
+        //private static RepositoryItemBase BetterDeserializeFromText(string xml, RepositoryItemBase targetObj, string filePath)
+        //{
+        //    if (!filePath.EndsWith(".BusinessFlow.xml", StringComparison.OrdinalIgnoreCase))
+        //        throw new NotImplementedException($"{nameof(BetterDeserializeFromText)} implementation for this type is not implemented yet.");
 
-            BusinessFlow.LazyLoad = true;
+        //    BusinessFlow.LazyLoad = true;
 
-            RepositoryItemHeader repositoryItemHeader = null!;
-            BusinessFlow businessFlow = null!;
+        //    RepositoryItemHeader repositoryItemHeader = null!;
+        //    BusinessFlow businessFlow = null!;
 
-            using XmlReader xmlReader = XmlReader.Create(new StringReader(xml));
+        //    using XmlReader xmlReader = XmlReader.Create(new StringReader(xml));
 
-            if (!xmlReader.IsStartElement())
-                throw new Exception($"Expected a start element.");
-            if (!string.Equals(xmlReader.Name, "GingerRepositoryItem"))
-                throw new Exception($"Expected element 'GingerRepositoryItem' but found {xmlReader.Name}.");
+        //    if (!xmlReader.IsStartElement())
+        //        throw new Exception($"Expected a start element.");
+        //    if (!string.Equals(xmlReader.Name, "GingerRepositoryItem"))
+        //        throw new Exception($"Expected element 'GingerRepositoryItem' but found {xmlReader.Name}.");
 
-            if (!xmlReader.IsEmptyElement)
-            {
-                RIBXmlReader ribXmlReader = new(xmlReader);
+        //    if (!xmlReader.IsEmptyElement)
+        //    {
+        //        RIBXmlReader ribXmlReader = new(xmlReader);
 
-                int startDepth = xmlReader.Depth;
-                while (xmlReader.Read())
-                {
-                    bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
-                    if (reachedEndOfElement)
-                        break;
+        //        int startDepth = xmlReader.Depth;
+        //        while (xmlReader.Read())
+        //        {
+        //            bool reachedEndOfElement = xmlReader.Depth == startDepth && xmlReader.NodeType == XmlNodeType.EndElement;
+        //            if (reachedEndOfElement)
+        //                break;
 
-                    if (!xmlReader.IsStartElement())
-                        continue;
+        //            if (!xmlReader.IsStartElement())
+        //                continue;
 
-                    bool isGrandChild = xmlReader.Depth > startDepth + 1;
-                    if (isGrandChild)
-                        continue;
+        //            bool isGrandChild = xmlReader.Depth > startDepth + 1;
+        //            if (isGrandChild)
+        //                continue;
 
-                    if (string.Equals(xmlReader.Name, "Header"))
-                    {
-                        repositoryItemHeader = new(ribXmlReader);
-                    }
-                    else if (string.Equals(xmlReader.Name, nameof(BusinessFlow)))
-                    {
-                        businessFlow = new(ribXmlReader);
-                    }
-                }
-            }
+        //            if (string.Equals(xmlReader.Name, "Header"))
+        //            {
+        //                repositoryItemHeader = new(ribXmlReader);
+        //            }
+        //            else if (string.Equals(xmlReader.Name, nameof(BusinessFlow)))
+        //            {
+        //                businessFlow = new(ribXmlReader);
+        //            }
+        //        }
+        //    }
 
-            businessFlow.RepositoryItemHeader = repositoryItemHeader;
-            businessFlow.FilePath = filePath;
+        //    businessFlow.RepositoryItemHeader = repositoryItemHeader;
+        //    businessFlow.FilePath = filePath;
 
-            return businessFlow;
+        //    return businessFlow;
 
-        }
+        //}
 
 
-        //[Time]
         public static RepositoryItemBase DeserializeFromText(string xml, RepositoryItemBase targetObj = null, string filePath = "")
         {
-            if (!string.IsNullOrEmpty(filePath) && filePath.EndsWith(".BusinessFlow.xml", StringComparison.OrdinalIgnoreCase))
-                return BetterDeserializeFromText(xml, targetObj, filePath);
+            //if (!string.IsNullOrEmpty(filePath) && filePath.EndsWith(".BusinessFlow.xml", StringComparison.OrdinalIgnoreCase))
+            //    return BetterDeserializeFromText(xml, targetObj, filePath);
 
             string encoding = "utf-8"; // make it static or remove string creation
             //check if we need ms or maybe text reader + do using to release mem
