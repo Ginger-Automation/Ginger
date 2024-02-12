@@ -771,9 +771,15 @@ namespace Amdocs.Ginger.Repository
 
         public override void SaveRepositoryItem(string fileName, string txt)
         {
-            PauseFileWatcher();
+            if (mFileWatcher.EnableRaisingEvents)
+            {
+                PauseFileWatcher();
+            }
             File.WriteAllText(fileName, txt);
-            ResumeFileWatcher();
+            if (!mFileWatcher.EnableRaisingEvents)
+            {
+                ResumeFileWatcher();
+            }
         }
 
         void RemoveItemFromLists(RepositoryItemBase repositoryItem)
