@@ -289,7 +289,6 @@ namespace GingerCore.Drivers
 
 
         protected IWebDriver Driver;
-        protected Agent Agent;
 
         protected eBrowserType mBrowserTpe;
         protected NgWebDriver ngDriver;
