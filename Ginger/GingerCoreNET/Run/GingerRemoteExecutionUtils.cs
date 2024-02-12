@@ -45,13 +45,13 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         if(response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.INFO, "Not found Execution Info againts solutionGuid  :" + soluionGuid);
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts solutionGuid  : { soluionGuid } GetSolutionRunsetsExecutionInfo() :{ response.Content.ReadAsStringAsync().Result.ToString()}");
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{ response.Content.ReadAsStringAsync().Result.ToString()}");
                         }
-                        Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                        
                     }
                     else
                     {
@@ -76,14 +76,14 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                         {
-                            Reporter.ToLog(eLogLevel.INFO, "Not found Execution Info againts runsetGuid  :" + runsetGuid);
-                            
+                            Reporter.ToLog(eLogLevel.DEBUG, $"Not found Execution Info againts runsetGuid  : {runsetGuid} GetSolutionRunsetsExecutionInfo() :{response.Content.ReadAsStringAsync().Result.ToString()}");
+
                         }
                         else
                         {
-                            Reporter.ToLog(eLogLevel.ERROR, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                            Reporter.ToLog(eLogLevel.ERROR, $"Error occurred during GetSolutionRunsetsExecutionInfo() :{ response.Content.ReadAsStringAsync().Result.ToString()}");
                         }
-                        Reporter.ToLog(eLogLevel.DEBUG, "Error occurred during GetSolutionRunsetsExecutionInfo() :" + response.Content.ReadAsStringAsync().Result.ToString());
+                        
                     }
                     else
                     {
