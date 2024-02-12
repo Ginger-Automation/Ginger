@@ -14,17 +14,20 @@ using System.Xml;
 Summary summary = BenchmarkRunner.Run<DeserializationBenchmark>();
 
 //Console.WriteLine("waiting to start");
-//await Task.Delay(10_000);
+////await Task.Delay(10_000);
 //Console.WriteLine("start");
+//BusinessFlow.LazyLoad = false;
+//Parallel.ForEach(TestDataGenerator.GenerateXMLs(10), repositoryItemBaseXML =>
+//    new BetterRepositorySerializer().Deserialize<BusinessFlow>(repositoryItemBaseXML));
 //foreach (string repositoryItemBaseXML in TestDataGenerator.GenerateXMLs(100))
 //{
 //    //NewRepositorySerializer.LazyLoad = false;
 //    //RepositoryItemBase item = NewRepositorySerializer.DeserializeFromText(repositoryItemBaseXML);
 //    BusinessFlow.LazyLoad = false;
-//    RepositoryItemBase item = new BetterRepositorySerializer2().Deserialize<BusinessFlow>(repositoryItemBaseXML);
+//    RepositoryItemBase item = new BetterRepositorySerializer().Deserialize<BusinessFlow>(repositoryItemBaseXML);
 //}
 //Console.WriteLine("waiting to end");
-//await Task.Delay(10_000);
+////await Task.Delay(10_000);
 //Console.WriteLine("end");
 
 //_ = new ActDummy();

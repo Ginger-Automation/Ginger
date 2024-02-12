@@ -38,7 +38,7 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         private NewRepositorySerializer _newRepositorySerializer = null!;
         private BetterRepositorySerializer _betterRepositorySerializer = null!;
 
-        [Params(1)]
+        [Params(1, 10, 100)]
         public int TestDataSize { get; set; }
 
         private string[] TestData { get; set; } = [];
@@ -89,6 +89,46 @@ namespace RepositorySerializerBenchmarks.Benchmarks
                 _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
         }
 
+        [Benchmark]
+        public void Old_Full_Parallel()
+        {
+            NewRepositorySerializer.LazyLoad = false;
+            Parallel.ForEach(TestData, repositoryItemBaseXML =>
+                Amdocs.Ginger.Repository.NewRepositorySerializer.DeserializeFromText(repositoryItemBaseXML));
+        }
+
+        [Benchmark]
+        public void Old_Lazy_Parallel()
+        {
+            NewRepositorySerializer.LazyLoad = true;
+            Parallel.ForEach(TestData, repositoryItemBaseXML =>
+                Amdocs.Ginger.Repository.NewRepositorySerializer.DeserializeFromText(repositoryItemBaseXML));
+        }
+
+        [Benchmark]
+        public void New_Full_Parallel()
+        {
+            BusinessFlow.LazyLoad = false;
+            Parallel.ForEach(TestData, repositoryItemBaseXML =>
+                _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML));
+        }
+
+        [Benchmark]
+        public void New_Lazy_Parallel()
+        {
+            BusinessFlow.LazyLoad = true;
+            Parallel.ForEach(TestData, repositoryItemBaseXML =>
+                _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML));
+        }
+
+
+
+
+
+
+
+
+        #region old benchmarks
         //[Benchmark]
         //public void New_Full_XmlDocument()
         //{
@@ -166,5 +206,6 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         //    foreach (string repositoryItemBaseXML in TestData)
         //        _betterRepositorySerializer.DeserializeViaRIBXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
         //}
+        #endregion
     }
 }

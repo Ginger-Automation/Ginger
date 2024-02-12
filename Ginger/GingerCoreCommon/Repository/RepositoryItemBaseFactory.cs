@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading;
 using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Repository;
 using MethodTimer;
@@ -21,10 +22,21 @@ namespace Amdocs.Ginger.Common.Repository
         };
         private static readonly Dictionary<string, Func<DeserializedSnapshot, RepositoryItemBase>> NameToConstructorMap = [];
         private static bool IsLoaded = false;
-
+        private static AutoResetEvent LoadSyncEvent = new(true);
 
         public static void Load()
         {
+            if (IsLoaded)
+                return;
+            Debug.WriteLine(Environment.CurrentManagedThreadId + " going to wait one");
+            LoadSyncEvent.WaitOne();
+            Debug.WriteLine(Environment.CurrentManagedThreadId + " crossed wait line");
+            if (IsLoaded)
+            {
+                LoadSyncEvent.Set();
+                return;
+            }
+            Debug.WriteLine(Environment.CurrentManagedThreadId + " starting loading");
             NameToConstructorMap.Clear();
             IEnumerable<Type> ribTypes = GetAllRepositoryItemBaseTypes();
             foreach (Type ribType in ribTypes)
@@ -34,6 +46,7 @@ namespace Amdocs.Ginger.Common.Repository
                     NameToConstructorMap[ribType.Name] = constructor;
             }
             IsLoaded = true;
+            LoadSyncEvent.Set();
         }
 
         private static IEnumerable<Type> GetAllRepositoryItemBaseTypes()
@@ -87,8 +100,7 @@ namespace Amdocs.Ginger.Common.Repository
 
         public static RepositoryItemBase Create(string name, DeserializedSnapshot snapshot)
         {
-            if (!IsLoaded)
-                Load();
+            Load();
 
             if (!NameToConstructorMap.TryGetValue(name, out Func<DeserializedSnapshot, RepositoryItemBase>? constructor) ||
                 constructor == null)
