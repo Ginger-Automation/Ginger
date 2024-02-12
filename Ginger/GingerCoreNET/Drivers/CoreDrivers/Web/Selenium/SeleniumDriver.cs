@@ -27,7 +27,6 @@ using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
-using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Deque.AxeCore.Commons;
@@ -350,7 +349,6 @@ namespace GingerCore.Drivers
 
         public override void InitDriver(Agent agent)
         {
-            this.Agent = agent;
             if (agent.DriverType == Agent.eDriverType.SeleniumRemoteWebDriver)
             {
                 if (agent.DriverConfiguration == null)
@@ -7942,10 +7940,7 @@ namespace GingerCore.Drivers
                         CloseAllTabsExceptOne(act);
                         break;
                     case ActBrowserElement.eControlAction.CloseAll:
-                        await System.Threading.Tasks.Task.Run(() =>
-                        {
-                            Agent.AgentOperations.Close();
-                        });
+                        CloseDriver();
                         break;
                     case ActBrowserElement.eControlAction.GetBrowserLog:
 
@@ -8177,7 +8172,7 @@ namespace GingerCore.Drivers
             {
 
                 case ActAgentManipulation.eAgenTManipulationActionType.CloseAgent:
-                    Driver.Quit();
+                    CloseDriver();
                     break;
 
                 default:
