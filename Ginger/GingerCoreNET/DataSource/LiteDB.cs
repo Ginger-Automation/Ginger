@@ -50,6 +50,16 @@ namespace GingerCoreNET.DataSource
             }
         }
 
+        public override string FileFullPath 
+        { 
+            get => base.FileFullPath; 
+            set
+            {
+                base.FileFullPath = value;
+                TryUpgradeDataFile();
+            }
+        }
+
         public GingerLiteDB()
         {
             TryUpgradeDataFile();
@@ -62,7 +72,7 @@ namespace GingerCoreNET.DataSource
                 string dbFilePath = ConnectionString.Filename;
                 return LiteEngine.Upgrade(dbFilePath);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }
