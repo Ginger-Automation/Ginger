@@ -196,7 +196,7 @@ namespace Ginger.Repository
                                         {
                                             var indexToAdd = Convert.ToInt32(repositoryItem.IndexActivityName[0].ToString());
                                             string gpOfIndexAct = repositoryItem.ActivityGroupMapping.TryGetValue(repositoryItem.IndexActivityName, out string value) ? value : string.Empty;
-                                            repositoryItem.HostBusinessFlow.AddActivity(activityCopy, (ActivitiesGroup)gpOfIndexAct, insertIndex: indexToAdd + 1);
+                                            repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(n=>n.Name== gpOfIndexAct), insertIndex: indexToAdd + 1);
                                         }
                                     }
                                     if (!errorOccured)
