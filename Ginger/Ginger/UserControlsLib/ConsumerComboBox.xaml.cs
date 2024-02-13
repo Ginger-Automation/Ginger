@@ -36,6 +36,9 @@ using Amdocs.Ginger.Common;
 using GingerCore.Activities;
 using GingerCore.Platforms;
 using amdocs.ginger.GingerCoreNET;
+using System.Collections.Specialized;
+using Windows.ApplicationModel.Chat;
+using System.Security.Cryptography;
 
 namespace Ginger.UserControlsLib
 {
@@ -51,7 +54,7 @@ namespace Ginger.UserControlsLib
             _nodeList = new ObservableCollection<Node>();
             if (ConsumerSource != null)
             {
-                ConsumerSource.CollectionChanged += ConsumerSource_CollectionChanged;
+                CollectionChangedEventManager.AddHandler(ConsumerSource, ConsumerSource_CollectionChanged);
             }
             SetText();
         }
@@ -115,13 +118,13 @@ namespace Ginger.UserControlsLib
 
             if (e.OldValue != null && e.OldValue is ObservableList<Consumer> oldConsumerSource)
             {
-                oldConsumerSource.CollectionChanged -= control.ConsumerSource_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(oldConsumerSource, control.ConsumerSource_CollectionChanged);
             }
 
             if (control.ConsumerSource != null)
             {
-                
-                control.ConsumerSource.CollectionChanged += control.ConsumerSource_CollectionChanged;
+                CollectionChangedEventManager.RemoveHandler(control.ConsumerSource, control.ConsumerSource_CollectionChanged);
+                CollectionChangedEventManager.AddHandler(control.ConsumerSource, control.ConsumerSource_CollectionChanged);
             }
         }
 
@@ -140,26 +143,45 @@ namespace Ginger.UserControlsLib
         }
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         public void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            PropertyChangedEventHandler? handler = PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
-        private void ConsumerCheckBox_Click(object sender, RoutedEventArgs e)
+        private void ConsumerGrid_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            CheckBox clickedBox = (CheckBox)sender;
+            //to handle click of entire ComboBox item we also intercept Grid MouseUp event
+            Grid grid = (Grid)sender;
+            CheckBox checkBox = (CheckBox)grid.Children[0];
+            if (checkBox.IsChecked == null)
+            {
+                return;
+            }
 
-               
-                
-            
+            bool isChecked = (bool)checkBox.IsChecked;
+            checkBox.IsChecked = !isChecked;
+            if (isChecked)
+            {
+                checkBox.RaiseEvent(new RoutedEventArgs(CheckBox.UncheckedEvent));
+            }
+            else
+            {
+                checkBox.RaiseEvent(new RoutedEventArgs(CheckBox.CheckedEvent));
+            }
+
+            //prevent ComboBox dropdown from closing after clicking an item
+            e.Handled = true;
+        }
+
+        private void CheckBox_CheckedUnchecked(object sender, RoutedEventArgs e)
+        {
             SetSelectedConsumer();
             SetText();
-
         }
         #endregion
 
