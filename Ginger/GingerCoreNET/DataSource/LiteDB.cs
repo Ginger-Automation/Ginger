@@ -60,21 +60,29 @@ namespace GingerCoreNET.DataSource
             }
         }
 
+        private static readonly AutoResetEvent UpgradeDataFileSyncEvent = new(true);
+
         public GingerLiteDB()
         {
             TryUpgradeDataFile();
         }
 
+
         private bool TryUpgradeDataFile()
         {
             try
             {
+                UpgradeDataFileSyncEvent.WaitOne();
                 string dbFilePath = ConnectionString.Filename;
                 return LiteEngine.Upgrade(dbFilePath);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
+            }
+            finally
+            {
+                UpgradeDataFileSyncEvent.Set();
             }
         }
 
@@ -520,7 +528,7 @@ namespace GingerCoreNET.DataSource
                 }
                 catch (Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception Occurred while doing LiteDB GetQueryOutput", ex);
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception Occurred while doing LiteDB GetQueryOutput\n" + ex.StackTrace, ex);
                     db.Dispose();
 
                 }
