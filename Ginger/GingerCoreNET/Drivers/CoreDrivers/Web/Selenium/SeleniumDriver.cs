@@ -7934,7 +7934,7 @@ namespace GingerCore.Drivers
                         CloseAllTabsExceptOne(act);
                         break;
                     case ActBrowserElement.eControlAction.CloseAll:
-                        Driver.Quit();
+                        CloseDriver();
                         break;
                     case ActBrowserElement.eControlAction.GetBrowserLog:
 
@@ -8166,7 +8166,7 @@ namespace GingerCore.Drivers
             {
 
                 case ActAgentManipulation.eAgenTManipulationActionType.CloseAgent:
-                    Driver.Quit();
+                    CloseDriver();
                     break;
 
                 default:
