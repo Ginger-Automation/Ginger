@@ -154,7 +154,7 @@ namespace Ginger.Actions.ActionConversion
             {
                 RepositoryFolder<BusinessFlow> repositoryFolder = WorkSpace.Instance.SolutionRepository.GetRepositoryItemRootFolder<BusinessFlow>();
                 BusinessFlowsFolderTreeItem bfsRoot = new BusinessFlowsFolderTreeItem(repositoryFolder);
-                mBFSelectionPage = new SingleItemTreeViewSelectionPage("Business Flow", eImageType.BusinessFlow, bfsRoot,SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
+                mBFSelectionPage = new SingleItemTreeViewSelectionPage(GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), eImageType.BusinessFlow, bfsRoot,SingleItemTreeViewSelectionPage.eItemSelectionType.MultiStayOpenOnDoubleClick, false);
                 WeakEventManager<SingleItemTreeViewSelectionPage, SelectionTreeEventArgs>.AddHandler(source: mBFSelectionPage, eventName: nameof(SingleItemTreeViewSelectionPage.SelectionDone), handler: MBFSelectionPage_SelectionDone);
 
             }
