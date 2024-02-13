@@ -64,7 +64,10 @@ namespace GingerCoreNET.DataSource
 
         public GingerLiteDB()
         {
-            TryUpgradeDataFile();
+            if (!string.IsNullOrEmpty(ConnectionString.Filename))
+            {
+                TryUpgradeDataFile();
+            }
         }
 
 
@@ -76,8 +79,9 @@ namespace GingerCoreNET.DataSource
                 string dbFilePath = ConnectionString.Filename;
                 return LiteEngine.Upgrade(dbFilePath);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while trying to upgrade data file.", ex);
                 return false;
             }
             finally
