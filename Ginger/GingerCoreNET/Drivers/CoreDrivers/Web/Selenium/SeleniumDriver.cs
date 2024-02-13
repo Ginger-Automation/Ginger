@@ -366,11 +366,6 @@ namespace GingerCore.Drivers
             return Driver;
         }
 
-        public Agent GetAgent()
-        {
-            return Agent;
-        }
-
         public eBrowserType GetBrowserType()
         {
             return mBrowserTpe;
