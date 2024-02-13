@@ -100,7 +100,10 @@ namespace Ginger.Repository
             foreach (var item in currentItem.HostBusinessFlow.Activities)
             {
                 currentItem.ActivityNameList.Add(activityIndex + "-" + item.ActivityName);
-                currentItem.ActivityGroupMapping.Add(activityIndex + "-" + item.ActivityName, item.ActivitiesGroupID);
+                if (!currentItem.ActivityGroupMapping.ContainsKey(activityIndex + "-" + item.ActivityName))
+                {
+                    currentItem.ActivityGroupMapping.Add(activityIndex + "-" + item.ActivityName, item.ActivitiesGroupID);
+                }
                 activityIndex++;
             }
         }
