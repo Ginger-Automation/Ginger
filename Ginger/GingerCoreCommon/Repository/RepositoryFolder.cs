@@ -395,19 +395,6 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public bool TryPauseFileWatcher()
-        {
-            try
-            {
-                PauseFileWatcher();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         public override void PauseFileWatcher()
         {
             if (mFileWatcher == null)
@@ -421,19 +408,6 @@ namespace Amdocs.Ginger.Repository
             else
             {
                 throw new Exception("RepositoryFolder.PauseFileWatcher is already EnableRaisingEvents = false");
-            }
-        }
-
-        public bool TryResumeFileWatcher()
-        {
-            try
-            {
-                ResumeFileWatcher();
-                return true;
-            }
-            catch(Exception)
-            {
-                return false;
             }
         }
 
@@ -797,9 +771,9 @@ namespace Amdocs.Ginger.Repository
 
         public override void SaveRepositoryItem(string fileName, string txt)
         {
-            TryPauseFileWatcher();
+            PauseFileWatcher();
             File.WriteAllText(fileName, txt);
-            TryResumeFileWatcher();
+            ResumeFileWatcher();
         }
 
         void RemoveItemFromLists(RepositoryItemBase repositoryItem)
