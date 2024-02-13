@@ -22,12 +22,15 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+using Deque.AxeCore.Commons;
+using Deque.AxeCore.Selenium;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
@@ -1531,9 +1534,121 @@ namespace GingerCore.Drivers
                 ActAgentManipulationHandler((ActAgentManipulation)act);
                 return;
             }
-
+            if(WorkSpace.Instance.BetaFeatures.ShowAccessibilityTesting)
+            {
+                if (act is ActAccessibilityTesting actAccessibilityTesting)
+                {
+                    ActAccessibility(actAccessibilityTesting);
+                    return;
+                }
+            }
             act.Error = "Run Action Failed due to unrecognized action type - " + ActType.ToString();
             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
+        }
+
+        private void ActAccessibility(ActAccessibilityTesting act)
+        {
+            string gotoUrl = string.Empty;
+            IWebElement e = null;
+            if ((act.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
+            {
+                if (!string.IsNullOrEmpty(act.LocateValueCalculated) && act.LocateBy != eLocateBy.NA )
+                {
+                    e = LocateElement(act);
+                        if (e == null)
+                        {
+                            act.Error += "Element not found: " + act.LocateBy + "=" + act.LocateValueCalculated;
+                            return;
+                        }
+                }
+            }
+            else
+            {
+                gotoUrl = act.GetInputParamCalculatedValue("Value");
+                if (string.IsNullOrEmpty(gotoUrl))
+                {
+                    act.Error = "Error: Provided URL is empty. Please provide valid URL.";
+                    return;
+
+                }
+                GotoURL(act, gotoUrl);
+            }
+            AxeBuilder axeBuilder = null;
+            try
+            {
+               axeBuilder = CreateAxeBuilder(act);
+
+                AxeResult axeResult = null;
+
+                if ((act.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
+                {
+                    axeResult = axeBuilder.Analyze(e);
+                }
+                else
+                {
+                    axeResult = axeBuilder.Analyze();
+                }
+                SetAxeResultToAction(act, axeResult);
+            }
+            catch(Exception ex)
+            {
+                act.Error = "Error: during accessibility testing:" + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Error: during accessibility testing", ex);
+                return;
+            }
+               
+            
+        }
+
+        private AxeBuilder CreateAxeBuilder(ActAccessibilityTesting act)
+        {
+            AxeBuilder axeBuilder = null;
+                axeBuilder = new AxeBuilder(Driver)
+                .WithOptions(new AxeRunOptions()
+                {
+                    XPath = true
+                });
+
+            if (act.Standard != null)
+            {
+                axeBuilder.WithTags(act.Standard.ToString());
+            }
+
+            return axeBuilder;
+        }
+
+        private void SetAxeResultToAction(ActAccessibilityTesting act, AxeResult axeResult)
+        {
+            bool hasAnyViolations = axeResult.Violations.Any();
+            var jsonresponse = JsonConvert.SerializeObject(axeResult);
+            act.RawResponseValues = jsonresponse;
+            act.AddOrUpdateReturnParamActual(ParamName: "Raw Response", ActualValue: jsonresponse);
+            if (hasAnyViolations)
+            {
+                act.Status = eRunStatus.Failed;
+                act.Error = $"Accessibility testing resulted in violations.";
+                act.AddOrUpdateReturnParamActual(ParamName: "ViolationCount", ActualValue: axeResult.Violations.Length.ToString());
+                act.AddOrUpdateReturnParamActual(ParamName: "ViolationList", ActualValue: String.Join(",", axeResult.Violations.Select(x => x.Id)));
+                int violatedNodeIndex = 0;
+                foreach (AxeResultItem violation in axeResult.Violations)
+                {
+                    foreach (AxeResultNode node in violation.Nodes)
+                    {
+                        violatedNodeIndex++;
+                        act.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationId", ActualValue: violation.Id, violatedNodeIndex.ToString());
+                        if(node.XPath != null)
+                        {
+                            act.AddOrUpdateReturnParamActualWithPath(ParamName: "NodeXPath", ActualValue: node.XPath.ToString(), violatedNodeIndex.ToString());
+                        }
+                        
+                        act.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationHelp", ActualValue: violation.Help, violatedNodeIndex.ToString());
+                    }
+                }
+            }
+            else
+            {
+                act.Status = eRunStatus.Passed;
+            }
         }
 
         private void ScreenshotHandler(ActScreenShot act)
@@ -3696,7 +3811,7 @@ namespace GingerCore.Drivers
 
             if (locateBy == eLocateBy.POMElement)
             {
-                POMExecutionUtils pomExcutionUtil = new POMExecutionUtils(act, act is ActUIElement ? ((ActUIElement)act).ElementLocateValue : ((ActVisualTesting)act).LocateValue);
+                POMExecutionUtils pomExcutionUtil = new POMExecutionUtils(act, act is ActUIElement ? ((ActUIElement)act).ElementLocateValue : (act is ActAccessibilityTesting ? ((ActAccessibilityTesting)act).LocateValue : ((ActVisualTesting)act).LocateValue));
 
                 var currentPOM = pomExcutionUtil.GetCurrentPOM();
 
@@ -4363,7 +4478,6 @@ namespace GingerCore.Drivers
         {
             get { return ePlatformType.Web; }
         }
-        private int exceptioncount = 0;
 
 
         private static string handleExePath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "StaticDrivers", "handle.exe");
@@ -4407,34 +4521,21 @@ namespace GingerCore.Drivers
                  * if exception then try the current mechanism
                  * */
 
-                try
-                {
-                    //TODO: MaheshK: Need to improve IsBrowserAlive code to handle non responsive browsers and when machine running low on resource.
-                    //if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && this.mDriverProcessId != 0)
-                    //{
-                    //    try
-                    //    {
-                    //        return IsBrowserAlive();
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred in IsBrowserAlive called from IsRunning Method using handle.exe ", ex);
-                    //    }
-                    //}
+                int maxAttempts = 5;
+                int attemptCount = 0;
 
-                    int count = 0;
-                    ///IAsyncResult result;
-                    //Action action = () =>
-                    var action = Task.Run(() =>
+                while (attemptCount <= maxAttempts)
+                {
+                    try
                     {
+                        int count = 0;
+
                         try
                         {
-                            Thread.Sleep(100);
                             count = Driver.WindowHandles.Count;
                         }
                         catch (System.InvalidCastException ex)
                         {
-                            exceptioncount = 0;
                             count = Driver.CurrentWindowHandle.Count();
                             Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred while casting when we are checking IsRunning", ex);
                         }
@@ -4450,107 +4551,104 @@ namespace GingerCore.Drivers
                         }
                         catch (Exception ex)
                         {
-                            //throw exception to outer catch
                             Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex);
                             throw;
                         }
-                    });
 
-                    //result = action.BeginInvoke(null, null);
-                    //if (result.AsyncWaitHandle.WaitOne(10000, true))  
-
-                    if (action.Wait(10000))
-                    {
                         if (count == 0)
                         {
                             return false;
                         }
-
-                        if (count > 0)
+                        else if (count > 0)
                         {
                             return true;
                         }
-                    }
-                    else
-                    {
-                        if (exceptioncount < 5)
+
+                        if(attemptCount < maxAttempts)
                         {
-                            exceptioncount++;
-                            return (IsRunning());
+                            attemptCount++;
+                            continue;
                         }
+
                         var currentWindow = Driver.CurrentWindowHandle;
                         if (!string.IsNullOrEmpty(currentWindow))
                         {
                             return true;
                         }
+
+                        if (count == 0)
+                        {
+                            return false;
+                        }
                     }
-                    if (count == 0)
+                    catch (OpenQA.Selenium.UnhandledAlertException)
                     {
                         return false;
                     }
-                }
-                catch (OpenQA.Selenium.UnhandledAlertException)
-                {
-                    return true;
-                }
-                catch (OpenQA.Selenium.NoSuchWindowException ex)
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex);
-                    var currentWindow = Driver.CurrentWindowHandle;
-                    if (!string.IsNullOrEmpty(currentWindow))
+                    catch (OpenQA.Selenium.NoSuchWindowException ex)
                     {
-                        return true;
+                        Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex);
+                        var currentWindow = Driver.CurrentWindowHandle;
+                        if (!string.IsNullOrEmpty(currentWindow))
+                        {
+                            
+                           return true;
+                        }
+
+                        if (attemptCount < maxAttempts)
+                        {
+                            attemptCount++;
+                            continue;
+                        }
+                    }
+                    catch (OpenQA.Selenium.WebDriverTimeoutException ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Timeout exception occurred when we are checking IsRunning", ex);
+                        var currentWindow = Driver.CurrentWindowHandle;
+                        if (!string.IsNullOrEmpty(currentWindow))
+                        {
+                            return true;
+                        }
+
+                        if (attemptCount < maxAttempts)
+                        {
+                            attemptCount++;
+                            continue;
+                        }
+                    }
+                    catch (OpenQA.Selenium.WebDriverException ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Webdriver exception occurred when we are checking IsRunning", ex);
+
+                        if (PreviousRunStopped && ex.Message == "Unexpected error. Error 404: Not Found\r\nNot Found")
+                        {
+                            return true;
+                        }
+
+                        if (attemptCount < maxAttempts)
+                        {
+                            attemptCount++;
+                            continue;
+                        }
+
+                        CloseDriver();
+                        break;
+                    }
+                    catch (Exception ex2)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex2);
+                        if (ex2.Message.ToString().ToUpper().Contains("DIALOG"))
+                        {
+                            return true;
+                        }
+
+                        CloseDriver();
+                        break;
                     }
 
-                    if (exceptioncount < 5)
-                    {
-                        exceptioncount++;
-                        return (IsRunning());
-                    }
                 }
-                catch (OpenQA.Selenium.WebDriverTimeoutException ex)
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Timeout exception occurred when we are checking IsRunning", ex);
-                    var currentWindow = Driver.CurrentWindowHandle;
-                    if (!string.IsNullOrEmpty(currentWindow))
-                    {
-                        return true;
-                    }
 
-                    if (exceptioncount < 5)
-                    {
-                        exceptioncount++;
-                        return (IsRunning());
-                    }
-                }
-                catch (OpenQA.Selenium.WebDriverException ex)
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Webdriver exception occurred when we are checking IsRunning", ex);
-
-                    if (PreviousRunStopped && ex.Message == "Unexpected error. Error 404: Not Found\r\nNot Found")
-                    {
-                        return true;
-                    }
-
-                    if (exceptioncount < 5)
-                    {
-                        exceptioncount++;
-                        return (IsRunning());
-                    }
-                    CloseDriver();
-                    return false;
-                }
-                catch (Exception ex2)
-                {
-                    Reporter.ToLog(eLogLevel.DEBUG, "Exception occurred when we are checking IsRunning", ex2);
-                    if (ex2.Message.ToString().ToUpper().Contains("DIALOG"))
-                    {
-                        return true;
-                    }
-                    CloseDriver();
-                    return false;
-                }
-                return true;
+                return false;
             }
             else
             {
@@ -6713,40 +6811,54 @@ namespace GingerCore.Drivers
             }
         }
 
-        void CheckifPageLoaded()
-        {
-            //TODO: slow function, try to check alternatives or let the user config wait for
-            try
-            {
-                bool DomElementIncreasing = true;
-                int CurrentDomElementSize = 0;
-                int SameSizzeCounter = 0;
-                while (DomElementIncreasing)
+        /*        void CheckifPageLoaded()
                 {
-                    Thread.Sleep(300);
-
-                    int instanceSize = Driver.FindElements(By.CssSelector("*")).Count;
-
-                    if (instanceSize > CurrentDomElementSize)
+                    //TODO: slow function, try to check alternatives or let the user config wait for
+                    try
                     {
-                        CurrentDomElementSize = instanceSize;
-                        SameSizzeCounter = 0;
-                        continue;
-                    }
-                    else
-                    {
-                        SameSizzeCounter++;
-                        if (SameSizzeCounter == 5)
+                        bool DomElementIncreasing = true;
+                        int CurrentDomElementSize = 0;
+                        int SameSizzeCounter = 0;
+                        while (DomElementIncreasing)
                         {
-                            DomElementIncreasing = false;
+                            Thread.Sleep(300);
+
+                            int instanceSize = Driver.FindElements(By.CssSelector("*")).Count;
+
+                            if (instanceSize > CurrentDomElementSize)
+                            {
+                                CurrentDomElementSize = instanceSize;
+                                SameSizzeCounter = 0;
+                                continue;
+                            }
+                            else
+                            {
+                                SameSizzeCounter++;
+                                if (SameSizzeCounter == 5)
+                                {
+                                    DomElementIncreasing = false;
+                                }
+                            }
                         }
                     }
+                    catch
+                    {
+                        // Do nothing...
+                    }
                 }
-            }
-            catch
+        */
+        void CheckifPageLoaded()
+        {
+            WebDriverWait webDriverWait = new WebDriverWait(Driver, TimeSpan.FromSeconds(ImplicitWait));
+            webDriverWait.Until((driver) =>
             {
-                // Do nothing...
-            }
+                object jQuery = ((IJavaScriptExecutor)driver).ExecuteScript("return window.jQuery && jQuery.active == 0");
+
+                bool IsJqueryCompleted = jQuery == null ? true : jQuery.Equals(true);
+                return
+                ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete") && IsJqueryCompleted;
+            });
+
         }
 
         String GetInjectJSSCript(string script)
