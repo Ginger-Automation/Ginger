@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             foreach (ActivitiesGroup activityGroup in _businessFlow.ActivitiesGroups)
             {
                 BPMNFileData? activityGroupBPMNFileData = CreateActivityGroupBPMNFileData(activityGroup);
-                if(activityGroupBPMNFileData == null)
+                if (activityGroupBPMNFileData == null)
                 {
                     continue;
                 }
@@ -75,7 +75,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
         private BPMNFileData? CreateActivityGroupBPMNFileData(ActivitiesGroup activityGroup)
         {
             Collaboration? activityGroupCollaboration = CreateCollaborationFromActivityGroup(activityGroup);
-            if(activityGroupCollaboration == null)
+            if (activityGroupCollaboration == null)
             {
                 return null;
             }
@@ -102,7 +102,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
         private Collaboration? CreateCollaborationFromActivityGroup(ActivitiesGroup activityGroup)
         {
             bool isEmpty = !activityGroup.ActivitiesIdentifiers.Any();
-            if(isEmpty)
+            if (isEmpty)
             {
                 return null;
             }
@@ -116,7 +116,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
         {
             string zipDirectoryPath = CreateReleaseZIPDirectory(bpmnFiles);
             string zipFilePath = $"{zipDirectoryPath}.zip";
-            if(File.Exists(zipFilePath))
+            zipFilePath = GetUniqueFilePath(zipFilePath);
+            if (File.Exists(zipFilePath))
             {
                 File.Delete(zipFilePath);
             }
@@ -125,9 +126,25 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             return zipFilePath;
         }
 
+        private string GetUniqueFilePath(string filePath)
+        {
+            if (!File.Exists(filePath))
+                return filePath;
+
+            string extension = Path.GetExtension(filePath);
+            string filePathWithoutExtension = filePath.Remove(filePath.Length - extension.Length, extension.Length);
+            int copyCounter = 1;
+            while (File.Exists($"{filePathWithoutExtension}({copyCounter}){extension}"))
+                copyCounter++;
+            return $"{filePathWithoutExtension}({copyCounter}){extension}";
+        }
+
         private string CreateReleaseZIPDirectory(IEnumerable<BPMNFileData> bpmnFiles)
         {
             string zipDirectoryRootPath = Path.Combine(_exportPath, _businessFlow.Name);
+
+            zipDirectoryRootPath = GetUniqueDirectoryPath(zipDirectoryRootPath);
+
             string zipDirectoryPath = Path.Combine(zipDirectoryRootPath, "requirements-library");
             if (Directory.Exists(zipDirectoryPath))
             {
@@ -141,6 +158,18 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
                 File.WriteAllText(filePath, bpmnFile.Content);
             }
             return zipDirectoryRootPath;
+        }
+
+        private string GetUniqueDirectoryPath(string directoryPath)
+        {
+            if (!Directory.Exists(directoryPath))
+                return directoryPath;
+
+            int copyCount = 1;
+            while (Directory.Exists($"{directoryPath}({copyCount})"))
+                copyCount++;
+
+            return $"{directoryPath}({copyCount})";
         }
 
         private sealed class BPMNFileData

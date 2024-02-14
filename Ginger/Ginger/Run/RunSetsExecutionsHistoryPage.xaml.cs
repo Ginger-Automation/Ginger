@@ -19,6 +19,9 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.BPMN.Conversion;
+using Amdocs.Ginger.CoreNET.BPMN.Exportation;
+using Amdocs.Ginger.CoreNET.BPMN.Models;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
@@ -26,11 +29,13 @@ using Amdocs.Ginger.CoreNET.Utility;
 using Ginger.Reports;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Activities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -43,8 +48,14 @@ namespace Ginger.Run
     /// </summary>
     public partial class RunSetsExecutionsHistoryPage : Page
     {
+        private const string BPMNExportPath = @"~\\Documents\BPMN";
+        private const string AccountReportAPIBaseURL = "https://usstlattstl01";
+
         ObservableList<RunSetReport> mExecutionsHistoryList = new ObservableList<RunSetReport>();
         ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
+
+        private HttpClient? _httpClient;
+
         public bool AutoLoadExecutionData = false;
         public ObservableList<RunSetReport> ExecutionsHistoryList
         {
@@ -85,17 +96,74 @@ namespace Ginger.Run
             }
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(RunSetReport.GUID), Header = "Execution ID", WidthWeight = 15 });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.Name, WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.Description, WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.StartTimeStamp, Header = "Execution Start Time", WidthWeight = 10, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.EndTimeStamp, Header = "Execution End Time", WidthWeight = 10, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.ExecutionDurationHHMMSS, Header = "Execution Duration", WidthWeight = 10, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.RunSetExecutionStatus, Header = "Execution Status", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.DataRepMethod, Header = "Type", Visible = true, ReadOnly = true, WidthWeight = 5, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "Generate Report", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"] });
+            view.GridColsView =
+            [
+                new(){ 
+                    Field = nameof(RunSetReport.GUID), 
+                    Header = "Execution ID", 
+                    WidthWeight = 15 
+                },
+                new(){ 
+                    Field = RunSetReport.Fields.Name, 
+                    WidthWeight = 20, 
+                    ReadOnly = true },
+                new()
+                { 
+                    Field = RunSetReport.Fields.Description, 
+                    WidthWeight = 20, 
+                    ReadOnly = true },
+                new()
+                { 
+                    Field = RunSetReport.Fields.StartTimeStamp, 
+                    Header = "Execution Start Time", 
+                    WidthWeight = 10, 
+                    ReadOnly = true 
+                },
+                new()
+                { 
+                    Field = RunSetReport.Fields.EndTimeStamp, 
+                    Header = "Execution End Time", 
+                    WidthWeight = 10, 
+                    ReadOnly = true 
+                },
+                new()
+                { 
+                    Field = RunSetReport.Fields.ExecutionDurationHHMMSS, 
+                    Header = "Execution Duration", 
+                    WidthWeight = 10, 
+                    ReadOnly = true 
+                },
+                new()
+                { 
+                    Field = RunSetReport.Fields.RunSetExecutionStatus, 
+                    Header = "Execution Status", 
+                    WidthWeight = 10, 
+                    ReadOnly = true, 
+                    BindingMode = BindingMode.OneWay 
+                },
+                new()
+                { 
+                    Field = RunSetReport.Fields.DataRepMethod, 
+                    Header = "Type", 
+                    Visible = true, 
+                    ReadOnly = true,
+                    WidthWeight = 5, 
+                    BindingMode = BindingMode.OneWay 
+                },
+                new(){ 
+                    Field = "Generate Report", 
+                    WidthWeight = 8, 
+                    StyleType = GridColView.eGridColStyleType.Template, 
+                    CellTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"] 
+                },
+                new()
+                {
+                    Field = "Generate BPMN",
+                    WidthWeight = 8,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = (DataTemplate)this.pageGrid.Resources["BPMNButtonDataTemplate"]
+                },
+            ];
 
             grdExecutionsHistory.SetAllColumnsDefaultView(view);
             grdExecutionsHistory.InitViewItems();
@@ -134,7 +202,7 @@ namespace Ginger.Run
             grdExecutionsHistory.Visibility = Visibility.Collapsed;
             Loading.Visibility = Visibility.Visible;
             mExecutionsHistoryList.Clear();
-            await Task.Run(() =>
+            await System.Threading.Tasks.Task.Run(() =>
             {
                 try
                 {
@@ -285,7 +353,7 @@ namespace Ginger.Run
         {
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
-                Process.Start(new ProcessStartInfo() { FileName = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder), UseShellExecute = true });
+                System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder), UseShellExecute = true });
             }
             else
             {
@@ -360,10 +428,82 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder, UseShellExecute = true });
-                    Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder + "\\" + "GingerExecutionReport.html", UseShellExecute = true });
+                    System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder, UseShellExecute = true });
+                    System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder + "\\" + "GingerExecutionReport.html", UseShellExecute = true });
                 }
             }
+        }
+
+        private void BPMNButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button BPMNButton = (Button)sender;
+            RunSetReport runSetReport = (RunSetReport)BPMNButton.Tag;
+            if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                CreateBPMNFromLiteDB(runSetReport.GUID);
+            else
+                CreateBPMNFromRemote(runSetReport.GUID);
+        }
+
+        private void CreateBPMNFromLiteDB(string runsetGuid)
+        {
+            LiteDbManager liteDbManager = new(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
+            LiteDbRunSet liteRunSet = liteDbManager.GetLatestExecutionRunsetData(runsetGuid);
+            IEnumerable<LiteDbBusinessFlow> liteBFs = liteRunSet
+                .RunnersColl
+                .SelectMany(liteRunner => liteRunner.AllBusinessFlowsColl);
+            
+            foreach (LiteDbBusinessFlow liteBF in liteBFs)
+            {
+                IEnumerable<GingerCore.Activity> activities = liteBF
+                    .AllActivitiesColl
+                    .Select(liteActivity => new GingerCore.Activity()
+                    {
+                        ActivityName = liteActivity.Name
+                    });
+                ActivitiesGroup activitiesGroup = new()
+                {
+                    Name = $"{liteBF.Name}_ActivityGroup",
+                    ActivitiesIdentifiers = new(activities
+                        .Select(activity => new ActivityIdentifiers()
+                        {
+                            ActivityName = activity.ActivityName
+                        }))
+                };
+                BusinessFlow businessFlow = new()
+                {
+                    Name = liteBF.Name,
+                    Activities = new(activities),
+                    ActivitiesGroups = [activitiesGroup]
+                };
+                ExportUseCaseFromBusinessFlow(businessFlow);
+            }
+        }
+
+        private void CreateBPMNFromRemote(string runsetGuid)
+        {
+            if (_httpClient == null)
+                _httpClient = new();
+
+            HttpRequestMessage request = new()
+            {
+                RequestUri = new Uri($"{AccountReportAPIBaseURL}/htmlreport/api/HtmlReport/GetActivitiesByParent"),
+                Content = new StringContent($@"
+                    {{
+                      ""ExecutionId"": ""{runsetGuid}"",
+                      ""ParentId"": """",
+                      ""From"": 0,
+                      ""Take"": 50,
+                      ""IsLoadActions"": true
+                    }}
+                ")
+            };
+        }
+
+        private void ExportUseCaseFromBusinessFlow(BusinessFlow businessFlow)
+        {
+            string fullBPMNExportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BPMNExportPath);
+            BusinessFlowToBPMNExporter bpmnExporter = new(businessFlow, fullBPMNExportPath);
+            bpmnExporter.Export();
         }
     }
 }

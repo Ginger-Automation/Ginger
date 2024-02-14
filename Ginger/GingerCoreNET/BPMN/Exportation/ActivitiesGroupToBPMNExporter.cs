@@ -76,9 +76,27 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             {
                 Directory.CreateDirectory(_exportPath);
             }
+            
             string filePath = Path.Combine(_exportPath, bpmnFile.Name);
+
+            filePath = GetUniqueFilePath(filePath);
+
             File.WriteAllText(filePath, bpmnFile.Content);
+            
             return filePath;
+        }
+
+        private string GetUniqueFilePath(string filePath)
+        {
+            if (!File.Exists(filePath))
+                return filePath;
+
+            string extension = Path.GetExtension(filePath);
+            string filePathWithoutExtension = filePath.Remove(filePath.Length - extension.Length, extension.Length);
+            int copyCounter = 1;
+            while (File.Exists($"{filePathWithoutExtension}({copyCounter}){extension}"))
+                copyCounter++;
+            return $"{filePathWithoutExtension}({copyCounter}){extension}";
         }
 
         private sealed class BPMNFileData
