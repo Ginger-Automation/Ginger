@@ -36,7 +36,8 @@ namespace GingerCore.Drivers.Common
         [IsSerializedForLocalRepository]
         public string TagName { get; set; }
 
-
+        [IsSerializedForLocalRepository]
+        public IList<string> XPathList = new List<string>();
         private string mID = null;
 
         [IsSerializedForLocalRepository]
@@ -128,12 +129,9 @@ namespace GingerCore.Drivers.Common
 
         public static HTMLElementInfo FindParentElementUsingGuid(HTMLElementInfo ChildElement, IList<ElementInfo> AllElements)
         {
-            if (AllElements == null) return ChildElement;
+            if (AllElements == null) return null;
             
-            var ParentElement = AllElements.FirstOrDefault((element) => element.Guid.Equals(ChildElement.ParentPomElementGuid));
-            if (ParentElement == null) return ChildElement;
-
-            return (HTMLElementInfo)ParentElement;
+            return (HTMLElementInfo)AllElements.FirstOrDefault((element) => element.Guid.Equals(ChildElement.ParentPomElementGuid));
         }
 
     }

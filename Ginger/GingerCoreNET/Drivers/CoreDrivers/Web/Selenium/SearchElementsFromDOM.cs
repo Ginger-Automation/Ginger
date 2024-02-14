@@ -1,6 +1,9 @@
 ﻿using Amdocs.Ginger.Common.UIElement;
+using GingerCore.Drivers;
 using GingerCore.Drivers.Common;
+using NPOI.OpenXmlFormats.Shared;
 using OpenQA.Selenium;
+using OpenQA.Selenium.DevTools.V119.Debugger;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -10,88 +13,94 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
     class SearchElementsFromDOM
     {
 
-        public static ReadOnlyCollection<T> GetAllChildNodes<T>(ISearchContext ShadowRoot, IWebDriver driver)
+        private readonly SeleniumDriver seleniumDriver;
+        private readonly LocateWebElement locateWebElement;
+        public SearchElementsFromDOM() { }
+
+        public SearchElementsFromDOM(SeleniumDriver seleniumDriver)
         {
-            return (ReadOnlyCollection<T>)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].childNodes", ShadowRoot);
+            this.seleniumDriver = seleniumDriver;
+            this.locateWebElement = new(this.seleniumDriver);
         }
-        public static IWebElement FindElement(string XpathWithDividers , ISearchContext Driver , By by)
+
+
+        public static IList<object> GetAllChildNodes(ISearchContext ShadowRoot, IWebDriver driver)
         {
-            return FindElement(XpathWithDividers.Split(RenderXPath.XPATH_DIVIDER).Where((xpath) => !string.IsNullOrEmpty(xpath)).ToList(),  Driver , by);
+            ReadOnlyCollection<object> childNodes = (ReadOnlyCollection<object>)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].childNodes", ShadowRoot);
+            return childNodes.Where((childNode) => childNode is IWebElement).ToList();
         }
-        private static IWebElement FindElement(IList<string>XPaths, ISearchContext Driver, By by)
+        public IWebElement FindElement(IList<string> XPaths, ElementLocator ElementToBeFoundLocator)
         {
-            int startPointer = XPaths.Count - 1;
-            ISearchContext CurrentElement = Driver;
-            while(startPointer > 0)
+            if (XPaths == null || XPaths.Count == 0)
             {
-                string XPath = XPaths[startPointer--];
-                if (CurrentElement is ShadowRoot)
+                return locateWebElement.LocateElementByLocator(ElementToBeFoundLocator, seleniumDriver.mDriver, null, false);
+            }
+
+            int startPointer = XPaths.Count - 1;
+            ISearchContext CurrentElement = seleniumDriver.mDriver;
+            while (startPointer >= 0 && CurrentElement != null)
+            {
+                string XPath = XPaths[startPointer];
+                ElementLocator elementLocator = this.GetElementLocatorForWebElement(startPointer, XPath, ElementToBeFoundLocator);
+
+                if (CurrentElement is ShadowRoot shadowRoot)
                 {
-                    CurrentElement = FindNodeBySelectorInShadowDOM((ShadowRoot)CurrentElement , XPath , (IWebDriver)Driver);
+                    CurrentElement = FindNodeBySelectorInShadowDOM(shadowRoot, elementLocator);
                 }
                 else
                 {
-                    CurrentElement = CurrentElement.FindElement(By.XPath(XPath));
+                    CurrentElement = locateWebElement.LocateElementByLocator(elementLocator, CurrentElement, null, false);
                     CurrentElement = ShadowDOM.GetShadowRootIfExists((IWebElement)CurrentElement) ?? CurrentElement;
                 }
+                startPointer--;
             }
-            
-            if(CurrentElement is ShadowRoot)
-            {
-               return FindNodeBySelectorInShadowDOM((ShadowRoot)CurrentElement, XPaths[startPointer], (IWebDriver)Driver);
-            }
-            else
-            {
-                return CurrentElement.FindElement(by);
-            }
-        }
 
-        public static IWebElement FindNodeBySelectorInShadowDOM(ShadowRoot ShadowRoot, string XPath, IWebDriver Driver)
+
+            return (IWebElement)CurrentElement;
+        }
+        private ElementLocator GetElementLocatorForWebElement(int startPointer, string XPath, ElementLocator ElementToBeFoundLocator)
         {
-            ReadOnlyCollection<IWebElement> childNodes = GetAllChildNodes<IWebElement>(ShadowRoot, Driver);
-            string XpathRelativeToParentNode = RenderXPath.ChangeXPathIfShadowDomExists(XPath, true);
 
-            if (string.IsNullOrEmpty(XpathRelativeToParentNode))
+            ElementLocator locator = new();
+
+            if (startPointer == 0)
             {
-                int Count = 0;
-                string TagName = string.Empty;
-                RenderXPath.FindShadowDomChildTagNameAndCount(XPath , out Count, out TagName);  
-                
-                foreach (IWebElement child in childNodes)
-                {
-                    try
-                    {
-                        if (TagName.Equals(child.TagName) && Count == 1)
-                        {
-                            Count--;
-                            return child;
-                        }
-                    }
-                    catch
-                    {
-                        continue;
-                    }
-                }
+                locator = ElementToBeFoundLocator;
             }
 
             else
             {
-                foreach (IWebElement child in childNodes)
-                {
+                locator.LocateBy = eLocateBy.ByXPath;
+                locator.LocateValue = XPath;
+            }
+            return locator;
+        }
+        private IWebElement FindNodeBySelectorInShadowDOM(ShadowRoot shadowRoot, ElementLocator locator)
+        {
+            IList<object> childNodes = GetAllChildNodes(shadowRoot, seleniumDriver.mDriver);
 
-                    try
-                    {
-                        return child.FindElement(By.XPath(XpathRelativeToParentNode));
-                    }
-                    catch
-                    {
-                        continue;
-                    }
+            // 1. check if element exists in the direct childNodes of the shadow dom
+            // 2. check if the element exists in the childNodes' DOM
+
+            IWebElement webElement = null;
+
+            foreach (IWebElement child in childNodes.Cast<IWebElement>())
+            {
+                try
+                {
+                    webElement = ShadowDOM.FindShadowRootDirectChild(shadowRoot, locator, seleniumDriver.mDriver, child.TagName) ?? locateWebElement.LocateElementByLocator(locator, child, null, false);
                 }
+                catch
+                {
+                    continue;
+                }
+
             }
 
-            return null;
+
+            return webElement;
         }
+
 
 
     }

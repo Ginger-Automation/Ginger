@@ -1,4 +1,6 @@
-﻿using OpenQA.Selenium;
+﻿using Amdocs.Ginger.Common.UIElement;
+using OpenQA.Selenium;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 {
@@ -7,7 +9,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
         public static ISearchContext GetShadowRootIfExists(ISearchContext webElement)
         {
 
-            if (webElement is not IWebElement) return null;
+            if (webElement == null || webElement is not IWebElement) return null;
 
 
             try
@@ -25,17 +27,54 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             return (string)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].outerHTML", root);
         }
 
-        public static IWebElement FindShadowRootDirectChild(ISearchContext shadowRoot , string cssSelector, IWebDriver Driver)
+        public static IWebElement FindShadowRootDirectChild(ISearchContext shadowRoot, ElementLocator locator, IWebDriver Driver, string childTagName)
         {
             try
             {
-                return (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].querySelector(arguments[1])" , shadowRoot , cssSelector);
+                string cssSelector = GetCssSelectorForShadowDOMChild(locator, childTagName);
+                if (string.IsNullOrEmpty(cssSelector))
+                {
+                    return null;
+                }
+                return (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].querySelector(arguments[1])", shadowRoot, cssSelector);
             }
-            catch 
-            { 
-                return null; 
+            catch
+            {
+                return null;
             }
         }
+
+        public static string GetCssSelectorForShadowDOMChild(ElementLocator locator, string tagName)
+        {
+            tagName = tagName.ToLower();
+
+            if (locator.LocateBy.Equals(eLocateBy.ByID))
+            {
+                return $"{tagName}#{locator.LocateValue}";
+            }
+
+            else if (locator.LocateBy.Equals(eLocateBy.ByClassName))
+            {
+                return $"{tagName}.{locator.LocateValue}";
+            }
+            else if (locator.LocateBy.Equals(eLocateBy.ByName))
+            {
+                return $"{tagName}[name='{locator.LocateValue}']";
+            }
+            else if (locator.LocateBy.Equals(eLocateBy.ByCSS) || locator.LocateBy.Equals(eLocateBy.ByTagName))
+            {
+                return locator.LocateValue;
+            }
+
+            return null;
+        }
+
+        
+        public static IWebElement GetShadowRootHost(ISearchContext searchContext, IWebDriver Driver)
+        {
+            return (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].host", searchContext);
+        }
+    
     }
 
 }

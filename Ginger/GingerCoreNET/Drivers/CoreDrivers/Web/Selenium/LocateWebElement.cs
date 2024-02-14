@@ -14,10 +14,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 {
     public class LocateWebElement
     {
-        public LocateWebElement()
-        {
-
-        }
         private readonly SeleniumDriver seleniumDriver;
         public LocateWebElement(SeleniumDriver seleniumDriver)
         {
@@ -28,7 +24,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             IWebElement elem = null;
             locator.StatusError = "";
             locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
-            string FriendlyLocatorValue = string.Empty;
             try
             {
                 try

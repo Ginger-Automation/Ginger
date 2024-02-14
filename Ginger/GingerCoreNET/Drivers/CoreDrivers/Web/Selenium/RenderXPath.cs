@@ -1,23 +1,24 @@
-﻿using GingerCore.Drivers.Common;
+﻿using Amdocs.Ginger.Common.UIElement;
 using OpenQA.Selenium;
-using Renci.SshNet.Sftp;
+using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.DevTools.V119.Accessibility;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 {
     public class RenderXPath
     {
-        public static readonly char XPATH_DIVIDER = '$';
+        // Convert this to a iterative code
 
-        public static string GenerateXPathForDOMElement(ISearchContext IWE, IWebDriver Driver, string current, StringBuilder XPathsForDetectedShadowElement, bool isBrowserFireFox)
+
+        public static string GenerateXPathForDOMElement(ISearchContext IWE, IWebDriver Driver, string current, IList<string> XPathsToDetectShadowElement, bool isBrowserFireFox)
         {
-            string tagName = string.Empty;
-            ReadOnlyCollection<IWebElement> childrenElements = null;
+            string tagName = string.Empty;            
             ISearchContext parentElement = null;
+            ReadOnlyCollection<IWebElement> childrenElements = null;
 
             if (IWE is IWebElement)
             {
@@ -40,21 +41,26 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             else if (IWE is ShadowRoot)
             {
                 parentElement = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].host", IWE);
-                XPathsForDetectedShadowElement.Append($"{XPATH_DIVIDER}{current}{XPATH_DIVIDER}");
-                string xpathBeforeCurrentShadowRoot = GenerateXPathForDOMElement(parentElement, Driver,string.Empty, XPathsForDetectedShadowElement, isBrowserFireFox);
-                XPathsForDetectedShadowElement.Append(xpathBeforeCurrentShadowRoot);
+                current = ChangeXPathIfShadowDomExists(current, true) ?? current;
+
+                XPathsToDetectShadowElement.Add(current);
+
+                string xpathBeforeCurrentShadowRoot = GenerateXPathForDOMElement(parentElement, Driver, string.Empty, XPathsToDetectShadowElement, isBrowserFireFox);
+
+                XPathsToDetectShadowElement.Add(xpathBeforeCurrentShadowRoot);
+
                 return xpathBeforeCurrentShadowRoot;
             }
 
-
             int count = 1;
+            string resultXPath = string.Empty;
+
             foreach (IWebElement childElement in childrenElements)
             {
                 try
                 {
                     if (IWE.Equals(childElement))
                     {
-                        string resultXPath = string.Empty;
                         if (string.IsNullOrEmpty(tagName))
                         {
                             resultXPath = current;
@@ -63,7 +69,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                         {
                             resultXPath = "/" + tagName + "[" + count + "]" + current;
                         }
-                        return GenerateXPathForDOMElement(parentElement,Driver ,resultXPath, XPathsForDetectedShadowElement, isBrowserFireFox);
+                        return GenerateXPathForDOMElement(parentElement, Driver, resultXPath, XPathsToDetectShadowElement, isBrowserFireFox);
                     }
                     else
                     {
@@ -82,33 +88,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                     }
                 }
             }
-            return current;
+
+            return resultXPath;
         }
 
-        public static string ConvertXpathListToString(IList<string> XPathList)
-        {
-            StringBuilder ResultXPath = new();
 
-            int startPointer = XPathList.Count - 1;
 
-            while(startPointer >= 0)
-            {
-                ResultXPath.Append(XPathList[startPointer--]);
-            }
-
-            return ResultXPath.ToString();
-        }
-
-/*        public static void AddToXPathIfParentXPathExists(HTMLElementInfo foundElementInfo, string ParentXPath)
-        {
-
-            if (!string.IsNullOrEmpty(ParentXPath))
-            {
-                foundElementInfo.XPath = $"{foundElementInfo.XPath}{XPATH_DIVIDER}{ParentXPath}";
-
-            }
-        }
-*/
         public static string ChangeXPathIfShadowDomExists(string Xpath, bool isShadowRootDetected)
         {
             if (isShadowRootDetected)
