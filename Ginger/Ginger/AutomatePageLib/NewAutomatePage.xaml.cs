@@ -1094,6 +1094,12 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 if (mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
                 {
+                    if(((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).Status == Agent.eStatus.NotStarted)
+                    {
+
+                        ((AgentOperations)((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Close();
+                    }
+
                     ((AgentOperations)((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).IsFailedToStart = false;
                 }
             }

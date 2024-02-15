@@ -182,8 +182,9 @@ namespace Ginger.BusinessFlowPages
             xTargetApplicationlbl.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
             xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
+            mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Paused;
             BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
-            
+            mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Started;
             if (mActivity.GetType() == typeof(ErrorHandler))
             {
                 xHandlerTypeStack.Visibility = Visibility.Visible;
@@ -217,8 +218,9 @@ namespace Ginger.BusinessFlowPages
                 CollectionChangedEventManager.RemoveHandler(source: mContext.BusinessFlow.TargetApplications, handler: AutoUpdate_ConsumerList);
                 CollectionChangedEventManager.AddHandler(source: mContext.BusinessFlow.TargetApplications, handler: AutoUpdate_ConsumerList);
             }
-
+            mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Paused;
             TargetAppSelectedComboBox();
+            mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Started;
         }
 
         private void UserProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)

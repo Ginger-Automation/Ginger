@@ -36,12 +36,14 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         public ObservableList<ApplicationAPIModel> SwaggerTwo(SwaggerDocument Swaggerdoc, ObservableList<ApplicationAPIModel> SwaggerModels)
         {
             swagTwo = Swaggerdoc;
-            var enumExampleList = SetEnumsValue(swagTwo);
+            
             var reqBodyNullExampleList = GetExamplesFromDefinitions(swagTwo);
 
             foreach (var paths in swagTwo.Paths)
             {
                 SwaggerPathItem SPi = paths.Value;
+                var enumExampleList = SetEnumsValue(paths);
+
                 foreach (KeyValuePair<SwaggerOperationMethod, SwaggerOperation> so in SPi.AsEnumerable())
                 {
                     SwaggerOperation Operation = so.Value;
