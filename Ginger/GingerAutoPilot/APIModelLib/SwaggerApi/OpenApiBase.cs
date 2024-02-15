@@ -380,7 +380,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
         }
 
-        public void SetOptionalValue(ObservableList<AppModelParameter> AppModelParameters, Dictionary<string, string> listExampleValues, Dictionary<string, List<string>> enumExampleList)
+        public void SetOptionalValue(ObservableList<AppModelParameter> AppModelParameters, Dictionary<string, string> listExampleValues, Dictionary<string, HashSet<string>> enumExampleList)
         {
             bool IsDefaultValueCheck = true;
             if (AppModelParameters.Count > 0)
@@ -403,7 +403,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                         item.OptionalValuesList = tempList;
                     }
 
-                    if (!string.IsNullOrEmpty(parameterName) && enumExampleList.TryGetValue(parameterName, out List<string> enumExampleValue))
+                    if (!string.IsNullOrEmpty(parameterName) && enumExampleList.TryGetValue(parameterName, out HashSet<string> enumExampleValue))
                     {
                         ObservableList<OptionalValue> tempList = new ObservableList<OptionalValue>();
 
@@ -427,27 +427,32 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
         }
 
-        public  Dictionary<string,List<string>> SetEnumsValue(SwaggerDocument sd)
+        public  Dictionary<string,HashSet<string>> SetEnumsValue(dynamic sd)
         {
 
-            Dictionary<string,List<string>> exampleValuesEnums = new Dictionary<string,List<string>>();
+            Dictionary<string,HashSet<string>> exampleValuesEnums = new Dictionary<string,HashSet<string>>();
 
-            if (sd.Definitions.Count > 0)
+            foreach(var item in sd.Value)
             {
-                foreach (var definition in sd.Definitions.Values)
+                if (item.Value.Parameters.Count > 0)
                 {
-                    if(definition.ActualProperties.Count > 0)
-                    {
-                        foreach (var cnt in definition.ActualProperties)
-                        {
-                            if(cnt.Value.Enumeration.Count>0)
-                            {
-                                foreach(var ent in cnt.Value.Enumeration)
-                                {
-                                    AddValueForKey(exampleValuesEnums, cnt.Key, ent.ToString());
-                                }
-                            }
 
+
+                    foreach (var definition in item.Value.Parameters)
+                    {
+                        if (definition.ActualSchema.ActualProperties.Count > 0)
+                        {
+                            foreach (var cnt in definition.ActualSchema.ActualProperties)
+                            {
+                                if (cnt.Value.Enumeration.Count > 0)
+                                {
+                                    foreach (var ent in cnt.Value.Enumeration)
+                                    {
+                                        AddValueForKey(exampleValuesEnums, cnt.Key, ent.ToString());
+                                    }
+                                }
+
+                            }
                         }
                     }
                 }
@@ -456,11 +461,11 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             
         }
 
-        public void AddValueForKey(Dictionary<string,List<string>> dictionary, string key, string value)
+        public void AddValueForKey(Dictionary<string,HashSet<string>> dictionary, string key, string value)
         {
             if (!dictionary.ContainsKey(key))
             {
-                dictionary[key] = new List<string> { value };
+                dictionary[key] = new HashSet<string> { value };
             }
             else
             {

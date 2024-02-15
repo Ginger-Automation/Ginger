@@ -357,20 +357,12 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-            Task.Run(async () =>
+            Task.Run(() =>
             {
-                Task saveAllTask = SaveModifiedActivitiesAsync();
-                if (!saveAllTask.IsCompleted)
-                {
-                    ShowLoading("saving modified");
-                    await saveAllTask;
-                    HideLoading();
-                    CloseWindow();
-                }
-                else
-                {
-                    CloseWindow();
-                }
+                ShowLoading("saving modified");
+                SaveModifiedActivities();
+                HideLoading();
+                CloseWindow();
             });
         }
 
@@ -426,24 +418,18 @@ namespace Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib
             }
         }
 
-        private Task SaveModifiedActivitiesAsync()
+        private void SaveModifiedActivities()
         {
             IEnumerable<ActivityBulkUpdateListItem> modifiedActivityBulkUpdateListItems = 
                 _activityBulkUpdateListItems
                 .Where(item => item.IsModified);
 
-            List<Task> saveTasks = [];
             foreach(ActivityBulkUpdateListItem item in modifiedActivityBulkUpdateListItems)
             {
-                Task saveTask = Task.Run(() =>
-                {
-                    item.CommitChanges();
-                    SaveHandler.Save(item.Activity); 
-                    item.IsModified = false;
-                });
-                saveTasks.Add(saveTask);
+                item.CommitChanges();
+                SaveHandler.Save(item.Activity);
+                item.IsModified = false;
             }
-            return Task.WhenAll(saveTasks);
         }
 
         private void ViewDetailsUCButton_Click(object sender, RoutedEventArgs e)
