@@ -23,6 +23,8 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Drivers;
+using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -49,7 +51,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         ObservableList<DeltaElementInfo> mDeltaElements;
         ComboEnumItem mCurrentGroupByFilter;
         ComboEnumItem mCurrentDeltaStatusFilter;
-
+        ApplicationPOMModel mPOMModel;
         bool IsFirstSelection = true;
         bool isEnableFriendlyLocator = false;
         GridColView mGridCompareColumn;
@@ -103,13 +105,12 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
             }
         }
-
-        public PomDeltaViewPage(ObservableList<DeltaElementInfo> deltaElements = null, GridColView gridCompareColumn = null, Agent mAgent = null)
+        public PomDeltaViewPage(PomDeltaUtils pomDeltaUtils, GridColView gridCompareColumn = null, Agent mAgent = null)
         {
             InitializeComponent();
 
-            mDeltaElements = deltaElements;
-
+            mDeltaElements = pomDeltaUtils.DeltaViewElements;
+            mPOMModel = pomDeltaUtils.POM;
             if (gridCompareColumn != null)
             {
                 mGridCompareColumn = gridCompareColumn;
@@ -431,7 +432,24 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.HighLightElement(mSelectedElement.ElementInfo, true);
+                if(mWinExplorer is SeleniumDriver selenium) 
+                {
+                    IList<ElementInfo> elementInfos = new ObservableList<ElementInfo>();
+
+                    var mappedDeltaUiElements = mDeltaElements.Select((element) => element.ElementInfo);
+                    foreach (var element in mappedDeltaUiElements)
+                    {
+                        elementInfos.Add(element);
+                    }
+
+                    selenium.HighlightPomWebElement(mSelectedElement.ElementInfo , elementInfos, true);
+                }
+
+                else
+                {
+                    mWinExplorer.HighLightElement(mSelectedElement.ElementInfo, true);
+                }
+
             }
         }
 
@@ -457,8 +475,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (mSelectedLocator != null)
             {
                 bool originalActiveVal = mSelectedLocator.ElementLocator.Active;
-                mSelectedLocator.ElementLocator.Active = true;//so it will be tested even if disabeled 
-                mWinExplorer.TestElementLocators(new ElementInfo() { Path = CurrentEI.ElementInfo.Path, Locators = new ObservableList<ElementLocator>() { mSelectedLocator.ElementLocator } });
+                mSelectedLocator.ElementLocator.Active = true;//so it will be tested even if disabeled
+                var ElementInfo = CurrentEI.ElementInfo;
+                ElementInfo.Locators = [mSelectedLocator.ElementLocator];
+                var tempPOMModel = mPOMModel;
+                tempPOMModel.MappedUIElements = new ObservableList<ElementInfo>();
+                var mappedDeltaUiElements = mDeltaElements.Select((element) => element.ElementInfo);
+                foreach ( var element in mappedDeltaUiElements )
+                {
+                    tempPOMModel.MappedUIElements.Add(element);
+                }
+
+                mWinExplorer.TestElementLocators(ElementInfo , mPOM: tempPOMModel);
                 mSelectedLocator.ElementLocator.Active = originalActiveVal;
             }
         }

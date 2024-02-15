@@ -4,6 +4,7 @@ using GingerCore.Drivers.Common;
 using NPOI.OpenXmlFormats.Shared;
 using OpenQA.Selenium;
 using OpenQA.Selenium.DevTools.V119.Debugger;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -24,10 +25,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
         }
 
 
-        public static IList<object> GetAllChildNodes(ISearchContext ShadowRoot, IWebDriver driver)
+        public static IList<IWebElement> GetAllChildNodes(ISearchContext ShadowRoot, IWebDriver driver)         
         {
-            ReadOnlyCollection<object> childNodes = (ReadOnlyCollection<object>)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].childNodes", ShadowRoot);
-            return childNodes.Where((childNode) => childNode is IWebElement).ToList();
+            try
+            {
+                ReadOnlyCollection<object> childNodes = (ReadOnlyCollection<object>)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].childNodes", ShadowRoot);
+                return childNodes.Where((childNode) => childNode is IWebElement).Select((childNode)=>(IWebElement)childNode).ToList();
+            }
+
+            catch(InvalidCastException)
+            {
+                ReadOnlyCollection<IWebElement> childNodes = (ReadOnlyCollection<IWebElement>)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].childNodes", ShadowRoot);
+                return childNodes.ToList();
+            }
+
         }
         public IWebElement FindElement(IList<string> XPaths, ElementLocator ElementToBeFoundLocator)
         {
@@ -77,14 +88,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
         }
         private IWebElement FindNodeBySelectorInShadowDOM(ShadowRoot shadowRoot, ElementLocator locator)
         {
-            IList<object> childNodes = GetAllChildNodes(shadowRoot, seleniumDriver.mDriver);
+            IList<IWebElement> childNodes = GetAllChildNodes(shadowRoot, seleniumDriver.mDriver);
 
             // 1. check if element exists in the direct childNodes of the shadow dom
             // 2. check if the element exists in the childNodes' DOM
 
             IWebElement webElement = null;
 
-            foreach (IWebElement child in childNodes.Cast<IWebElement>())
+            foreach (IWebElement child in childNodes)
             {
                 try
                 {

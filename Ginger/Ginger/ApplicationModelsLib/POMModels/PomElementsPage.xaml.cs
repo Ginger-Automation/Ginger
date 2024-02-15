@@ -909,7 +909,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
             ElementInfo CurrentEI = (ElementInfo)MainElementsGrid.CurrentItem;
-
+            CurrentEI.Locators = [mSelectedLocator];
             if (mSelectedLocator != null)
             {
                 var testElement = new ElementInfo();
@@ -928,7 +928,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     }
                 }
 
-                mWinExplorer.TestElementLocators(testElement, false, mPOM);
+                mWinExplorer.TestElementLocators(CurrentEI, false, mPOM);
             }
         }
 

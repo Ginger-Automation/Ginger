@@ -3901,7 +3901,7 @@ namespace GingerCore.Drivers
             }
         }
         
-        // convert recursion to 
+        // convert recursion to iteration    
         public IWebElement LocateElementByLocators(ElementInfo currentPOMElementInfo, IList<ElementInfo> MappedUIElements, bool iscallfromFriendlyLocator = false, POMExecutionUtils POMExecutionUtils = null)
         {
             IWebElement elem = null;
@@ -3925,11 +3925,11 @@ namespace GingerCore.Drivers
                 ParentContext = LocateElementByLocators(ParentElement, MappedUIElements, false, POMExecutionUtils);
             }
             ISearchContext shadowRoot = ShadowDOM.GetShadowRootIfExists(ParentContext);
-            IList<object> childNodes = null;
+            IList<IWebElement> childNodes = null;
             if (shadowRoot != null)
             {
                 childNodes = SearchElementsFromDOM.GetAllChildNodes(shadowRoot, Driver);
-
+            
             }
 
             foreach (ElementLocator locator in currentPOMElementInfo.Locators.Where(x => x.Active == true).ToList())
@@ -3946,37 +3946,37 @@ namespace GingerCore.Drivers
                             ElementLocator evaluatedLocator = FLocator.CreateInstance() as ElementLocator;
                             ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
                             FLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
-                        }
-
+            }
+            
                         if (FLocator.LocateBy == eLocateBy.POMElement && POMExecutionUtils != null)
                         {
                             ElementInfo ReferancePOMElementInfo = POMExecutionUtils.GetFriendlyElementInfo(new Guid(FLocator.LocateValue));
-
+            
                             targetElement = LocateElementByLocators(ReferancePOMElementInfo, MappedUIElements, true, POMExecutionUtils);
                         }
                         else
                         {
                             if (shadowRoot != null)
                             {
-
-                                foreach (IWebElement child in childNodes.Cast<IWebElement>())
+            
+                                foreach (IWebElement child in childNodes)
                                 {
                                     targetElement = ShadowDOM.FindShadowRootDirectChild(shadowRoot, locator, Driver, child.TagName);
-
+            
                                     targetElement ??= locateWebElement.LocateElementByLocator(locator, child);
-
+            
                                     if (targetElement != null)
                                     {
                                         break;
                                     }
                                 }
                             }
-
+            
                             else
                             {
                                 targetElement = locateWebElement.LocateElementByLocator(locator, ParentContext);
-                            }
-
+            }
+             
                         }
                         if (targetElement != null)
                         {
@@ -3990,17 +3990,17 @@ namespace GingerCore.Drivers
                 }
 
 
-
+                   
                 if (!locator.IsAutoLearned)
                 {
                     if (shadowRoot != null)
                     {
-                        foreach (IWebElement child in childNodes.Cast<IWebElement>())
+                        foreach (IWebElement child in childNodes)
                         {
                             elem = ShadowDOM.FindShadowRootDirectChild(shadowRoot, locator, Driver, child.TagName);
 
                             elem ??= LocateElementIfNotAutoLeared(locator, ParentContext, friendlyLocatorElementlist);
-
+            
                             if (elem != null)
                             {
                                 break;
@@ -4016,7 +4016,7 @@ namespace GingerCore.Drivers
                 {
                     if (shadowRoot != null)
                     {
-                        foreach (IWebElement child in childNodes.Cast<IWebElement>())
+                        foreach (IWebElement child in childNodes)
                         {
                             elem = ShadowDOM.FindShadowRootDirectChild(shadowRoot, locator, Driver, child.TagName);
                             elem ??= locateWebElement.LocateElementByLocator(locator, child, friendlyLocatorElementlist, true);
@@ -4033,7 +4033,7 @@ namespace GingerCore.Drivers
                         elem = locateWebElement.LocateElementByLocator(locator, ParentContext, friendlyLocatorElementlist, true);
                     }
                 }
-
+            
                 if (elem != null)
                 {
                     locator.StatusError = string.Empty;
@@ -9310,12 +9310,20 @@ namespace GingerCore.Drivers
                     }
                     if (!el.IsAutoLearned)
                     {
-                        webElement = LocateElementIfNotAutoLeared(el, Driver, friendlyLocatorElementlist);
+                            webElement = LocateElementIfNotAutoLeared(el, Driver, friendlyLocatorElementlist);
                     }
                     else
                     {
-                        // make changes here
-                        webElement = locateWebElement.LocateElementByLocator(el, Driver, friendlyLocatorElementlist, true);
+                        // for POM element
+                        if (mPOM!=null)
+                        {
+                            webElement = LocateElementByLocators(EI , mPOM.MappedUIElements);
+                        }
+                        // For Live spy
+                        else
+                        {
+                            webElement = locateWebElement.LocateElementByLocator(el, Driver, friendlyLocatorElementlist, true);
+                        }
                     }
                     if (webElement != null)
                     {

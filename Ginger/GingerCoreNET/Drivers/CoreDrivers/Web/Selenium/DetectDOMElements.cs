@@ -146,7 +146,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                             seleniumDriver.allReadElem.Add(foundElementInfo);
                             ISearchContext ShadowRoot = ShadowDOM.GetShadowRootIfExists(webElement);
                             if (ShadowRoot == null) continue;
-                            IList<object> ChildNodes = SearchElementsFromDOM.GetAllChildNodes(ShadowRoot, seleniumDriver.mDriver);
+                            IList<IWebElement> ChildNodes = SearchElementsFromDOM.GetAllChildNodes(ShadowRoot, seleniumDriver.mDriver);
 
                             foreach (IWebElement ChildNode in ChildNodes)
                             {
