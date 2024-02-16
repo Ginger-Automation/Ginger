@@ -39,24 +39,35 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
     /// </summary>
     public sealed class CollaborationFromActivityGroupCreator
     {
+        public sealed class Options
+        {
+            public bool IgnoreInterActivityFlowControls { get; init; }
+        }
+
         private readonly ActivitiesGroup _activityGroup;
+        private readonly Options _options;
         private readonly ISolutionFacadeForBPMN _solutionFacade;
 
         /// <summary>
         /// Create a new <see cref="CollaborationFromActivityGroupCreator"/>.
         /// </summary>
         /// <param name="activityGroup"><see cref="ActivitiesGroup"/> which will be used to create.</param>
-        public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup) : this(activityGroup, new WorkSpaceToSolutionFacadeAdapter(WorkSpace.Instance)) { }
+        public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup) : this(activityGroup, new Options()) { }
+
+        public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup, Options options) : this(activityGroup, options, new WorkSpaceToSolutionFacadeAdapter(WorkSpace.Instance)) { }
+        
+        public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade) : this(activityGroup, new Options(), solutionFacade) { }
 
         /// <summary>
         /// Create a new <see cref="CollaborationFromActivityGroupCreator"/>.
         /// </summary>
         /// <param name="activityGroup"><see cref="ActivitiesGroup"/> which will be used to create.</param>
         /// <param name="solutionFacade">A facade to expose solution data.</param>
-        public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade)
+        public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup, Options options, ISolutionFacadeForBPMN solutionFacade)
         {
             ValidateConstructorArgs(activityGroup, solutionFacade);
             _activityGroup = activityGroup;
+            _options = options;
             _solutionFacade = solutionFacade;
         }
 
@@ -133,7 +144,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             IFlowTarget firstEntityForNextActivity = CreateProcessEntitiesForActivity(activitiesEnumerator, collaboration, activityTaskMap);
 
-            IEnumerable<IProcessEntity> processEntitiesForFlowControls = CreateProcessEntitiesForActivityFlowControls(currentActivity, collaboration, activityTaskMap);
+            IEnumerable<IProcessEntity> processEntitiesForFlowControls = Array.Empty<IProcessEntity>();
+            if (!_options.IgnoreInterActivityFlowControls)
+            {
+                CreateProcessEntitiesForActivityFlowControls(currentActivity, collaboration, activityTaskMap);
+            }
 
             if (startEvent != null)
             {

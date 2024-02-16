@@ -35,11 +35,15 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
     public sealed class BusinessFlowToBPMNExporter
     {
         private readonly BusinessFlow _businessFlow;
+        private readonly CollaborationFromActivityGroupCreator.Options _activityGroupCollaborationOptions;
         private readonly string _exportPath;
 
-        public BusinessFlowToBPMNExporter(BusinessFlow businessFlow, string exportPath)
+        public BusinessFlowToBPMNExporter(BusinessFlow businessFlow, string exportPath) : this(businessFlow, new CollaborationFromActivityGroupCreator.Options(), exportPath) { }
+
+        public BusinessFlowToBPMNExporter(BusinessFlow businessFlow, CollaborationFromActivityGroupCreator.Options activityGroupCollaborationOptions, string exportPath)
         {
             _businessFlow = businessFlow;
+            _activityGroupCollaborationOptions = activityGroupCollaborationOptions;
             _exportPath = exportPath;
         }
 
@@ -107,7 +111,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
                 return null;
             }
 
-            CollaborationFromActivityGroupCreator collaborationFromActivityGroupCreator = new(activityGroup);
+            CollaborationFromActivityGroupCreator collaborationFromActivityGroupCreator = new(activityGroup, _activityGroupCollaborationOptions);
             Collaboration activityGroupCollaboration = collaborationFromActivityGroupCreator.Create();
             return activityGroupCollaboration;
         }
