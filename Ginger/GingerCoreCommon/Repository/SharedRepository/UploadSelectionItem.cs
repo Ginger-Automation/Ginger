@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -191,6 +191,7 @@ namespace Ginger.Repository.ItemToRepositoryWizard
 
         public Guid ItemGUID { get; set; }
 
+        public IContext Context { get; set; }
 
         public void SetItemPartesFromEnum(Type enumType)
         {

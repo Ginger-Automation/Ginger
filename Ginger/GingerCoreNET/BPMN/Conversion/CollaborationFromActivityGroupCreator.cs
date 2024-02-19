@@ -41,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
     {
         public sealed class Options
         {
-            public bool IgnoreInterActivityFlowControls { get; init; }
+            public NonDeterministicFlowControlHandlingStrategy NonDeterministicFlowControlHandlingStrategy { get; init; } = NonDeterministicFlowControlHandlingStrategy.Fail;
         }
 
         private readonly ActivitiesGroup _activityGroup;
@@ -144,11 +144,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             IFlowTarget firstEntityForNextActivity = CreateProcessEntitiesForActivity(activitiesEnumerator, collaboration, activityTaskMap);
 
-            IEnumerable<IProcessEntity> processEntitiesForFlowControls = Array.Empty<IProcessEntity>();
-            if (!_options.IgnoreInterActivityFlowControls)
-            {
-                CreateProcessEntitiesForActivityFlowControls(currentActivity, collaboration, activityTaskMap);
-            }
+            IEnumerable<IProcessEntity> processEntitiesForFlowControls = CreateProcessEntitiesForActivityFlowControls(currentActivity, collaboration, activityTaskMap);
 
             if (startEvent != null)
             {
@@ -230,7 +226,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
         private IEnumerable<IProcessEntity> CreateProcessEntitiesForActivityFlowControls(Activity activity, Collaboration collaboration, IDictionary<Activity, IEnumerable<Task>> activityTasksMap)
         {
-            ProcessEntitiesFromActivityFlowControlCreator processEntitiesFromActivityFlowControlCreator = new(activity, collaboration, _solutionFacade, activityTasksMap);
+            ProcessEntitiesFromActivityFlowControlCreator processEntitiesFromActivityFlowControlCreator = new(
+                activity, 
+                collaboration, 
+                _solutionFacade, 
+                activityTasksMap, 
+                _options.NonDeterministicFlowControlHandlingStrategy);
             return processEntitiesFromActivityFlowControlCreator.Create();
         }
 

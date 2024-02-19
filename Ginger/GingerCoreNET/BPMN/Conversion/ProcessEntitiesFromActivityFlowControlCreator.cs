@@ -31,8 +31,15 @@ using System.Text;
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 {
+    public enum NonDeterministicFlowControlHandlingStrategy
+    {
+        Fail,
+        Ignore
+    }
+
     internal sealed class ProcessEntitiesFromActivityFlowControlCreator
     {
+
         internal static readonly IReadOnlySet<eFlowControlAction> SubProcessRelevantFlowControls = new HashSet<eFlowControlAction>()
         {
             eFlowControlAction.GoToActivity,
@@ -50,9 +57,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
         private readonly IDictionary<Activity, IEnumerable<Task>> _activityTasksMap;
         private readonly Participant _activityParticipant;
         private readonly IEnumerable<FlowControl> _flowControls;
+        private readonly NonDeterministicFlowControlHandlingStrategy _nonDeterministicFlowControlHandlingStrategy;
 
-        internal ProcessEntitiesFromActivityFlowControlCreator(Activity activity, Collaboration collaboration, ISolutionFacadeForBPMN solutionFacade,
-            IDictionary<Activity, IEnumerable<Task>> activityTasksMap)
+        internal ProcessEntitiesFromActivityFlowControlCreator(
+            Activity activity, Collaboration collaboration, ISolutionFacadeForBPMN solutionFacade,
+            IDictionary<Activity, IEnumerable<Task>> activityTasksMap, 
+            NonDeterministicFlowControlHandlingStrategy nonDeterministicFlowControlHandlingStrategy)
         {
             _activity = activity;
             _collaboration = collaboration;
@@ -60,6 +70,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             _activityTasksMap = activityTasksMap;
             _activityParticipant = GetActivityParticipant();
             _flowControls = GetRelevantFlowControls();
+            _nonDeterministicFlowControlHandlingStrategy = nonDeterministicFlowControlHandlingStrategy;
         }
 
         private IEnumerable<FlowControl> GetRelevantFlowControls()
@@ -80,7 +91,17 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             List<Task> conditionalTasks = new();
             foreach (FlowControl flowControl in _flowControls)
             {
-                conditionalTasks.AddRange(CreateConditionalTasks(gateway, flowControl));
+                try
+                {
+                    conditionalTasks.AddRange(CreateConditionalTasks(gateway, flowControl));
+                }
+                catch(FlowControlTargetActivityNotFoundException)
+                {
+                    if (_nonDeterministicFlowControlHandlingStrategy == NonDeterministicFlowControlHandlingStrategy.Fail)
+                    {
+                        throw;
+                    }
+                }
             }
 
             List<IProcessEntity> processEntitiesForFlowControl = new();
@@ -228,7 +249,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             Activity? targetActivity = _solutionFacade.GetActivitiesFromSharedRepository().FirstOrDefault(a => string.Equals(a.ActivityName, targetActivityName));
             if (targetActivity == null)
             {
-                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found in shared repository by name {targetActivityName}.");
+                throw new FlowControlTargetActivityNotFoundException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found in shared repository by name {targetActivityName}.");
             }
 
             Task targetActivityTask = _activityParticipant.Process.AddTask<Task>(name: targetActivityName);
@@ -267,7 +288,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             KeyValuePair<Activity, IEnumerable<Task>> activityTasksPair = _activityTasksMap.FirstOrDefault(kv => kv.Key.Guid == activityGuid);
             if (activityTasksPair.Value == null || !activityTasksPair.Value.Any())
             {
-                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found by Guid '{activityGuid}'.");
+                throw new FlowControlTargetActivityNotFoundException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found by Guid '{activityGuid}'.");
             }
 
             return activityTasksPair.Value;
@@ -278,7 +299,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             KeyValuePair<Activity, IEnumerable<Task>> activityTasksPair = _activityTasksMap.FirstOrDefault(kv => string.Equals(kv.Key.ActivityName, activityName));
             if (activityTasksPair.Value == null || !activityTasksPair.Value.Any())
             {
-                throw new BPMNConversionException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found by name '{activityName}'.");
+                throw new FlowControlTargetActivityNotFoundException($"No {GingerDicser.GetTermResValue(eTermResKey.Activity)} found by name '{activityName}'.");
             }
 
             return activityTasksPair.Value;
