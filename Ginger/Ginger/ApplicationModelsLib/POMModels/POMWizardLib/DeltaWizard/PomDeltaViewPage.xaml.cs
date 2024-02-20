@@ -500,7 +500,15 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.TestElementLocators(mSelectedElement.ElementInfo);
+                var tempPOMModel = mPOMModel;
+                tempPOMModel.MappedUIElements = new ObservableList<ElementInfo>();
+                var mappedDeltaUiElements = mDeltaElements.Select((element) => element.ElementInfo);
+                foreach (var element in mappedDeltaUiElements)
+                {
+                    tempPOMModel.MappedUIElements.Add(element);
+                }
+
+                mWinExplorer.TestElementLocators(mSelectedElement.ElementInfo, mPOM: tempPOMModel);
             }
         }
 

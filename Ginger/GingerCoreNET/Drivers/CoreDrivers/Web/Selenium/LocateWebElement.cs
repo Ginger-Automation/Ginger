@@ -154,10 +154,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                             throw;
                         }
                     }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
                 }
 
                 // need to check if this works with Shadow Root

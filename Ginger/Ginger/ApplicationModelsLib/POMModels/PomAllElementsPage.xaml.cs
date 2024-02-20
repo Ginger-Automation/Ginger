@@ -355,7 +355,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                         return;
                     }
 
-                    if (mWinExplorer.TestElementLocators(EI, true))
+                    if (mWinExplorer.TestElementLocators(EI, true, mPOM))
                     {
                         EI.ElementStatus = ElementInfo.eElementStatus.Passed;
                     }

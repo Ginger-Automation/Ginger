@@ -340,7 +340,7 @@ namespace Ginger
 
             if (SelectedElement != null)
             {
-                WindowExplorerDriver.TestElementLocators(SelectedElement);
+                WindowExplorerDriver.TestElementLocators(SelectedElement, mPOM: SelectedPOM);
             }
         }
 
@@ -441,7 +441,7 @@ namespace Ginger
 
             if (SelectedElement != null)
             {
-                WindowExplorerDriver.TestElementLocators(SelectedElement);
+                WindowExplorerDriver.TestElementLocators(SelectedElement, mPOM: SelectedPOM);
             }
         }
 
@@ -1056,10 +1056,10 @@ namespace Ginger
                     WindowExplorerDriver.TestElementLocators(testElement);
 
                 }
-                else if (Platform.PlatformType() == ePlatformType.Web && SelectedElement.GetType().Equals(typeof(HTMLElementInfo)))
+                else if (Platform.PlatformType().Equals(ePlatformType.Web) && SelectedElement is HTMLElementInfo)
                 {
                     var htmlElementInfo = new HTMLElementInfo() { Path = testElement.Path, Locators = testElement.Locators, Properties = SelectedElement.Properties};
-                    WindowExplorerDriver.TestElementLocators(htmlElementInfo);
+                    WindowExplorerDriver.TestElementLocators(htmlElementInfo, mPOM: SelectedPOM);
                 }
 
                 else

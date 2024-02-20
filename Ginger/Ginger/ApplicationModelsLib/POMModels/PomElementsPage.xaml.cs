@@ -954,7 +954,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.TestElementLocators(mSelectedElement);
+                mWinExplorer.TestElementLocators(mSelectedElement, mPOM:mPOM);
             }
         }
 

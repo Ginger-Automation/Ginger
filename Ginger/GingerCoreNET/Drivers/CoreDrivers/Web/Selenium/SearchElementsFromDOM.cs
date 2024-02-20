@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 {
-    class SearchElementsFromDOM
+    public class SearchElementsFromDOM
     {
 
         private readonly SeleniumDriver seleniumDriver;
@@ -117,15 +117,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 
             foreach (IWebElement child in childNodes)
             {
-                try
-                {
-                    webElement = shadowDOM.FindShadowRootDirectChild(shadowRoot, locator, seleniumDriver.mDriver, child.TagName) ?? locateWebElement.LocateElementByLocator(locator, child, null, false);
-                }
-                catch
-                {
-                    continue;
-                }
+                
+                webElement = shadowDOM.FindShadowRootDirectChild(shadowRoot, locator, seleniumDriver.mDriver, child.TagName) ?? locateWebElement.LocateElementByLocator(locator, child, null, true);
 
+                if (webElement != null)
+                {
+                    break;
+                }
             }
 
 
