@@ -44,8 +44,8 @@ namespace Ginger.ReporterLib
 
             if (txt.Length > 200)
             { 
-                this.Width = 550;
-                this.Height = 250;
+                this.Width = 530;
+                this.Height = 230;
             }
 
             xOKButton.Visibility = Visibility.Collapsed;
