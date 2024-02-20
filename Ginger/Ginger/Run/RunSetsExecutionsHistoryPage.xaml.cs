@@ -505,7 +505,7 @@ namespace Ginger.Run
                     }
 
                     //ask user if they want to add missing activities to Shared Repository
-                    eUserMsgSelection userResponse = Reporter.ToUser(eUserMsgKey.AddActivityGroupsToSharedRepositoryForBPMNConversion);
+                    eUserMsgSelection userResponse = Reporter.ToUser(eUserMsgKey.AddActivitiesToSharedRepositoryForBPMNConversion);
                     if (userResponse == eUserMsgSelection.Cancel)
                         return;
 
