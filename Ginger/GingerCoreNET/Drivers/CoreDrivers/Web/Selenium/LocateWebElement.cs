@@ -39,7 +39,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                         ngDriver = new Protractor.NgWebDriver(seleniumDriver.mDriver);
                         ngDriver.WaitForAngular();
                     }
-                    if (locator.LocateBy == eLocateBy.ByngRepeat && ngDriver!=null)
+                    if (locator.LocateBy == eLocateBy.ByngRepeat && ngDriver != null)
                     {
                         elem = ngDriver.FindElement(Protractor.NgBy.Repeater(locator.LocateValue));
                     }
@@ -142,17 +142,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                     }
                     catch (NoSuchElementException ex)
                     {
-                        try
-                        {
-                            sel = "//a[href='@']";
-                            sel = sel.Replace("@", locator.LocateValue);
-                            elem = searchContext.FindElement(By.XPath(sel));
-                            locator.StatusError = ex.Message;
-                        }
-                        catch (Exception)
-                        {
-                            throw;
-                        }
+                        sel = "//a[href='@']";
+                        sel = sel.Replace("@", locator.LocateValue);
+                        elem = searchContext.FindElement(By.XPath(sel));
+                        locator.StatusError = ex.Message;
                     }
                 }
 

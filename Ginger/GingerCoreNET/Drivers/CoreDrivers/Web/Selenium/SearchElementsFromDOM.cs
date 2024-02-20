@@ -33,17 +33,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
         /// <returns></returns>
         public IList<IWebElement> GetAllChildNodes(ISearchContext searchContext, IWebDriver driver)         
         {
-            try
+            var childNodes = ((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].childNodes", searchContext);
+
+            if(childNodes is ReadOnlyCollection<object> objectChildNodes)
             {
-                ReadOnlyCollection<object> childNodes = (ReadOnlyCollection<object>)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].childNodes", searchContext);
-                return childNodes.Where((childNode) => childNode is IWebElement).Select((childNode)=>(IWebElement)childNode).ToList();
+                return objectChildNodes.Where((childNode) => childNode is IWebElement).Select((childNode) => (IWebElement)childNode).ToList();
             }
 
-            catch(InvalidCastException)
+            else if(childNodes is ReadOnlyCollection<IWebElement> webElementChildNodes)
             {
-                ReadOnlyCollection<IWebElement> childNodes = (ReadOnlyCollection<IWebElement>)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].childNodes", searchContext);
-                return childNodes.ToList();
+                return webElementChildNodes.ToList();
             }
+
+            return null;
         }
        
         /// <summary>
@@ -114,6 +116,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             // 2. check if the element exists in the childNodes' DOM
 
             IWebElement webElement = null;
+            if(childNodes == null)
+            {
+                return webElement;
+            }
 
             foreach (IWebElement child in childNodes)
             {
