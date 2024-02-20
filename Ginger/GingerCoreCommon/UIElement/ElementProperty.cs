@@ -48,6 +48,6 @@ namespace Amdocs.Ginger.Common.UIElement
         public const string InnerText = "InnerText";
         public const string ParentFormId = "ParentFormId";
         public const string Sequence = "Sequence";
-        public const string ParentPOMGUID = "ParentPOMGuid";
+        public static readonly string ParentPOMGUID = "ParentPOMGuid";
     }
 }

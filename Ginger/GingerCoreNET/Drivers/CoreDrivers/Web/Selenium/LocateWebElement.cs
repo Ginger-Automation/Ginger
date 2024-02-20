@@ -39,19 +39,19 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                         ngDriver = new Protractor.NgWebDriver(seleniumDriver.mDriver);
                         ngDriver.WaitForAngular();
                     }
-                    if (locator.LocateBy == eLocateBy.ByngRepeat)
+                    if (locator.LocateBy == eLocateBy.ByngRepeat && ngDriver!=null)
                     {
                         elem = ngDriver.FindElement(Protractor.NgBy.Repeater(locator.LocateValue));
                     }
-                    if (locator.LocateBy == eLocateBy.ByngSelectedOption)
+                    if (locator.LocateBy == eLocateBy.ByngSelectedOption && ngDriver != null)
                     {
                         elem = ngDriver.FindElement(Protractor.NgBy.SelectedOption(locator.LocateValue));
                     }
-                    if (locator.LocateBy == eLocateBy.ByngBind)
+                    if (locator.LocateBy == eLocateBy.ByngBind && ngDriver != null)
                     {
                         elem = ngDriver.FindElement(Protractor.NgBy.Binding(locator.LocateValue));
                     }
-                    if (locator.LocateBy == eLocateBy.ByngModel)
+                    if (locator.LocateBy == eLocateBy.ByngModel && ngDriver != null)
                     {
                         elem = ngDriver.FindElement(Protractor.NgBy.Model(locator.LocateValue));
                     }
@@ -150,10 +150,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                             locator.StatusError = ex.Message;
                         }
                         catch (Exception)
-                        { }
+                        {
+                            throw;
+                        }
                     }
                     catch (Exception)
-                    { }
+                    {
+                        throw;
+                    }
                 }
 
                 // need to check if this works with Shadow Root
@@ -320,7 +324,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             }
             catch (System.Net.Sockets.SocketException ex)
             {
-                if (AlwaysReturn == true)
+                if (AlwaysReturn)
                 {
                     elem = null;
                     locator.StatusError = ex.Message;
@@ -334,7 +338,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             }
             catch (Exception ex)
             {
-                if (AlwaysReturn == true)
+                if (AlwaysReturn)
                 {
                     elem = null;
                     locator.StatusError = ex.Message;
@@ -343,7 +347,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                 }
                 else
                 {
-                    throw ex;
+                    throw;
                 }
             }
 

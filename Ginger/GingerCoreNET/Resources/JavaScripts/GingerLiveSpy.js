@@ -124,6 +124,15 @@ function define_GingerLibLiveSpy() {
         const Y = GingerLibLiveSpy.GetYPoint();
         let depth = 0;
         let resultElementFromPoint = null;
+        function getCurrentDepth(element) {
+            let depth = 0;
+
+            while (element.parentNode) {
+                element = element.parentNode;
+                depth++;
+            }
+            return depth;
+        }
 
         allShadowRoots.forEach((shadowRoot) => {
             let element = shadowRoot.elementFromPoint(X, Y);
@@ -134,16 +143,6 @@ function define_GingerLibLiveSpy() {
                 resultElementFromPoint = element;
             }
         });
-
-        function getCurrentDepth(element) {
-            let depth = 0;
-
-            while (element.parentNode) {
-                element = element.parentNode;
-                depth++;
-            }
-            return depth;
-        }
 
         if (!resultElementFromPoint) {
             return document.elementFromPoint(X, Y);

@@ -24,7 +24,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
         }
         public ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null)
         {
-            return FindAllElementsFromPOM(path, pomSetting, seleniumDriver.mDriver, Guid.Empty, foundElementsList, PomMetaData);
+            FindAllElementsFromPOM(path, pomSetting, seleniumDriver.mDriver, Guid.Empty, foundElementsList, PomMetaData);
+            return foundElementsList;
         }
 
         /// <summary>
@@ -45,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
         /// PageSource as the name suggests is the HTML document 
         /// </param>
         /// <returns></returns>
-        private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null)
+        private void FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null)
         {
             if (PomMetaData == null)
             {
@@ -71,7 +72,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                     {
                         if (seleniumDriver.StopProcess)
                         {
-                            return foundElementsList;
+                            return;
                         }
                         //The <noscript> tag defines an alternate content to be displayed to users that have disabled scripts in their browser or have a browser that doesn't support script.
                         //skip to learn to element which is inside noscript tag
@@ -171,7 +172,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 
                             seleniumDriver.allReadElem.Add(foundElementInfo);
                             ISearchContext ShadowRoot = shadowDOM.GetShadowRootIfExists(webElement);
-                            if (ShadowRoot == null) continue;
+                            if (ShadowRoot == null)
+                            {
+                                continue;
+                            }
                             string InnerHTML = shadowDOM.GetHTML(ShadowRoot, seleniumDriver.mDriver);
                             if (!string.IsNullOrEmpty(InnerHTML))
                             {
@@ -237,16 +241,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                         pomMetaData.Name += " " + seleniumDriver.mDriver.Title;
                     }
 
-                    IEnumerable<HtmlNode> formInputElements = ((HtmlNode)formElement).Descendants().Where(x => x.Name.StartsWith("input"));
+                    IEnumerable<HtmlNode> formInputElements = formElement.Descendants().Where(x => x.Name.StartsWith("input"));
                     seleniumDriver.CreatePOMMetaData(foundElementsList, formInputElements.ToList(), pomMetaData, pomSetting);
-                    IEnumerable<HtmlNode> formButtonElements = ((HtmlNode)formElement).Descendants().Where(x => x.Name.StartsWith("button"));
+                    IEnumerable<HtmlNode> formButtonElements = formElement.Descendants().Where(x => x.Name.StartsWith("button"));
                     seleniumDriver.CreatePOMMetaData(foundElementsList, formButtonElements.ToList(), pomMetaData, pomSetting);
 
                     PomMetaData.Add(pomMetaData);
 
                 }
             }
-            return foundElementsList;
         }
     }
 }

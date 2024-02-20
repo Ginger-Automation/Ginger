@@ -126,7 +126,10 @@ namespace GingerCore.Drivers.Common
 
         public HTMLElementInfo FindParentElementUsingGuid(IList<ElementInfo> AllElements)
         {
-            if (AllElements == null) return null;
+            if (AllElements == null)
+            {
+                return null;
+            }
             var ParentPOMGuid = FindParentPOMGuid();
             return (HTMLElementInfo)AllElements.FirstOrDefault((element) => element.Guid.Equals(new Guid(ParentPOMGuid)));
         }

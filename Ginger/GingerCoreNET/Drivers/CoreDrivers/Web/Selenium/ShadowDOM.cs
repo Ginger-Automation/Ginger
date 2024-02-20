@@ -16,8 +16,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
         public ISearchContext GetShadowRootIfExists(ISearchContext webElement)
         {
 
-            if (webElement == null || webElement is not IWebElement) return null;
-
+            if (webElement == null || webElement is not IWebElement)
+            {
+                return null;
+            }
 
             try
             {
