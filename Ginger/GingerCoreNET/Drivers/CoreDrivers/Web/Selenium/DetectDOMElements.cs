@@ -8,9 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using HtmlAgilityPack;
 using GingerCore.Drivers;
-using System.Collections.ObjectModel;
-using System.Collections;
-
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 {
     public class DetectDOMElements
@@ -78,20 +75,25 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                         IWebElement webElement = null;
                         if (learnElement)
                         {
-                            string xpath = RenderXPath.ChangeXPathIfShadowDomExists(htmlElemNode.XPath, isShadowRootDetected);
+                            string xpath = htmlElemNode.XPath;
                             if (htmlElemNode.Name.ToLower().Equals(eElementType.Svg.ToString().ToLower()))
                             {
-                                xpath = string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()=\'svg\']");
+                                if (!isShadowRootDetected)
+                                {
+                                    xpath = string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()=\'svg\']");
+                                }
                             }
 
-                            if (string.IsNullOrEmpty(xpath))
+                            if (parentContext is ShadowRoot shadowRoot)
                             {
-                                webElement = (IWebElement)parentContext;
+                                webElement = shadowRoot.FindElement(By.CssSelector(ShadowDOM.ConvertXPathToCssSelector(xpath)));
                             }
+
                             else
                             {
                                 webElement = parentContext.FindElement(By.XPath(xpath));
                             }
+
                             if (webElement == null)
                             {
                                 continue;
@@ -118,9 +120,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                             // should we remove Xpath from HTMLElementInfo as we have a list for it now
                             foundElementInfo.HTMLElementObject = htmlElemNode;
                             foundElementInfo.XPath = xpath;
-                            foundElementInfo.ParentPomElementGuid = (ParentGUID.Equals(Guid.Empty)) ? foundElementInfo.ParentPomElementGuid : ParentGUID;
+                            var ParentPOMGuid = (ParentGUID.Equals(Guid.Empty)) ? Guid.Empty.ToString() : ParentGUID.ToString();
 
                             ((IWindowExplorer)seleniumDriver).LearnElementInfoDetails(foundElementInfo, pomSetting);
+                            foundElementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentPOMGUID, Value = ParentPOMGuid, ShowOnUI = false });
                             foundElementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.Sequence, Value = foundElementsList.Count.ToString(), ShowOnUI = false });
                             if (seleniumDriver.ExtraLocatorsRequired)
                             {
@@ -146,15 +149,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                             seleniumDriver.allReadElem.Add(foundElementInfo);
                             ISearchContext ShadowRoot = ShadowDOM.GetShadowRootIfExists(webElement);
                             if (ShadowRoot == null) continue;
-                            IList<IWebElement> ChildNodes = SearchElementsFromDOM.GetAllChildNodes(ShadowRoot, seleniumDriver.mDriver);
-
-                            foreach (IWebElement ChildNode in ChildNodes)
+                            string InnerHTML = ShadowDOM.GetHTML(ShadowRoot, seleniumDriver.mDriver);
+                            if (!string.IsNullOrEmpty(InnerHTML))
                             {
-                                string InnerHTML = ShadowDOM.GetHTML(ChildNode, seleniumDriver.mDriver);
-                                if (!string.IsNullOrEmpty(InnerHTML))
-                                {
-                                    FindAllElementsFromPOM(path, pomSetting, ChildNode, foundElementInfo.Guid, foundElementsList, PomMetaData, true, InnerHTML);
-                                }
+                                FindAllElementsFromPOM(path, pomSetting, ShadowRoot, foundElementInfo.Guid, foundElementsList, PomMetaData, true, InnerHTML);
                             }
                         }
 
@@ -163,7 +161,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                             string xpath = htmlElemNode.XPath;
                             if (webElement == null)
                             {
-                                webElement = parentContext.FindElement(By.XPath(xpath));
+                                if (parentContext is ShadowRoot shadowRoot)
+                                {
+                                    webElement = shadowRoot.FindElement(By.CssSelector(ShadowDOM.ConvertXPathToCssSelector(xpath)));
+                                }
+                                else
+                                {
+                                    webElement = parentContext.FindElement(By.XPath(xpath));
+                                }
                             }
                             seleniumDriver.mDriver.SwitchTo().Frame(webElement);
                             string newPath = string.Empty;

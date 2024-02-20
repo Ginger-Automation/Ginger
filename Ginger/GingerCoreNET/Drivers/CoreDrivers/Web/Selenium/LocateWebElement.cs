@@ -5,6 +5,7 @@ using GingerCoreNET.Drivers.CommonLib;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -82,8 +83,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                             elem = seleniumDriver.GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
                         }
                         elem ??= searchContext.FindElement(By.Id(locator.LocateValue));
-                            //elem = SearchElementsFromDOM.FindElement(elementInfo?.XPath ?? locator.LocateValue, Driver, By.Id(locator.LocateValue));
-                        
                     }
 
                 }
@@ -102,7 +101,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                             elem = seleniumDriver.GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
                         }
                         elem ??= searchContext.FindElement(By.Name(locator.LocateValue));
-                            // elem = SearchElementsFromDOM.FindElement(elementInfo?.XPath ?? locator.LocateValue, Driver, By.Name(locator.LocateValue));
                     }
 
                 }
@@ -125,8 +123,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                                 By by = By.XPath(sel) as By;
                                 elem = seleniumDriver.GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
                             }
-                            
-                            elem ??= searchContext.FindElement(By.XPath(sel));
+
+                            if (searchContext is ShadowRoot)
+                            {
+                                elem ??= searchContext.FindElement(By.CssSelector($"a[href='{sel}']"));
+                            }
+                            else
+                            {
+                                elem ??= searchContext.FindElement(By.XPath(sel));
+                            }
+
                         }
 
                     }
@@ -146,6 +152,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                     { }
                 }
 
+                // need to check if this works with Shadow Root
                 if (locator.LocateBy == eLocateBy.ByLinkText)
                 {
                     locator.LocateValue = locator.LocateValue.Trim();
@@ -199,8 +206,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                         By by = By.XPath(locator.LocateValue) as By;
                         elem = seleniumDriver.GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
                     }
-                        //elem = SearchElementsFromDOM.FindElement(elementInfo?.XPath ?? locator.LocateValue, Driver, By.XPath(locator.LocateValue));
+                    if (searchContext is ShadowRoot)
+                    {
+                        if (locator.LocateBy.Equals(eLocateBy.ByXPath))
+                        {
+
+                            string cssSelector = ShadowDOM.ConvertXPathToCssSelector(locator.LocateValue);
+                            elem ??= searchContext.FindElement(By.CssSelector(cssSelector));
+                        }
+                    }
+
+                    else
+                    {
                         elem ??= searchContext.FindElement(By.XPath(locator.LocateValue));
+                    }
                 }
 
                 if (locator.LocateBy == eLocateBy.ByValue)
@@ -216,9 +235,16 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                             By by = By.XPath("//*[@value=\"" + locator.LocateValue + "\"]") as By;
                             elem = seleniumDriver.GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
                         }
+                        if (searchContext is ShadowRoot)
+                        {
+                            elem ??= searchContext.FindElement(By.CssSelector($"[value='{locator.LocateValue}']"));
+                        }
+                        else
+                        {
                             elem ??= searchContext.FindElement(By.XPath("//*[@value=\"" + locator.LocateValue + "\"]"));
-                    }
+                        }
 
+                    }
                 }
 
                 if (locator.LocateBy == eLocateBy.ByAutomationID)
@@ -228,7 +254,17 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                         By by = By.XPath("//*[@data-automation-id=\"" + locator.LocateValue + "\"]") as By;
                         elem = seleniumDriver.GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
                     }
-                    elem ??= searchContext.FindElement(By.XPath("//*[@data-automation-id=\"" + locator.LocateValue + "\"]"));
+
+                    if (searchContext is ShadowRoot)
+                    {
+                        elem ??= searchContext.FindElement(By.CssSelector($"[data-automation-id={locator.LocateValue}]"));
+                    }
+                    else
+                    {
+                        elem ??= searchContext.FindElement(By.XPath("//*[@data-automation-id=\"" + locator.LocateValue + "\"]"));
+                    }
+
+
                 }
 
                 if (locator.LocateBy == eLocateBy.ByCSS)
@@ -241,6 +277,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                     elem ??= searchContext.FindElement(By.CssSelector(locator.LocateValue));
                 }
 
+                // need to check with shadow dom
                 if (locator.LocateBy == eLocateBy.ByClassName)
                 {
                     if (locator.EnableFriendlyLocator && FriendlyLocatorElement.DoesFriendlyLocatorListExist(friendlyLocatorElements))
@@ -248,14 +285,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                         By by = By.ClassName(locator.LocateValue) as By;
                         elem = seleniumDriver.GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
                     }
-                    
+
                     elem ??= searchContext.FindElement(By.ClassName(locator.LocateValue));
 
                 }
 
                 if (locator.LocateBy == eLocateBy.ByMulitpleProperties)
                 {
-                    elem = seleniumDriver.GetElementByMutlipleAttributes(locator.LocateValue);
+                    elem = seleniumDriver.GetElementByMutlipleAttributes(locator.LocateValue, searchContext);
                 }
 
                 if (locator.LocateBy == eLocateBy.ByTagName)
@@ -266,12 +303,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                         elem = seleniumDriver.GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
 
                     }
-                    else
+                    if (searchContext is ShadowRoot)
                     {
-                        //elem = SearchElementsFromDOM.FindElement(elementInfo?.XPath ?? locator.LocateValue, Driver, By.TagName(locator.LocateValue));
-                        elem = searchContext.FindElement(By.TagName(locator.LocateValue));
+                        elem = searchContext.FindElement(By.CssSelector(locator.LocateValue));
                     }
 
+                    else
+                    {
+                        elem = searchContext.FindElement(By.TagName(locator.LocateValue));
+                    }
                 }
             }
             catch (System.Net.Sockets.SocketException ex)

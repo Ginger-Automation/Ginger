@@ -909,7 +909,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
 
             ElementInfo CurrentEI = (ElementInfo)MainElementsGrid.CurrentItem;
-            CurrentEI.Locators = [mSelectedLocator];
+
             if (mSelectedLocator != null)
             {
                 var testElement = new ElementInfo();
@@ -927,8 +927,21 @@ namespace Ginger.ApplicationModelsLib.POMModels
                         testElement.Properties = CurrentEI.Properties;
                     }
                 }
+                else if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Web))
+                {
+                    var htmlElementInfo = new HTMLElementInfo() { 
+                        Path = testElement.Path, 
+                        Locators = testElement.Locators, 
+                        Properties = ((HTMLElementInfo)CurrentEI).Properties,
+                        XPathList = ((HTMLElementInfo)CurrentEI).XPathList 
+                    };
 
-                mWinExplorer.TestElementLocators(CurrentEI, false, mPOM);
+                    htmlElementInfo.FriendlyLocators = testElement.FriendlyLocators;
+                    testElement = htmlElementInfo; 
+                }
+
+
+                mWinExplorer.TestElementLocators(testElement, false, mPOM);
             }
         }
 

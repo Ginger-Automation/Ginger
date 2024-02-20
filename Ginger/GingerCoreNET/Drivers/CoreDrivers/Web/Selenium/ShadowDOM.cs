@@ -1,6 +1,8 @@
 ﻿using Amdocs.Ginger.Common.UIElement;
 using OpenQA.Selenium;
-using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 {
@@ -21,10 +23,10 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                 return null;
             }
         }
-        public static string GetHTML(IWebElement root, IWebDriver driver)
+        public static string GetHTML(ISearchContext root, IWebDriver driver)
         {
 
-            return (string)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].outerHTML", root);
+            return (string)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].innerHTML", root);
         }
 
         public static IWebElement FindShadowRootDirectChild(ISearchContext shadowRoot, ElementLocator locator, IWebDriver Driver, string childTagName)
@@ -69,12 +71,40 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             return null;
         }
 
-        
+/*        
         public static IWebElement GetShadowRootHost(ISearchContext searchContext, IWebDriver Driver)
         {
             return (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].host", searchContext);
         }
     
+*/        // make changes here for xpath : /html/body/div - done
+        public static string ConvertXPathToCssSelector(string XPath)
+        {
+            IEnumerable<string> tags = XPath.Split('/').Where((x)=>!string.IsNullOrEmpty(x));
+            StringBuilder strBuilder = new();
+
+            foreach (string tag in tags)
+            {
+                int indexOfOpenBracket = tag.IndexOf('[');
+
+                if(indexOfOpenBracket!= -1)
+                {
+                    string tagName = tag.Substring(0, indexOfOpenBracket);
+                    string count = tag.Substring(indexOfOpenBracket);
+                    count = count.Replace('[', '(');
+                    count = count.Replace(']', ')');
+                    strBuilder.Append($"{tagName}:nth-of-type{count} ");
+                }
+
+                else
+                {
+                    strBuilder.Append(tag);
+                }
+            }
+
+            return strBuilder.ToString();
+        }
+
     }
 
 }

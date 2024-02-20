@@ -1058,7 +1058,7 @@ namespace Ginger
                 }
                 else if (Platform.PlatformType() == ePlatformType.Web && SelectedElement.GetType().Equals(typeof(HTMLElementInfo)))
                 {
-                    var htmlElementInfo = new HTMLElementInfo() { Path = testElement.Path, Locators = testElement.Locators};
+                    var htmlElementInfo = new HTMLElementInfo() { Path = testElement.Path, Locators = testElement.Locators, Properties = SelectedElement.Properties};
                     WindowExplorerDriver.TestElementLocators(htmlElementInfo);
                 }
 

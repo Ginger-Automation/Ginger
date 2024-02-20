@@ -31,9 +31,6 @@ namespace GingerCore.Drivers.Common
 
 
         [IsSerializedForLocalRepository]
-        public Guid ParentPomElementGuid { get; set; } = Guid.Empty;
-
-        [IsSerializedForLocalRepository]
         public string TagName { get; set; }
 
         [IsSerializedForLocalRepository]
@@ -130,9 +127,15 @@ namespace GingerCore.Drivers.Common
         public static HTMLElementInfo FindParentElementUsingGuid(HTMLElementInfo ChildElement, IList<ElementInfo> AllElements)
         {
             if (AllElements == null) return null;
-            
-            return (HTMLElementInfo)AllElements.FirstOrDefault((element) => element.Guid.Equals(ChildElement.ParentPomElementGuid));
+            var ParentPOMGuid = FindParentPOMGuid(ChildElement);
+
+            return (HTMLElementInfo)AllElements.FirstOrDefault((element) => element.Guid.Equals(new Guid(ParentPOMGuid)));
         }
 
+
+        public static string FindParentPOMGuid(HTMLElementInfo elementInfo)
+        {
+            return  elementInfo.Properties.FirstOrDefault((prop) => prop.Name.Equals(ElementProperty.ParentPOMGUID))?.Value ?? Guid.Empty.ToString();
+        }
     }
 }
