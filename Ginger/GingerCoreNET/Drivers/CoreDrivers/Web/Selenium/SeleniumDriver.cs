@@ -287,6 +287,11 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
         public string UnhandledPromptBehavior { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Use custom browser driver. Provide complete driver path with file extension")]
+        public string DriverFilePath { get; set; }
+
 
         protected IWebDriver Driver;
 
@@ -373,6 +378,9 @@ namespace GingerCore.Drivers
 
         public override void StartDriver()
         {
+            //Add localhost to no proxy so that driver service can be started with proxy
+            //System.Environment.SetEnvironmentVariable("NO_PROXY", @"http://localhost");
+
             DriverService driverService = null;
 
             if (StartBMP)
@@ -473,6 +481,7 @@ namespace GingerCore.Drivers
                         }
 
                         driverService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
+                        AddCustomDriverPath(driverService);
                         driverService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         break;
@@ -513,6 +522,7 @@ namespace GingerCore.Drivers
                         }
 
                         driverService = FirefoxDriverService.CreateDefaultService();
+                        AddCustomDriverPath(driverService);
                         driverService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new FirefoxDriver((FirefoxDriverService)driverService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         this.mDriverProcessId = driverService.ProcessId;
@@ -591,7 +601,11 @@ namespace GingerCore.Drivers
                         {
                             options.DebuggerAddress = DebugAddress.Trim();
                         }
+
                         driverService = ChromeDriverService.CreateDefaultService();
+
+                        AddCustomDriverPath(driverService);
+
                         if (HideConsoleWindow)
                         {
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
@@ -686,11 +700,11 @@ namespace GingerCore.Drivers
                             SetCurrentPageLoadStrategy(ieOptions);
                             ieOptions.IgnoreZoomLevel = true;
                             driverService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
+                            AddCustomDriverPath(driverService);
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
-                            Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));                           
+                            Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         }
                         else
-
                         {
                             EdgeOptions EDOpts = new EdgeOptions();
                             SetBrowserLogLevel(EDOpts);
@@ -705,6 +719,7 @@ namespace GingerCore.Drivers
 
                             SetCurrentPageLoadStrategy(EDOpts);
                             driverService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
+                            AddCustomDriverPath(driverService);
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
                             Driver = new EdgeDriver((EdgeDriverService)driverService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                             this.mDriverProcessId = driverService.ProcessId;
@@ -860,13 +875,29 @@ namespace GingerCore.Drivers
                     ex.Message.StartsWith("unable to obtain", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     RestartRetry = false;
-                    UpdateDriver(driverService);
+                    UpdateDriver();
                     StartDriver();
                 }
             }
         }
 
-        private void UpdateDriver(DriverService driverService)
+        private void AddCustomDriverPath(DriverService driverService)
+        {
+            if (!string.IsNullOrWhiteSpace(DriverFilePath))
+            {
+                if (File.Exists(DriverFilePath))
+                {
+                    driverService.DriverServicePath = Path.GetDirectoryName(DriverFilePath);
+                    driverService.DriverServiceExecutableName = Path.GetFileName(DriverFilePath);
+                }
+                else
+                {
+                    throw new FileNotFoundException($"Invalid path provided in Custom Driver File in {nameof(DriverFilePath)} in Agent Configuration. Please provide valid path or consider removing it if not needed.");
+                } 
+            }
+        }
+
+        private void UpdateDriver()
         {
             try
             {
@@ -1534,7 +1565,7 @@ namespace GingerCore.Drivers
                 ActAgentManipulationHandler((ActAgentManipulation)act);
                 return;
             }
-            if(WorkSpace.Instance.BetaFeatures.ShowAccessibilityTesting)
+            if (WorkSpace.Instance.BetaFeatures.ShowAccessibilityTesting)
             {
                 if (act is ActAccessibilityTesting actAccessibilityTesting)
                 {
@@ -1552,14 +1583,14 @@ namespace GingerCore.Drivers
             IWebElement e = null;
             if ((act.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
             {
-                if (!string.IsNullOrEmpty(act.LocateValueCalculated) && act.LocateBy != eLocateBy.NA )
+                if (!string.IsNullOrEmpty(act.LocateValueCalculated) && act.LocateBy != eLocateBy.NA)
                 {
                     e = LocateElement(act);
-                        if (e == null)
-                        {
-                            act.Error += "Element not found: " + act.LocateBy + "=" + act.LocateValueCalculated;
-                            return;
-                        }
+                    if (e == null)
+                    {
+                        act.Error += "Element not found: " + act.LocateBy + "=" + act.LocateValueCalculated;
+                        return;
+                    }
                 }
             }
             else
@@ -1576,7 +1607,7 @@ namespace GingerCore.Drivers
             AxeBuilder axeBuilder = null;
             try
             {
-               axeBuilder = CreateAxeBuilder(act);
+                axeBuilder = CreateAxeBuilder(act);
 
                 AxeResult axeResult = null;
 
@@ -1590,24 +1621,24 @@ namespace GingerCore.Drivers
                 }
                 SetAxeResultToAction(act, axeResult);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 act.Error = "Error: during accessibility testing:" + ex.Message;
                 Reporter.ToLog(eLogLevel.ERROR, "Error: during accessibility testing", ex);
                 return;
             }
-               
-            
+
+
         }
 
         private AxeBuilder CreateAxeBuilder(ActAccessibilityTesting act)
         {
             AxeBuilder axeBuilder = null;
-                axeBuilder = new AxeBuilder(Driver)
-                .WithOptions(new AxeRunOptions()
-                {
-                    XPath = true
-                });
+            axeBuilder = new AxeBuilder(Driver)
+            .WithOptions(new AxeRunOptions()
+            {
+                XPath = true
+            });
 
             if (act.Standard != null)
             {
@@ -1636,11 +1667,11 @@ namespace GingerCore.Drivers
                     {
                         violatedNodeIndex++;
                         act.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationId", ActualValue: violation.Id, violatedNodeIndex.ToString());
-                        if(node.XPath != null)
+                        if (node.XPath != null)
                         {
                             act.AddOrUpdateReturnParamActualWithPath(ParamName: "NodeXPath", ActualValue: node.XPath.ToString(), violatedNodeIndex.ToString());
                         }
-                        
+
                         act.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationHelp", ActualValue: violation.Help, violatedNodeIndex.ToString());
                     }
                 }
@@ -1661,7 +1692,7 @@ namespace GingerCore.Drivers
                 }
                 else if (act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
                 {
-                    AddScreenshotIntoAct(act,true);
+                    AddScreenshotIntoAct(act, true);
                 }
                 else if (act.WindowsToCapture == Act.eWindowsToCapture.FullPageWithUrlAndTimestamp)
                 {
@@ -1770,7 +1801,7 @@ namespace GingerCore.Drivers
         private void AddCurrentScreenShot(ActScreenShot act)
         {
             Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-            act.AddScreenShot(ss.AsByteArray, Driver.Title);               
+            act.AddScreenShot(ss.AsByteArray, Driver.Title);
         }
 
 
@@ -4564,7 +4595,7 @@ namespace GingerCore.Drivers
                             return true;
                         }
 
-                        if(attemptCount < maxAttempts)
+                        if (attemptCount < maxAttempts)
                         {
                             attemptCount++;
                             continue;
@@ -4591,8 +4622,8 @@ namespace GingerCore.Drivers
                         var currentWindow = Driver.CurrentWindowHandle;
                         if (!string.IsNullOrEmpty(currentWindow))
                         {
-                            
-                           return true;
+
+                            return true;
                         }
 
                         if (attemptCount < maxAttempts)
@@ -8922,7 +8953,7 @@ namespace GingerCore.Drivers
 
         }
 
-        public void AddScreenshotIntoAct(ActScreenShot act,bool IsFullPageScreenshot = false)
+        public void AddScreenshotIntoAct(ActScreenShot act, bool IsFullPageScreenshot = false)
         {
 
             if (!IsFullPageScreenshot)
