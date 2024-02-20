@@ -11,7 +11,8 @@ using RepositorySerializerBenchmarks.Enhancements.LiteXML;
 using System.Xml;
 
 //Summary summary = BenchmarkRunner.Run<SerializationBenchmark>();
-Summary summary = BenchmarkRunner.Run<DeserializationBenchmark>();
+//Summary summary = BenchmarkRunner.Run<DeserializationBenchmark>();
+Summary summary = BenchmarkRunner.Run<LazyLoadBenchmark>();
 
 //Console.WriteLine("waiting to start");
 ////await Task.Delay(10_000);
@@ -32,8 +33,9 @@ Summary summary = BenchmarkRunner.Run<DeserializationBenchmark>();
 
 //_ = new ActDummy();
 //string xml = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Benchmarks", "Resources", "TestBusinessFlow.Ginger.BusinessFlow.xml"));
-//BusinessFlow businessFlow = new BetterRepositorySerializer2().Deserialize<BusinessFlow>(xml);
-//string newXml = new BetterRepositorySerializer2().Serialize(businessFlow);
+//BusinessFlow.LazyLoad = true;
+//BusinessFlow businessFlow = new BetterRepositorySerializer().Deserialize<BusinessFlow>(xml);
+//string newXml = new BetterRepositorySerializer().Serialize(businessFlow);
 //Console.WriteLine("end");
 
 

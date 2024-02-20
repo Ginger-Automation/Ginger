@@ -77,6 +77,8 @@ namespace GingerCore
                 .WithValues(nameof(Variables), Variables.Cast<RepositoryItemBase>());
         }
 
+        public static bool Lite { get; set; } = false;
+
         protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
         {
             base.ReadSnapshotProperties(property);
@@ -90,10 +92,14 @@ namespace GingerCore
             {
                 if (LazyLoad)
                 {
-                    Activities = new()
-                    {
-                        LazyLoadDetails = property.GetValuesLazy()
-                    };
+                    //Activities = new()
+                    //{
+                    //    LazyLoadDetails = property.GetValuesLazy()
+                    //};
+                    if (Lite)
+                        property.GetValuesLite();
+                    else
+                        property.GetValuesLazy();
                 }
                 else
                     Activities = new(property.GetValues<Activity>());
