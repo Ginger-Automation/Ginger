@@ -13,14 +13,20 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 {
     public class RenderXPath
     {
+        /// <summary>
+        /// The algorithm to find the xpath uses the bottom to top DFS approach until the 'html' tag is located viz the topmost element in HTML Document.
+        /// </summary>
+        /// <param name="IWE">Web Element for which the Xpath should be generated</param>
+        /// <param name="Driver"></param>
+        /// <param name="current">Current Xpath</param>
+        /// <param name="XPathsToDetectShadowElement">if shadow dom is detected, the xpath is added to the list (which as of now is only used for Live Spy)</param>
+        /// <param name="isBrowserFireFox"></param>
+        /// <returns>the xpath relative to the  nearest shadow dom else returns the full xpath</returns>
         public string GenerateXPathForDOMElement(ISearchContext IWE, IWebDriver Driver, string current, IList<string> XPathsToDetectShadowElement, bool isBrowserFireFox)
         {
 
             Stack<ISearchContext> stack = new();
-            Stack<string> currentXpathStack = new();
             stack.Push(IWE);
-            currentXpathStack.Push(string.Empty);
-
             ISearchContext parentElement = null;
             ReadOnlyCollection<IWebElement> childrenElements = null;
             bool isShadowRootDetected = false;
@@ -29,16 +35,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             {
 
                 ISearchContext context = stack.Pop();
-                string currentXpath = currentXpathStack.Pop();
-                if(context is IWebElement webElement)
+                if (context is IWebElement webElement)
                 {
                     string tagName = webElement.TagName;
 
                     if (tagName.Equals("html"))
                     {
-                        string resultXPath = $"/html[1]{currentXpath}";
-                        currentXpathStack.Push(resultXPath);
-                        
+                        string resultXPath = $"/html[1]{current}";
+                        current = resultXPath;
+
                         if (isShadowRootDetected)
                         {
                             XPathsToDetectShadowElement.Add(resultXPath);
@@ -67,14 +72,14 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                                 string resultXPath = string.Empty;
                                 if (string.IsNullOrEmpty(tagName))
                                 {
-                                    resultXPath = currentXpath;
+                                    resultXPath = current;
                                 }
                                 else
                                 {
-                                    resultXPath = $"/{tagName}[{count}]{currentXpath}";
+                                    resultXPath = $"/{tagName}[{count}]{current}";
                                 }
                                 stack.Push(parentElement);
-                                currentXpathStack.Push(resultXPath);
+                                current = resultXPath;
                                 break;
                             }
                             else
@@ -102,15 +107,15 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                 else if (context is ShadowRoot shadowRoot)
                 {
                     parentElement = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].host", shadowRoot);
-                    XPathsToDetectShadowElement.Add(currentXpath);
+                    XPathsToDetectShadowElement.Add(current);
                     stack.Push(parentElement);
-                    currentXpathStack.Push(string.Empty);   
+                    current = string.Empty;
                     isShadowRootDetected = true;
                 }
 
             }
 
-            return currentXpathStack.Count > 0 ? currentXpathStack.Pop() : string.Empty;
+            return XPathsToDetectShadowElement.Count > 0 ? XPathsToDetectShadowElement[0] : current;
         }
 
     }

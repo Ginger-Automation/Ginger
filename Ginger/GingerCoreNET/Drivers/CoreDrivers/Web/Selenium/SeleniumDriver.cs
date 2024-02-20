@@ -6194,10 +6194,10 @@ namespace GingerCore.Drivers
         public string GenerateXpathForIWebElement(HTMLElementInfo ElementInfo, string currentXpath)
         {
             IList<string> XPathsForDetectedShadowElement = new List<string>();
-            string NonShadowDOMXpath = renderXPath.GenerateXPathForDOMElement((ISearchContext)ElementInfo.ElementObject, Driver, currentXpath, XPathsForDetectedShadowElement, mBrowserTpe == eBrowserType.FireFox);
+            string resultXPath = renderXPath.GenerateXPathForDOMElement((ISearchContext)ElementInfo.ElementObject, Driver, currentXpath, XPathsForDetectedShadowElement, mBrowserTpe == eBrowserType.FireFox);
             ElementInfo.XPathList = XPathsForDetectedShadowElement;
 
-            return XPathsForDetectedShadowElement.Count > 0 ? XPathsForDetectedShadowElement[0] : NonShadowDOMXpath;
+            return resultXPath;
         }
 
         public async Task<string> GenerateXpathForIWebElementAsync(IWebElement IWE, string current)

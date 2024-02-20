@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 {
+    /*
+        LocateWebElement was made to have functions to locate web element using different conditions
+    */
     public class LocateWebElement
     {
         private readonly SeleniumDriver seleniumDriver;

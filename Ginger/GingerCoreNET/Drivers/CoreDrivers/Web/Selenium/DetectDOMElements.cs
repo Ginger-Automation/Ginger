@@ -10,6 +10,10 @@ using HtmlAgilityPack;
 using GingerCore.Drivers;
 namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 {
+    
+    /*
+        DetectDOMElements was created to Detect Web Elements through Page Object Model
+    */
     public class DetectDOMElements
     {
         SeleniumDriver seleniumDriver;
@@ -23,6 +27,24 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             return FindAllElementsFromPOM(path, pomSetting, seleniumDriver.mDriver, Guid.Empty, foundElementsList, PomMetaData);
         }
 
+        /// <summary>
+        /// Finds All the Elements on the Web Page including Shadow DOM Elements
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="pomSetting"></param>
+        /// <param name="parentContext">
+        /// used to find elements under the ParentContext Initially the parent context is IWebDriver, 
+        /// if shadow root is detected then parent context is the shadow root (as the elements inside the shadow DOM cannot be directly detected)
+        /// </param>
+        /// <param name="ParentGUID"></param>
+        /// <param name="foundElementsList"></param>
+        /// <param name="PomMetaData"></param>
+        /// <param name="isShadowRootDetected">is used to conditionally render xpath for svg</param>
+        /// <param name="pageSource"> 
+        /// As shadow DOM Elements are not directly available, pageSource is manually initialized whenever a shadow root is detected. 
+        /// PageSource as the name suggests is the HTML document 
+        /// </param>
+        /// <returns></returns>
         private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null)
         {
             if (PomMetaData == null)
@@ -228,3 +250,4 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
         }
     }
 }
+ 

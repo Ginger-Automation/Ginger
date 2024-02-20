@@ -8,6 +8,11 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 {
     public class ShadowDOM
     {
+        /// <summary>
+        /// returns the shadow root if exists in the given ISearchContext
+        /// </summary>
+        /// <param name="webElement">under which shadow root is searched for</param>
+        /// <returns></returns>
         public ISearchContext GetShadowRootIfExists(ISearchContext webElement)
         {
 
@@ -23,6 +28,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                 return null;
             }
         }
+        
+        /// <summary>
+        /// Gets the inner HTML of the giver root
+        /// </summary>
+        /// <param name="root"></param>
+        /// <param name="driver"></param>
+        /// <returns></returns>
         public string GetHTML(ISearchContext root, IWebDriver driver)
         {
 

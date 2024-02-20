@@ -25,22 +25,33 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             this.locateWebElement = new(this.seleniumDriver);
         }
 
-
-        public IList<IWebElement> GetAllChildNodes(ISearchContext ShadowRoot, IWebDriver driver)         
+        /// <summary>
+        /// Gets all the Child nodes of the searchContext
+        /// </summary>
+        /// <param name="searchContext"></param>
+        /// <param name="driver"></param>
+        /// <returns></returns>
+        public IList<IWebElement> GetAllChildNodes(ISearchContext searchContext, IWebDriver driver)         
         {
             try
             {
-                ReadOnlyCollection<object> childNodes = (ReadOnlyCollection<object>)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].childNodes", ShadowRoot);
+                ReadOnlyCollection<object> childNodes = (ReadOnlyCollection<object>)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].childNodes", searchContext);
                 return childNodes.Where((childNode) => childNode is IWebElement).Select((childNode)=>(IWebElement)childNode).ToList();
             }
 
             catch(InvalidCastException)
             {
-                ReadOnlyCollection<IWebElement> childNodes = (ReadOnlyCollection<IWebElement>)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].childNodes", ShadowRoot);
+                ReadOnlyCollection<IWebElement> childNodes = (ReadOnlyCollection<IWebElement>)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].childNodes", searchContext);
                 return childNodes.ToList();
             }
-
         }
+       
+        /// <summary>
+        /// Finds Element when element is detected by live spy
+        /// </summary>
+        /// <param name="XPaths">list of xpaths if the shadow dom exists</param>
+        /// <param name="ElementToBeFoundLocator">locator info of the element to be found</param>
+        /// <returns></returns>
         public IWebElement FindElement(IList<string> XPaths, ElementLocator ElementToBeFoundLocator)
         {
             if (XPaths == null || XPaths.Count == 0)
@@ -70,6 +81,8 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 
             return (IWebElement)CurrentElement;
         }
+        
+
         private ElementLocator GetElementLocatorForWebElement(int startPointer, string XPath, ElementLocator ElementToBeFoundLocator)
         {
 
@@ -87,6 +100,12 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             }
             return locator;
         }
+        /// <summary>
+        /// It first checks if the direct child is the element that is to be found. if not then finds the element in the descendants of the direct child nodes of the shadow root
+        /// </summary>
+        /// <param name="shadowRoot"></param>
+        /// <param name="locator">locator of the element to found</param>
+        /// <returns></returns>
         private IWebElement FindNodeBySelectorInShadowDOM(ShadowRoot shadowRoot, ElementLocator locator)
         {
             IList<IWebElement> childNodes = GetAllChildNodes(shadowRoot, seleniumDriver.mDriver);
