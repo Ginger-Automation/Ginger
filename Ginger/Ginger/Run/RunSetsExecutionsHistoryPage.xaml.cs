@@ -174,7 +174,7 @@ namespace Ginger.Run
                 },
                 new()
                 {
-                    Field = "Generate BPMN",
+                    Field = "Export BPMN",
                     WidthWeight = 8,
                     StyleType = GridColView.eGridColStyleType.Template,
                     CellTemplate = (DataTemplate)this.pageGrid.Resources["BPMNButtonDataTemplate"]
