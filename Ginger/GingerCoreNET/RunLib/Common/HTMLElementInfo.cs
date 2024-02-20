@@ -124,18 +124,17 @@ namespace GingerCore.Drivers.Common
         public HtmlNode NearHTMLElementObject { get; set; }
 
 
-        public static HTMLElementInfo FindParentElementUsingGuid(HTMLElementInfo ChildElement, IList<ElementInfo> AllElements)
+        public HTMLElementInfo FindParentElementUsingGuid(IList<ElementInfo> AllElements)
         {
             if (AllElements == null) return null;
-            var ParentPOMGuid = FindParentPOMGuid(ChildElement);
-
+            var ParentPOMGuid = FindParentPOMGuid();
             return (HTMLElementInfo)AllElements.FirstOrDefault((element) => element.Guid.Equals(new Guid(ParentPOMGuid)));
         }
 
 
-        public static string FindParentPOMGuid(HTMLElementInfo elementInfo)
+        public string FindParentPOMGuid()
         {
-            return  elementInfo.Properties.FirstOrDefault((prop) => prop.Name.Equals(ElementProperty.ParentPOMGUID))?.Value ?? Guid.Empty.ToString();
+            return  this.Properties.FirstOrDefault((prop) => prop.Name.Equals(ElementProperty.ParentPOMGUID))?.Value ?? Guid.Empty.ToString();
         }
     }
 }

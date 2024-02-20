@@ -16,6 +16,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 
         private readonly SeleniumDriver seleniumDriver;
         private readonly LocateWebElement locateWebElement;
+        private readonly ShadowDOM shadowDOM = new();
         public SearchElementsFromDOM() { }
 
         public SearchElementsFromDOM(SeleniumDriver seleniumDriver)
@@ -25,7 +26,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
         }
 
 
-        public static IList<IWebElement> GetAllChildNodes(ISearchContext ShadowRoot, IWebDriver driver)         
+        public IList<IWebElement> GetAllChildNodes(ISearchContext ShadowRoot, IWebDriver driver)         
         {
             try
             {
@@ -61,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                 else
                 {
                     CurrentElement = locateWebElement.LocateElementByLocator(elementLocator, CurrentElement, null, false);
-                    CurrentElement = ShadowDOM.GetShadowRootIfExists((IWebElement)CurrentElement) ?? CurrentElement;
+                    CurrentElement = shadowDOM.GetShadowRootIfExists((IWebElement)CurrentElement) ?? CurrentElement;
                 }
                 startPointer--;
             }
@@ -99,7 +100,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             {
                 try
                 {
-                    webElement = ShadowDOM.FindShadowRootDirectChild(shadowRoot, locator, seleniumDriver.mDriver, child.TagName) ?? locateWebElement.LocateElementByLocator(locator, child, null, false);
+                    webElement = shadowDOM.FindShadowRootDirectChild(shadowRoot, locator, seleniumDriver.mDriver, child.TagName) ?? locateWebElement.LocateElementByLocator(locator, child, null, false);
                 }
                 catch
                 {

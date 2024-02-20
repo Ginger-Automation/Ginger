@@ -16,6 +16,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
     public class LocateWebElement
     {
         private readonly SeleniumDriver seleniumDriver;
+        private readonly ShadowDOM shadowDOM = new();
         public LocateWebElement(SeleniumDriver seleniumDriver)
         {
             this.seleniumDriver = seleniumDriver;
@@ -211,7 +212,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                         if (locator.LocateBy.Equals(eLocateBy.ByXPath))
                         {
 
-                            string cssSelector = ShadowDOM.ConvertXPathToCssSelector(locator.LocateValue);
+                            string cssSelector = shadowDOM.ConvertXPathToCssSelector(locator.LocateValue);
                             elem ??= searchContext.FindElement(By.CssSelector(cssSelector));
                         }
                     }

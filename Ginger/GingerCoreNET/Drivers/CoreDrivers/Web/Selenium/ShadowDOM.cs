@@ -8,7 +8,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 {
     public class ShadowDOM
     {
-        public static ISearchContext GetShadowRootIfExists(ISearchContext webElement)
+        public ISearchContext GetShadowRootIfExists(ISearchContext webElement)
         {
 
             if (webElement == null || webElement is not IWebElement) return null;
@@ -23,13 +23,13 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                 return null;
             }
         }
-        public static string GetHTML(ISearchContext root, IWebDriver driver)
+        public string GetHTML(ISearchContext root, IWebDriver driver)
         {
 
             return (string)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].innerHTML", root);
         }
 
-        public static IWebElement FindShadowRootDirectChild(ISearchContext shadowRoot, ElementLocator locator, IWebDriver Driver, string childTagName)
+        public IWebElement FindShadowRootDirectChild(ISearchContext shadowRoot, ElementLocator locator, IWebDriver Driver, string childTagName)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             }
         }
 
-        public static string GetCssSelectorForShadowDOMChild(ElementLocator locator, string tagName)
+        public string GetCssSelectorForShadowDOMChild(ElementLocator locator, string tagName)
         {
             tagName = tagName.ToLower();
 
@@ -71,14 +71,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             return null;
         }
 
-/*        
-        public static IWebElement GetShadowRootHost(ISearchContext searchContext, IWebDriver Driver)
-        {
-            return (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].host", searchContext);
-        }
-    
-*/        // make changes here for xpath : /html/body/div - done
-        public static string ConvertXPathToCssSelector(string XPath)
+        public string ConvertXPathToCssSelector(string XPath)
         {
             IEnumerable<string> tags = XPath.Split('/').Where((x)=>!string.IsNullOrEmpty(x));
             StringBuilder strBuilder = new();

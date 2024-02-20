@@ -66,7 +66,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -88,6 +87,8 @@ namespace GingerCore.Drivers
         private int mDriverProcessId = 0;
         private readonly DetectDOMElements detectDOMElements;
         private readonly LocateWebElement locateWebElement;
+        private readonly RenderXPath renderXPath = new();
+        private readonly ShadowDOM shadowDOM = new();
         private const string CHROME_DRIVER_NAME = "chromedriver";
         private const string EDGE_DRIVER_NAME = "msedgedriver";
         private const string FIREFOX_DRIVER_NAME = "geckodriver";
@@ -3913,19 +3914,18 @@ namespace GingerCore.Drivers
 
             ISearchContext shadowRoot = null;
             ISearchContext ParentContext = Driver;
-            IList<IWebElement> childNodes = null;
-            var ParentPOMGuid = HTMLElementInfo.FindParentPOMGuid((HTMLElementInfo)currentPOMElementInfo);
+            var ParentPOMGuid = ((HTMLElementInfo)currentPOMElementInfo).FindParentPOMGuid();
 
             if (!ParentPOMGuid.Equals(Guid.Empty.ToString()))
             {
                 HTMLElementInfo ParentElement = null;
-                ParentElement = HTMLElementInfo.FindParentElementUsingGuid((HTMLElementInfo)currentPOMElementInfo, MappedUIElements);
+                ParentElement = ((HTMLElementInfo)currentPOMElementInfo).FindParentElementUsingGuid(MappedUIElements);
 
                 if (ParentElement != null)
                 {
                     ParentContext = LocateElementByLocators(ParentElement, MappedUIElements, iscallfromFriendlyLocator, POMExecutionUtils);
                 }
-                shadowRoot = ShadowDOM.GetShadowRootIfExists(ParentContext);
+                shadowRoot = shadowDOM.GetShadowRootIfExists(ParentContext);
             }
 
             foreach (ElementLocator locator in currentPOMElementInfo.Locators.Where(x => x.Active == true).ToList())
@@ -3955,7 +3955,7 @@ namespace GingerCore.Drivers
                             if (shadowRoot != null)
                             {
 
-                                elem = locateWebElement.LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
+                                targetElement = locateWebElement.LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
 
                             }
 
@@ -6194,7 +6194,7 @@ namespace GingerCore.Drivers
         public string GenerateXpathForIWebElement(HTMLElementInfo ElementInfo, string currentXpath)
         {
             IList<string> XPathsForDetectedShadowElement = new List<string>();
-            string NonShadowDOMXpath = RenderXPath.GenerateXPathForDOMElement((ISearchContext)ElementInfo.ElementObject, Driver, currentXpath, XPathsForDetectedShadowElement, mBrowserTpe == eBrowserType.FireFox);
+            string NonShadowDOMXpath = renderXPath.GenerateXPathForDOMElement((ISearchContext)ElementInfo.ElementObject, Driver, currentXpath, XPathsForDetectedShadowElement, mBrowserTpe == eBrowserType.FireFox);
             ElementInfo.XPathList = XPathsForDetectedShadowElement;
 
             return XPathsForDetectedShadowElement.Count > 0 ? XPathsForDetectedShadowElement[0] : NonShadowDOMXpath;

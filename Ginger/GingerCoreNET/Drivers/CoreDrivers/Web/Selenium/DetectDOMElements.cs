@@ -13,6 +13,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
     public class DetectDOMElements
     {
         SeleniumDriver seleniumDriver;
+        ShadowDOM shadowDOM = new();
         public DetectDOMElements(SeleniumDriver seleniumDriver)
         {
             this.seleniumDriver = seleniumDriver;
@@ -86,7 +87,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 
                             if (parentContext is ShadowRoot shadowRoot)
                             {
-                                webElement = shadowRoot.FindElement(By.CssSelector(ShadowDOM.ConvertXPathToCssSelector(xpath)));
+                                webElement = shadowRoot.FindElement(By.CssSelector(shadowDOM.ConvertXPathToCssSelector(xpath)));
                             }
 
                             else
@@ -147,9 +148,9 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                             foundElementsList.Add(foundElementInfo);
 
                             seleniumDriver.allReadElem.Add(foundElementInfo);
-                            ISearchContext ShadowRoot = ShadowDOM.GetShadowRootIfExists(webElement);
+                            ISearchContext ShadowRoot = shadowDOM.GetShadowRootIfExists(webElement);
                             if (ShadowRoot == null) continue;
-                            string InnerHTML = ShadowDOM.GetHTML(ShadowRoot, seleniumDriver.mDriver);
+                            string InnerHTML = shadowDOM.GetHTML(ShadowRoot, seleniumDriver.mDriver);
                             if (!string.IsNullOrEmpty(InnerHTML))
                             {
                                 FindAllElementsFromPOM(path, pomSetting, ShadowRoot, foundElementInfo.Guid, foundElementsList, PomMetaData, true, InnerHTML);
@@ -163,7 +164,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
                             {
                                 if (parentContext is ShadowRoot shadowRoot)
                                 {
-                                    webElement = shadowRoot.FindElement(By.CssSelector(ShadowDOM.ConvertXPathToCssSelector(xpath)));
+                                    webElement = shadowRoot.FindElement(By.CssSelector(shadowDOM.ConvertXPathToCssSelector(xpath)));
                                 }
                                 else
                                 {
