@@ -1871,8 +1871,11 @@ namespace GingerCore
         {
             if (Activities.Any(act => act.Guid == activityGuid))
             {
-                Activities.FirstOrDefault(act => act.Guid == activityGuid).Type = eSharedItemType.Link;
-                Activities.FirstOrDefault(act => act.Guid == activityGuid).ParentGuid = parentGuid;
+                Activity activity = Activities.First(a => a.Guid == activityGuid);
+                bool wasPreviouslyActive = activity.Active;
+                activity.Type = eSharedItemType.Link;
+                activity.Active = wasPreviouslyActive;
+                activity.ParentGuid = parentGuid;
                 return true;
             }
             return false;
