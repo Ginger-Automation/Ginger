@@ -474,10 +474,13 @@ namespace Ginger.Run
 
                     IEnumerable<BusinessFlowExecutionSequence> bfSequences;
                     if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                    {
                         bfSequences = GetBusinessFlowsExecutionSequencesFromLiteDb(runSetReport.GUID);
+                    }
                     else
+                    {
                         bfSequences = await GetBusinessFlowsExecutionSequencesRemoteAsync(runSetReport.GUID);
-
+                    }
                     List<(BusinessFlow,IEnumerable<GingerCore.Activity>)> activitiesMissingFromSR = [];
                     foreach (BusinessFlowExecutionSequence bfSequence in bfSequences)
                     {
@@ -509,16 +512,22 @@ namespace Ginger.Run
                             }
                         }
                         if (exportedSuccessfullyCount > 0)
+                        {
                             Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.MultipleExportToBPMNSuccessful, exportedSuccessfullyCount));
+                        }
                         else
+                        {
                             Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, "Unexpected Error, check logs for more details."));
+                        }
                         return;
                     }
 
                     //ask user if they want to add missing activities to Shared Repository
                     eUserMsgSelection userResponse = Reporter.ToUser(eUserMsgKey.AddActivitiesToSharedRepositoryForBPMNConversion);
                     if (userResponse == eUserMsgSelection.Cancel)
+                    {
                         return;
+                    }
 
                     if (userResponse == eUserMsgSelection.No)
                     {
@@ -545,9 +554,13 @@ namespace Ginger.Run
                             }
                         }
                         if (exportedSuccessfullyCount > 0)
+                        {
                             Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.MultipleExportToBPMNSuccessful, exportedSuccessfullyCount));
+                        }
                         else
+                        {
                             Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, "Unexpected Error, check logs for more details."));
+                        }
                         return;
                     }
 
@@ -555,7 +568,9 @@ namespace Ginger.Run
                     {
                         bool wasAllAdded = TryAddActivitiesToSharedRepository(activitiesMissingFromSR);
                         if (!wasAllAdded)
+                        {
                             return;
+                        }
 
                         int exportedSuccessfullyCount = 0;
                         foreach (BusinessFlowExecutionSequence bfSequence in bfSequences)
