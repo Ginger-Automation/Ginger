@@ -678,6 +678,7 @@
     <PackageReference Include="log4net" Version="2.0.15" />
     <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.5.0" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.MemberEntitlementManagement.WebApi" Version="16.205.1" />
     <PackageReference Include="Mono.Posix" Version="7.1.0-final.1.21458.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NSwag.Core.Yaml" Version="12.0.9" />
@@ -730,6 +731,9 @@
     </Reference>
     <Reference Include="ALM_Common">
       <HintPath>..\GingerCoreNET\DLLS\ALM_Common.dll</HintPath>
+    </Reference>
+    <Reference Include="AzureDevOpsRepo">
+      <HintPath>..\..\..\..\ALMInteraction\AzureRepositoryStd\bin\Debug\net8.0\AzureDevOpsRepo.dll</HintPath>
     </Reference>
     <Reference Include="CredentialManagement">
       <HintPath>DLLs\CredentialManagement.dll</HintPath>
