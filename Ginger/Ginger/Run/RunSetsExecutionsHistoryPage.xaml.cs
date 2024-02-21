@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using AccountReport.Contracts.ResponseModels;
 using ACL_Data_Contract;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
@@ -27,11 +28,8 @@ using Amdocs.Ginger.CoreNET.BPMN.Models;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
+using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.Utility;
-using Amdocs.Ginger.Repository;
-using Applitools.Utils;
-using DocumentFormat.OpenXml.InkML;
-using DocumentFormat.OpenXml.Math;
 using Ginger.Reports;
 using Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
@@ -41,17 +39,12 @@ using GingerCore;
 using GingerCore.Activities;
 using GingerWPF.WizardLib;
 using MongoDB.Driver.Linq;
-using OpenQA.Selenium.Appium;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -65,7 +58,6 @@ namespace Ginger.Run
     public partial class RunSetsExecutionsHistoryPage : Page
     {
         private const string BPMNExportPath = @"~\\Documents\BPMN";
-        private const string AccountReportAPIBaseURL = "http://usstlattstl01:7711";
 
         ObservableList<RunSetReport> mExecutionsHistoryList = new ObservableList<RunSetReport>();
         ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
@@ -640,19 +632,16 @@ namespace Ginger.Run
         {
             List<BusinessFlowExecutionSequence> bfExecSequences = [];
 
-            JsonObject response = await GetExecutionDataFromAccountReport(executionId);
-            JsonArray runnersColl = response["RunnersColl"]!.AsArray();
-            foreach (JsonObject runner in runnersColl.Select(item => item!.AsObject()))
+            AccountReportRunSetClient runset = await GetExecutionDataFromAccountReportAsync(executionId);
+            foreach (AccountReportRunnerClient runner in runset.RunnersColl)
             {
-                JsonArray businessFlowsColl = runner["BusinessFlowsColl"]!.AsArray();
-                foreach (JsonObject businessFlow in businessFlowsColl.Select(item => item!.AsObject()))
+                foreach (AccountReportBusinessFlowClient businessFlow in runner.BusinessFlowsColl)
                 {
-                    BusinessFlow bf = GetBusinessFlowByName(businessFlow["Name"]!.ToString());
-                    JsonArray activitiesColl = businessFlow["ActivitiesColl"]!.AsArray();
+                    BusinessFlow bf = GetBusinessFlowByName(businessFlow.Name);
+                    List<AccountReportActivityClient> activities = businessFlow.ActivitiesColl; 
 
-                    IEnumerable<ExecutedActivity> activities = activitiesColl
-                        .Select(item => item!.AsObject())
-                        .Select(activityJson => GetBusinessFlowActivityByName(bf, activityJson["Name"]!.ToString())!)
+                    IEnumerable<ExecutedActivity> executedActivities = activities
+                        .Select(activity => GetBusinessFlowActivityByName(bf, activity.Name)!)
                         .Where(activity => activity != null)
                         .Select(activity => new ExecutedActivity(
                             activity,
@@ -660,7 +649,7 @@ namespace Ginger.Run
                             existInBF: true))
                         .ToList();
 
-                    bfExecSequences.Add(new(bf, activities));
+                    bfExecSequences.Add(new(bf, executedActivities));
                 }
             }
 
@@ -774,35 +763,10 @@ namespace Ginger.Run
             ExportUseCaseFromBusinessFlow(executedBF);
         }
 
-        private async Task<JsonObject> GetExecutionDataFromAccountReport(string executionId)
+        private Task<AccountReportRunSetClient> GetExecutionDataFromAccountReportAsync(string executionId)
         {
-            if (_httpClient == null)
-            {
-                _httpClient = new();
-            }
-
-            HttpRequestMessage request = new()
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri($"{AccountReportAPIBaseURL}/api/AccountReport/GetAccountHtmlReport/{executionId}")
-            };
-            request.Headers.Add("accept", "application/json");
-
-            HttpResponseMessage response = await _httpClient.SendAsync(request);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception($"AccountReport api returned unsuccessful response while getting execution data.\nStatusCode: {response.StatusCode},\nContent: {await response.Content.ReadAsStringAsync()}");
-            }
-
-            JsonObject? responseJson = (JsonObject?)JsonNode.Parse(await response.Content.ReadAsStringAsync());
-
-            if (responseJson == null)
-            {
-                throw new Exception("AccountReport api response parsed to null json.");
-            }
-
-            return responseJson;
+            AccountReportApiHandler handler = new(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+            return handler.GetAccountHTMLReportAsync(Guid.Parse(executionId));
         }
 
         private string ExportUseCaseFromBusinessFlow(BusinessFlow businessFlow)

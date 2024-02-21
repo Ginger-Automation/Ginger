@@ -21,6 +21,7 @@ using Amdocs.Ginger.CoreNET.BPMN.Models;
 using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using GingerCore;
 using GingerCore.Activities;
+using GingerUtils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -120,7 +121,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
         {
             string zipDirectoryPath = CreateReleaseZIPDirectory(bpmnFiles);
             string zipFilePath = $"{zipDirectoryPath}.zip";
-            zipFilePath = GetUniqueFilePath(zipFilePath);
+            zipFilePath = FileUtils.GetUniqueFilePath(zipFilePath);
             if (File.Exists(zipFilePath))
             {
                 File.Delete(zipFilePath);
@@ -130,29 +131,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             return zipFilePath;
         }
 
-        private string GetUniqueFilePath(string filePath)
-        {
-            if (!File.Exists(filePath))
-            {
-                return filePath;
-            }
-
-            string extension = Path.GetExtension(filePath);
-            string filePathWithoutExtension = filePath.Remove(filePath.Length - extension.Length, extension.Length);
-            int copyCounter = 1;
-            while (File.Exists($"{filePathWithoutExtension}({copyCounter}){extension}"))
-            {
-                copyCounter++;
-            }
-
-            return $"{filePathWithoutExtension}({copyCounter}){extension}";
-        }
-
         private string CreateReleaseZIPDirectory(IEnumerable<BPMNFileData> bpmnFiles)
         {
             string zipDirectoryRootPath = Path.Combine(_exportPath, _businessFlow.Name);
 
-            zipDirectoryRootPath = GetUniqueDirectoryPath(zipDirectoryRootPath);
+            zipDirectoryRootPath = FileUtils.GetUniqueDirectoryPath(zipDirectoryRootPath);
 
             string zipDirectoryPath = Path.Combine(zipDirectoryRootPath, "requirements-library");
             if (Directory.Exists(zipDirectoryPath))
@@ -169,21 +152,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             return zipDirectoryRootPath;
         }
 
-        private string GetUniqueDirectoryPath(string directoryPath)
-        {
-            if (!Directory.Exists(directoryPath))
-            {
-                return directoryPath;
-            }
-
-            int copyCount = 1;
-            while (Directory.Exists($"{directoryPath}({copyCount})"))
-            {
-                copyCount++;
-            }
-
-            return $"{directoryPath}({copyCount})";
-        }
+        
 
         private sealed class BPMNFileData
         {

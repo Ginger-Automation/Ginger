@@ -27,6 +27,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using GingerUtils;
 
 namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
 {
@@ -96,28 +97,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             
             string filePath = Path.Combine(_exportPath, bpmnFile.Name);
 
-            filePath = GetUniqueFilePath(filePath);
+            filePath = FileUtils.GetUniqueFilePath(filePath);
 
             File.WriteAllText(filePath, bpmnFile.Content);
             
             return filePath;
-        }
-
-        private string GetUniqueFilePath(string filePath)
-        {
-            if (!File.Exists(filePath))
-            {
-                return filePath;
-            }
-
-            string extension = Path.GetExtension(filePath);
-            string filePathWithoutExtension = filePath.Remove(filePath.Length - extension.Length, extension.Length);
-            int copyCounter = 1;
-            while (File.Exists($"{filePathWithoutExtension}({copyCounter}){extension}"))
-            {
-                copyCounter++;
-            }
-            return $"{filePathWithoutExtension}({copyCounter}){extension}";
         }
 
         private sealed class BPMNFileData
