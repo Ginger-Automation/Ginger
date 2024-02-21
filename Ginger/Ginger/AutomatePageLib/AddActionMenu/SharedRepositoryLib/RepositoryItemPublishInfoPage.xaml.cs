@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Activities;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -99,6 +100,10 @@ namespace Ginger.Repository
             foreach (var item in currentItem.HostBusinessFlow.Activities)
             {
                 currentItem.ActivityNameList.Add(activityIndex + "-" + item.ActivityName);
+                if (!currentItem.ActivityGroupMapping.ContainsKey(activityIndex + "-" + item.ActivityName))
+                {
+                    currentItem.ActivityGroupMapping.Add(activityIndex + "-" + item.ActivityName, item.ActivitiesGroupID);
+                }
                 activityIndex++;
             }
         }
@@ -193,7 +198,8 @@ namespace Ginger.Repository
                                         else
                                         {
                                             var indexToAdd = Convert.ToInt32(repositoryItem.IndexActivityName[0].ToString());
-                                            repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(), insertIndex: indexToAdd + 1);
+                                            string gpOfIndexAct = repositoryItem.ActivityGroupMapping.TryGetValue(repositoryItem.IndexActivityName, out string value) ? value : string.Empty;
+                                            repositoryItem.HostBusinessFlow.AddActivity(activityCopy, repositoryItem.HostBusinessFlow.ActivitiesGroups.FirstOrDefault(n=>n.Name== gpOfIndexAct), insertIndex: indexToAdd + 1);
                                         }
                                     }
                                     if (!errorOccured)

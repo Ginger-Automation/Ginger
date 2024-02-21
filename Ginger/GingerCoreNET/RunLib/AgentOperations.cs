@@ -897,7 +897,12 @@ namespace GingerCore
                 }
                 else
                 {
-                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, "Please confirm Agent configurations are valid");
+                    string FailedToConnectErrorMessage = "Please confirm Agent configurations are valid";
+                    if (!string.IsNullOrEmpty(Driver?.ErrorMessageFromDriver))
+                    {
+                        FailedToConnectErrorMessage += $"{Environment.NewLine}Extra Info: {Driver.ErrorMessageFromDriver}";
+                    }
+                    Reporter.ToUser(eUserMsgKey.FailedToConnectAgent, Agent.Name, FailedToConnectErrorMessage);
                 }
             }
             catch (Exception AgentStartException)

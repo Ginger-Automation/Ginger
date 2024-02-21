@@ -400,7 +400,7 @@ namespace Amdocs.Ginger.Common
             
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToDownloadDriver, new UserMsg(eUserMsgType.ERROR, "Failed to Download the Driver",
                 "Oh no! The {0} Driver couldn't be downloaded because we're currently offline.Check your internet connection or update the proxy settings in the Agent config for automatic downloads." + Environment.NewLine +
-                $"If that feels like a puzzle, you can manually grab the driver and drop it into the Ginger installation directory({ AppContext.BaseDirectory})." + Environment.NewLine +"Cheers to problem-solving."
+                $"If that feels like a puzzle, You can also grab the driver yourself and set its location in the DriverFilePath in the Agent Configuration." + Environment.NewLine +"Cheers to problem-solving."
                 , eUserMsgOption.OK, eUserMsgSelection.None));
 
             #endregion Agents/Drivers Messages
