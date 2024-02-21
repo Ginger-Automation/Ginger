@@ -322,7 +322,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             List<AccessibilityRuleData> Exculedrules = new  List<AccessibilityRuleData>();
             if(OperationValueList != null && OperationValueList.Count > 0 && RulesItemsdata != null)
             {
-                Exculedrules = RulesItemsdata.Where(x => OperationValueList.Select(y => y.Value).ToList().Contains(x.Tags)).ToList(); 
+                var operationValues = OperationValueList.Select(y => y.Value).ToList();
+                Exculedrules = RulesItemsdata.Where(x => operationValues.Contains(x.Tags)).ToList();
             }
             else
             {

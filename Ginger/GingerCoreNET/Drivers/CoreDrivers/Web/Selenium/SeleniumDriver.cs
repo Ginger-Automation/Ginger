@@ -1567,14 +1567,14 @@ namespace GingerCore.Drivers
                 ActAgentManipulationHandler((ActAgentManipulation)act);
                 return;
             }
-            if (WorkSpace.Instance.BetaFeatures.ShowAccessibilityTesting)
-            {
+            //if (WorkSpace.Instance.BetaFeatures.ShowAccessibilityTesting)
+            //{
                 if (act is ActAccessibilityTesting actAccessibilityTesting)
                 {
                     ActAccessibility(actAccessibilityTesting);
                     return;
                 }
-            }
+            //}
             act.Error = "Run Action Failed due to unrecognized action type - " + ActType.ToString();
             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
         }
@@ -1610,6 +1610,7 @@ namespace GingerCore.Drivers
                 {
                     axeResult = axeBuilder.Analyze();
                 }
+
                 SetAxeResultToAction(act, axeResult);
             }
             catch (Exception ex)
@@ -1668,8 +1669,7 @@ namespace GingerCore.Drivers
                 }
                 
             }
-            //bool hasAnyViolations = axeResult.Violations.Any();
-            var jsonresponse = JsonConvert.SerializeObject(axeResult);
+            var jsonresponse = JsonConvert.SerializeObject(axeResult, Formatting.Indented);
             act.RawResponseValues = jsonresponse;
             act.AddOrUpdateReturnParamActual(ParamName: "Raw Response", ActualValue: jsonresponse);
             if (hasAnyViolations)

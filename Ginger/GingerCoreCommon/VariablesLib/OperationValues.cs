@@ -58,7 +58,7 @@ namespace Amdocs.Ginger.Common.VariablesLib
                 if(mDisplayName != value)
                 {
                     mDisplayName = value;
-                    OnPropertyChanged(nameof(value));
+                    OnPropertyChanged(nameof(DisplayName));
                 }
             }
         }

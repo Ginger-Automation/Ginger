@@ -214,8 +214,8 @@ namespace Ginger.UserControlsLib
                         bool isValid = Guid.TryParse(this.ItemsSource[node.Title].ToString(), out guidOutput);
                         if (isValid)
                         {
-                            SelectedItems.Add(new OperationValues() { Value = node.Title, Guid = Guid.Parse(this.ItemsSource[node.Title].ToString()) });
-                            temp.Add(new OperationValues() { Value = node.Title, Guid = Guid.Parse(this.ItemsSource[node.Title].ToString()) });
+                            SelectedItems.Add(new OperationValues() { Value = node.Title, Guid = guidOutput });
+                            temp.Add(new OperationValues() { Value = node.Title, Guid = guidOutput });
                         }
                         else
                         {

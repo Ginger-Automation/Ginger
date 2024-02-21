@@ -67,7 +67,7 @@ namespace Ginger.Configurations
             }
         }
 
-        private Dictionary<string, object> _items;
+        private Dictionary<string, object> _items = new Dictionary<string, object>();
 
         public Dictionary<string, object> Items
         {
@@ -100,7 +100,7 @@ namespace Ginger.Configurations
             }
         }
 
-        private Dictionary<string, object> _SeverityItems;
+        private Dictionary<string, object> _SeverityItems = new Dictionary<string, object>();
 
         public Dictionary<string, object> SeverityItems
         {
