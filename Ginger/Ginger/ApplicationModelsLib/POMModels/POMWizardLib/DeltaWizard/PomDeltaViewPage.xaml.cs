@@ -23,16 +23,12 @@ using Amdocs.Ginger.Repository;
 using Ginger.Actions.UserControls;
 using Ginger.UserControls;
 using GingerCore;
-using GingerCore.Drivers;
-using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -56,7 +52,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         bool IsFirstSelection = true;
         bool isEnableFriendlyLocator = false;
         GridColView mGridCompareColumn;
-        ObservableList<ElementInfo> elementInfoList;
+        private readonly ObservableList<ElementInfo> elementInfoList = [];
         private Agent mAgent;
         IWindowExplorer mWinExplorer
         {
@@ -443,8 +439,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                IList<ElementInfo> elementInfos = new ObservableList<ElementInfo>();
-
                 mWinExplorer.HighLightElement(mSelectedElement.ElementInfo, true, elementInfoList);
 
             }
