@@ -64,7 +64,7 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
 
                 else
                 {
-                    strBuilder.Append(tag);
+                    strBuilder.Append($"{tag} ");
                 }
             }
 

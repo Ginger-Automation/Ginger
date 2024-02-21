@@ -377,6 +377,29 @@ namespace GingerCore.Drivers
             return mBrowserTpe;
         }
 
+        private ISearchContext _searchContext = null;
+        /// <summary>
+        ///  This attribute is used to keep track of Shadow Root, when user manually creates actions to switch to a shadow root.
+        /// </summary>
+        private ISearchContext CurrentContext
+        {
+            get
+            {
+                if(_searchContext == null)
+                {
+                    return Driver;
+                }
+
+                return _searchContext;
+            }
+
+            set
+            {
+                _searchContext = value;
+            }
+                
+        }
+
         public override void StartDriver()
         {
             //Add localhost to no proxy so that driver service can be started with proxy
@@ -3885,7 +3908,7 @@ namespace GingerCore.Drivers
                 ElementLocator locator = new ElementLocator();
                 locator.LocateBy = locateBy;
                 locator.LocateValue = locateValue;
-                elem = LocateElementByLocator(locator, Driver, null , AlwaysReturn);
+                elem = LocateElementByLocator(locator, CurrentContext, null , AlwaysReturn);
                 if (elem == null)
                 {
                     act.ExInfo += string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
@@ -7827,7 +7850,16 @@ namespace GingerCore.Drivers
                 return;
             }
         }
-
+        private void HandleSwitchToShadowDOM(Act act)
+        {
+            IWebElement shadowDOMHost = LocateElement(act);
+            if(shadowDOMHost == null)
+            {
+                act.ExInfo = $"{act.ExInfo}\nShadow Root Host cannot be located. Please try to find the appropriate Locator of the Element just above the shadow root (Shadow Root Host)";
+                return;
+            }
+           CurrentContext = shadowDOM.GetShadowRootIfExists(shadowDOMHost);
+        }
         public async void ActBrowserElementHandler(ActBrowserElement act)
         {
             try
@@ -8172,6 +8204,9 @@ namespace GingerCore.Drivers
                         mAct = act;
                         SetUPDevTools(Driver);
                         GotoURL(act, Driver.Url);
+                        break;
+                    case ActBrowserElement.eControlAction.SwitchToShadowDOM:
+                        HandleSwitchToShadowDOM(act);
                         break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());

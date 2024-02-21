@@ -74,6 +74,7 @@ namespace GingerCore.Platforms.PlatformsInfo
             browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToDefaultFrame);
             browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToParentFrame);
             browserActElementList.Add(ActBrowserElement.eControlAction.SwitchWindow);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToShadowDOM);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetWindowTitle);
             browserActElementList.Add(ActBrowserElement.eControlAction.DeleteAllCookies);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetPageSource);

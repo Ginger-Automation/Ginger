@@ -121,7 +121,7 @@ namespace Ginger.Actions
             ResetView();
             ePlatformType ActivityPlatform = mAct.Platform;
 
-            if (mAct.ControlAction == ActBrowserElement.eControlAction.SwitchFrame || mAct.ControlAction == ActBrowserElement.eControlAction.SwitchWindow || mAct.ControlAction == ActBrowserElement.eControlAction.CloseTabExcept)
+            if (mAct.ControlAction == ActBrowserElement.eControlAction.SwitchFrame || mAct.ControlAction == ActBrowserElement.eControlAction.SwitchToShadowDOM || mAct.ControlAction == ActBrowserElement.eControlAction.SwitchWindow || mAct.ControlAction == ActBrowserElement.eControlAction.CloseTabExcept)
             {
                 xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
                 SetLocateValueControls();
