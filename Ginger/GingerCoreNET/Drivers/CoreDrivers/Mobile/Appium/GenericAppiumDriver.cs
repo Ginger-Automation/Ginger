@@ -38,6 +38,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Mobile;
+using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium;
 using Amdocs.Ginger.CoreNET.Drivers.DriversWindow;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
@@ -167,7 +168,6 @@ namespace Amdocs.Ginger.CoreNET
 
         private AppiumDriver Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
-
         public override bool StopProcess
         {
             get
@@ -1592,7 +1592,7 @@ namespace Amdocs.Ginger.CoreNET
             //NA
         }
 
-        async void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        async void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
             if (AppType == eAppType.Web)
             {
@@ -2483,7 +2483,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     default:
-                        elem = mSeleniumDriver.LocateElementByLocator(EL);
+                        elem = mSeleniumDriver.LocateElementByLocator(EL); 
                         break;
                 }
             }

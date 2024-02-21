@@ -32,11 +32,13 @@ using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
+using OpenQA.Selenium.Appium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -338,7 +340,7 @@ namespace Ginger
 
             if (SelectedElement != null)
             {
-                WindowExplorerDriver.TestElementLocators(SelectedElement);
+                WindowExplorerDriver.TestElementLocators(SelectedElement, mPOM: SelectedPOM);
             }
         }
 
@@ -439,7 +441,7 @@ namespace Ginger
 
             if (SelectedElement != null)
             {
-                WindowExplorerDriver.TestElementLocators(SelectedElement);
+                WindowExplorerDriver.TestElementLocators(SelectedElement, mPOM: SelectedPOM);
             }
         }
 
@@ -1051,9 +1053,20 @@ namespace Ginger
                         testElement = htmlElementInfo;
                         testElement.Properties = SelectedElement.Properties;
                     }
+                    WindowExplorerDriver.TestElementLocators(testElement);
+
+                }
+                else if (Platform.PlatformType().Equals(ePlatformType.Web) && SelectedElement is HTMLElementInfo)
+                {
+                    var htmlElementInfo = new HTMLElementInfo() { Path = testElement.Path, Locators = testElement.Locators, Properties = SelectedElement.Properties};
+                    WindowExplorerDriver.TestElementLocators(htmlElementInfo, mPOM: SelectedPOM);
                 }
 
-                WindowExplorerDriver.TestElementLocators(testElement);
+                else
+                {
+                    WindowExplorerDriver.TestElementLocators(testElement);
+
+                }
             }
         }
 

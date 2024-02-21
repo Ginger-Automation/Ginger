@@ -1104,7 +1104,7 @@ namespace GingerCore.Drivers.PBDriver
         }
 
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
             HighLightElement(ElementInfo);
         }
