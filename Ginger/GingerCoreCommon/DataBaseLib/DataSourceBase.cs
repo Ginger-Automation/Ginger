@@ -72,7 +72,7 @@ namespace GingerCore.DataSource
             }
         }
 
-        public string FileFullPath
+        public virtual string FileFullPath
         {
             get
             {

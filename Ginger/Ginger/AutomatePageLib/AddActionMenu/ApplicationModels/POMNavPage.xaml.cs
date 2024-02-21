@@ -29,6 +29,7 @@ using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using GingerCore;
+using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerWPF.UserControlsLib.UCTreeView;
 using System;
@@ -222,7 +223,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.HighLightElement(mSelectedElement, true);
+               mWinExplorer.HighLightElement(mSelectedElement, true, mPOM?.MappedUIElements);
             }
         }
         private bool ValidateDriverAvalability()

@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using LiteDB;
+using LiteDB.Engine;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,10 +32,28 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
     //Need to make sure that LiteDb handles it internally
     public class LiteDbConnector
     {
-        public string ConnectionString { get; set; }
+        public ConnectionString ConnectionString { get; set; }
         public LiteDbConnector(string filePath)
         {
-            this.ConnectionString = $"filename={filePath}; connection=Shared; upgrade=true";
+            ConnectionString = new()
+            {
+                Filename = filePath,
+                Connection = ConnectionType.Shared
+            };
+            TryUpgradeDataFile();
+        }
+
+        private bool TryUpgradeDataFile()
+        {
+            try
+            {
+                string dbFilePath = ConnectionString.Filename;
+                return LiteEngine.Upgrade(dbFilePath);
+            }
+            catch(Exception)
+            {
+                return false;
+            }
         }
 
         public EntityBuilder<T> GetMapper<T>()
@@ -164,7 +183,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             {
                 using (var db = new LiteDatabase(this.ConnectionString))
                 {
-                    using (FileStream fs = File.Create(this.ConnectionString))
+                    using (FileStream fs = File.Create(this.ConnectionString.ToString()))
                     {
                         var file = db.FileStorage.Download(imagePath, fs);
                     }

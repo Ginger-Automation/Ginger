@@ -45,11 +45,12 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         {
             
             opendoc = Swaggerdoc;
-            var enumValuesListAMP = SetEnumsValue(opendoc);
+            
             var reqBodyNullExampleList = GetExamplesFromDefinitions(opendoc);
             foreach (var paths in opendoc.Paths)
             {
                 SwaggerPathItem SPi = paths.Value;
+                var enumValuesListAMP = SetEnumsValue(paths);
                 foreach (KeyValuePair<SwaggerOperationMethod, SwaggerOperation> so in SPi.AsEnumerable())
                 {
                     SwaggerOperation Operation = so.Value;
