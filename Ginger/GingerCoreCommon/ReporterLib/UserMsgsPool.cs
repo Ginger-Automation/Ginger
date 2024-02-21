@@ -146,7 +146,7 @@ namespace Amdocs.Ginger.Common
         ScriptPaused, MissingFileLocation, ElementNotFound, TextNotFound, ProvideSearchString, NoTextOccurrence, JSExecutionFailed, FailedToInitiate, FailedToCreateRequestResponse, ActionNotImplemented, RunSetNotExecuted, OperationNotSupported, ValueIssue, MissingTargetApplication,
         ThreadError, ParsingError, SpecifyUniqueValue, ParameterAlreadyExists, DeleteNodesFromRequest, ParameterMerge, ParameterEdit, ParameterUpdate, ParameterDelete, SaveAll, SaveSelected, SaveAllModifiedItems, CopiedErrorInfo, RepositoryNameCantEmpty,
         ExcelProcessingError, EnterValidBusinessflow, DeleteItem, RefreshFolder, RefreshFailed, ReplaceAll, ItemSelection, DifferentItemType, CopyCutOperation, ObjectLoad, POMAgentIsNotRunning, POMNotOnThePageWarn, POMCannotDeleteAutoLearnedElement, ALMDefectsUserInOtaAPI, InvalidYAML, InvalidJSON,  DuplicateRunsetName,
-        POMElementNotExist, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped, SavePOMChanges,
+        POMElementNotExist,ElementNotSelected, UpdateExistingPOMElement, POMMoveElementFromUnmappedToMapped, SavePOMChanges,
         AskIfToUndoChanges, AskIfToUndoItemChanges, AskIfToImportFile, FileAlreadyExistWarn,
         POMDeltaWizardReLearnWillEraseModification, WarnAddLegacyAction, WarnAddLegacyActionAndOfferNew,
         PluginDownloadInProgress, SaveRunsetChanges, LegacyActionsCleanup,
@@ -174,11 +174,13 @@ namespace Amdocs.Ginger.Common
         HasUnhandledConflicts, 
         HasUnhandledMandatoryIssues,
         UncommitedChangesPreventCheckout,
-        ExportToBPMNSuccessful,
+        ExportToBPMNSuccessful, 
+        MultipleExportToBPMNSuccessful,
         GingerEntityToBPMNConversionError,
         IssueWhileAnalyzingConflict,
         ConflictsResolvedCount,
-        AddActivityGroupsToSharedRepositoryForBPMNConversion,
+        AddActivityGroupsToSharedRepositoryForBPMNConversion, 
+        AddActivitiesToSharedRepositoryForBPMNConversion,
         FailedToDownloadDriver
     }
 
@@ -398,7 +400,7 @@ namespace Amdocs.Ginger.Common
             
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToDownloadDriver, new UserMsg(eUserMsgType.ERROR, "Failed to Download the Driver",
                 "Oh no! The {0} Driver couldn't be downloaded because we're currently offline.Check your internet connection or update the proxy settings in the Agent config for automatic downloads." + Environment.NewLine +
-                $"If that feels like a puzzle, you can manually grab the driver and drop it into the Ginger installation directory({ AppContext.BaseDirectory})." + Environment.NewLine +"Cheers to problem-solving."
+                $"If that feels like a puzzle, You can also grab the driver yourself and set its location in the DriverFilePath in the Agent Configuration." + Environment.NewLine +"Cheers to problem-solving."
                 , eUserMsgOption.OK, eUserMsgSelection.None));
 
             #endregion Agents/Drivers Messages
@@ -595,8 +597,10 @@ namespace Amdocs.Ginger.Common
 
             #region Otoma
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExportToBPMNSuccessful, new UserMsg(eUserMsgType.INFO, "BPMN Export Successful", "Exported to BPMN file {0} successfully.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MultipleExportToBPMNSuccessful, new UserMsg(eUserMsgType.INFO, "BPMN Export Successful", "{0} BPMN file(s) exported successfully.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.GingerEntityToBPMNConversionError, new UserMsg(eUserMsgType.ERROR, "BPMN Export Failed", "Error occurred while exporting BPMN.\n{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AddActivityGroupsToSharedRepositoryForBPMNConversion, new UserMsg(eUserMsgType.QUESTION, Caption: "Add Missing Activity Groups to Shared Repository", Message: "All the activity groups must be added to shared repository before generating BPMN.\nWould you like to add now?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AddActivitiesToSharedRepositoryForBPMNConversion, new UserMsg(eUserMsgType.QUESTION, Caption: "Add Missing Activities to Shared Repository", Message: "All the activities must be added to shared repository before generating BPMN.\nWould you like to add now?", eUserMsgOption.YesNoCancel, eUserMsgSelection.Yes));
             #endregion
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed, new UserMsg(eUserMsgType.INFO, "Remote Data deletion", "Remote Execution Results will not be deleted.", eUserMsgOption.OK, eUserMsgSelection.OK));
@@ -796,6 +800,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToLoadPlugIn, new UserMsg(eUserMsgType.ERROR, "Failed to Load Plug In", "Ginger could not load the plug in '{0}'" + Environment.NewLine + "Error Details: {1}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.POMElementNotExist, new UserMsg(eUserMsgType.QUESTION, "Element Not Found", "'{0}' does not exist in selected Page Object Model - '{1}'" + Environment.NewLine + "Do you want to add this Element to POM ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ElementNotSelected, new UserMsg(eUserMsgType.INFO, "Search Items not Found", "No Items Found to Search or Please select the Parent Item/list ", eUserMsgOption.OK, eUserMsgSelection.None));
+
             Reporter.UserMsgsPool.Add(eUserMsgKey.UpdateExistingPOMElement, new UserMsg(eUserMsgType.QUESTION, "Updated Element Found", "An updated version of Page Object Model Element '{0}' Found." + Environment.NewLine + "Do you want to update existing POM ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SavePOMChanges, new UserMsg(eUserMsgType.QUESTION, "Save POM Changes", "Selected POM '{0}' was updated." + Environment.NewLine + "Do you want to save changes ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
 

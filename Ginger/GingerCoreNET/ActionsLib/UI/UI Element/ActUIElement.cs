@@ -289,6 +289,9 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Set Value")]
             SetValue,
             [Description(EElementActionTypeGeneric)]
+            [EnumValueDescription("Context Menu Click")]
+            ContextMenuClick,
+            [Description(EElementActionTypeGeneric)]
             [EnumValueDescription("Get Value")]
             GetValue,
             [Description(EElementActionTypeGeneric)]
@@ -568,7 +571,6 @@ namespace GingerCore.Actions.Common
         }
 
 
-
         public eElementAction ElementAction
         {
             get { return GetOrCreateInputParam<eElementAction>(Fields.ElementAction, eElementAction.Unknown); }
@@ -789,7 +791,9 @@ namespace GingerCore.Actions.Common
             [EnumValueDescription("Select All Rows")]
             SelectAllRows,
             [EnumValueDescription("Right Click")]
-            RightClick
+            RightClick,
+            [EnumValueDescription("Context Menu Click")]
+            ContextMenuClick
         }
 
         // TODO: move Locate Value to here and remove from Act.cs

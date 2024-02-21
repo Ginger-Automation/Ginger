@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Ginger.Repository
@@ -179,6 +180,19 @@ namespace Ginger.Repository
             {
                 mActivityList = value;
                 OnPropertyChanged(nameof(ActivityNameList));
+            }
+        }
+
+        private Dictionary<string, string> mActivityGroupMapping = new Dictionary<string, string>();
+        public Dictionary<string, string> ActivityGroupMapping
+        {
+            get
+            {
+                return mActivityGroupMapping;
+            }
+            set
+            {
+                mActivityGroupMapping = value;
             }
         }
 

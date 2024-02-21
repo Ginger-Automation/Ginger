@@ -674,7 +674,7 @@ namespace GingerCoreNETUnitTest.BPMN
             CreateActivityGroupWithGoToActivityByNameFlowControlWithInvalidTargetName(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
 
-            Assert.ThrowsException<BPMNConversionException>(() => creator.Create(), $"Expected to throw {nameof(BPMNConversionException)} because no {nameof(Activity)} was found by name in shared repository.");
+            Assert.ThrowsException<FlowControlTargetActivityNotFoundException>(() => creator.Create(), $"Expected to throw {nameof(BPMNConversionException)} because no {nameof(Activity)} was found by name in shared repository.");
         }
 
         [TestMethod]
@@ -1199,7 +1199,7 @@ namespace GingerCoreNETUnitTest.BPMN
             CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControlWithInvalidTargetName(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
 
-            Assert.ThrowsException<BPMNConversionException>(() => creator.Create(), $"Expected to throw {nameof(BPMNConversionException)} because no {nameof(Activity)} was found by name in shared repository.");
+            Assert.ThrowsException<FlowControlTargetActivityNotFoundException>(() => creator.Create(), $"Expected to throw {nameof(BPMNConversionException)} because no {nameof(Activity)} was found by name in shared repository.");
         }
 
         private bool IsConditionalTask(Task task)

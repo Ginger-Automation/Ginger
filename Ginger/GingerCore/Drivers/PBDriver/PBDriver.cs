@@ -232,10 +232,12 @@ namespace GingerCore.Drivers.PBDriver
                                 List<Bitmap> bList;
                                 foreach (AppWindow aw in list)
                                 {
-                                    Bitmap bmp = mUIAutomationHelper.GetAppWindowAsBitmap(aw);
-                                    if (bmp != null)
+                                    using (Bitmap bmp = mUIAutomationHelper.GetAppWindowAsBitmap(aw))
                                     {
-                                        act.AddScreenShot(bmp);
+                                        if (bmp != null)
+                                        {
+                                            act.AddScreenShot(bmp);
+                                        }
                                     }
                                     bList = mUIAutomationHelper.GetAppDialogAsBitmap(aw);
                                     foreach (Bitmap tempbmp in bList)
@@ -249,8 +251,10 @@ namespace GingerCore.Drivers.PBDriver
                             {
                                 if (mUIAutomationHelper.GetCurrentWindow() != null)
                                 {
-                                    Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
-                                    act.AddScreenShot(bmp);
+                                    using (Bitmap bmpcurrentwin = mUIAutomationHelper.GetCurrentWindowBitmap())
+                                    {
+                                        act.AddScreenShot(bmpcurrentwin);
+                                    }
                                 }
                             }
                             return;
@@ -1100,7 +1104,7 @@ namespace GingerCore.Drivers.PBDriver
         }
 
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
             HighLightElement(ElementInfo);
         }
@@ -1250,8 +1254,8 @@ namespace GingerCore.Drivers.PBDriver
         /// <returns>Application Screenshot in Bitmap format</returns>
         public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
-            Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
-            return bmp;
+            return mUIAutomationHelper.GetCurrentWindowBitmap();
+
         }
 
         /// <summary>

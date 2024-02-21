@@ -30,6 +30,7 @@ using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.DataSource;
+using GingerCore.Drivers;
 using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
@@ -879,7 +880,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.HighLightElement(mSelectedElement, true);
+                    mWinExplorer.HighLightElement(mSelectedElement, true, mPOM?.MappedUIElements);
             }
         }
 
@@ -919,6 +920,18 @@ namespace Ginger.ApplicationModelsLib.POMModels
                         testElement.Properties = CurrentEI.Properties;
                     }
                 }
+                else if (WorkSpace.Instance.Solution.GetTargetApplicationPlatform(mPOM.TargetApplicationKey).Equals(ePlatformType.Web))
+                {
+                    var htmlElementInfo = new HTMLElementInfo() { 
+                        Path = testElement.Path, 
+                        Locators = testElement.Locators, 
+                        Properties = ((HTMLElementInfo)CurrentEI).Properties,
+                    };
+
+                    htmlElementInfo.FriendlyLocators = testElement.FriendlyLocators;
+                    testElement = htmlElementInfo; 
+                }
+
 
                 mWinExplorer.TestElementLocators(testElement, false, mPOM);
             }
@@ -933,7 +946,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.TestElementLocators(mSelectedElement);
+                mWinExplorer.TestElementLocators(mSelectedElement, mPOM:mPOM);
             }
         }
 

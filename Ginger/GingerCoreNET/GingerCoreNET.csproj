@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AssemblyVersion></AssemblyVersion>
     <FileVersion></FileVersion>
     <RootNamespace>Amdocs.Ginger.CoreNET</RootNamespace>
@@ -224,17 +224,21 @@
 
   <ItemGroup>
   
-    <PackageReference Include="Appium.WebDriver" Version="5.0.0-beta01" />
+    <PackageReference Include="Appium.WebDriver" Version="5.0.0-rc.5" />
   
-    <PackageReference Include="Azure.Identity" Version="1.8.1" />
+    <PackageReference Include="Azure.Identity" Version="1.10.4" />
   
-    <PackageReference Include="CassandraCSharpDriver" Version="3.10.0" />
+    <PackageReference Include="CassandraCSharpDriver" Version="3.19.5" />
   
-    <PackageReference Include="CommandLineParser" Version="2.8.0" />
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
   
     <PackageReference Include="AutoMapper" Version="12.0.1" />
   
     <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
+  
+    <PackageReference Include="Deque.AxeCore.Commons" Version="4.8.0" />
+  
+    <PackageReference Include="Deque.AxeCore.Selenium" Version="4.8.0" />
   
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling" Version="6.0.1304" />
   
@@ -250,17 +254,17 @@
     
     <PackageReference Include="HBaseNet" Version="0.1.0" />
     
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.21" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
     <PackageReference Include="InputSimulatorStandard" Version="1.0.0" />
   
     <PackageReference Include="LibGit2Sharp.NativeBinaries" Version="2.0.278" />
-	<PackageReference Include="LiteDB" Version="4.1.4" />
+	<PackageReference Include="LiteDB" Version="5.0.17" />
   
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.0.1" />
   
-    <PackageReference Include="log4net" Version="2.0.12" />
+    <PackageReference Include="log4net" Version="2.0.15" />
   
-    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.22.0" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="13.5.0" />
   
     <PackageReference Include="MailKit" Version="4.0.0" />
   
@@ -281,6 +285,8 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Graph" Version="4.51.0" />
     <PackageReference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.ServiceBus" Version="6.0.1304" />
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.205.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="16.205.1" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
     <PackageReference Include="MySql.Data" Version="8.0.16" />
@@ -292,18 +298,19 @@
     <PackageReference Include="protobuf-net.Core" Version="3.2.26" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="108.0.3" />
-    <PackageReference Include="Selenium.Support" Version="4.13.1" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.13.1" />
+    <PackageReference Include="Selenium.Axe" Version="4.0.16" />
+    <PackageReference Include="Selenium.Support" Version="4.17.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.17.0" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="4.1.0" />
     <PackageReference Include="SharpAdbClient" Version="2.3.23" />
-    <PackageReference Include="SSH.NET" Version="2020.0.1" />
+    <PackageReference Include="SSH.NET" Version="2023.0.1" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Data.OleDb" Version="6.0.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
-    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.1" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
     <PackageReference Include="System.Reflection.DispatchProxy" Version="4.7.1" />
-    <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -327,6 +334,9 @@
     </Reference>
     <Reference Include="ALM_CommonStd">
       <HintPath>DLLS\ALM_CommonStd.dll</HintPath>
+    </Reference>
+    <Reference Include="AzureDevOpsRepo">
+      <HintPath>..\..\..\..\ALMInteraction\AzureRepositoryStd\bin\Debug\net8.0\AzureDevOpsRepo.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>

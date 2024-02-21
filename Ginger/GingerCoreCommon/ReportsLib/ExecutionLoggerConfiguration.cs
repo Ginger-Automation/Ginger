@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
@@ -25,6 +26,10 @@ namespace Ginger.Reports
 {
     public class ExecutionLoggerConfiguration : RepositoryItemBase
     {
+        public delegate void LoggerConfigurationChangedEvent();
+        public event LoggerConfigurationChangedEvent DataRepositoryChanged;
+
+        public event LoggerConfigurationChangedEvent PublishToCentralizedDbChanged;
         public static partial class Fields
         {
             public static string Parameter = "Parameter";
@@ -139,11 +144,12 @@ namespace Ginger.Reports
                 {
                     mPublishLogToCentralDB = value;
                     OnPropertyChanged(nameof(PublishLogToCentralDB));
+                    PublishToCentralizedDbChanged?.Invoke();
                 }
             }
         }
 
-        private eDeleteLocalDataOnPublish mDeleteLocalDataOnPublish = eDeleteLocalDataOnPublish.No;
+        private eDeleteLocalDataOnPublish mDeleteLocalDataOnPublish = eDeleteLocalDataOnPublish.Yes;
 
         [IsSerializedForLocalRepository]
         public eDeleteLocalDataOnPublish DeleteLocalDataOnPublish
@@ -214,7 +220,7 @@ namespace Ginger.Reports
             }
             set
             {
-                mSealightsLog = value;
+                    mSealightsLog = value;
             }
         }
 
@@ -362,6 +368,7 @@ namespace Ginger.Reports
                 {
                     mDataRepositoryMethod = value;
                     OnPropertyChanged(nameof(SelectedDataRepositoryMethod));
+                    DataRepositoryChanged?.Invoke();
                 }
             }
         }

@@ -122,15 +122,13 @@ namespace GingerCore.Actions
             }
             if (rc == "-1")
             {
-                ConditionCalculated += " is True";
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
-                this.ExInfo = ConditionCalculated;
+                this.ExInfo = $"Calculated expression evaluates to '{ConditionCalculated}'.";
             }
             else
             {
-                ConditionCalculated += " is False";
                 this.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
-                this.Error = ConditionCalculated;
+                this.Error = $"Validation failed because expression evaluates to '{ConditionCalculated}'.";
                 if (!string.IsNullOrEmpty(csharpError))
                 {
                     this.ExInfo = csharpError;

@@ -22,6 +22,10 @@ namespace GingerCoreNETUnitTest.LiteDb
         {
             ActivitiesGroupColl = new List<GingerActvityGroup>();
         }
+        public static ILiteCollection<GingerBusinessFlow> IncludeAllReferences(ILiteCollection<GingerBusinessFlow> gingerBusinessFlow)
+        {
+            return gingerBusinessFlow.Include((gBf) => gBf.ActivitiesGroupColl);
+        }
     }
 
     class GingerActvityGroup : GingerBaseData

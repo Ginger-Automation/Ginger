@@ -1844,8 +1844,10 @@ namespace GingerCore.Drivers.JavaDriverLib
                                 }
 
                                 TypeConverter tc = TypeDescriptor.GetConverter(typeof(Bitmap));
-                                Bitmap btmp = (Bitmap)tc.ConvertFrom(screenShotbytes);
-                                actScreenShot.AddScreenShot(btmp);
+                                using (Bitmap btmp = (Bitmap)tc.ConvertFrom(screenShotbytes))
+                                {
+                                    actScreenShot.AddScreenShot(btmp);
+                                } 
                             }
                             catch (Exception ex)
                             {
@@ -2393,7 +2395,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
 
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
             if (ElementInfo.GetType() == typeof(JavaElementInfo))
             {

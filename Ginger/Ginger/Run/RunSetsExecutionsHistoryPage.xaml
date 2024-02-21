@@ -11,9 +11,31 @@
 
     <Grid Name="pageGrid">
         <Grid.Resources>
-            <DataTemplate x:Key="ReportButton">
-                <Button x:Name="ReportBtn" Click="ReportBtnClicked" ToolTip="Generate Report" Style="{StaticResource @InputImageGridCellButtonStyle}">
-                    <Image Source="{StaticResource @Report2_16x16}" Height="16" Width="16"/>
+            <DataTemplate
+                x:Key="ReportButton">
+                <Button
+                    x:Name="ReportBtn"
+                    Click="ReportBtnClicked"
+                    ToolTip="Generate Report"
+                    Style="{StaticResource @InputImageGridCellButtonStyle}">
+                    <Image
+                        Source="{StaticResource @Report2_16x16}"
+                        Height="16"
+                        Width="16" />
+                </Button>
+            </DataTemplate>
+            <DataTemplate
+                x:Key="BPMNButtonDataTemplate">
+                <Button
+                    x:Name="BPMNButton"
+                    Click="BPMNButton_Click"
+                    ToolTip="Generate BPMN"
+                    Style="{StaticResource @InputImageGridCellButtonStyle}"
+                    Tag="{Binding .}">
+                    <Image
+                        Source="{StaticResource @Report2_16x16}"
+                        Height="16"
+                        Width="16" />
                 </Button>
             </DataTemplate>
         </Grid.Resources>

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -30,7 +30,8 @@ namespace GingerCoreNET.ALMLib
             Jira = 4,
             Qtest = 5,
             Octane = 6,
-            ZephyrEnterprise = 7
+            ZephyrEnterprise = 7,
+            Azure = 8
         }
 
         public enum eALMConnectType

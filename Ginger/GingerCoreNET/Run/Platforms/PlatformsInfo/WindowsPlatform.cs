@@ -45,6 +45,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementLocatorsTypeList.Add(eLocateBy.ByName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByText);
                 mElementLocatorsTypeList.Add(eLocateBy.ByID);
+                mElementLocatorsTypeList.Add(eLocateBy.NA);
             }
             return mElementLocatorsTypeList;
         }

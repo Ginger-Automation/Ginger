@@ -36,7 +36,7 @@ namespace Ginger.ApplicationModelsLib.ModelOptionalValue
             XML,
             [EnumValueDescription("JSON")]
             Json,
-            [EnumValueDescription("DataBase")]
+            [EnumValueDescription("Database")]
             DB
         }
         public enum eOptionalValuesTargetType

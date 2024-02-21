@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -48,5 +48,6 @@ namespace Amdocs.Ginger.Common.UIElement
         public const string InnerText = "InnerText";
         public const string ParentFormId = "ParentFormId";
         public const string Sequence = "Sequence";
+        public static readonly string ParentPOMGUID = "ParentPOMGuid";
     }
 }

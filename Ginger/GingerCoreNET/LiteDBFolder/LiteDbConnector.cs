@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common;
 using LiteDB;
+using LiteDB.Engine;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,36 +26,62 @@ using System.Linq;
 
 namespace Amdocs.Ginger.CoreNET.LiteDBFolder
 {
+
+    //TODO: manaska: Need to check when LiteDB will appropriately handle multi access of db files.
+    //As of now we are manually using Locks to handle multithreading but in the future.
+    //Need to make sure that LiteDb handles it internally
     public class LiteDbConnector
     {
-        public string ConnectionString { get; set; }
-        public LiteDbConnector(string connectionString)
+        public ConnectionString ConnectionString { get; set; }
+        public LiteDbConnector(string filePath)
         {
-            this.ConnectionString = connectionString;
+            ConnectionString = new()
+            {
+                Filename = filePath,
+                Connection = ConnectionType.Shared
+            };
+            TryUpgradeDataFile();
+        }
+
+        private bool TryUpgradeDataFile()
+        {
+            try
+            {
+                string dbFilePath = ConnectionString.Filename;
+                return LiteEngine.Upgrade(dbFilePath);
+            }
+            catch(Exception)
+            {
+                return false;
+            }
         }
 
         public EntityBuilder<T> GetMapper<T>()
         {
             return BsonMapper.Global.Entity<T>();
         }
-        public LiteCollection<T> GetCollection<T>(string collectionName)
+        public ILiteCollection<T> GetCollection<T>(string collectionName)
         {
-            LiteCollection<T> collection = null;
-            try
-            {
-                using (var db = new LiteDatabase(this.ConnectionString))
-                {
-                    collection = db.GetCollection<T>(collectionName);
-                }
-            }
-            catch (Exception)
-            {
+                ILiteCollection<T> collection = null;
 
-            }
-            return collection;
+                try
+                {
+                    using (var db = new LiteDatabase(this.ConnectionString))
+                    {
+                        collection = db.GetCollection<T>(collectionName);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to Get Collection: {collectionName}", ex);
+                    throw;
+                }
+                return collection;
         }
 
-        public bool DeleteCollectionItems<T>(LiteCollection<T> baseColl, Query query)
+/*        
+ *        This function is not used anywhere
+ *        public bool DeleteCollectionItems<T>(LiteCollection<T> baseColl, Query query)
         {
             bool result = false;
             try
@@ -70,7 +97,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             }
             return result;
         }
-        public bool DeleteDocumentByLiteDbRunSet(LiteDbRunSet liteDbRunSet, eExecutedFrom executedFrom = eExecutedFrom.Run)
+*/        public bool DeleteDocumentByLiteDbRunSet(LiteDbRunSet liteDbRunSet, eExecutedFrom executedFrom = eExecutedFrom.Run)
         {
             bool result = true;
             var runSetLiteColl = GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
@@ -113,19 +140,21 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             var name = typeof(T).Name + "s";
             return name;
         }
-        public List<T> FilterCollection<T>(LiteCollection<T> baseColl, Query query)
+        public List<T> FilterCollection<T>(ILiteCollection<T> baseColl, Query query)
         {
-            return baseColl.IncludeAll().Find(query).ToList();
+            return baseColl.Find(query).ToList();
+        }
+        public List<T> FilterCollection<T>(ILiteCollection<T> baseColl , BsonExpression expression)
+        {
+            return baseColl.Find(expression).ToList();
         }
 
-        public void SetCollection<T>(LiteCollection<T> baseColl, List<T> updateData)
+        public void SetCollection<T>(ILiteCollection<T> baseColl, List<T> updateData)
         {
             try
             {
-                using (var db = new LiteDatabase(this.ConnectionString))
-                {
-                    baseColl.Upsert(updateData);
-                }
+                using var db = new LiteDatabase(this.ConnectionString);
+                baseColl.Upsert(updateData);
             }
             catch (Exception ex)
             {
@@ -154,7 +183,7 @@ namespace Amdocs.Ginger.CoreNET.LiteDBFolder
             {
                 using (var db = new LiteDatabase(this.ConnectionString))
                 {
-                    using (FileStream fs = File.Create(this.ConnectionString))
+                    using (FileStream fs = File.Create(this.ConnectionString.ToString()))
                     {
                         var file = db.FileStorage.Download(imagePath, fs);
                     }

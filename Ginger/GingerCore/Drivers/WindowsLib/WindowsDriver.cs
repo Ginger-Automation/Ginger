@@ -224,8 +224,10 @@ namespace GingerCore.Drivers.WindowsLib
                             //Disabling the capturing all windows for Windows driver until we fix show window issue
                             if (mUIAutomationHelper.GetCurrentWindow() != null)
                             {
-                                Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
-                                act.AddScreenShot(bmp);
+                                using (Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap())
+                                {
+                                    act.AddScreenShot(bmp);
+                                }
                             }
                             //if not running well. need to add return same as PBDrive
                         }
@@ -1287,7 +1289,7 @@ namespace GingerCore.Drivers.WindowsLib
             return aw;
         }
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
             if (ElementInfo.ElementObject == null || locateElementByItLocators)
             {
@@ -1571,8 +1573,7 @@ namespace GingerCore.Drivers.WindowsLib
 
         public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
-            Bitmap bmp = mUIAutomationHelper.GetCurrentWindowBitmap();
-            return bmp;
+            return mUIAutomationHelper.GetCurrentWindowBitmap();
         }
 
         ObservableList<ElementInfo> IWindowExplorer.GetElements(ElementLocator EL)

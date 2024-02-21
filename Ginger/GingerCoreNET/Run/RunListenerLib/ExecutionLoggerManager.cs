@@ -39,6 +39,7 @@ using System.Reflection;
 using System.Text;
 using static GingerCore.ALM.PublishToALMConfig;
 using Activity = GingerCore.Activity;
+using JsonWriter = Newtonsoft.Json.JsonWriter;
 
 namespace Ginger.Run
 {
@@ -153,6 +154,20 @@ namespace Ginger.Run
             mJsonSerializer = new Newtonsoft.Json.JsonSerializer();
             mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
             ExecutedFrom = executedFrom;
+
+            if (WorkSpace.Instance!=null && WorkSpace.Instance.Solution != null)
+            {
+                WorkSpace.Instance.Solution.LoggerConfigurations.DataRepositoryChanged -= InitializeExecutionLogger;
+                WorkSpace.Instance.Solution.LoggerConfigurations.DataRepositoryChanged += InitializeExecutionLogger;
+            }
+
+            InitializeExecutionLogger();
+            executionLoggerHelper = new ExecutionLoggerHelper();
+        }
+
+        private void InitializeExecutionLogger()
+        {
+
             if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 mExecutionLogger = new LiteDBRepository();
@@ -161,9 +176,7 @@ namespace Ginger.Run
             {
                 mExecutionLogger = new TextFileRepository();
             }
-            executionLoggerHelper = new ExecutionLoggerHelper();
         }
-
         public override void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)
         {
             activityGroup.StartTimeStamp = DateTime.UtcNow; // DateTime.Now.ToUniversalTime();
@@ -239,7 +252,23 @@ namespace Ginger.Run
             {
                 RunSetReport.Name = defaultRunTabLogName;
             }
+
             RunSetReport.Description = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Description;
+
+
+            if (!string.IsNullOrEmpty(WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription) && WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription.Contains('{'))
+            {
+                IValueExpression mVE = new ValueExpression(WorkSpace.Instance.RunsetExecutor.RunsetExecutionEnvironment, mCurrentBusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false)
+                {
+                    Value = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription
+                };
+                RunSetReport.RunDescription = mVE.ValueCalculated;
+            }
+            else
+            {
+                RunSetReport.RunDescription = WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunDescription;
+
+            }
             RunSetReport.GUID = WorkSpace.Instance.RunsetExecutor.RunSetConfig.Guid.ToString();
             RunSetReport.StartTimeStamp = DateTime.Now.ToUniversalTime();
             RunSetReport.Watch.Start();

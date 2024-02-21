@@ -49,7 +49,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
             mAgent = mPomDeltaUtils.Agent;
 
-            mPomDeltaViewPage = new PomDeltaViewPage(mDeltaElements, gridColView, mAgent);
+            mPomDeltaViewPage = new PomDeltaViewPage(mPomDeltaUtils, gridColView, mAgent);
             mPomDeltaViewPage.SetAgent(mAgent);
             mPomDeltaViewPage.xMainElementsGrid.Grid.Columns[1].Visibility = Visibility.Collapsed;
             mPomDeltaViewPage.xMainElementsGrid.btnMarkAll.Visibility = Visibility.Collapsed;

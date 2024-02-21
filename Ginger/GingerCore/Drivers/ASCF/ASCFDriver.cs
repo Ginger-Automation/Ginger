@@ -432,13 +432,15 @@ namespace GingerCore.Drivers.ASCF
                         {
                             act.AddScreenShot(screenShot);
                         }
+                        screenShots.Clear();
                     }
                     else
                     {
-                        Bitmap tempBmp = TakeScreenShot(actSS);
-                        act.AddScreenShot(tempBmp);
+                        using (Bitmap tempBmp = TakeScreenShot(actSS))
+                        {
+                            act.AddScreenShot(tempBmp);
+                        }
                     }
-
                     break;
                 case "ActGetMsgboxText":
                     ActGetMsgboxText actmsg = (ActGetMsgboxText)act;
@@ -981,7 +983,7 @@ namespace GingerCore.Drivers.ASCF
         {
         }
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
             ASCFControlInfo CI = (ASCFControlInfo)ElementInfo;
 
