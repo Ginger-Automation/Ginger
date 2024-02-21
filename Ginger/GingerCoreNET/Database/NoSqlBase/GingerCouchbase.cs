@@ -205,7 +205,7 @@ namespace GingerCore.NoSqlBase
                             break;
                         case Actions.ActDBValidation.eDBValidationType.RecordCount:
                             result = clusterCB.Query<dynamic>("Select Count(*) as RECORDCOUNT from `" + bucketName + "`");
-                            var count = result.Rows[0].ToString();
+                            var count = result.Rows[0];
                             Act.ParseJSONToOutputValues(count.ToString(), 1);
                             break;
                         case Actions.ActDBValidation.eDBValidationType.UpdateDB:
