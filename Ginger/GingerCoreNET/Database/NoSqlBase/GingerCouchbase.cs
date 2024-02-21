@@ -153,21 +153,20 @@ namespace GingerCore.NoSqlBase
         private string GetBucketName(string inputSQL)
         {
             string bucketName = string.Empty;
+            string inputSQLLower = inputSQL.ToLower();
             int bucket1 = 0;
             int bucket2 = 0;
             if (Action == ActDBValidation.eDBValidationType.RecordCount)
             {
                 bucketName = inputSQL.Replace("`", "");
-            } else if (Action == ActDBValidation.eDBValidationType.UpdateDB)
+            }else
             {
-                bucket1 = inputSQL.ToLower().IndexOf("`");
-                bucket2 = inputSQL.ToLower().IndexOf("`",bucket1+1);
-                bucketName = inputSQL.Substring(bucket1, bucket2 - bucket1);
-            }
-            else
-            {
-                bucket1 = inputSQL.ToLower().IndexOf(" from ") + 6;
-                bucket2 = inputSQL.ToLower().IndexOf("`", bucket1 + 1);
+                if (Action == ActDBValidation.eDBValidationType.UpdateDB){
+                    bucket1 = inputSQLLower.IndexOf("`");
+                }else{
+                    bucket1 = inputSQLLower.IndexOf(" from ") + 6;
+                }
+                bucket2 = inputSQLLower.IndexOf("`", bucket1 + 1);
                 bucketName = inputSQL.Substring(bucket1, bucket2 - bucket1);
 
             }
