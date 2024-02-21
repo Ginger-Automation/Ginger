@@ -12,7 +12,7 @@
         <DockPanel Margin="10,0,0,0">
             <StackPanel x:Name="xTargetPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
                 <Label x:Name="xTargetLbl" Style="{StaticResource $LabelStyle}">Target:</Label>
-                <StackPanel x:Name="xTargetRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="55,0,0,0">
+                <StackPanel x:Name="xTargetRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="65,0,0,0">
                     <UserControlsLib:UCRadioButtons x:Name="xTargetRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 </StackPanel>
             </StackPanel>
@@ -22,8 +22,6 @@
                     <ColumnDefinition Width="115"/>
                     <ColumnDefinition Width="47*" />
                 </Grid.ColumnDefinitions>
-                <Label x:Name="xValueLabel" Content="Value:"  Grid.Column="0" Style="{StaticResource $LabelStyle}" Margin="-5,0,0,0"/>
-                <Actions:UCValueExpression x:Name="ValueUC" Grid.Column="1" Margin="6,0,0,0" Grid.ColumnSpan="1"/>
             </Grid>
 
             <StackPanel x:Name="xLocateByAndValuePanel" DockPanel.Dock="Top">
@@ -48,10 +46,34 @@
                 </Grid>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0" DockPanel.Dock="Top">
-                <Label Grid.Column="0" Style="{StaticResource $LabelStyle}">Standard:</Label>
-                <ComboBox Grid.Column="1" x:Name="xStandardComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="300" Margin="60,0,0,0"></ComboBox>
+
+            <StackPanel x:Name="xAnalyzerPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                <Label x:Name="xAnalyzerLbl" Grid.Column="0" Style="{StaticResource $LabelStyle}">Analyzer:</Label>
+                <StackPanel x:Name="xAnalyzerRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="52,0,0,0">
+                    <UserControlsLib:UCRadioButtons x:Name="xAnalyzerRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                </StackPanel>
             </StackPanel>
+
+            <StackPanel x:Name="xStdStack" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                <Label x:Name="xStdlbl" Grid.Column="0" Style="{StaticResource $LabelStyle}" Content="Standard :"/>
+                <UserControlsLib:MultiSelectComboBox Grid.Column="1" x:Name="xStdCB" Margin="75,0,0,0" Width="300"/>
+            </StackPanel>
+
+            <StackPanel x:Name="xSeverityStack" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                <Label x:Name="xSeveritylbl" Grid.Column="0" Style="{StaticResource $LabelStyle}" Content="Acceptable Severity :"/>
+                <UserControlsLib:MultiSelectComboBox Grid.Column="1" x:Name="xSeverityCB" Margin="18,0,0,0" Width="300" />
+            </StackPanel>
+
+
+            <StackPanel x:Name="xUpdateExcludeRuleGridPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="135,10,0,0">
+                <Ginger:ucGrid x:Name="UpdateExcludeRuleGrid" Title="Exclude Rule" MinWidth="400" MaxWidth="800" MaxHeight="400" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Visible"/>
+            </StackPanel>
+
+            <StackPanel x:Name="xUpdateIncludeRuleGridPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="135,10,0,0">
+                <Ginger:ucGrid x:Name="UpdateIncludeRuleGrid" Title="Include Rule" MinWidth="400" MaxWidth="800" MaxHeight="400" ShowAdd="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowRefresh="Collapsed" ShowCopy="Collapsed" ShowPaste="Collapsed" ShowCut="Collapsed" ShowTitle="Visible"/>
+            </StackPanel>
+
+
 
         </DockPanel>
     </Grid>
