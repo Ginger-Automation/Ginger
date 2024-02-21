@@ -21,6 +21,7 @@ using Amdocs.Ginger.CoreNET.BPMN.Models;
 using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using GingerCore;
 using GingerCore.Activities;
+using GingerUtils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,11 +36,15 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
     public sealed class BusinessFlowToBPMNExporter
     {
         private readonly BusinessFlow _businessFlow;
+        private readonly CollaborationFromActivityGroupCreator.Options _activityGroupCollaborationOptions;
         private readonly string _exportPath;
 
-        public BusinessFlowToBPMNExporter(BusinessFlow businessFlow, string exportPath)
+        public BusinessFlowToBPMNExporter(BusinessFlow businessFlow, string exportPath) : this(businessFlow, new CollaborationFromActivityGroupCreator.Options(), exportPath) { }
+
+        public BusinessFlowToBPMNExporter(BusinessFlow businessFlow, CollaborationFromActivityGroupCreator.Options activityGroupCollaborationOptions, string exportPath)
         {
             _businessFlow = businessFlow;
+            _activityGroupCollaborationOptions = activityGroupCollaborationOptions;
             _exportPath = exportPath;
         }
 
@@ -53,7 +58,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             foreach (ActivitiesGroup activityGroup in _businessFlow.ActivitiesGroups)
             {
                 BPMNFileData? activityGroupBPMNFileData = CreateActivityGroupBPMNFileData(activityGroup);
-                if(activityGroupBPMNFileData == null)
+                if (activityGroupBPMNFileData == null)
                 {
                     continue;
                 }
@@ -75,7 +80,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
         private BPMNFileData? CreateActivityGroupBPMNFileData(ActivitiesGroup activityGroup)
         {
             Collaboration? activityGroupCollaboration = CreateCollaborationFromActivityGroup(activityGroup);
-            if(activityGroupCollaboration == null)
+            if (activityGroupCollaboration == null)
             {
                 return null;
             }
@@ -102,12 +107,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
         private Collaboration? CreateCollaborationFromActivityGroup(ActivitiesGroup activityGroup)
         {
             bool isEmpty = !activityGroup.ActivitiesIdentifiers.Any();
-            if(isEmpty)
+            if (isEmpty)
             {
                 return null;
             }
 
-            CollaborationFromActivityGroupCreator collaborationFromActivityGroupCreator = new(activityGroup);
+            CollaborationFromActivityGroupCreator collaborationFromActivityGroupCreator = new(activityGroup, _activityGroupCollaborationOptions);
             Collaboration activityGroupCollaboration = collaborationFromActivityGroupCreator.Create();
             return activityGroupCollaboration;
         }
@@ -116,7 +121,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
         {
             string zipDirectoryPath = CreateReleaseZIPDirectory(bpmnFiles);
             string zipFilePath = $"{zipDirectoryPath}.zip";
-            if(File.Exists(zipFilePath))
+            zipFilePath = FileUtils.GetUniqueFilePath(zipFilePath);
+            if (File.Exists(zipFilePath))
             {
                 File.Delete(zipFilePath);
             }
@@ -128,6 +134,9 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
         private string CreateReleaseZIPDirectory(IEnumerable<BPMNFileData> bpmnFiles)
         {
             string zipDirectoryRootPath = Path.Combine(_exportPath, _businessFlow.Name);
+
+            zipDirectoryRootPath = FileUtils.GetUniqueDirectoryPath(zipDirectoryRootPath);
+
             string zipDirectoryPath = Path.Combine(zipDirectoryRootPath, "requirements-library");
             if (Directory.Exists(zipDirectoryPath))
             {
@@ -142,6 +151,8 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             }
             return zipDirectoryRootPath;
         }
+
+        
 
         private sealed class BPMNFileData
         {
