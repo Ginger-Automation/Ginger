@@ -769,7 +769,7 @@ namespace Ginger.Run
             return handler.GetAccountHTMLReportAsync(Guid.Parse(executionId));
         }
 
-        private string ExportUseCaseFromBusinessFlow(BusinessFlow businessFlow)
+        private void ExportUseCaseFromBusinessFlow(BusinessFlow businessFlow)
         {
             string fullBPMNExportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BPMNExportPath);
             BusinessFlowToBPMNExporter bpmnExporter = new(
@@ -779,10 +779,7 @@ namespace Ginger.Run
                     NonDeterministicFlowControlHandlingStrategy = NonDeterministicFlowControlHandlingStrategy.Ignore
                 },
                 fullBPMNExportPath);
-            string exportPath = bpmnExporter.Export();
-            string solutionRelativeExportPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(exportPath);
-
-            return solutionRelativeExportPath;
+            bpmnExporter.Export();
         }
 
         private sealed class BusinessFlowExecutionSequence
