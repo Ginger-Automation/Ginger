@@ -18,6 +18,7 @@ limitations under the License.
 
 using AccountReport.Contracts;
 using AccountReport.Contracts.ResponseModels;
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using AutoMapper;
@@ -98,6 +99,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             var destination = iMapper.Map<LiteDbRunSet, AccountReportRunSet>(runSet);
             return destination;
+        }
+
+        public bool IsConfigurationChanged()
+        {
+            return !EndPointUrl.Equals(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
         }
         public async Task<bool> SendRunsetExecutionDataToCentralDBAsync(AccountReportRunSet accountReportRunSet, bool isUpdate = false)
         {
