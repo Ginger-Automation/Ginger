@@ -291,6 +291,11 @@ namespace GingerCore.Drivers
         [UserConfiguredDescription("Specifies the state of current session’s user prompt handler, You can change it from dismiss, accept, dismissAndNotify, acceptAndNotify, ignore")]
         public string UnhandledPromptBehavior { get; set; }
 
+        [UserConfigured]
+        [UserConfiguredDefault("")]
+        [UserConfiguredDescription("Use custom browser driver. Provide complete driver path with file extension")]
+        public string DriverFilePath { get; set; }
+
 
         protected IWebDriver Driver;
         protected eBrowserType mBrowserTpe;
@@ -374,6 +379,9 @@ namespace GingerCore.Drivers
 
         public override void StartDriver()
         {
+            //Add localhost to no proxy so that driver service can be started with proxy
+            //System.Environment.SetEnvironmentVariable("NO_PROXY", @"http://localhost");
+
             DriverService driverService = null;
 
             if (StartBMP)
@@ -474,6 +482,7 @@ namespace GingerCore.Drivers
                         }
 
                         driverService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
+                        AddCustomDriverPath(driverService);
                         driverService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieoptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         break;
@@ -514,6 +523,7 @@ namespace GingerCore.Drivers
                         }
 
                         driverService = FirefoxDriverService.CreateDefaultService();
+                        AddCustomDriverPath(driverService);
                         driverService.HideCommandPromptWindow = HideConsoleWindow;
                         Driver = new FirefoxDriver((FirefoxDriverService)driverService, FirefoxOption, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         this.mDriverProcessId = driverService.ProcessId;
@@ -592,7 +602,11 @@ namespace GingerCore.Drivers
                         {
                             options.DebuggerAddress = DebugAddress.Trim();
                         }
+
                         driverService = ChromeDriverService.CreateDefaultService();
+
+                        AddCustomDriverPath(driverService);
+
                         if (HideConsoleWindow)
                         {
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
@@ -687,11 +701,11 @@ namespace GingerCore.Drivers
                             SetCurrentPageLoadStrategy(ieOptions);
                             ieOptions.IgnoreZoomLevel = true;
                             driverService = InternetExplorerDriverService.CreateDefaultService(GetDriversPathPerOS());
+                            AddCustomDriverPath(driverService);
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
                             Driver = new InternetExplorerDriver((InternetExplorerDriverService)driverService, ieOptions, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                         }
                         else
-
                         {
                             EdgeOptions EDOpts = new EdgeOptions();
                             SetBrowserLogLevel(EDOpts);
@@ -706,6 +720,7 @@ namespace GingerCore.Drivers
 
                             SetCurrentPageLoadStrategy(EDOpts);
                             driverService = EdgeDriverService.CreateDefaultService();//CreateDefaultServiceFromOptions(EDOpts);
+                            AddCustomDriverPath(driverService);
                             driverService.HideCommandPromptWindow = HideConsoleWindow;
                             Driver = new EdgeDriver((EdgeDriverService)driverService, EDOpts, TimeSpan.FromSeconds(Convert.ToInt32(HttpServerTimeOut)));
                             this.mDriverProcessId = driverService.ProcessId;
@@ -861,13 +876,29 @@ namespace GingerCore.Drivers
                     ex.Message.StartsWith("unable to obtain", StringComparison.InvariantCultureIgnoreCase)))
                 {
                     RestartRetry = false;
-                    UpdateDriver(driverService);
+                    UpdateDriver();
                     StartDriver();
                 }
             }
         }
 
-        private void UpdateDriver(DriverService driverService)
+        private void AddCustomDriverPath(DriverService driverService)
+        {
+            if (!string.IsNullOrWhiteSpace(DriverFilePath))
+            {
+                if (File.Exists(DriverFilePath))
+                {
+                    driverService.DriverServicePath = Path.GetDirectoryName(DriverFilePath);
+                    driverService.DriverServiceExecutableName = Path.GetFileName(DriverFilePath);
+                }
+                else
+                {
+                    throw new FileNotFoundException($"Invalid path provided in Custom Driver File in {nameof(DriverFilePath)} in Agent Configuration. Please provide valid path or consider removing it if not needed.");
+                } 
+            }
+        }
+
+        private void UpdateDriver()
         {
             try
             {
