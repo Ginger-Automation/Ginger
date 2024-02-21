@@ -37,14 +37,14 @@ namespace GingerCore.Actions
     // TODO: rename to DBAction
     public class ActDBValidation : ActWithoutDriver
     {
-        public override string ActionDescription { get { return "DataBase Action"; } }
-        public override string ActionUserDescription { get { return "Run Select/Update SQL on Database"; } }
+        public override string ActionDescription { get { return "Database Action"; } }
+        public override string ActionUserDescription { get { return "Execute SQL queries on a database"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)
         {
-            TBH.AddText("Use this action in case you need to pull/validate/update/etc. data from/on a database system.");
+            TBH.AddText("Use this action when you need to interact with a database system.");
             TBH.AddLineBreak();
-            TBH.AddText("This action contains list of options which will allow you to run simple or complicated SQL.");
+            TBH.AddText("The available options allow you to execute both simple and complex SQL queries.");
         }
 
         public override string ActionEditPage { get { return "ValidationDBPage"; } }
