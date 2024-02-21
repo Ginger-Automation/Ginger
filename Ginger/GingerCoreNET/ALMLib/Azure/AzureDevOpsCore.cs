@@ -44,17 +44,15 @@ using System.Threading.Tasks;
 using OctaneStdSDK.Entities.Base;
 using Amdocs.Ginger.CoreNET.ALMLib.DataContract;
 using GingerCore.ALM.QC;
-using System.Collections;
+using TestSuite = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestSuite;
 
 namespace GingerCore.ALM
 {
     public class AzureDevOpsCore : ALMCore
     {
         protected AzureDevOpsRepository opsRepository;
-       
-        private LoginDTO loginDto;
-        List<Release> releases;
-        private static Dictionary<string, string> ExploredApplicationModule = new Dictionary<string, string>();
+        LoginDTO loginDto;
+        private static readonly Dictionary<string, string> ExploredApplicationModule = new Dictionary<string, string>();
         public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.Azure;
 
         public AzureDevOpsCore()
@@ -82,15 +80,12 @@ namespace GingerCore.ALM
 
         public override bool ConnectALMServer()
         {
+            LoginDTO loginDTO = new LoginDTO()
+            {
+                Password = DefaultAlmConfig.ALMPassword,
+                Server = DefaultAlmConfig.ALMServerURL
+            };
 
-            LoginDTO loginDTO = null;
-            
-                loginDTO = new LoginDTO()
-                {
-                    Password = ALMCore.DefaultAlmConfig.ALMPassword,
-                    Server = ALMCore.DefaultAlmConfig.ALMServerURL
-                };
-            
             try
             {
                 Reporter.ToLog(eLogLevel.DEBUG, "Connecting to Azure server");
@@ -147,16 +142,13 @@ namespace GingerCore.ALM
 
         public override ObservableList<ExternalItemFieldBase> GetALMItemFields(BackgroundWorker bw, bool online, ResourceType resourceType = ResourceType.ALL)
         {
-            ResourceType resource = (ResourceType)resourceType;
             ObservableList<ExternalItemFieldBase> fields = new ObservableList<ExternalItemFieldBase>();
             LoginDTO _loginDto = GetLoginDTO();
 
             string[] witType = ["Test Case", "Test Suite", "Test Plan"];
             foreach(var i in witType)
             {
-                List<WorkItemTypeFieldWithReferences> listnodes = [];
-                    
-               listnodes = AzureDevOpsRepository.GetListNodes(_loginDto, i);
+                List<WorkItemTypeFieldWithReferences> listnodes =  AzureDevOpsRepository.GetListNodes(_loginDto, i);
                
 
                 ExtractFields(fields, i, listnodes);
@@ -565,6 +557,33 @@ namespace GingerCore.ALM
                 }
             
             return testlabPathList;
+        }
+
+        public ALMTestSetData GetTestSuiteById(string tsId)
+        {
+            
+
+            LoginDTO logincred = GetLoginDTO();
+
+            // Get a testplan client instance
+            VssConnection connection = AzureDevOpsRepository.LoginAzure(logincred);
+            WorkItemTrackingHttpClient witc = connection.GetClient<WorkItemTrackingHttpClient>();
+
+            TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
+
+            int testplanId = 21;
+            int id = Int32.Parse(tsId);
+
+            TestSuite suite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project,testplanId,id).Result;
+
+            ALMTestSetData aLMTestSetData = new()
+            {
+                Id = suite.Id.ToString(),
+                Name = suite.Name,
+                
+            };
+
+            return aLMTestSetData;
         }
     }
 }

@@ -500,6 +500,8 @@ namespace Ginger.ALM
             AzureRadioButton.FontWeight = FontWeights.Regular;
             AzureRadioButton.Foreground = Brushes.Black;
             xPasswordPanel.Visibility = Visibility.Visible;
+            xUsername.Visibility = Visibility.Visible;
+            PasswordLabel.Content = "Password :";
             switch (CurrentAlmConfigurations.AlmType)
             {
                 case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.QC:
@@ -517,8 +519,6 @@ namespace Ginger.ALM
                     ServerURLTextBox.Cursor = null;
                     RestAPICheckBox.Visibility = Visibility.Visible;
                     RestAPICheckBox.IsEnabled = false;
-                    PasswordLabel.Content = "Password :";
-                    xUsername.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RQM:
@@ -536,8 +536,6 @@ namespace Ginger.ALM
                     ServerURLTextBox.IsEnabled = false;
                     JiraTestingALMSelectionPanel.Visibility = Visibility.Hidden;
                     ServerURLTextBox.Cursor = Cursors.Arrow;
-                    PasswordLabel.Content = "Password :";
-                    xUsername.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.RALLY:
@@ -553,8 +551,6 @@ namespace Ginger.ALM
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     ExampleURLHint.Content = "Example: http://server:8080/almbin";
                     ServerURLTextBox.Cursor = null;
-                    PasswordLabel.Content = "Password :";
-                    xUsername.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Jira:
@@ -570,8 +566,6 @@ namespace Ginger.ALM
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
                     SetLoadPackageButtonContent();
                     ServerURLTextBox.Cursor = null;
-                    PasswordLabel.Content = "Password :";
-                    xUsername.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Qtest:
@@ -592,8 +586,6 @@ namespace Ginger.ALM
                     RestAPICheckBox.IsEnabled = false;
                     TokenCheckBox.Visibility = Visibility.Visible;
                     TokenCheckBox.IsEnabled = true;
-                    PasswordLabel.Content = "Password :";
-                    xUsername.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Octane:
@@ -612,8 +604,6 @@ namespace Ginger.ALM
                     RestAPICheckBox.IsChecked = true;
                     RestAPICheckBox.IsEnabled = false;
                     xPasswordPanel.Visibility = Visibility.Collapsed;
-                    PasswordLabel.Content = "Password :";
-                    xUsername.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.ZephyrEnterprise:
@@ -633,8 +623,6 @@ namespace Ginger.ALM
                     RestAPICheckBox.IsEnabled = false;
                     TokenCheckBox.Visibility = Visibility.Visible;
                     TokenCheckBox.IsEnabled = true;
-                    PasswordLabel.Content = "Password :";
-                    xUsername.Visibility = Visibility.Visible;
                     break;
 
                 case GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Azure:
@@ -648,13 +636,11 @@ namespace Ginger.ALM
                     DownloadPackageLink.Visibility = Visibility.Collapsed;
                     PackageHint.Visibility = Visibility.Collapsed;
                     Grid.SetColumnSpan(ServerURLTextBox, 2);
-                    ExampleURLHint.Content = "Example: http://dev.azure.com/amanpras ";
+                    ExampleURLHint.Content = "Example: http://dev.azure.com/YourOrgName ";
                     ServerURLTextBox.Cursor = null;
                     RestAPICheckBox.IsChecked = true;
                     RestAPICheckBox.IsEnabled = false;
-                    xUsername.Visibility = Visibility.Visible;
                     TokenCheckBox.Visibility = Visibility.Collapsed;
-                    xPasswordPanel.Visibility = Visibility.Visible;
                     PasswordLabel.Content = "Personal Access Token :";
                     
                     break;

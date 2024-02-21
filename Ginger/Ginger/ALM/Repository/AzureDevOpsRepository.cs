@@ -25,7 +25,6 @@ using Ginger.ALM.QC.TreeViewItems;
 using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
-using OctaneStdSDK.Entities.Tests;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -106,7 +105,6 @@ namespace Ginger.ALM.Repository
                 return false;
             }
            
-            //AzureDevOpsCore.CallCreateAzureTest(businessFlow, "c98a7f06-645f-40a4-8f1f-093abb489cb8");
 
             ALMTestSetData matchingTS = null;
 
@@ -114,7 +112,7 @@ namespace Ginger.ALM.Repository
             //TO DO MaheshK : check if the businessFlow already mapped to Octane Test Suite
             if (!String.IsNullOrEmpty(businessFlow.ExternalID))
             {
-                matchingTS = ((OctaneCore)ALMIntegration.Instance.AlmCore).GetTestSuiteById(businessFlow.ExternalID);
+                matchingTS = ((AzureDevOpsCore)ALMIntegration.Instance.AlmCore).GetTestSuiteById(businessFlow.ExternalID);
                 if (matchingTS != null)
                 {
                     //ask user if want to continute
