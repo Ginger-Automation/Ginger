@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -42,6 +42,7 @@ namespace Amdocs.Ginger.Common.UIElement
         [IsSerializedForLocalRepository]
         public ObservableList<ElementLocator> FriendlyLocators = new ObservableList<ElementLocator>();
 
+        
 
         string mScreenShotImage;
         [IsSerializedForLocalRepository]
@@ -698,5 +699,4 @@ namespace Amdocs.Ginger.Common.UIElement
         [EnumValueDescription("Near")]
         near
     }
-
 }

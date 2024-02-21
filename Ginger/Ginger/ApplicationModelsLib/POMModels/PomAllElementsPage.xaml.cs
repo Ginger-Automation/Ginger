@@ -23,6 +23,7 @@ using Amdocs.Ginger.Repository;
 using Ginger.ApplicationModelsLib.POMModels.POMWizardLib;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerWPF.WizardLib;
 using System;
@@ -354,7 +355,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                         return;
                     }
 
-                    if (mWinExplorer.TestElementLocators(EI, true))
+                    if (mWinExplorer.TestElementLocators(EI, true, mPOM))
                     {
                         EI.ElementStatus = ElementInfo.eElementStatus.Passed;
                     }
