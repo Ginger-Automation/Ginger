@@ -70,6 +70,8 @@ namespace Ginger.Run
         ObservableList<RunSetReport> mExecutionsHistoryList = new ObservableList<RunSetReport>();
         ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
 
+        private HttpClient? _httpClient;
+
         public bool AutoLoadExecutionData = false;
         public ObservableList<RunSetReport> ExecutionsHistoryList
         {
@@ -93,8 +95,19 @@ namespace Ginger.Run
             mExecutionHistoryLevel = executionHistoryLevel;
             RunsetConfig = runsetConfig;
 
+            this.Unloaded += OnUnloaded;
+
             SetGridView();
             LoadExecutionsHistoryData();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (_httpClient != null)
+            {
+                _httpClient.Dispose();
+                _httpClient = null;
+            }
         }
 
         public void ReloadData()
@@ -742,38 +755,33 @@ namespace Ginger.Run
 
         private async Task<JsonObject> GetExecutionDataFromAccountReport(string executionId)
         {
-            HttpClient? httpClient = null;
-            try
+            if (_httpClient == null)
             {
-                httpClient = new();
-
-                HttpRequestMessage request = new()
-                {
-                    Method = HttpMethod.Get,
-                    RequestUri = new Uri($"{AccountReportAPIBaseURL}/api/AccountReport/GetAccountHtmlReport/{executionId}")
-                };
-                request.Headers.Add("accept", "application/json");
-
-                HttpResponseMessage response = await httpClient.SendAsync(request);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new Exception($"AccountReport api returned unsuccessful response while getting execution data.\nStatusCode: {response.StatusCode},\nContent: {await response.Content.ReadAsStringAsync()}");
-                }
-
-                JsonObject? responseJson = (JsonObject?)JsonNode.Parse(await response.Content.ReadAsStringAsync());
-
-                if (responseJson == null)
-                {
-                    throw new Exception("AccountReport api response parsed to null json.");
-                }
-
-                return responseJson;
+                _httpClient = new();
             }
-            finally
+
+            HttpRequestMessage request = new()
             {
-                httpClient?.Dispose();
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"{AccountReportAPIBaseURL}/api/AccountReport/GetAccountHtmlReport/{executionId}")
+            };
+            request.Headers.Add("accept", "application/json");
+
+            HttpResponseMessage response = await _httpClient.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"AccountReport api returned unsuccessful response while getting execution data.\nStatusCode: {response.StatusCode},\nContent: {await response.Content.ReadAsStringAsync()}");
             }
+
+            JsonObject? responseJson = (JsonObject?)JsonNode.Parse(await response.Content.ReadAsStringAsync());
+
+            if (responseJson == null)
+            {
+                throw new Exception("AccountReport api response parsed to null json.");
+            }
+
+            return responseJson;
         }
 
         private string ExportUseCaseFromBusinessFlow(BusinessFlow businessFlow)
