@@ -44,6 +44,7 @@ namespace Ginger.UserControlsLib
         private ObservableCollection<Node> _nodeList;
         private object obj;
         private string AttrName;
+        private bool Isboolean;
         public MultiSelectComboBox()
         {
             InitializeComponent();
@@ -209,8 +210,21 @@ namespace Ginger.UserControlsLib
                 if (node.IsSelected && node.Title != "All")
                 {
                     if (this.ItemsSource.Count > 0)
-                        SelectedItems.Add(new OperationValues() { Value = node.Title, Guid = Guid.Parse(this.ItemsSource[node.Title].ToString()) });
-                        temp.Add(new OperationValues() { Value = node.Title, Guid = Guid.Parse(this.ItemsSource[node.Title].ToString()) });
+                    {
+                        Guid guidOutput;
+                        bool isValid = Guid.TryParse(this.ItemsSource[node.Title].ToString(), out guidOutput);
+                        if (isValid)
+                        {
+                            SelectedItems.Add(new OperationValues() { Value = node.Title, Guid = Guid.Parse(this.ItemsSource[node.Title].ToString()) });
+                            temp.Add(new OperationValues() { Value = node.Title, Guid = Guid.Parse(this.ItemsSource[node.Title].ToString()) });
+                        }
+                        else
+                        {
+                            SelectedItems.Add(new OperationValues() { Value = node.Title });
+                            temp.Add(new OperationValues() { Value = node.Title });
+                        }
+                    }
+                    
                 }
             }
             OperationSelectedItems = new ObservableList<OperationValues>(temp);
@@ -221,7 +235,6 @@ namespace Ginger.UserControlsLib
             //// If the VE is on stand alone form:
             this.obj = obj;
             this.AttrName = AttrName;
-
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(this, OperationSelectedValuesProperty, obj, AttrName);
         }
 

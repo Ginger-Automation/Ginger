@@ -692,6 +692,7 @@
     <PackageReference Include="System.Management" Version="8.0.0" />
     <PackageReference Include="System.Web.Services.Description" Version="8.0.0" />
     <PackageReference Include="System.Windows.Forms.DataVisualization" Version="1.0.0-prerelease.20110.1" />
+    <PackageReference Include="TWP.Selenium.Axe.Html" Version="0.0.1" />
     <PackageReference Include="UIAComWrapperNetstandard" Version="1.0.1">
       <Aliases>UIAComWrapperNetstandard</Aliases>
     </PackageReference>

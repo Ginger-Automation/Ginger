@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -41,6 +41,24 @@ namespace Amdocs.Ginger.Common.VariablesLib
                 {
                     mValue = value;
                     OnPropertyChanged(nameof(Value));
+                }
+            }
+        }
+
+        string mDisplayName;
+
+        public string DisplayName
+        {
+            get
+            {
+                return mDisplayName;
+            }
+            set
+            {
+                if(mDisplayName != value)
+                {
+                    mDisplayName = value;
+                    OnPropertyChanged(nameof(value));
                 }
             }
         }

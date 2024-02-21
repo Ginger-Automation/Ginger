@@ -2,14 +2,19 @@
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
+using Ginger.Configurations;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -92,6 +97,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             public static string Standard = "Standard";
             public static string ElementType = "ElementType";
             public static string ValueToSelect = "ValueToSelect";
+            public static string Analyzer = "Analyzer";
         }
 
         public enum eTarget
@@ -100,6 +106,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             Page,
             [EnumValueDescription("Element")]
             Element,
+        }
+
+        public enum eAnalyzer
+        {
+            [EnumValueDescription("ByTag")]
+            ByTag,
+            [EnumValueDescription("ByRule")]
+            ByRule,
         }
 
         public override eLocateBy LocateBy
@@ -140,6 +154,24 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             wcag21a,
             [EnumValueDescription("WCAG 2.1 Level AA")]
             wcag21aa,
+            [EnumValueDescription("WCAG 2.2 Level A")]
+            wcag22a,
+            [EnumValueDescription("WCAG 2.2 Level AA")]
+            wcag22aa,
+            [EnumValueDescription("Best Practice")]
+            bestpractice,
+        }
+
+        public enum eSeverity
+        {
+            [EnumValueDescription("Serious")]
+            Serious,
+            [EnumValueDescription("Minor")]
+            Minor,
+            [EnumValueDescription("Critical")]
+            Critical,
+            [EnumValueDescription("Moderate")]
+            Moderate,
         }
 
         public eTags Standard
@@ -153,6 +185,90 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 AddOrUpdateInputParamValue(Fields.Standard, value.ToString());
 
                 OnPropertyChanged(nameof(eTags));
+            }
+        }
+
+        private ObservableList<OperationValues> mOperationValueList;
+        [IsSerializedForLocalRepository]
+        public ObservableList<OperationValues> OperationValueList
+        {
+            get
+            {
+                return mOperationValueList;
+            }
+            set
+            {
+                if (value != mOperationValueList)
+                {
+                    mOperationValueList = value;
+                    OnPropertyChanged(nameof(OperationValueList));
+                    if (ExcludeRuleList != null)
+                    {
+                        ObservableList<AccessibilityRuleData>  RuleListasperTag = GetRulesAsPerTags();
+                        ExcludeRuleList.Clear();
+                        foreach (AccessibilityRuleData ruleData in RuleListasperTag)
+                        {
+                            ExcludeRuleList.Add(ruleData);
+                        }
+                    }                
+                }
+            }
+        }
+
+        private ObservableList<AccessibilityRuleData> mExcludeRuleList;
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<AccessibilityRuleData> ExcludeRuleList
+        {
+            get
+            {
+                return mExcludeRuleList;
+            }
+            set
+            {
+                if (value != mExcludeRuleList)
+                {
+                    mExcludeRuleList = value;
+                    OnPropertyChanged(nameof(ExcludeRuleList));
+                }
+            }
+        }
+
+        private ObservableList<AccessibilityRuleData> mIncludeRuleList;
+
+        [IsSerializedForLocalRepository]
+        public ObservableList<AccessibilityRuleData> IncludeRuleList
+        {
+            get
+            {
+                return mIncludeRuleList;
+            }
+            set
+            {
+                if (value != mIncludeRuleList)
+                {
+                    mIncludeRuleList = value;
+                    OnPropertyChanged(nameof(IncludeRuleList));
+                }
+            }
+        }
+
+
+        private ObservableList<OperationValues> mSeverityOperationValueList;
+        [IsSerializedForLocalRepository]
+        public ObservableList<OperationValues> SeverityOperationValueList
+        {
+            get
+            {
+                return mSeverityOperationValueList;
+            }
+            set
+            {
+                if (value != mSeverityOperationValueList)
+                {
+                    mSeverityOperationValueList = value;
+                    OnPropertyChanged(nameof(SeverityOperationValueList));
+                }
             }
         }
 
@@ -199,5 +315,120 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
             }
         }
+        public ObservableList<AccessibilityRuleData> RulesItemsdata;
+
+        public ObservableList<AccessibilityRuleData> GetRulesAsPerTags()
+        {
+            List<AccessibilityRuleData> Exculedrules = new  List<AccessibilityRuleData>();
+            if(OperationValueList != null && OperationValueList.Count > 0 && RulesItemsdata != null)
+            {
+                Exculedrules = RulesItemsdata.Where(x => OperationValueList.Select(y => y.Value).ToList().Contains(x.Tags)).ToList(); 
+            }
+            else
+            {
+                RulesItemsdata = RulesItemsdata == null ? GetRuleList() : RulesItemsdata;
+            }
+            foreach(AccessibilityRuleData ruleData in Exculedrules)
+            {
+                ruleData.Active = ExcludeRuleList!= null && ExcludeRuleList.Any(x=>x.RuleID == ruleData.RuleID) ? ExcludeRuleList.FirstOrDefault(x => x.RuleID == ruleData.RuleID).Active : false;
+            }
+            return Exculedrules.Any() ? new ObservableList<AccessibilityRuleData>(Exculedrules) : RulesItemsdata;
+        }
+
+        public ObservableList<AccessibilityRuleData> GetAllRules()
+        {
+            ObservableList<AccessibilityRuleData> Inculedrules = new ObservableList<AccessibilityRuleData>();
+
+            Inculedrules = RulesItemsdata == null ? GetRuleList() : RulesItemsdata;
+            foreach (AccessibilityRuleData ruleData in Inculedrules)
+            {
+                ruleData.Active = IncludeRuleList != null && IncludeRuleList.Any(x => x.RuleID == ruleData.RuleID) ? IncludeRuleList.FirstOrDefault(x => x.RuleID == ruleData.RuleID).Active : false;
+            }
+            return new ObservableList<AccessibilityRuleData>(Inculedrules);
+        }
+
+
+        public ObservableList<AccessibilityRuleData> GetRuleList()
+        {
+            AccessibilityConfiguration accessibilityConfiguration = new AccessibilityConfiguration();
+            
+            ObservableList<AccessibilityRuleData> ruleDatalist = accessibilityConfiguration.GetAccessibilityRules();
+            try
+            {
+                RulesItemsdata = ruleDatalist;
+                foreach (AccessibilityRuleData item in ruleDatalist)
+                {
+                    item.PropertyChanged += RuleData_PropertyChanged;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return ruleDatalist;
+        }
+
+        private void RuleData_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(ExcludeRuleList));
+        }
+
+        private Dictionary<string, object> _items;
+
+        public Dictionary<string, object> Items
+        {
+            get
+            {
+                return _items;
+            }
+            set
+            {
+                _items = value;
+
+            }
+        }
+        private Dictionary<string, object> _SeverityItems;
+
+        public Dictionary<string, object> SeverityItems
+        {
+            get
+            {
+                return _SeverityItems;
+            }
+            set
+            {
+                _SeverityItems = value;
+
+            }
+        }
     }
+
+    //public class RuleData : RepositoryItemBase, INotifyPropertyChanged
+    //{
+    //    public event PropertyChangedEventHandler PropertyChanged;
+
+    //    private bool mActive = false;
+    //    [IsSerializedForLocalRepository]
+    //    public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
+    //    [IsSerializedForLocalRepository]
+    //    public string RuleID { get; set; }
+    //    [IsSerializedForLocalRepository]
+    //    public string Tags { get; set; }
+
+    //    public string Impact { get; set; }
+
+    //    public string Description { get; set; }
+
+    //    public string ACTRules { get; set; }
+    //    public override string ItemName { get ; set ; }
+
+    //    public void OnPropertyChanged(string name)
+    //    {
+    //        PropertyChangedEventHandler handler = PropertyChanged;
+    //        if (handler != null)
+    //        {
+    //            handler(this, new PropertyChangedEventArgs(name));
+    //        }
+    //    }
+    //}
 }
