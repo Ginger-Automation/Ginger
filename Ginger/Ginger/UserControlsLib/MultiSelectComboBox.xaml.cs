@@ -44,7 +44,6 @@ namespace Ginger.UserControlsLib
         private ObservableCollection<Node> _nodeList;
         private object obj;
         private string AttrName;
-        private bool Isboolean;
         public MultiSelectComboBox()
         {
             InitializeComponent();

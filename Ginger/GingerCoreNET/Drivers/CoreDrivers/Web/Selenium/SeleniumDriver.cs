@@ -1512,8 +1512,6 @@ namespace GingerCore.Drivers
                         break;
                     case ActMultiselectList.eActMultiselectListAction.ClearAllSelectedValues:
                         DeSelectMultiselectListOptions(el);
-
-                        //TODO: implement ClearAllSelectedValues for ActMultiselectList
                         break;
                 }
 
@@ -1612,9 +1610,6 @@ namespace GingerCore.Drivers
                 {
                     axeResult = axeBuilder.Analyze();
                 }
-                 //string path = $"{WorkSpace.Instance.Solution.ContainingFolderFullPath}\\AxeReport.html";
-                //Driver.CreateAxeHtmlReport(axeResult, path);
-                //act.AddOrUpdateReturnParamActual(ParamName: "Accessibility report", ActualValue: path );
                 SetAxeResultToAction(act, axeResult);
             }
             catch (Exception ex)

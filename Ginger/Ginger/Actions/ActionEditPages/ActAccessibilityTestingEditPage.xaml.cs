@@ -48,7 +48,6 @@ namespace Ginger.Actions
         string mExistingPOMAndElementGuidString = null;
         ObservableList<OperationValues> SeverityList;
         private AccessibilityConfiguration AccessibilityConfiguration = new AccessibilityConfiguration();
-        //List<RuleData> RulesItemsdata;
         public ActAccessibilityTestingEditPage(ActAccessibilityTesting act)
         {
             InitializeComponent();
@@ -77,9 +76,6 @@ namespace Ginger.Actions
             xStdCB.ItemsSource = mAct.Items;
             xStdCB.Init(mAct, nameof(mAct.OperationValueList));
 
-            
-            //SetGridView();
-            //SetExcludeGridView();
             xLocateValueVE.BindControl(Context.GetAsContext(mAct.Context), mAct, Act.Fields.LocateValue);
             xTargetRadioButton.Init(typeof(ActAccessibilityTesting.eTarget), xTargetRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page.ToString()), TargetRadioButton_Clicked);
             xTargetRadioButton.Init(typeof(ActAccessibilityTesting.eAnalyzer), xAnalyzerRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByTag.ToString()), AnalyzerRadioButton_Clicked);
@@ -312,31 +308,9 @@ namespace Ginger.Actions
             }
         }
 
-        private void AddPatchOperationForExculdeRule(object sender, RoutedEventArgs e)
-        {
-            ActInputValue NetworkPatchInput = new ActInputValue();
-            //mAct.ExcludeOperationValueList.Add(NetworkPatchInput);
-        }
-
-        private void UpdateExcludeRuleVEButton_Click(object sender, RoutedEventArgs e)
-        {
-            ActInputValue cosmosPatchInput = (ActInputValue)UpdateExcludeRuleGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(cosmosPatchInput, nameof(ActInputValue.Value), Context.GetAsContext(mAct.Context));
-            VEEW.ShowAsWindow();
-        }
-        private void UpdateExcludeRulePathVEButton_Click(object sender, RoutedEventArgs e)
-        {
-            ActInputValue cosmosPatchInput = (ActInputValue)UpdateExcludeRuleGrid.CurrentItem;
-            ValueExpressionEditorPage VEEW = new ValueExpressionEditorPage(cosmosPatchInput, nameof(ActInputValue.Param), Context.GetAsContext(mAct.Context));
-            VEEW.ShowAsWindow();
-        }
-
         public ObservableList<OperationValues> GetStandardTagslist()
         {
             ObservableList<OperationValues> StandardTagList = new ObservableList<OperationValues>();
-            //Selenium.Axe.AxeRunOptions tt = new Selenium.Axe.AxeRunOptions();
-            //Selenium.Axe.AxeBuilderOptions yy = new();
-            //yy.
             StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag2a.ToString(), DisplayName = GingerCore.General.GetEnumDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag2a) });
             StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag2aa.ToString(), DisplayName = GingerCore.General.GetEnumDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag2aa) });
             StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag21a.ToString(), DisplayName = GingerCore.General.GetEnumDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag21a) });
@@ -357,84 +331,6 @@ namespace Ginger.Actions
             SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Minor.ToString() });
             return SeverityList;
         }
-
-        //private Dictionary<string, object> _items;
-
-        //public Dictionary<string, object> Items
-        //{
-        //    get
-        //    {
-        //        return _items;
-        //    }
-        //    set
-        //    {
-        //        _items = value;
-
-        //    }
-        //}
-
-        //private Dictionary<string, object> _RulesItems;
-
-        //public Dictionary<string, object> RulesItems
-        //{
-        //    get
-        //    {
-        //        return _RulesItems;
-        //    }
-        //    set
-        //    {
-        //        _RulesItems = value;
-
-        //    }
-        //}
-
-        //private Dictionary<string, object> _InculdeRulesItems;
-
-        //public Dictionary<string, object> InculdeRulesItems
-        //{
-        //    get
-        //    {
-        //        return _InculdeRulesItems;
-        //    }
-        //    set
-        //    {
-        //        _InculdeRulesItems = value;
-
-        //    }
-        //}
-        //private Dictionary<string, object> _SeverityItems;
-
-        //public Dictionary<string, object> SeverityItems
-        //{
-        //    get
-        //    {
-        //        return _SeverityItems;
-        //    }
-        //    set
-        //    {
-        //        _SeverityItems = value;
-
-        //    }
-        //}
-
-        //public List<RuleData> GetRuleList()
-        //{
-        //    List<RuleData> ruleDatalist = new List<RuleData>();
-        //    try
-        //    {
-
-        //        StreamReader sr = new StreamReader("C:\\Users\\pravishe\\Downloads\\TestRuleData.json");
-        //        string jsonString = sr.ReadToEnd();
-        //        ruleDatalist = JsonConvert.DeserializeObject<List<RuleData>>(jsonString);
-
-
-        //    }
-        //    catch (Exception ex)
-        //    { 
-
-        //    }
-        //    return ruleDatalist;
-        //}
 
     }
 }

@@ -22,8 +22,6 @@
                     <ColumnDefinition Width="115"/>
                     <ColumnDefinition Width="47*" />
                 </Grid.ColumnDefinitions>
-                <!--<Label x:Name="xValueLabel" Content="Value:"  Grid.Column="0" Style="{StaticResource $LabelStyle}" Margin="-5,0,0,0"/>
-                <Actions:UCValueExpression x:Name="ValueUC" Grid.Column="1" Margin="6,0,0,0" Grid.ColumnSpan="1"/>-->
             </Grid>
 
             <StackPanel x:Name="xLocateByAndValuePanel" DockPanel.Dock="Top">
