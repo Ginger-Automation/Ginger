@@ -51,7 +51,7 @@ namespace GingerCore.ALM
     public class AzureDevOpsCore : ALMCore
     {
         protected AzureDevOpsRepository opsRepository;
-        LoginDTO loginDto;
+        
         private static readonly Dictionary<string, string> ExploredApplicationModule = new Dictionary<string, string>();
         public override ALMIntegrationEnums.eALMType ALMType => ALMIntegrationEnums.eALMType.Azure;
 
@@ -80,11 +80,7 @@ namespace GingerCore.ALM
 
         public override bool ConnectALMServer()
         {
-            LoginDTO loginDTO = new LoginDTO()
-            {
-                Password = DefaultAlmConfig.ALMPassword,
-                Server = DefaultAlmConfig.ALMServerURL
-            };
+            LoginDTO loginDTO = GetLoginDTO();
 
             try
             {
@@ -208,16 +204,16 @@ namespace GingerCore.ALM
             throw new NotImplementedException();
         }
 
-        private LoginDTO GetLoginDTO()
+        private static LoginDTO GetLoginDTO()
         {
-            this.loginDto = new LoginDTO()
+            LoginDTO loginDTO = new()
             {
                 Password = ALMCore.DefaultAlmConfig.ALMPassword,
                 Server = ALMCore.DefaultAlmConfig.ALMServerURL,
                 Project = ALMCore.DefaultAlmConfig.ALMProjectName
             };
             
-            return this.loginDto;
+            return loginDTO;
         }
 
 
