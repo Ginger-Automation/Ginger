@@ -56,7 +56,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         {
             get
             {
-                if (mSealightsApiHandler == null)
+                if (mSealightsApiHandler == null || mSealightsApiHandler.IsConfigurationChanged())
                 {
                     mSealightsApiHandler = new SealightsReportApiHandler(mContext);
                 }
