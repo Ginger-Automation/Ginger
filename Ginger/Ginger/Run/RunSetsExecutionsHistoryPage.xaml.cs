@@ -586,9 +586,13 @@ namespace Ginger.Run
                             }
                         }
                         if (exportedSuccessfullyCount > 0)
+                        {
                             Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.MultipleExportToBPMNSuccessful, exportedSuccessfullyCount));
+                        }
                         else
+                        {
                             Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, "Unexpected Error, check logs for more details."));
+                        }
                         return;
                     }
                 }
@@ -672,7 +676,9 @@ namespace Ginger.Run
                 .FirstOrDefault(bf => string.Equals(bf.Name, name));
 
             if (bf == null)
+            {
                 throw new Exception($"No {GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)} found by name '{name}'.");
+            }
 
             return bf;
         }
