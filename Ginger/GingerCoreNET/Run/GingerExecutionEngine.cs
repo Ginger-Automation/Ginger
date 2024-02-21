@@ -268,15 +268,62 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
+            InitializeAccountReportExecutionLogger();
+            InitializeSealightReportExecutionLogger();
 
-            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes)
+            if (WorkSpace.Instance!=null && WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
+            {
+                WorkSpace.Instance.Solution.LoggerConfigurations.PublishToCentralizedDbChanged -= InitializeAccountReportExecutionLogger;
+                WorkSpace.Instance.Solution.LoggerConfigurations.PublishToCentralizedDbChanged += InitializeAccountReportExecutionLogger;
+            }
+
+            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.SealightsConfiguration!=null)
+            {
+                WorkSpace.Instance.Solution.SealightsConfiguration.SealightsConfigChanged -= InitializeSealightReportExecutionLogger;
+                WorkSpace.Instance.Solution.SealightsConfiguration.SealightsConfigChanged += InitializeSealightReportExecutionLogger;
+            }
+        }
+
+        public void InitializeAccountReportExecutionLogger()
+        {
+            var accountReportExecutionLogger = RunListeners.Find((runListeners) => runListeners.GetType() == typeof(AccountReportExecutionLogger));
+
+            if (mSelectedExecutionLoggerConfiguration != null 
+                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes &&
+                accountReportExecutionLogger == null)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
+            
+            else if (
+                mSelectedExecutionLoggerConfiguration != null
+                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.No &&
+                accountReportExecutionLogger!=null
+                )
+            {
+                RunListeners.Remove(accountReportExecutionLogger);
+            }
+        }
 
-            if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
+        public void InitializeSealightReportExecutionLogger()
+        {
+            var seaLightReportExecutionLogger = RunListeners.Find((runListeners) => runListeners.GetType() == typeof(SealightsReportExecutionLogger));
+
+            if(mSelectedExecutionLoggerConfiguration!=null &&
+               WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes &&
+                seaLightReportExecutionLogger == null
+                )
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
+            }
+
+            else if(
+                mSelectedExecutionLoggerConfiguration != null &&
+               WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.No &&
+                seaLightReportExecutionLogger != null
+                )
+            {
+                RunListeners.Remove(seaLightReportExecutionLogger);
             }
         }
 

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2023 European Support Limited
 
@@ -24,6 +24,9 @@ namespace Ginger.Configurations
 
     public class SealightsConfiguration : RepositoryItemBase
     {
+        public delegate void SealightsConfigurationChangedEvent();
+        public event SealightsConfigurationChangedEvent SealightsConfigChanged;
+
         public enum eSealightsEntityLevel
         {
             [EnumValueDescription("Business Flow")]
@@ -55,6 +58,7 @@ namespace Ginger.Configurations
                 {
                     mSealightsLog = value;
                     OnPropertyChanged(nameof(SealightsLog));
+                    SealightsConfigChanged?.Invoke();
                 }
             }
         }
