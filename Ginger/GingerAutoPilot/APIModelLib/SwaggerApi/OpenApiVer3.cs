@@ -17,9 +17,12 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common.APIModelLib;
+using Amdocs.Ginger.Common.Expressions;
+using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Variables;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NJsonSchema;
 using NSwag;
 using System;
@@ -42,21 +45,23 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         {
             
             opendoc = Swaggerdoc;
-
+            
+            var reqBodyNullExampleList = GetExamplesFromDefinitions(opendoc);
             foreach (var paths in opendoc.Paths)
             {
                 SwaggerPathItem SPi = paths.Value;
+                var enumValuesListAMP = SetEnumsValue(paths);
                 foreach (KeyValuePair<SwaggerOperationMethod, SwaggerOperation> so in SPi.AsEnumerable())
                 {
                     SwaggerOperation Operation = so.Value;
-
+                    
 
                     bool supportBody = true;
                     if (Operation.RequestBody == null)
                     {
 
                         ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key,opendoc);
-                        SetOptionalValue(basicModal.AppModelParameters,GetExamplesFromOpenApiComponents(opendoc.Components));
+                        SetOptionalValue(basicModal.AppModelParameters, reqBodyNullExampleList, enumValuesListAMP);
                         SwaggerModels.Add(basicModal);
                         GenerateResponse(Operation, basicModal);
                     }
@@ -113,7 +118,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
                                 }
 
-                                SetOptionalValue(AAM.AppModelParameters, GetExamplesFromOpenApiComponents(opendoc.Components));
+                                SetOptionalValue(AAM.AppModelParameters, ExampleValueDict(Operation), enumValuesListAMP);
                             }
                             GenerateResponse(Operation, AAM);
                             SwaggerModels.Add(AAM);
@@ -171,6 +176,5 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
 
             return exampleValues;
         }
-
     }
 }

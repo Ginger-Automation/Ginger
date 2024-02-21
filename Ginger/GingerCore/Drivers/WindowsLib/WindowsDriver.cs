@@ -1289,7 +1289,7 @@ namespace GingerCore.Drivers.WindowsLib
             return aw;
         }
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
             if (ElementInfo.ElementObject == null || locateElementByItLocators)
             {

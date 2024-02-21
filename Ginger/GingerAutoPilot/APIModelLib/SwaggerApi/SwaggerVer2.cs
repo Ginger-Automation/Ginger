@@ -36,10 +36,14 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
         public ObservableList<ApplicationAPIModel> SwaggerTwo(SwaggerDocument Swaggerdoc, ObservableList<ApplicationAPIModel> SwaggerModels)
         {
             swagTwo = Swaggerdoc;
+            
+            var reqBodyNullExampleList = GetExamplesFromDefinitions(swagTwo);
 
             foreach (var paths in swagTwo.Paths)
             {
                 SwaggerPathItem SPi = paths.Value;
+                var enumExampleList = SetEnumsValue(paths);
+
                 foreach (KeyValuePair<SwaggerOperationMethod, SwaggerOperation> so in SPi.AsEnumerable())
                 {
                     SwaggerOperation Operation = so.Value;
@@ -50,7 +54,7 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                     {
 
                         ApplicationAPIModel basicModal = GenerateBasicModel(Operation, so.Key, ref supportBody, paths.Key, swagTwo);
-                        SetOptionalValue(basicModal.AppModelParameters, GetExamplesFromDefinitions(swagTwo));
+                        SetOptionalValue(basicModal.AppModelParameters, reqBodyNullExampleList, enumExampleList);
                         SwaggerModels.Add(basicModal);
                         GenerateResponse(Operation, basicModal);
                     }
@@ -108,8 +112,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                         break;
 
                                 }
+                                SetOptionalValue(AAM.AppModelParameters, ExampleValueDict(Operation), enumExampleList);
 
-                                SetOptionalValue(AAM.AppModelParameters, GetExamplesFromDefinitions(swagTwo));
                             }
                             GenerateResponse(Operation, AAM);
                             SwaggerModels.Add(AAM);
@@ -166,8 +170,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
                                     break;
 
                             }
+                            SetOptionalValue(AAM.AppModelParameters, ExampleValueDict(Operation),enumExampleList);
 
-                            SetOptionalValue(AAM.AppModelParameters, GetExamplesFromDefinitions(swagTwo));
                         }
                         GenerateResponse(Operation, AAM);
 
@@ -182,50 +186,5 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.APIModelLib.Swagge
             }
             return SwaggerModels;
         }
-        public static Dictionary<string, string> GetExamplesFromDefinitions(SwaggerDocument apidoc)
-        {
-
-            Dictionary<string, string> exampleValues = new Dictionary<string, string>();
-            try
-            {
-                if (apidoc.Definitions != null && apidoc.Definitions.Count != 0)
-                {
-                    foreach (var schemaEntry in apidoc.Definitions)
-                    {
-                        string schemaName = schemaEntry.Key;
-                        var schemaDefinition = schemaEntry.Value;
-
-                        if (schemaDefinition.ActualProperties != null && schemaDefinition.ActualProperties.Count > 0)
-                        {
-                            foreach (var item in schemaDefinition.ActualProperties)
-                            {
-                                var actualName = item.Key.ToLower();
-                                var actualDefinition = item.Value.Example?.ToString();
-                                if (actualDefinition != null  && !exampleValues.ContainsKey(actualName.ToLower()))
-                                {
-                                  
-                                    exampleValues.Add(actualName,actualDefinition.ToString());
-                                }
-
-                            }
-                        }
-                        else if (schemaDefinition.Example != null)
-                        {
-                            if (!exampleValues.ContainsKey(schemaName.ToLower()))
-                            {
-                                exampleValues.Add(schemaName.ToLower(), schemaDefinition.Example.ToString());
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Reporter.ToLog(eLogLevel.ERROR, "Example values could not be fetched, please check the API", ex);
-            }
-
-            return exampleValues;
-        }
-
     }
 }

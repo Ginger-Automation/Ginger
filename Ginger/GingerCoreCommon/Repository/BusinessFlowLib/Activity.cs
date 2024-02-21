@@ -861,6 +861,7 @@ namespace GingerCore
                 newInstance.Guid = activityInstance.Guid;
                 newInstance.ActivitiesGroupID = activityInstance.ActivitiesGroupID;
                 newInstance.Type = activityInstance.Type;
+                newInstance.Active = activityInstance.Active;
                 if (hostItem != null)
                 {
                     //replace old instance object with new
