@@ -1336,7 +1336,7 @@ namespace GingerCore.Drivers.InternalBrowserLib
         }
 
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
             //TODO: keep old element border and restore it
             //string scriptRemoveBorder = "arguments[0].style.border='0px'";

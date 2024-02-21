@@ -571,7 +571,6 @@ namespace GingerCore.Actions.Common
         }
 
 
-
         public eElementAction ElementAction
         {
             get { return GetOrCreateInputParam<eElementAction>(Fields.ElementAction, eElementAction.Unknown); }

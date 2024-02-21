@@ -29,7 +29,6 @@ using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -49,11 +48,11 @@ namespace Ginger.ApplicationModelsLib.POMModels
         ObservableList<DeltaElementInfo> mDeltaElements;
         ComboEnumItem mCurrentGroupByFilter;
         ComboEnumItem mCurrentDeltaStatusFilter;
-
+        ApplicationPOMModel mPOMModel;
         bool IsFirstSelection = true;
         bool isEnableFriendlyLocator = false;
         GridColView mGridCompareColumn;
-
+        private readonly ObservableList<ElementInfo> elementInfoList = [];
         private Agent mAgent;
         IWindowExplorer mWinExplorer
         {
@@ -104,12 +103,21 @@ namespace Ginger.ApplicationModelsLib.POMModels
             }
         }
 
-        public PomDeltaViewPage(ObservableList<DeltaElementInfo> deltaElements = null, GridColView gridCompareColumn = null, Agent mAgent = null)
+        private void SetElementsInfoList()
+        {
+            foreach(var element in mDeltaElements.Select(Delta=>Delta.ElementInfo))
+            {
+                elementInfoList.Add(element);
+            }
+        }
+        public PomDeltaViewPage(PomDeltaUtils pomDeltaUtils, GridColView gridCompareColumn = null, Agent mAgent = null)
         {
             InitializeComponent();
 
-            mDeltaElements = deltaElements;
+            mDeltaElements = pomDeltaUtils.DeltaViewElements;
 
+            SetElementsInfoList();
+            mPOMModel = pomDeltaUtils.POM;
             if (gridCompareColumn != null)
             {
                 mGridCompareColumn = gridCompareColumn;
@@ -431,7 +439,8 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.HighLightElement(mSelectedElement.ElementInfo, true);
+                mWinExplorer.HighLightElement(mSelectedElement.ElementInfo, true, elementInfoList);
+
             }
         }
 
@@ -457,8 +466,13 @@ namespace Ginger.ApplicationModelsLib.POMModels
             if (mSelectedLocator != null)
             {
                 bool originalActiveVal = mSelectedLocator.ElementLocator.Active;
-                mSelectedLocator.ElementLocator.Active = true;//so it will be tested even if disabeled 
-                mWinExplorer.TestElementLocators(new ElementInfo() { Path = CurrentEI.ElementInfo.Path, Locators = new ObservableList<ElementLocator>() { mSelectedLocator.ElementLocator } });
+                mSelectedLocator.ElementLocator.Active = true;//so it will be tested even if disabeled
+                var ElementInfo = CurrentEI.ElementInfo;
+                ElementInfo.Locators = [mSelectedLocator.ElementLocator];
+                var mappedDeltaUiElements = mDeltaElements.Select((element) => element.ElementInfo);
+                mPOMModel.MappedUIElements = elementInfoList;
+
+                mWinExplorer.TestElementLocators(ElementInfo , mPOM: mPOMModel);
                 mSelectedLocator.ElementLocator.Active = originalActiveVal;
             }
         }
@@ -472,7 +486,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                mWinExplorer.TestElementLocators(mSelectedElement.ElementInfo);
+
+                mPOMModel.MappedUIElements = elementInfoList;
+
+                mWinExplorer.TestElementLocators(mSelectedElement.ElementInfo, mPOM: mPOMModel);
             }
         }
 

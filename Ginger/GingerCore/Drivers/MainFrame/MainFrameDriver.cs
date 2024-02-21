@@ -701,7 +701,7 @@ namespace GingerCore.Drivers.MainFrame
 
         #region WindowDriverFunctions
 
-        public void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        public void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
         }
 
