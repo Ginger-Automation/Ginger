@@ -4788,13 +4788,7 @@ namespace GingerCore.Drivers
                     List<ElementInfo> list = new List<ElementInfo>();
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    Stopwatch stopWatch = new();
-                    stopWatch.Start();
-
                     list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData));
-
-                    stopWatch.Stop();
-
 
                     for (int i = 0; i < list.Count; i++)
                     {
