@@ -983,7 +983,7 @@ namespace GingerCore.Drivers.ASCF
         {
         }
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
             ASCFControlInfo CI = (ASCFControlInfo)ElementInfo;
 

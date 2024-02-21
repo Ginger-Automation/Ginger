@@ -343,15 +343,7 @@ namespace Ginger.Actions._Common.ActUIElementLib
             else
             {
                 IWindowExplorer windowExplorer = ((IWindowExplorer)((AgentOperations)((Agent)currentAgent.Agent).AgentOperations).Driver);
-                if (windowExplorer is SeleniumDriver selenium)
-                {
-                    selenium.HighlightPomWebElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, SelectedPOM.MappedUIElements, true);
-                }
-                else
-                {
-                    windowExplorer.HighLightElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, true);
-
-                }
+                windowExplorer.HighLightElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, true, SelectedPOM.MappedUIElements);
             }
         }
 

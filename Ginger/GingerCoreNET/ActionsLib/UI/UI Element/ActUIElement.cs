@@ -570,8 +570,6 @@ namespace GingerCore.Actions.Common
             }
         }
 
-        [IsSerializedForLocalRepository]
-        public IList<string> XPathListToLocateShadowElement { get; set; } = new List<string>();
 
         public eElementAction ElementAction
         {

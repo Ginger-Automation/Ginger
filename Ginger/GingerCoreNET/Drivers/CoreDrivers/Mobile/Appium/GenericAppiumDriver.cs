@@ -168,8 +168,6 @@ namespace Amdocs.Ginger.CoreNET
 
         private AppiumDriver Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
-        private LocateWebElement locateWebElement;
-
         public override bool StopProcess
         {
             get
@@ -257,7 +255,6 @@ namespace Amdocs.Ginger.CoreNET
                 if (!(Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device"))
                 {
                     mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
-                    locateWebElement = new(mSeleniumDriver);
                     mSeleniumDriver.StopProcess = this.StopProcess;
                     mSeleniumDriver.BusinessFlow = this.BusinessFlow;
 
@@ -1595,7 +1592,7 @@ namespace Amdocs.Ginger.CoreNET
             //NA
         }
 
-        async void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        async void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
             if (AppType == eAppType.Web)
             {
@@ -2486,7 +2483,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     default:
-                        elem = locateWebElement.LocateElementByLocator(EL, mSeleniumDriver.mDriver); 
+                        elem = mSeleniumDriver.LocateElementByLocator(EL); 
                         break;
                 }
             }

@@ -28,6 +28,7 @@ using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -55,7 +56,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         bool IsFirstSelection = true;
         bool isEnableFriendlyLocator = false;
         GridColView mGridCompareColumn;
-
+        ObservableList<ElementInfo> elementInfoList;
         private Agent mAgent;
         IWindowExplorer mWinExplorer
         {
@@ -105,11 +106,21 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 }
             }
         }
+
+        private void SetElementsInfoList()
+        {
+            foreach(var element in mDeltaElements.Select(Delta=>Delta.ElementInfo))
+            {
+                elementInfoList.Add(element);
+            }
+        }
         public PomDeltaViewPage(PomDeltaUtils pomDeltaUtils, GridColView gridCompareColumn = null, Agent mAgent = null)
         {
             InitializeComponent();
 
             mDeltaElements = pomDeltaUtils.DeltaViewElements;
+
+            SetElementsInfoList();
             mPOMModel = pomDeltaUtils.POM;
             if (gridCompareColumn != null)
             {
@@ -432,23 +443,9 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                if(mWinExplorer is SeleniumDriver selenium) 
-                {
-                    IList<ElementInfo> elementInfos = new ObservableList<ElementInfo>();
+                IList<ElementInfo> elementInfos = new ObservableList<ElementInfo>();
 
-                    var mappedDeltaUiElements = mDeltaElements.Select((element) => element.ElementInfo);
-                    foreach (var element in mappedDeltaUiElements)
-                    {
-                        elementInfos.Add(element);
-                    }
-
-                    selenium.HighlightPomWebElement(mSelectedElement.ElementInfo , elementInfos, true);
-                }
-
-                else
-                {
-                    mWinExplorer.HighLightElement(mSelectedElement.ElementInfo, true);
-                }
+                mWinExplorer.HighLightElement(mSelectedElement.ElementInfo, true, elementInfoList);
 
             }
         }
@@ -478,15 +475,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
                 mSelectedLocator.ElementLocator.Active = true;//so it will be tested even if disabeled
                 var ElementInfo = CurrentEI.ElementInfo;
                 ElementInfo.Locators = [mSelectedLocator.ElementLocator];
-                var tempPOMModel = mPOMModel;
-                tempPOMModel.MappedUIElements = new ObservableList<ElementInfo>();
                 var mappedDeltaUiElements = mDeltaElements.Select((element) => element.ElementInfo);
-                foreach ( var element in mappedDeltaUiElements )
-                {
-                    tempPOMModel.MappedUIElements.Add(element);
-                }
+                mPOMModel.MappedUIElements = elementInfoList;
 
-                mWinExplorer.TestElementLocators(ElementInfo , mPOM: tempPOMModel);
+                mWinExplorer.TestElementLocators(ElementInfo , mPOM: mPOMModel);
                 mSelectedLocator.ElementLocator.Active = originalActiveVal;
             }
         }
@@ -500,15 +492,10 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                var tempPOMModel = mPOMModel;
-                tempPOMModel.MappedUIElements = new ObservableList<ElementInfo>();
-                var mappedDeltaUiElements = mDeltaElements.Select((element) => element.ElementInfo);
-                foreach (var element in mappedDeltaUiElements)
-                {
-                    tempPOMModel.MappedUIElements.Add(element);
-                }
 
-                mWinExplorer.TestElementLocators(mSelectedElement.ElementInfo, mPOM: tempPOMModel);
+                mPOMModel.MappedUIElements = elementInfoList;
+
+                mWinExplorer.TestElementLocators(mSelectedElement.ElementInfo, mPOM: mPOMModel);
             }
         }
 

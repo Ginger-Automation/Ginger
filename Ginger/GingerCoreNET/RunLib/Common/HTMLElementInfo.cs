@@ -33,8 +33,6 @@ namespace GingerCore.Drivers.Common
         [IsSerializedForLocalRepository]
         public string TagName { get; set; }
 
-        [IsSerializedForLocalRepository]
-        public IList<string> XPathList = new List<string>();
         private string mID = null;
 
         [IsSerializedForLocalRepository]
@@ -131,6 +129,12 @@ namespace GingerCore.Drivers.Common
                 return null;
             }
             var ParentPOMGuid = FindParentPOMGuid();
+
+            if (ParentGuid.Equals(Guid.Empty.ToString()))
+            {
+                return null;
+            }
+
             return (HTMLElementInfo)AllElements.FirstOrDefault((element) => element.Guid.Equals(new Guid(ParentPOMGuid)));
         }
 

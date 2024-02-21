@@ -880,14 +880,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
 
             if (mSelectedElement != null)
             {
-                if(mWinExplorer is SeleniumDriver selenium)
-                {
-                    selenium.HighlightPomWebElement(mSelectedElement, mPOM?.MappedUIElements, true);
-                }
-                else
-                {
-                    mWinExplorer.HighLightElement(mSelectedElement, true);
-                }
+                    mWinExplorer.HighLightElement(mSelectedElement, true, mPOM?.MappedUIElements);
             }
         }
 
@@ -933,7 +926,6 @@ namespace Ginger.ApplicationModelsLib.POMModels
                         Path = testElement.Path, 
                         Locators = testElement.Locators, 
                         Properties = ((HTMLElementInfo)CurrentEI).Properties,
-                        XPathList = ((HTMLElementInfo)CurrentEI).XPathList 
                     };
 
                     htmlElementInfo.FriendlyLocators = testElement.FriendlyLocators;

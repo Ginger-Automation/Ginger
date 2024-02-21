@@ -2395,7 +2395,7 @@ namespace GingerCore.Drivers.JavaDriverLib
 
 
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
             if (ElementInfo.GetType() == typeof(JavaElementInfo))
             {

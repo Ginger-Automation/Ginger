@@ -1082,11 +1082,6 @@ namespace Ginger
         {
             if (xActUIPageFrame.Content != null && xActUIPageFrame.Content is ControlActionsPage_New)
             {
-                if((xActUIPageFrame.Content as ControlActionsPage_New).DefaultAction is ActUIElement && SelectedElement is HTMLElementInfo htmlElementInfo)
-                {
-                    ((xActUIPageFrame.Content as ControlActionsPage_New).DefaultAction as ActUIElement).XPathListToLocateShadowElement = htmlElementInfo.XPathList;
-                }
-
                 (xActUIPageFrame.Content as ControlActionsPage_New).AddActionClicked(sender, e);
 
                 if (POMElementsUpdated && (xAutoSavePOMChkBox.IsChecked == true

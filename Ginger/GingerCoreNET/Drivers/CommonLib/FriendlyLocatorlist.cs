@@ -28,9 +28,6 @@ namespace GingerCoreNET.Drivers.CommonLib
 
         public IWebElement FriendlyElement { get; set; }
 
-        public static bool DoesFriendlyLocatorListExist(IList<FriendlyLocatorElement> friendlyLocatorElements)
-        {
-            return friendlyLocatorElements != null && friendlyLocatorElements.Count > 0;
-        }
+
     }
 }

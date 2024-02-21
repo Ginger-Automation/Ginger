@@ -43,47 +43,6 @@ namespace Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium
             return (string)((IJavaScriptExecutor)driver).ExecuteScript("return arguments[0].innerHTML", root);
         }
 
-        public IWebElement FindShadowRootDirectChild(ISearchContext shadowRoot, ElementLocator locator, IWebDriver Driver, string childTagName)
-        {
-            try
-            {
-                string cssSelector = GetCssSelectorForShadowDOMChild(locator, childTagName);
-                if (string.IsNullOrEmpty(cssSelector))
-                {
-                    return null;
-                }
-                return (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].querySelector(arguments[1])", shadowRoot, cssSelector);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public string GetCssSelectorForShadowDOMChild(ElementLocator locator, string tagName)
-        {
-            tagName = tagName.ToLower();
-
-            if (locator.LocateBy.Equals(eLocateBy.ByID))
-            {
-                return $"{tagName}#{locator.LocateValue}";
-            }
-
-            else if (locator.LocateBy.Equals(eLocateBy.ByClassName))
-            {
-                return $"{tagName}.{locator.LocateValue}";
-            }
-            else if (locator.LocateBy.Equals(eLocateBy.ByName))
-            {
-                return $"{tagName}[name='{locator.LocateValue}']";
-            }
-            else if (locator.LocateBy.Equals(eLocateBy.ByCSS) || locator.LocateBy.Equals(eLocateBy.ByTagName))
-            {
-                return locator.LocateValue;
-            }
-
-            return null;
-        }
 
         public string ConvertXPathToCssSelector(string XPath)
         {

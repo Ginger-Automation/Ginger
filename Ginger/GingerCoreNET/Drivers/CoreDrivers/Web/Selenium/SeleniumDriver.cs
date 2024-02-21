@@ -30,6 +30,7 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
+using Applitools;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
 using GingerCore.Actions;
@@ -85,13 +86,13 @@ namespace GingerCore.Drivers
         public bool isNetworkLogMonitoringStarted = false;
         ActBrowserElement mAct;
         private int mDriverProcessId = 0;
-        private readonly DetectDOMElements detectDOMElements;
-        private readonly LocateWebElement locateWebElement;
-        private readonly RenderXPath renderXPath = new();
         private readonly ShadowDOM shadowDOM = new();
         private const string CHROME_DRIVER_NAME = "chromedriver";
         private const string EDGE_DRIVER_NAME = "msedgedriver";
         private const string FIREFOX_DRIVER_NAME = "geckodriver";
+
+        private readonly List<string> HighlightStyleList = ["arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'" ];
+
         public enum eBrowserType
         {
             IE,
@@ -292,7 +293,6 @@ namespace GingerCore.Drivers
 
 
         protected IWebDriver Driver;
-        public IWebDriver mDriver { get { return Driver; } }
         protected eBrowserType mBrowserTpe;
         protected NgWebDriver ngDriver;
         private String DefaultWindowHandler = null;
@@ -320,11 +320,9 @@ namespace GingerCore.Drivers
         IWebElement LastHighLightedElement;
         XPathHelper mXPathHelper;
 
-        public List<ElementInfo> allReadElem = new List<ElementInfo>();
+        private List<ElementInfo> allReadElem = new List<ElementInfo>();
 
         private string CurrentFrame;
-        private readonly SearchElementsFromDOM searchElementsFromDOM;
-        //ResourceManager mResourceManager = new ResourceManager("Resources", typeof(SeleniumDriver).Assembly);
 
         public SeleniumDriver()
         {
@@ -342,17 +340,11 @@ namespace GingerCore.Drivers
         public SeleniumDriver(eBrowserType BrowserType)
         {
             mBrowserTpe = BrowserType;
-            detectDOMElements = new DetectDOMElements(this);
-            locateWebElement = new(this);
-            searchElementsFromDOM = new(this);
         }
 
         public SeleniumDriver(object driver)
         {
             this.Driver = (IWebDriver)driver;
-            detectDOMElements = new DetectDOMElements(this);
-            locateWebElement = new(this);
-            searchElementsFromDOM = new(this);
         }
 
         public override void InitDriver(Agent agent)
@@ -3723,7 +3715,7 @@ namespace GingerCore.Drivers
             action.MoveToElement(e).Build().Perform();
         }
 
-        public IWebElement FindElementReg(eLocateBy LocatorType, string LocValue)
+        private IWebElement FindElementReg(eLocateBy LocatorType, string LocValue)
         {
             Regex reg = new Regex(LocValue.Replace("{RE:", "").Replace("}", ""), RegexOptions.Compiled);
 
@@ -3801,7 +3793,6 @@ namespace GingerCore.Drivers
             IWebElement elem = null;
             eLocateBy locateBy = act.LocateBy;
             string locateValue = act.LocateValueCalculated;
-            IList<string> XPaths = new List<string>();
             if (ValidationElementLocateBy != null)
             {
                 Enum.TryParse<eLocateBy>(ValidationElementLocateBy, true, out locateBy);
@@ -3816,7 +3807,6 @@ namespace GingerCore.Drivers
                 ActUIElement aev = (ActUIElement)act;
                 Enum.TryParse<eLocateBy>(aev.ElementLocateBy.ToString(), true, out locateBy);
                 locateValue = aev.ElementLocateValueForDriver;
-                XPaths = aev.XPathListToLocateShadowElement;
             }
 
             if (locateBy == eLocateBy.POMElement)
@@ -3864,7 +3854,7 @@ namespace GingerCore.Drivers
                 ElementLocator locator = new ElementLocator();
                 locator.LocateBy = locateBy;
                 locator.LocateValue = locateValue;
-                elem = searchElementsFromDOM.FindElement(XPaths, locator);
+                elem = LocateElementByLocator(locator, Driver, null , AlwaysReturn);
                 if (elem == null)
                 {
                     act.ExInfo += string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
@@ -3928,7 +3918,7 @@ namespace GingerCore.Drivers
                 shadowRoot = shadowDOM.GetShadowRootIfExists(ParentContext);
             }
 
-            foreach (ElementLocator locator in currentPOMElementInfo.Locators.Where(x => x.Active == true).ToList())
+            foreach (ElementLocator locator in currentPOMElementInfo.Locators.Where(x => x.Active))
             {
                 List<FriendlyLocatorElement> friendlyLocatorElementlist = new List<FriendlyLocatorElement>();
                 if (locator.EnableFriendlyLocator && !iscallfromFriendlyLocator)
@@ -3955,13 +3945,13 @@ namespace GingerCore.Drivers
                             if (shadowRoot != null)
                             {
 
-                                targetElement = locateWebElement.LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
+                                targetElement = LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
 
                             }
 
                             else
                             {
-                                targetElement = locateWebElement.LocateElementByLocator(locator, ParentContext);
+                                targetElement = LocateElementByLocator(locator, ParentContext);
                             }
              
                         }
@@ -3983,7 +3973,7 @@ namespace GingerCore.Drivers
                     if (shadowRoot != null)
                     {
 
-                        elem = locateWebElement.LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
+                        elem = LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
 
                     }
                     else
@@ -3997,13 +3987,13 @@ namespace GingerCore.Drivers
                     if (shadowRoot != null)
                     {
 
-                        elem = locateWebElement.LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
+                        elem = LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
                     
                     }
 
                     else
                     {
-                        elem = locateWebElement.LocateElementByLocator(locator, ParentContext, friendlyLocatorElementlist, true);
+                        elem = LocateElementByLocator(locator, ParentContext, friendlyLocatorElementlist, true);
                     }
                 }
             
@@ -4022,7 +4012,315 @@ namespace GingerCore.Drivers
             return elem;
         }
 
-        public IWebElement GetElementByFriendlyLocatorlist(List<FriendlyLocatorElement> friendlyLocatorElements, By by)
+        public IWebElement LocateElementByLocator(ElementLocator locator, ISearchContext searchContext = null, List<FriendlyLocatorElement> friendlyLocatorElements = null, bool AlwaysReturn = true)
+        {
+            IWebElement elem = null;
+            locator.StatusError = "";
+            locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
+            searchContext = searchContext ?? Driver;
+            try
+            {
+                try
+                {
+                    Protractor.NgWebDriver ngDriver = null;
+                    if (locator.LocateBy == eLocateBy.ByngRepeat || locator.LocateBy == eLocateBy.ByngSelectedOption || locator.LocateBy == eLocateBy.ByngBind || locator.LocateBy == eLocateBy.ByngModel)
+                    {
+                        ngDriver = new Protractor.NgWebDriver(Driver);
+                        ngDriver.WaitForAngular();
+                    }
+                    if (locator.LocateBy == eLocateBy.ByngRepeat && ngDriver != null)
+                    {
+                        elem = ngDriver.FindElement(Protractor.NgBy.Repeater(locator.LocateValue));
+                    }
+                    if (locator.LocateBy == eLocateBy.ByngSelectedOption && ngDriver != null)
+                    {
+                        elem = ngDriver.FindElement(Protractor.NgBy.SelectedOption(locator.LocateValue));
+                    }
+                    if (locator.LocateBy == eLocateBy.ByngBind && ngDriver != null)
+                    {
+                        elem = ngDriver.FindElement(Protractor.NgBy.Binding(locator.LocateValue));
+                    }
+                    if (locator.LocateBy == eLocateBy.ByngModel && ngDriver != null)
+                    {
+                        elem = ngDriver.FindElement(Protractor.NgBy.Model(locator.LocateValue));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Exception occurred when LocateElementByLocator", ex);
+                    if (AlwaysReturn)
+                    {
+                        elem = null;
+                        locator.StatusError = ex.Message;
+                        locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                        return elem;
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                switch (locator.LocateBy)
+                {
+                    case eLocateBy.ByID:
+                        if (locator.LocateValue.IndexOf("{RE:") >= 0)
+                        {
+                            elem = FindElementReg(locator.LocateBy, locator.LocateValue);
+                        }
+                        else
+                        {
+                            if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                            {
+                                By by = By.Id(locator.LocateValue) as By;
+                                elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                            }
+                            elem ??= searchContext.FindElement(By.Id(locator.LocateValue));
+                        }
+                        break;
+
+                    case eLocateBy.ByName:
+                        if (locator.LocateValue.IndexOf("{RE:") >= 0)
+                        {
+                            elem = FindElementReg(locator.LocateBy, locator.LocateValue);
+                        }
+                        else
+                        {
+                            if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                            {
+                                By by = By.Name(locator.LocateValue) as By;
+                                elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                            }
+                            elem ??= searchContext.FindElement(By.Name(locator.LocateValue));
+                        }
+                        break;
+
+                    case eLocateBy.ByHref:
+                        string pattern = @".+:\/\/[^\/]+";
+                        string sel = "//a[contains(@href, '@RREEPP')]";
+                        sel = sel.Replace("@RREEPP", new Regex(pattern).Replace(locator.LocateValue, ""));
+                        try
+                        {
+                            if (locator.LocateValue.IndexOf("{RE:") >= 0)
+                            {
+                                elem = FindElementReg(locator.LocateBy, locator.LocateValue);
+                            }
+                            else
+                            {
+                                if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                                {
+                                    By by = By.XPath(sel) as By;
+                                    elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                                }
+
+                                if (searchContext is ShadowRoot)
+                                {
+                                    elem ??= searchContext.FindElement(By.CssSelector($"a[href='{sel}']"));
+                                }
+                                else
+                                {
+                                    elem ??= searchContext.FindElement(By.XPath(sel));
+                                }
+
+                            }
+
+                        }
+                        catch (NoSuchElementException ex)
+                        {
+                            sel = "//a[href='@']";
+                            sel = sel.Replace("@", locator.LocateValue);
+                            elem = searchContext.FindElement(By.XPath(sel));
+                            locator.StatusError = ex.Message;
+                        }
+                        break;
+
+                    case eLocateBy.ByLinkText:
+                        locator.LocateValue = locator.LocateValue.Trim();
+                        try
+                        {
+                            if (locator.LocateValue.IndexOf("{RE:") >= 0)
+                            {
+                                elem = FindElementReg(locator.LocateBy, locator.LocateValue);
+                            }
+                            else
+                            {
+                                if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                                {
+                                    By by = By.LinkText(locator.LocateValue) as By;
+                                    elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                                }
+                                elem ??= searchContext.FindElement(By.LinkText(locator.LocateValue));
+                                if (elem == null)
+                                {
+                                    if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                                    {
+                                        By by = By.XPath("//*[text()='" + locator.LocateValue + "']") as By;
+                                        elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                                    }
+                                    elem ??= searchContext.FindElement(By.XPath("//*[text()='" + locator.LocateValue + "']"));
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            try
+                            {
+                                if (ex.GetType() == typeof(NoSuchElementException))
+                                {
+                                    elem = searchContext.FindElement(By.XPath("//*[text()='" + locator.LocateValue + "']"));
+
+                                }
+                            }
+                            catch (Exception ex2)
+                            {
+                                locator.StatusError = ex2.Message;
+                            }
+                        }
+                        break;
+
+                    case eLocateBy.ByXPath:
+                    case eLocateBy.ByRelXPath:
+                        if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                        {
+                            By by = By.XPath(locator.LocateValue) as By;
+                            elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                        }
+                        if (searchContext is ShadowRoot)
+                        {
+                            if (locator.LocateBy.Equals(eLocateBy.ByXPath))
+                            {
+
+                                string cssSelector = shadowDOM.ConvertXPathToCssSelector(locator.LocateValue);
+                                elem ??= searchContext.FindElement(By.CssSelector(cssSelector));
+                            }
+                        }
+                        else
+                        {
+                            elem ??= searchContext.FindElement(By.XPath(locator.LocateValue));
+                        }
+
+                        break;
+
+                    case eLocateBy.ByValue:
+                        if (locator.LocateValue.IndexOf("{RE:") >= 0)
+                        {
+                            elem = FindElementReg(locator.LocateBy, locator.LocateValue);
+                        }
+                        else
+                        {
+                            if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                            {
+                                By by = By.XPath("//*[@value=\"" + locator.LocateValue + "\"]") as By;
+                                elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                            }
+                            if (searchContext is ShadowRoot)
+                            {
+                                elem ??= searchContext.FindElement(By.CssSelector($"[value='{locator.LocateValue}']"));
+                            }
+                            else
+                            {
+                                elem ??= searchContext.FindElement(By.XPath("//*[@value=\"" + locator.LocateValue + "\"]"));
+                            }
+
+                        }
+                        break;
+                    case eLocateBy.ByAutomationID:
+                        if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                        {
+                            By by = By.XPath("//*[@data-automation-id=\"" + locator.LocateValue + "\"]") as By;
+                            elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                        }
+
+                        if (searchContext is ShadowRoot)
+                        {
+                            elem ??= searchContext.FindElement(By.CssSelector($"[data-automation-id={locator.LocateValue}]"));
+                        }
+                        else
+                        {
+                            elem ??= searchContext.FindElement(By.XPath("//*[@data-automation-id=\"" + locator.LocateValue + "\"]"));
+                        }
+                        break;
+                    case eLocateBy.ByCSS:
+                        if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                        {
+                            By by = By.CssSelector(locator.LocateValue) as By;
+                            elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                        }
+                        elem ??= searchContext.FindElement(By.CssSelector(locator.LocateValue));
+                        break;
+
+                    case eLocateBy.ByClassName:
+                        if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                        {
+                            By by = By.ClassName(locator.LocateValue) as By;
+                            elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+                        }
+
+                        elem ??= searchContext.FindElement(By.ClassName(locator.LocateValue));
+                        break;
+
+                    case eLocateBy.ByMulitpleProperties:
+                        elem = GetElementByMutlipleAttributes(locator.LocateValue, searchContext);
+                        break;
+
+                    case eLocateBy.ByTagName:
+                        if (locator.EnableFriendlyLocator && friendlyLocatorElements?.Count > 0)
+                        {
+                            By by = By.TagName(locator.LocateValue) as By;
+                            elem = GetElementByFriendlyLocatorlist(friendlyLocatorElements, by);
+
+                        }
+                        if (searchContext is ShadowRoot)
+                        {
+                            elem = searchContext.FindElement(By.CssSelector(locator.LocateValue));
+                        }
+
+                        else
+                        {
+                            elem = searchContext.FindElement(By.TagName(locator.LocateValue));
+                        }
+                        break;
+
+                }
+            }
+            catch (System.Net.Sockets.SocketException ex)
+            {
+                if (AlwaysReturn)
+                {
+                    elem = null;
+                    locator.StatusError = ex.Message;
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                    return elem;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch (Exception ex)
+            {
+                if (AlwaysReturn)
+                {
+                    elem = null;
+                    locator.StatusError = ex.Message;
+                    locator.LocateStatus = ElementLocator.eLocateStatus.Failed;
+                    return elem;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            if (elem != null)
+            {
+                locator.LocateStatus = ElementLocator.eLocateStatus.Passed;
+            }
+
+            return elem;
+        }
+
+        private IWebElement GetElementByFriendlyLocatorlist(List<FriendlyLocatorElement> friendlyLocatorElements, By by)
         {
             Dictionary<string, object> dictionary = new Dictionary<string, object>();
             List<object> filters = new List<object>();
@@ -4059,7 +4357,7 @@ namespace GingerCore.Drivers
 
 
 
-        public IWebElement GetElementByMutlipleAttributes(string LocValue, ISearchContext searchContext)
+        private IWebElement GetElementByMutlipleAttributes(string LocValue, ISearchContext searchContext)
         {
             //Fix me
             //put in hash map
@@ -4462,7 +4760,7 @@ namespace GingerCore.Drivers
                     Stopwatch stopWatch = new();
                     stopWatch.Start();
 
-                    list = General.ConvertObservableListToList<ElementInfo>(detectDOMElements.FindAllElementsFromPOM("", pomSetting, foundElementsList, PomMetaData));
+                    list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData));
 
                     stopWatch.Stop();
 
@@ -4505,7 +4803,216 @@ namespace GingerCore.Drivers
             });
         }
 
-        public void CreatePOMMetaData(ObservableList<ElementInfo> foundElementsList, List<HtmlNode> formChildElements, POMPageMetaData pomMetaData, PomSetting pomSetting = null)
+        private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null)
+        {
+            if (PomMetaData == null)
+            {
+                PomMetaData = new ObservableList<POMPageMetaData>();
+            }
+            if (foundElementsList == null)
+            {
+                foundElementsList = new ObservableList<ElementInfo>();
+
+            }
+
+            List<HtmlNode> formElementsList = new List<HtmlNode>();
+            string documentContents = pageSource ?? Driver.PageSource;
+            HtmlDocument htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(documentContents);
+            IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#"));
+
+            if (htmlElements.Any())
+            {
+                foreach (HtmlNode htmlElemNode in htmlElements)
+                {
+                    try
+                    {
+                        if (StopProcess)
+                        {
+                            return foundElementsList;
+                        }
+                        //The <noscript> tag defines an alternate content to be displayed to users that have disabled scripts in their browser or have a browser that doesn't support script.
+                        //skip to learn to element which is inside noscript tag
+                        if (htmlElemNode.Name.ToLower().Equals("noscript") || htmlElemNode.XPath.ToLower().Contains("/noscript"))
+                        {
+                            continue;
+                        }
+                        //get Element Type
+                        Tuple<string, eElementType> elementTypeEnum = SeleniumDriver.GetElementTypeEnum(htmlNode: htmlElemNode);
+
+                        // set the Flag in case you wish to learn the element or not
+                        bool learnElement = true;
+
+                        //filter element if needed, in case we need to learn only the MappedElements .i.e., LearnMappedElementsOnly is checked
+                        if (pomSetting != null && pomSetting.filteredElementType != null)
+                        {
+                            //Case Learn Only Mapped Element : set learnElement to false in case element doesn't exist in the filteredElementType List AND element is not frame element
+                            if (!pomSetting.filteredElementType.Contains(elementTypeEnum.Item2))
+                            {
+                                learnElement = false;
+                            }
+                        }
+
+                        IWebElement webElement = null;
+                        if (learnElement)
+                        {
+                            string xpath = htmlElemNode.XPath;
+                            if (htmlElemNode.Name.ToLower().Equals(eElementType.Svg.ToString().ToLower()))
+                            {
+                                if (!isShadowRootDetected)
+                                {
+                                    xpath = string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()=\'svg\']");
+                                }
+                            }
+
+                            if (parentContext is ShadowRoot shadowRoot)
+                            {
+                                webElement = shadowRoot.FindElement(By.CssSelector(shadowDOM.ConvertXPathToCssSelector(xpath)));
+                            }
+
+                            else
+                            {
+                                webElement = parentContext.FindElement(By.XPath(xpath));
+                            }
+
+                            if (webElement == null)
+                            {
+                                continue;
+                            }
+                            //filter none visible elements
+                            if (!webElement.Displayed || webElement.Size.Width == 0 || webElement.Size.Height == 0)
+                            {
+                                //for some element like select tag el.Displayed is false but element is visible in page
+                                if (webElement.GetCssValue("display").Equals("none", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    continue;
+                                }
+                                else if (webElement.GetCssValue("width").Equals("auto") || webElement.GetCssValue("height").Equals("auto"))
+                                {
+                                    continue;
+                                }
+                            }
+
+                            HTMLElementInfo foundElementInfo = new HTMLElementInfo();
+                            foundElementInfo.ElementType = elementTypeEnum.Item1;
+                            foundElementInfo.ElementTypeEnum = elementTypeEnum.Item2;
+                            foundElementInfo.ElementObject = webElement;
+                            foundElementInfo.Path = path;
+                            // should we remove Xpath from HTMLElementInfo as we have a list for it now
+                            foundElementInfo.HTMLElementObject = htmlElemNode;
+                            foundElementInfo.XPath = xpath;
+                            var ParentPOMGuid = (ParentGUID.Equals(Guid.Empty)) ? Guid.Empty.ToString() : ParentGUID.ToString();
+
+                            ((IWindowExplorer)this).LearnElementInfoDetails(foundElementInfo, pomSetting);
+                            foundElementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentPOMGUID, Value = ParentPOMGuid, ShowOnUI = false });
+                            foundElementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.Sequence, Value = foundElementsList.Count.ToString(), ShowOnUI = false });
+                            if (ExtraLocatorsRequired)
+                            {
+                                GetRelativeXpathElementLocators(foundElementInfo);
+
+                                if (pomSetting != null && pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
+                                {
+                                    foreach (var template in pomSetting.relativeXpathTemplateList)
+                                    {
+                                        CreateXpathFromUserTemplate(template, foundElementInfo);
+                                    }
+                                }
+                            }
+                            //Element Screenshot
+                            if (pomSetting.LearnScreenshotsOfElements)
+                            {
+                                foundElementInfo.ScreenShotImage = TakeElementScreenShot(webElement);
+                            }
+
+                            foundElementInfo.IsAutoLearned = true;
+                            foundElementsList.Add(foundElementInfo);
+
+                            allReadElem.Add(foundElementInfo);
+                            ISearchContext ShadowRoot = shadowDOM.GetShadowRootIfExists(webElement);
+                            if (ShadowRoot == null)
+                            {
+                                continue;
+                            }
+                            string InnerHTML = shadowDOM.GetHTML(ShadowRoot, Driver);
+                            if (!string.IsNullOrEmpty(InnerHTML))
+                            {
+                                FindAllElementsFromPOM(path, pomSetting, ShadowRoot, foundElementInfo.Guid, foundElementsList, PomMetaData, true, InnerHTML);
+                            }
+                        }
+
+                        if (eElementType.Iframe == elementTypeEnum.Item2)
+                        {
+                            string xpath = htmlElemNode.XPath;
+                            if (webElement == null)
+                            {
+                                if (parentContext is ShadowRoot shadowRoot)
+                                {
+                                    webElement = shadowRoot.FindElement(By.CssSelector(shadowDOM.ConvertXPathToCssSelector(xpath)));
+                                }
+                                else
+                                {
+                                    webElement = parentContext.FindElement(By.XPath(xpath));
+                                }
+                            }
+                            Driver.SwitchTo().Frame(webElement);
+                            string newPath = string.Empty;
+                            if (path == string.Empty)
+                            {
+                                newPath = xpath;
+                            }
+                            else
+                            {
+                                newPath = path + "," + xpath;
+                            }
+                            FindAllElementsFromPOM(newPath, pomSetting, parentContext, ParentGUID, foundElementsList, PomMetaData, isShadowRootDetected, pageSource);
+                            Driver.SwitchTo().ParentFrame();
+                        }
+
+                        if (eElementType.Form == elementTypeEnum.Item2)
+                        {
+                            formElementsList.Add(htmlElemNode);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to learn the Web Element '{0}'", htmlElemNode.Name), ex);
+                    }
+                }
+            }
+
+            int pomActivityIndex = 1;
+            if (formElementsList.Any())
+            {
+                foreach (HtmlNode formElement in formElementsList)
+                {
+                    POMPageMetaData pomMetaData = new POMPageMetaData();
+                    pomMetaData.Type = POMPageMetaData.MetaDataType.Form;
+                    pomMetaData.Name = formElement.GetAttributeValue("name", "") != string.Empty ? formElement.GetAttributeValue("name", "") : formElement.GetAttributeValue("id", "");
+                    if (string.IsNullOrEmpty(pomMetaData.Name))
+                    {
+                        pomMetaData.Name = "POM Activity - " + Driver.Title + " " + pomActivityIndex;
+                        pomActivityIndex++;
+                    }
+                    else
+                    {
+                        pomMetaData.Name += " " + Driver.Title;
+                    }
+
+                    IEnumerable<HtmlNode> formInputElements = formElement.Descendants().Where(x => x.Name.StartsWith("input"));
+                    CreatePOMMetaData(foundElementsList, formInputElements.ToList(), pomMetaData, pomSetting);
+                    IEnumerable<HtmlNode> formButtonElements = formElement.Descendants().Where(x => x.Name.StartsWith("button"));
+                    CreatePOMMetaData(foundElementsList, formButtonElements.ToList(), pomMetaData, pomSetting);
+
+                    PomMetaData.Add(pomMetaData);
+
+                }
+            }
+
+            return foundElementsList;
+        }
+
+
+        private void CreatePOMMetaData(ObservableList<ElementInfo> foundElementsList, List<HtmlNode> formChildElements, POMPageMetaData pomMetaData, PomSetting pomSetting = null)
         {
 
             string radioButtoNameOrID = string.Empty;
@@ -4568,7 +5075,7 @@ namespace GingerCore.Drivers
         }
 
         Regex AttRegex = new Regex("@[a-zA-Z]*", RegexOptions.Compiled);
-        public void CreateXpathFromUserTemplate(string xPathTemplate, HTMLElementInfo hTMLElement)
+        private void CreateXpathFromUserTemplate(string xPathTemplate, HTMLElementInfo hTMLElement)
         {
             try
             {
@@ -4606,7 +5113,7 @@ namespace GingerCore.Drivers
             }
         }
 
-        public void GetRelativeXpathElementLocators(HTMLElementInfo foundElemntInfo)
+        private void GetRelativeXpathElementLocators(HTMLElementInfo foundElemntInfo)
         {
             if (foundElemntInfo.ElementTypeEnum == eElementType.Svg)
             {
@@ -4827,11 +5334,11 @@ namespace GingerCore.Drivers
             {
                 if (string.IsNullOrWhiteSpace(EI.Path) || (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe")))
                 {
-                    EI.XPath = GenerateXpathForIWebElement((HTMLElementInfo)EI, string.Empty);
+                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, string.Empty);
                 }
                 else
                 {
-                    EI.XPath = GenerateXpathForIWebElement((HTMLElementInfo)EI, EI.Path);
+                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
                 }
             }
 
@@ -4943,7 +5450,7 @@ namespace GingerCore.Drivers
             EI.ElementTypeEnum = GetElementTypeEnum(el).Item2;
             EI.Path = path;
             EI.ElementObject = el;
-            EI.XPath = GenerateXpathForIWebElement(EI, "");
+            EI.XPath = GenerateXpathForIWebElement(el, "");
             return EI;
         }
 
@@ -5398,80 +5905,66 @@ namespace GingerCore.Drivers
 
 
 
-        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
 
-            HighlightElement(ElementInfo, locateElementByItLocators);
+            HighlightElement(ElementInfo, locateElementByItLocators, MappedUIElements);
         }
 
-        private void SetWebElementInElementInfoToHighlight(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> AllPomElementInfo = null)
-        {
-            Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
-            UnhighlightLast();
-
-            Driver.SwitchTo().DefaultContent();
-            if (!string.IsNullOrEmpty(ElementInfo.Path))
-            {
-                SwitchFrame(ElementInfo);
-            }
-            else
-            {
-                SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
-            }
-
-
-            //Find element 
-            if (locateElementByItLocators)
-            {
-                ElementInfo.ElementObject = LocateElementByLocators(ElementInfo, AllPomElementInfo);
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(ElementInfo.XPath))
-                {
-                    ElementInfo.XPath = GenerateXpathForIWebElement((HTMLElementInfo)ElementInfo, "");
-                }
-                if (ElementInfo is HTMLElementInfo && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).RelXpath))
-                {
-                    ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
-                }
-                if (!string.IsNullOrEmpty(ElementInfo.XPath))
-                {
-                    // ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
-                    ElementLocator ElementToBeFoundLocator = new ElementLocator()
-                    {
-                        LocateBy = eLocateBy.ByXPath,
-                        LocateValue = ElementInfo.XPath
-                    };
-                    ElementInfo.ElementObject = searchElementsFromDOM.FindElement(((HTMLElementInfo)ElementInfo).XPathList, ElementToBeFoundLocator);
-                }
-            }
-        }
-
-        private void HighlightWebElement(IWebElement webElement)
-        {
-            if (webElement == null)
-            {
-                return;
-            }
-            //Highlight element
-            IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
-
-            List<string> attributesList = new List<string>() { "arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'" };
-
-            foreach (string attribuet in attributesList)
-            {
-                javascriptDriver.ExecuteScript(attribuet, new object[] { webElement });
-            }
-
-            LastHighLightedElement = webElement;
-        }
-        private void HighlightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        private void HighlightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> AllPomElementInfo=null)
         {
             try
             {
-                SetWebElementInElementInfoToHighlight(ElementInfo, locateElementByItLocators);
-                HighlightWebElement((IWebElement)ElementInfo.ElementObject);
+                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+                UnhighlightLast();
+
+                Driver.SwitchTo().DefaultContent();
+                if (!string.IsNullOrEmpty(ElementInfo.Path))
+                {
+                    SwitchFrame(ElementInfo);
+                }
+                else
+                {
+                    SwitchFrame(ElementInfo.Path, ElementInfo.XPath, true);
+                }
+
+
+                //Find element 
+                if (locateElementByItLocators)
+                {
+                    ElementInfo.ElementObject = LocateElementByLocators(ElementInfo, AllPomElementInfo);
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(ElementInfo.XPath))
+                    {
+                        ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                    }
+                    if (ElementInfo is HTMLElementInfo && string.IsNullOrEmpty(((HTMLElementInfo)ElementInfo).RelXpath))
+                    {
+                        ((HTMLElementInfo)ElementInfo).RelXpath = mXPathHelper.GetElementRelXPath(ElementInfo);
+                    }
+                    if (!string.IsNullOrEmpty(ElementInfo.XPath))
+                    {
+                        ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+                    }
+                }
+                IWebElement webElement = (IWebElement)ElementInfo.ElementObject;
+
+                if (webElement == null)
+                {
+                    return;
+                }
+                //Highlight element
+                IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
+
+
+                foreach (string attribuet in HighlightStyleList)
+                {
+                    javascriptDriver.ExecuteScript(attribuet, new object[] { webElement });
+                }
+
+                LastHighLightedElement = webElement;
 
             }
             finally
@@ -5480,12 +5973,6 @@ namespace GingerCore.Drivers
             }
 
         }
-        public void HighlightPomWebElement(ElementInfo ElementInfo, IList<ElementInfo> AllPOMElements, bool locateElementByLocators = false)
-        {
-            SetWebElementInElementInfoToHighlight(ElementInfo, locateElementByLocators, AllPOMElements);
-            HighlightWebElement((IWebElement)ElementInfo.ElementObject);
-        }
-
 
 
         void IWindowExplorer.UnHighLightElements()
@@ -5532,7 +6019,7 @@ namespace GingerCore.Drivers
                 {
                     if (string.IsNullOrEmpty(ElementInfo.XPath))
                     {
-                        ElementInfo.XPath = GenerateXpathForIWebElement((HTMLElementInfo)ElementInfo, "");
+                        ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
                     }
 
                     el = Driver.FindElement(By.XPath(ElementInfo.XPath));
@@ -5681,13 +6168,7 @@ namespace GingerCore.Drivers
 
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
-            ElementLocator ElementToBeFoundLocator = new()
-            {
-                LocateBy = elementLocateBy,
-                LocateValue = ElementInfo.XPath
-            };
-
-            IWebElement e = searchElementsFromDOM.FindElement(((HTMLElementInfo)ElementInfo).XPathList, ElementToBeFoundLocator);
+            IWebElement e = Driver.FindElement(By.XPath(ElementInfo.XPath));
             if (e.TagName == "select")  // combo box
             {
                 return GetComboValues(ElementInfo);
@@ -6082,7 +6563,7 @@ namespace GingerCore.Drivers
                 if (el.TagName == "iframe" || el.TagName == "frame")
                 {
                     foundElemntInfo.Path = string.Empty;
-                    foundElemntInfo.XPath = GenerateXpathForIWebElement(foundElemntInfo, "");
+                    foundElemntInfo.XPath = GenerateXpathForIWebElement(el, "");
                     return GetElementFromIframe(foundElemntInfo);
                 }
                 return foundElemntInfo;
@@ -6101,7 +6582,7 @@ namespace GingerCore.Drivers
         /// </summary>
         /// <param name="element">IWebElement</param>
         /// <returns>String image base64</returns>
-        public string TakeElementScreenShot(IWebElement element)
+        private string TakeElementScreenShot(IWebElement element)
         {
             var screenshot = ((ITakesScreenshot)element).GetScreenshot();
             Bitmap image = ScreenshotToImage(screenshot);
@@ -6167,37 +6648,115 @@ namespace GingerCore.Drivers
                     Driver.SwitchTo().DefaultContent();
                 }
 
-                foundElemntInfo.XPath = GenerateXpathForIWebElement(foundElemntInfo, "");
+                foundElemntInfo.XPath = GenerateXpathForIWebElement(elInsideIframe, "");
                 return GetElementFromIframe(foundElemntInfo);
             }
 
             return foundElemntInfo;
         }
+        /// <summary>
+        /// The algorithm to find the xpath uses the bottom to top DFS approach until the 'html' tag is located viz the topmost element in HTML Document.
+        /// </summary>
+        /// <param name="IWE">Web Element for which the Xpath should be generated</param>
+        /// <param name="Driver"></param>
+        /// <param name="current">Current Xpath</param>
+        /// <param name="XPathsToDetectShadowElement">if shadow dom is detected, the xpath is added to the list (which as of now is only used for Live Spy)</param>
+        /// <param name="isBrowserFireFox"></param>
+        /// <returns>the xpath relative to the  nearest shadow dom else returns the full xpath</returns>
 
-        //public ElementInfo GetHTMLElementInfoFromIWebElement(IWebElement EL, string path)
-        //{
-        //    string xpath = GenerateXpathForIWebElement(EL, "");
-        //    HTMLElementInfo EI = new HTMLElementInfo();
-        //    EI.ElementObject = EL;
-        //    EI.ElementTitle = GenerateElementTitle(EL);
-        //    EI.WindowExplorer = this;
-        //    EI.ID = GenerateElementID(EL);
-        //    EI.Value = GenerateElementValue(EL);
-        //    EI.Name = GenerateElementName(EL);
-        //    EI.ElementType = GenerateElementType(EL);
-        //    EI.ElementTypeEnum = GetElementTypeEnum(EL).Item2;
-        //    EI.Path = path;
-        //    EI.XPath = xpath;
-        //    EI.RelXpath = mXPathHelper.GetElementRelXPath(EI);
-        //    return EI;
-        //}
-        public string GenerateXpathForIWebElement(HTMLElementInfo ElementInfo, string currentXpath)
+        public string GenerateXpathForIWebElement(IWebElement IWE, string current)
         {
-            IList<string> XPathsForDetectedShadowElement = new List<string>();
-            string resultXPath = renderXPath.GenerateXPathForDOMElement((ISearchContext)ElementInfo.ElementObject, Driver, currentXpath, XPathsForDetectedShadowElement, mBrowserTpe == eBrowserType.FireFox);
-            ElementInfo.XPathList = XPathsForDetectedShadowElement;
+            Stack<ISearchContext> stack = new();
+            stack.Push(IWE);
+            ISearchContext parentElement = null;
+            ReadOnlyCollection<IWebElement> childrenElements = null;
+            bool isShadowRootDetected = false;
+            IList<string> XPaths = new List<string>();
+            while (stack.Count > 0)
+            {
 
-            return resultXPath;
+                ISearchContext context = stack.Pop();
+                if (context is IWebElement webElement)
+                {
+                    string tagName = webElement.TagName;
+
+                    if (tagName.Equals("html"))
+                    {
+                        string resultXPath = $"/html[1]{current}";
+                        current = resultXPath;
+
+                        if (isShadowRootDetected)
+                        {
+                            XPaths.Add(resultXPath);
+                        }
+                        continue;
+                    }
+                    parentElement = (ISearchContext)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].parentNode", webElement);
+
+                    if (parentElement is ShadowRoot)
+                    {
+                        childrenElements = parentElement.FindElements(By.CssSelector(tagName));
+                    }
+                    else
+                    {
+                        childrenElements = parentElement.FindElements(By.XPath("./" + tagName));
+                    }
+                    int count = 1;
+
+                    foreach (IWebElement childElement in childrenElements)
+                    {
+
+                        try
+                        {
+                            if (context.Equals(childElement))
+                            {
+                                string resultXPath = string.Empty;
+                                if (string.IsNullOrEmpty(tagName))
+                                {
+                                    resultXPath = current;
+                                }
+                                else
+                                {
+                                    resultXPath = $"/{tagName}[{count}]{current}";
+                                }
+                                stack.Push(parentElement);
+                                current = resultXPath;
+                                break;
+                            }
+                            else
+                            {
+                                count++;
+                            }
+
+                        }
+
+                        catch (Exception ex)
+                        {
+                            if (eBrowserType.FireFox.Equals(mBrowserTpe) && ex.Message != null && ex.Message.Contains("did not match a known command"))
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                throw;
+                            }
+                        }
+                    }
+                }
+
+
+                else if (context is ShadowRoot shadowRoot)
+                {
+                    parentElement = (IWebElement)((IJavaScriptExecutor)Driver).ExecuteScript("return arguments[0].host", shadowRoot);
+                    XPaths.Add(current);
+                    stack.Push(parentElement);
+                    current = string.Empty;
+                    isShadowRootDetected = true;
+                }
+
+            }
+
+            return XPaths.Count > 0 ? XPaths[0] : current;
         }
 
         public async Task<string> GenerateXpathForIWebElementAsync(IWebElement IWE, string current)
@@ -8545,7 +9104,7 @@ namespace GingerCore.Drivers
                         elemInfo.ElementTypeEnum = elemTypeEnum.Item2;
                         elemInfo.ElementObject = ele;
                         elemInfo.Path = iframeXPath;
-                        elemInfo.XPath = string.IsNullOrEmpty(elemId) ? GenerateXpathForIWebElement(elemInfo, string.Empty) : elemNode.XPath;
+                        elemInfo.XPath = string.IsNullOrEmpty(elemId) ? GenerateXpathForIWebElement(ele, string.Empty) : elemNode.XPath;
                         elemInfo.HTMLElementObject = elemNode;
 
                         ((IWindowExplorer)this).LearnElementInfoDetails(elemInfo);
@@ -8844,7 +9403,7 @@ namespace GingerCore.Drivers
 
             if (string.IsNullOrEmpty(EI.XPath))
             {
-                EI.XPath = GenerateXpathForIWebElement((HTMLElementInfo)EI, "");
+                EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, "");
             }
 
             IWebElement e = (IWebElement)EI.ElementObject;
@@ -9276,7 +9835,7 @@ namespace GingerCore.Drivers
                             }
                             else
                             {
-                                targetElement = locateWebElement.LocateElementByLocator(FLocator, Driver);
+                                targetElement = LocateElementByLocator(FLocator, Driver);
                             }
                             if (targetElement != null)
                             {
@@ -9302,7 +9861,7 @@ namespace GingerCore.Drivers
                         // For Live spy
                         else
                         {
-                            webElement = locateWebElement.LocateElementByLocator(el, Driver, friendlyLocatorElementlist, true);
+                            webElement = LocateElementByLocator(el, Driver, friendlyLocatorElementlist, true);
                         }
                     }
                     if (webElement != null)
@@ -9347,7 +9906,7 @@ namespace GingerCore.Drivers
             ElementLocator evaluatedLocator = el.CreateInstance() as ElementLocator;
             ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
             evaluatedLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
-            return locateWebElement.LocateElementByLocator(evaluatedLocator, parentContext, friendlyLocatorElements, true);
+            return LocateElementByLocator(evaluatedLocator, parentContext, friendlyLocatorElements, true);
         }
         private bool IsUserProfileFolderPathValid()
         {
@@ -9434,9 +9993,9 @@ namespace GingerCore.Drivers
         {
             if (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe"))
             {
-                return GenerateXpathForIWebElement((HTMLElementInfo)EI, string.Empty);
+                return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, string.Empty);
             }
-            return GenerateXpathForIWebElement((HTMLElementInfo)EI, EI.Path);
+            return GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
         }
 
         public string GetInnerHtml(ElementInfo elementInfo)

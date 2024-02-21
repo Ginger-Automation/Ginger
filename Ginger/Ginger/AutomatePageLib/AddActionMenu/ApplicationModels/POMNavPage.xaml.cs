@@ -223,14 +223,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
 
             if (mSelectedElement != null)
             {
-                if(mWinExplorer is SeleniumDriver driver)
-                {
-                    driver.HighlightPomWebElement(mSelectedElement , mPOM?.MappedUIElements, true);
-                }
-                else
-                {
-                    mWinExplorer.HighLightElement(mSelectedElement, true);
-                }
+               mWinExplorer.HighLightElement(mSelectedElement, true, mPOM?.MappedUIElements);
             }
         }
         private bool ValidateDriverAvalability()
