@@ -7868,6 +7868,12 @@ namespace GingerCore.Drivers
                 return;
             }
         }
+        /// <summary>
+        /// When the user enters a locator to locate a shadow root host (the parent node of the shadow root)
+        /// the corresponding shadow root is provided to the current context attribute.
+        /// </summary>
+        /// <param name="act"></param>
+        /// <exception cref="NoSuchElementException">Is thrown when no shadow root is found</exception>
         private void HandleSwitchToShadowDOM(Act act)
         {
             IWebElement shadowDOMHost = LocateElement(act);
@@ -7883,6 +7889,10 @@ namespace GingerCore.Drivers
 
         }
 
+        /// <summary>
+        /// Is called when user wants to switch to the default DOM (which does not have direct access 
+        /// to the shadow roots' elements but can access elements which are not in a shadow root)
+        /// </summary>
         private void HandleSwitchToDefaultDOM()
         {
             CurrentContext = Driver;
