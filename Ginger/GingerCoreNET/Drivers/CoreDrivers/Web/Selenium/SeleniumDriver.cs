@@ -30,7 +30,6 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
-using Applitools;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
 using GingerCore.Actions;
@@ -378,6 +377,7 @@ namespace GingerCore.Drivers
         }
 
         private ISearchContext _searchContext = null;
+        private readonly object _contextLock = new();
         /// <summary>
         ///  This attribute is used to keep track of Shadow Root, when user manually creates actions to switch to a shadow root.
         /// </summary>
@@ -385,19 +385,19 @@ namespace GingerCore.Drivers
         {
             get
             {
-                if(_searchContext == null)
+                lock (_contextLock)
                 {
-                    return Driver;
+                    return _searchContext;
                 }
-
-                return _searchContext;
             }
 
             set
             {
-                _searchContext = value;
+                lock (_contextLock)
+                {
+                    _searchContext = value;
+                }
             }
-                
         }
 
         public override void StartDriver()
@@ -1538,7 +1538,7 @@ namespace GingerCore.Drivers
                 }
 
                 return;
-            }
+        }
 
 
             if (ActType == typeof(ActHello))
@@ -1548,7 +1548,7 @@ namespace GingerCore.Drivers
             }
 
             if (ActType == typeof(ActScreenShot))
-            {
+        {
                 ScreenshotHandler((ActScreenShot)act);
                 return;
             }
@@ -7853,13 +7853,23 @@ namespace GingerCore.Drivers
         private void HandleSwitchToShadowDOM(Act act)
         {
             IWebElement shadowDOMHost = LocateElement(act);
-            if(shadowDOMHost == null)
+            if(shadowDOMHost != null)
             {
-                act.ExInfo = $"{act.ExInfo}\nShadow Root Host cannot be located. Please try to find the appropriate Locator of the Element just above the shadow root (Shadow Root Host)";
-                return;
+                CurrentContext = shadowDOM.GetShadowRootIfExists(shadowDOMHost);
             }
-           CurrentContext = shadowDOM.GetShadowRootIfExists(shadowDOMHost);
+
+            if (shadowDOMHost == null || CurrentContext == null)
+            { 
+                throw new NoSuchElementException("Shadow Root Host cannot be located. Please try to find the appropriate Locator of the Element just above the shadow root (Shadow Root Host)");
+            }
+
         }
+
+        private void HandleSwitchToDefaultDOM()
+        {
+            CurrentContext = Driver;
+        }
+
         public async void ActBrowserElementHandler(ActBrowserElement act)
         {
             try
@@ -8207,6 +8217,9 @@ namespace GingerCore.Drivers
                         break;
                     case ActBrowserElement.eControlAction.SwitchToShadowDOM:
                         HandleSwitchToShadowDOM(act);
+                        break;
+                    case ActBrowserElement.eControlAction.SwitchToDefaultDOM:
+                        HandleSwitchToDefaultDOM();
                         break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());
