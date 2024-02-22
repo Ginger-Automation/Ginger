@@ -232,6 +232,11 @@ namespace Amdocs.Ginger.Repository
 
         public ActInputValue(DeserializedSnapshot snapshot) : base(snapshot) { }
 
+        public ActInputValue(DeserializedSnapshot2 snapshot) : base(snapshot)
+        {
+            Param = snapshot.GetValue(nameof(Param));
+        }
+
         protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
             return base.WriteSnapshotProperties(snapshotBuilder)

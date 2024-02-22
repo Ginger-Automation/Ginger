@@ -248,6 +248,15 @@ namespace GingerCore.Variables
 
         public VariableBase(DeserializedSnapshot snapshot) : base(snapshot) { }
 
+        public VariableBase(DeserializedSnapshot2 snapshot) : base(snapshot)
+        {
+            Name = snapshot.GetValue(nameof(Name));
+            Description = snapshot.GetValue(nameof(Description));
+            MappedOutputType = snapshot.GetValueAsEnum<eOutputType>(nameof(MappedOutputType));
+            ParentName = snapshot.GetValue(nameof(ParentName));
+            ParentType = snapshot.GetValue(nameof(ParentType));
+        }
+
         protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
             return base.WriteSnapshotProperties(snapshotBuilder)

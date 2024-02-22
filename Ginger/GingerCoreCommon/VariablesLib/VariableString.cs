@@ -104,6 +104,11 @@ namespace GingerCore.Variables
 
         public VariableString(DeserializedSnapshot snapshot) : base(snapshot) { }
 
+        public VariableString(DeserializedSnapshot2 snapshot) : base(snapshot)
+        {
+            InitialStringValue = snapshot.GetValue(nameof(InitialStringValue));
+        }
+
         protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
             return base.WriteSnapshotProperties(snapshotBuilder)

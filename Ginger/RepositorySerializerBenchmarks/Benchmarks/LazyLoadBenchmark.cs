@@ -35,7 +35,7 @@ namespace RepositorySerializerBenchmarks.Benchmarks
     {
         private BetterRepositorySerializer _betterRepositorySerializer = null!;
 
-        [Params(1, 10)]
+        [Params(1, 10, 100)]
         public int TestDataSize { get; set; }
 
         private string[] TestData { get; set; } = [];

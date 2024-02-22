@@ -101,6 +101,8 @@ namespace GingerCore.Actions
 
         public ActLogAction(DeserializedSnapshot snapshot) : base(snapshot) { }
 
+        public ActLogAction(DeserializedSnapshot2 snapshot) : base(snapshot) { }
+
         eLogLevel GetLogLevel(eActionLogLevels loglevel)
         {
             eLogLevel logLevel;

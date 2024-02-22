@@ -86,19 +86,37 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
             return (T)item;
         }
 
+        public static bool UseDeserializer2 { get; set; } = true;
+
         private RepositoryItemHeader ReadRepositoryItemHeader(XmlReader reader)
         {
             reader.ValidateNodeType(XmlNodeType.Element);
             reader.ValidateNodeName(RepositoryItemHeader.XmlElementName);
 
-            DeserializedSnapshot snapshot = new(reader);
-            return new RepositoryItemHeader(snapshot);
+            if (UseDeserializer2)
+            {
+                DeserializedSnapshot2 snapshot = DeserializedSnapshot2.Load(reader);
+                return new RepositoryItemHeader(snapshot);
+            }
+            else
+            {
+                DeserializedSnapshot snapshot = new(reader);
+                return new RepositoryItemHeader(snapshot);
+            }
         }
 
         private RepositoryItemBase ReadRepositoryItemBase(XmlReader reader)
         {
-            DeserializedSnapshot snapshot = new(reader);
-            return RepositoryItemBaseFactory.Create(snapshot.Name, snapshot);
+            if (UseDeserializer2)
+            {
+                DeserializedSnapshot2 snapshot = DeserializedSnapshot2.Load(reader);
+                return RepositoryItemBaseFactory.Create(snapshot.Name, snapshot);
+            }
+            else
+            {
+                DeserializedSnapshot snapshot = new(reader);
+                return RepositoryItemBaseFactory.Create(snapshot.Name, snapshot);
+            }
         }
     }
 }

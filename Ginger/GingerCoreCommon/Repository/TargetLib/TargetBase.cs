@@ -47,6 +47,8 @@ namespace Amdocs.Ginger.Common.Repository
 
         public TargetBase(DeserializedSnapshot snapshot) : base(snapshot) { }
 
+        public TargetBase(DeserializedSnapshot2 snapshot) : base(snapshot) { }
+
         protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
             return base.WriteSnapshotProperties(snapshotBuilder);

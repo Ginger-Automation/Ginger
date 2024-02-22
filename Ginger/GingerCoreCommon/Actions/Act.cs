@@ -711,6 +711,17 @@ namespace GingerCore.Actions
 
         public Act(DeserializedSnapshot snapshot) : base(snapshot) { }
 
+        public Act(DeserializedSnapshot2 snapshot) : base(snapshot)
+        {
+            Active = snapshot.GetValueAsBool(nameof(Active));
+            Description = snapshot.GetValue(nameof(Description));
+            Platform = snapshot.GetValueAsEnum<ePlatformType>(nameof(Platform));
+            RetryMechanismInterval = snapshot.GetValueAsInt(nameof(RetryMechanismInterval));
+            StatusConverter = snapshot.GetValueAsEnum<eStatusConverterOptions>(nameof(StatusConverter));
+            WindowsToCapture = snapshot.GetValueAsEnum<eWindowsToCapture>(nameof(WindowsToCapture));
+            InputValues = new(snapshot.GetValues<ActInputValue>(nameof(InputValues)));
+        }
+
         protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
             return base.WriteSnapshotProperties(snapshotBuilder)

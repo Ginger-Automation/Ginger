@@ -75,9 +75,21 @@ namespace Amdocs.Ginger.Repository
         //    reader.Load(DeserializeProperty);
         //}
 
-        public RepositoryItemHeader(DeserializedSnapshot snapshot) 
+        public RepositoryItemHeader(DeserializedSnapshot snapshot)
         {
             snapshot.ReadProperties(ReadSnapshotProperties);
+        }
+
+        public RepositoryItemHeader(DeserializedSnapshot2 snapshot)
+        {
+            ItemGuid = snapshot.GetValueAsGuid(nameof(ItemGuid));
+            ItemType = snapshot.GetValue(nameof(ItemType));
+            CreatedBy = snapshot.GetValue(nameof(CreatedBy));
+            Created = snapshot.GetValueAsDateTime(nameof(Created), "yyyyMMddHHmm");
+            GingerVersion = snapshot.GetValue(nameof(GingerVersion));
+            Version = snapshot.GetValueAsInt(nameof(Version));
+            LastUpdateBy = snapshot.GetValue(nameof(LastUpdateBy));
+            LastUpdate = snapshot.GetValueAsDateTime(nameof(LastUpdate), "yyyyMMddHHmm");
         }
 
         public virtual SerializedSnapshot CreateSnapshot()

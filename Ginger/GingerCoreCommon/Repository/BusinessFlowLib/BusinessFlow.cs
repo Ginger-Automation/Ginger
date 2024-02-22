@@ -50,6 +50,18 @@ namespace GingerCore
 
         public BusinessFlow(DeserializedSnapshot snapshot) : base(snapshot) { }
 
+        public BusinessFlow(DeserializedSnapshot2 snapshot) : base(snapshot)
+        {
+            Name = snapshot.GetValue(nameof(Name));
+            Source = snapshot.GetValueAsEnum<eSource>(nameof(Source));
+            Status = snapshot.GetValueAsEnum<eBusinessFlowStatus>(nameof(Status));
+            Activities = new(snapshot.GetValues<Activity>(nameof(Activities)));
+            ActivitiesGroups = new(snapshot.GetValues<ActivitiesGroup>(nameof(ActivitiesGroups)));
+            TargetApplications = new(snapshot.GetValues<TargetBase>(nameof(TargetApplication)));
+            Variables = new(snapshot.GetValues<VariableBase>(nameof(Variables)));
+
+        }
+
         public BusinessFlow(string sName)
         {
             Name = sName;

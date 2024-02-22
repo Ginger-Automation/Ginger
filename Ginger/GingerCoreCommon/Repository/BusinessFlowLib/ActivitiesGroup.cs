@@ -55,6 +55,12 @@ namespace GingerCore.Activities
 
         public ActivitiesGroup(DeserializedSnapshot snapshot) : base(snapshot) { }
 
+        public ActivitiesGroup(DeserializedSnapshot2 snapshot) : base(snapshot)
+        {
+            Name = snapshot.GetValue(nameof(Name));
+            ActivitiesIdentifiers = new(snapshot.GetValues<ActivityIdentifiers>(nameof(ActivitiesIdentifiers)));
+        }
+
         protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
             return base.WriteSnapshotProperties(snapshotBuilder)

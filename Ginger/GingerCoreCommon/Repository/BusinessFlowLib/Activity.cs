@@ -135,6 +135,21 @@ namespace GingerCore
 
         public Activity(DeserializedSnapshot snapshot) : base(snapshot) { }
 
+        public Activity(DeserializedSnapshot2 snapshot) : base(snapshot)
+        {
+            ActionRunOption = snapshot.GetValueAsEnum<eActionRunOption>(nameof(ActionRunOption));
+            Active = snapshot.GetValueAsBool(nameof(Active));
+            ActivitiesGroupID = snapshot.GetValue(nameof(ActivitiesGroupID));
+            ActivityName = snapshot.GetValue(nameof(ActivityName));
+            AutomationStatus = snapshot.GetValueAsEnum<eActivityAutomationStatus>(nameof(AutomationStatus));
+            ErrorHandlerMappingType = snapshot.GetValueAsEnum<eHandlerMappingType>(nameof(ErrorHandlerMappingType));
+            PercentAutomated = snapshot.GetValue(nameof(PercentAutomated));
+            POMMetaDataId = snapshot.GetValueAsGuid(nameof(POMMetaDataId));
+            TargetApplication = snapshot.GetValue(nameof(TargetApplication));
+            Type = snapshot.GetValueAsEnum<eSharedItemType>(nameof(Type));
+            Acts = new(snapshot.GetValues<Act>(nameof(Acts)));
+        }
+
         protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder builder)
         {
             return base.WriteSnapshotProperties(builder)

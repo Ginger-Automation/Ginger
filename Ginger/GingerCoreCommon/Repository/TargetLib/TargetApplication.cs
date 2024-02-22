@@ -72,6 +72,11 @@ namespace GingerCore.Platforms
 
         public TargetApplication(DeserializedSnapshot snapshot) { }
 
+        public TargetApplication(DeserializedSnapshot2 snapshot)
+        {
+            AppName = snapshot.GetValue(nameof(AppName));
+        }
+
         protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
             return base.WriteSnapshotProperties(snapshotBuilder)

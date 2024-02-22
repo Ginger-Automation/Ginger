@@ -32,6 +32,14 @@ namespace GingerCore.Activities
 
         public ActivityIdentifiers(DeserializedSnapshot snapshot) : base(snapshot) { }
 
+        public ActivityIdentifiers(DeserializedSnapshot2 snapshot) : base(snapshot)
+        {
+            ActivityAutomationStatus = snapshot.GetValueAsEnum<eActivityAutomationStatus>(nameof(ActivityAutomationStatus));
+            ActivityGuid = snapshot.GetValueAsGuid(nameof(ActivityGuid));
+            ActivityName = snapshot.GetValue(nameof(ActivityName));
+            ActivityParentGuid = snapshot.GetValueAsGuid(nameof(ActivityParentGuid));
+        }
+
         protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
         {
             return base.WriteSnapshotProperties(snapshotBuilder)
