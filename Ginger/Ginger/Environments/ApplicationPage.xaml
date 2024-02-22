@@ -38,7 +38,7 @@
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
                         <UserControls:ImageMakerControl x:Name="xDBsTabTabHeaderImage" ImageType="DataSource" Height="20" Width="20"/>
-                        <TextBlock x:Name="xDBsTabHeaderText" Text="DataBases" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
+                        <TextBlock x:Name="xDBsTabHeaderText" Text="Databases" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
                     </StackPanel>
                 </TabItem.Header>
                 <Frame x:Name="DBsFrame"/>

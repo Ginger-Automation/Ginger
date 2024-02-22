@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium;
@@ -32,6 +33,7 @@ using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
+//using Selenium.Axe;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
@@ -70,6 +72,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DevToolsDomains = OpenQA.Selenium.DevTools.V121.DevToolsSessionDomains;
+
 
 namespace GingerCore.Drivers
 {
@@ -1532,8 +1535,6 @@ namespace GingerCore.Drivers
                         break;
                     case ActMultiselectList.eActMultiselectListAction.ClearAllSelectedValues:
                         DeSelectMultiselectListOptions(el);
-
-                        //TODO: implement ClearAllSelectedValues for ActMultiselectList
                         break;
                 }
 
@@ -1589,14 +1590,14 @@ namespace GingerCore.Drivers
                 ActAgentManipulationHandler((ActAgentManipulation)act);
                 return;
             }
-            if (WorkSpace.Instance.BetaFeatures.ShowAccessibilityTesting)
-            {
+            //if (WorkSpace.Instance.BetaFeatures.ShowAccessibilityTesting)
+            //{
                 if (act is ActAccessibilityTesting actAccessibilityTesting)
                 {
                     ActAccessibility(actAccessibilityTesting);
                     return;
                 }
-            }
+            //}
             act.Error = "Run Action Failed due to unrecognized action type - " + ActType.ToString();
             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
         }
@@ -1617,17 +1618,6 @@ namespace GingerCore.Drivers
                     }
                 }
             }
-            else
-            {
-                gotoUrl = act.GetInputParamCalculatedValue("Value");
-                if (string.IsNullOrEmpty(gotoUrl))
-                {
-                    act.Error = "Error: Provided URL is empty. Please provide valid URL.";
-                    return;
-
-                }
-                GotoURL(act, gotoUrl);
-            }
             AxeBuilder axeBuilder = null;
             try
             {
@@ -1643,6 +1633,7 @@ namespace GingerCore.Drivers
                 {
                     axeResult = axeBuilder.Analyze();
                 }
+
                 SetAxeResultToAction(act, axeResult);
             }
             catch (Exception ex)
@@ -1658,24 +1649,50 @@ namespace GingerCore.Drivers
         private AxeBuilder CreateAxeBuilder(ActAccessibilityTesting act)
         {
             AxeBuilder axeBuilder = null;
-            axeBuilder = new AxeBuilder(Driver)
-            .WithOptions(new AxeRunOptions()
+                axeBuilder = new AxeBuilder(Driver)
+                .WithOptions(new AxeRunOptions()
+                {
+                    XPath = true
+                });
+            if (act.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByTag.ToString())
             {
-                XPath = true
-            });
-
-            if (act.Standard != null)
-            {
-                axeBuilder.WithTags(act.Standard.ToString());
+                if (act.OperationValueList != null && act.OperationValueList.Any())
+                {
+                    string[] Tag_array = act.OperationValueList.Select(i => i.Value.ToString()).ToArray();
+                    axeBuilder.WithTags(Tag_array);
+                }
+                if (act.ExcludeRuleList != null && act.ExcludeRuleList.Any(i => i.Active))
+                {
+                    string[] ExcludeRules = act.ExcludeRuleList.Where(i => i.Active).Select(i => i.RuleID.ToString()).ToArray();
+                    axeBuilder.DisableRules(ExcludeRules);
+                }
             }
-
+            else
+            {
+                if (act.IncludeRuleList != null && act.IncludeRuleList.Any(i => i.Active))
+                {
+                    string[] IncludeRules = act.IncludeRuleList.Where(i=> i.Active).Select(i => i.RuleID.ToString()).ToArray();
+                    axeBuilder.WithRules(IncludeRules);
+                }
+            }
             return axeBuilder;
         }
 
         private void SetAxeResultToAction(ActAccessibilityTesting act, AxeResult axeResult)
         {
             bool hasAnyViolations = axeResult.Violations.Any();
-            var jsonresponse = JsonConvert.SerializeObject(axeResult);
+
+            if (act.SeverityOperationValueList != null && act.SeverityOperationValueList.Any() && act.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByTag.ToString())
+            {
+                List<string> sevritylist = act.SeverityOperationValueList.Select(x => x.Value.ToLower()).ToList();
+                List<string> Violationsevrity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()).ToList() : new List<string>();
+                foreach(string severity in sevritylist)
+                {
+                    hasAnyViolations = !Violationsevrity.Any(y => y.Equals(severity));
+                }
+                
+            }
+            var jsonresponse = JsonConvert.SerializeObject(axeResult, Formatting.Indented);
             act.RawResponseValues = jsonresponse;
             act.AddOrUpdateReturnParamActual(ParamName: "Raw Response", ActualValue: jsonresponse);
             if (hasAnyViolations)
@@ -1697,6 +1714,7 @@ namespace GingerCore.Drivers
                         }
 
                         act.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationHelp", ActualValue: violation.Help, violatedNodeIndex.ToString());
+                        act.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationImpact", ActualValue: violation.Impact, violatedNodeIndex.ToString());
                     }
                 }
             }

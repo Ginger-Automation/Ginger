@@ -51,6 +51,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
         private const string GET_BUSINESSFLOW_EXECUTION_DATA = "api/AccountReport/GetAccountReportBusinessflowsByExecutionId/";
         private const string GET_RUNSET_EXECUTION_DATA = "api/AccountReport/GetRunsetHLExecutionInfo/";
         private const string GET_RUNNER_EXECUTION_DATA = "api/AccountReport/GetAccountReportRunnersByExecutionId/";
+        private const string GET_ACCOUNT_HTML_REPORT = "/api/AccountReport/GetAccountHtmlReport/";
 
 
 
@@ -469,6 +470,34 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
                 return accountReportrunset;
             }
             return accountReportrunset;
+        }
+
+        public async Task<AccountReportRunSetClient> GetAccountHTMLReportAsync(Guid executionId)
+        {
+            if (restClient == null)
+            {
+                return null!;
+            }
+
+            RestRequest request = new($"{GET_ACCOUNT_HTML_REPORT}{executionId}", Method.Get);
+            try
+            {
+                RestResponse response = await restClient.ExecuteAsync(request);
+                if (response.IsSuccessful)
+                {
+                    return JsonConvert.DeserializeObject<AccountReportRunSetClient>(response.Content);
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to get account HTML report for execution id '{executionId}'.");
+                    return null!;
+                }
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Failed to get account HTML report for execution id '{executionId}'.", ex);
+                return null!;
+            }
         }
     }
 }
