@@ -495,18 +495,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             resultsFlex.SetAttributeValue("id", "results");
             contentArea.AppendChild(resultsFlex);
 
-            //if (!string.IsNullOrEmpty(results.Error))
-            //{
-            //    var errorHeader = doc.CreateElement("h2");
-            //    errorHeader.InnerHtml = "SCAN ERRORS:";
-            //    contentArea.AppendChild(errorHeader);
-
-            //    var errorContent = doc.CreateElement("div");
-            //    errorContent.SetAttributeValue("id", "ErrorMessage");
-            //    errorContent.InnerHtml = HttpUtility.HtmlEncode(results.Error);
-            //    contentArea.AppendChild(errorContent);
-            //}
-
             if (violationCount > 0 && requestedResults.HasFlag(ReportTypes.Violations))
             {
                 GetReadableAxeResults(results.Violations, ResultType.Violations, doc, resultsFlex);
@@ -627,11 +615,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     content = new StringBuilder();
                     htmlAndSelector = doc.CreateElement("p");
                     htmlAndSelector.SetAttributeValue("class", "wrapTwo");
-
-                    //foreach (var target in item.Target)
-                    //{
-                    //    content.AppendLine($"{HttpUtility.HtmlEncode(target)}");
-                    //}
 
                     htmlAndSelector.InnerHtml = content.ToString();
                     htmlAndSelectorWrapper.AppendChild(htmlAndSelector);
