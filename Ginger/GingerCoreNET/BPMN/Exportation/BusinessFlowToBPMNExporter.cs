@@ -73,7 +73,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
         {
             Collaboration businessFlowCollaboration = CreateCollaborationFromBusinessFlow(businessFlow);
             string businessFlowCollaborationXML = SerializeCollaborationToXML(businessFlowCollaboration);
-            string businessFlowCollaborationBPMNFileName = $"usecase-{businessFlow.Guid}.bpmn";
+            string businessFlowCollaborationBPMNFileName = $"usecase-{businessFlow.Name}.bpmn";
             return new BPMNFileData(businessFlowCollaborationBPMNFileName, businessFlowCollaborationXML);
         }
 
@@ -86,7 +86,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             }
 
             string activityGroupCollaborationXML = SerializeCollaborationToXML(activityGroupCollaboration);
-            string activityGroupCollaborationBPMNFileName = $"subprocess-{activityGroup.Guid}.bpmn";
+            string activityGroupCollaborationBPMNFileName = $"subprocess-{activityGroup.Name}.bpmn";
             return new BPMNFileData(activityGroupCollaborationBPMNFileName, activityGroupCollaborationXML);
         }
 
