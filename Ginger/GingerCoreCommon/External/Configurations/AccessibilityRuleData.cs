@@ -14,10 +14,19 @@ namespace Ginger.Configurations
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool mActive = false;
+        /// <summary>
+        /// Gets or sets the Active associated with the accessibility rule.
+        /// </summary>
         [IsSerializedForLocalRepository]
         public bool Active { get { return mActive; } set { if (mActive != value) { mActive = value; OnPropertyChanged(nameof(Active)); } } }
+        /// <summary>
+        /// Gets or sets the Rule Id associated with the accessibility rule.
+        /// </summary>
         [IsSerializedForLocalRepository]
         public string RuleID { get; set; }
+        /// <summary>
+        /// Gets or sets the tags associated with the accessibility rule.
+        /// </summary>
         [IsSerializedForLocalRepository]
         public string Tags { get; set; }
 
