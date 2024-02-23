@@ -1608,7 +1608,18 @@ namespace GingerCore.Drivers
                     axeResult = axeBuilder.Analyze();
                 }
 
-                string path = $"{WorkSpace.Instance.Solution.ContainingFolderFullPath}\\{act.ItemName} AxeReport.html";
+                string path = String.Empty;
+
+                if(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder != null)
+                {
+                    string folderPath = Path.Combine(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, @"AccessibilityReport\");
+                    if (!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+                    path = $"{folderPath}{Path.DirectorySeparatorChar}{act.ItemName} AxeReport.html";
+                }
+
                 act.CreateAxeHtmlReport(Driver, axeResult, path,ActAccessibilityTesting.ReportTypes.All);
                 act.AddOrUpdateReturnParamActual(ParamName: "Accessibility report", ActualValue: path );
                 SetAxeResultToAction(act, axeResult);
