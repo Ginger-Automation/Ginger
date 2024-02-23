@@ -17,7 +17,6 @@ limitations under the License.
 #endregion
 
 using AccountReport.Contracts.ResponseModels;
-using ACL_Data_Contract;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
@@ -31,13 +30,13 @@ using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.Utility;
 using Ginger.Reports;
-using Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
 using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Activities;
 using GingerWPF.WizardLib;
+using Microsoft.VisualStudio.Services.Common;
 using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
@@ -563,6 +562,10 @@ namespace Ginger.Run
                         {
                             return;
                         }
+                        foreach(ExecutedActivity executedActivity in bfSequences.SelectMany(bfSeq => bfSeq.ExecutedActivities))
+                        {
+                            executedActivity.ExistInSharedRepository = ActivityExistInSharedRepository(executedActivity.Name);
+                        }
 
                         int exportedSuccessfullyCount = 0;
                         foreach (BusinessFlowExecutionSequence bfSequence in bfSequences)
@@ -615,12 +618,32 @@ namespace Ginger.Run
                 BusinessFlow bf = GetBusinessFlowByName(liteBF.Name);
                 IEnumerable<ExecutedActivity> activities = liteBF
                     .AllActivitiesColl
-                    .Select(liteActivity => GetBusinessFlowActivityByName(bf, liteActivity.Name)!)
-                    .Where(activity => activity != null)
-                    .Select(activity => new ExecutedActivity(
-                        activity,
-                        existInSR: ActivityExistInSharedRepository(activity.ActivityName),
-                        existInBF: true));
+                    .Select(seqActivity =>
+                    {
+                        bool existInSR, existInBF;
+                        GingerCore.Activity? activity;
+
+                        activity = GetActivityFromSharedRepository(seqActivity.Name);
+                        existInSR = activity != null;
+                        if (activity == null)
+                        {
+                            activity = GetActivityFromBusinessFlow(bf, seqActivity.Name);
+                            existInBF = activity != null;
+                        }
+                        else
+                        {
+                            existInBF = ActivityExistInBusinessFlow(bf, seqActivity.Name);
+                        }
+
+                        if (activity == null)
+                        {
+                            return null!;
+                        }
+
+                        return new ExecutedActivity(activity, existInSR, existInBF);
+                    })
+                    .Where(executedActivity => executedActivity != null)
+                    .ToArray();
 
                 bfExecSequences.Add(new(bf, activities));
             }
@@ -641,13 +664,32 @@ namespace Ginger.Run
                     List<AccountReportActivityClient> activities = businessFlow.ActivitiesColl; 
 
                     IEnumerable<ExecutedActivity> executedActivities = activities
-                        .Select(activity => GetBusinessFlowActivityByName(bf, activity.Name)!)
-                        .Where(activity => activity != null)
-                        .Select(activity => new ExecutedActivity(
-                            activity,
-                            existInSR: ActivityExistInSharedRepository(activity.ActivityName),
-                            existInBF: true))
-                        .ToList();
+                        .Select(seqActivity =>
+                        {
+                            bool existInSR, existInBF;
+                            GingerCore.Activity? activity;
+
+                            activity = GetActivityFromSharedRepository(seqActivity.Name);
+                            existInSR = activity != null;
+                            if (activity == null)
+                            {
+                                activity = GetActivityFromBusinessFlow(bf, seqActivity.Name);
+                                existInBF = activity != null;
+                            }
+                            else
+                            {
+                                existInBF = ActivityExistInBusinessFlow(bf, seqActivity.Name);
+                            }
+
+                            if (activity == null)
+                            {
+                                return null!;
+                            }
+
+                            return new ExecutedActivity(activity, existInSR, existInBF);
+                        })
+                        .Where(executedActivity => executedActivity != null)
+                        .ToArray();
 
                     bfExecSequences.Add(new(bf, executedActivities));
                 }
@@ -672,13 +714,6 @@ namespace Ginger.Run
             return bf;
         }
 
-        private GingerCore.Activity? GetBusinessFlowActivityByName(BusinessFlow bf, string activityName)
-        {
-            return bf
-                .Activities
-                .FirstOrDefault(activity => string.Equals(activity.ActivityName, activityName));
-        }
-
         private bool ActivityExistInSharedRepository(string name)
         {
             return WorkSpace
@@ -686,6 +721,29 @@ namespace Ginger.Run
                 .SolutionRepository
                 .GetAllRepositoryItems<GingerCore.Activity>()
                 .Any(activity => string.Equals(activity.ActivityName, name));
+        }
+
+        public bool ActivityExistInBusinessFlow(BusinessFlow bf, string name)
+        {
+            return bf
+                .Activities
+                .Any(activity => string.Equals(activity.ActivityName, name));
+        }
+
+        private GingerCore.Activity? GetActivityFromSharedRepository(string name)
+        {
+            return WorkSpace
+                .Instance
+                .SolutionRepository
+                .GetAllRepositoryItems<GingerCore.Activity>()
+                .FirstOrDefault(activity => string.Equals(activity.ActivityName, name));
+        }
+
+        private GingerCore.Activity? GetActivityFromBusinessFlow(BusinessFlow bf, string activityName)
+        {
+            return bf
+                .Activities
+                .FirstOrDefault(activity => string.Equals(activity.ActivityName, activityName));
         }
 
         private bool ActivityGroupExistInSharedRepository(string name)
@@ -728,29 +786,53 @@ namespace Ginger.Run
 
         private void ExportUseCaseFromBusinessFlowExecutionSequence(BusinessFlowExecutionSequence bfSequence)
         {
-            BusinessFlow bf = GetBusinessFlowByName(bfSequence.Name);
-            IEnumerable<ActivitiesGroup> groups = bf
+            bool allActivityExistInSR = bfSequence
+                .ExecutedActivities
+                .All(executedActivity => executedActivity.ExistInSharedRepository);
+
+            if (!allActivityExistInSR)
+            {
+                throw new Exception($"All activities must be added to shared repository for generating use case.");
+            }
+
+            ActivitiesGroup virtualGroup = new()
+            {
+                Name = GenerateVirtualGroupNameForBusinessFlow(bfSequence.BusinessFlow)
+            };
+
+            IEnumerable<ActivitiesGroup> groups = bfSequence.BusinessFlow
                 .ActivitiesGroups
                 .Select(group => new ActivitiesGroup()
                 {
                     Name = group.Name
                 })
+                .Concat(new[] { virtualGroup })
                 .ToArray();
-            IEnumerable<GingerCore.Activity> activities = bf
-                .Activities
-                .Select(activity =>
+
+            ActivitiesGroup prevGroup = virtualGroup;
+            foreach (ExecutedActivity executedActivity in bfSequence.ExecutedActivities)
+            {
+                ActivitiesGroup? group = null;
+
+                if (executedActivity.ExistInBusinessFlow)
                 {
-                    ActivitiesGroup group = groups.First(g => string.Equals(g.Name, activity.ActivitiesGroupID));
-                    group.ActivitiesIdentifiers.Add(new()
-                    {
-                        ActivityName = activity.ActivityName,
-                    });
-                    return new GingerCore.Activity()
-                    {
-                        ActivityName = activity.ActivityName,
-                        ActivitiesGroupID = activity.ActivitiesGroupID
-                    };
-                })
+                    groups.FirstOrDefault(g => string.Equals(g.Name, executedActivity.Activity.ActivitiesGroupID));
+                }
+
+                if (group == null)
+                {
+                    group = prevGroup;
+                }
+
+                group.ActivitiesIdentifiers.Add(new()
+                {
+                    ActivityName = executedActivity.Name,
+                });
+            }
+
+            IEnumerable<GingerCore.Activity> activities = bfSequence
+                .ExecutedActivities
+                .Select(executedActivity => executedActivity.Activity)
                 .ToArray();
 
             BusinessFlow executedBF = new()
@@ -761,6 +843,27 @@ namespace Ginger.Run
             };
 
             ExportUseCaseFromBusinessFlow(executedBF);
+        }
+
+        private string GenerateVirtualGroupNameForBusinessFlow(BusinessFlow bf)
+        {
+            string virtualGroupName = $"{bf.Name}_Virtual";
+
+            bool groupWithSameNameExists(string name)
+            {
+                return bf
+                    .ActivitiesGroups
+                    .Any(group => string.Equals(group.Name, name));
+            }
+
+            if (!groupWithSameNameExists(virtualGroupName))
+                return virtualGroupName;
+
+            int copyCount = 1;
+            while (groupWithSameNameExists($"{virtualGroupName}{copyCount}"))
+                copyCount++;
+
+            return $"{virtualGroupName}{copyCount}";
         }
 
         private Task<AccountReportRunSetClient> GetExecutionDataFromAccountReportAsync(string executionId)
@@ -774,11 +877,15 @@ namespace Ginger.Run
             string fullBPMNExportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BPMNExportPath);
             BusinessFlowToBPMNExporter bpmnExporter = new(
                 businessFlow,
-                new CollaborationFromActivityGroupCreator.Options()
+                new BusinessFlowToBPMNExporter.Options()
                 {
-                    NonDeterministicFlowControlHandlingStrategy = NonDeterministicFlowControlHandlingStrategy.Ignore
-                },
-                fullBPMNExportPath);
+                    ExportPath = fullBPMNExportPath,
+                    IgnoreGroupWithNoValidActivity = true,
+                    GroupConversionOptions = new()
+                    {
+                        NonDeterministicFlowControlHandlingStrategy = NonDeterministicFlowControlHandlingStrategy.Ignore
+                    }
+                });
             bpmnExporter.Export();
         }
 
@@ -801,7 +908,9 @@ namespace Ginger.Run
         {
             public GingerCore.Activity Activity { get; }
 
-            public bool ExistInSharedRepository { get; }
+            public string Name => Activity.ActivityName;
+
+            public bool ExistInSharedRepository { get; set; }
 
             public bool ExistInBusinessFlow { get; }
 

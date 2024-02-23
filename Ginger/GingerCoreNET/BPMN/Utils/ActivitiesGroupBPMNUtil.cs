@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Utils
 
             if (!activities.Any())
             {
-                throw new BPMNConversionException($"No eligible {GingerDicser.GetTermResValue(eTermResKey.Activity)} found for creating BPMN in {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} '{activityGroup.Name}'.\n\nHINT: Make sure {GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)} contains at least one active {GingerDicser.GetTermResValue(eTermResKey.Activity)}.");
+                throw NoValidActivityFoundInGroupException.WithDefaultMessage(activityGroup.Name);
             }
 
             return activities;
