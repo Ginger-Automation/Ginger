@@ -155,10 +155,13 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             bpmnMetaDataElement.AppendChild(descriptionElement);
 
             //TODO: BPMN - Validate definitions->collaboration->extensionElements->bpmnMetadata->systemRef
-            XmlElement systemRefElement = xmlDocument.CreateElement(IG_XML_PREFIX, "systemRef", IG_XML_URI);
-            XmlText systemRefTextNode = xmlDocument.CreateTextNode(collaboration.SystemRef);
-            systemRefElement.AppendChild(systemRefTextNode);
-            bpmnMetaDataElement.AppendChild(systemRefElement);
+            if (!string.IsNullOrEmpty(collaboration.SystemRef))
+            {
+                XmlElement systemRefElement = xmlDocument.CreateElement(IG_XML_PREFIX, "systemRef", IG_XML_URI);
+                XmlText systemRefTextNode = xmlDocument.CreateTextNode(collaboration.SystemRef);
+                systemRefElement.AppendChild(systemRefTextNode);
+                bpmnMetaDataElement.AppendChild(systemRefElement);
+            }
 
             XmlElement domainRefElement = xmlDocument.CreateElement(IG_XML_PREFIX, "domainRef", IG_XML_URI);
             XmlText domainRefTextNode = xmlDocument.CreateTextNode("32"); //static value

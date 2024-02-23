@@ -263,12 +263,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             Participant firstParticipant = participants.First();
 
-            Collaboration collaboration = new(_activityGroup.Guid, CollaborationType.SubProcess)
-            {
-                Name = _activityGroup.Name,
-                SystemRef = firstParticipant.Guid.ToString(),
-                Description = _activityGroup.Description
-            };
+            Collaboration collaboration = Collaboration.CreateForSubProcess(
+                guid: _activityGroup.Guid,
+                systemRef: firstParticipant.Guid.ToString());
+            collaboration.Name = _activityGroup.Name;
+            collaboration.Description = _activityGroup.Description;
 
             foreach (Participant participant in participants)
             {

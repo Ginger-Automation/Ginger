@@ -56,14 +56,10 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             IEnumerable<Participant> participants = CreateParticipants();
 
-            Participant firstParticipant = participants.First();
-
-            Collaboration collaboration = new(_businessFlow.Guid, CollaborationType.UseCase)
-            {
-                Name = _businessFlow.Name,
-                SystemRef = firstParticipant.Guid.ToString(),
-                Description = _businessFlow.Description
-            };
+            Collaboration collaboration = Collaboration.CreateForUseCase(
+                guid: _businessFlow.Guid);
+            collaboration.Name = _businessFlow.Name;
+            collaboration.Description = _businessFlow.Description;
 
             foreach (Participant participant in participants)
             {
