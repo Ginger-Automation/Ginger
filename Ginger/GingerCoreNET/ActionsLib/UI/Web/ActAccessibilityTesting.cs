@@ -271,36 +271,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         }
         public ObservableList<AccessibilityRuleData> RulesItemsdata;
 
-        //public ObservableList<AccessibilityRuleData> GetRulesAsPerTags()
-        //{
-        //    List<AccessibilityRuleData> Exculedrules = new  List<AccessibilityRuleData>();
-        //    if(OperationValueList != null && OperationValueList.Count > 0 && RulesItemsdata != null)
-        //    {
-        //        var operationValues = OperationValueList.Select(y => y.Value).ToList();
-        //        Exculedrules = RulesItemsdata.Where(x => operationValues.Contains(x.Tags)).ToList();
-        //    }
-        //    else
-        //    {
-        //        RulesItemsdata = RulesItemsdata == null ? GetRuleList() : RulesItemsdata;
-        //    }
-        //    foreach(AccessibilityRuleData ruleData in Exculedrules)
-        //    {
-        //        ruleData.Active = ExcludeRuleList!= null && ExcludeRuleList.Any(x=>x.RuleID == ruleData.RuleID) ? ExcludeRuleList.FirstOrDefault(x => x.RuleID == ruleData.RuleID).Active : false;
-        //    }
-        //    return Exculedrules.Any() ? new ObservableList<AccessibilityRuleData>(Exculedrules) : RulesItemsdata;
-        //}
-
-        //public ObservableList<AccessibilityRuleData> GetAllRules()
-        //{
-        //    ObservableList<AccessibilityRuleData> Inculedrules = new ObservableList<AccessibilityRuleData>();
-
-        //    Inculedrules = RulesItemsdata == null ? GetRuleList() : RulesItemsdata;
-        //    foreach (AccessibilityRuleData ruleData in Inculedrules)
-        //    {
-        //        ruleData.Active = IncludeRuleList != null && IncludeRuleList.Any(x => x.RuleID == ruleData.RuleID) ? IncludeRuleList.FirstOrDefault(x => x.RuleID == ruleData.RuleID).Active : false;
-        //    }
-        //    return new ObservableList<AccessibilityRuleData>(Inculedrules);
-        //}
 
 
         public ObservableList<AccessibilityRuleData> GetRuleList()
@@ -310,10 +280,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             try
             {
                 ruleDatalist = accessibilityConfiguration.GetAccessibilityRules();
-                //foreach (AccessibilityRuleData item in ruleDatalist)
-                //{
-                //    item.PropertyChanged += RuleData_PropertyChanged;
-                //}
             }
             catch (Exception ex)
             {
@@ -321,11 +287,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             }
             return ruleDatalist;
         }
-
-        //private void RuleData_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        //{
-        //    OnPropertyChanged(nameof(ExcludeRuleList));
-        //}
 
         private Dictionary<string, object> _items;
 

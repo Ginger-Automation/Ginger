@@ -228,69 +228,6 @@ namespace Ginger.Actions
             }
         }
 
-        //private void SetExcludeGridView()
-        //{
-        //    UpdateExcludeRuleGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Elements", new RoutedEventHandler(CheckUnCheckAllExcludeRules));
-        //    GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-        //    defView.GridColsView = new ObservableList<GridColView>();
-
-        //    defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
-        //    defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.RuleID), Header = "Rule Id", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-        //    defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Tags), Header = "Tag", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-        //    defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Impact), Header = "Severity", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-        //    defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Description), WidthWeight = 50, ReadOnly = true });
-
-        //    UpdateExcludeRuleGrid.SetAllColumnsDefaultView(defView);
-        //    UpdateExcludeRuleGrid.InitViewItems();
-        //    UpdateExcludeRuleGrid.DataSourceList = mAct.ExcludeRuleList;
-        //    UpdateExcludeRuleGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
-        //}
-
-        //private void SetIncludeGridView()
-        //{
-        //    UpdateIncludeRuleGrid.AddToolbarTool("@UnCheckAllColumn_16x16.png", "Check/Uncheck All Elements", new RoutedEventHandler(CheckUnCheckAllIncludeRules));
-        //    GridViewDef defView = new GridViewDef(GridViewDef.DefaultViewName);
-        //    defView.GridColsView = new ObservableList<GridColView>();
-
-        //    defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
-        //    defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.RuleID), Header = "Rule Id", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-        //    defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Tags), Header = "Tag", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-        //    defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Impact), Header = "Severity", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-        //    defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Description), WidthWeight = 50, ReadOnly = true });
-
-        //    UpdateIncludeRuleGrid.SetAllColumnsDefaultView(defView);
-        //    UpdateIncludeRuleGrid.InitViewItems();
-        //    UpdateIncludeRuleGrid.DataSourceList = mAct.IncludeRuleList;
-        //    UpdateIncludeRuleGrid.SetTitleStyle((Style)TryFindResource("@ucTitleStyle_4"));
-        //}
-
-        //private void CheckUnCheckAllExcludeRules(object sender, RoutedEventArgs e)
-        //{
-        //    if (mAct.ExcludeRuleList.Count > 0)
-        //    {
-        //        bool areallSelected = mAct.ExcludeRuleList.All(x=>x.Active);
-
-        //        foreach (AccessibilityRuleData elem in mAct.ExcludeRuleList)
-        //        {
-        //            elem.Active = !areallSelected;
-        //        }
-
-        //    }
-        //}
-
-        //private void CheckUnCheckAllIncludeRules(object sender, RoutedEventArgs e)
-        //{
-        //    if (mAct.IncludeRuleList.Count > 0)
-        //    {
-        //        bool areallSelected = mAct.IncludeRuleList.Any(x => x.Active == false);
-
-        //        foreach (AccessibilityRuleData elem in mAct.IncludeRuleList)
-        //        {
-        //            elem.Active = !areallSelected;
-        //        }
-        //    }
-        //}
-
         public ObservableList<OperationValues> GetStandardTagslist()
         {
             ObservableList<OperationValues> StandardTagList = new ObservableList<OperationValues>();
