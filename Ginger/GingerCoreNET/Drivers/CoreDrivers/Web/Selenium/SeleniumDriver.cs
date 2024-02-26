@@ -34,6 +34,8 @@ using Amdocs.Ginger.Repository;
 using Applitools;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
+using Ginger.Configurations;
+
 //using Selenium.Axe;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -1631,24 +1633,25 @@ namespace GingerCore.Drivers
                 {
                     XPath = true
                 });
-            if (act.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByTag.ToString())
+            List<string> sevritylist = act.SeverityOperationValueList.Select(x => x.Value.ToLower()).ToList();
+            if (act.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString())
             {
                 if (act.OperationValueList != null && act.OperationValueList.Any())
                 {
                     string[] Tag_array = act.OperationValueList.Select(i => i.Value.ToString()).ToArray();
                     axeBuilder.WithTags(Tag_array);
                 }
-                if (act.ExcludeRuleList != null && act.ExcludeRuleList.Any(i => i.Active))
+                string[] ExcludeRules = act.RulesItemsdata.Where(x => sevritylist.Contains(x.Impact.ToLower())).Select(i => i.RuleID.ToString()).ToArray();
+                if (ExcludeRules != null && ExcludeRules.Any())
                 {
-                    string[] ExcludeRules = act.ExcludeRuleList.Where(i => i.Active).Select(i => i.RuleID.ToString()).ToArray();
                     axeBuilder.DisableRules(ExcludeRules);
                 }
             }
-            else
+            else if (act.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString())
             {
-                if (act.IncludeRuleList != null && act.IncludeRuleList.Any(i => i.Active))
+                string[] IncludeRules = act.RulesItemsdata.Where(x => sevritylist.Contains(x.Impact.ToLower())).Select(i => i.RuleID.ToString()).ToArray();
+                if (IncludeRules != null && IncludeRules.Any())
                 {
-                    string[] IncludeRules = act.IncludeRuleList.Where(i=> i.Active).Select(i => i.RuleID.ToString()).ToArray();
                     axeBuilder.WithRules(IncludeRules);
                 }
             }
@@ -1658,23 +1661,39 @@ namespace GingerCore.Drivers
         private void SetAxeResultToAction(ActAccessibilityTesting act, AxeResult axeResult)
         {
             bool hasAnyViolations = axeResult.Violations.Any();
+            bool ActionResult = false;
 
-            if (act.SeverityOperationValueList != null && act.SeverityOperationValueList.Any() && act.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByTag.ToString())
+            if (act.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString() && act.SeverityOperationValueList != null && act.SeverityOperationValueList.Any())
             {
                 List<string> sevritylist = act.SeverityOperationValueList.Select(x => x.Value.ToLower()).ToList();
                 List<string> Violationsevrity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()).ToList() : new List<string>();
                 foreach(string severity in sevritylist)
                 {
-                    hasAnyViolations = !Violationsevrity.Any(y => y.Equals(severity));
+                    ActionResult = !Violationsevrity.Any(y => y.Equals(severity));
                 }
-                
+            }
+            else if(act.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString() && act.SeverityOperationValueList != null && act.SeverityOperationValueList.Any())
+            {
+                List<string> sevritylist = act.SeverityOperationValueList.Select(x => x.Value.ToLower()).ToList();
+                List<string> Violationsevrity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()).ToList() : new List<string>();
+                foreach (string severity in sevritylist)
+                {
+                    ActionResult = Violationsevrity.Any(y => y.Equals(severity));
+                }
             }
             var jsonresponse = JsonConvert.SerializeObject(axeResult, Formatting.Indented);
             act.RawResponseValues = jsonresponse;
             act.AddOrUpdateReturnParamActual(ParamName: "Raw Response", ActualValue: jsonresponse);
             if (hasAnyViolations)
             {
-                act.Status = eRunStatus.Failed;
+                if(ActionResult)
+                {
+                    act.Status = eRunStatus.Failed;
+                }
+                else
+                {
+                    act.Status = eRunStatus.Passed;
+                }
                 act.Error = $"Accessibility testing resulted in violations.";
                 act.AddOrUpdateReturnParamActual(ParamName: "ViolationCount", ActualValue: axeResult.Violations.Length.ToString());
                 act.AddOrUpdateReturnParamActual(ParamName: "ViolationList", ActualValue: String.Join(",", axeResult.Violations.Select(x => x.Id)));
@@ -1691,7 +1710,7 @@ namespace GingerCore.Drivers
                         }
 
                         act.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationHelp", ActualValue: violation.Help, violatedNodeIndex.ToString());
-                        act.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationImpact", ActualValue: violation.Impact, violatedNodeIndex.ToString());
+                        act.AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationSeverity", ActualValue: violation.Impact, violatedNodeIndex.ToString());
                     }
                 }
             }

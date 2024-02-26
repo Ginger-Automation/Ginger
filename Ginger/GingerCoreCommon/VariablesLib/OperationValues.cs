@@ -63,6 +63,10 @@ namespace Amdocs.Ginger.Common.VariablesLib
             }
         }
 
-        public override string ItemName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public override string ItemName 
+        { 
+            get;
+            set; 
+        }
     }
 }
