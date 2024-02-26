@@ -91,11 +91,12 @@ namespace Ginger.Actions
             xLocateValueVE.BindControl(Context.GetAsContext(mAct.Context), mAct, Act.Fields.LocateValue);
             xTargetRadioButton.Init(typeof(ActAccessibilityTesting.eTarget), xTargetRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page.ToString()), TargetRadioButton_Clicked);
             xAnalyzerRadioButton.Init(typeof(ActAccessibilityTesting.eAnalyzer), xAnalyzerRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByStandard.ToString()), AnalyzerRadioButton_Clicked);
-            BindControl();
+            BindControlForTarget();
+            BindControlForAnalyzer();
             SetLocateValueFrame();
         }
 
-        private void BindControl()
+        private void BindControlForTarget()
         {
             if ((mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
             {
@@ -105,16 +106,18 @@ namespace Ginger.Actions
             {
                 xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Collapsed;
             }
-
+        }
+        private void BindControlForAnalyzer()
+        {
             if ((mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString()))
             {
                 xStdStack.Visibility = System.Windows.Visibility.Visible;
-                xSeveritylbl.Content = "Acceptable Severities";
+                xSeveritylbl.Content = "Acceptable Severities :";
             }
-            else if((mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString()))
+            else if ((mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString()))
             {
                 xStdStack.Visibility = System.Windows.Visibility.Collapsed;
-                xSeveritylbl.Content = "Severities";
+                xSeveritylbl.Content = "Severities :";
             }
         }
 
@@ -136,30 +139,12 @@ namespace Ginger.Actions
 
         private void TargetRadioButton_Clicked(object sender, System.Windows.RoutedEventArgs e)
         {
-            if (mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString())
-            {
-                xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
-            }
-            else if(mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Page.ToString())
-            {
-                xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
-            }
+            BindControlForTarget();
         }
 
         private void AnalyzerRadioButton_Clicked(object sender, System.Windows.RoutedEventArgs e)
         {
-            RadioButton rbSender1 = sender as RadioButton;
-
-            if(mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString())
-            {
-                xStdStack.Visibility = System.Windows.Visibility.Visible;
-                xSeveritylbl.Content = "Acceptable Severitie's :";
-            }
-            else if(mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString())
-            {
-                xStdStack.Visibility = System.Windows.Visibility.Collapsed;
-                xSeveritylbl.Content = "Severitie's :";
-            }
+            BindControlForAnalyzer();
         }
 
         private void SetLocateValueFrame()
@@ -231,13 +216,13 @@ namespace Ginger.Actions
         public ObservableList<OperationValues> GetStandardTagslist()
         {
             ObservableList<OperationValues> StandardTagList = new ObservableList<OperationValues>();
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag2a.ToString(), DisplayName = GingerCore.General.GetEnumDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag2a) });
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag2aa.ToString(), DisplayName = GingerCore.General.GetEnumDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag2aa) });
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag21a.ToString(), DisplayName = GingerCore.General.GetEnumDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag21a) });
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag21aa.ToString(), DisplayName = GingerCore.General.GetEnumDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag21aa) });
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag22a.ToString(), DisplayName = GingerCore.General.GetEnumDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag22a) });
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag22aa.ToString(), DisplayName = GingerCore.General.GetEnumDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag22aa) });
-            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.bestpractice.ToString(), DisplayName = GingerCore.General.GetEnumDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.bestpractice) });
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag2a.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag2a.ToString()) });
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag2aa.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag2aa.ToString()) });
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag21a.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag21a.ToString()) });
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag21aa.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag21aa.ToString()) });
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag22a.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag22a.ToString()) });
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag22aa.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag22aa.ToString()) });
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.bestpractice.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.bestpractice.ToString()) });
             return StandardTagList;
         }
 
