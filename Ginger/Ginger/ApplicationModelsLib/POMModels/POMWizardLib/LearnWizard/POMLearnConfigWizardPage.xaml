@@ -62,7 +62,7 @@
                                 <TextBlock Margin="7,9,0,10" >Learn:</TextBlock>
                                 <CheckBox x:Name="xLearnScreenshotsOfElements" AutomationProperties.AutomationId="LearnScreenshotsElementsCheckBox AID" Content="Elements Screenshots" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="False" Style="{StaticResource $CeckBoxStyle}"/>
                                 <CheckBox x:Name="xLearnOnlyMappedElements" AutomationProperties.AutomationId="LearnOnlyMappedElementsCheckBox AID" Content="Only Mapped Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" IsEnabled="False" Style="{StaticResource $CeckBoxStyle}"/>
-                                <CheckBox x:Name="xLearnShadowDOMElements" AutomationProperties.AutomationId="LearnOnlyMappedElementsCheckBox AID" Content="Shadow DOM Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="False" IsEnabled="False" Style="{StaticResource $CeckBoxStyle}"/>
+                                <CheckBox x:Name="xLearnShadowDOMElements" AutomationProperties.AutomationId="LearnShadowDOMElementsCheckBox AID" Content="Shadow DOM Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="False" IsEnabled="False" Style="{StaticResource $CeckBoxStyle}"/>
                             </StackPanel>
                             
                             
