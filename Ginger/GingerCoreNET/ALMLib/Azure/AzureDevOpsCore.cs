@@ -311,6 +311,10 @@ namespace GingerCore.ALM
 
         public  void TestCaseEntryInSuite(BusinessFlow bf)
         {
+            try
+            {
+
+            
             LoginDTO login = GetLoginDTO();
             string projectName = login.Project;
             VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
@@ -323,25 +327,29 @@ namespace GingerCore.ALM
             TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
 
 
-
-            foreach (ActivitiesGroup ag  in bf.ActivitiesGroups)
-            {
-                WorkItem2 testcasetoAdd = new()
+            
+                foreach (ActivitiesGroup ag in bf.ActivitiesGroups)
                 {
-                    Id = Int32.Parse(ag.ExternalID)
-                };
+                    WorkItem2 testcasetoAdd = new()
+                    {
+                        Id = Int32.Parse(ag.ExternalID)
+                    };
 
-                SuiteTestCaseCreateUpdateParameters parameters = new()
-                {
-                    workItem = testcasetoAdd
-                };
+                    SuiteTestCaseCreateUpdateParameters parameters = new()
+                    {
+                        workItem = testcasetoAdd
+                    };
 
-                IEnumerable<SuiteTestCaseCreateUpdateParameters> parametersCollection = new List<SuiteTestCaseCreateUpdateParameters> { parameters };
+                    IEnumerable<SuiteTestCaseCreateUpdateParameters> parametersCollection = new List<SuiteTestCaseCreateUpdateParameters> { parameters };
 
 
-                testPlanClient.AddTestCasesToSuiteAsync(parametersCollection, projectName, planId, suiteId);
+                    testPlanClient.AddTestCasesToSuiteAsync(parametersCollection, projectName, planId, suiteId);
+                }
             }
-           
+            catch (Exception)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error related to Suite case entry");
+            }
 
         }
         public static void CreateNewTestPlanOrSuite(BusinessFlow bf)
@@ -605,13 +613,13 @@ namespace GingerCore.ALM
         public List<TestPlanWebApi.TestPlan> GetTestSuiteRun(string testSuiteId)
         {
             string projectName = ALMCore.DefaultAlmConfig.ALMProjectName;
-            //int testPlanId =getTestPlanId();
+            
             LoginDTO loginCred = GetLoginDTO();
             // Get a testplan client instance
             VssConnection connection = AzureDevOpsRepository.LoginAzure(loginCred);
             TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
 
-            // Get Test Suites
+            
             // Get test plans
             List<TestPlanWebApi.TestPlan> plans = testPlanClient.GetTestPlansAsync(projectName).Result;
             return plans;
