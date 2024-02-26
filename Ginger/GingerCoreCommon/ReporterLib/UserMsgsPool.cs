@@ -181,6 +181,7 @@ namespace Amdocs.Ginger.Common
         ConflictsResolvedCount,
         AddActivityGroupsToSharedRepositoryForBPMNConversion, 
         AddActivitiesToSharedRepositoryForBPMNConversion,
+        AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport,
         FailedToDownloadDriver
     }
 
@@ -601,6 +602,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.GingerEntityToBPMNConversionError, new UserMsg(eUserMsgType.ERROR, "BPMN Export Failed", "Error occurred while exporting BPMN.\n{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AddActivityGroupsToSharedRepositoryForBPMNConversion, new UserMsg(eUserMsgType.QUESTION, Caption: "Add Missing Activity Groups to Shared Repository", Message: "All the activity groups must be added to shared repository before generating BPMN.\nWould you like to add now?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AddActivitiesToSharedRepositoryForBPMNConversion, new UserMsg(eUserMsgType.QUESTION, Caption: "Add Missing Activities to Shared Repository", Message: "All the activities must be added to shared repository before generating BPMN.\nWould you like to add now?", eUserMsgOption.YesNoCancel, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport, new UserMsg(eUserMsgType.INFO, Caption: "Activities missing from Shared Repository", Message: "All activities must be added to shared repository for generating BPMN.", eUserMsgOption.OK, eUserMsgSelection.OK));
             #endregion
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed, new UserMsg(eUserMsgType.INFO, "Remote Data deletion", "Remote Execution Results will not be deleted.", eUserMsgOption.OK, eUserMsgSelection.OK));

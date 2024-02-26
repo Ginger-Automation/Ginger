@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using AccountReport.Contracts.ResponseModels;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
@@ -24,14 +23,12 @@ using Amdocs.Ginger.CoreNET.BPMN.Exportation;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.Utility;
 using Ginger.Reports;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
 using Ginger.UserControls;
 using GingerCore;
-using GingerCore.Activities;
 using GingerWPF.WizardLib;
 using MongoDB.Driver.Linq;
 using System;
@@ -44,6 +41,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using static Amdocs.Ginger.CoreNET.BPMN.Exportation.RunSetExecutionHistoryToBPMNExporter;
 
 namespace Ginger.Run
 {
@@ -452,262 +450,117 @@ namespace Ginger.Run
         {
             Button BPMNButton = (Button)sender;
             RunSetReport runSetReport = (RunSetReport)BPMNButton.Tag;
+            _ = ExportBPMNFromRunSetReport(runSetReport);
+        }
 
-            System.Threading.Tasks.Task.Run(async () =>
+        private async Task ExportBPMNFromRunSetReport(RunSetReport runSetReport)
+        {
+            try
             {
-                try
+                Dispatcher.Invoke(() => Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNZIP));
+
+                RunSetExecutionHistoryToBPMNExporter exporter = new();
+
+                IEnumerable<ExecutedBusinessFlow> executedBusinessFlows;
+                executedBusinessFlows = await exporter.GetExecutedBusinessFlows(runSetReport.GUID, runSetReport.DataRepMethod);
+
+                executedBusinessFlows = RemoveNonSharedRepositoryActivitiesFromExecutionData(executedBusinessFlows);
+                if (!executedBusinessFlows.Any())
                 {
-                    Dispatcher.Invoke(() => Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNZIP));
+                    return;
+                }
 
-                    IEnumerable<BusinessFlowExecutionSequence> bfSequences;
-                    if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
+                int exportedSuccessfullyCount = 0;
+                foreach (ExecutedBusinessFlow executedBusinessFlow in executedBusinessFlows)
+                {
+                    try
                     {
-                        bfSequences = GetBusinessFlowsExecutionSequencesFromLiteDb(runSetReport.GUID);
+                        exporter.Export(executedBusinessFlow, BPMNExportPath);
+                        exportedSuccessfullyCount++;
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        bfSequences = await GetBusinessFlowsExecutionSequencesRemoteAsync(runSetReport.GUID);
-                    }
-                    List<(BusinessFlow,IEnumerable<GingerCore.Activity>)> activitiesMissingFromSR = [];
-                    foreach (BusinessFlowExecutionSequence bfSequence in bfSequences)
-                    {
-                        activitiesMissingFromSR.Add((
-                            bfSequence.BusinessFlow,
-                            bfSequence
-                                .ExecutedActivities
-                                .Where(executedActivity => !executedActivity.ExistInSharedRepository)
-                                .Select(executedActivity => executedActivity.Activity)
-                                .ToList()));
-                    }
-
-                    bool allItemsExistInSR = !activitiesMissingFromSR
-                        .SelectMany(pair => pair.Item2)
-                        .Any();
-                    if (allItemsExistInSR)
-                    {
-                        int exportedSuccessfullyCount = 0;
-                        foreach (BusinessFlowExecutionSequence bfSequence in bfSequences)
-                        {
-                            try
-                            {
-                                ExportUseCaseFromBusinessFlowExecutionSequence(bfSequence);
-                                exportedSuccessfullyCount++;
-                            }
-                            catch(Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while exporting BPMN for business flow {bfSequence.Name}.", ex);
-                            }
-                        }
-                        if (exportedSuccessfullyCount > 0)
-                        {
-                            Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.MultipleExportToBPMNSuccessful, exportedSuccessfullyCount));
-                        }
-                        else
-                        {
-                            Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, "Unexpected Error, check logs for more details."));
-                        }
-                        return;
-                    }
-
-                    //ask user if they want to add missing activities to Shared Repository
-                    eUserMsgSelection userResponse = Reporter.ToUser(eUserMsgKey.AddActivitiesToSharedRepositoryForBPMNConversion);
-                    if (userResponse == eUserMsgSelection.Cancel)
-                    {
-                        return;
-                    }
-
-                    if (userResponse == eUserMsgSelection.No)
-                    {
-                        int exportedSuccessfullyCount = 0;
-                        foreach (BusinessFlowExecutionSequence bfSequence in bfSequences)
-                        {
-                            try
-                            {
-                                IEnumerable<ExecutedActivity> activitiesExistingInSR = bfSequence
-                                        .ExecutedActivities
-                                        .Where(execitedActivity => execitedActivity.ExistInSharedRepository)
-                                        .ToList();
-
-                                BusinessFlowExecutionSequence filteredBfSequence = new(
-                                    bfSequence.BusinessFlow,
-                                    activitiesExistingInSR);
-
-                                ExportUseCaseFromBusinessFlowExecutionSequence(filteredBfSequence);
-                                exportedSuccessfullyCount++;
-                            }
-                            catch (Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while exporting BPMN for business flow {bfSequence.Name}.", ex);
-                            }
-                        }
-                        if (exportedSuccessfullyCount > 0)
-                        {
-                            Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.MultipleExportToBPMNSuccessful, exportedSuccessfullyCount));
-                        }
-                        else
-                        {
-                            Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, "Unexpected Error, check logs for more details."));
-                        }
-                        return;
-                    }
-
-                    if (userResponse == eUserMsgSelection.Yes)
-                    {
-                        bool wasAllAdded = TryAddActivitiesToSharedRepository(activitiesMissingFromSR);
-                        if (!wasAllAdded)
-                        {
-                            return;
-                        }
-                        foreach(ExecutedActivity executedActivity in bfSequences.SelectMany(bfSeq => bfSeq.ExecutedActivities))
-                        {
-                            executedActivity.ExistInSharedRepository = ActivityExistInSharedRepository(executedActivity.Name);
-                        }
-
-                        int exportedSuccessfullyCount = 0;
-                        foreach (BusinessFlowExecutionSequence bfSequence in bfSequences)
-                        {
-                            try
-                            {
-                                ExportUseCaseFromBusinessFlowExecutionSequence(bfSequence);
-                                exportedSuccessfullyCount++;
-                            }
-                            catch (Exception ex)
-                            {
-                                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while exporting BPMN for business flow {bfSequence.Name}.", ex);
-                            }
-                        }
-                        if (exportedSuccessfullyCount > 0)
-                        {
-                            Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.MultipleExportToBPMNSuccessful, exportedSuccessfullyCount));
-                        }
-                        else
-                        {
-                            Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, "Unexpected Error, check logs for more details."));
-                        }
-                        return;
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while exporting BPMN for business flow {executedBusinessFlow.Name}.", ex);
                     }
                 }
-                catch(Exception ex)
+                if (exportedSuccessfullyCount > 0)
+                {
+                    Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.MultipleExportToBPMNSuccessful, exportedSuccessfullyCount));
+                }
+                else
                 {
                     Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, "Unexpected Error, check logs for more details."));
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while exporting BPMN from execution history.", ex);
                 }
-                finally
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, "Unexpected Error, check logs for more details."));
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while exporting BPMN from execution history.", ex);
+            }
+            finally
+            {
+                Dispatcher.Invoke(() => Reporter.HideStatusMessage());
+            }
+        }
+
+        private IEnumerable<ExecutedBusinessFlow> RemoveNonSharedRepositoryActivitiesFromExecutionData(IEnumerable<ExecutedBusinessFlow> executedBusinessFlows)
+        {
+            List<(BusinessFlow, IEnumerable<GingerCore.Activity>)> activitiesMissingFromSR = [];
+            foreach (ExecutedBusinessFlow executedBusinessFlow in executedBusinessFlows)
+            {
+                activitiesMissingFromSR.Add((
+                    executedBusinessFlow.BusinessFlow,
+                    executedBusinessFlow
+                        .ExecutedActivities
+                        .Where(executedActivity => !executedActivity.ExistInSharedRepository)
+                        .Select(executedActivity => executedActivity.Activity)
+                        .ToArray()));
+            }
+
+            bool allItemsExistInSR = !activitiesMissingFromSR
+                .SelectMany(pair => pair.Item2)
+                .Any();
+
+            if (allItemsExistInSR)
+            {
+                return executedBusinessFlows;
+            }
+
+            //ask user if they want to add missing activities to Shared Repository
+            eUserMsgSelection userResponse = eUserMsgSelection.Cancel;
+            Dispatcher.Invoke(() => userResponse = Reporter.ToUser(eUserMsgKey.AddActivitiesToSharedRepositoryForBPMNConversion));
+            if (userResponse == eUserMsgSelection.Yes)
+            {
+                bool wasAllAdded = TryAddActivitiesToSharedRepository(activitiesMissingFromSR);
+                if (!wasAllAdded)
                 {
-                    Dispatcher.Invoke(() => Reporter.HideStatusMessage());
+                    Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport));
+                    return Array.Empty<ExecutedBusinessFlow>();
                 }
-            });
-        }
 
-        private IEnumerable<BusinessFlowExecutionSequence> GetBusinessFlowsExecutionSequencesFromLiteDb(string executionId)
-        {
-            LiteDbManager liteDbManager = new(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
-            LiteDbRunSet liteRunSet = liteDbManager.GetLatestExecutionRunsetData(executionId);
-            IEnumerable<LiteDbBusinessFlow> liteBFs = liteRunSet
-                .RunnersColl
-                .SelectMany(liteRunner => liteRunner.AllBusinessFlowsColl);
-
-            List<BusinessFlowExecutionSequence> bfExecSequences = [];
-
-            foreach (LiteDbBusinessFlow liteBF in liteBFs)
-            {
-                BusinessFlow bf = GetBusinessFlowByName(liteBF.Name);
-                IEnumerable<ExecutedActivity> activities = liteBF
-                    .AllActivitiesColl
-                    .Select(seqActivity =>
-                    {
-                        bool existInSR, existInBF;
-                        GingerCore.Activity? activity;
-
-                        activity = GetActivityFromSharedRepository(seqActivity.Name);
-                        existInSR = activity != null;
-                        if (activity == null)
-                        {
-                            activity = GetActivityFromBusinessFlow(bf, seqActivity.Name);
-                            existInBF = activity != null;
-                        }
-                        else
-                        {
-                            existInBF = ActivityExistInBusinessFlow(bf, seqActivity.Name);
-                        }
-
-                        if (activity == null)
-                        {
-                            return null!;
-                        }
-
-                        return new ExecutedActivity(activity, existInSR, existInBF);
-                    })
-                    .Where(executedActivity => executedActivity != null)
-                    .ToArray();
-
-                bfExecSequences.Add(new(bf, activities));
+                return executedBusinessFlows;
             }
-
-            return bfExecSequences;
-        }
-
-        private async Task<IEnumerable<BusinessFlowExecutionSequence>> GetBusinessFlowsExecutionSequencesRemoteAsync(string executionId)
-        {
-            List<BusinessFlowExecutionSequence> bfExecSequences = [];
-
-            AccountReportRunSetClient runset = await GetExecutionDataFromAccountReportAsync(executionId);
-            foreach (AccountReportRunnerClient runner in runset.RunnersColl)
+            else if (userResponse == eUserMsgSelection.No)
             {
-                foreach (AccountReportBusinessFlowClient businessFlow in runner.BusinessFlowsColl)
+                List<ExecutedBusinessFlow> filteredExecutedBusinessFlows = [];
+                foreach (ExecutedBusinessFlow executedBusinessFlow in executedBusinessFlows)
                 {
-                    BusinessFlow bf = GetBusinessFlowByName(businessFlow.Name);
-                    List<AccountReportActivityClient> activities = businessFlow.ActivitiesColl; 
+                    IEnumerable<ExecutedActivity> activitiesExistingInSR = executedBusinessFlow
+                                .ExecutedActivities
+                                .Where(execitedActivity => execitedActivity.ExistInSharedRepository)
+                                .ToList();
 
-                    IEnumerable<ExecutedActivity> executedActivities = activities
-                        .Select(seqActivity =>
-                        {
-                            bool existInSR, existInBF;
-                            GingerCore.Activity? activity;
-
-                            activity = GetActivityFromSharedRepository(seqActivity.Name);
-                            existInSR = activity != null;
-                            if (activity == null)
-                            {
-                                activity = GetActivityFromBusinessFlow(bf, seqActivity.Name);
-                                existInBF = activity != null;
-                            }
-                            else
-                            {
-                                existInBF = ActivityExistInBusinessFlow(bf, seqActivity.Name);
-                            }
-
-                            if (activity == null)
-                            {
-                                return null!;
-                            }
-
-                            return new ExecutedActivity(activity, existInSR, existInBF);
-                        })
-                        .Where(executedActivity => executedActivity != null)
-                        .ToArray();
-
-                    bfExecSequences.Add(new(bf, executedActivities));
+                    filteredExecutedBusinessFlows.Add(new ExecutedBusinessFlow(
+                        executedBusinessFlow.BusinessFlow,
+                        activitiesExistingInSR));
                 }
+                return filteredExecutedBusinessFlows;
             }
-
-            return bfExecSequences;
-        }
-
-        private BusinessFlow GetBusinessFlowByName(string name)
-        {
-            BusinessFlow? bf = WorkSpace
-                .Instance
-                .SolutionRepository
-                .GetAllRepositoryItems<BusinessFlow>()
-                .FirstOrDefault(bf => string.Equals(bf.Name, name));
-
-            if (bf == null)
+            else
             {
-                throw new Exception($"No {GingerDicser.GetTermResValue(eTermResKey.BusinessFlows)} found by name '{name}'.");
-            }
+                return Array.Empty<ExecutedBusinessFlow>();
 
-            return bf;
+            }
         }
 
         private bool ActivityExistInSharedRepository(string name)
@@ -719,52 +572,20 @@ namespace Ginger.Run
                 .Any(activity => string.Equals(activity.ActivityName, name));
         }
 
-        public bool ActivityExistInBusinessFlow(BusinessFlow bf, string name)
-        {
-            return bf
-                .Activities
-                .Any(activity => string.Equals(activity.ActivityName, name));
-        }
-
-        private GingerCore.Activity? GetActivityFromSharedRepository(string name)
-        {
-            return WorkSpace
-                .Instance
-                .SolutionRepository
-                .GetAllRepositoryItems<GingerCore.Activity>()
-                .FirstOrDefault(activity => string.Equals(activity.ActivityName, name));
-        }
-
-        private GingerCore.Activity? GetActivityFromBusinessFlow(BusinessFlow bf, string activityName)
-        {
-            return bf
-                .Activities
-                .FirstOrDefault(activity => string.Equals(activity.ActivityName, activityName));
-        }
-
-        private bool ActivityGroupExistInSharedRepository(string name)
-        {
-            return WorkSpace
-                .Instance
-                .SolutionRepository
-                .GetAllRepositoryItems<ActivitiesGroup>()
-                .Any(activityGroup => string.Equals(activityGroup.Name, name));
-        }
-
-        private bool TryAddActivitiesToSharedRepository(IEnumerable<(BusinessFlow,IEnumerable<GingerCore.Activity>)> bfActivities)
+        private bool TryAddActivitiesToSharedRepository(IEnumerable<(BusinessFlow, IEnumerable<GingerCore.Activity>)> bfActivities)
         {
             bool wasAllAdded = false;
             Dispatcher.Invoke(() =>
             {
                 List<UploadItemSelection> uploadItems = new();
-                foreach(var bfActivitiesPair in bfActivities)
+                foreach (var bfActivitiesPair in bfActivities)
                 {
                     BusinessFlow bf = bfActivitiesPair.Item1;
-                    foreach(GingerCore.Activity activity in bfActivitiesPair.Item2)
+                    foreach (GingerCore.Activity activity in bfActivitiesPair.Item2)
                     {
                         uploadItems.Add(UploadItemToRepositoryWizard.CreateUploadItem(
                             activity,
-                            new Amdocs.Ginger.Common.Context()
+                            new Context()
                             {
                                 BusinessFlow = bf
                             }));
@@ -778,148 +599,6 @@ namespace Ginger.Run
                     .All(activity => ActivityExistInSharedRepository(activity.ActivityName));
             });
             return wasAllAdded;
-        }
-
-        private void ExportUseCaseFromBusinessFlowExecutionSequence(BusinessFlowExecutionSequence bfSequence)
-        {
-            bool allActivityExistInSR = bfSequence
-                .ExecutedActivities
-                .All(executedActivity => executedActivity.ExistInSharedRepository);
-
-            if (!allActivityExistInSR)
-            {
-                throw new Exception($"All activities must be added to shared repository for generating use case.");
-            }
-
-            ActivitiesGroup virtualGroup = new()
-            {
-                Name = GenerateVirtualGroupNameForBusinessFlow(bfSequence.BusinessFlow)
-            };
-
-            IEnumerable<ActivitiesGroup> groups = bfSequence.BusinessFlow
-                .ActivitiesGroups
-                .Select(group => new ActivitiesGroup()
-                {
-                    Name = group.Name
-                })
-                .Concat(new[] { virtualGroup })
-                .ToArray();
-
-            ActivitiesGroup prevGroup = virtualGroup;
-            foreach (ExecutedActivity executedActivity in bfSequence.ExecutedActivities)
-            {
-                ActivitiesGroup? group = null;
-
-                if (executedActivity.ExistInBusinessFlow)
-                {
-                    groups.FirstOrDefault(g => string.Equals(g.Name, executedActivity.Activity.ActivitiesGroupID));
-                }
-
-                if (group == null)
-                {
-                    group = prevGroup;
-                }
-
-                group.ActivitiesIdentifiers.Add(new()
-                {
-                    ActivityName = executedActivity.Name,
-                });
-            }
-
-            IEnumerable<GingerCore.Activity> activities = bfSequence
-                .ExecutedActivities
-                .Select(executedActivity => executedActivity.Activity)
-                .ToArray();
-
-            BusinessFlow executedBF = new()
-            {
-                Name = bfSequence.Name,
-                ActivitiesGroups = new(groups),
-                Activities = new(activities)
-            };
-
-            ExportUseCaseFromBusinessFlow(executedBF);
-        }
-
-        private string GenerateVirtualGroupNameForBusinessFlow(BusinessFlow bf)
-        {
-            string virtualGroupName = $"{bf.Name}_Virtual";
-
-            bool groupWithSameNameExists(string name)
-            {
-                return bf
-                    .ActivitiesGroups
-                    .Any(group => string.Equals(group.Name, name));
-            }
-
-            if (!groupWithSameNameExists(virtualGroupName))
-            {
-                return virtualGroupName;
-            }
-
-            int copyCount = 1;
-            while (groupWithSameNameExists($"{virtualGroupName}{copyCount}"))
-            {
-                copyCount++;
-            }
-
-            return $"{virtualGroupName}{copyCount}";
-        }
-
-        private Task<AccountReportRunSetClient> GetExecutionDataFromAccountReportAsync(string executionId)
-        {
-            AccountReportApiHandler handler = new(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
-            return handler.GetAccountHTMLReportAsync(Guid.Parse(executionId));
-        }
-
-        private void ExportUseCaseFromBusinessFlow(BusinessFlow businessFlow)
-        {
-            string fullBPMNExportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BPMNExportPath);
-            BusinessFlowToBPMNExporter bpmnExporter = new(
-                businessFlow,
-                new BusinessFlowToBPMNExporter.Options()
-                {
-                    ExportPath = fullBPMNExportPath,
-                    IgnoreGroupWithNoValidActivity = true,
-                    GroupConversionOptions = new()
-                    {
-                        IgnoreInterActivityFlowControls = true
-                    }
-                });
-            bpmnExporter.Export();
-        }
-
-        private sealed class BusinessFlowExecutionSequence
-        {
-            public BusinessFlow BusinessFlow { get; }
-
-            public string Name => BusinessFlow.Name;
-
-            public IEnumerable<ExecutedActivity> ExecutedActivities { get; }
-
-            public BusinessFlowExecutionSequence(BusinessFlow businessFlow, IEnumerable<ExecutedActivity> executedActivities)
-            {
-                BusinessFlow = businessFlow;
-                ExecutedActivities = new List<ExecutedActivity>(executedActivities);
-            }
-        }
-
-        private sealed class ExecutedActivity
-        {
-            public GingerCore.Activity Activity { get; }
-
-            public string Name => Activity.ActivityName;
-
-            public bool ExistInSharedRepository { get; set; }
-
-            public bool ExistInBusinessFlow { get; }
-
-            public ExecutedActivity(GingerCore.Activity activity, bool existInSR, bool existInBF)
-            {
-                Activity = activity;
-                ExistInSharedRepository = existInSR;
-                ExistInBusinessFlow = existInBF;
-            }
         }
     }
 }
