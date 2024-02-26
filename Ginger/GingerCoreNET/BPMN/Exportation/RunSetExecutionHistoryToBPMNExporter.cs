@@ -35,7 +35,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             }
             else
             {
-                throw new BPMNExportationException($"Generation of BPMN from {GingerDicser.GetTermResValue(eTermResKey.RunSet)} execution history with report method '{source}' is not supported.");
+                throw new ArgumentException($"Generation of BPMN from {GingerDicser.GetTermResValue(eTermResKey.RunSet)} execution history with report method '{source}' is not supported.");
             }
         }
 
@@ -62,7 +62,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
                 .RunnersColl
                 .SelectMany(liteRunner => liteRunner.AllBusinessFlowsColl);
 
-            List<ExecutedBusinessFlow> bfExecSequences = [];
+            List<ExecutedBusinessFlow> executedBusinessFlows = [];
 
             foreach (LiteDbBusinessFlow liteBF in liteBFs)
             {
@@ -96,15 +96,15 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
                     .Where(executedActivity => executedActivity != null)
                     .ToArray();
 
-                bfExecSequences.Add(new(bf, activities));
+                executedBusinessFlows.Add(new(bf, activities));
             }
 
-            return bfExecSequences;
+            return executedBusinessFlows;
         }
 
         private async Task<IEnumerable<ExecutedBusinessFlow>> GetExecutedBusinessFlowsFromRemoteAsync(string executionId)
         {
-            List<ExecutedBusinessFlow> bfExecSequences = [];
+            List<ExecutedBusinessFlow> executedBusinessFlows = [];
 
             AccountReportRunSetClient runset = await GetExecutionDataFromAccountReportAsync(executionId);
             foreach (AccountReportRunnerClient runner in runset.RunnersColl)
@@ -142,11 +142,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
                         .Where(executedActivity => executedActivity != null)
                         .ToArray();
 
-                    bfExecSequences.Add(new(bf, executedActivities));
+                    executedBusinessFlows.Add(new(bf, executedActivities));
                 }
             }
 
-            return bfExecSequences;
+            return executedBusinessFlows;
         }
 
         private BusinessFlow GetBusinessFlowByName(string name)
