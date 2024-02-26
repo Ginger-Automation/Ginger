@@ -2483,7 +2483,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     default:
-                        elem = mSeleniumDriver.LocateElementByLocator(EL); 
+                        elem = mSeleniumDriver.LocateElementByLocator(EL, Driver); 
                         break;
                 }
             }

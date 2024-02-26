@@ -379,11 +379,13 @@ namespace GingerCore.Drivers
             return mBrowserTpe;
         }
 
-        private ISearchContext _searchContext = null;
-        private readonly object _contextLock = new();
         /// <summary>
         ///  This attribute is used to keep track of Shadow Root, when user manually creates actions to switch to a shadow root.
         /// </summary>
+        /// 
+        private readonly object _contextLock = new ();
+        private ISearchContext _searchContext = null;
+
         private ISearchContext CurrentContext
         {
             get
@@ -3926,7 +3928,7 @@ namespace GingerCore.Drivers
                 ElementLocator locator = new ElementLocator();
                 locator.LocateBy = locateBy;
                 locator.LocateValue = locateValue;
-                elem = LocateElementByLocator(locator, CurrentContext, null , AlwaysReturn);
+                elem = LocateElementByLocator(locator, CurrentContext ?? Driver, null , AlwaysReturn);
                 if (elem == null)
                 {
                     act.ExInfo += string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
@@ -4023,7 +4025,7 @@ namespace GingerCore.Drivers
 
                             else
                             {
-                                targetElement = LocateElementByLocator(locator, ParentContext);
+                                targetElement = LocateElementByLocator(locator, ParentContext??Driver);
                             }
              
                         }
@@ -4050,7 +4052,7 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        elem = LocateElementIfNotAutoLeared(locator, ParentContext, friendlyLocatorElementlist);
+                        elem = LocateElementIfNotAutoLeared(locator, ParentContext??Driver, friendlyLocatorElementlist);
                     }
                 }
                 else
@@ -4065,7 +4067,7 @@ namespace GingerCore.Drivers
 
                     else
                     {
-                        elem = LocateElementByLocator(locator, ParentContext, friendlyLocatorElementlist, true);
+                        elem = LocateElementByLocator(locator, ParentContext??Driver, friendlyLocatorElementlist, true);
                     }
                 }
             
@@ -4084,12 +4086,11 @@ namespace GingerCore.Drivers
             return elem;
         }
 
-        public IWebElement LocateElementByLocator(ElementLocator locator, ISearchContext searchContext = null, List<FriendlyLocatorElement> friendlyLocatorElements = null, bool AlwaysReturn = true)
+        public IWebElement LocateElementByLocator(ElementLocator locator, ISearchContext searchContext, List<FriendlyLocatorElement> friendlyLocatorElements = null, bool AlwaysReturn = true)
         {
             IWebElement elem = null;
             locator.StatusError = "";
             locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
-            searchContext = searchContext ?? Driver;
             try
             {
                 try
@@ -4995,7 +4996,7 @@ namespace GingerCore.Drivers
 
                             allReadElem.Add(foundElementInfo);
                             ISearchContext ShadowRoot = shadowDOM.GetShadowRootIfExists(webElement);
-                            if (ShadowRoot == null)
+                            if (ShadowRoot == null || !pomSetting.LearnShadowDomElements)
                             {
                                 continue;
                             }

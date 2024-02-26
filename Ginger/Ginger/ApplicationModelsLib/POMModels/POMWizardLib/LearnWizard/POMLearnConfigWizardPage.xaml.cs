@@ -71,6 +71,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     SetAutoMapElementTypesGridView();
                     xLearnOnlyMappedElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnOnlyMappedElements));
                     xLearnScreenshotsOfElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnScreenshotsOfElements));
+                    xLearnShadowDOMElements.BindControl(mWizard.mPomLearnUtils, nameof(PomLearnUtils.LearnShadowDomElements));
                     if (mAppPlatform == ePlatformType.Web)
                     {
                         isEnableFriendlyLocator = true;
@@ -271,6 +272,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
             xLearnOnlyMappedElements.IsEnabled = xAgentControlUC.AgentIsRunning;
             xLearnScreenshotsOfElements.IsEnabled = xAgentControlUC.AgentIsRunning;
+            xLearnShadowDOMElements.IsEnabled = xAgentControlUC.AgentIsRunning;
             xAutoMapElementTypesExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
             xAutoMapElementTypesExpander.IsEnabled = xAgentControlUC.AgentIsRunning;
             xElementLocatorsSettingsExpander.IsExpanded = xAgentControlUC.AgentIsRunning;
