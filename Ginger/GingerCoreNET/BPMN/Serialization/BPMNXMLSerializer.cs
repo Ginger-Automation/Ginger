@@ -154,7 +154,6 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             descriptionElement.AppendChild(descriptionTextNode);
             bpmnMetaDataElement.AppendChild(descriptionElement);
 
-            //TODO: BPMN - Validate definitions->collaboration->extensionElements->bpmnMetadata->systemRef
             if (!string.IsNullOrEmpty(collaboration.SystemRef))
             {
                 XmlElement systemRefElement = xmlDocument.CreateElement(IG_XML_PREFIX, "systemRef", IG_XML_URI);
@@ -181,7 +180,6 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Serialization
             XmlElement participantElement = xmlDocument.CreateElement(BPMN_XML_PREFIX, "participant", BPMN_XML_URI);
 
             participantElement.SetAttribute("id", participant.Id);
-            //TODO: BPMN - Validate definitions->collaboration->participant@systemRef attribute
             participantElement.SetAttribute("systemRef", IG_XML_URI, participant.SystemRef);
             participantElement.SetAttribute("name", participant.Name);
             participantElement.SetAttribute("processRef", participant.Process.Id);
