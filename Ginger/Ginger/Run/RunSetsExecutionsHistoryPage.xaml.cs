@@ -883,7 +883,7 @@ namespace Ginger.Run
                     IgnoreGroupWithNoValidActivity = true,
                     GroupConversionOptions = new()
                     {
-                        NonDeterministicFlowControlHandlingStrategy = NonDeterministicFlowControlHandlingStrategy.Ignore
+                        IgnoreInterActivityFlowControls = true
                     }
                 });
             bpmnExporter.Export();
