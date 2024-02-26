@@ -35,7 +35,7 @@ import sun.awt.AppContext;
 
 public class GingerAgent  {
 
-	public static final String GINGER_JAVA_AGENT_VERSION="3.2.1.1";
+	public static final String GINGER_JAVA_AGENT_VERSION="2024.1.0.0";
 	
     private static Thread t1 = null;
     private static Instrumentation mInstrumentation = null;
