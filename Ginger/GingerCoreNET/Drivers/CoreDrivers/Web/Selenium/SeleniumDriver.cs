@@ -1612,12 +1612,12 @@ namespace GingerCore.Drivers
 
                 if(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder != null)
                 {
-                    string folderPath = Path.Combine(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, @"AccessibilityReport\");
+                    string folderPath = Path.Combine(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, @"AccessibilityReport");
                     if (!Directory.Exists(folderPath))
                     {
                         Directory.CreateDirectory(folderPath);
                     }
-                    path = $"{folderPath}{Path.DirectorySeparatorChar}{act.ItemName} AxeReport.html";
+                    path = $"{folderPath}{Path.DirectorySeparatorChar}{act.ItemName}_AccessibilityReport.html";
                 }
 
                 act.CreateAxeHtmlReport(Driver, axeResult, path,ActAccessibilityTesting.ReportTypes.All);
