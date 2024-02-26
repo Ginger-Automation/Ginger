@@ -21,9 +21,20 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
 {
     public sealed class RunSetExecutionHistoryToBPMNExporter
     {
+        /// <summary>
+        /// Initializes a new instance.
+        /// </summary>
         public RunSetExecutionHistoryToBPMNExporter() { }
 
-        public Task<IEnumerable<ExecutedBusinessFlow>> GetExecutedBusinessFlows(string executionId, DataRepositoryMethod source)
+        /// <summary>
+        /// Retrieve a collection of <see cref="ExecutedBusinessFlow"/> based on the specified execution ID and data repository source.<br/>
+        /// <b>NOTE:</b> This method is not supported for <see cref="DataRepositoryMethod.TextFile"/>
+        /// </summary>
+        /// <param name="executionId">The execution ID of the runset for which to retrieve executed business flows.</param>
+        /// <param name="source">The source from where to fetch the executed business flows. Can be either <see cref="DataRepositoryMethod.LiteDB"/> or <see cref="DataRepositoryMethod.Remote"/>.</param>
+        /// <returns>Collection of <see cref="ExecutedBusinessFlow"/> for the specific runset execution.</returns>
+        /// <exception cref="ArgumentException">If the provided <see cref="DataRepositoryMethod"/> is not supported.</exception>
+        public Task<IEnumerable<ExecutedBusinessFlow>> GetExecutedBusinessFlowsAsync(string executionId, DataRepositoryMethod source)
         {
             if (source == DataRepositoryMethod.LiteDB)
             {
@@ -39,6 +50,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             }
         }
 
+        /// <summary>
+        /// Export a given <see cref="ExecutedBusinessFlow"/> to a specified path. 
+        /// </summary>
+        /// <param name="executedBusinessFlow">The <see cref="ExecutedBusinessFlow"/> to be exported.</param>
+        /// <param name="exportPath">The file system path where the BPMN file should be exported.</param>
+        /// <exception cref="BPMNExportationException">If any <see cref="Activity"/> is not available in Shared Repository.</exception>
         public void Export(ExecutedBusinessFlow executedBusinessFlow, string exportPath)
         {
             bool hasAnyNonSharedRepositoryActivity = executedBusinessFlow
@@ -54,6 +71,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             ExportBusinessFlow(businessFlow, exportPath);
         }
 
+        /// <summary>
+        /// Retrieve collection of <see cref="ExecutedBusinessFlow"/> from LiteDB based on the <paramref name="executionId"/>.
+        /// </summary>
+        /// <param name="executionId">The execution ID for which to retrieve collection of <see cref="ExecutedBusinessFlow"/> from LiteDB.</param>
+        /// <returns>Collection of <see cref="ExecutedBusinessFlow"/> for the given <paramref name="executionId"/>.</returns>
         private IEnumerable<ExecutedBusinessFlow> GetExecutedBusinessFlowsFromLiteDb(string executionId)
         {
             LiteDbManager liteDbManager = new(new ExecutionLoggerHelper().GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder));
@@ -102,6 +124,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             return executedBusinessFlows;
         }
 
+        /// <summary>
+        /// Retrieve collection of <see cref="ExecutedBusinessFlow"/> from a remote source based on the <paramref name="executionId"/>.
+        /// </summary>
+        /// <param name="executionId">The execution ID for which to retrieve collection of <see cref="ExecutedBusinessFlow"/> from a remote.</param>
+        /// <returns>Collection of <see cref="ExecutedBusinessFlow"/> for the given <paramref name="executionId"/>.</returns>
         private async Task<IEnumerable<ExecutedBusinessFlow>> GetExecutedBusinessFlowsFromRemoteAsync(string executionId)
         {
             List<ExecutedBusinessFlow> executedBusinessFlows = [];
@@ -118,7 +145,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
                         .Select(seqActivity =>
                         {
                             bool existInSR, existInBF;
-                            GingerCore.Activity? activity;
+                            Activity? activity;
 
                             activity = GetActivityFromSharedRepository(seqActivity.Name);
                             existInSR = activity != null;
@@ -149,6 +176,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             return executedBusinessFlows;
         }
 
+        /// <summary>
+        /// Retrieve a <see cref="BusinessFlow"/> by it's name from the solution.
+        /// </summary>
+        /// <param name="name">The name of the <see cref="BusinessFlow"/> to retrieve.</param>
+        /// <returns><see cref="BusinessFlow"/> matching the given <paramref name="name"/>.</returns>
+        /// <exception cref="BPMNExportationException">If no matching <see cref="BusinessFlow"/> is found.</exception>
         private BusinessFlow GetBusinessFlowByName(string name)
         {
             BusinessFlow? bf = WorkSpace
@@ -165,6 +198,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             return bf;
         }
 
+        /// <summary>
+        /// Retrieve an <see cref="Activity"/> by it's name from the shared repository.
+        /// </summary>
+        /// <param name="name">The name of the <see cref="Activity"/> to retrieve.</param>
+        /// <returns><see cref="Activity"/> matching the given <paramref name="name"/> or <see langword="null"/> if no match is found.</returns>
         private Activity? GetActivityFromSharedRepository(string name)
         {
             return WorkSpace
@@ -174,6 +212,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
                 .FirstOrDefault(activity => string.Equals(activity.ActivityName, name));
         }
 
+        /// <summary>
+        /// Retrieve an <see cref="Activity"/> by it's name from the given <see cref="BusinessFlow"/>.
+        /// </summary>
+        /// <param name="bf">The <see cref="BusinessFlow"/> from which to retrieve the <see cref="Activity"/>.</param>
+        /// <param name="activityName">The name of the <see cref="Activity"/> to retrieve.</param>
+        /// <returns><see cref="Activity"/> matching the given <paramref name="name"/> or <see langword="null"/> if no match is found.</returns>
         private Activity? GetActivityFromBusinessFlow(BusinessFlow bf, string activityName)
         {
             return bf
@@ -181,6 +225,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
                 .FirstOrDefault(activity => string.Equals(activity.ActivityName, activityName));
         }
 
+        /// <summary>
+        /// Create a new <see cref="BusinessFlow"/> instance based on the execution data of an <see cref="ExecutedBusinessFlow"/>.
+        /// </summary>
+        /// <param name="executedBusinessFlow">The <see cref="ExecutedBusinessFlow"/> from which to create a new <see cref="BusinessFlow"/> instance.</param>
+        /// <returns><see cref="BusinessFlow"/> based on the given <paramref name="executedBusinessFlow"/>.</returns>
         private BusinessFlow CreateBusinessFlowFromExecutionData(ExecutedBusinessFlow executedBusinessFlow)
         {
             IEnumerable<ActivitiesGroup> groups = executedBusinessFlow.BusinessFlow
@@ -214,12 +263,22 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             };
         }
 
+        /// <summary>
+        /// Retrieve execution data from the account report API based on the <paramref name="executionId"/>.
+        /// </summary>
+        /// <param name="executionId">The execution ID for which to retrieve execution data from the account report.</param>
+        /// <returns><see cref="AccountReportRunSetClient"/> containing the execution details.</returns>
         private Task<AccountReportRunSetClient> GetExecutionDataFromAccountReportAsync(string executionId)
         {
             AccountReportApiHandler handler = new(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
             return handler.GetAccountHTMLReportAsync(Guid.Parse(executionId));
         }
 
+        /// <summary>
+        /// Export a given <see cref="BusinessFlow"/> to a specified path.
+        /// </summary>
+        /// <param name="businessFlow">The <see cref="BusinessFlow"/> to be exported.</param>
+        /// <param name="exportPath">The file system path where the BPMN file should be exported.</param>
         private void ExportBusinessFlow(BusinessFlow businessFlow, string exportPath)
         {
             string fullExportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(exportPath);

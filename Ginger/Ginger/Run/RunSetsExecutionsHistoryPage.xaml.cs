@@ -450,10 +450,10 @@ namespace Ginger.Run
         {
             Button BPMNButton = (Button)sender;
             RunSetReport runSetReport = (RunSetReport)BPMNButton.Tag;
-            _ = ExportBPMNFromRunSetReport(runSetReport);
+            _ = ExportBPMNFromRunSetReportAsync(runSetReport);
         }
 
-        private async Task ExportBPMNFromRunSetReport(RunSetReport runSetReport)
+        private async Task ExportBPMNFromRunSetReportAsync(RunSetReport runSetReport)
         {
             try
             {
@@ -462,7 +462,7 @@ namespace Ginger.Run
                 RunSetExecutionHistoryToBPMNExporter exporter = new();
 
                 IEnumerable<ExecutedBusinessFlow> executedBusinessFlows;
-                executedBusinessFlows = await exporter.GetExecutedBusinessFlows(runSetReport.GUID, runSetReport.DataRepMethod);
+                executedBusinessFlows = await exporter.GetExecutedBusinessFlowsAsync(runSetReport.GUID, runSetReport.DataRepMethod);
 
                 executedBusinessFlows = RemoveNonSharedRepositoryActivitiesFromExecutionData(executedBusinessFlows);
                 if (!executedBusinessFlows.Any())
