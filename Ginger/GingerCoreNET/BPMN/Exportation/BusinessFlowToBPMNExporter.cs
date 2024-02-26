@@ -126,7 +126,9 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             catch (NoValidActivityFoundInGroupException)
             {
                 if (_options.IgnoreGroupWithNoValidActivity)
+                {
                     return null;
+                }
                 throw;
             }
         }

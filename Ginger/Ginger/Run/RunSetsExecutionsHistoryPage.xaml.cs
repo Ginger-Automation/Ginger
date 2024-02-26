@@ -853,11 +853,15 @@ namespace Ginger.Run
             }
 
             if (!groupWithSameNameExists(virtualGroupName))
+            {
                 return virtualGroupName;
+            }
 
             int copyCount = 1;
             while (groupWithSameNameExists($"{virtualGroupName}{copyCount}"))
+            {
                 copyCount++;
+            }
 
             return $"{virtualGroupName}{copyCount}";
         }
