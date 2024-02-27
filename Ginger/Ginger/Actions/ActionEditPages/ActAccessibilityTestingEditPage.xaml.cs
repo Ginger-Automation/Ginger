@@ -96,7 +96,7 @@ namespace Ginger.Actions
 
             xLocateValueVE.BindControl(Context.GetAsContext(mAct.Context), mAct, Act.Fields.LocateValue);
             xTargetRadioButton.Init(typeof(ActAccessibilityTesting.eTarget), xTargetRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page.ToString()), TargetRadioButton_Clicked);
-            xTargetRadioButton.Init(typeof(ActAccessibilityTesting.eAnalyzer), xAnalyzerRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByTag.ToString()), AnalyzerRadioButton_Clicked);
+            xAnalyzerRadioButton.Init(typeof(ActAccessibilityTesting.eAnalyzer), xAnalyzerRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByTag.ToString()), AnalyzerRadioButton_Clicked);
             if ((act.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
             {
                 xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
@@ -164,6 +164,10 @@ namespace Ginger.Actions
             if (rbSender.Content.ToString() == ActAccessibilityTesting.eTarget.Element.ToString())
             {
                 xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
 
@@ -270,10 +274,10 @@ namespace Ginger.Actions
             defView.GridColsView = new ObservableList<GridColView>();
 
             defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.RuleID), Header = "Rule Id", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Tags), Header = "Tag", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Impact), Header = "Severity", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Description), WidthWeight = 50, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.RuleID), Header = "Rule Id", WidthWeight = 40, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Tags), Header = "Tag", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Impact), Header = "Severity", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Description), WidthWeight = 70, ReadOnly = true });
 
             UpdateExcludeRuleGrid.SetAllColumnsDefaultView(defView);
             UpdateExcludeRuleGrid.InitViewItems();
@@ -288,9 +292,9 @@ namespace Ginger.Actions
             defView.GridColsView = new ObservableList<GridColView>();
 
             defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.RuleID), Header = "Rule Id", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Tags), Header = "Tag", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Impact), Header = "Severity", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.RuleID), Header = "Rule Id", WidthWeight = 40, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Tags), Header = "Tag", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Impact), Header = "Severity", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Description), WidthWeight = 50, ReadOnly = true });
 
             UpdateIncludeRuleGrid.SetAllColumnsDefaultView(defView);
