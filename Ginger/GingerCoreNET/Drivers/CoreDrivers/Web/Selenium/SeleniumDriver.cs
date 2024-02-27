@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
-//using Selenium.Axe;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
@@ -72,6 +71,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DevToolsDomains = OpenQA.Selenium.DevTools.V121.DevToolsSessionDomains;
+
 
 
 namespace GingerCore.Drivers
@@ -1592,14 +1592,11 @@ namespace GingerCore.Drivers
                 ActAgentManipulationHandler((ActAgentManipulation)act);
                 return;
             }
-            //if (WorkSpace.Instance.BetaFeatures.ShowAccessibilityTesting)
-            //{
-                if (act is ActAccessibilityTesting actAccessibilityTesting)
-                {
-                    ActAccessibility(actAccessibilityTesting);
-                    return;
-                }
-            //}
+            if (act is ActAccessibilityTesting actAccessibilityTesting)
+            {
+                ActAccessibility(actAccessibilityTesting);
+                return;
+            }
             act.Error = "Run Action Failed due to unrecognized action type - " + ActType.ToString();
             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
         }
@@ -1625,7 +1622,7 @@ namespace GingerCore.Drivers
             {
                 axeBuilder = CreateAxeBuilder(act);
 
-                AxeResult axeResult = null;
+                 AxeResult axeResult = null;
 
                 if ((act.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
                 {
@@ -1636,6 +1633,20 @@ namespace GingerCore.Drivers
                     axeResult = axeBuilder.Analyze();
                 }
 
+                string path = String.Empty;
+
+                if(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder != null)
+                {
+                    string folderPath = Path.Combine(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, @"AccessibilityReport");
+                    if (!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+                    path = $"{folderPath}{Path.DirectorySeparatorChar}{act.ItemName}_AccessibilityReport.html";
+                }
+
+                act.CreateAxeHtmlReport(Driver, axeResult, path,ActAccessibilityTesting.ReportTypes.All);
+                act.AddOrUpdateReturnParamActual(ParamName: "Accessibility report", ActualValue: path );
                 SetAxeResultToAction(act, axeResult);
             }
             catch (Exception ex)

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -343,8 +343,9 @@ namespace Ginger.BusinessFlowPages
                     //map activities target application to BF if missing in BF
                     userSelection = businessFlow.MapTAToBF(userSelection, activityIns, WorkSpace.Instance.Solution.ApplicationPlatforms);
                     businessFlow.SetActivityTargetApplication(activityIns);
-                    if (insertIndex >= 0)
+                    if (insertIndex >= 0 && insertIndex < businessFlow.ActivitiesGroups.Count)
                     {
+                        //QUESTION: Why do we have to move activity group?
                         businessFlow.ActivitiesGroups.Move(businessFlow.ActivitiesGroups.IndexOf(parentGroup), insertIndex);
                     }
                     businessFlow.AddActivity(activityIns, parentGroup, insertIndex);
