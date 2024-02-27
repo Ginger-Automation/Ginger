@@ -143,13 +143,10 @@ namespace Amdocs.Ginger.Repository
 
         public RepositoryItemBase(DeserializedSnapshot2 snapshot)
         {
-            if (DeserializedSnapshot2.ReadProperties)
-            {
-                Guid = snapshot.GetValueAsGuid(nameof(Guid));
-                ParentGuid = snapshot.GetValueAsGuid(nameof(ParentGuid));
-                ExternalID = snapshot.GetValue(nameof(ExternalID), defaultValue: string.Empty);
-                ExternalID2 = snapshot.GetValue(nameof(ExternalID2), defaultValue: string.Empty);
-            }
+            Guid = snapshot.GetValueAsGuid(nameof(Guid));
+            ParentGuid = snapshot.GetValueAsGuid(nameof(ParentGuid));
+            ExternalID = snapshot.GetValue(nameof(ExternalID), defaultValue: string.Empty);
+            ExternalID2 = snapshot.GetValue(nameof(ExternalID2), defaultValue: string.Empty);
         }
 
         public virtual SerializedSnapshot CreateSnapshot()

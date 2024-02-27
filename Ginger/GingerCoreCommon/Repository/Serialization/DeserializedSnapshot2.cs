@@ -17,8 +17,6 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
 {
     public sealed class DeserializedSnapshot2
     {
-        public static bool ReadProperties { get; set; }
-
         public string Name => _rootElement.Name;
 
         private readonly LiteXmlElement _rootElement;
@@ -35,7 +33,7 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
 
         public string GetValue(string propertyName)
         {
-            Span<LiteXmlAttribute> attributes = CollectionsMarshal.AsSpan((List<LiteXmlAttribute>)_rootElement.Attributes);
+            Span<LiteXmlAttribute> attributes = CollectionsMarshal.AsSpan(_rootElement.Attributes);
             for (int attributeIndex = 0; attributeIndex < attributes.Length; attributeIndex++)
             {
                 if (string.Equals(attributes[attributeIndex].Name, propertyName))
@@ -144,7 +142,7 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
 
         public TRepositoryItemBase GetValue<TRepositoryItemBase>(string propertyName) where TRepositoryItemBase : RepositoryItemBase
         {
-            Span<LiteXmlElement> childElements = CollectionsMarshal.AsSpan((List<LiteXmlElement>)_rootElement.ChildElements);
+            Span<LiteXmlElement> childElements = CollectionsMarshal.AsSpan(_rootElement.ChildElements);
             for (int index = 0; index < childElements.Length; index++)
             {
                 LiteXmlElement childElement = childElements[index];
@@ -169,13 +167,13 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
 
         public IEnumerable<TRepositoryItemBase> GetValues<TRepositoryItemBase>(string propertyName) where TRepositoryItemBase : RepositoryItemBase
         {
-            Span<LiteXmlElement> childElements = CollectionsMarshal.AsSpan((List<LiteXmlElement>)_rootElement.ChildElements);
+            Span<LiteXmlElement> childElements = CollectionsMarshal.AsSpan(_rootElement.ChildElements);
             for (int index = 0; index < childElements.Length; index++)
             {
                 LiteXmlElement childElement = childElements[index];
                 if (Equals(childElement.Name, propertyName))
                 {
-                    Span<LiteXmlElement> valuesXml = CollectionsMarshal.AsSpan((List<LiteXmlElement>)childElement.ChildElements);
+                    Span<LiteXmlElement> valuesXml = CollectionsMarshal.AsSpan(childElement.ChildElements);
                     TRepositoryItemBase[] values = new TRepositoryItemBase[valuesXml.Length];
                     for (int valueIndex = 0; valueIndex < valuesXml.Length; valueIndex++)
                     {
@@ -187,6 +185,21 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
             }
 
             return Array.Empty<TRepositoryItemBase>();
+        }
+
+        public LiteXmlElement GetValuesLite(string propertyName)
+        {
+            Span<LiteXmlElement> childElements = CollectionsMarshal.AsSpan(_rootElement.ChildElements);
+            for (int index = 0; index < childElements.Length; index++)
+            {
+                LiteXmlElement childElement = childElements[index];
+                if (Equals(childElement.Name, propertyName))
+                {
+                    return childElement;
+                }
+            }
+
+            throw DeserializedPropertyNotFoundException.WithDefaultMessage(propertyName);
         }
 
         public IEnumerable<TRepositoryItemBase> GetValues<TRepositoryItemBase>(string propertyName, IEnumerable<TRepositoryItemBase> defaultValue) where TRepositoryItemBase : RepositoryItemBase

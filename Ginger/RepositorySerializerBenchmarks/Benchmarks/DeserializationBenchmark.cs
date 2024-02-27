@@ -20,8 +20,7 @@ namespace RepositorySerializerBenchmarks.Benchmarks
     {
         public DeserializationBenchmarkConfig()
         {
-            SummaryStyle = 
-                BenchmarkDotNet.Reports.SummaryStyle.Default
+            SummaryStyle = BenchmarkDotNet.Reports.SummaryStyle.Default
                 .WithTimeUnit(Perfolizer.Horology.TimeUnit.Millisecond)
                 .WithSizeUnit(BenchmarkDotNet.Columns.SizeUnit.MB);
         }
@@ -59,18 +58,19 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         [Benchmark(Baseline = true)]
         public void Old_Full()
         {
+            BusinessFlow.LazyLoad = false;
             NewRepositorySerializer.LazyLoad = false;
             foreach (string repositoryItemBaseXML in TestData)
                 Amdocs.Ginger.Repository.NewRepositorySerializer.DeserializeFromText(repositoryItemBaseXML);
         }
 
-        //[Benchmark]
-        //public void Old_Lazy()
-        //{
-        //    NewRepositorySerializer.LazyLoad = true;
-        //    foreach (string repositoryItemBaseXML in TestData)
-        //        Amdocs.Ginger.Repository.NewRepositorySerializer.DeserializeFromText(repositoryItemBaseXML);
-        //}
+        [Benchmark]
+        public void Old_Lazy()
+        {
+            NewRepositorySerializer.LazyLoad = true;
+            foreach (string repositoryItemBaseXML in TestData)
+                Amdocs.Ginger.Repository.NewRepositorySerializer.DeserializeFromText(repositoryItemBaseXML);
+        }
 
         [Benchmark]
         public void New_Full()
@@ -81,13 +81,13 @@ namespace RepositorySerializerBenchmarks.Benchmarks
                 _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
         }
 
-        //[Benchmark]
-        //public void New_Lazy()
-        //{
-        //    BusinessFlow.LazyLoad = true;
-        //    foreach (string repositoryItemBaseXML in TestData)
-        //        _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
-        //}
+        [Benchmark]
+        public void New_Lazy()
+        {
+            BusinessFlow.LazyLoad = true;
+            foreach (string repositoryItemBaseXML in TestData)
+                _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
+        }
 
         //[Benchmark]
         //public void Old_Full_Parallel()
@@ -130,7 +130,14 @@ namespace RepositorySerializerBenchmarks.Benchmarks
                 _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
         }
 
-
+        [Benchmark]
+        public void New2_Lazy()
+        {
+            BusinessFlow.LazyLoad = true;
+            BetterRepositorySerializer.UseDeserializer2 = true;
+            foreach (string repositoryItemBaseXML in TestData)
+                _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
+        }
 
 
 

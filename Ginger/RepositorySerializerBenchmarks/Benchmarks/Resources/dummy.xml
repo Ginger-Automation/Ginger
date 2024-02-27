@@ -1,5 +1,2115 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<books>
-	<book>
-		<title/>
-			<author>
+﻿<BusinessFlow Guid="3044e488-eaff-41d0-8d12-e4713e52eb93" Name="TestBusinessFlow" ParentGuid="00000000-0000-0000-0000-000000000000" Source="Ginger" Status="Unknown">
+	<Activities>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 1" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="c5a33bd1-c563-40a4-819b-6f3da6013d94" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="6986a4c2-169c-4a56-9703-a957f3865717" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="332cccf2-ad02-495d-8580-aba57cd9b0e1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="cc38a114-6e86-45cd-86e1-93c0c5125926" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="be33e22e-cfba-4e5f-a3f0-2d20ce14b9ba" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="cb1aa6bd-349f-43da-86e9-3191c57cddba" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="117d960b-09cc-4dcf-9209-a07fe6efcad1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="db44e399-09ea-48d2-83a1-3d52beef461e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="047aa632-72ef-4edb-8e28-2d32876a2387" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="a32ed6ba-73f7-4d19-acf2-b883aebefdf5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d5e7e237-dc5c-4d70-a18f-aba715391741" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="f086d200-263b-491d-b1e7-acebf95035f6" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5e9276a7-7ebe-4399-8b97-872630932071" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="d980aca0-fad9-452a-bbb7-6942aee18373" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a443763c-1f84-4e7e-81a6-45d437ae552e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="e69b8870-e26e-4143-a171-228491839e36" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="acaeddd2-d122-46ed-903d-97db46e0724a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="73226eaa-a101-419e-8739-5b4f364bc0b5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2387cb01-7405-4dbc-8353-a8a7041fbec5" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="8dbb0db7-3081-4ba7-9be5-d97ec0530846" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d590999b-9e1d-456c-a900-5c1369ffb604" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="949c3f00-7938-4eae-93d5-cc22a8c79d34" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c342dd68-2b1b-4c08-ace5-bd9bf5c7c17d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="a2b902a8-6cd6-422e-ba9e-f370bfb44468" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="10b88bcf-05cb-4d87-b6ce-31f4771f2535" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="680c36c2-1914-4ae5-8ae1-1bb2033cb6e3" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="579cb7a6-9eb4-49fa-8188-0d0acd1f2f5c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="a24ffa83-17fe-45fb-8140-13687af9589b" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="fd76f1f6-428a-43e9-b44e-0d3905c31918" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="40ae8b03-7ee8-49af-ad90-a680d1e2966d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="0b4a440b-9d53-45b2-9817-77855cac2129" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="e88607df-47e0-4c0d-b778-9d42ab0c3f0d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="7032b10f-e526-491b-aeaf-aae14a584aac" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="c30e429b-0589-4850-a91a-3506f10f26f6" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6f116917-e5c6-4cfa-ab4a-d936ea74a9b6" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="7e168b35-3590-4656-9901-71dce25bea71" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a9892d33-7528-4c1b-90d0-b608622ac407" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="4e192398-d79b-4075-a40f-4826147b4ce3" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="3185b144-a43a-4774-abfa-bc6c0ace38ec" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="6aad7079-e52d-489e-8aad-cc2f1c47e5b5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a31c30aa-bc79-4691-82c7-6f5540e96e27" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 2" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="ce20189e-fcf4-46c5-b20d-e948a2224f48" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="726cede3-d7e9-4bb1-a9cc-70bb4cdf096c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="7b4ecd93-352c-43e1-a86f-4e1df927f527" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="ce98bcc8-c1d4-4a00-824d-95b6f4c85e8c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="05da7530-977e-4599-a99e-9dd8d6d0469a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="a8af9c62-3881-4e59-8b14-d7c9917020d4" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5e322de6-a6f5-491b-a682-84a9f5b7bd0b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="05d6f517-b802-4e59-aa44-6532d522db5a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f620ed55-62ed-4204-b368-baceda99c0fc" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="2781fbde-e31d-4fa5-a005-d565709d2c8e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c8784fd6-9039-4705-927a-7435d0de39aa" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="fa0931f7-44b2-40a0-9d00-d6d856421a08" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9ec8e96b-a1ce-4258-bd40-99a19b414372" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="c6e6d567-ccce-4ab2-b5ed-9836efd046a9" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="11abecbc-17a5-419f-8dbe-de3e74c95f8b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="64671306-5a6a-4d1e-8fae-e4c13f1a2f0d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="aa829771-dabf-41fa-941e-c8f07bcb0ddd" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="bda19f5d-9b44-4ae1-88a4-27622a9aa0b3" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="59de7d17-75a4-40d4-9e89-ff324f3c583e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="67ca5319-258e-48e4-bdcc-6ea6e399c467" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="31ff3779-a3ae-4732-857c-f372ccf27478" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="3692a893-8943-43bc-b6e3-6ba1f3762295" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="29fed80e-4b7a-44d6-ba33-f148ca9640eb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="8643ab75-debb-49f3-b6b4-228c0399f19a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6515fe9f-4c45-46fa-a0c3-b0899092f692" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="8ecfd725-2d4a-4769-aee0-2e3b24901e9f" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4212f4e4-a91d-4939-9f44-6a4494c76a44" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="c40054c2-2ff9-4484-b92d-953f94ec56e7" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="21bc925b-4618-487e-aa98-15fdd225f920" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="c1ec0fdf-60ce-456a-b941-ae6b0df80af5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="bd3b5792-7456-40e8-b46b-8d9f5c4dd13a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="939f81f7-b0bb-495f-95fb-38d8a4a279d2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a688c2ce-df5f-4264-a3e5-f6cdd4c6becf" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="ddab574d-9020-4921-8dc6-eed87dbd14e5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="25fa3584-4c1f-4d4c-981a-d0907f940105" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="2ab1f6a6-32c1-4fa6-b0cd-e810f7256ce2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d4af6349-f038-408e-9dc4-d457f64453eb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="05b7c443-16b3-432c-8598-f0a48d40fcf0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="206fb68e-2c6d-41bd-ab7e-9d42f81e8572" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="94d5541e-9fe4-4528-92ea-5f718aa64f08" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="59f047df-6f24-45bc-9c01-5faa3d69fb41" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 3" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="25ec30e8-00bc-4ac9-973a-40219787ae81" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="2fc5cfea-b1bf-43f2-90b0-df57443e88e8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f49ba478-810f-4385-be28-0c617bc6ac57" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="9045dda6-c95f-4216-98b6-ca5b2d030812" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="3c08f81a-d251-4312-b525-f445fd52f911" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="63785d5f-2ec8-43ed-8474-ee81928330f7" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="ac5bdbce-2957-413f-b12f-85ffb8a823d2" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="69036b25-81f8-417c-b876-e27d76f8d9ae" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2a294ecd-6056-4ee7-be81-8574966e2c1a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="f4d811f0-dd9c-4059-844e-7d64575414a2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2998b805-cc4c-43f5-a028-eb64b563da87" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="01067664-afd5-428a-bcc1-6cdd4aa49ae8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a69234d8-da9a-4748-b36e-ff507247bdb9" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="523f1bf2-f4fc-4f54-8588-e6116f4059a1" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="93d78e79-3b2b-4e56-b38f-669119dc297d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="429925ba-4f07-449d-b19b-54119b80eed0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="18f45dc6-3e1f-44b0-b943-0cb354080e89" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="3c8b3dcd-715b-4f37-a1a5-6d8c0692749d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="cd2cbe16-adfb-4844-b1d1-746bf41f0e12" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="8384e8c7-b105-4254-a501-447b5d65b95d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="b8db531a-4945-4b5a-b82a-6e85a7367622" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="77048065-b5ef-464a-96d4-f963ab2267de" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4d083e0a-cf26-4156-9c75-a7e90d7fdd40" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="e1800a4e-5aeb-4482-80e3-ce5ed81f7889" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="904660e9-c48f-4645-9aa3-a4aefba821e0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="3c328748-c90f-4ec1-8379-36da8e7f12de" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="510d1a95-c54d-4869-9fc2-1075a97bf522" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="a495937d-d215-4d01-9f07-308be750a787" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d14d376f-d3ae-41b8-88ac-ea427ac8b862" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="141a54e1-bdc8-4109-a0e6-c6a884b0a4f0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4abcc313-4b5c-4b33-a46f-74218e7132f6" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="64aa34cd-bc0f-4f75-96f1-4d839d5a2c08" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9da5d30c-8eaa-44e0-800f-591ca09734d0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="10f0746c-63b0-4163-ad3d-eb7eed54fb1a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="357b1cb2-863c-46df-9b95-fc7c9cc8d7e2" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="ba752338-60c8-4e28-a2fc-a411811e1b9e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="7c536411-c847-41f8-abcb-2b240a824b4b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="f5e1e895-ccd2-4e85-a9fc-0341df330d45" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="7bff4ce5-4c30-412a-a666-565d20df30e8" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="c25b007f-22b3-4c7c-beaa-bc64d3c81396" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f4b0a6ee-1faa-4266-925f-501c6559482c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 4" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="bee9c2e9-a1b8-445e-bc1a-7cb1bca7b0d6" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="b6051ff8-69f4-4d89-86ae-24f396aa4e3d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="87f70af9-eae3-41c2-8d3d-c7f07e336dbb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="9d8d8597-7e71-400b-9b4f-01af8d1fbbaa" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="656e556c-0e8f-45cf-b4a0-a059d1bc719b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="dc9effbe-cd52-40fb-9cf9-f61fb92e59af" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6e9765c6-14a2-4b06-9eda-d03ca208ca91" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="91442d10-16ba-4bac-9878-cafe6e838034" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="0c07d05c-1ba3-472d-973b-e9f16f99a525" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="aeb43805-e8fb-4371-8516-b736e6f1a7d4" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="225087af-15c6-4a72-ba3a-df8d82fa7446" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="459f446a-482c-4fbb-a084-d01f13858045" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a120990b-402a-420f-92f3-5b4d30667b7f" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="e8d958bf-d8b1-4f77-89a6-43e857c0919b" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f3634f46-968f-4276-8d10-b854f99d0ed8" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="7c106039-71b5-492f-a8da-e490de56044f" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f4cc9114-9f7b-49c0-9749-4066d74ee9e3" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="41133593-3c23-427f-bd90-117dca4a764c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a7426941-ecda-483a-9dfe-683e2d469870" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="9aee3275-ac96-42e1-bfbf-a42eb452982b" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="df865899-d7e5-4cc5-a7b5-44a37fd38168" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="6297653e-c173-4dfd-afe7-24121292f737" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2eb532a9-c305-4550-af74-1951d4fd59fb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="578ab9ae-e935-46b0-978c-84f666d6959e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="85fb5050-79ea-4bde-892d-f8f0b335459e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="a2da8e43-7bdb-4f9d-8162-450df6aa1a11" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5545eeca-dc51-4395-81cd-ce99aac8728f" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="93ee53bf-9570-42a0-b997-b09c51273380" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="018d03ac-8ce4-4b47-ae58-9488fd0aca08" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="297d199c-0a17-4e63-ac89-2c2ff5d21fe3" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="1f3eed28-b3f1-4ae4-8867-97af79be810e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="a00a8d5b-1e67-488a-a5ac-487446b18b65" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="74513758-4675-4f6e-9547-b28328d9814c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="9ce2fe29-2459-4e03-8705-47340e0bc783" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="cc540857-dd4f-4810-9be6-d1de00cc1e75" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="669c2054-144c-44a9-a5c1-1e396a85157d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="b13fd40f-d0aa-4599-8709-522a7d127667" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="fc6c37e6-73ea-41c4-a1e4-3bbcd6265f88" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="dbc9651c-ea72-4c81-8607-f8a463a3eda2" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="e61a2d49-65d1-46cd-9c01-747e8f946cf9" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d9c023f0-ef4b-46a4-8297-904e4a16479e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 5" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="7ca002e5-84db-4e29-92c3-67f36adb6d9e" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="d880e914-be9e-4a94-b53e-331946518788" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="3afa2ad6-07db-4464-ab54-63ca4fb1a140" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="78f1aa3f-c5a8-4317-ba7e-fc97554f7518" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c5f9b923-5bdd-4947-aec2-befc03617895" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="fbb29175-083c-483e-9f85-d9a6eec4b245" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5b048e13-b487-4dc7-8843-69b34db5b322" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="f00c6991-468e-4805-85f3-d4a66a760786" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="15c38dd3-1d71-4c65-9333-306cec9f1e5b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="bdb2d218-4ad5-420a-8277-ab6f40743bdc" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e4287b47-1ad5-4495-8f70-373d5c41bd94" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="2d92116e-ce11-4f24-9bd7-7cc4de2f1ca3" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c58a21a6-b758-43de-bf09-6f5b55979ee7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="1213ac3d-7342-4a16-9021-6c863481fc20" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="cde041ae-528b-444e-bb2e-09778c017045" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="531b135b-3b75-4933-8f18-f0a4cfe586cb" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c6bc7d5c-5d07-4a8c-a9f0-7a1bb63f4717" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="74726c74-237a-4103-bd80-6a99f4c7a08a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="3e94fc4a-99ec-4657-b9f9-82c4b32bdc54" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="881f51c8-ada3-4fb9-b148-af99cb70010e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4ee9d16a-2071-4ca5-9168-f7dfb2123128" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="d7d2ef9d-690a-47cb-ab96-20a8f8b4df02" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f8f6dad3-f005-4dfa-a508-12ea2f1a9967" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="575b65d8-79da-4aaa-a8a9-8b0b904bceb9" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="20f1a939-4cd6-4055-b0d9-aa196a8deb63" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="6e23e5a8-bc1a-4ead-8e3b-3cb4bdaa58ea" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="8bdd127c-3364-413d-889a-df7e386be17e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="12bc4247-9611-4ef1-84b3-ee723ca4b6c0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9c9f8c6b-c23c-45e9-b595-762acf2febd1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="dfb6ae6c-e6ed-4b8e-a944-49a877ca38df" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="dd6d0b93-0c8c-4d1f-aa8a-ea5a8dbc7f39" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="cc6f39e0-f55e-4646-8b00-0a203f144461" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="78b036bf-61d0-4941-b62e-6153e3b89983" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="92996a59-8b32-4f7f-9877-c5d9704f1360" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="3133a014-9418-4ad7-9f4e-ea32db6aea88" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="27db5687-d289-4536-bc11-4f52cd201ead" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="72baa0ba-b253-44b1-bc97-3528640e52be" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="cb207700-e28c-4a06-b700-80372f5e6fe6" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="71e741b3-c96e-4e92-973b-c86eef07ad9c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="bfd6c8aa-5d4c-4da7-9f5a-a930f1a3c82f" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="09153a0d-acad-47a6-a476-d2615e62bdcb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 6" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="223f3b0e-bfe7-4171-8c18-3d2dd4857b50" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="b7c71929-985f-4234-8fc0-efc507948ee5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6e132d4d-21c9-4f53-b6cd-7da659e86aaf" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="969d8488-da5d-42d2-997d-a1d49c7fdc6d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="7c18e6e5-662e-4f87-8a47-53d31e7bfac6" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="58c98315-293d-49af-901a-bece274f7cff" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d2aff3d5-3626-4f43-b8f8-8f731d3d4be2" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="584efae7-2f33-4da2-87ad-456004d01c3e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="db34a686-b384-4a56-b290-b0a9518d2a3d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="506b9c85-a6d0-4c69-a897-7956ca85a061" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="245badb9-d2b0-4d6b-a074-fddb4c55a91c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="419768ab-8cd4-4399-9ecf-3ef7f1c9029f" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="8d647234-3d1d-4c61-af96-8d9ef2986de9" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="3b52f3aa-ac92-41ed-abdd-d5b710142101" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9c594fcc-4fd2-4a56-b154-a6270f8fe9cd" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="b5894860-d83e-4e72-a2c1-43aebc2cae21" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="8f1fc3c9-b1cd-4abe-bd2a-c828756c5064" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="65776115-e8fa-4a25-9572-a30ae8292a3e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="bd3dfbf6-2adf-4c6f-bb84-6243ca8e5d11" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="18dc3191-98dc-4bf5-b99f-418964c7805a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="97c60256-fb05-4990-8061-f3709bd4872d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="19509635-9302-4ec5-b8a1-6fafbcb1e2da" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5f76c2ed-0cca-495b-80ba-d4777933fc3b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="0cc16e22-4e9d-45da-832a-2d1800852067" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c6a14249-a40c-4ced-996a-48e40d1f5bb5" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="2973bef9-5e9d-4745-9e30-79d837c64b85" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e59dd9b3-7cb3-4498-9b34-768faeb684ca" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="4e89526a-cdd8-4f2e-986a-c6f8b4435240" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4d28976a-6ed9-4c7c-9c53-1102a3cac0e5" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="6c322506-e3d1-441d-a560-0681cc4d6f32" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="8e572d46-75fd-401d-98ce-8ee1af5d0cd6" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="e10e780a-5a9c-4e63-b785-d79ed7542155" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="286b949d-d461-498c-85c4-5078c0e3b023" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="362d6ad2-821c-48a0-a965-930e1f8d113d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="27988d1c-99cb-40f8-bea4-a9356486cce5" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="a962e70c-f5fb-4d8a-a9f7-459905428520" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="8d5047a1-506f-4347-a3b7-57c380ee7692" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="b749a28d-9ae9-47dd-8647-19ee2791d3d3" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="7a555579-c021-46e4-8586-c50d61fdd368" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="9ca88928-ec2f-4f8f-a5b3-68933d517356" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="95f828ed-79ed-40b1-94a2-a052d682d179" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 7" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="1cf04715-327b-4ecd-9afc-cb3ceb8b769f" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="b70ff736-3a79-41ac-9b8e-7fce4d096518" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="7c8eec6e-c04b-4e1f-9704-959dda5dcc47" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="e917b3fe-a12b-4a76-8a2b-eda41d793064" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="43579d53-6d4f-431a-bfc6-be72b3fc02eb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="c89a133f-8d26-48c6-a27e-756372154b96" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="95e5043a-1c01-4da2-a68c-034b32a7a83b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="f4850a99-b755-4f88-8c2d-e95517ea67a2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="bd34204f-9eb3-4333-b76d-18e17e9c961f" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="34d4080b-6f7a-4180-b482-73377c4d6565" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="279d102f-ba7d-4f09-b139-83f15b2e5c80" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="42175dbf-5e4e-4e1d-a817-e9e4a0e31b7e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="486d9e02-c755-4550-9196-2c241eb6e88a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="b19975ba-0221-44df-8bcd-6ad0deb4ebe5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="3c22f36e-e748-4958-ad22-e102821d26ff" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="f81b3ffe-e231-4dd1-adbb-83e3aa8e7cb9" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="ff6bc8ca-6863-454f-ba80-9b737e3af2d7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="7440e543-d44c-491b-a1d6-d487d1469b1b" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="73028368-f5d8-41d2-b5f9-8192be982704" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="65a70d02-8a54-4599-93ed-9a118a718221" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="3e7b4a07-b464-4eae-a791-12eb27c7098c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="554a5a9c-bae2-4320-8f4e-2e22cc9fed0a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="bc55af2b-9397-4934-acd5-4e71bbf3a094" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="8bb872b3-cfd0-4fca-a03c-1f1c4b01fe92" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="37dc7c40-1e5b-4900-8def-1cbf486183ef" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="ef9e9fe2-275c-471a-b619-6f9911ce43fe" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="3293adce-4213-43e4-aaaf-d1fac2bc8768" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="11892c5a-5925-4fe4-9685-9861675241d7" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c34eeb26-c61b-4338-a3e4-b426470be339" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="0658c5a7-643b-47e5-afc4-2945446e2e2d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d3dc6c69-bf2b-4ab5-81c9-fd42babf5ba4" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="147ce5d0-f86c-4962-8a15-19ab7c9bc619" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="fd263248-5b97-49be-b097-ab54e467c44a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="29117c18-19c2-4b26-887f-67596dc6c96e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="aedb9baa-2baf-4e32-b27b-afe7c7384c61" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="7796474f-c156-401c-94c1-a00af2e0fb44" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="40cbdacb-72a5-4a4a-8fc1-2599a38764cd" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="bf44240d-5934-41ce-9941-3d78f7f6fbfe" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6dc801ce-c7e3-4801-9952-a61d569b6174" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="29af9460-df51-405f-8eb6-15c73016a2be" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="902e881c-1b86-4cc7-b783-1c67ed272351" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 8" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="4e8329c1-b373-457f-a9bb-633531ecc621" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="d1dce3fd-1c80-49b4-ad35-9977e1a10edb" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="7dc70fed-98d9-4c6c-af39-4ece4123e197" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="8d34691b-47cc-4aa1-a1d3-982e0f595580" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="bee807d1-5c37-467d-9337-b007a3d225c4" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="5d60d992-8300-4b8e-b0f2-8a4cdde10fe2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="772fc828-eaf1-4bc0-be8e-79420258df8a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="a50c2068-9acf-4bed-9e0d-812ef40a15fc" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="95e4c086-7ccb-45c6-8e99-716c3b480bc3" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="328ecb92-61ff-4c80-bac3-34ef64790f36" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="20d46537-57b4-4699-ae4c-a109662508aa" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="500b2de7-be82-44b7-9800-e9d5ab2703b9" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="42852895-10ac-41d7-98a7-02ca50d1ca73" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="1931081f-6bae-48d6-b611-ae1663cc4da1" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5d2e908c-6ba5-4d18-af23-0bfbc7a8765c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="990b5399-469a-4560-9b4b-6f2769740932" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="179aa360-7e8a-4db8-9f1b-a86a3ce2407a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="d77fa084-e90c-4a48-be7d-2919b6adf10f" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="980431ce-4d66-45ef-b49f-7dc08cc58a44" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="e8e823bb-2963-4cec-a17a-0c0149893c01" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="ee240cb4-c882-4597-ac26-ab32661403ec" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="8dcfce93-530e-4d9e-bf54-5373e4b218cd" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="71e60dfc-db0d-4fcb-a682-1a300b64bfec" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="9de15eea-ebf8-49db-aa3b-6627ef7f4dfe" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="15d9ef1c-8254-4c9c-af1a-d3ca82e23e00" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="4fef7857-80ee-452f-a06d-df168b0dc69b" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="b582c1cc-1d9f-473b-a9e5-ccf834ba6442" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="055ebd46-7beb-4456-8b19-11187afb2cf2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="ae23eca6-bcb4-4a2e-a1a7-dfda040af625" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="fd77fda3-295b-4f71-afe9-b0ef58af0681" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e1a1a495-13a5-48bb-a24f-6430be2811b2" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="0a06c55a-5627-4ecc-96c1-01df67717dbf" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="8e5f9480-4d28-4184-ac4f-a7a2a8b5bd9c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="d03cc9fc-3ae5-47e0-850b-2f43d9e6734c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="45a0b2ba-27e1-472a-9619-8bf849839ecf" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="5558a2ce-7240-4757-b247-72daa4d1f7fb" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="279d4eb7-2cfb-4ee0-b2c6-7ec6203c73cc" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="252ba1cd-2a24-4a7a-853f-c63c61db69a8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="54b63b55-ba8b-4e9c-a47d-8d3fd318162d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="bf938168-0c40-4543-ade5-97598b7f17a4" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e3bd15ac-df11-43ed-bba3-602de12061d9" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 9" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="3c3532f2-1fb1-4971-b8f4-123223312a49" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="7c509231-2be1-4f61-af49-8b8a49f3d2e0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d6917056-a79a-44f6-a86c-641599457d6f" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="3abdd552-7d22-4686-ba7b-e8a03437c669" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6e383902-6db5-4ad8-a59d-bd01f16ef401" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="5c1fb5eb-bd32-4f48-9c38-0df1f3e66ca1" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="21a7313c-2658-4733-93a2-e19aa460604b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="2093c46e-67f0-47b5-b4c8-9c5198d78de4" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="fff99cd6-8d95-42d1-8514-bf7e0edaa41d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="9d5d3f48-743e-4499-9e26-14286d50a9c5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="0f523394-477c-4b73-b135-77dbab359f94" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="67fbd806-52c6-4d80-bc01-7c6d29910c59" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e3e7bfcd-dfdb-446e-84f2-2526b4be0413" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="758721a2-2886-4bd7-8f68-064f03dc1679" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d1463a00-8716-4c56-b58e-66ba1032ae4d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="5da2b978-f5b2-4b3d-a8b8-776001c29e69" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="b6167ae4-883d-4e58-9bc8-4983478c7d2e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="90088605-c439-4ade-8ec4-7f918c40eb5d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4e7bab1e-b63b-4dd0-9e79-50b81fad3561" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="e0bdd728-200a-4532-aaa9-38f985d11733" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="666cd927-98e5-4407-8651-7c9aa4f796c8" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="11f58d1e-0a60-410c-8036-9fed6471676a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f10464a0-4588-4070-9aeb-bcbe8ab33429" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="2e8820f8-9edb-4493-9cc7-1c6f7a16a56e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4522093e-45b1-4d1f-a8bf-ede4f15357ca" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="e0bed20c-a911-4ed1-ab2f-6896337c3b28" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c5fc913d-0d7f-4a4f-b42c-6307037cbcaf" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="64d4699e-c94d-4052-9204-41349e59c980" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="1cda779c-7b8e-4a30-9fe9-02d457d62585" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="50172c5b-a467-4a0e-be73-cc946d93e665" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9616335e-8735-4366-b8a3-0a06815e888c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="33addf0f-c17a-4371-8eb1-3a7fdb446077" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e53c4db5-3def-4e29-a88b-f6b101a77c19" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="96e79449-3f68-47aa-9d7e-270de41ca660" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="aa77b267-2e4d-4d60-935d-e47cbc4b93a7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="b3eab0c7-fb09-41f7-b8c3-18415e9c0da6" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f3dc4a43-f00b-4b8c-a965-76d7a27cef9f" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="6f93b16d-5389-4e3b-a85a-6e77ecb77506" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c571f6f0-955e-4339-af91-df28b3fd0464" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="2f76c914-1c80-403f-9420-c146eeba368a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="8e4f2398-4f6e-462d-b739-08c30ac10069" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 10" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="92a53d70-c8d6-405f-b400-a4a4ddd50a95" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="387d81ee-b595-4cc6-8d62-b626130454c9" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d7b87798-15b0-45ca-a474-c84f14dbffb1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="69c1945e-5b58-4cf3-9ebd-c9681443eea7" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="081beaac-b21f-4417-9c3e-09611cf3139a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="5712bf87-acbd-4a0d-8976-3f465c496b08" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d573b724-9da9-4041-9ff5-5475cfbcee26" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="f74df9eb-d75e-4057-80d0-662674828b5a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="b59ccc24-ae66-4759-b076-44c86d8fe4b5" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="309b7436-0a46-4b3c-a429-91c51cac7a9e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a3c31029-31b0-46e9-85ef-1bd0efb53955" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="af90163d-bceb-4814-8c81-aa0abc7c454c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c6551731-9abe-484e-bede-1fe120d70173" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="d8f5f99f-6313-465b-9b7c-be2a83183ba8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="8a43bb72-1746-4fef-b444-f72631f5143f" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="9c2e0e2d-2dd0-4a9f-855e-56415edebd00" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e841463f-dce3-4928-a4c1-dbd5bab67bd3" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="e2c26074-eba4-417c-8648-08a71656970b" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="06d5e22a-127a-4aba-a9df-387523f1c4ab" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="1459fe53-d7f5-4f48-a9c5-2a4c27e2dc4d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="284d98a1-75ff-4842-b058-e9b4888831bb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="35ba85af-57a6-439b-99f4-1c69577f2302" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="bdfab2ce-3475-4fe4-8551-9ccaeeda6515" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="8bf451bc-dedc-4244-82b7-202ffeebf6e4" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a32e1136-033b-4c7c-91be-2709eb47209a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="9887e4b4-c6e7-4cff-adfb-3dde4e874bab" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6472295d-b3c9-4d4b-b6f7-973df97aac69" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="58b73998-456d-49e2-9224-9e06b650bb05" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c1d25252-e4a8-4c8f-9ae9-97b0b6c55e39" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="c3a60de7-51c0-4094-a884-7f3138c4c918" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="81558577-b1ef-408d-b21b-2c9d83a1e164" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="de33c518-2449-4a6d-889f-5cbf747141af" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="450b06e2-0eae-4f79-8bb6-1807889c4411" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="ea4c6685-55ab-4156-81f7-952a263661d4" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="48843480-fde4-4762-80df-bd9011d2fe70" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="476083db-1b9c-4491-9244-2c30add7a88c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="58715907-fd3e-4cc8-821a-fd4095f3213c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="a9846bb3-eb7f-4d96-b039-fbeacea79949" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="63425ebb-0ef1-4779-ae76-03713f865783" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="153cc9a4-520b-43e1-bfef-55f3048047c2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="b47246b2-d455-4b6f-bc52-fae2cfbf373e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 11" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="5bb04c83-4ab4-404e-9069-ee7a0eee405a" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="d8c5eefc-cea7-4a37-8f04-5aa7f536b506" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="84852a67-b76e-4982-be4d-bf59af640dd1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="b890f18b-b86b-40a4-b0e8-11a88a2df751" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2a6b3738-dc46-4c6b-9dc5-84ce5daefc16" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="353eb29e-a289-48af-85df-3238ac84347e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="ecf6bf7c-af62-4b7a-a683-742a719069c6" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="ea531902-dadf-4fcb-9180-2a4555ec62e7" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="63efa665-12b5-4cda-8a30-b3989ae15aa3" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="ce62ea65-b1e1-439d-8448-230807a4226f" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="7242f233-96b4-4eaa-aaa7-e34a24a3dfd2" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="dd07c288-a34f-4c74-8152-95f86a5e63e0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d8a9e4c3-8fff-4e0d-892e-917f2f7ea41d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="e5fd52e7-c46f-43e4-9ea8-fa2c3cfbeb98" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d1d056dc-6de0-4fed-a4e0-cf0fe81ecc31" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="93cc2ad8-9ae8-490d-91ea-aa34af5381c9" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="8ff099fa-5572-4974-b35b-16f71ab5b0c7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="21a8fd23-809c-4b9d-bd8b-615aaa40c8c4" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="ed586e5b-2ba5-4219-b86a-b3912950f672" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="8fd1f1b8-4747-4a4c-8fd8-5199a7291e15" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9e2f7fef-5156-48b3-a78f-3a205150c33f" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="73f1e63c-82cb-4953-bde9-453d6439712b" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="29b71114-844b-4164-b521-8ae484e1e79c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="cdfd30d3-2daa-48ee-bab5-e845aa027ba5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c36b8a1e-f269-4ccc-a814-6bcff01fca18" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="dca89ac8-19b6-4a73-919c-64e1fd55d88a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9c9c7cee-9ad2-48ce-b9d3-6376d2e0a223" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="3ba1fa34-b561-4b7a-b2f4-2b32df1132ae" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e842b4e1-7c6f-4512-bbe4-d163a01cf928" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="fb24edb3-c8fc-4d12-8be6-6060d156acca" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d417bc58-fa17-4d26-bd8c-ef58c9425086" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="c5bde5d8-6af6-4cd9-9d9a-8c6e6bfda25d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6c30235e-84bc-49ab-9acc-ce634b257939" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="2d633188-d8f0-4f51-8aef-7da8886a67f2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="388e9cf7-8040-4fc2-888c-625916642774" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="b930d3f6-36d6-4d1b-a4db-704f64a50e6c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="35df00ee-50c3-4f2c-8a65-48450451a076" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="78d3252a-625f-455f-9251-7c876081919d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="31edd8a4-1153-481d-87c3-514f7f0849c0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="feb30495-38cf-4138-b0a1-856786fc4443" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="06004e68-8607-4aa1-bdfe-e355930e4aa2" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 12" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="ec39cff6-823f-4406-a3d2-7c60edec5024" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="ff22165e-2e97-4f12-9555-98705a1dc783" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="05cba420-10af-471d-9bf0-5eed936f8931" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="b0e1097a-72ea-473e-9eb6-e92fbfb76dfa" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5ec8ad11-963c-47d5-a61c-59d32b7e55a0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="b8f0265e-dd21-46fd-9803-5c3a4701d1dd" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="647e76e8-3248-4d0c-819e-7a7ca0c809ef" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="de6dd5b5-d054-474b-b2b9-35daa88ac435" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="df5ad7b7-b12a-419f-ba95-3b10d820e154" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="a3cd3427-c318-4e0d-be76-da8fb00a320b" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="91278375-9824-4c53-8d5b-5ab286399b24" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="db70c942-e06a-40de-9156-34cd89c308fb" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c5366768-19cc-479b-9384-43fd6fc2f06a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="bf613cf1-5a0e-42cb-bca7-fac2b657f559" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a79eab5a-85cb-4a7a-a527-9a09dc7415b3" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="6e24ed6a-6fb5-4b3d-a26c-ea3e08386c4b" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="22770d22-dd4f-41ae-a32e-2cf4a358b836" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="41299023-354d-41e2-b643-b1575c147e26" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="010354ef-9ad1-43af-b59b-1927e866b385" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="9ddf778f-481a-4b94-97e8-25275874b1b8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e8aaca3d-353c-42c3-9553-ea84f962efc8" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="c93239d2-1c48-4abe-a811-1690bbf474d8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="3a6f7bb7-58ef-4a4b-ab21-39832b6161e6" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="be5cc2df-f40c-4824-a038-456765921637" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="89740af2-76ed-4d01-90ef-0ec72fecf75e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="d4cd4744-2a7b-4014-bd7b-312b01382b53" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="942acca3-2ff3-493c-a8e7-c86be4500b75" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="9d774509-36a4-4e57-b791-d8ffff0a4ce4" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4a6c49a4-f852-445f-900d-81bdc30ddaf1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="e32bbbb1-4712-4e26-a333-a0bf09a5fcf2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2465251d-5ad7-4cfa-a7bf-cfb478ba5093" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="ec32a3d7-6777-40ef-8998-67048e97367c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a19cdff7-5d9a-46f8-ab9c-061eb2513d93" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="70515ce0-140c-4814-bd1e-a9f39d4590b7" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2f2a89aa-6fb9-4384-b6b2-3d3c2d2c8780" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="c54e6fc7-19fc-43b9-b9e3-f93f2a5077c5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a755817d-5f90-49ce-8f5b-55500b4cd158" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="4b816b70-eb04-4b49-8e73-6c916e79890f" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="427bb91e-9b0e-432b-b13b-f6a21e329001" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="274b8844-6961-4c43-8eaa-3d342e9b8474" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6dfda1aa-d00d-4c42-bbbc-bd9fc0befcc4" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 13" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="2d79fc57-cf67-4d80-8b91-5324618c08b4" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="1ca4eec0-0bf4-430f-ac95-e0215b6fa0ad" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d1184690-99b7-4b2a-a3a3-4e21dacd18a4" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="d08b78dc-252e-4957-9f71-b787cfa2b2c9" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c0b0ea20-1d15-4278-97b7-567432f45e7d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="6cea20fd-a2bf-44aa-b495-c46ecacbe651" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e535e397-79c4-4e20-b1b5-8bfd19dbe865" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="aabfcc0d-0710-4ebc-8ae3-156c4de42325" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5429fbf9-d73e-42f4-8741-25128dbf1911" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="d1309f37-2f58-42df-add8-995a5e052235" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6e0e83cd-1967-4db6-9d32-fbb6cdf9554a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="55e361e1-492a-4d44-b703-93dc1e5bfee1" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f8f05af6-f663-489c-9d99-f4842c58f631" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="f50f2585-d1dc-48c7-b570-1b78a745062e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="544ac3f3-198f-4e5b-8707-4f245226554f" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="a5357453-aace-4b30-b332-6463698ca709" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="88f28114-f511-41bd-a167-e24b4a719590" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="5f33608a-5539-422a-9cd9-a93177b3d090" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="174ce868-3b08-46a7-a77c-bf8ecc6eb92c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="1556a7b8-55ef-4eb5-8eb9-f6a5b4ae393c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="774e00b2-3d0c-4b38-978a-9dc508c3f35e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="fe1c7bc1-33af-4668-81e7-5ee9c3ebafd9" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="24e31474-eb11-4f40-9a65-5622a75ce6f2" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="b532fc5e-4f1d-43dd-9a86-896d7a1080a1" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a2035da8-9fba-40ca-9a32-52badb8d0958" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="b868724b-1dcd-40be-b496-2d5e2a880a5c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="be776598-d2d3-4c46-8c0e-fb72700aab7e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="e8578e64-3822-492b-9889-bee8882c2269" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="99f78527-da46-445f-b4f6-c5ce622590f9" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="492a567b-d948-4304-84ed-284162a2e569" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2b7df5d2-7934-4e58-b873-796241242b33" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="0d5a53ff-8352-4d1c-8614-595b0680c2d5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f5f403cf-658a-4ba2-af07-e4dae971053e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="a7fe1248-dd2f-4468-9b85-eaeba6dd3865" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="074a8445-511d-4346-9ab2-9f449704efcc" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="944d5df6-a82e-4df0-a58f-2a50b7c4d7b3" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="46c74064-762f-4cb9-a000-7ceb7a2ee443" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="32eed534-9436-4716-aed8-e9ef70e86cc9" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="1f6bb01f-5644-49cd-b6f1-697533c4a2f4" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="6bec18ff-7f47-4e8b-a3a3-f0ac6d1f18de" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a4870392-ae3e-4373-9174-781142945cff" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 14" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="6dbefb55-0c03-4569-9c66-19d33e3189ba" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="90af5673-bf2a-45f9-bf9f-c1c70eaa00f5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5408b4ea-32b1-42c7-bbc8-94862f3e0092" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="c13c2d8d-1df5-4240-8339-a5c60a27f0b8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d2cf057d-6151-46b6-b63e-58e70b9b9074" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="a8ee2e97-c36b-4152-9615-b9b2bcb14ef7" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="cee01913-a397-412f-a6cf-a2333b24040b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="1452efff-bf83-4639-a81b-58b933499422" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f89766f7-3eca-4593-82bb-99f119aef79e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="044f2e93-b66d-4f26-8ee0-cceee29fe149" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e0f88318-ab11-4bbb-b54f-8a94640e6305" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="e05f9085-a43a-415b-a4e9-f58c2e0890d3" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="73005825-34ce-476b-8840-d2c735005afb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="7388c79a-2a06-44d0-a3c3-6982b3a8937d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="adbb164d-ae41-487f-9c26-957fc14e9ef7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="4cacd3a0-c99e-41d7-8245-decf6f7b4ced" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="7896801c-63d3-4fda-9f55-550a2ef767f8" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="a1dd5679-86c6-4d99-9a50-52bbe5dc19f5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5b6d46a9-2531-4e8a-9837-b178af8e8a39" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="391b12b1-f068-42a7-abce-f572e4b6d8bd" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2654607f-e05f-4e74-905b-cb528052e7a7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="d5d53bc2-e4e2-4e4f-a951-8826c388ad26" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f1a12a54-6c4d-4565-a98e-4607189855e1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="b9181003-1d20-4e7a-b243-78162625f773" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9e836671-1c77-4201-9809-2caf1e613d91" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="4c7b6e4b-3b9b-4fce-88e7-adad6cff9cab" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2c006cf0-d0a6-40c9-b5a3-62a627b18b32" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="0689ff69-6d1e-41c9-84dd-2f3fe2832753" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f5ddf6fb-a5ba-4a43-a114-0c8ee9cd84d9" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="d7cfd5eb-3b4c-454d-8fc4-5b2c16793b7c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2017dbae-604e-4aaf-9578-700402388733" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="80d0ded8-1c7e-4a60-887e-337992b7682a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="06166742-3533-4eea-a3af-5bbbfe872dbe" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="a2af8d4d-7ddd-44d5-b660-e2405ff1bb2c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f6890fe1-4ae6-4d01-a518-aa3d03763fb0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="cba85406-12fd-443c-84cc-905af69ddaee" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c8a73b8e-633e-4032-b7c3-5c81d488c2eb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="ae36f48e-bf4e-4390-8420-78d9804368a3" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="589d624a-d815-4fd5-a97a-4a82d670ba68" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="8cec21d5-39ee-4d53-82db-9f7e621b4afb" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="b7676632-8a91-4c8e-907c-4bc78c3c0b31" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 15" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="b65ed8c9-780f-459f-9611-0500d080222b" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="d7f273a5-095b-4272-927f-b09c6df802c5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="afb22765-ac98-4086-8f90-9ec1d18a2bc4" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="f8a1e77f-2fdc-4fa9-94e3-fc6850ca93ac" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="13530acb-4c69-4268-8129-2212b486d123" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="09c5a0f4-d0ce-4b39-98be-fbbec026a237" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e3bd55af-22e9-4d6d-b6d1-2ae6e0b6aa9b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="0c5c2abc-c32d-4370-a3ab-66cd63d947d7" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="44c1dff6-8120-436f-af6f-fda66a3d5460" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="3f72647d-acd5-4b28-ba2a-5a7ebeee53b5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="49c381ec-c11c-48be-9d25-395108e95c5d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="67f9b0ac-74e8-4411-a54c-4b00fe5e8d63" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="fde09c44-ae40-4777-a342-5bf6b9d06702" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="a6fb3a25-8aae-438a-a915-ad728f816b8f" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4c408527-0a4b-4408-91f4-101c4efd30f0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="ab8e8007-d8a1-475a-8193-323767b84d21" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="29411e03-d670-4022-8346-eb0556be03a4" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="24a15816-73fb-4180-bc92-90ee81dfa55b" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="906de7ef-11b2-486e-8684-a66a8515ba69" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="8e3709fa-35ca-442e-8079-5931ae57f5dd" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="0a65ec6c-965a-44cc-8a95-9179413ba3a3" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="28c9a64c-84f9-4c00-9028-9657d7b046de" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="b58ae78a-f239-4fe1-aa98-26891bedc535" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="f2a47851-5730-4265-b606-1416b77c9160" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6ca20c55-29e2-46cd-97be-02059d4bb2e9" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="cea63762-56ff-43d6-80d7-390dac68c096" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="0cf48551-2ea7-40c2-b551-8d6f2387b616" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="b41a8ad8-8e53-411b-85b9-da210e28aa28" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="dddcb78e-cca9-414a-9633-b93558a22721" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="41d8bf9c-7686-43f9-ad3c-6c6da1516a7b" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="ffd0725c-0453-461a-9ed8-370bd73dafca" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="cdb8620e-6767-41fc-8228-e8ab30953356" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9382ae3d-f9d7-4005-a8ed-41386ae388c1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="63414a6c-ff8a-40ab-80a7-9e50fe318ea6" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9199f0cb-4b4b-4193-a3bb-1975b5458b39" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="0dd34215-0508-4e8c-a241-ecf152bd54be" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="b1cfad59-f8f1-486d-8ef8-6962f7ab8982" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="3d613053-29ca-437b-90f4-51431afaaf83" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6c468424-98db-495e-ab0b-ce16066650da" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="dfde23d7-5e5c-4f54-a73b-5f7c3be038d0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f0743339-0d37-437d-8edb-96faac8e6a96" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 16" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="26733247-006f-4ab5-b53b-6e5b7e667392" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="8a984abe-6937-4ac6-b4e5-018e649debcd" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="bc395ecf-4079-473e-85c2-4aa87d35a954" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="b93e488d-0112-4685-b0e6-e9e13f61167e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c4ec9a05-045b-4a3e-89f3-b36f2bbe1306" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="ba4e6621-e545-4342-92e9-ec1aab522ec2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c3802ba0-3621-4f0e-9f0b-22bae2812c92" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="f55a76eb-cb50-4947-98d6-cb6b911ab574" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e54019be-30ea-4f8c-a415-d13972546ba1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="992e2484-f563-4aae-8d79-186fc09c8703" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="7077ac38-6527-4758-8cba-8feb497173e0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="0ede415f-a162-4b77-b2f1-a95b192ff0a4" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="24cd7dc6-bec4-4b10-a865-115d9a4f3d52" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="7a367cee-02f9-4996-a145-28fca35d1a45" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4cc9f736-a162-4044-a2ec-3856758775ea" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="0d5f0740-2dcd-4fbc-93f0-16e0ecff7ce0" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6761ebc2-2615-44a8-bd71-2e08ac0d9ef1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="93e31322-60f7-46c2-88b2-82a6f2b6dc97" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9c7d5b57-a334-4622-9a65-bf9736208b2d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="753b7997-72fc-4137-8d43-54cc5bfdbb72" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a59aeb20-82a2-4619-893c-723abb0e0f53" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="a0ad8d5f-3b86-40cd-a012-5df6a09e8ba5" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="778229da-483a-4773-9534-bbfc34083f21" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="760b66e2-5390-4dc8-98bf-c047de20f54e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4f2f7814-afbd-423c-93b2-9480ec92a236" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="aec80960-c566-48e2-b5a5-e267256968ac" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a91973ed-c2c1-403b-9916-077a9930267b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="a59697c3-fbd3-435e-9eba-d1c25e76bc7a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="37e0237c-0fd1-460d-b48c-fa95f36eb40a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="15386b2a-cb21-4350-bffa-6cf681187584" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="82e6f243-2197-4dbc-ba97-d248b9497df5" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="36a2bc6f-6332-4c1d-b11f-e8ff35a471e1" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="dd880b79-ce08-4988-a772-87f937fcdd2d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="52e0febc-25e0-45e3-8f87-54e3a6e23f57" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9e7a2ed3-b611-4c02-85d1-76b65174193b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="7a213525-aab2-4c44-9de4-b42905196a25" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="1423d13c-0a89-4540-a78b-f8335edf5e3c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="8aecb496-2dce-4b11-93e7-9e626bdcae0d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="17b89630-1ecf-4121-b1d9-bd2de88bab10" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="bb60320d-55f8-4f3e-a4a9-75e1c7d08f9f" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="ed59ca5c-f882-446c-8164-59fbcaec87e1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 17" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="3011a575-074b-4424-9ee0-41e957d2a668" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="d59e4965-19f2-42d0-87ef-bd382c4f585e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e45c46fb-cb8e-441a-aee3-5c638aa5e498" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="38b238a0-c643-4b19-a778-ea34d272dbaf" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2c781883-c1fe-48c3-9050-7243870f8150" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="27301c77-3ded-47bc-969f-5218677f5740" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="eddfa188-a724-4011-9b79-b87f91d2bc32" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="c7e7aa21-c63b-4743-80c7-d16a4a69ddf7" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="19adb4f6-c653-49ee-ac5b-c585ef2c5eed" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="d5ba42a5-d8a5-404f-bd68-16d65185e99a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="3ba29d9c-acbd-43e8-b13a-1e8e1ff8082b" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="d8937015-d08f-42de-9c69-3ca3bbe97f49" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4b71846b-b860-4acb-b3eb-bbef91c49ce2" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="4129f691-dbd9-4497-b92f-4276ae7e1f99" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4785de46-3520-474b-9265-c8d931c04b08" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="9c4bd89e-95bf-42c3-82b8-605e0c346322" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="023aef25-e164-45e5-b27c-5641f3478541" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="ea0dd1b5-fafe-4cb9-a46e-77b9266b9457" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="3c555fea-7f73-4dc9-8173-3b8011ef89d5" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="f3306978-a430-45d6-89f0-c4c28cd68a91" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="48dcfe9e-5945-4718-9142-579d33692495" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="b63b7bb9-dbc7-4d9c-9260-5c24449f93fd" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="aff434c6-1609-4f77-9df4-aacac9cf0e53" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="8b559bcd-b85a-4803-808b-c3aa1d22108a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c8fc6030-a7e0-4000-afd0-49aa4c00c6dc" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="68c1a9af-01f3-4693-9f72-dfa3d8c55803" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="ee10d9ab-61b8-49bf-8ece-5c02e179706f" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="9755054b-d806-400d-ba09-7ed2addecbf8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4711f60a-7d9b-467e-8f35-0829b2e71603" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="5b8851c0-bb9f-42d1-87e1-8f0f8ee1b1c8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="8fd13466-52bc-4bf1-b424-623033a54a02" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="e25af3fd-f0fd-422d-ab45-c1bc5cdfdbaf" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5ac478ba-b303-4a0b-b2c0-e10498e6b4d8" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="d44a888b-e24a-4f44-bc84-af659a201284" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="12993fae-e2dd-4545-9d3f-2f1061c67e6d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="25c39647-3aa4-4b7c-8f95-8ea282c8f042" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="95184525-209c-485a-ae77-764d2af6e62e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="318ce0ec-86f8-464a-81ed-f8fca392a2a6" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="001eef15-6914-4eb7-bd98-74758346d9b1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="794fe573-118d-4a52-9f0f-1f84c3fda330" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e0db0364-ae34-4392-ac93-003fb75041cb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 18" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="187e689a-6cd0-49ee-98b6-f5fa3b8438ac" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="a293426f-13ad-4089-96f3-be87ba69be88" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="bf0451b7-98de-4432-97dc-afee053c30f8" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="d9f7ae8e-f14b-4139-b099-26909c856b78" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="7fbb1e31-32ea-41db-b3c0-414845224f08" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="e001fc1a-9f50-4c3d-99d4-5923191ba2a3" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e7de6998-08d9-442f-bd98-0ed03a6a31b1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="1ce7d2e7-69c2-45ea-ad52-9c1b5dae0237" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5790ef68-efc2-4d08-9389-6318720936c2" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="d7c96395-d9d4-4786-a972-572ea2e75175" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="8691e85a-9dff-4aaa-a33b-c0613028b7d5" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="a226ed23-4848-4fe5-bb93-6992390810d2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5fd47f36-834a-469e-b5f5-6fbb9f6cac54" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="2788b6cb-9469-451d-8c8e-2121372a66f7" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="cd2118ed-8ae4-4b3a-bde0-d81afdf09973" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="fe3c9e87-466a-420f-a981-1b7386d098f8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="77f2823a-5d66-42c4-afb9-9267cbc482a7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="0f8a308e-f88b-4865-a8d3-a9e6a098f9aa" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="b1b99502-31da-4a3d-a8b9-71cfcaf5818c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="47bd486c-b647-4145-a7eb-c127d0b245fe" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="233bdd78-f9d3-4a5b-9687-2d7941c44e7c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="a04e6a85-926d-4a29-b3c4-92bcbe274868" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="b866a577-53c4-44cb-b184-a896a76e9dab" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="ab5fd711-ae69-47be-aba6-0e9a38273491" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4b781d0d-9ba3-4c53-9119-3aba40dc38bb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="2a2faca8-554e-4d5b-83bc-32be42c20d60" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="48d42438-de84-4673-ad36-bf5e8c729ad6" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="4c4c1f28-194c-4876-8061-c6b09f055da4" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="fc68f755-ee23-455d-9623-de53e4562a56" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="420a5c40-784e-4390-afc6-97083ea4513a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="f86a960e-9613-4103-a0d2-19494be076b1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="fa272bf2-94e7-4589-a3f3-27b4f24c7713" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9bf217cc-f7ee-4fbc-8422-dea635957f22" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="a1bc6a38-afc1-4f4c-aef7-02dc32dfb6fb" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2b49ee8c-c396-4b5d-80cc-f492079b31b3" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="bfee51e0-4f58-4e00-9c1d-39c35cec27bb" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="15494e4e-7e05-4581-beff-d550f7382aa4" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="43860666-fe81-4d2c-a451-807eca8e5947" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="48a62de8-fee8-4e5b-80af-6d1695ab77da" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="55a0288e-fa6f-4543-982c-e5137039c85e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="68b8c648-ae26-419b-8eee-358847297337" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 19" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="9850e192-796f-4867-9c83-fecbbcb532fc" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="06d47743-fa4c-40dc-a441-d3ce6a5959f6" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="fd132b1a-9b04-4ced-b047-db5e15f31f76" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="11ec2aae-d3f5-42de-9d45-34ff40ff4124" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c3bdd5eb-7301-4147-bb21-f2d6f9be6e44" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="7adec547-69bb-4c05-9878-e45e00289bb6" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d49cd8cf-8b55-4ec6-a9f6-fb4921d08aaa" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="63366a7b-1ed4-4430-a93a-2519c8fd8008" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c03dd4c0-7758-4efa-95eb-40332c47e560" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="4112b060-1c47-44a2-8a09-d01b65b1f0be" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4415d076-ecd6-4cef-a613-6ede12a4f4a8" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="29ceb9e7-852a-40d8-9c01-c11a4627532a" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="7159883a-f48e-4a00-9c28-2bf06ffd24be" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="4e3a5bc4-62fc-4a48-ae5e-9f435c0a4d24" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4ad9d11f-62d4-4d56-8cdb-b6b315610362" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="fd0e8935-37b7-45bb-9dd2-ee72c9ab9829" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="efecf7d6-d9bc-485b-b2ef-237f905d5802" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="603626d0-77f3-4887-a721-d16f4872e8e8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2603664c-52ea-48cb-af02-e45012e43eeb" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="9c09eb54-98df-4048-b9aa-69bc7eede4d2" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="df643b87-9cc8-4ccc-8b5e-76ddfd06283d" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="d3e8eeb2-89f3-45ae-be71-38ed07ed453d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e9c83bc5-b55f-45c4-a28b-b74783a0409a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="1fc1fc10-e5e7-4995-bb4d-23b40b70b0a3" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5bc3e40e-8ef2-4774-ba43-e88f1593381a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="133fa488-a12e-45fe-8195-15932f6e3c05" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9c3e3718-dcec-4a56-820f-d794acce3c31" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="6cbee992-9ef2-4f5b-8915-14bf3e656aa4" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="c9b233b8-3aa5-4f58-9cc7-56ab4981c7cc" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="c857b352-e76d-40b2-b871-e39d5f0f58e6" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9b0229ba-cc55-432f-86bd-653df11279f1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="6628cf3e-78de-45c8-bab4-b78bd4235a2d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6092f7fd-f8fd-47b5-953b-e27a7cf36b4e" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="7d5f1b2c-8164-4a43-bce8-21de3c98d7bb" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2a035754-48cc-432b-8c72-c003742239a1" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="2c7d28fc-6c11-4339-94f6-d73be9a13d08" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2dd48a14-459c-46c0-a995-762cb28d3dd8" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="08b2faf2-7e56-4c50-9af0-2d318b00b4be" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="86bc1e4d-8d76-4f49-b2b0-87343dd4805c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="2b0aaab0-804a-4dc2-8a8f-e3ba7c92efed" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="a137c742-7dec-4e69-ace9-fe9adcdaaa82" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+		<Activity ActionRunOption="StopActionsRunOnFailure" Active="True" ActivitiesGroupID="Group" ActivityName="Activity 20" AutomationStatus="Development" ErrorHandlerMappingType="ErrorHandlersMatchingTrigger" Guid="6c6af600-e26b-4ec0-8294-b02f6cbb9edf" ParentGuid="00000000-0000-0000-0000-000000000000" PercentAutomated="100%" POMMetaDataId="00000000-0000-0000-0000-000000000000" TargetApplication="MyWebApp" Type="Regular">
+			<Acts>
+				<ActDummy Active="True" Description="Action 1" Guid="893a29b8-678c-4c9f-9edd-641ecad99ee1" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="58b34df2-b8fe-4738-b602-327209162414" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 2" Guid="562f6109-37f5-442c-9d66-c2bbba639440" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="50c4899b-f372-4bca-b78e-9eba45ee08ff" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 3" Guid="494de897-60ae-4db8-9bc3-f2320a5ce12c" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="03e04c7c-e71a-40bf-a309-b664b27974b0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 4" Guid="2ad8d85d-fd20-4fd9-92a1-e323a4234b19" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="4db45752-30d4-4d49-99f4-30adcf1665b5" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 5" Guid="c39a5131-f9fc-4d4e-802a-788d6606a5de" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="3a1cce4f-b814-434d-8beb-c4ad2bfe5d43" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 6" Guid="5c551ebd-abda-4071-94be-c50723626a5d" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="52ea6e7b-3022-4837-8e7f-ed98e856c2b0" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 7" Guid="0c3a795f-0d08-4279-b8b6-dfe101dbb435" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="70bb0b27-ce96-46b1-a27d-54843257b93c" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 8" Guid="6f9daed3-2d28-44ed-88a7-8adcf3f0b242" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="9ec3f207-0f34-4d23-b7e9-c604c2fa33e7" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 9" Guid="8d63a099-20bb-4213-8131-4972d7c3024e" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="6761da63-bccb-47e7-9852-6bd69a9818d6" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 10" Guid="8001b979-886f-4bfb-a6c6-5de8f63c5bfe" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d2275d69-d66b-4182-987a-fe5fb6715c0a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 11" Guid="c8a89c2d-6c5e-4ea6-8838-d29237bd4ad6" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="2f0ba060-678a-48a4-8bb9-570ddaef4838" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 12" Guid="609727f7-8383-47c1-9a8a-7871f170628b" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="cdc8af0b-aab5-42ec-b75d-aa4cb5975a3a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 13" Guid="e87b51fd-3156-4820-9010-379420c223b6" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e5db48c6-64a1-4a7e-a0d9-a98e77a6ba1f" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 14" Guid="93953f9b-2c6e-4e20-a12c-0729c26d7b79" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="57c059f2-b621-4963-b8bf-f60f5dab3586" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 15" Guid="d397cc98-276d-4495-ba38-9df2075b761b" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="e48733bd-cdcb-4594-bba0-d66cd16ad50a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 16" Guid="a39bfe4b-c5ee-4efd-abab-65a079aa42c8" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="5930e8f7-a4c3-475f-a3ef-6ff885290b73" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 17" Guid="46060644-cbeb-484d-ab72-9e9ad5f07e97" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="d67669e0-e2f2-4568-b023-2d6ba4eaa574" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 18" Guid="ac68ee8a-5e9d-4e2c-ac59-5da2d4c0fe85" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="728c4a0d-4e12-47ae-b90c-8fea178f8e27" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 19" Guid="c57adc7f-0ec2-40a4-bdd6-46f37827fd78" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="b0533bdd-1faf-4899-99f5-8877d8850428" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+				<ActDummy Active="True" Description="Action 20" Guid="e76d7e80-bcb7-48cd-8796-55e2e559d7f4" ParentGuid="00000000-0000-0000-0000-000000000000" Platform="NA" RetryMechanismInterval="5" StatusConverter="None" WindowsToCapture="OnlyActiveWindow">
+					<InputValues>
+						<ActInputValue Guid="82c07d18-97fa-45e7-a87a-e9629c28827a" Param="Value" ParentGuid="00000000-0000-0000-0000-000000000000" />
+					</InputValues>
+				</ActDummy>
+			</Acts>
+		</Activity>
+	</Activities>
+
+	<ActivitiesGroups>
+		<ActivitiesGroup Guid="1392b6ff-e861-4497-8eeb-8ff8200f47f8" Name="Group" ParentGuid="00000000-0000-0000-0000-000000000000">
+			<ActivitiesIdentifiers>
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="c5a33bd1-c563-40a4-819b-6f3da6013d94" ActivityName="Activity 1" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="7a0ad1cb-74f7-4915-8be8-357b5623fb8f" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="ce20189e-fcf4-46c5-b20d-e948a2224f48" ActivityName="Activity 2" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="e69036dc-3572-4f57-83ad-e2331f784ab6" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="25ec30e8-00bc-4ac9-973a-40219787ae81" ActivityName="Activity 3" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="57a56734-311a-49e6-ba94-5a05859e2d1a" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="bee9c2e9-a1b8-445e-bc1a-7cb1bca7b0d6" ActivityName="Activity 4" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="ad6d94fd-217e-49a3-8cc4-dea4e488c550" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="7ca002e5-84db-4e29-92c3-67f36adb6d9e" ActivityName="Activity 5" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="36e40cd4-5a93-45d9-9b2a-4b632d3f6b64" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="223f3b0e-bfe7-4171-8c18-3d2dd4857b50" ActivityName="Activity 6" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="e879dfcd-6dfa-48e2-87a0-636a10b30891" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="1cf04715-327b-4ecd-9afc-cb3ceb8b769f" ActivityName="Activity 7" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="586ff2b6-e583-4446-8aac-794a18cbdc4a" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="4e8329c1-b373-457f-a9bb-633531ecc621" ActivityName="Activity 8" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="8145d24c-48c2-48c8-ba3c-d5d1f0f3bdbc" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="3c3532f2-1fb1-4971-b8f4-123223312a49" ActivityName="Activity 9" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="ca6182b0-b0d1-4027-ba44-8aa66e8d3a67" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="92a53d70-c8d6-405f-b400-a4a4ddd50a95" ActivityName="Activity 10" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="e4d6ae43-0300-4559-a36c-b9f51ebf9d6e" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="5bb04c83-4ab4-404e-9069-ee7a0eee405a" ActivityName="Activity 11" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="c8e18323-b653-4d7d-baf5-4ed7dea6f7c9" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="ec39cff6-823f-4406-a3d2-7c60edec5024" ActivityName="Activity 12" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="7aa70a4e-3af5-46f4-a646-3a463fff058a" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="2d79fc57-cf67-4d80-8b91-5324618c08b4" ActivityName="Activity 13" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="6bc9422b-3a3c-4acb-9353-2370dac9f825" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="6dbefb55-0c03-4569-9c66-19d33e3189ba" ActivityName="Activity 14" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="2e917137-0938-48fa-b5eb-ba35e055406f" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="b65ed8c9-780f-459f-9611-0500d080222b" ActivityName="Activity 15" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="1961f98f-226c-4ae0-a4d7-f9106eaa9c04" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="26733247-006f-4ab5-b53b-6e5b7e667392" ActivityName="Activity 16" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="e122f879-d4dc-4d42-9324-f7792ae7298b" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="3011a575-074b-4424-9ee0-41e957d2a668" ActivityName="Activity 17" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="9119c786-6dbb-47bf-a024-173f03b5fefd" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="187e689a-6cd0-49ee-98b6-f5fa3b8438ac" ActivityName="Activity 18" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="68306fa1-5de7-4c48-96fb-1e87a335fd55" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="9850e192-796f-4867-9c83-fecbbcb532fc" ActivityName="Activity 19" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="65b57f1e-4af9-4046-a41e-ee94c72f79cb" ParentGuid="00000000-0000-0000-0000-000000000000" />
+				<ActivityIdentifiers ActivityAutomationStatus="Development" ActivityGuid="6c6af600-e26b-4ec0-8294-b02f6cbb9edf" ActivityName="Activity 20" ActivityParentGuid="00000000-0000-0000-0000-000000000000" Guid="79c7f8a1-3333-46be-95d6-d57fdf8dc404" ParentGuid="00000000-0000-0000-0000-000000000000" />
+			</ActivitiesIdentifiers>
+		</ActivitiesGroup>
+	</ActivitiesGroups>
+
+	<TargetApplications>
+		<TargetApplication AppName="MyWebApp" Guid="47835bf6-b1a6-4171-9f8a-71d841bd5634" ParentGuid="00000000-0000-0000-0000-000000000000" />
+	</TargetApplications>
+</BusinessFlow>

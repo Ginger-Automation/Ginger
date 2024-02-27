@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection.PortableExecutable;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -55,7 +56,16 @@ namespace GingerCore
             Name = snapshot.GetValue(nameof(Name));
             Source = snapshot.GetValueAsEnum<eSource>(nameof(Source));
             Status = snapshot.GetValueAsEnum<eBusinessFlowStatus>(nameof(Status));
-            Activities = new(snapshot.GetValues<Activity>(nameof(Activities)));
+            if (LazyLoad)
+            {
+                snapshot.GetValuesLite(nameof(Activities));
+            }
+            else
+            {
+                //long startTime = DateTime.Now.Ticks;
+                Activities = new(snapshot.GetValues<Activity>(nameof(Activities)));
+                //Console.WriteLine($"Activities loaded in {TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds}ms");
+            }
             ActivitiesGroups = new(snapshot.GetValues<ActivitiesGroup>(nameof(ActivitiesGroups)));
             TargetApplications = new(snapshot.GetValues<TargetBase>(nameof(TargetApplication)));
             Variables = new(snapshot.GetValues<VariableBase>(nameof(Variables)));
@@ -114,7 +124,9 @@ namespace GingerCore
                         property.GetValuesLazy();
                 }
                 else
+                {
                     Activities = new(property.GetValues<Activity>());
+                }
             }
             else if (property.HasName(nameof(ActivitiesGroups)))
                 ActivitiesGroups = new(property.GetValues<ActivitiesGroup>());

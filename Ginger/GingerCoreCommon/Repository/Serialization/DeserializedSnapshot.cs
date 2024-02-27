@@ -138,32 +138,33 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
 
             public LiteXmlElement GetValuesLite()
             {
-                return CreateLiteXmlElement(_reader);
+                //return CreateLiteXmlElement(_reader);
+                return LiteXmlElement.Load(_reader);
             }
 
-            private LiteXmlElement CreateLiteXmlElement(XmlReader reader)
-            {
-                string name = reader.Name;
+            //private LiteXmlElement CreateLiteXmlElement(XmlReader reader)
+            //{
+            //    string name = reader.Name;
 
-                List<LiteXmlAttribute> attributes = [];
-                reader.ReadAttributes((name, value) =>
-                    attributes.Add(new()
-                    {
-                        Name = name,
-                        Value = value
-                    }));
+            //    List<LiteXmlAttribute> attributes = [];
+            //    reader.ReadAttributes((name, value) =>
+            //        attributes.Add(new()
+            //        {
+            //            Name = name,
+            //            Value = value
+            //        }));
 
-                List<LiteXmlElement> childElements = [];
-                reader.ReadChildElements(childReader =>
-                    childElements.Add(CreateLiteXmlElement(childReader)));
+            //    List<LiteXmlElement> childElements = [];
+            //    reader.ReadChildElements(childReader =>
+            //        childElements.Add(CreateLiteXmlElement(childReader)));
 
-                return new LiteXmlElement()
-                {
-                    Name = name,
-                    Attributes = attributes,
-                    ChildElements = childElements
-                };
-            }
+            //    return new LiteXmlElement()
+            //    {
+            //        Name = name,
+            //        Attributes = attributes,
+            //        ChildElements = childElements
+            //    };
+            //}
         }
     }
 }
