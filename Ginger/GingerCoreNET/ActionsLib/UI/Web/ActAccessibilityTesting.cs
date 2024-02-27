@@ -16,16 +16,18 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.VariablesLib;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
 using Deque.AxeCore.Commons;
-using DocumentFormat.OpenXml.InkML;
-using DocumentFormat.OpenXml.Wordprocessing;
+using Deque.AxeCore.Selenium;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 using Ginger.Configurations;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
@@ -134,10 +136,10 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
         public enum eAnalyzer
         {
-            [EnumValueDescription("ByTag")]
-            ByTag,
-            [EnumValueDescription("ByRule")]
-            ByRule,
+            [EnumValueDescription("By Standard")]
+            ByStandard,
+            [EnumValueDescription("By Severity")]
+            BySeverity,
         }
 
         public override eLocateBy LocateBy
@@ -212,86 +214,39 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             }
         }
 
-        private ObservableList<OperationValues> mOperationValueList;
+        private ObservableList<OperationValues> mStandardList;
         [IsSerializedForLocalRepository]
-        public ObservableList<OperationValues> OperationValueList
+        public ObservableList<OperationValues> StandardList
         {
             get
             {
-                return mOperationValueList;
+                return mStandardList;
             }
             set
             {
-                if (value != mOperationValueList)
+                if (value != mStandardList)
                 {
-                    mOperationValueList = value;
-                    OnPropertyChanged(nameof(OperationValueList));
-                    if (ExcludeRuleList != null)
-                    {
-                        ObservableList<AccessibilityRuleData>  RuleListasperTag = GetRulesAsPerTags();
-                        ExcludeRuleList.Clear();
-                        foreach (AccessibilityRuleData ruleData in RuleListasperTag)
-                        {
-                            ExcludeRuleList.Add(ruleData);
-                        }
-                    }                
-                }
-            }
-        }
-
-        private ObservableList<AccessibilityRuleData> mExcludeRuleList;
-
-        [IsSerializedForLocalRepository]
-        public ObservableList<AccessibilityRuleData> ExcludeRuleList
-        {
-            get
-            {
-                return mExcludeRuleList;
-            }
-            set
-            {
-                if (value != mExcludeRuleList)
-                {
-                    mExcludeRuleList = value;
-                    OnPropertyChanged(nameof(ExcludeRuleList));
-                }
-            }
-        }
-
-        private ObservableList<AccessibilityRuleData> mIncludeRuleList;
-
-        [IsSerializedForLocalRepository]
-        public ObservableList<AccessibilityRuleData> IncludeRuleList
-        {
-            get
-            {
-                return mIncludeRuleList;
-            }
-            set
-            {
-                if (value != mIncludeRuleList)
-                {
-                    mIncludeRuleList = value;
-                    OnPropertyChanged(nameof(IncludeRuleList));
+                    mStandardList = value;
+                    OnPropertyChanged(nameof(StandardList));               
                 }
             }
         }
 
 
-        private ObservableList<OperationValues> mSeverityOperationValueList;
+        private ObservableList<OperationValues> mSeverityList;
         [IsSerializedForLocalRepository]
-        public ObservableList<OperationValues> SeverityOperationValueList
+        public ObservableList<OperationValues> SeverityList
         {
             get
             {
-                return mSeverityOperationValueList;
+                return mSeverityList;
             }
             set
             {
-                if (value != mSeverityOperationValueList)
+                if (value != mSeverityList)
                 {
-                    mSeverityOperationValueList = value;
-                    OnPropertyChanged(nameof(SeverityOperationValueList));
+                    mSeverityList = value;
+                    OnPropertyChanged(nameof(SeverityList));
                 }
             }
         }
@@ -339,63 +294,30 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
             }
         }
-        public ObservableList<AccessibilityRuleData> RulesItemsdata;
-
-        public ObservableList<AccessibilityRuleData> GetRulesAsPerTags()
+        public ObservableList<AccessibilityRuleData> RulesItemsdata
         {
-            List<AccessibilityRuleData> Exculedrules = new  List<AccessibilityRuleData>();
-            if(OperationValueList != null && OperationValueList.Count > 0 && RulesItemsdata != null)
+            get
             {
-                var operationValues = OperationValueList.Select(y => y.Value).ToList();
-                Exculedrules = RulesItemsdata.Where(x => operationValues.Contains(x.Tags)).ToList();
+               return GetRuleList();
             }
-            else
-            {
-                RulesItemsdata = RulesItemsdata == null ? GetRuleList() : RulesItemsdata;
-            }
-            foreach(AccessibilityRuleData ruleData in Exculedrules)
-            {
-                ruleData.Active = ExcludeRuleList!= null && ExcludeRuleList.Any(x=>x.RuleID == ruleData.RuleID) ? ExcludeRuleList.FirstOrDefault(x => x.RuleID == ruleData.RuleID).Active : false;
-            }
-            return Exculedrules.Any() ? new ObservableList<AccessibilityRuleData>(Exculedrules) : RulesItemsdata;
         }
 
-        public ObservableList<AccessibilityRuleData> GetAllRules()
-        {
-            ObservableList<AccessibilityRuleData> Inculedrules = new ObservableList<AccessibilityRuleData>();
-
-            Inculedrules = RulesItemsdata == null ? GetRuleList() : RulesItemsdata;
-            foreach (AccessibilityRuleData ruleData in Inculedrules)
-            {
-                ruleData.Active = IncludeRuleList != null && IncludeRuleList.Any(x => x.RuleID == ruleData.RuleID) ? IncludeRuleList.FirstOrDefault(x => x.RuleID == ruleData.RuleID).Active : false;
-            }
-            return new ObservableList<AccessibilityRuleData>(Inculedrules);
-        }
 
 
         public ObservableList<AccessibilityRuleData> GetRuleList()
         {
             AccessibilityConfiguration accessibilityConfiguration = new AccessibilityConfiguration();
-            
-            ObservableList<AccessibilityRuleData> ruleDatalist = accessibilityConfiguration.GetAccessibilityRules();
+            ObservableList<AccessibilityRuleData> ruleDatalist = new ObservableList<AccessibilityRuleData>();
             try
             {
-                RulesItemsdata = ruleDatalist;
-                foreach (AccessibilityRuleData item in ruleDatalist)
-                {
-                    item.PropertyChanged += RuleData_PropertyChanged;
-                }
+                ruleDatalist = accessibilityConfiguration.GetAccessibilityRules();
             }
             catch (Exception ex)
             {
-
+                Error = "Error: during accessibility testing:" + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Error: during accessibility testing", ex);
             }
             return ruleDatalist;
-        }
-
-        private void RuleData_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            OnPropertyChanged(nameof(ExcludeRuleList));
         }
 
         private Dictionary<string, object> _items;
@@ -426,6 +348,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
 
             }
         }
+
         [Flags]
         public enum ReportTypes
         {
@@ -436,7 +359,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             All = 15
         }
 
-        public void CreateAxeHtmlReport(ISearchContext context, AxeResult results, string destination,  ReportTypes requestedResults)
+        public void CreateAxeHtmlReport(ISearchContext context, AxeResult results, string destination, ReportTypes requestedResults)
         {
             // Get the unwrapped element if we are using a wrapped element
             context = context is IWrapsElement ? (context as IWrapsElement).WrappedElement : context;
@@ -738,7 +661,6 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 .AppendLine($"Size: {results.TestEnvironment.WindowWidth} x {results.TestEnvironment.WindowHeight}<br>")
                 .AppendLine($"Time: {results.Timestamp}<br>")
                 .AppendLine($"User agent: {results.TestEnvironment.UserAgent}<br>")
-                //.AppendLine($"Using: {results.TestEngineName} ({results.TestEngineVersion})")
                 .ToString();
             return contextContent;
         }
@@ -787,6 +709,143 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 }
             }
             return count;
+        }
+
+        public void AnalyzerAccessibility(IWebDriver Driver,IWebElement element)
+        {
+            AxeBuilder axeBuilder = null;
+            try
+            {
+                axeBuilder = CreateAxeBuilder(Driver);
+                AxeResult axeResult = null;
+
+                if ((GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
+                {
+                    axeResult = axeBuilder.Analyze(element);
+                }
+                else
+                {
+                    axeResult = axeBuilder.Analyze();
+                }
+
+                string path = String.Empty;
+
+                if (WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder != null)
+                {
+                    string folderPath = Path.Combine(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder, @"AccessibilityReport");
+                    if (!Directory.Exists(folderPath))
+                    {
+                        Directory.CreateDirectory(folderPath);
+                    }
+                    path = $"{folderPath}{Path.DirectorySeparatorChar}{ItemName}_AccessibilityReport.html";
+                }
+
+                CreateAxeHtmlReport(Driver, axeResult, path, ActAccessibilityTesting.ReportTypes.All);
+                AddOrUpdateReturnParamActual(ParamName: "Accessibility report", ActualValue: path);
+
+                SetAxeResultToAction(axeResult);
+            }
+            catch (Exception ex)
+            {
+                Error = "Error: during accessibility testing:" + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Error: during accessibility testing", ex);
+                return;
+            }
+        }
+
+        public AxeBuilder CreateAxeBuilder(IWebDriver Driver)
+        {
+            AxeBuilder axeBuilder = null;
+            axeBuilder = new AxeBuilder(Driver)
+            .WithOptions(new AxeRunOptions()
+            {
+                XPath = true
+            });
+            List<string> sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
+            if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString())
+            {
+                if (StandardList != null && StandardList.Any())
+                {
+                    string[] Tag_array = StandardList.Select(i => i.Value.ToString()).ToArray();
+                    axeBuilder.WithTags(Tag_array);
+                }
+                string[] ExcludeRules = RulesItemsdata.Where(x => sevritylist.Contains(x.Impact.ToLower())).Select(i => i.RuleID.ToString()).ToArray();
+                if (ExcludeRules != null && ExcludeRules.Any())
+                {
+                    axeBuilder.DisableRules(ExcludeRules);
+                }
+            }
+            else if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString())
+            {
+                string[] IncludeRules = RulesItemsdata.Where(x => sevritylist.Contains(x.Impact.ToLower())).Select(i => i.RuleID.ToString()).ToArray();
+                if (IncludeRules != null && IncludeRules.Any())
+                {
+                    axeBuilder.WithRules(IncludeRules);
+                }
+            }
+            return axeBuilder;
+        }
+
+        public void SetAxeResultToAction(AxeResult axeResult)
+        {
+            bool hasAnyViolations = axeResult.Violations.Any();
+            bool ActionResult = false;
+
+            if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString() && SeverityList != null && SeverityList.Any())
+            {
+                List<string> sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
+                List<string> Violationsevrity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()).ToList() : new List<string>();
+                foreach (string severity in sevritylist)
+                {
+                    ActionResult = !Violationsevrity.Any(y => y.Equals(severity));
+                }
+            }
+            else if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString() && SeverityList != null && SeverityList.Any())
+            {
+                List<string> sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
+                List<string> Violationsevrity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()).ToList() : new List<string>();
+                foreach (string severity in sevritylist)
+                {
+                    ActionResult = Violationsevrity.Any(y => y.Equals(severity));
+                }
+            }
+            var jsonresponse = JsonConvert.SerializeObject(axeResult, Newtonsoft.Json.Formatting.Indented);
+            RawResponseValues = jsonresponse;
+            AddOrUpdateReturnParamActual(ParamName: "Raw Response", ActualValue: jsonresponse);
+            if (hasAnyViolations)
+            {
+                if (ActionResult)
+                {
+                    Status = eRunStatus.Failed;
+                }
+                else
+                {
+                    Status = eRunStatus.Passed;
+                }
+                Error = $"Accessibility testing resulted in violations.";
+                AddOrUpdateReturnParamActual(ParamName: "ViolationCount", ActualValue: axeResult.Violations.Length.ToString());
+                AddOrUpdateReturnParamActual(ParamName: "ViolationList", ActualValue: String.Join(",", axeResult.Violations.Select(x => x.Id)));
+                int violatedNodeIndex = 0;
+                foreach (AxeResultItem violation in axeResult.Violations)
+                {
+                    foreach (AxeResultNode node in violation.Nodes)
+                    {
+                        violatedNodeIndex++;
+                        AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationId", ActualValue: violation.Id, violatedNodeIndex.ToString());
+                        if (node.XPath != null)
+                        {
+                            AddOrUpdateReturnParamActualWithPath(ParamName: "NodeXPath", ActualValue: node.XPath.ToString(), violatedNodeIndex.ToString());
+                        }
+
+                        AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationHelp", ActualValue: violation.Help, violatedNodeIndex.ToString());
+                        AddOrUpdateReturnParamActualWithPath(ParamName: "ViolationSeverity", ActualValue: violation.Impact, violatedNodeIndex.ToString());
+                    }
+                }
+            }
+            else
+            {
+                Status = eRunStatus.Passed;
+            }
         }
     }
 
