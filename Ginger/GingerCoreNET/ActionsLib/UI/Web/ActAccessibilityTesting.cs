@@ -314,7 +314,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             }
             catch (Exception ex)
             {
-
+                Error = "Error: during accessibility testing:" + ex.Message;
+                Reporter.ToLog(eLogLevel.ERROR, "Error: during accessibility testing", ex);
             }
             return ruleDatalist;
         }
