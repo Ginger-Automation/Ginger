@@ -304,7 +304,7 @@ namespace GingerCore.ALM
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to Octane ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to Azure DevOps", ex);
                 return false;
             }
         }
@@ -647,19 +647,16 @@ namespace GingerCore.ALM
             TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
             List<TestPlan> plans = testPlanClient.GetTestPlansAsync(logincred.Project).Result;
             
-            int testplanId = Int32.Parse(tsId);
-            int suiteId = testplanId + 1;
 
-            TestSuite suite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project, testplanId, suiteId).Result;
            if(Int32.TryParse(tsId, out int testplanId))
             {
                 int suiteId = testplanId + 1;
-                TestSuite suite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project, testplanId, suiteId).Result;
+                TestSuite testsuite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project, testplanId, suiteId).Result;
 
                 ALMTestSetData aLMTestSetData = new()
                 {
-                    Id = suite.Id.ToString(),
-                    Name = suite.Name,
+                    Id = testsuite.Id.ToString(),
+                    Name = testsuite.Name,
                     ParentId = testplanId.ToString()
 
                 };
