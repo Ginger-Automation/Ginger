@@ -91,7 +91,7 @@ namespace Ginger.Actions
                 }
             }
             xStdCB.ItemsSource = mAct.Items;
-            xStdCB.Init(mAct, nameof(mAct.StandardList));
+            xStdCB.Init(mAct, nameof(mAct.StandardList),true);
 
             xSeverityStack.Visibility = Visibility.Visible;
             mAct.SeverityItems = new Dictionary<string, object>();
