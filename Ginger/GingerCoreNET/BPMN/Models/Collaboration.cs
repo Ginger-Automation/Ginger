@@ -40,11 +40,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
         private readonly ICollection<Participant> _participants;
         public IEnumerable<Participant> Participants => _participants;
 
-        public Collaboration(Guid guid, CollaborationType collaborationType) :
-            this(guid.ToString(), collaborationType)
-        { }
-
-        public Collaboration(string guid, CollaborationType collaborationType)
+        private Collaboration(string guid, CollaborationType collaborationType)
         {
             Guid = guid;
             Id = $"Collaboration_{Guid}";
@@ -53,6 +49,29 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Models
             Description = string.Empty;
             CollaborationType = collaborationType;
             _participants = new List<Participant>();
+        }
+
+        public static Collaboration CreateForSubProcess(Guid guid, string systemRef)
+        {
+            return CreateForSubProcess(guid.ToString(), systemRef);
+        }
+
+        public static Collaboration CreateForSubProcess(string guid, string systemRef)
+        {
+            return new Collaboration(guid, CollaborationType.SubProcess)
+            {
+                SystemRef = systemRef
+            };
+        }
+
+        public static Collaboration CreateForUseCase(Guid guid)
+        {
+            return CreateForUseCase(guid.ToString());
+        }
+
+        public static Collaboration CreateForUseCase(string guid)
+        {
+            return new Collaboration(guid, CollaborationType.UseCase);
         }
 
         public void AddParticipant(Participant participant)
