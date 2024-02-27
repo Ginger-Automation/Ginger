@@ -12,15 +12,15 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
     {
         public string Name { get; init; }
 
-        public List<LiteXmlAttribute> Attributes { get; init; }
+        public LiteXmlAttribute[] Attributes { get; init; }
 
-        public List<LiteXmlElement> ChildElements { get; init; }
+        public LiteXmlElement[] ChildElements { get; init; }
 
         private LiteXmlElement(string name, List<LiteXmlAttribute> attributes, List<LiteXmlElement> childElements)
         {
             Name = name;
-            Attributes = attributes;
-            ChildElements = childElements;
+            Attributes = attributes.ToArray();
+            ChildElements = childElements.ToArray();
         }
 
         public static LiteXmlElement Load(XmlReader reader)

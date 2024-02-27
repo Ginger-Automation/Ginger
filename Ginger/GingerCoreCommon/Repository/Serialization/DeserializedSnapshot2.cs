@@ -11,6 +11,7 @@ using Amdocs.Ginger.Repository;
 using System.Xml.Linq;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 #nullable enable
 namespace Amdocs.Ginger.Common.Repository.Serialization
@@ -28,16 +29,28 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
 
         public static DeserializedSnapshot2 Load(XmlReader reader)
         {
-            return new DeserializedSnapshot2(LiteXmlElement.Load(reader));
+            long startTime = DateTime.Now.Ticks;
+            var r = new DeserializedSnapshot2(LiteXmlElement.Load(reader));
+            Console.WriteLine($"DeserializedSnapshot2 for '{reader.Name}' loaded in {TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds}ms");
+            return r;
         }
 
         public string GetValue(string propertyName)
         {
-            Span<LiteXmlAttribute> attributes = CollectionsMarshal.AsSpan(_rootElement.Attributes);
-            for (int attributeIndex = 0; attributeIndex < attributes.Length; attributeIndex++)
+            //Span<LiteXmlAttribute> attributes = CollectionsMarshal.AsSpan(_rootElement.Attributes);
+            //for (int attributeIndex = 0; attributeIndex < attributes.Length; attributeIndex++)
+            //{
+            //    if (string.Equals(attributes[attributeIndex].Name, propertyName))
+            //        return attributes[attributeIndex].Value;
+            //}
+
+            ref LiteXmlAttribute currentAttribute = ref MemoryMarshal.GetArrayDataReference(_rootElement.Attributes);
+            ref LiteXmlAttribute beyondAttributesArray = ref Unsafe.Add(ref currentAttribute, _rootElement.Attributes.Length);
+            while (Unsafe.IsAddressLessThan(ref currentAttribute, ref beyondAttributesArray))
             {
-                if (string.Equals(attributes[attributeIndex].Name, propertyName))
-                    return attributes[attributeIndex].Value;
+                if (string.Equals(currentAttribute.Name, propertyName))
+                    return currentAttribute.Value;
+                currentAttribute = ref Unsafe.Add(ref currentAttribute, 1);
             }
 
             throw DeserializedPropertyNotFoundException.WithDefaultMessage(propertyName);
@@ -142,13 +155,15 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
 
         public TRepositoryItemBase GetValue<TRepositoryItemBase>(string propertyName) where TRepositoryItemBase : RepositoryItemBase
         {
-            Span<LiteXmlElement> childElements = CollectionsMarshal.AsSpan(_rootElement.ChildElements);
-            for (int index = 0; index < childElements.Length; index++)
-            {
-                LiteXmlElement childElement = childElements[index];
-                if (string.Equals(childElement.Name, propertyName))
-                    return (TRepositoryItemBase)RepositoryItemBaseFactory.Create(childElement.Name, new DeserializedSnapshot2(childElement));
-            }
+            //Span<LiteXmlElement> childElements = CollectionsMarshal.AsSpan(_rootElement.ChildElements);
+            //for (int index = 0; index < childElements.Length; index++)
+            //{
+            //    LiteXmlElement childElement = childElements[index];
+            //    if (string.Equals(childElement.Name, propertyName))
+            //        return (TRepositoryItemBase)RepositoryItemBaseFactory.Create(childElement.Name, new DeserializedSnapshot2(childElement));
+            //}
+
+            ref LiteXmlElement currentElement = ref MemoryMarshal.GetArrayDataReference(_rootElement.ChildElements);
 
             throw DeserializedPropertyNotFoundException.WithDefaultMessage(propertyName);
         }

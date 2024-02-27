@@ -62,9 +62,9 @@ namespace GingerCore
             }
             else
             {
-                //long startTime = DateTime.Now.Ticks;
+                long startTime = DateTime.Now.Ticks;
                 Activities = new(snapshot.GetValues<Activity>(nameof(Activities)));
-                //Console.WriteLine($"Activities loaded in {TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds}ms");
+                Console.WriteLine($"Activities loaded in {TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds}ms");
             }
             ActivitiesGroups = new(snapshot.GetValues<ActivitiesGroup>(nameof(ActivitiesGroups)));
             TargetApplications = new(snapshot.GetValues<TargetBase>(nameof(TargetApplication)));
@@ -125,7 +125,9 @@ namespace GingerCore
                 }
                 else
                 {
+                    long startTime = DateTime.Now.Ticks;
                     Activities = new(property.GetValues<Activity>());
+                    Console.WriteLine($"Activities loaded in {TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds}ms");
                 }
             }
             else if (property.HasName(nameof(ActivitiesGroups)))

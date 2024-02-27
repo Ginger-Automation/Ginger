@@ -56,6 +56,16 @@ namespace RepositorySerializerBenchmarks.Benchmarks
 
         private XmlReader[] Readers { get; set; } = [];
 
+        [Benchmark(Baseline = true)]
+        public void CreateRIBFromXmlReader()
+        {
+            foreach (XmlReader reader in Readers)
+            {
+                reader.MoveToContent();
+                RepositoryItemBaseFactory.Create(reader.Name, new DeserializedSnapshot(reader));
+            }
+        }
+
         [Benchmark]
         public void LoadLiteXML()
         {
@@ -85,7 +95,7 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         }
 
         [Benchmark]
-        public void CreateRIB()
+        public void CreateRIBFromLiteXML()
         {
             foreach (DeserializedSnapshot2 snapshot in Snapshots)
                 RepositoryItemBaseFactory.Create(snapshot.Name, snapshot);
