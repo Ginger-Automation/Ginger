@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,8 +35,6 @@ using Applitools;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
 using Ginger.Configurations;
-
-//using Selenium.Axe;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
@@ -75,6 +73,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using DevToolsDomains = OpenQA.Selenium.DevTools.V121.DevToolsSessionDomains;
+
 
 
 namespace GingerCore.Drivers
@@ -1569,14 +1568,11 @@ namespace GingerCore.Drivers
                 ActAgentManipulationHandler((ActAgentManipulation)act);
                 return;
             }
-            //if (WorkSpace.Instance.BetaFeatures.ShowAccessibilityTesting)
-            //{
-                if (act is ActAccessibilityTesting actAccessibilityTesting)
-                {
-                    ActAccessibility(actAccessibilityTesting);
-                    return;
-                }
-            //}
+            if (act is ActAccessibilityTesting actAccessibilityTesting)
+            {
+                ActAccessibility(actAccessibilityTesting);
+                return;
+            }
             act.Error = "Run Action Failed due to unrecognized action type - " + ActType.ToString();
             act.Status = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
         }
