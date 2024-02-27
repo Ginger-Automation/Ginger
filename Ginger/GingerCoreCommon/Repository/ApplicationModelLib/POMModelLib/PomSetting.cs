@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -35,6 +35,8 @@ namespace Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib
         public bool LearnScreenshotsOfElements { get; set; }
 
         public bool isPOMLearn { get; set; }
+
+        public bool LearnShadowDomElements { get; set; }
 
     }
 }
