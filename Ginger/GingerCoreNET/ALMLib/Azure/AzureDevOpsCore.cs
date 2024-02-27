@@ -292,7 +292,7 @@ namespace GingerCore.ALM
             {
                 if (mappedTestSet == null) //##create new Test Set in QC
                 {
-                    CreateNewTestPlanOrSuite(businessFlow);
+                    CreateTestPlan(businessFlow);
                 }
                 else //##update existing test set
                 {
@@ -318,33 +318,42 @@ namespace GingerCore.ALM
             LoginDTO login = GetLoginDTO();
             string projectName = login.Project;
             VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
-            int planId = Int32.Parse(bf.ExternalID); 
-
-            int suiteId = planId +1; // the root suite id will always be +1 from plan id
-
-            // Get a testplan client instance
-
-            TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
 
 
-            
-                foreach (ActivitiesGroup ag in bf.ActivitiesGroups)
+
+                if (Int32.TryParse(bf.ExternalID, out int planId) && Int32.TryParse(bf.ExternalID2, out int suiteId))
                 {
-                    WorkItem2 testcasetoAdd = new()
+                    // Get a testplan client instance
+
+                    TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
+
+
+
+                    foreach (ActivitiesGroup ag in bf.ActivitiesGroups)
                     {
-                        Id = Int32.Parse(ag.ExternalID)
-                    };
+                        WorkItem2 testcasetoAdd = new()
+                        {
+                            Id = Int32.Parse(ag.ExternalID)
+                        };
 
-                    SuiteTestCaseCreateUpdateParameters parameters = new()
-                    {
-                        workItem = testcasetoAdd
-                    };
+                        SuiteTestCaseCreateUpdateParameters parameters = new()
+                        {
+                            workItem = testcasetoAdd
+                        };
 
-                    IEnumerable<SuiteTestCaseCreateUpdateParameters> parametersCollection = new List<SuiteTestCaseCreateUpdateParameters> { parameters };
+                        IEnumerable<SuiteTestCaseCreateUpdateParameters> parametersCollection = new List<SuiteTestCaseCreateUpdateParameters> { parameters };
 
 
-                    testPlanClient.AddTestCasesToSuiteAsync(parametersCollection, projectName, planId, suiteId);
+                        testPlanClient.AddTestCasesToSuiteAsync(parametersCollection, projectName, planId, suiteId);
+                    }
                 }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to parse ExternalID as an integer.");
+
+                }
+
+
             }
             catch (Exception)
             {
@@ -352,7 +361,7 @@ namespace GingerCore.ALM
             }
 
         }
-        public static void CreateNewTestPlanOrSuite(BusinessFlow bf)
+        public static void CreateTestPlan(BusinessFlow bf)
         {
             LoginDTO login = GetLoginDTO();
             string projectName = login.Project;
@@ -373,7 +382,8 @@ namespace GingerCore.ALM
             // this will be the id of test plan
             bf.ExternalID = plan.Id.ToString();
 
-
+            // this will be root suite id of the test plan
+            bf.ExternalID2 = plan.RootSuite.Id.ToString();
             
         }
 
