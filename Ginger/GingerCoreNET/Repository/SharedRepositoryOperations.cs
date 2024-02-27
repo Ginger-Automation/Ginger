@@ -488,6 +488,7 @@ namespace Ginger.Repository
                                         if (BF.Activities[i].IsLinkedItem && BF.Activities[i].ParentGuid == mActivity.Guid)
                                         {
                                             mActivity.UpdateInstance(BF.Activities[i], eItemParts.All.ToString(), BF);
+                                            BF.MapTAToBF(eUserMsgSelection.None, BF.Activities[i], WorkSpace.Instance.Solution.ApplicationPlatforms, silently: true);
                                         }
                                     }
                                     lock (saveLock)
