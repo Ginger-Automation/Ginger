@@ -268,6 +268,10 @@ namespace Ginger.ALM.Repository
                 QCTestPlanExplorerPage win = new QCTestPlanExplorerPage();
                 win.xCreateBusinessFlowFolder.Visibility = Visibility.Collapsed;//no need to create separate folder
                 uploadPath = win.ShowAsWindow(eWindowShowStyle.Dialog);
+                if (uploadPath == null)
+                {
+                    return false;
+                }
             }
             //upload the Activities Group
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);

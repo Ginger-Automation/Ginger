@@ -108,6 +108,10 @@ namespace Ginger.ALM.Repository
                 QCTestPlanExplorerPage win = new QCTestPlanExplorerPage();
                 win.xCreateBusinessFlowFolder.Visibility = Visibility.Collapsed;//no need to create separate folder
                 uploadPath = win.ShowAsWindow(eWindowShowStyle.Dialog);
+                if (uploadPath == null)
+                {
+                    return false;
+                }
             }
             //upload the Activities Group
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
@@ -196,6 +200,11 @@ namespace Ginger.ALM.Repository
                 if (almConectStyle != eALMConnectType.Silence)
                 {
                     testPlanUploadPath = SelectALMTestPlanPath();
+                    if (String.IsNullOrEmpty(testPlanUploadPath))
+                    {
+                        //no path to upload to
+                        return false;
+                    }
                 }
                 //create upload path if checked to create separete folder
                 if (QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder)
