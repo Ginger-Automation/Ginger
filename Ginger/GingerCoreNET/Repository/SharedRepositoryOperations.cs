@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -488,6 +488,7 @@ namespace Ginger.Repository
                                         if (BF.Activities[i].IsLinkedItem && BF.Activities[i].ParentGuid == mActivity.Guid)
                                         {
                                             mActivity.UpdateInstance(BF.Activities[i], eItemParts.All.ToString(), BF);
+                                            BF.MapTAToBF(eUserMsgSelection.None, BF.Activities[i], WorkSpace.Instance.Solution.ApplicationPlatforms, silently: true);
                                         }
                                     }
                                     lock (saveLock)
