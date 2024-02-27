@@ -4025,7 +4025,10 @@ namespace GingerCore.Drivers
 
                             else
                             {
-                                targetElement = LocateElementByLocator(locator, ParentContext??Driver);
+                                if (ParentContext != null)
+                                {
+                                    targetElement = LocateElementByLocator(locator, ParentContext);
+                                }
                             }
              
                         }
@@ -4052,7 +4055,10 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        elem = LocateElementIfNotAutoLeared(locator, ParentContext??Driver, friendlyLocatorElementlist);
+                        if (ParentContext != null)
+                        {
+                            elem = LocateElementIfNotAutoLeared(locator, ParentContext, friendlyLocatorElementlist);
+                        }
                     }
                 }
                 else
@@ -4067,7 +4073,10 @@ namespace GingerCore.Drivers
 
                     else
                     {
-                        elem = LocateElementByLocator(locator, ParentContext??Driver, friendlyLocatorElementlist, true);
+                        if (ParentContext != null)
+                        {
+                            elem = LocateElementByLocator(locator, ParentContext, friendlyLocatorElementlist, true);
+                        }
                     }
                 }
             
