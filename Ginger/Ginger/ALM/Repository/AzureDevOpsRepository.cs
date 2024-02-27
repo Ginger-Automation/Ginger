@@ -50,7 +50,6 @@ namespace Ginger.ALM.Repository
         {
             if (activtiesGroup == null) { return false; }
             //if it is called from shared repository need to select path
-          
             //upload the Activities Group
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
             string res = string.Empty;
@@ -133,7 +132,43 @@ namespace Ginger.ALM.Repository
 
             bool performSave = false;
 
-           
+
+            //just to check if new TC needs to be created or update has to be done
+            if (matchingTS == null)
+            {
+                if (almConectStyle != eALMConnectType.Silence)
+                {
+                    testPlanUploadPath = SelectALMTestPlanPath();
+                    if (String.IsNullOrEmpty(testPlanUploadPath))
+                    {
+                        //no path to upload to
+                        return false;
+                    }
+                }
+                //create upload path if checked to create separete folder
+                if (QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder)
+                {
+                    try
+                    {
+                        string folderId = AzureCore.GetLastTestPlanIdFromPath(testPlanUploadPath).ToString();
+                        folderId = AzureCore.CreateApplicationModule(businessFlow.Name, businessFlow.Description, folderId);
+                        testPlanUploadPath = folderId;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, "Failed to get create folder for Test Plan with Octane REST API", ex);
+                    }
+                }
+                else
+                {
+                    testPlanUploadPath = AzureCore.GetLastTestPlanIdFromPath(testPlanUploadPath).ToString();
+                }
+            }
+            else
+            {
+                matchingTC = new ALMTestCase();
+            }
+
             //check if all of the business flow activities groups already exported to Octane and export the ones which not
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
             {

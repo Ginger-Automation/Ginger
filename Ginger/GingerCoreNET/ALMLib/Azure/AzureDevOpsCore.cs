@@ -651,15 +651,27 @@ namespace GingerCore.ALM
             int suiteId = testplanId + 1;
 
             TestSuite suite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project, testplanId, suiteId).Result;
-
-            ALMTestSetData aLMTestSetData = new()
+           if(Int32.TryParse(tsId, out int testplanId))
             {
-                Id = suite.Id.ToString(),
-                Name = suite.Name,
-                
-            };
+                int suiteId = testplanId + 1;
+                TestSuite suite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project, testplanId, suiteId).Result;
 
-            return aLMTestSetData;
+                ALMTestSetData aLMTestSetData = new()
+                {
+                    Id = suite.Id.ToString(),
+                    Name = suite.Name,
+                    ParentId = testplanId.ToString()
+
+                };
+
+                return aLMTestSetData;
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR,"Unable to parse ExternalId to test suite id");
+                return null;
+            }
+            
         }
     }
 }

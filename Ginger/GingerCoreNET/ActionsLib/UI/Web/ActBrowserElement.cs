@@ -179,7 +179,12 @@ namespace GingerCore.Actions
             [EnumValueDescription("Set Blocked Urls")]
             SetBlockedUrls,
             [EnumValueDescription("Unblock Urls")]
-            UnblockeUrls
+            UnblockeUrls,
+            [EnumValueDescription("Switch To Shadow DOM")]
+            SwitchToShadowDOM,
+            [EnumValueDescription("Switch To Default DOM")]
+            SwitchToDefaultDOM
+
         }
 
         //TODO: For ActBroswer ObjectLocatrosConfigNeeded is false 
