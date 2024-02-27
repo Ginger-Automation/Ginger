@@ -55,12 +55,12 @@
             </StackPanel>
 
             <StackPanel x:Name="xStdStack" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
-                <Label x:Name="xStdlbl" Grid.Column="0" Style="{StaticResource $LabelStyle}" Content="Standard's :"/>
+                <Label x:Name="xStdlbl" Grid.Column="0" Style="{StaticResource $LabelStyle}" Content="Standards :"/>
                 <UserControlsLib:MultiSelectComboBox Grid.Column="1" x:Name="xStdCB" Margin="70,0,0,0" Width="300"/>
             </StackPanel>
 
             <StackPanel x:Name="xSeverityStack" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
-                <Label x:Name="xSeveritylbl" Grid.Column="0" Width="140" Style="{StaticResource $LabelStyle}" Content="Acceptable Severity's :"/>
+                <Label x:Name="xSeveritylbl" Grid.Column="0" Width="140" Style="{StaticResource $LabelStyle}" Content="Acceptable Severities :"/>
                 <UserControlsLib:MultiSelectComboBox Grid.Column="1" x:Name="xSeverityCB" Margin="8,0,0,0" Width="300" />
             </StackPanel>
 

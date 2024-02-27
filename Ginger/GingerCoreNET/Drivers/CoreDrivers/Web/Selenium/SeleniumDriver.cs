@@ -34,7 +34,6 @@ using Amdocs.Ginger.Repository;
 using Applitools;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
-using Ginger.Configurations;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
