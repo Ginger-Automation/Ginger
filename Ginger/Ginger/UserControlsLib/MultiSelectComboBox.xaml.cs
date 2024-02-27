@@ -45,7 +45,7 @@ namespace Ginger.UserControlsLib
         private ObservableCollection<Node> _nodeList;
         private object obj;
         private string AttrName;
-        private bool isenum = true;
+        private bool isenum = false;
         public MultiSelectComboBox()
         {
             InitializeComponent();
@@ -284,7 +284,7 @@ namespace Ginger.UserControlsLib
             OperationSelectedItems = new ObservableList<OperationValues>(temp);
         }
 
-        public void Init(object obj, string AttrName,bool isenumval=false)
+        public void Init(object obj, string AttrName,bool isenumval = false)
         {
             //// If the VE is on stand alone form:
             this.obj = obj;
