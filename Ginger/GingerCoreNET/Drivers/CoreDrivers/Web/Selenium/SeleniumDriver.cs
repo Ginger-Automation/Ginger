@@ -383,25 +383,17 @@ namespace GingerCore.Drivers
         ///  This attribute is used to keep track of Shadow Root, when user manually creates actions to switch to a shadow root.
         /// </summary>
         /// 
-        private readonly object _contextLock = new ();
-        private ISearchContext _searchContext = null;
 
+        private ISearchContext _searchContext = null;
         private ISearchContext CurrentContext
         {
             get
             {
-                lock (_contextLock)
-                {
-                    return _searchContext;
-                }
+               return  _searchContext ?? Driver;
             }
-
             set
             {
-                lock (_contextLock)
-                {
-                    _searchContext = value;
-                }
+                _searchContext = value;
             }
         }
 
@@ -3939,7 +3931,7 @@ namespace GingerCore.Drivers
                 ElementLocator locator = new ElementLocator();
                 locator.LocateBy = locateBy;
                 locator.LocateValue = locateValue;
-                elem = LocateElementByLocator(locator, CurrentContext ?? Driver, null , AlwaysReturn);
+                elem = LocateElementByLocator(locator, CurrentContext, null , AlwaysReturn);
                 if (elem == null)
                 {
                     act.ExInfo += string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
@@ -5015,8 +5007,13 @@ namespace GingerCore.Drivers
                             foundElementsList.Add(foundElementInfo);
 
                             allReadElem.Add(foundElementInfo);
+                            if (!pomSetting.LearnShadowDomElements)
+                            {
+                                continue;
+                            }
+
                             ISearchContext ShadowRoot = shadowDOM.GetShadowRootIfExists(webElement);
-                            if (ShadowRoot == null || !pomSetting.LearnShadowDomElements)
+                            if (ShadowRoot == null)
                             {
                                 continue;
                             }
