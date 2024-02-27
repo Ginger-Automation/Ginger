@@ -114,7 +114,7 @@ namespace Ginger.Variables
 
         private void UpdateIntialDateTimePicker()
         {
-            if (!String.IsNullOrEmpty(((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString()))
+            if (!String.IsNullOrEmpty(((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue)?.Content?.ToString()))
             {
                 dtpInitialDate.CustomFormat = ((System.Windows.Controls.ComboBoxItem)txtDateFormat.SelectedValue).Content.ToString();
                 if (dpMinDate != null || dpMaxDate != null)
@@ -137,8 +137,15 @@ namespace Ginger.Variables
             //}
             //if (await UserKeepsTyping() || dtpInitialDate.CustomFormat == txtDateFormat.Text) return;
             //dtpInitialDate.CustomFormat = txtDateFormat.Text;
-            variableDateTime.DateTimeFormat = txtDateFormat.Text;
-            UpdateIntialDateTimePicker();
+            try
+            {
+                variableDateTime.DateTimeFormat = txtDateFormat.Text;
+                UpdateIntialDateTimePicker();
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.DEBUG, $"{ex.Message}", ex);
+            }
         }
     }
 }
