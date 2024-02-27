@@ -1594,7 +1594,7 @@ namespace GingerCore.Drivers
                 }
             }
 
-            act.AnalyserAccessibility(Driver, e);
+            act.AnalyzerAccessibility(Driver, e);
         }
 
         private void ScreenshotHandler(ActScreenShot act)

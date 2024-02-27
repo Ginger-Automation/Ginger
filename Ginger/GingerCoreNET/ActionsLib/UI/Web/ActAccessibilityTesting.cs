@@ -710,7 +710,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             return count;
         }
 
-        public void AnalyserAccessibility(IWebDriver Driver,IWebElement element)
+        public void AnalyzerAccessibility(IWebDriver Driver,IWebElement element)
         {
             AxeBuilder axeBuilder = null;
             try
