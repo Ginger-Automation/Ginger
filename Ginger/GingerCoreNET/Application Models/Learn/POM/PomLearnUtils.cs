@@ -85,6 +85,21 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             }
         }
 
+        bool mLearnShadowDomElements = false;
+
+        public bool LearnShadowDomElements
+        {
+            get
+            {
+                return mLearnShadowDomElements;
+            }
+
+            set
+            {
+                mLearnShadowDomElements = value;
+            }
+        }
+
         public IWindowExplorer IWindowExplorerDriver
         {
             get
@@ -179,6 +194,7 @@ namespace Amdocs.Ginger.CoreNET.Application_Models
             pomSetting.relativeXpathTemplateList = GetRelativeXpathTemplateList();
             pomSetting.SpecificFramePath = SpecificFramePath;
             pomSetting.LearnScreenshotsOfElements = LearnScreenshotsOfElements;
+            pomSetting.LearnShadowDomElements = LearnShadowDomElements;
         }
 
         public void LearnScreenShot()
