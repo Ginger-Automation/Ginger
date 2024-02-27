@@ -1,4 +1,22 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Common.VariablesLib;
@@ -78,7 +96,7 @@ namespace Ginger.Actions
 
             xLocateValueVE.BindControl(Context.GetAsContext(mAct.Context), mAct, Act.Fields.LocateValue);
             xTargetRadioButton.Init(typeof(ActAccessibilityTesting.eTarget), xTargetRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page.ToString()), TargetRadioButton_Clicked);
-            xTargetRadioButton.Init(typeof(ActAccessibilityTesting.eAnalyzer), xAnalyzerRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByTag.ToString()), AnalyzerRadioButton_Clicked);
+            xAnalyzerRadioButton.Init(typeof(ActAccessibilityTesting.eAnalyzer), xAnalyzerRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByTag.ToString()), AnalyzerRadioButton_Clicked);
             if ((act.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
             {
                 xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
@@ -146,6 +164,10 @@ namespace Ginger.Actions
             if (rbSender.Content.ToString() == ActAccessibilityTesting.eTarget.Element.ToString())
             {
                 xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
+            }
+            else
+            {
+                xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Collapsed;
             }
         }
 
@@ -252,10 +274,10 @@ namespace Ginger.Actions
             defView.GridColsView = new ObservableList<GridColView>();
 
             defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.RuleID), Header = "Rule Id", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Tags), Header = "Tag", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Impact), Header = "Severity", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Description), WidthWeight = 50, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.RuleID), Header = "Rule Id", WidthWeight = 40, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Tags), Header = "Tag", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Impact), Header = "Severity", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Description), WidthWeight = 70, ReadOnly = true });
 
             UpdateExcludeRuleGrid.SetAllColumnsDefaultView(defView);
             UpdateExcludeRuleGrid.InitViewItems();
@@ -270,9 +292,9 @@ namespace Ginger.Actions
             defView.GridColsView = new ObservableList<GridColView>();
 
             defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Active), WidthWeight = 8, MaxWidth = 50, HorizontalAlignment = System.Windows.HorizontalAlignment.Center, StyleType = GridColView.eGridColStyleType.CheckBox });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.RuleID), Header = "Rule Id", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Tags), Header = "Tag", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
-            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Impact), Header = "Severity", WidthWeight = 25, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.RuleID), Header = "Rule Id", WidthWeight = 40, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Tags), Header = "Tag", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
+            defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Impact), Header = "Severity", WidthWeight = 10, StyleType = GridColView.eGridColStyleType.Text, ReadOnly = true });
             defView.GridColsView.Add(new GridColView() { Field = nameof(AccessibilityRuleData.Description), WidthWeight = 50, ReadOnly = true });
 
             UpdateIncludeRuleGrid.SetAllColumnsDefaultView(defView);
