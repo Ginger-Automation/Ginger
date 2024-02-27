@@ -313,7 +313,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNZIP);
 
                 string fullBPMNExportPath = WorkSpace.Instance.Solution.SolutionOperations.ConvertSolutionRelativePath(BPMNExportPath);
-                BusinessFlowToBPMNExporter businessFlowToBPMNExporter = new(mBusinessFlow, fullBPMNExportPath);
+                BusinessFlowToBPMNExporter businessFlowToBPMNExporter = new(mBusinessFlow, new BusinessFlowToBPMNExporter.Options() 
+                { 
+                    ExportPath = fullBPMNExportPath
+                });
                 string exportPath = businessFlowToBPMNExporter.Export();
                 string solutionRelativeExportPath = WorkSpace.Instance.SolutionRepository.ConvertFullPathToBeRelative(exportPath);
 

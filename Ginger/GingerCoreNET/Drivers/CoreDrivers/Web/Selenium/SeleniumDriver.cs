@@ -31,7 +31,6 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
-using Applitools;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
 using GingerCore.Actions;
@@ -378,6 +377,24 @@ namespace GingerCore.Drivers
         public eBrowserType GetBrowserType()
         {
             return mBrowserTpe;
+        }
+
+        /// <summary>
+        ///  This attribute is used to keep track of Shadow Root, when user manually creates actions to switch to a shadow root.
+        /// </summary>
+        /// 
+
+        private ISearchContext _searchContext = null;
+        private ISearchContext CurrentContext
+        {
+            get
+            {
+               return  _searchContext ?? Driver;
+            }
+            set
+            {
+                _searchContext = value;
+            }
         }
 
         public override void StartDriver()
@@ -1516,7 +1533,7 @@ namespace GingerCore.Drivers
                 }
 
                 return;
-            }
+        }
 
 
             if (ActType == typeof(ActHello))
@@ -1526,7 +1543,7 @@ namespace GingerCore.Drivers
             }
 
             if (ActType == typeof(ActScreenShot))
-            {
+        {
                 ScreenshotHandler((ActScreenShot)act);
                 return;
             }
@@ -3798,7 +3815,7 @@ namespace GingerCore.Drivers
                 ElementLocator locator = new ElementLocator();
                 locator.LocateBy = locateBy;
                 locator.LocateValue = locateValue;
-                elem = LocateElementByLocator(locator, Driver, null , AlwaysReturn);
+                elem = LocateElementByLocator(locator, CurrentContext, null , AlwaysReturn);
                 if (elem == null)
                 {
                     act.ExInfo += string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
@@ -3895,7 +3912,10 @@ namespace GingerCore.Drivers
 
                             else
                             {
-                                targetElement = LocateElementByLocator(locator, ParentContext);
+                                if (ParentContext != null)
+                                {
+                                    targetElement = LocateElementByLocator(locator, ParentContext);
+                                }
                             }
              
                         }
@@ -3922,7 +3942,10 @@ namespace GingerCore.Drivers
                     }
                     else
                     {
-                        elem = LocateElementIfNotAutoLeared(locator, ParentContext, friendlyLocatorElementlist);
+                        if (ParentContext != null)
+                        {
+                            elem = LocateElementIfNotAutoLeared(locator, ParentContext, friendlyLocatorElementlist);
+                        }
                     }
                 }
                 else
@@ -3937,7 +3960,10 @@ namespace GingerCore.Drivers
 
                     else
                     {
-                        elem = LocateElementByLocator(locator, ParentContext, friendlyLocatorElementlist, true);
+                        if (ParentContext != null)
+                        {
+                            elem = LocateElementByLocator(locator, ParentContext, friendlyLocatorElementlist, true);
+                        }
                     }
                 }
             
@@ -3956,12 +3982,11 @@ namespace GingerCore.Drivers
             return elem;
         }
 
-        public IWebElement LocateElementByLocator(ElementLocator locator, ISearchContext searchContext = null, List<FriendlyLocatorElement> friendlyLocatorElements = null, bool AlwaysReturn = true)
+        public IWebElement LocateElementByLocator(ElementLocator locator, ISearchContext searchContext, List<FriendlyLocatorElement> friendlyLocatorElements = null, bool AlwaysReturn = true)
         {
             IWebElement elem = null;
             locator.StatusError = "";
             locator.LocateStatus = ElementLocator.eLocateStatus.Pending;
-            searchContext = searchContext ?? Driver;
             try
             {
                 try
@@ -4866,6 +4891,11 @@ namespace GingerCore.Drivers
                             foundElementsList.Add(foundElementInfo);
 
                             allReadElem.Add(foundElementInfo);
+                            if (!pomSetting.LearnShadowDomElements)
+                            {
+                                continue;
+                            }
+
                             ISearchContext ShadowRoot = shadowDOM.GetShadowRootIfExists(webElement);
                             if (ShadowRoot == null)
                             {
@@ -7740,6 +7770,35 @@ namespace GingerCore.Drivers
                 return;
             }
         }
+        /// <summary>
+        /// When the user enters a locator to locate a shadow root host (the parent node of the shadow root)
+        /// the corresponding shadow root is provided to the current context attribute.
+        /// </summary>
+        /// <param name="act"></param>
+        /// <exception cref="NoSuchElementException">Is thrown when no shadow root is found</exception>
+        private void HandleSwitchToShadowDOM(Act act)
+        {
+            IWebElement shadowDOMHost = LocateElement(act);
+            if(shadowDOMHost != null)
+            {
+                CurrentContext = shadowDOM.GetShadowRootIfExists(shadowDOMHost);
+            }
+
+            if (shadowDOMHost == null || CurrentContext == null)
+            { 
+                throw new NoSuchElementException("Shadow Root Host cannot be located. Please try to find the appropriate Locator of the Element just above the shadow root (Shadow Root Host)");
+            }
+
+        }
+
+        /// <summary>
+        /// Is called when user wants to switch to the default DOM (which does not have direct access 
+        /// to the shadow roots' elements but can access elements which are not in a shadow root)
+        /// </summary>
+        private void HandleSwitchToDefaultDOM()
+        {
+            CurrentContext = Driver;
+        }
 
         public async void ActBrowserElementHandler(ActBrowserElement act)
         {
@@ -8085,6 +8144,12 @@ namespace GingerCore.Drivers
                         mAct = act;
                         SetUPDevTools(Driver);
                         GotoURL(act, Driver.Url);
+                        break;
+                    case ActBrowserElement.eControlAction.SwitchToShadowDOM:
+                        HandleSwitchToShadowDOM(act);
+                        break;
+                    case ActBrowserElement.eControlAction.SwitchToDefaultDOM:
+                        HandleSwitchToDefaultDOM();
                         break;
                     default:
                         throw new Exception("Action unknown/not implemented for the Driver: " + this.GetType().ToString());

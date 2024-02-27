@@ -61,7 +61,7 @@ namespace GingerCoreNETUnitTest.BPMN
             ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
             CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
-            Assert.ThrowsException<BPMNConversionException>(() => converter.Create());
+            Assert.ThrowsException<NoValidActivityFoundInGroupException>(() => converter.Create());
         }
 
         [TestMethod]
@@ -82,7 +82,7 @@ namespace GingerCoreNETUnitTest.BPMN
             ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
             CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
-            Assert.ThrowsException<BPMNConversionException>(() => converter.Create());
+            Assert.ThrowsException<NoValidActivityFoundInGroupException>(() => converter.Create());
         }
 
         [TestMethod]
@@ -98,7 +98,7 @@ namespace GingerCoreNETUnitTest.BPMN
             ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
             CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
-            Assert.ThrowsException<BPMNConversionException>(() => converter.Create());
+            Assert.ThrowsException<NoValidActivityFoundInGroupException>(() => converter.Create());
         }
 
         [TestMethod]
