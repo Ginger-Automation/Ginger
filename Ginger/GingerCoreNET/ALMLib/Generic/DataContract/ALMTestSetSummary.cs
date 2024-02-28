@@ -25,6 +25,6 @@ namespace GingerCore.ALM.QC
     {
         public string TestSetName { get; set; }
         public dynamic TestSetID { get; set; }
-        public List<string[]> TestSetStatuses { get; set; }
+        public dynamic TestSetStatuses { get; set; }
     }
 }
