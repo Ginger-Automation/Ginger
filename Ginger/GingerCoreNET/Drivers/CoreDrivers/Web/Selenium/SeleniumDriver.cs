@@ -5298,15 +5298,35 @@ namespace GingerCore.Drivers
                 EI.ElementTypeEnum = elementTypeEnum.Item2;
             }
 
-            if ((string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/") && EI.ElementObject != null)
+
+            if(pomSetting == null)
             {
+                IList<string> XPaths = new List<string>();
+
                 if (string.IsNullOrWhiteSpace(EI.Path) || (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe")))
                 {
-                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, string.Empty);
+                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, string.Empty, XPaths);
                 }
                 else
                 {
-                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
+                    EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path, XPaths);
+                }
+
+                ((HTMLElementInfo)EI).XPathList = XPaths;
+            }
+
+            else
+            {
+                if ((string.IsNullOrEmpty(EI.XPath) || EI.XPath == "/") && EI.ElementObject != null)
+                {
+                    if (string.IsNullOrWhiteSpace(EI.Path) || (EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("frame") || EI.Path.Split('/')[EI.Path.Split('/').Length - 1].Contains("iframe")))
+                    {
+                        EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, string.Empty);
+                    }
+                    else
+                    {
+                        EI.XPath = GenerateXpathForIWebElement((IWebElement)EI.ElementObject, EI.Path);
+                    }
                 }
             }
 
@@ -5914,7 +5934,30 @@ namespace GingerCore.Drivers
                     }
                     if (!string.IsNullOrEmpty(ElementInfo.XPath))
                     {
-                        ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
+
+                        IList<string> XPaths = ((HTMLElementInfo)ElementInfo).XPathList;
+                        ISearchContext tempContext = Driver;
+                        int startPointer = XPaths.Count - 1;
+
+                        while(startPointer > 0 && tempContext!=null)
+                        {
+                            tempContext = tempContext.FindElement(By.XPath(XPaths[startPointer]));
+                            tempContext = shadowDOM.GetShadowRootIfExists(tempContext);
+                            startPointer--;
+                        }
+                        if (tempContext!=null)
+                        {
+                            if (tempContext is ShadowRoot)
+                            {
+                                string cssSelector = shadowDOM.ConvertXPathToCssSelector(ElementInfo.XPath);
+                                ElementInfo.ElementObject = tempContext.FindElement(By.CssSelector(cssSelector));
+                            }
+                            else
+                            {
+                                ElementInfo.ElementObject = tempContext.FindElement(By.XPath(ElementInfo.XPath));
+
+                            }
+                        }
                     }
                 }
                 IWebElement webElement = (IWebElement)ElementInfo.ElementObject;
@@ -6136,16 +6179,48 @@ namespace GingerCore.Drivers
 
         object IWindowExplorer.GetElementData(ElementInfo ElementInfo, eLocateBy elementLocateBy, string elementLocateValue)
         {
-            IWebElement e = Driver.FindElement(By.XPath(ElementInfo.XPath));
-            if (e.TagName == "select")  // combo box
+            IList<string> XPaths = ((HTMLElementInfo)ElementInfo).XPathList;
+            ISearchContext tempContext = Driver;
+            int startPointer = XPaths.Count - 1;
+
+            IWebElement e = null;
+
+            if (startPointer > 0)
+            {
+                while (startPointer > 0 && tempContext != null)
+                {
+                    tempContext = tempContext.FindElement(By.XPath(XPaths[startPointer]));
+                    tempContext = shadowDOM.GetShadowRootIfExists(tempContext);
+                    startPointer--;
+                }
+                if (tempContext != null)
+                {
+                    if (tempContext is ShadowRoot)
+                    {
+                        string cssSelector = shadowDOM.ConvertXPathToCssSelector(ElementInfo.XPath);
+                        e = tempContext.FindElement(By.CssSelector(cssSelector));
+                    }
+                    else
+                    {
+                        e = tempContext.FindElement(By.XPath(ElementInfo.XPath));
+                    }
+                }
+            }
+            else
+            {
+                e = Driver.FindElement(By.XPath(ElementInfo.XPath));
+            }
+
+            string tagName = e?.TagName ?? string.Empty;
+            if (tagName == "select")  // combo box
             {
                 return GetComboValues(ElementInfo);
             }
-            if (e.TagName == "table")  // Table
+            if (tagName == "table")  // Table
             {
                 return GetTableData(ElementInfo);
             }
-            if (e.TagName == "canvas")
+            if (tagName == "canvas")
             {
                 ((SeleniumDriver)ElementInfo.WindowExplorer).InjectGingerLiveSpyAndStartClickEvent(ElementInfo);
                 return GetXAndYpointsfromClickEvent(ElementInfo);
@@ -6632,14 +6707,15 @@ namespace GingerCore.Drivers
         /// <param name="isBrowserFireFox"></param>
         /// <returns>the xpath relative to the  nearest shadow dom else returns the full xpath</returns>
 
-        public string GenerateXpathForIWebElement(IWebElement IWE, string current)
+        public string GenerateXpathForIWebElement(IWebElement IWE, string current, IList<string> XPaths = null)
         {
             Stack<ISearchContext> stack = new();
             stack.Push(IWE);
             ISearchContext parentElement = null;
             ReadOnlyCollection<IWebElement> childrenElements = null;
             bool isShadowRootDetected = false;
-            IList<string> XPaths = new List<string>();
+            XPaths ??= new List<string>();
+
             while (stack.Count > 0)
             {
 

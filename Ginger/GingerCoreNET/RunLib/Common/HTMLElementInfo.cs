@@ -100,7 +100,8 @@ namespace GingerCore.Drivers.Common
         {
             return mName;
         }
-
+        // Temporary list for XPaths to locate shadow dom Element
+        public IList<string> XPathList { get; set; }
         public HtmlNode HTMLElementObject { get; set; }
 
         public override string GetAbsoluteXpath()
