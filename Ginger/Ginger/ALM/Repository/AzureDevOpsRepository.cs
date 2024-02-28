@@ -50,7 +50,6 @@ namespace Ginger.ALM.Repository
         {
             if (activtiesGroup == null) { return false; }
             //if it is called from shared repository need to select path
-           
             //upload the Activities Group
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);
             string res = string.Empty;
@@ -133,18 +132,11 @@ namespace Ginger.ALM.Repository
 
             bool performSave = false;
 
+
             //just to check if new TC needs to be created or update has to be done
             if (matchingTS == null)
             {
-                if (almConectStyle != eALMConnectType.Silence)
-                {
-                    testPlanUploadPath = SelectALMTestPlanPath();
-                    if (String.IsNullOrEmpty(testPlanUploadPath))
-                    {
-                        //no path to upload to
-                        return false;
-                    }
-                }
+               
                 //create upload path if checked to create separete folder
                 if (QCTestPlanFolderTreeItem.IsCreateBusinessFlowFolder)
                 {
@@ -168,6 +160,7 @@ namespace Ginger.ALM.Repository
             {
                 matchingTC = new ALMTestCase();
             }
+
             //check if all of the business flow activities groups already exported to Octane and export the ones which not
             foreach (ActivitiesGroup ag in businessFlow.ActivitiesGroups)
             {
@@ -185,9 +178,11 @@ namespace Ginger.ALM.Repository
             ObservableList<ExternalItemFieldBase> testSetFieldsFields = CleanUnrelvantFields(allFields, "Test Suite");
 
             bool exportRes = ((AzureDevOpsCore)ALMIntegration.Instance.AlmCore).ExportBusinessFlow(businessFlow, matchingTS, testLabUploadPath, testSetFieldsFields, null, ref res);
+
             Reporter.HideStatusMessage();
             if (exportRes)
             {
+                ((AzureDevOpsCore)ALMIntegration.Instance.AlmCore).TestCaseEntryInSuite(businessFlow);
                 if (performSaveAfterExport)
                 {
                     Reporter.ToStatus(eStatusMsgKey.SaveItem, null, businessFlow.Name, GingerDicser.GetTermResValue(eTermResKey.BusinessFlow));
@@ -235,7 +230,7 @@ namespace Ginger.ALM.Repository
 
         public override object GetTSRunStatus(object tsItem)
         {
-            throw new NotImplementedException();
+            return AzureCore.GetTSRunStatus(tsItem);
         }
 
         public override void ImportALMTests(string importDestinationFolderPath)
