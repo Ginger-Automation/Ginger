@@ -92,7 +92,7 @@ namespace Ginger.Actions
             }
             xStdCB.ItemsSource = mAct.Items;
             //Boolean value is to show description of enum value  
-            xStdCB.Init(mAct, nameof(mAct.StandardList),true);
+            xStdCB.Init(mAct, nameof(mAct.StandardList),ShowEnumDesc: true);
 
             xSeverityStack.Visibility = Visibility.Visible;
             mAct.SeverityItems = new Dictionary<string, object>();
