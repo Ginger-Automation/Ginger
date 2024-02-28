@@ -47,6 +47,7 @@ using TestPlan = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.Web
 using SuiteEntry = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.SuiteEntry;
 using WorkItem2 = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.WorkItem;
 using WorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
+using Microsoft.TeamFoundation.Core.WebApi;
 
 
 namespace GingerCore.ALM
@@ -125,7 +126,60 @@ namespace GingerCore.ALM
       
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
-            throw new NotImplementedException();
+            if (bizFlow is null)
+            {
+                return false;
+            }
+            LoginDTO login = GetLoginDTO();
+                
+
+            try
+            {
+                VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
+
+                var testClient = connection.GetClient<TestManagementHttpClient>();
+
+                if (Int32.TryParse(bizFlow.ExternalID, out int testPlanId) && Int32.TryParse(bizFlow.ExternalID2, out int suiteId))
+                {
+                    string projectName = login.Project;
+
+                    var testPoints = testClient.GetPointsAsync(projectName, testPlanId, suiteId).Result;
+                    if (testPoints != null)
+                    {
+                        foreach (var item in testPoints)
+                        {
+                            int testpointid = item.Id;
+                            var matchingTC = bizFlow.ActivitiesGroups.FirstOrDefault(p => p.ExternalID == item.TestCase.Id);
+                           
+                            if (matchingTC != null)
+                            {
+                                RunCreateModel run = new RunCreateModel(name: item.TestCase.Name, plan: new Microsoft.TeamFoundation.TestManagement.WebApi.ShallowReference(bizFlow.ExternalID), pointIds: [testpointid]);
+                                TestRun testrun = testClient.CreateTestRunAsync(run, projectName).Result;
+
+                                TestCaseResult caseResult = new() { State = "Completed", Outcome = matchingTC.RunStatus.ToString(), Id = 100000 };
+
+                                var testResults = testClient.UpdateTestResultsAsync(new TestCaseResult[] { caseResult }, projectName, testrun.Id).Result;
+                                RunUpdateModel runmodel = new RunUpdateModel(state: "Completed");
+                                TestRun testRunResult = testClient.UpdateTestRunAsync(runmodel, projectName, testrun.Id, runmodel).Result;
+                            }
+
+
+                        }
+                        
+                    }
+
+                }
+
+                return true;
+
+            }
+            catch (AggregateException e)
+            {
+                Console.WriteLine(e.InnerException.Message);
+
+            }
+            return false;
+            
         }
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
