@@ -83,15 +83,16 @@ namespace Ginger.Actions
             SeverityList = GetSeverityList();
             mAct.Items = new Dictionary<string, object>();
             xStdStack.Visibility = Visibility.Visible;
-            foreach (OperationValues StandaredTag in StandardTaglist)
+            foreach (OperationValues StandardTag in StandardTaglist)
             {
-                if (!string.IsNullOrEmpty(StandaredTag.Value.ToString()))
+                if (!string.IsNullOrEmpty(StandardTag.Value.ToString()))
                 {
-                    mAct.Items.Add(StandaredTag.Value.ToString(), StandaredTag.Value.ToString());
+                    mAct.Items.Add(StandardTag.Value.ToString(), StandardTag);
                 }
             }
             xStdCB.ItemsSource = mAct.Items;
-            xStdCB.Init(mAct, nameof(mAct.StandardList));
+            //Boolean value is to show description of enum value  
+            xStdCB.Init(mAct, nameof(mAct.StandardList),ShowEnumDesc: true);
 
             xSeverityStack.Visibility = Visibility.Visible;
             mAct.SeverityItems = new Dictionary<string, object>();
@@ -99,7 +100,7 @@ namespace Ginger.Actions
             {
                 if (!string.IsNullOrEmpty(severity.Value.ToString()))
                 {
-                    mAct.SeverityItems.Add(severity.Value.ToString(), severity.Value.ToString());
+                    mAct.SeverityItems.Add(severity.Value.ToString(), severity);
                 }
             }
             xSeverityCB.ItemsSource = mAct.SeverityItems;
