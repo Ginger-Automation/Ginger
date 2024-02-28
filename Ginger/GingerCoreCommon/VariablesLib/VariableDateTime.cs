@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -210,21 +210,28 @@ namespace GingerCore.Variables
 
         public string ConvertDateTimeToSpecificFormat(string format, string datetimeToFormat = "")
         {
-            if (!string.IsNullOrEmpty(datetimeToFormat))
-            {
-                return Convert.ToDateTime(datetimeToFormat).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
-            }
-            return Convert.ToDateTime(this.mInitialDateTime).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+                if (!string.IsNullOrEmpty(datetimeToFormat))
+                {
+                    return Convert.ToDateTime(datetimeToFormat).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
+                }
+                return Convert.ToDateTime(this.mInitialDateTime).ToString(format, System.Globalization.CultureInfo.InvariantCulture);
         }
 
         public bool CheckDateTimeWithInRange(string dateTimeValue)
         {
-            if (DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, dateTimeValue)) >= DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, MinDateTime)) &&
-                DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, dateTimeValue)) <= DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, MaxDateTime)))
+            try
             {
-                return true;
+                if (DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, dateTimeValue)) >= DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, MinDateTime)) &&
+    DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, dateTimeValue)) <= DateTime.Parse(ConvertDateTimeToSpecificFormat(DateTimeFormat, MaxDateTime)))
+                {
+                    return true;
+                }
+                return false;
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
         public bool IsValidDateTimeFormat(string value)
         {

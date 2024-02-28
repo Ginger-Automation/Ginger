@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
     {
         public sealed class Options
         {
-            public NonDeterministicFlowControlHandlingStrategy NonDeterministicFlowControlHandlingStrategy { get; init; } = NonDeterministicFlowControlHandlingStrategy.Fail;
+            public bool IgnoreInterActivityFlowControls { get; set; } = false;
         }
 
         private readonly ActivitiesGroup _activityGroup;
@@ -226,12 +226,16 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
         private IEnumerable<IProcessEntity> CreateProcessEntitiesForActivityFlowControls(Activity activity, Collaboration collaboration, IDictionary<Activity, IEnumerable<Task>> activityTasksMap)
         {
+            if (_options.IgnoreInterActivityFlowControls)
+            {
+                return Array.Empty<IProcessEntity>();
+            }
+
             ProcessEntitiesFromActivityFlowControlCreator processEntitiesFromActivityFlowControlCreator = new(
                 activity, 
                 collaboration, 
                 _solutionFacade, 
-                activityTasksMap, 
-                _options.NonDeterministicFlowControlHandlingStrategy);
+                activityTasksMap);
             return processEntitiesFromActivityFlowControlCreator.Create();
         }
 
@@ -263,12 +267,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             Participant firstParticipant = participants.First();
 
-            Collaboration collaboration = new(_activityGroup.Guid, CollaborationType.SubProcess)
-            {
-                Name = _activityGroup.Name,
-                SystemRef = firstParticipant.Guid.ToString(),
-                Description = _activityGroup.Description
-            };
+            Collaboration collaboration = Collaboration.CreateForSubProcess(
+                guid: _activityGroup.Guid,
+                systemRef: firstParticipant.Guid.ToString());
+            collaboration.Name = _activityGroup.Name;
+            collaboration.Description = _activityGroup.Description;
 
             foreach (Participant participant in participants)
             {

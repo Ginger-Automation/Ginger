@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -56,14 +56,10 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             IEnumerable<Participant> participants = CreateParticipants();
 
-            Participant firstParticipant = participants.First();
-
-            Collaboration collaboration = new(_businessFlow.Guid, CollaborationType.UseCase)
-            {
-                Name = _businessFlow.Name,
-                SystemRef = firstParticipant.Guid.ToString(),
-                Description = _businessFlow.Description
-            };
+            Collaboration collaboration = Collaboration.CreateForUseCase(
+                guid: _businessFlow.Guid);
+            collaboration.Name = _businessFlow.Name;
+            collaboration.Description = _businessFlow.Description;
 
             foreach (Participant participant in participants)
             {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -193,10 +193,6 @@ namespace Ginger.Reports
                 xCentralExecutionLoggerExpander.Visibility = Visibility.Collapsed;
                 xFolderMaximumSizeRow.Height = new GridLength(30);
                 _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
-                if (isControlsSet)
-                {
-                    Reporter.ToUser(eUserMsgKey.ChangesRequireRestart);
-                }
             }
         }
         private void LiteDbRadioBtnsPnl_Checked(object sender, RoutedEventArgs e)
@@ -209,10 +205,6 @@ namespace Ginger.Reports
                 }
                 xFolderMaximumSizeRow.Height = new GridLength(0);
                 _selectedExecutionLoggerConfiguration.SelectedDataRepositoryMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
-                if (isControlsSet)
-                {
-                    Reporter.ToUser(eUserMsgKey.ChangesRequireRestart);
-                }
             }
 
         }

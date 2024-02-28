@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 
 namespace Ginger.UserControlsLib
 {
@@ -44,6 +45,7 @@ namespace Ginger.UserControlsLib
         private ObservableCollection<Node> _nodeList;
         private object obj;
         private string AttrName;
+        private bool ShowEnumDesc = false;
         public MultiSelectComboBox()
         {
             InitializeComponent();
@@ -170,15 +172,45 @@ namespace Ginger.UserControlsLib
             else
             {
                 int _selectedCount = 0;
-                foreach (Node s in _nodeList)
+                if (ShowEnumDesc)
                 {
-                    if (s.IsSelected && s.Title != "All")
-                        _selectedCount++;
+                    foreach (Node s in _nodeList)
+                    {
+                        if (s.IsSelected && s._title != "All")
+                        {
+                            _selectedCount++;
+                        }
+                    }
+                    if (_selectedCount == _nodeList.Count - 1)
+                    {
+                        _nodeList.FirstOrDefault(i => i._title == "All").IsSelected = true;
+                    }
+                    else
+                    {
+                        _nodeList.FirstOrDefault(i => i._title == "All").IsSelected = false;
+                    }
                 }
-                if (_selectedCount == _nodeList.Count - 1)
-                    _nodeList.FirstOrDefault(i => i.Title == "All").IsSelected = true;
                 else
-                    _nodeList.FirstOrDefault(i => i.Title == "All").IsSelected = false;
+                {
+                    foreach (Node s in _nodeList)
+                    {
+                        if (s.IsSelected && s.Title != "All")
+                        {
+                            _selectedCount++;
+                        }
+                    }
+                    if (_selectedCount == _nodeList.Count - 1)
+                    {
+                        _nodeList.FirstOrDefault(i => i.Title == "All").IsSelected = true;
+                    }
+                    else
+                    {
+                        _nodeList.FirstOrDefault(i => i.Title == "All").IsSelected = false;
+                    }
+                       
+                }
+                
+                
             }
             SetSelectedItems();
             SetText();
@@ -192,9 +224,23 @@ namespace Ginger.UserControlsLib
         {
             foreach (OperationValues keyValue in SelectedItems)
             {
-                Node node = _nodeList.FirstOrDefault(i => i.Title == keyValue.Value);
-                if (node != null)
-                    node.IsSelected = true;
+                if(ShowEnumDesc)
+                {
+                    Node node = _nodeList.FirstOrDefault(i => i._title == keyValue.Value);
+                    if (node != null)
+                    {
+                        node.IsSelected = true;
+                    }
+                }
+                else
+                {
+                    Node node = _nodeList.FirstOrDefault(i => i.Title == keyValue.Value);
+                    if (node != null)
+                    {
+                        node.IsSelected = true;
+                    }
+                }
+                
             }
         }
 
@@ -206,47 +252,77 @@ namespace Ginger.UserControlsLib
             SelectedItems.Clear();
             foreach (Node node in _nodeList)
             {
-                if (node.IsSelected && node.Title != "All")
+                if (node._ShowEnumDesc)
                 {
-                    if (this.ItemsSource.Count > 0)
+                    if (node.IsSelected && node._title != "All")
                     {
-                        Guid guidOutput;
-                        bool isValid = Guid.TryParse(this.ItemsSource[node.Title].ToString(), out guidOutput);
-                        if (isValid)
+                        if (this.ItemsSource.Count > 0)
                         {
-                            SelectedItems.Add(new OperationValues() { Value = node.Title, Guid = guidOutput });
-                            temp.Add(new OperationValues() { Value = node.Title, Guid = guidOutput });
+                            Guid guidOutput;
+                            bool isValid = Guid.TryParse(this.ItemsSource[node._title].ToString(), out guidOutput);
+                            if (isValid)
+                            {
+                                SelectedItems.Add(new OperationValues() { Value = node._title, Guid = guidOutput });
+                                temp.Add(new OperationValues() { Value = node._title, Guid = guidOutput });
+                            }
+                            else
+                            {
+                                SelectedItems.Add(new OperationValues() { Value = node._title });
+                                temp.Add(new OperationValues() { Value = node._title });
+                            }
                         }
-                        else
-                        {
-                            SelectedItems.Add(new OperationValues() { Value = node.Title });
-                            temp.Add(new OperationValues() { Value = node.Title });
-                        }
+
                     }
-                    
                 }
+                else
+                {
+                    if (node.IsSelected && node.Title != "All")
+                    {
+                        if (this.ItemsSource.Count > 0)
+                        {
+                            Guid guidOutput;
+                            bool isValid = Guid.TryParse(this.ItemsSource[node.Title].ToString(), out guidOutput);
+                            if (isValid)
+                            {
+                                SelectedItems.Add(new OperationValues() { Value = node.Title, Guid = guidOutput });
+                                temp.Add(new OperationValues() { Value = node.Title, Guid = guidOutput });
+                            }
+                            else
+                            {
+                                SelectedItems.Add(new OperationValues() { Value = node.Title });
+                                temp.Add(new OperationValues() { Value = node.Title });
+                            }
+                        }
+
+                    }
+                }
+                
             }
             OperationSelectedItems = new ObservableList<OperationValues>(temp);
         }
 
-        public void Init(object obj, string AttrName)
+        public void Init(object obj, string AttrName,bool ShowEnumDesc = false)
         {
             //// If the VE is on stand alone form:
             this.obj = obj;
             this.AttrName = AttrName;
+            this.ShowEnumDesc = ShowEnumDesc;
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(this, OperationSelectedValuesProperty, obj, AttrName);
         }
 
         private void DisplayInControl()
         {
             _nodeList.Clear();
-            if(this.ItemsSource.Count >0)
+
+            var objectlist = this.ItemsSource.Select(x => x.Value);
+            this.ShowEnumDesc = objectlist.Any(x => x is OperationValues ? !string.IsNullOrEmpty(((OperationValues)x).DisplayName) : false);
+            if (this.ItemsSource.Count > 0)
             {
-                _nodeList.Add(new Node("All"));
+                _nodeList.Add(new Node("All", this.ShowEnumDesc));
             }
             foreach (KeyValuePair<string, object> keyValue in this.ItemsSource)
             {
-                Node node = new Node(keyValue.Key);
+                Node node = new Node(keyValue.Key,this.ShowEnumDesc);
                 _nodeList.Add(node);
             }
             MultiSelectCombo.ItemsSource = _nodeList;
@@ -259,16 +335,33 @@ namespace Ginger.UserControlsLib
                 StringBuilder displayText = new StringBuilder();
                 foreach (Node s in _nodeList)
                 {
-                    if (s.IsSelected == true && s.Title == "All")
+                    if (s._ShowEnumDesc)
                     {
-                        displayText = new StringBuilder();
-                        displayText.Append("All");
-                        break;
+                        if (s.IsSelected && s._title == "All")
+                        {
+                            displayText = new StringBuilder();
+                            displayText.Append("All");
+                            break;
+                        }
+                        else if (s.IsSelected && s._title != "All")
+                        {
+                            displayText.Append(s.Title);
+                            displayText.Append(',');
+                        }
                     }
-                    else if (s.IsSelected == true && s.Title != "All")
+                    else
                     {
-                        displayText.Append(s.Title);
-                        displayText.Append(',');
+                        if (s.IsSelected && s.Title == "All")
+                        {
+                            displayText = new StringBuilder();
+                            displayText.Append("All");
+                            break;
+                        }
+                        else if (s.IsSelected && s.Title != "All")
+                        {
+                            displayText.Append(s.Title);
+                            displayText.Append(',');
+                        }
                     }
                 }
                 this.Text = displayText.ToString().TrimEnd(new char[] { ',' });
@@ -287,12 +380,14 @@ namespace Ginger.UserControlsLib
     public class Node : INotifyPropertyChanged
     {
 
-        private string _title;
+        public string _title;
         private bool _isSelected;
+        public bool _ShowEnumDesc = false;
         #region ctor
-        public Node(string title)
+        public Node(string title,bool ShowEnumDesc)
         {
             Title = title;
+            _ShowEnumDesc = ShowEnumDesc;
         }
         #endregion
 
@@ -301,7 +396,7 @@ namespace Ginger.UserControlsLib
         {
             get
             {
-                return _title;
+                return _ShowEnumDesc ? GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), _title) : _title;
             }
             set
             {

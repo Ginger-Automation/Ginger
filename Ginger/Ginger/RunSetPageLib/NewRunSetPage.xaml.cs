@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1354,7 +1354,6 @@ namespace Ginger.Run
             FlowElement RunnerFlowelement = new FlowElement(FlowElement.eElementType.CustomeShape, GRP, mFlowX, mFlowY, 600, 220);
             RunnerFlowelement.OtherInfoVisibility = Visibility.Collapsed;
             RunnerFlowelement.Tag = GRP.Tag;
-            WeakEventManager<Control, MouseButtonEventArgs>.AddHandler(source: RunnerFlowelement, eventName: nameof(Control.MouseDoubleClick), handler: RunnerFlowelement_MouseDoubleClick);
 
             if (mFlowDiagram.mCurrentFlowElem != null)
             {
@@ -1385,20 +1384,6 @@ namespace Ginger.Run
             mFlowDiagram.AddConnector(FL);
         }
 
-        private void RunnerFlowelement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            RunnerPage rp = (RunnerPage)((FlowElement)sender).GetCustomeShape().Content;
-            General.eRIPageViewMode runnerConfigsPage = General.eRIPageViewMode.Standalone;
-            if(mEditMode == eEditMode.View)
-            {
-                runnerConfigsPage = General.eRIPageViewMode.ViewAndExecute;
-            }
-            GingerRunnerConfigurationsPage PACW = new GingerRunnerConfigurationsPage(rp.ExecutorEngine, GingerRunnerConfigurationsPage.ePageViewMode.RunsetPage, mContext, runnerConfigsPage);
-            PACW.ShowAsWindow();
-            rp.ExecutorEngine.GingerRunner.PauseDirtyTracking();
-            rp.UpdateRunnerInfo();
-            rp.ExecutorEngine.GingerRunner.ResumeDirtyTracking();
-        }
 
         private void GRP_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {

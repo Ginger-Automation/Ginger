@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -31,12 +31,6 @@ using System.Text;
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 {
-    public enum NonDeterministicFlowControlHandlingStrategy
-    {
-        Fail,
-        Ignore
-    }
-
     internal sealed class ProcessEntitiesFromActivityFlowControlCreator
     {
 
@@ -57,12 +51,10 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
         private readonly IDictionary<Activity, IEnumerable<Task>> _activityTasksMap;
         private readonly Participant _activityParticipant;
         private readonly IEnumerable<FlowControl> _flowControls;
-        private readonly NonDeterministicFlowControlHandlingStrategy _nonDeterministicFlowControlHandlingStrategy;
 
         internal ProcessEntitiesFromActivityFlowControlCreator(
             Activity activity, Collaboration collaboration, ISolutionFacadeForBPMN solutionFacade,
-            IDictionary<Activity, IEnumerable<Task>> activityTasksMap, 
-            NonDeterministicFlowControlHandlingStrategy nonDeterministicFlowControlHandlingStrategy)
+            IDictionary<Activity, IEnumerable<Task>> activityTasksMap)
         {
             _activity = activity;
             _collaboration = collaboration;
@@ -70,7 +62,6 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             _activityTasksMap = activityTasksMap;
             _activityParticipant = GetActivityParticipant();
             _flowControls = GetRelevantFlowControls();
-            _nonDeterministicFlowControlHandlingStrategy = nonDeterministicFlowControlHandlingStrategy;
         }
 
         private IEnumerable<FlowControl> GetRelevantFlowControls()
@@ -91,17 +82,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             List<Task> conditionalTasks = new();
             foreach (FlowControl flowControl in _flowControls)
             {
-                try
-                {
-                    conditionalTasks.AddRange(CreateConditionalTasks(gateway, flowControl));
-                }
-                catch(FlowControlTargetActivityNotFoundException)
-                {
-                    if (_nonDeterministicFlowControlHandlingStrategy == NonDeterministicFlowControlHandlingStrategy.Fail)
-                    {
-                        throw;
-                    }
-                }
+                conditionalTasks.AddRange(CreateConditionalTasks(gateway, flowControl));
             }
 
             List<IProcessEntity> processEntitiesForFlowControl = new();
