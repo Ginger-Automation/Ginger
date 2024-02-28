@@ -87,7 +87,7 @@ namespace Ginger.Actions
             {
                 if (!string.IsNullOrEmpty(StandaredTag.Value.ToString()))
                 {
-                    mAct.Items.Add(StandaredTag.Value.ToString(), StandaredTag.Value.ToString());
+                    mAct.Items.Add(StandaredTag.Value.ToString(), StandaredTag);
                 }
             }
             xStdCB.ItemsSource = mAct.Items;
@@ -100,7 +100,7 @@ namespace Ginger.Actions
             {
                 if (!string.IsNullOrEmpty(severity.Value.ToString()))
                 {
-                    mAct.SeverityItems.Add(severity.Value.ToString(), severity.Value.ToString());
+                    mAct.SeverityItems.Add(severity.Value.ToString(), severity);
                 }
             }
             xSeverityCB.ItemsSource = mAct.SeverityItems;

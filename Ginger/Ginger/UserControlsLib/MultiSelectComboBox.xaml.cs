@@ -296,7 +296,10 @@ namespace Ginger.UserControlsLib
         private void DisplayInControl()
         {
             _nodeList.Clear();
-            if(this.ItemsSource.Count >0)
+
+            var objectlist = this.ItemsSource.Select(x => x.Value);
+            this.isenum = objectlist.Any(x => !string.IsNullOrEmpty(((OperationValues)x).DisplayName));
+            if (this.ItemsSource.Count > 0)
             {
                 _nodeList.Add(new Node("All", this.isenum));
             }
