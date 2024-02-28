@@ -21,6 +21,7 @@ namespace Amdocs.Ginger.Common.Repository
             "GingerCoreCommon"
         };
         private static readonly Dictionary<string, Func<DeserializedSnapshot, RepositoryItemBase>> NameToConstructorMap = [];
+        //TODO: Replace dictionary with List span
         private static readonly Dictionary<string, Func<DeserializedSnapshot2, RepositoryItemBase>> NameToConstructorMap2 = [];
         private static bool IsLoaded = false;
         private static bool IsLoaded2 = false;
@@ -31,15 +32,12 @@ namespace Amdocs.Ginger.Common.Repository
         {
             if (IsLoaded)
                 return;
-            Debug.WriteLine(Environment.CurrentManagedThreadId + " going to wait one");
             LoadSyncEvent.WaitOne();
-            Debug.WriteLine(Environment.CurrentManagedThreadId + " crossed wait line");
             if (IsLoaded)
             {
                 LoadSyncEvent.Set();
                 return;
             }
-            Debug.WriteLine(Environment.CurrentManagedThreadId + " starting loading");
             NameToConstructorMap.Clear();
             IEnumerable<Type> ribTypes = GetAllRepositoryItemBaseTypes();
             foreach (Type ribType in ribTypes)
@@ -56,15 +54,12 @@ namespace Amdocs.Ginger.Common.Repository
         {
             if (IsLoaded2)
                 return;
-            Debug.WriteLine(Environment.CurrentManagedThreadId + " going to wait one");
             LoadSyncEvent2.WaitOne();
-            Debug.WriteLine(Environment.CurrentManagedThreadId + " crossed wait line");
             if (IsLoaded2)
             {
                 LoadSyncEvent2.Set();
                 return;
             }
-            Debug.WriteLine(Environment.CurrentManagedThreadId + " starting loading");
             NameToConstructorMap2.Clear();
             IEnumerable<Type> ribTypes = GetAllRepositoryItemBaseTypes();
             foreach (Type ribType in ribTypes)
@@ -175,7 +170,14 @@ namespace Amdocs.Ginger.Common.Repository
                 constructor == null)
                 throw new Exception($"No constructor was loaded in factory for '{name}'.");
 
+            //if (ObjectCreationCounts.ContainsKey(name))
+            //    ObjectCreationCounts[name]++;
+            //else
+            //    ObjectCreationCounts[name] = 1;
+
             return constructor(snapshot);
         }
+
+        //public static Dictionary<string, int> ObjectCreationCounts { get; } = [];
     }
 }

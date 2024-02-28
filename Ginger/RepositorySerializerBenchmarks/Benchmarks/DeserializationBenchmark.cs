@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using YamlDotNet.Core;
 
 namespace RepositorySerializerBenchmarks.Benchmarks
 {
@@ -76,6 +77,8 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         public void New_Full()
         {
             BusinessFlow.LazyLoad = false;
+            Activity.LazyLoad = false;
+            Act.LazyLoad = false;
             BetterRepositorySerializer.UseDeserializer2 = false;
             foreach (string repositoryItemBaseXML in TestData)
                 _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
@@ -85,6 +88,10 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         public void New_Lazy()
         {
             BusinessFlow.LazyLoad = true;
+            BusinessFlow.Lite = true;
+            Activity.LazyLoad = false;
+            Act.LazyLoad = false;
+            BetterRepositorySerializer.UseDeserializer2 = false;
             foreach (string repositoryItemBaseXML in TestData)
                 _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
         }
@@ -125,6 +132,8 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         public void New2_Full()
         {
             BusinessFlow.LazyLoad = false;
+            Activity.LazyLoad = false;
+            Act.LazyLoad = false;
             BetterRepositorySerializer.UseDeserializer2 = true;
             foreach (string repositoryItemBaseXML in TestData)
                 _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
@@ -134,6 +143,8 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         public void New2_Lazy()
         {
             BusinessFlow.LazyLoad = true;
+            Activity.LazyLoad = false;
+            Act.LazyLoad = false;
             BetterRepositorySerializer.UseDeserializer2 = true;
             foreach (string repositoryItemBaseXML in TestData)
                 _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);

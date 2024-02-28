@@ -18,6 +18,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -135,6 +136,8 @@ namespace GingerCore
 
         public Activity(DeserializedSnapshot snapshot) : base(snapshot) { }
 
+        public static bool LazyLoad { get; set; } = false;
+
         public Activity(DeserializedSnapshot2 snapshot) : base(snapshot)
         {
             ActionRunOption = snapshot.GetValueAsEnum<eActionRunOption>(nameof(ActionRunOption));
@@ -147,7 +150,17 @@ namespace GingerCore
             POMMetaDataId = snapshot.GetValueAsGuid(nameof(POMMetaDataId));
             TargetApplication = snapshot.GetValue(nameof(TargetApplication));
             Type = snapshot.GetValueAsEnum<eSharedItemType>(nameof(Type));
-            Acts = new(snapshot.GetValues<Act>(nameof(Acts)));
+            if (LazyLoad)
+            {
+                snapshot.GetValuesLite(nameof(Acts));
+            }
+            else
+            {
+                //Console.WriteLine("Started loading actions");
+                //long start = DateTime.Now.Ticks;
+                Acts = new(snapshot.GetValues<Act>(nameof(Acts)));
+                //Console.WriteLine($"Completed loading actions in {TimeSpan.FromTicks(DateTime.Now.Ticks - start).TotalMilliseconds}ms");
+            }
         }
 
         protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder builder)
@@ -190,7 +203,12 @@ namespace GingerCore
             else if (property.HasName(nameof(Type)))
                 Type = property.GetValueAsEnum<eSharedItemType>();
             else if (property.HasName(nameof(Acts)))
-                Acts = new(property.GetValues<Act>());
+            {
+                if (LazyLoad)
+                    property.GetValuesLite();
+                else
+                    Acts = new(property.GetValues<Act>());
+            }
         }
 
         public override string ToString()

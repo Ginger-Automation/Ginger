@@ -1,4 +1,5 @@
-﻿using Amdocs.Ginger.Common.Repository.Serialization;
+﻿using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Repository;
 using BenchmarkDotNet.Reports;
 using BenchmarkDotNet.Running;
@@ -11,9 +12,24 @@ using RepositorySerializerBenchmarks.Enhancements.LiteXML;
 using System.Xml;
 
 //Summary summary = BenchmarkRunner.Run<SerializationBenchmark>();
-Summary summary = BenchmarkRunner.Run<DeserializationBenchmark>();
+//Summary summary = BenchmarkRunner.Run<DeserializationBenchmark>();
 //Summary summary = BenchmarkRunner.Run<LazyLoadBenchmark>();
 //Summary summary = BenchmarkRunner.Run<DeserializedSnapshot2Benchmarks>();
+
+DeserializationBenchmark b = new();
+b.TestDataSize = 100;
+b.GlobalSetup();
+Console.WriteLine("Starting to deserialize");
+Thread.Sleep(5000);
+Console.WriteLine("started");
+b.New2_Lazy();
+Console.WriteLine("completed");
+Thread.Sleep(5000);
+//Console.WriteLine("Created following objects from RepositoryItemBaseFactory, ");
+//foreach (var nameCount in RepositoryItemBaseFactory.ObjectCreationCounts)
+//{
+//    Console.WriteLine($"{nameCount.Key}: {nameCount.Value}");
+//}
 
 
 //_ = new ActDummy();
@@ -53,61 +69,3 @@ Summary summary = BenchmarkRunner.Run<DeserializationBenchmark>();
 //BusinessFlow.LazyLoad = true;
 //BusinessFlow businessFlow = new BetterRepositorySerializer().Deserialize<BusinessFlow>(xml);
 //string newXml = new BetterRepositorySerializer().Serialize(businessFlow);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Summary summary = BenchmarkRunner.Run<SerializationBenchmark>();
-//Summary summary = BenchmarkRunner.Run<DeserializationBenchmark>();
-
-//_ = new ActDummy();
-//string xml = File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Benchmarks", "Resources", "TestBusinessFlow.Ginger.BusinessFlow.xml"));
-//TestDataGenerator.GenerateRIBs(1);

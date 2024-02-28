@@ -56,19 +56,22 @@ namespace GingerCore
             Name = snapshot.GetValue(nameof(Name));
             Source = snapshot.GetValueAsEnum<eSource>(nameof(Source));
             Status = snapshot.GetValueAsEnum<eBusinessFlowStatus>(nameof(Status));
+            ActivitiesGroups = new(snapshot.GetValues<ActivitiesGroup>(nameof(ActivitiesGroups)));
+            TargetApplications = new(snapshot.GetValues<TargetBase>(nameof(TargetApplication)));
+            Variables = new(snapshot.GetValues<VariableBase>(nameof(Variables))); 
             if (LazyLoad)
             {
                 snapshot.GetValuesLite(nameof(Activities));
             }
             else
             {
+                //Console.WriteLine("Starting to load activities");
+                //Thread.Sleep(5000);
                 //long startTime = DateTime.Now.Ticks;
                 Activities = new(snapshot.GetValues<Activity>(nameof(Activities)));
                 //Console.WriteLine($"Activities loaded in {TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds}ms");
+                //Thread.Sleep(5000);
             }
-            ActivitiesGroups = new(snapshot.GetValues<ActivitiesGroup>(nameof(ActivitiesGroups)));
-            TargetApplications = new(snapshot.GetValues<TargetBase>(nameof(TargetApplication)));
-            Variables = new(snapshot.GetValues<VariableBase>(nameof(Variables)));
 
         }
 
@@ -114,10 +117,6 @@ namespace GingerCore
             {
                 if (LazyLoad)
                 {
-                    //Activities = new()
-                    //{
-                    //    LazyLoadDetails = property.GetValuesLazy()
-                    //};
                     if (Lite)
                         property.GetValuesLite();
                     else

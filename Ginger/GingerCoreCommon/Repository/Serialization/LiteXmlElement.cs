@@ -16,11 +16,11 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
 
         public LiteXmlElement[] ChildElements { get; init; }
 
-        private LiteXmlElement(string name, List<LiteXmlAttribute> attributes, List<LiteXmlElement> childElements)
+        private LiteXmlElement(string name, LiteXmlAttribute[] attributes, LiteXmlElement[] childElements)
         {
             Name = name;
-            Attributes = attributes.ToArray();
-            ChildElements = childElements.ToArray();
+            Attributes = attributes;
+            ChildElements = childElements;
         }
 
         public static LiteXmlElement Load(XmlReader reader)
@@ -28,10 +28,10 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
             reader.MoveToContent();
 
             string name = reader.Name;
-
-            List<LiteXmlAttribute> attributes = [];
+            
+            List<LiteXmlAttribute> attributes = new(reader.AttributeCount);
             reader.ReadAttributes((name, value) =>
-                attributes.Add(new()
+                attributes.Add(new LiteXmlAttribute()
                 {
                     Name = name,
                     Value = value
@@ -41,7 +41,7 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
             reader.ReadChildElements(childReader =>
                 childElements.Add(Load(childReader)));
 
-            return new LiteXmlElement(name, attributes, childElements);
+            return new LiteXmlElement(name, attributes.ToArray(), childElements.ToArray());
         }
     }
 }

@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Xml;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
@@ -711,6 +712,8 @@ namespace GingerCore.Actions
 
         public Act(DeserializedSnapshot snapshot) : base(snapshot) { }
 
+        public static bool LazyLoad { get; set; } = false;
+
         public Act(DeserializedSnapshot2 snapshot) : base(snapshot)
         {
             Active = snapshot.GetValueAsBool(nameof(Active));
@@ -719,7 +722,14 @@ namespace GingerCore.Actions
             RetryMechanismInterval = snapshot.GetValueAsInt(nameof(RetryMechanismInterval));
             StatusConverter = snapshot.GetValueAsEnum<eStatusConverterOptions>(nameof(StatusConverter));
             WindowsToCapture = snapshot.GetValueAsEnum<eWindowsToCapture>(nameof(WindowsToCapture));
-            InputValues = new(snapshot.GetValues<ActInputValue>(nameof(InputValues)));
+            if (LazyLoad)
+            {
+                snapshot.GetValuesLite(nameof(InputValues));
+            }
+            else
+            {
+                InputValues = new(snapshot.GetValues<ActInputValue>(nameof(InputValues)));
+            }
         }
 
         protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
@@ -741,6 +751,8 @@ namespace GingerCore.Actions
                 Active = property.GetValueAsBool();
             else if (property.HasName(nameof(Description)))
                 Description = property.GetValue();
+            else if (property.HasName(nameof(Platform)))
+                Platform = property.GetValueAsEnum<ePlatformType>();
             else if (property.HasName(nameof(RetryMechanismInterval)))
                 RetryMechanismInterval = property.GetValueAsInt();
             else if (property.HasName(nameof(StatusConverter)))
@@ -748,7 +760,12 @@ namespace GingerCore.Actions
             else if (property.HasName(nameof(WindowsToCapture)))
                 WindowsToCapture = property.GetValueAsEnum<eWindowsToCapture>();
             else if (property.HasName(nameof(InputValues)))
-                InputValues = new(property.GetValues<ActInputValue>());
+            {
+                if (LazyLoad)
+                    property.GetValuesLite();
+                else
+                    InputValues = new(property.GetValues<ActInputValue>());
+            }
         }
 
         #region ActInputValues
