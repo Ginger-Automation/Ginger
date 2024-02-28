@@ -162,12 +162,24 @@ namespace GingerCore.ALM
                                 RunUpdateModel runmodel = new(state: "Completed");
                                 TestRun testRunResult = testClient.UpdateTestRunAsync(runmodel, projectName, testrun.Id, runmodel).Result;
                             }
-
+                            else
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR,"No Matching Test case found for Test Point Id");
+                            }
 
                         }
                         
                     }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR,"No TestPoint found for given Project,TestPlanId or Suite Id");
+                    }
 
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR,"Unable to Covert ExternalId to Integer");
+                    return false;
                 }
 
                 return true;
@@ -175,7 +187,7 @@ namespace GingerCore.ALM
             }
             catch (AggregateException e)
             {
-                Console.WriteLine(e.InnerException.Message);
+                Reporter.ToLog(eLogLevel.ERROR,e.InnerException.Message);
 
             }
             return false;
