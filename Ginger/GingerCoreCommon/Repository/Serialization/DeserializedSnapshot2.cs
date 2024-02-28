@@ -29,9 +29,9 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
 
         public static DeserializedSnapshot2 Load(XmlReader reader)
         {
-            long startTime = DateTime.Now.Ticks;
+            //long startTime = DateTime.Now.Ticks;
             var r = new DeserializedSnapshot2(LiteXmlElement.Load(reader));
-            Console.WriteLine($"DeserializedSnapshot2 for '{reader.Name}' loaded in {TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds}ms");
+            //Console.WriteLine($"DeserializedSnapshot2 for '{reader.Name}' loaded in {TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds}ms");
             return r;
         }
 
@@ -164,6 +164,14 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
             //}
 
             ref LiteXmlElement currentElement = ref MemoryMarshal.GetArrayDataReference(_rootElement.ChildElements);
+            ref LiteXmlElement beyondElementsArray = ref Unsafe.Add(ref currentElement, _rootElement.ChildElements.Length);
+
+            while (Unsafe.IsAddressLessThan(ref currentElement, ref beyondElementsArray))
+            {
+                if (string.Equals(currentElement.Name, propertyName))
+                    return (TRepositoryItemBase)RepositoryItemBaseFactory.Create(currentElement.Name, new DeserializedSnapshot2(currentElement));
+                currentElement = ref Unsafe.Add(ref currentElement, 1);
+            }
 
             throw DeserializedPropertyNotFoundException.WithDefaultMessage(propertyName);
         }
@@ -182,21 +190,45 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
 
         public IEnumerable<TRepositoryItemBase> GetValues<TRepositoryItemBase>(string propertyName) where TRepositoryItemBase : RepositoryItemBase
         {
-            Span<LiteXmlElement> childElements = CollectionsMarshal.AsSpan(_rootElement.ChildElements);
-            for (int index = 0; index < childElements.Length; index++)
+            //Span<LiteXmlElement> childElements = CollectionsMarshal.AsSpan(_rootElement.ChildElements);
+            //for (int index = 0; index < childElements.Length; index++)
+            //{
+            //    LiteXmlElement childElement = childElements[index];
+            //    if (string.Equals(childElement.Name, propertyName))
+            //    {
+            //        Span<LiteXmlElement> valuesXml = CollectionsMarshal.AsSpan(childElement.ChildElements);
+            //        TRepositoryItemBase[] values = new TRepositoryItemBase[valuesXml.Length];
+            //        for (int valueIndex = 0; valueIndex < valuesXml.Length; valueIndex++)
+            //        {
+            //            LiteXmlElement value = valuesXml[valueIndex];
+            //            values[valueIndex] = (TRepositoryItemBase)RepositoryItemBaseFactory.Create(value.Name, new DeserializedSnapshot2(value));
+            //        }
+            //        return values;
+            //    }
+            //}
+
+            ref LiteXmlElement currentChildElement = ref MemoryMarshal.GetArrayDataReference(_rootElement.ChildElements);
+            ref LiteXmlElement beyondChildElementsArray = ref Unsafe.Add(ref currentChildElement, _rootElement.ChildElements.Length);
+
+            while (Unsafe.IsAddressLessThan(ref currentChildElement, ref beyondChildElementsArray))
             {
-                LiteXmlElement childElement = childElements[index];
-                if (Equals(childElement.Name, propertyName))
+                if (string.Equals(currentChildElement.Name, propertyName))
                 {
-                    Span<LiteXmlElement> valuesXml = CollectionsMarshal.AsSpan(childElement.ChildElements);
-                    TRepositoryItemBase[] values = new TRepositoryItemBase[valuesXml.Length];
-                    for (int valueIndex = 0; valueIndex < valuesXml.Length; valueIndex++)
+                    ref LiteXmlElement currentValueElement = ref MemoryMarshal.GetArrayDataReference(currentChildElement.ChildElements);
+                    ref LiteXmlElement beyondValueElementsArray = ref Unsafe.Add(ref currentValueElement, currentChildElement.ChildElements.Length);
+
+                    TRepositoryItemBase[] values = new TRepositoryItemBase[currentChildElement.ChildElements.Length];
+                    int valueIndex = 0;
+                    while (Unsafe.IsAddressLessThan(ref currentValueElement, ref beyondValueElementsArray))
                     {
-                        LiteXmlElement value = valuesXml[valueIndex];
-                        values[valueIndex] = (TRepositoryItemBase)RepositoryItemBaseFactory.Create(value.Name, new DeserializedSnapshot2(value));
+                        values[valueIndex] = (TRepositoryItemBase)RepositoryItemBaseFactory.Create(currentValueElement.Name, new DeserializedSnapshot2(currentValueElement));
+                        valueIndex++;
+                        currentValueElement = ref Unsafe.Add(ref currentValueElement, 1);
                     }
+
                     return values;
                 }
+                currentChildElement = ref Unsafe.Add(ref currentChildElement, 1);
             }
 
             return Array.Empty<TRepositoryItemBase>();
@@ -204,14 +236,24 @@ namespace Amdocs.Ginger.Common.Repository.Serialization
 
         public LiteXmlElement GetValuesLite(string propertyName)
         {
-            Span<LiteXmlElement> childElements = CollectionsMarshal.AsSpan(_rootElement.ChildElements);
-            for (int index = 0; index < childElements.Length; index++)
+            //Span<LiteXmlElement> childElements = CollectionsMarshal.AsSpan(_rootElement.ChildElements);
+            //for (int index = 0; index < childElements.Length; index++)
+            //{
+            //    LiteXmlElement childElement = childElements[index];
+            //    if (Equals(childElement.Name, propertyName))
+            //    {
+            //        return childElement;
+            //    }
+            //}
+
+            ref LiteXmlElement currentElement = ref MemoryMarshal.GetArrayDataReference(_rootElement.ChildElements);
+            ref LiteXmlElement beyondElementsArray = ref Unsafe.Add(ref currentElement, _rootElement.ChildElements.Length);
+
+            while (Unsafe.IsAddressLessThan(ref currentElement, ref beyondElementsArray))
             {
-                LiteXmlElement childElement = childElements[index];
-                if (Equals(childElement.Name, propertyName))
-                {
-                    return childElement;
-                }
+                if (string.Equals(currentElement.Name, propertyName))
+                    return currentElement;
+                currentElement = ref Unsafe.Add(ref currentElement, 1);
             }
 
             throw DeserializedPropertyNotFoundException.WithDefaultMessage(propertyName);

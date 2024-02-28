@@ -145,8 +145,8 @@ namespace Amdocs.Ginger.Repository
         {
             Guid = snapshot.GetValueAsGuid(nameof(Guid));
             ParentGuid = snapshot.GetValueAsGuid(nameof(ParentGuid));
-            ExternalID = snapshot.GetValue(nameof(ExternalID), defaultValue: string.Empty);
-            ExternalID2 = snapshot.GetValue(nameof(ExternalID2), defaultValue: string.Empty);
+            //ExternalID = snapshot.GetValue(nameof(ExternalID), defaultValue: string.Empty);
+            //ExternalID2 = snapshot.GetValue(nameof(ExternalID2), defaultValue: string.Empty);
         }
 
         public virtual SerializedSnapshot CreateSnapshot()
