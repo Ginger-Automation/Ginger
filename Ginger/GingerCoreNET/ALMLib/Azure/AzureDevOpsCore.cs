@@ -158,8 +158,8 @@ namespace GingerCore.ALM
 
                                 TestCaseResult caseResult = new() { State = "Completed", Outcome = matchingTC.RunStatus.ToString(), Id = 100000 };
 
-                                var testResults = testClient.UpdateTestResultsAsync(new TestCaseResult[] { caseResult }, projectName, testrun.Id).Result;
-                                RunUpdateModel runmodel = new RunUpdateModel(state: "Completed");
+                                var testResults = testClient.UpdateTestResultsAsync([caseResult], projectName, testrun.Id).Result;
+                                RunUpdateModel runmodel = new(state: "Completed");
                                 TestRun testRunResult = testClient.UpdateTestRunAsync(runmodel, projectName, testrun.Id, runmodel).Result;
                             }
 
