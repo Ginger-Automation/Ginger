@@ -164,7 +164,7 @@ namespace GingerCore.ALM
                             }
                             else
                             {
-                                Reporter.ToLog(eLogLevel.ERROR,"No Matching Test case found for Test Point Id");
+                                Reporter.ToLog(eLogLevel.ERROR, $"No Matching TestCase(ActivityGroup) found for TestPointId: {testpointid}");
                             }
 
                         }
@@ -172,13 +172,13 @@ namespace GingerCore.ALM
                     }
                     else
                     {
-                        Reporter.ToLog(eLogLevel.ERROR,"No TestPoint found for given Project,TestPlanId or Suite Id");
+                        Reporter.ToLog(eLogLevel.ERROR, $"No TestPoint found for given ProjectName: {projectName}, TestPlanId: {testPlanId}, SuiteId: {suiteId} or BusinessFlow: {bizFlow.Name}");
                     }
 
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR,"Unable to Covert ExternalId to Integer");
+                    Reporter.ToLog(eLogLevel.ERROR,$"Unable to convert  ExternalId: {bizFlow.ExternalID} to TestPlanId/SuiteId");
                     return false;
                 }
 
