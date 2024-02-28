@@ -337,13 +337,13 @@ namespace Ginger.UserControlsLib
                 {
                     if (s._ShowEnumDesc)
                     {
-                        if (s.IsSelected == true && s._title == "All")
+                        if (s.IsSelected && s._title == "All")
                         {
                             displayText = new StringBuilder();
                             displayText.Append("All");
                             break;
                         }
-                        else if (s.IsSelected == true && s._title != "All")
+                        else if (s.IsSelected && s._title != "All")
                         {
                             displayText.Append(s.Title);
                             displayText.Append(',');
@@ -351,13 +351,13 @@ namespace Ginger.UserControlsLib
                     }
                     else
                     {
-                        if (s.IsSelected == true && s.Title == "All")
+                        if (s.IsSelected && s.Title == "All")
                         {
                             displayText = new StringBuilder();
                             displayText.Append("All");
                             break;
                         }
-                        else if (s.IsSelected == true && s.Title != "All")
+                        else if (s.IsSelected && s.Title != "All")
                         {
                             displayText.Append(s.Title);
                             displayText.Append(',');

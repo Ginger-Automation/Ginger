@@ -83,11 +83,11 @@ namespace Ginger.Actions
             SeverityList = GetSeverityList();
             mAct.Items = new Dictionary<string, object>();
             xStdStack.Visibility = Visibility.Visible;
-            foreach (OperationValues StandaredTag in StandardTaglist)
+            foreach (OperationValues StandardTag in StandardTaglist)
             {
-                if (!string.IsNullOrEmpty(StandaredTag.Value.ToString()))
+                if (!string.IsNullOrEmpty(StandardTag.Value.ToString()))
                 {
-                    mAct.Items.Add(StandaredTag.Value.ToString(), StandaredTag);
+                    mAct.Items.Add(StandardTag.Value.ToString(), StandardTag);
                 }
             }
             xStdCB.ItemsSource = mAct.Items;
