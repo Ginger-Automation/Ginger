@@ -99,12 +99,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             Collaboration collaboration = CreateCollaboration(activities);
 
-            CreateProcessEntitiesForActivity(activities, collaboration);
+            CreateProcessEntitiesForActivities(activities, collaboration);
 
             return collaboration;
         }
 
-        private void CreateProcessEntitiesForActivity(IEnumerable<Activity> activities, Collaboration collaboration)
+        private void CreateProcessEntitiesForActivities(IEnumerable<Activity> activities, Collaboration collaboration)
         {
             if (!activities.Any())
             {
@@ -113,18 +113,22 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             HistoricalEnumerator<Activity> activitiesEnumerator = new(activities.GetEnumerator());
             Dictionary<Activity, IEnumerable<Task>> activityTasksMap = new();
-            CreateProcessEntitiesForActivity(activitiesEnumerator, collaboration, activityTasksMap);
+            CreateProcessEntitiesForActivities(activitiesEnumerator, collaboration, activityTasksMap);
         }
 
-        private IFlowTarget CreateProcessEntitiesForActivity(HistoricalEnumerator<Activity> activitiesEnumerator, Collaboration collaboration, IDictionary<Activity, IEnumerable<Task>> activityTaskMap)
+        private IFlowTarget CreateProcessEntitiesForActivities(HistoricalEnumerator<Activity> activitiesEnumerator, Collaboration collaboration, IDictionary<Activity, IEnumerable<Task>> activityTaskMap)
         {
             bool isFirstActivity = activitiesEnumerator.Current == null;
 
             bool noMoreActivitiesLeft = !activitiesEnumerator.MoveNext();
             if (noMoreActivitiesLeft)
             {
-                Activity lastActivity = activitiesEnumerator.Previous;
-                EndEvent endEvent = CreateEndEventInParticipantOfActivity(lastActivity, collaboration);
+                Participant participantWithStartEvent = collaboration
+                    .Participants
+                    .First(p => p.Process.StartEvent != null);
+                EndEvent endEvent = participantWithStartEvent
+                    .Process
+                    .AddEndEvent(string.Empty);
                 return endEvent;
             }
 
@@ -142,7 +146,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             Task firstTaskForCurrentActivity = tasksForCurrentActivity.First();
             Task lastTaskForCurrentActivity = tasksForCurrentActivity.Last();
 
-            IFlowTarget firstEntityForNextActivity = CreateProcessEntitiesForActivity(activitiesEnumerator, collaboration, activityTaskMap);
+            IFlowTarget firstEntityForNextActivity = CreateProcessEntitiesForActivities(activitiesEnumerator, collaboration, activityTaskMap);
 
             IEnumerable<IProcessEntity> processEntitiesForFlowControls = CreateProcessEntitiesForActivityFlowControls(currentActivity, collaboration, activityTaskMap);
 
@@ -203,25 +207,6 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             StartEvent startEvent = participant.Process.AddStartEvent(name: string.Empty);
 
             return startEvent;
-        }
-
-        private EndEvent CreateEndEventInParticipantOfActivity(Activity activity, Collaboration collaboration)
-        {
-            Participant participant;
-            if (ActivityBPMNUtil.IsWebServicesActivity(activity, _solutionFacade))
-            {
-                Consumer consumer = ActivityBPMNUtil.GetActivityFirstConsumer(activity);
-                participant = GetParticipantByGuid(consumer.ConsumerGuid, collaboration);
-            }
-            else
-            {
-                TargetBase targetApp = SolutionBPMNUtil.GetTargetApplicationByName(activity.TargetApplication, _solutionFacade);
-                participant = GetParticipantByGuid(targetApp.Guid, collaboration);
-            }
-
-            EndEvent endEvent = participant.Process.AddEndEvent(name: string.Empty);
-
-            return endEvent;
         }
 
         private IEnumerable<IProcessEntity> CreateProcessEntitiesForActivityFlowControls(Activity activity, Collaboration collaboration, IDictionary<Activity, IEnumerable<Task>> activityTasksMap)
