@@ -719,6 +719,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             try
             {
                 axeBuilder = CreateAxeBuilder(Driver);
+                if(Status == eRunStatus.Failed && !string.IsNullOrEmpty(Error))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Error: {Error}");
+                    return;
+                }
                 AxeResult axeResult = null;
 
                 if ((GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
@@ -739,7 +744,9 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     {
                         Directory.CreateDirectory(folderPath);
                     }
-                    path = $"{folderPath}{Path.DirectorySeparatorChar}{ItemName}_AccessibilityReport.html";
+                    string DatetimeFormate = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
+                    string reportname = $"{ItemName}{DatetimeFormate}_AccessibilityReport.html";
+                    path = $"{folderPath}{Path.DirectorySeparatorChar}{reportname}";
                 }
 
                 CreateAxeHtmlReport(Driver, axeResult, path, ActAccessibilityTesting.ReportTypes.All);
@@ -758,12 +765,14 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         public AxeBuilder CreateAxeBuilder(IWebDriver Driver)
         {
             AxeBuilder axeBuilder = null;
+            List<string> sevritylist = null;
             axeBuilder = new AxeBuilder(Driver)
             .WithOptions(new AxeRunOptions()
             {
                 XPath = true
             });
-            List<string> sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
+
+
             if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString())
             {
                 if (StandardList != null && StandardList.Any())
@@ -771,18 +780,41 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     string[] Tag_array = StandardList.Select(i => i.Value.ToString()).ToArray();
                     axeBuilder.WithTags(Tag_array);
                 }
-                string[] ExcludeRules = RulesItemsdata.Where(x => sevritylist.Contains(x.Impact.ToLower())).Select(i => i.RuleID.ToString()).ToArray();
-                if (ExcludeRules != null && ExcludeRules.Any())
+                else if (StandardList == null || !StandardList.Any())
                 {
-                    axeBuilder.DisableRules(ExcludeRules);
+                    Status = eRunStatus.Failed;
+                    Error = "Standard list is empty or not set.";
+                    return axeBuilder;
                 }
+
+                if (SeverityList != null && SeverityList.Any())
+                {
+                    sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
+                    string[] ExcludeRules = RulesItemsdata.Where(x => sevritylist.Contains(x.Impact.ToLower())).Select(i => i.RuleID.ToString()).ToArray();
+                    if (ExcludeRules != null && ExcludeRules.Any())
+                    {
+                        axeBuilder.DisableRules(ExcludeRules);
+                    }
+                }
+                
             }
             else if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString())
             {
-                string[] IncludeRules = RulesItemsdata.Where(x => sevritylist.Contains(x.Impact.ToLower())).Select(i => i.RuleID.ToString()).ToArray();
-                if (IncludeRules != null && IncludeRules.Any())
+                if (SeverityList != null && SeverityList.Any())
                 {
-                    axeBuilder.WithRules(IncludeRules);
+                    sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
+
+                    string[] IncludeRules = RulesItemsdata.Where(x => sevritylist.Contains(x.Impact.ToLower())).Select(i => i.RuleID.ToString()).ToArray();
+                    if (IncludeRules != null && IncludeRules.Any())
+                    {
+                        axeBuilder.WithRules(IncludeRules);
+                    }
+                }
+                else if(SeverityList == null || !SeverityList.Any())
+                {
+                    Status = eRunStatus.Failed;
+                    Error = "Severity list is empty or not set.";
+                    return axeBuilder;
                 }
             }
             return axeBuilder;
@@ -791,7 +823,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         public void SetAxeResultToAction(AxeResult axeResult)
         {
             bool hasAnyViolations = axeResult.Violations.Any();
-            bool ActionResult = false;
+            bool ActionResult = true;
 
             if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString() && SeverityList != null && SeverityList.Any())
             {
