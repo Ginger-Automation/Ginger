@@ -178,7 +178,7 @@ namespace GingerCore.ALM
                 }
                 else
                 {
-                    Reporter.ToLog(eLogLevel.ERROR,$"Unable to convert  ExternalId: {bizFlow.ExternalID} to TestPlanId/SuiteId");
+                    Reporter.ToLog(eLogLevel.ERROR,$"Unable to convert ExternalId: {bizFlow.ExternalID} of the BusinessFlow : {bizFlow.Name}  to TestPlanId/SuiteId");
                     return false;
                 }
 
