@@ -1617,11 +1617,11 @@ namespace GingerCore.Drivers
         {
             try
             {
-                if (act.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow || TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure)
+                if (act.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow )
                 {
                     AddCurrentScreenShot(act);
                 }
-                else if (act.WindowsToCapture == Act.eWindowsToCapture.FullPage)
+                else if (act.WindowsToCapture == Act.eWindowsToCapture.FullPage || TakeOnlyActiveFrameOrWindowScreenShotInCaseOfFailure)
                 {
                     AddScreenshotIntoAct(act, true);
                 }
