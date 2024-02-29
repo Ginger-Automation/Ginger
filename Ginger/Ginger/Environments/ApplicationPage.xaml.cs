@@ -82,7 +82,7 @@ namespace Ginger.Environments
 
         private void UpdateDBsTabHeader()
         {
-            xDBsTabHeaderText.Text = string.Format("DataBases ({0})", mEnvApplication.Dbs.Count);
+            xDBsTabHeaderText.Text = string.Format("Databases ({0})", mEnvApplication.Dbs.Count);
         }
 
         private void AppTab_SelectionChanged(object sender, SelectionChangedEventArgs e)

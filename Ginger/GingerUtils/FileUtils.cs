@@ -69,5 +69,50 @@ namespace GingerUtils
                 return false;
             }
         }
+
+        /// <summary>
+        /// Checks if the provided <paramref name="filePath"/> is unique or not, if not then returns a new unique path.
+        /// <para>For example, if the provided file path is <b>C:\myFile.txt</b> and a file with this path already exists then the method returns a new path <b>C:\myFile(1).txt</b>.</para>
+        /// </summary>
+        /// <param name="filePath">Fully qualified path.</param>
+        /// <returns>The same <paramref name="filePath"/> if it is unique otherwise a returns new unique path.</returns>
+        public static string GetUniqueFilePath(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                return filePath;
+            }
+
+            string extension = Path.GetExtension(filePath);
+            string filePathWithoutExtension = filePath.Remove(filePath.Length - extension.Length, extension.Length);
+            int copyCounter = 1;
+            while (File.Exists($"{filePathWithoutExtension}({copyCounter}){extension}"))
+            {
+                copyCounter++;
+            }
+            return $"{filePathWithoutExtension}({copyCounter}){extension}";
+        }
+
+        /// <summary>
+        /// Checks if the provided <paramref name="directoryPath"/> is unique or not, if not then returns a new unique path.
+        /// <para>For example, if the provided directory path is <b>C:\myDirectory</b> and a file with this path already exists then the method returns a new path <b>C:\myDirectory(1)</b>.</para>
+        /// </summary>
+        /// <param name="directoryPath">Fully qualified path.</param>
+        /// <returns>The same <paramref name="directoryPath"/> if it is unique otherwise a returns new unique path.</returns>
+        public static string GetUniqueDirectoryPath(string directoryPath)
+        {
+            if (!Directory.Exists(directoryPath))
+            {
+                return directoryPath;
+            }
+
+            int copyCount = 1;
+            while (Directory.Exists($"{directoryPath}({copyCount})"))
+            {
+                copyCount++;
+            }
+
+            return $"{directoryPath}({copyCount})";
+        }
     }
 }

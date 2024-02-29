@@ -44,7 +44,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
         public SealightsReportApiHandler(Context context)
         {
             mContext = context;
-            mVE = new GingerCore.ValueExpression(mContext.Environment, mContext.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+            InitializeValueExpression();
 
             EndPointUrl = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL;
             Token = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken;
@@ -57,6 +57,24 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.SealightsExecutionLogger
                 restClient = new RestClient(EndPointUrl);
                 restClient.Options.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
             }
+        }
+
+
+        private void InitializeValueExpression()
+        {
+            mVE ??= new GingerCore.ValueExpression(mContext.Environment, mContext.BusinessFlow, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+        }
+
+        public bool IsConfigurationChanged()
+        {
+            InitializeValueExpression();
+
+            mVE.Value = WorkSpace.Instance.Solution.SealightsConfiguration.SealightsURL;
+            
+            
+            return 
+                !mVE.ValueCalculated.Equals(EndPointUrl) || 
+                !Token.Equals(WorkSpace.Instance.Solution.SealightsConfiguration.SealightsAgentToken);
         }
 
         public void SendCreationTestSessionToSealightsAsync()

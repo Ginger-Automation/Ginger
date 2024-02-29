@@ -1232,7 +1232,6 @@ namespace GingerCore.ALM
                 if (tc.LinkedTestID == null || tc.LinkedTestID == string.Empty)
                 {
                     tcActivsGroup.ExternalID = tc.TestID;
-                    tcActivsGroup.ExternalID2 = tc.TestID;
                 }
                 else
                 {
@@ -1727,7 +1726,6 @@ namespace GingerCore.ALM
             }).Result;
 
             activitiesGroup.ExternalID = test.Id.ToString();
-            activitiesGroup.ExternalID2 = test.Id.ToString();
             CreateTestStep(test.Id, testScript);
 
             return test.Id.ToString();
@@ -1862,7 +1860,6 @@ namespace GingerCore.ALM
             }).Result;
 
             activitiesGroup.ExternalID = test.Id.ToString();
-            activitiesGroup.ExternalID2 = test.Id.ToString();
             CreateTestStep(test.Id, testScript);
 
             return test.Id.ToString();

@@ -224,7 +224,7 @@
 
   <ItemGroup>
   
-    <PackageReference Include="Appium.WebDriver" Version="5.0.0-rc.1" />
+    <PackageReference Include="Appium.WebDriver" Version="5.0.0-rc.5" />
   
     <PackageReference Include="Azure.Identity" Version="1.10.4" />
   
@@ -235,6 +235,10 @@
     <PackageReference Include="AutoMapper" Version="12.0.1" />
   
     <PackageReference Include="CouchbaseNetClient" Version="2.7.11" />
+  
+    <PackageReference Include="Deque.AxeCore.Commons" Version="4.8.0" />
+  
+    <PackageReference Include="Deque.AxeCore.Selenium" Version="4.8.0" />
   
     <PackageReference Include="EnterpriseLibrary.TransientFaultHandling" Version="6.0.1304" />
   
@@ -281,6 +285,8 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Graph" Version="4.51.0" />
     <PackageReference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.ServiceBus" Version="6.0.1304" />
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.205.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="16.205.1" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
     <PackageReference Include="MySql.Data" Version="8.0.16" />
@@ -292,6 +298,7 @@
     <PackageReference Include="protobuf-net.Core" Version="3.2.26" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="108.0.3" />
+    <PackageReference Include="Selenium.Axe" Version="4.0.16" />
     <PackageReference Include="Selenium.Support" Version="4.17.0" />
     <PackageReference Include="Selenium.WebDriver" Version="4.17.0" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="4.1.0" />
@@ -327,6 +334,9 @@
     </Reference>
     <Reference Include="ALM_CommonStd">
       <HintPath>DLLS\ALM_CommonStd.dll</HintPath>
+    </Reference>
+    <Reference Include="AzureDevOpsRepo">
+      <HintPath>..\..\..\..\ALMInteraction\AzureRepositoryStd\bin\Debug\net8.0\AzureDevOpsRepo.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>

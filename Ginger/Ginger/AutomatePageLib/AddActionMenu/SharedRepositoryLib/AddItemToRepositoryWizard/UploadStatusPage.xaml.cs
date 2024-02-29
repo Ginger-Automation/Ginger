@@ -66,7 +66,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
                     {
                         if (selectedItem.ItemUploadStatus != UploadItemSelection.eItemUploadStatus.Uploaded)
                         {
-                            (new SharedRepositoryOperations()).UploadItemToRepository(UploadItemToRepositoryWizard.Context, selectedItem);
+                            (new SharedRepositoryOperations()).UploadItemToRepository((Context)selectedItem.Context, selectedItem);
                         }
                     }
                     else
