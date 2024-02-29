@@ -5935,28 +5935,35 @@ namespace GingerCore.Drivers
                     if (!string.IsNullOrEmpty(ElementInfo.XPath))
                     {
 
-                        IList<string> XPaths = ((HTMLElementInfo)ElementInfo).XPathList;
-                        ISearchContext tempContext = Driver;
-                        int startPointer = XPaths.Count - 1;
-
-                        while(startPointer > 0 && tempContext!=null)
+                        if(((HTMLElementInfo)ElementInfo).XPathList != null)
                         {
-                            tempContext = tempContext.FindElement(By.XPath(XPaths[startPointer]));
-                            tempContext = shadowDOM.GetShadowRootIfExists(tempContext);
-                            startPointer--;
+                            IList<string> XPaths = ((HTMLElementInfo)ElementInfo).XPathList;
+                            ISearchContext tempContext = Driver;
+                            int startPointer = XPaths.Count - 1;
+
+                            while (startPointer > 0 && tempContext != null)
+                            {
+                                tempContext = tempContext.FindElement(By.XPath(XPaths[startPointer]));
+                                tempContext = shadowDOM.GetShadowRootIfExists(tempContext);
+                                startPointer--;
+                            }
+                            if (tempContext != null)
+                            {
+                                if (tempContext is ShadowRoot)
+                                {
+                                    string cssSelector = shadowDOM.ConvertXPathToCssSelector(ElementInfo.XPath);
+                                    ElementInfo.ElementObject = tempContext.FindElement(By.CssSelector(cssSelector));
+                                }
+                                else
+                                {
+                                    ElementInfo.ElementObject = tempContext.FindElement(By.XPath(ElementInfo.XPath));
+
+                                }
+                            }
                         }
-                        if (tempContext!=null)
+                        else
                         {
-                            if (tempContext is ShadowRoot)
-                            {
-                                string cssSelector = shadowDOM.ConvertXPathToCssSelector(ElementInfo.XPath);
-                                ElementInfo.ElementObject = tempContext.FindElement(By.CssSelector(cssSelector));
-                            }
-                            else
-                            {
-                                ElementInfo.ElementObject = tempContext.FindElement(By.XPath(ElementInfo.XPath));
-
-                            }
+                            ElementInfo.ElementObject = Driver.FindElement(By.XPath(ElementInfo.XPath));
                         }
                     }
                 }
