@@ -780,11 +780,13 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     string[] Tag_array = StandardList.Select(i => i.Value.ToString()).ToArray();
                     axeBuilder.WithTags(Tag_array);
                 }
-                else
+                else if (StandardList == null || !StandardList.Any())
                 {
                     Status = eRunStatus.Failed;
-                    Error = $"Unknown standards";
+                    Error = "Standard list is empty or not set.";
+                    return axeBuilder;
                 }
+
                 if (SeverityList != null && SeverityList.Any())
                 {
                     sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
@@ -808,10 +810,11 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                         axeBuilder.WithRules(IncludeRules);
                     }
                 }
-                else
+                else if(SeverityList == null || !SeverityList.Any())
                 {
                     Status = eRunStatus.Failed;
-                    Error = $"Unknown severities";
+                    Error = "Severity list is empty or not set.";
+                    return axeBuilder;
                 }
             }
             return axeBuilder;
