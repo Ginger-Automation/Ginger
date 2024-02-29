@@ -183,18 +183,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     else
                     {
-                        if(cA is ActAccessibilityTesting)
-                        {
-                            if(WorkSpace.Instance.BetaFeatures.ShowAccessibilityTesting)
-                            {
-                                platformActions.Add(cA);
-                            }
-                        }
-                        else
-                        {
-                            platformActions.Add(cA);
-                        }
-                        
+                       platformActions.Add(cA);
                     }
                 }
             }

@@ -161,7 +161,7 @@ namespace Ginger.UserControlsLib
         {
             CheckBox clickedBox = (CheckBox)sender;
 
-            if (clickedBox.Content == "All")
+            if (clickedBox.Content.ToString() == "All")
             {
                 foreach (Node node in _nodeList)
                 {                  

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -1813,7 +1813,7 @@ namespace GingerCore
                     int idntIndex = group.Item1.ActivitiesIdentifiers.IndexOf(group.Item2);
                     if (idntIndex >= 0)
                     {
-                        group.Item1.ActivitiesIdentifiers.Move(idntIndex, idntIndex + (newIndx - currentIndx));
+                        ((IObservableList)group.Item1.ActivitiesIdentifiers).Move(idntIndex, idntIndex + (newIndx - currentIndx));
                     }
                 }
             }
