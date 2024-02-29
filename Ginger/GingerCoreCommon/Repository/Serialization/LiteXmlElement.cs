@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace Amdocs.Ginger.Common.Repository.Serialization
 {
-    public sealed class LiteXmlElement
+    public readonly struct LiteXmlElement
     {
         public string Name { get; init; }
 

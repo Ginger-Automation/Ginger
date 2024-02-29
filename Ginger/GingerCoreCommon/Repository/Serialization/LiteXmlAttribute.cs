@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Amdocs.Ginger.Common.Repository.Serialization
 {
-    public sealed class LiteXmlAttribute
+    public readonly struct LiteXmlAttribute
     {
         public string Name { get; init; }
 

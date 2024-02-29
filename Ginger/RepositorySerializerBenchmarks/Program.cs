@@ -17,7 +17,7 @@ using System.Xml;
 //Summary summary = BenchmarkRunner.Run<DeserializedSnapshot2Benchmarks>();
 
 DeserializationBenchmark b = new();
-b.TestDataSize = 100;
+b.TestDataSize = 500;
 b.GlobalSetup();
 Console.WriteLine("Starting to deserialize");
 Thread.Sleep(5000);
