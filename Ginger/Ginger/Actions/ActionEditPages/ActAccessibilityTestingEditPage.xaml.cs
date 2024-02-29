@@ -64,7 +64,6 @@ namespace Ginger.Actions
         private ActAccessibilityTesting mAct;
         PlatformInfoBase mPlatform;
         string mExistingPOMAndElementGuidString = null;
-        ObservableList<OperationValues> SeverityList;
         private AccessibilityConfiguration AccessibilityConfiguration = new AccessibilityConfiguration();
         public ActAccessibilityTestingEditPage(ActAccessibilityTesting act)
         {
@@ -80,7 +79,7 @@ namespace Ginger.Actions
             xLocateValueVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(Act.Fields.LocateValue));
 
             ObservableList<OperationValues> StandardTaglist = GetStandardTagslist();
-            SeverityList = GetSeverityList();
+            ObservableList<OperationValues> SeverityList = GetSeverityList();
             mAct.Items = new Dictionary<string, object>();
             xStdStack.Visibility = Visibility.Visible;
             foreach (OperationValues StandardTag in StandardTaglist)
@@ -248,8 +247,8 @@ namespace Ginger.Actions
         {
             ObservableList<OperationValues> SeverityList = new ObservableList<OperationValues>();
 
-            SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Serious.ToString() });
             SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Critical.ToString() });
+            SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Serious.ToString() });
             SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Moderate.ToString() });
             SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Minor.ToString() });
             return SeverityList;
