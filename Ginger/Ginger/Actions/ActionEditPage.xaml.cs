@@ -53,6 +53,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using static GingerCore.Actions.Act;
 
 namespace Ginger.Actions
 {
@@ -433,6 +434,10 @@ namespace Ginger.Actions
                 if (mAction.DSOutputConfigParams[0].OutParamMap == null)
                 {
                     mAction.OutDSParamMapType = Act.eOutputDSParamMapType.ParamToRow.ToString();
+                }
+                else if (mAction.DSOutputConfigParams.Any(x => x.OutParamMap == Act.eOutputDSParamMapType.ParamToCol.ToString()))
+                {
+                    mAction.OutDSParamMapType = Act.eOutputDSParamMapType.ParamToCol.ToString();
                 }
                 else
                 {
@@ -2133,6 +2138,7 @@ namespace Ginger.Actions
 
         private void OutDSParamType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            mAction.OutDSParamMapType = ((eOutputDSParamMapType)xdsOutputParamMapType.SelectedValue).ToString();
             updateDSOutGrid();
             SetDSGridVisibility();
         }

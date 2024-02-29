@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -182,7 +182,8 @@ namespace Amdocs.Ginger.Common
         AddActivityGroupsToSharedRepositoryForBPMNConversion, 
         AddActivitiesToSharedRepositoryForBPMNConversion,
         AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport,
-        FailedToDownloadDriver
+        FailedToDownloadDriver,
+        ShadowRootExists
     }
 
     public static class UserMsgsPool
@@ -236,6 +237,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowNeedTargetApplication, new UserMsg(eUserMsgType.WARN, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} Not Selected", "{0} Not Selected! Please Select at least one {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToUndoChange, new UserMsg(eUserMsgType.WARN, "Undo Changes", "Are you sure you want to undo all changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ShadowRootExists, new UserMsg(eUserMsgType.INFO, "Shadow DOM Element Detected", "This element exists under a shadow root, you will have to manually add the action(s) to locate this element's parent. Please look into 'Switch To Shadow DOM' operation in Browser Action", eUserMsgOption.OK , eUserMsgSelection.OK));
+
 
             #endregion General Application Messages
 

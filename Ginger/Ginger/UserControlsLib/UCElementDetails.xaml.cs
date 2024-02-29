@@ -1082,6 +1082,15 @@ namespace Ginger
         {
             if (xActUIPageFrame.Content != null && xActUIPageFrame.Content is ControlActionsPage_New)
             {
+
+                if(SelectedElement!= null && SelectedElement is HTMLElementInfo htmlSelectedElementInfo)
+                {
+                    if(htmlSelectedElementInfo.XPathList?.Count > 0)
+                    {
+                        Reporter.ToUser(eUserMsgKey.ShadowRootExists);
+                    }
+                }
+
                 (xActUIPageFrame.Content as ControlActionsPage_New).AddActionClicked(sender, e);
 
                 if (POMElementsUpdated && (xAutoSavePOMChkBox.IsChecked == true
