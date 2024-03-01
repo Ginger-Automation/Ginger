@@ -2138,7 +2138,10 @@ namespace Ginger.Actions
 
         private void OutDSParamType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            mAction.OutDSParamMapType = ((eOutputDSParamMapType)xdsOutputParamMapType.SelectedValue).ToString();
+            if (xdsOutputParamMapType.SelectedValue is not null)
+            {
+                mAction.OutDSParamMapType = ((eOutputDSParamMapType)xdsOutputParamMapType.SelectedValue).ToString();
+            }
             updateDSOutGrid();
             SetDSGridVisibility();
         }
