@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -297,7 +297,7 @@ namespace Amdocs.Ginger.Repository
             soapHeaderContent.Append("{WSSECPASSWORD}");
             soapHeaderContent.Append("</wsse:Password>\n\t\t\t\t<wsse:Nonce EncodingType=");
             soapHeaderContent.Append("\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary\"");
-            soapHeaderContent.Append(">" + "{Function Fun=GenerateHashCode(\"{Function Fun=GetGUID()}wssecpassword\")}" + "=");
+            soapHeaderContent.Append(">" + "{Function Fun=GenerateHashCode(\"{Function Fun=GetGUID()}{WSSECPASSWORD}\")}" + "=");
             soapHeaderContent.Append("</wsse:Nonce>\n\t\t\t\t<wsu:Created>");
             soapHeaderContent.Append("{Function Fun=GetUTCTimeStamp()}");
             soapHeaderContent.Append("</wsu:Created>\n\t\t\t</wsse:UsernameToken>\n\t\t</wsse:Security>\n\t</soapenv:Header>\n");
