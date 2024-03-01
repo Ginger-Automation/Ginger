@@ -37,6 +37,8 @@
                     </StackPanel>
                     
                     <CheckBox x:Name="xLearnOnlyMappedElements" Content="Learn Only Mapped Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="True" Style="{StaticResource $CeckBoxStyle}"/>
+                    <CheckBox x:Name="xLearnShadowDOMElements" Content="Learn Shadow DOM Elements" DockPanel.Dock="Top" Margin="7,10,0,10" IsChecked="False" Style="{StaticResource $CeckBoxStyle}"/>
+
                     <Expander x:Name="xAutoMapElementTypesExpander" DockPanel.Dock="Top" Visibility="Visible" IsExpanded="False" Margin="5,0,0,0">
                         <Expander.Header>
                             <Label x:Name="xPropertiesExpanderLabel" Style="{StaticResource @HorizontalExpanderLightLabelStyle}" FontWeight="Normal" FontSize="12" Content="Elements Types to Auto Map"/>

@@ -3749,6 +3749,9 @@ namespace GingerCore.Drivers
             return Driver.FindElements(By.XPath("//*[@value=\"" + LocValue + "\"]")).FirstOrDefault();
         }
 
+
+        // This function is called not only by WebDrivers but Other Drivers as well(eg Mobile Driver).
+        // If changes are made here or any functions that are called in this function, Please test for all the Calling Drivers.
         public IWebElement LocateElement(Act act, bool AlwaysReturn = false, string ValidationElementLocateBy = null, string ValidationElementLocateValue = null)
         {
             IWebElement elem = null;
@@ -3865,18 +3868,24 @@ namespace GingerCore.Drivers
 
             ISearchContext shadowRoot = null;
             ISearchContext ParentContext = Driver;
-            var ParentPOMGuid = ((HTMLElementInfo)currentPOMElementInfo).FindParentPOMGuid();
 
-            if (!ParentPOMGuid.Equals(Guid.Empty.ToString()))
+
+            if(currentPOMElementInfo is HTMLElementInfo htmlCurrentElementInfo)
             {
-                HTMLElementInfo ParentElement = null;
-                ParentElement = ((HTMLElementInfo)currentPOMElementInfo).FindParentElementUsingGuid(MappedUIElements);
+                var ParentPOMGuid = htmlCurrentElementInfo.FindParentPOMGuid();
 
-                if (ParentElement != null)
+                if (!ParentPOMGuid.Equals(Guid.Empty.ToString()))
                 {
-                    ParentContext = LocateElementByLocators(ParentElement, MappedUIElements, iscallfromFriendlyLocator, POMExecutionUtils);
+                    HTMLElementInfo ParentElement = null;
+                    ParentElement = htmlCurrentElementInfo.FindParentElementUsingGuid(MappedUIElements);
+
+                    if (ParentElement != null)
+                    {
+                        ParentContext = LocateElementByLocators(ParentElement, MappedUIElements, iscallfromFriendlyLocator, POMExecutionUtils);
+                    }
+                    shadowRoot = shadowDOM.GetShadowRootIfExists(ParentContext);
                 }
-                shadowRoot = shadowDOM.GetShadowRootIfExists(ParentContext);
+
             }
 
             foreach (ElementLocator locator in currentPOMElementInfo.Locators.Where(x => x.Active))
