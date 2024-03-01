@@ -1444,24 +1444,24 @@ namespace Amdocs.Ginger.CoreNET
                     startX = sz.Width * 0.5;
                     startY = sz.Height * 0.3;
                     endX = sz.Width * 0.5;
-                    endY = sz.Height * 0.7 * impact;
+                    endY = startY + (sz.Height * 0.4 * impact);
                     break;
                 case eSwipeSide.Up: // center of header
                     startX = sz.Width * 0.5;
-                    startY = sz.Height * 0.7 * impact;
+                    startY = sz.Height * 0.7;
                     endX = sz.Width * 0.5;
-                    endY = sz.Height * 0.3;
+                    endY = startY - (sz.Height * 0.4 * impact);
                     break;
                 case eSwipeSide.Right: // center of left side
-                    startX = sz.Width * 0.7 * impact;
+                    startX = sz.Width * 0.3;
                     startY = sz.Height * 0.5;
-                    endX = sz.Width * 0.3;
+                    endX = startX + (sz.Width * 0.4 * impact);
                     endY = sz.Height * 0.5;
                     break;
                 case eSwipeSide.Left: // center of right side
-                    startX = sz.Width * 0.3;
+                    startX = sz.Width * 0.7;
                     startY = sz.Height * 0.5;
-                    endX = sz.Width * 0.7 * impact;
+                    endX = startX - (sz.Width * 0.4 * impact);
                     endY = sz.Height * 0.5;
                     break;
                 default:
