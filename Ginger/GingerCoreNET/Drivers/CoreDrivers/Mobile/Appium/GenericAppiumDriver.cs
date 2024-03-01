@@ -95,12 +95,12 @@ namespace Amdocs.Ginger.CoreNET
         public String Proxy { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("N/A")]
+        [UserConfiguredDefault("Default")]
         [UserConfiguredDescription("Screen Scale Factor Correction for X coordinate, needed for fixing screen mouse click/point accuracy (decimal number)")]
         public String ScreenScaleFactorCorrectionX { get; set; }
 
         [UserConfigured]
-        [UserConfiguredDefault("N/A")]
+        [UserConfiguredDefault("Default")]
         [UserConfiguredDescription("Screen Scale Factor Correction for Y coordinate, needed for fixing screen mouse click/point accuracy (decimal number)")]
         public String ScreenScaleFactorCorrectionY { get; set; }
 
