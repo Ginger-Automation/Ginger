@@ -318,7 +318,7 @@ namespace Ginger.Actions
                             RowNum.IsChecked = true;
                             p = p.Substring(p.TrimStart().IndexOf("ROWNUM="));
                             int startIndex = p.IndexOf("ROWNUM=") + 7;
-                            int endIndex = p.IndexOf(" ");
+                            int endIndex = p.IndexOf("}");
                             int charCount = endIndex > startIndex ? endIndex - startIndex : startIndex - endIndex;
                             rowNum = p.Substring(startIndex, charCount);
                             RowSelectorValue.Text = rowNum;
