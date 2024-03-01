@@ -291,16 +291,19 @@ namespace Ginger.BusinessFlowPages
 
         public void TargetAppSelectedComboBox()
         {
-            if (xTargetApplicationComboBox.SelectedItem != null &&
-                           WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+            Dispatcher.Invoke(() =>
             {
-                PrepareAndLoadConsumerComboBox();
-            }
-            else
-            {
-                xConsumerStack.Visibility = Visibility.Collapsed;
-                BindingOperations.ClearAllBindings(xConsumerCB);
-            }
+                if (xTargetApplicationComboBox.SelectedItem != null &&
+                               WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+                {
+                    PrepareAndLoadConsumerComboBox();
+                }
+                else
+                {
+                    xConsumerStack.Visibility = Visibility.Collapsed;
+                    BindingOperations.ClearAllBindings(xConsumerCB);
+                }
+            });
         }
         private void PrepareAndLoadConsumerComboBox()
         {
