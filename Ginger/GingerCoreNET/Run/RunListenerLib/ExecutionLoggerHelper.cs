@@ -81,7 +81,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib
         }
         public string GetLoggerDirectory(string logsFolder)
         {
-            if (logsFolder.StartsWith(@"~"))
+            if (!string.IsNullOrEmpty(logsFolder) &&  logsFolder.StartsWith(@"~"))
             {
                 logsFolder = SetAbsolutePath(logsFolder);
             }

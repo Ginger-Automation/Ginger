@@ -95,8 +95,11 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void DeleteEnvTreeItems()
         {
+            mTreeView.Tree.DeleteItemAndSelectParent(this);
             ProjEnvironment.Applications.Remove(EnvApplication);
             ProjEnvironment.SaveBackup();//to mark the env as changed
+            mTreeView.Tree.RefreshSelectedTreeNodeParent();
+
         }
         private void Delete(object sender, RoutedEventArgs e)
         {
@@ -126,6 +129,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             copy.Name = copy.Name + "_copy";
             ProjEnvironment.Applications.Add(copy);
             ProjEnvironment.SaveBackup();//to mark the env as changed
+            mTreeView.Tree.RefreshSelectedTreeNodeParent();
         }
 
         private void Share(object sender, System.Windows.RoutedEventArgs e)
