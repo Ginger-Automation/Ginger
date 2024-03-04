@@ -148,6 +148,8 @@ namespace Ginger.Run.RunSetActions
                 virtualBF.Description = runSetExec.RunSetConfig.Description;
                 virtualBF.Status = BusinessFlow.eBusinessFlowStatus.Unknown;
                 virtualBF.RunStatus = runSetExec.RunSetConfig.RunSetExecutionStatus;
+                virtualBF.StartTimeStamp = runSetExec.RunSetConfig.StartTimeStamp;
+                virtualBF.EndTimeStamp = runSetExec.RunSetConfig.EndTimeStamp;
                 virtualBF.Activities = new ObservableList<Activity>();
                 foreach (GingerRunner runSetrunner in runSetExec.Runners)
                 {
@@ -161,6 +163,7 @@ namespace Ginger.Run.RunSetActions
                         ActivitiesGroup virtualAG = new ActivitiesGroup();
                         virtualAG.Name = runSetBF.Name;
                         virtualAG.Description = runSetBF.Description;
+                        
                         if (Enum.IsDefined(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString()))
                         {
                             virtualAG.RunStatus = (eActivitiesGroupRunStatus)Enum.Parse(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString());
