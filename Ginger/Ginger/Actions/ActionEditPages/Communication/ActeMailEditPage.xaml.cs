@@ -229,11 +229,10 @@ namespace Ginger.Actions.Communication
             xEmailConfigView.HasAttachmentsSelectionChanged += xSendEMailConfigView_HasAttachmentsSelectionChanged;
             xEmailConfigView.ReadmailMethodChanged += xReadEmailConfigView_ReadMethodChanged;     
             xEmailConfigView.AddFileAttachment += xSendEMailConfigView_FileAdded;
+            xEmailConfigView.AttachmentNameVEButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
 
             WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xEmailConfigView.xFilterFolderAllRadioButton, eventName: nameof(ToggleButton.Checked), handler: xFilterFolderRadioButton_SelectionChanged);
             WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xEmailConfigView.xFilterFolderSpecificRadioButton, eventName: nameof(ToggleButton.Checked), handler: xFilterFolderRadioButton_SelectionChanged);
-            WeakEventManager<UCEmailConfigView, RoutedEventArgs>.AddHandler(source: xEmailConfigView, eventName: nameof(UCEmailConfigView.AttachmentNameVEButtonClick), handler: xSendEMailConfigView_NameValueExpressionButtonClick);
-
         }
 
         private static ComboEnumItem FindComboBoxItem(ComboBox comboBox, Predicate<ComboEnumItem> predicate)
