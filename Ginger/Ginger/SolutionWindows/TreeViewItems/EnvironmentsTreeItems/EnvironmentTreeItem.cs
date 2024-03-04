@@ -116,6 +116,10 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 app.Name = appName;
                 ProjEnvironment.Applications.Add(app);
+                if (mTreeView != null && mTreeView.Tree != null)
+                {
+                    mTreeView.Tree.RefreshSelectedTreeNodeParent();
+                }
             }
         }
     }
