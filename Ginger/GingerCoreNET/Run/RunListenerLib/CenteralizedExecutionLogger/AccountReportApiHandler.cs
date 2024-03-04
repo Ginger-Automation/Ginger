@@ -104,7 +104,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public bool IsConfigurationChanged()
         {
-            return !EndPointUrl.Equals(WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
+            return !string.Equals(EndPointUrl, WorkSpace.Instance.Solution.LoggerConfigurations.CentralLoggerEndPointUrl);
         }
         public async Task<bool> SendRunsetExecutionDataToCentralDBAsync(AccountReportRunSet accountReportRunSet, bool isUpdate = false)
         {
