@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1082,6 +1082,15 @@ namespace Ginger
         {
             if (xActUIPageFrame.Content != null && xActUIPageFrame.Content is ControlActionsPage_New)
             {
+
+                if(SelectedElement!= null && SelectedElement is HTMLElementInfo htmlSelectedElementInfo)
+                {
+                    if(htmlSelectedElementInfo.XPathList?.Count > 0)
+                    {
+                        Reporter.ToUser(eUserMsgKey.ShadowRootExists);
+                    }
+                }
+
                 (xActUIPageFrame.Content as ControlActionsPage_New).AddActionClicked(sender, e);
 
                 if (POMElementsUpdated && (xAutoSavePOMChkBox.IsChecked == true

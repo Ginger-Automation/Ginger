@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,9 +35,7 @@ using AzureRepositoryStd.BLL;
 using AzureRepositoryStd;
 using AlmDataContractsStd.Contracts;
 using TestPlanWebApi = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi;
-using OctaneStdSDK.Entities.Releases;
 using Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi;
-using WorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
 using Microsoft.TeamFoundation.TestManagement.WebApi;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,6 +43,12 @@ using OctaneStdSDK.Entities.Base;
 using Amdocs.Ginger.CoreNET.ALMLib.DataContract;
 using GingerCore.ALM.QC;
 using TestSuite = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestSuite;
+using TestPlan = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan;
+using SuiteEntry = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.SuiteEntry;
+using WorkItem2 = Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.WorkItem;
+using WorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
+using Microsoft.TeamFoundation.Core.WebApi;
+
 
 namespace GingerCore.ALM
 {
@@ -122,7 +126,72 @@ namespace GingerCore.ALM
       
         public override bool ExportExecutionDetailsToALM(BusinessFlow bizFlow, ref string result, bool exectutedFromAutomateTab = false, PublishToALMConfig publishToALMConfig = null, ProjEnvironment projEnvironment = null)
         {
-            throw new NotImplementedException();
+            if (bizFlow is null)
+            {
+                return false;
+            }
+            LoginDTO login = GetLoginDTO();
+                
+
+            try
+            {
+                VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
+
+                var testClient = connection.GetClient<TestManagementHttpClient>();
+
+                if (Int32.TryParse(bizFlow.ExternalID, out int testPlanId) && Int32.TryParse(bizFlow.ExternalID2, out int suiteId))
+                {
+                    string projectName = login.Project;
+
+                    var testPoints = testClient.GetPointsAsync(projectName, testPlanId, suiteId).Result;
+                    if (testPoints != null)
+                    {
+                        foreach (var item in testPoints)
+                        {
+                            int testpointid = item.Id;
+                            var matchingTC = bizFlow.ActivitiesGroups.FirstOrDefault(p => p.ExternalID == item.TestCase.Id);
+                           
+                            if (matchingTC != null)
+                            {
+                                RunCreateModel run = new RunCreateModel(name: item.TestCase.Name, plan: new Microsoft.TeamFoundation.TestManagement.WebApi.ShallowReference(bizFlow.ExternalID), pointIds: [testpointid]);
+                                TestRun testrun = testClient.CreateTestRunAsync(run, projectName).Result;
+
+                                TestCaseResult caseResult = new() { State = "Completed", Outcome = matchingTC.RunStatus.ToString(), Id = 100000 };
+
+                                var testResults = testClient.UpdateTestResultsAsync([caseResult], projectName, testrun.Id).Result;
+                                RunUpdateModel runmodel = new(state: "Completed");
+                                TestRun testRunResult = testClient.UpdateTestRunAsync(runmodel, projectName, testrun.Id, runmodel).Result;
+                            }
+                            else
+                            {
+                                Reporter.ToLog(eLogLevel.ERROR, $"No Matching TestCase(ActivityGroup) found for TestPointId: {testpointid}");
+                            }
+
+                        }
+                        
+                    }
+                    else
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"No TestPoint found for given ProjectName: {projectName}, TestPlanId: {testPlanId}, SuiteId: {suiteId} or BusinessFlow: {bizFlow.Name}");
+                    }
+
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR,$"Unable to convert ExternalId: {bizFlow.ExternalID} of the BusinessFlow : {bizFlow.Name}  to TestPlanId/SuiteId");
+                    return false;
+                }
+
+                return true;
+
+            }
+            catch (AggregateException e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR,e.InnerException.Message);
+
+            }
+            return false;
+            
         }
 
         public override Dictionary<string, string> GetALMDomainProjects(string ALMDomainName)
@@ -240,6 +309,7 @@ namespace GingerCore.ALM
                         tempPlan.Add(item.Name, []);
                         tempPlan[item.Name].Add(item.Iteration);
                         tempPlan[item.Name].Add(item.Id.ToString());
+                        tempPlan[item.Name].Add(item.State);
                     }
                 }
             }
@@ -250,24 +320,11 @@ namespace GingerCore.ALM
         {
             try
             {
-                string step = string.Empty;
-                activitiesGroup.ActivitiesIdentifiers.ToList().ForEach(p =>
+                List<string> step = [];
+              foreach(var item in activitiesGroup.ActivitiesIdentifiers)
                 {
-                    if (!string.IsNullOrEmpty(step))
-                    {
-                        step += "- ";
-                    }
-                    step += p.ActivityName + " ";
-
-                    if (p.IdentifiedActivity.Variables.Any())
-                    {
-                        p.IdentifiedActivity.Variables.ToList().ForEach(f =>
-                        {
-                            step += " <" + f.Name + "> ";
-                        });
-                    }
-                    step += '\n';
-                });
+                    step.Add(item.ActivityName);
+                }
 
                 if (mappedTest == null) //#Create new test case
                 {
@@ -301,46 +358,99 @@ namespace GingerCore.ALM
             {
                 if (mappedTestSet == null) //##create new Test Set in QC
                 {
-                    testSetId = CreateNewTestSuite(businessFlow, fatherId, testSetFields);
+                    CreateTestPlan(businessFlow);
                 }
                 else //##update existing test set
                 {
                     testSetId = UpdateExistingTestSuite(businessFlow, mappedTestSet, fatherId, testSetFields);
                 }
 
-                businessFlow.ExternalID = testSetId.ToString();
                 return true;
             }
             catch (Exception ex)
             {
                 result = "Unexpected error occurred- " + ex.Message;
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to Octane ALM", ex);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to export the " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to Azure DevOps", ex);
                 return false;
             }
         }
-        public int? CreateNewTestSuite(BusinessFlow bf, string fatherId, ObservableList<ExternalItemFieldBase> testsetfield)
+
+        public  void TestCaseEntryInSuite(BusinessFlow bf)
         {
-            LoginDTO logincred = GetLoginDTO();
-            // Get a testplan client instance
-            VssConnection connection = AzureDevOpsRepository.LoginAzure(logincred);
-            WorkItemTrackingHttpClient workItemTrackingClient = connection.GetClient<WorkItemTrackingHttpClient>();
-            WorkItem workItem;
-            JsonPatchDocument patchDocument = new JsonPatchDocument();
+            try
+            {
 
-
-            patchDocument.Add(
-               new JsonPatchOperation()
-               {
-                   Operation = Operation.Add,
-                   Path = "/fields/System.Title",
-                   Value = bf.Name
-               });
-
-            workItem = workItemTrackingClient.CreateWorkItemAsync(patchDocument, logincred.Project, "Test Suite").Result;
-            bf.ExternalID = workItem.Id.ToString();
             
-            return workItem.Id;
+            LoginDTO login = GetLoginDTO();
+            string projectName = login.Project;
+            VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
 
+
+
+                if (Int32.TryParse(bf.ExternalID, out int planId) && Int32.TryParse(bf.ExternalID2, out int suiteId))
+                {
+                    // Get a testplan client instance
+
+                    TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
+
+
+
+                    foreach (ActivitiesGroup ag in bf.ActivitiesGroups)
+                    {
+                        WorkItem2 testcasetoAdd = new()
+                        {
+                            Id = Int32.Parse(ag.ExternalID)
+                        };
+
+                        SuiteTestCaseCreateUpdateParameters parameters = new()
+                        {
+                            workItem = testcasetoAdd
+                        };
+
+                        IEnumerable<SuiteTestCaseCreateUpdateParameters> parametersCollection = new List<SuiteTestCaseCreateUpdateParameters> { parameters };
+
+
+                        testPlanClient.AddTestCasesToSuiteAsync(parametersCollection, projectName, planId, suiteId);
+                    }
+                }
+                else
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Failed to parse ExternalID as an integer.");
+
+                }
+
+
+            }
+            catch (Exception)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error related to Suite case entry");
+            }
+
+        }
+        public static void CreateTestPlan(BusinessFlow bf)
+        {
+            LoginDTO login = GetLoginDTO();
+            string projectName = login.Project;
+            VssConnection connection = AzureDevOpsRepository.LoginAzure(login);
+
+            // Get a testplan client instance
+            TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
+
+            TestPlanWebApi.TestPlanCreateParams testPlanCreateParams = new TestPlanWebApi.TestPlanCreateParams()
+            {
+                Name = bf.Name,
+            };
+
+
+            // create a test plan
+            TestPlanWebApi.TestPlan plan = testPlanClient.CreateTestPlanAsync(testPlanCreateParams, projectName).Result;
+
+            // this will be the id of test plan
+            bf.ExternalID = plan.Id.ToString();
+
+            // this will be root suite id of the test plan
+            bf.ExternalID2 = plan.RootSuite.Id.ToString();
+            
         }
 
         public int? UpdateExistingTestSuite(BusinessFlow bf, ALMTestSetData mappedTestSet, string fatherId, ObservableList<ExternalItemFieldBase> testsetfield)
@@ -365,7 +475,7 @@ namespace GingerCore.ALM
             return workItem.Id;
         }
 
-        public void CreateNewTestCase(ActivitiesGroup ag, string fatherId, ObservableList<ExternalItemFieldBase> testcasefields, string step)
+        public void CreateNewTestCase(ActivitiesGroup ag, string fatherId, ObservableList<ExternalItemFieldBase> testcasefields, List<string> step)
         {
             TestBaseHelper helper = new TestBaseHelper();
             ITestBase testBase = helper.Create();
@@ -394,11 +504,10 @@ namespace GingerCore.ALM
             // create a test case
             var testCaseObject = witclient.CreateWorkItemAsync(json, logincred.Project, "Test Case").Result;
             ag.ExternalID = testCaseObject.Id.ToString();
-            ag.ExternalID2 = testCaseObject.Id.ToString();
 
         }
 
-        public void UpdateTestCase(ActivitiesGroup ag, string fatherId, ObservableList<ExternalItemFieldBase> testcasefields, string step)
+        public void UpdateTestCase(ActivitiesGroup ag, string fatherId, ObservableList<ExternalItemFieldBase> testcasefields, List<string> step)
         {
             LoginDTO logincred = GetLoginDTO();
             // Get a testplan client instance
@@ -420,13 +529,15 @@ namespace GingerCore.ALM
         }
 
 
-        public ITestBase CreateTestStep(string step, ITestBase testBase)
+        public static ITestBase CreateTestStep(List<string> step, ITestBase testBase)
         {
-            ITestStep testStep1 = testBase.CreateTestStep();
-            testStep1.Title = step;
-            testStep1.ExpectedResult = "Pass";
+            foreach (var title in step)
+            {
+                ITestStep testStep = testBase.CreateTestStep(); 
+                testStep.Title = title;
+                testBase.Actions.Add(testStep);
+            }
 
-            testBase.Actions.Add(testStep1);
             return testBase;
         }
 
@@ -477,7 +588,7 @@ namespace GingerCore.ALM
             }
         }
 
-        private string GetRootFolderId()
+        private static string GetRootFolderId()
         {
             LoginDTO loginDTO = GetLoginDTO();
             
@@ -545,16 +656,50 @@ namespace GingerCore.ALM
             List<ALMTestSetSummary> testlabPathList = new List<ALMTestSetSummary>();
             Dictionary<string, List<string>> listoftestPlans = GetTestPlan();
             foreach (var testset in listoftestPlans)
-                {
-                    ALMTestSetSummary QCTestSetTreeItem = new ALMTestSetSummary();
+            {
+                ALMTestSetSummary QCTestSetTreeItem = new ALMTestSetSummary();
                 QCTestSetTreeItem.TestSetID = testset.Value[1];
-                    QCTestSetTreeItem.TestSetName = testset.Key;
+                QCTestSetTreeItem.TestSetName = testset.Key;
+                QCTestSetTreeItem.TestSetStatuses = testset.Value[2];
                     testlabPathList.Add(QCTestSetTreeItem);
                 }
             
             return testlabPathList;
         }
+        public dynamic GetTSRunStatus(dynamic TSItem)
+        {
+            List<TestSuite> testInstances = GetTestSuiteRun(TSItem.TestSetID);
 
+            foreach (TestSuite testInstance in testInstances)
+            {
+                bool existing = false;
+                foreach (string[] status in TSItem.TestSetStatuses)
+                {
+                    if (status[0] == testInstance.Name)
+                    {
+                        existing = true;
+                        status[1] = (Int32.Parse(status[1]) + 1).ToString();
+                    }
+                }
+                if (!existing) { TSItem.TestSetStatuses.Add(new string[] { testInstance.Name, "1" }); }
+            }
+            return TSItem;
+        }
+        
+        public List<TestPlanWebApi.TestPlan> GetTestSuiteRun(string testSuiteId)
+        {
+            string projectName = ALMCore.DefaultAlmConfig.ALMProjectName;
+            
+            LoginDTO loginCred = GetLoginDTO();
+            // Get a testplan client instance
+            VssConnection connection = AzureDevOpsRepository.LoginAzure(loginCred);
+            TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
+
+            
+            // Get test plans
+            List<TestPlanWebApi.TestPlan> plans = testPlanClient.GetTestPlansAsync(projectName).Result;
+            return plans;
+        }
         public ALMTestSetData GetTestSuiteById(string tsId)
         {
             
@@ -566,20 +711,30 @@ namespace GingerCore.ALM
             WorkItemTrackingHttpClient witc = connection.GetClient<WorkItemTrackingHttpClient>();
 
             TestPlanHttpClient testPlanClient = connection.GetClient<TestPlanHttpClient>();
+            List<TestPlan> plans = testPlanClient.GetTestPlansAsync(logincred.Project).Result;
+            
 
-            int testplanId = 21;
-            int id = Int32.Parse(tsId);
-
-            TestSuite suite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project,testplanId,id).Result;
-
-            ALMTestSetData aLMTestSetData = new()
+           if(Int32.TryParse(tsId, out int testplanId))
             {
-                Id = suite.Id.ToString(),
-                Name = suite.Name,
-                
-            };
+                int suiteId = testplanId + 1;
+                TestSuite testsuite = testPlanClient.GetTestSuiteByIdAsync(logincred.Project, testplanId, suiteId).Result;
 
-            return aLMTestSetData;
+                ALMTestSetData aLMTestSetData = new()
+                {
+                    Id = testsuite.Id.ToString(),
+                    Name = testsuite.Name,
+                    ParentId = testplanId.ToString()
+
+                };
+
+                return aLMTestSetData;
+            }
+            else
+            {
+                Reporter.ToLog(eLogLevel.ERROR,"Unable to parse ExternalId to test suite id");
+                return null;
+            }
+            
         }
     }
 }
