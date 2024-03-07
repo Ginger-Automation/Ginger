@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Enhancements\NewFolder1\**" />
+    <Compile Remove="Enhancements\NewFolder\**" />
+    <Compile Remove="Enhancements\Wrappers\**" />
+    <EmbeddedResource Remove="Enhancements\NewFolder1\**" />
+    <EmbeddedResource Remove="Enhancements\NewFolder\**" />
+    <EmbeddedResource Remove="Enhancements\Wrappers\**" />
+    <None Remove="Enhancements\NewFolder1\**" />
+    <None Remove="Enhancements\NewFolder\**" />
+    <None Remove="Enhancements\Wrappers\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.11" />
+    <PackageReference Include="MethodTimer.Fody" Version="3.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Benchmarks\Resources\dummy.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Benchmarks\Resources\TestBusinessFlow.Ginger.BusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Benchmarks\Resources\TestBusinessFlow.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

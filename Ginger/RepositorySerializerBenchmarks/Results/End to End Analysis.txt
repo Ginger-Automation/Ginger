@@ -1,0 +1,42 @@
+NewRepositorySerializer
+RepositoryFolder-309: All BusinessFlow xmls loaded in 04.068s
+UCTreeView-330: All BusinessFlow TreeViewItems loaded in 04.099s
+UCTreeView-281: All BusinessFlow UI Item loaded in 26:222s
+
+BetterRepositorySerializer
+RepositoryFolder-309: All BusinessFlow xmls loaded in 01.777s
+UCTreeView-330: All BusinessFlow TreeViewItems loaded in 01.806s
+UCTreeView-363: All BusinessFlow TVI Items added to Tree in 19.899s
+UCTreeView-281: All BusinessFlow UI Item loaded in 21:746s
+
+BetterRepositorySerializer + Dispatcher over foreach in UCTreeView.SetTreeNodeItemChilds
+RepositoryFolder-309: All BusinessFlow xmls loaded in 01.780s
+UCTreeView-330: All BusinessFlow TreeViewItems loaded in 01.810s
+	UCTreeView-348: Each ForEach iteration: 7ms
+UCTreeView-363: All BusinessFlow TVI Items added to Tree in 08.072s
+UCTreeView-281: All BusinessFlow UI Item loaded in 09:941s
+
+BetterRepositorySerializer + Dispatcher over foreach in UCTreeView.SetTreeNodeItemChilds + Remove Thread.Sleep(5)
+RepositoryFolder-309: All BusinessFlow xmls loaded in 00.596s
+UCTreeView-330: All BusinessFlow TreeViewItems loaded in 00.630s
+	UCTreeView-348: Each ForEach iteration: 1ms
+UCTreeView-376: All BusinessFlow TVI Items added to Tree from Dispatcher in 2.3332246s
+UCTreeView-363: All BusinessFlow TVI Items added to Tree in 2.3772106s
+UCTreeView-281: All BusinessFlow UI Item loaded in 03:061s
+
+
+
+No Changes
+All BusinessFlow xmls loaded in 01.460s
+All BusinessFlow TreeViewItems loaded in 01.491s
+All BusinessFlow TVI Items added to Tree in 20.9462925s
+All BusinessFlow UI Item loaded in 22:474s
+Perceivable Time 23.5s
+
+
+BetterRepositorySerializer + Dispatcher over foreach in UCTreeView.SetTreeNodeItemChilds + Remove Thread.Sleep(5)
+All BusinessFlow xmls loaded in 00.610s
+All BusinessFlow TreeViewItems loaded in 00.642s
+All BusinessFlow TVI Items added to Tree in 1.061303s
+All BusinessFlow UI Item loaded in 01:776s
+Perceivable Time 5.8s

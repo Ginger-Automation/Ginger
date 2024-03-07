@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -16,8 +16,12 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
@@ -97,5 +101,16 @@ namespace GingerCore.Variables
         public override bool SupportResetValue { get { return true; } }
 
         public override bool SupportAutoValue { get { return false; } }
+
+        public VariableString(DeserializedSnapshot snapshot) : base(snapshot)
+        {
+            InitialStringValue = snapshot.GetValue(nameof(InitialStringValue));
+        }
+
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
+        {
+            return base.WriteSnapshotProperties(snapshotBuilder)
+                .WithValue(nameof(InitialStringValue), InitialStringValue);
+        }
     }
 }

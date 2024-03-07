@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Repository;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
@@ -95,6 +96,10 @@ namespace GingerCore.Actions
         }
 
         public override eImageType Image { get { return eImageType.File; } }
+
+        public ActLogAction() { }
+
+        public ActLogAction(DeserializedSnapshot snapshot) : base(snapshot) { }
 
         eLogLevel GetLogLevel(eActionLogLevels loglevel)
         {

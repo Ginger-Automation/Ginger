@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -18,6 +18,7 @@ limitations under the License.
 
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using GingerCore.DataSource;
 using GingerCore.Environments;
 
@@ -28,6 +29,11 @@ namespace GingerCore.Actions
         public BusinessFlow RunOnBusinessFlow;
         public ProjEnvironment RunOnEnvironment;
         public ObservableList<DataSourceBase> DSList;
+
+        public ActWithoutDriver() { }
+
+        public ActWithoutDriver(DeserializedSnapshot snapshot) : base(snapshot) { }
+
         public abstract void Execute();
     }
 }

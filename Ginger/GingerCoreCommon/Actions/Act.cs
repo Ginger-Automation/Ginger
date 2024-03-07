@@ -22,13 +22,18 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Xml;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Actions;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
+using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions.Common;
@@ -696,6 +701,37 @@ namespace GingerCore.Actions
             }
         }
 
+        private static Dictionary<string, Act> _nameToActMap = new();
+        private static readonly IEnumerable<string> ActAssemblyNames = new List<string>()
+        {
+            "GingerCoreCommon",
+            "GingerCoreNET"
+        };
+
+        public Act() { }
+
+        public Act(DeserializedSnapshot snapshot) : base(snapshot)
+        {
+            Active = snapshot.GetValueAsBool(nameof(Active));
+            Description = snapshot.GetValue(nameof(Description));
+            Platform = snapshot.GetValueAsEnum<ePlatformType>(nameof(Platform));
+            RetryMechanismInterval = snapshot.GetValueAsInt(nameof(RetryMechanismInterval));
+            StatusConverter = snapshot.GetValueAsEnum<eStatusConverterOptions>(nameof(StatusConverter));
+            WindowsToCapture = snapshot.GetValueAsEnum<eWindowsToCapture>(nameof(WindowsToCapture));
+            InputValues = new(snapshot.GetValues<ActInputValue>(nameof(InputValues)));
+        }
+
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
+        {
+            return base.WriteSnapshotProperties(snapshotBuilder)
+                .WithValue(nameof(Active), Active.ToString())
+                .WithValue(nameof(Description), Description)
+                .WithValue(nameof(Platform), Platform.ToString())
+                .WithValue(nameof(RetryMechanismInterval), RetryMechanismInterval.ToString())
+                .WithValue(nameof(StatusConverter), StatusConverter.ToString())
+                .WithValue(nameof(WindowsToCapture), WindowsToCapture.ToString())
+                .WithValues(nameof(InputValues), InputValues.Cast<RepositoryItemBase>());
+        }
 
         #region ActInputValues
         public void AddInputValueParam(string ParamName)
@@ -2016,7 +2052,5 @@ namespace GingerCore.Actions
         {
             return "Action";
         }
-
-
     }
 }

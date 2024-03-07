@@ -274,7 +274,15 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (hadDummyNode)
             {
                 SetRepositoryFolderIsExpanded(treeViewItem, isExpanded: true);
+                Stopwatch stopwatch = new();
+                stopwatch.Start();
                 await SetTreeNodeItemChilds(treeViewItem);
+                stopwatch.Stop();
+                System.Diagnostics.Debug.WriteLine($"All BusinessFlow UI Item loaded in {new DateTime(stopwatch.Elapsed.Ticks).ToString("ss:fff")}s");
+                Dispatcher.Invoke(() =>
+                {
+                    Reporter.ToUser(eUserMsgKey.AllBusinessFlowLoadTime, new DateTime(stopwatch.Elapsed.Ticks).ToString("ss.fff"));
+                });
                 GingerCore.General.DoEvents();
                 // remove the handler as expand data is cached now on tree
                 WeakEventManager<TreeViewItem, RoutedEventArgs>.RemoveHandler(treeViewItem, nameof(TreeViewItem.Expanded), TVI_Expanded);
@@ -315,7 +323,11 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             if (TVI.Tag is ITreeViewItem ITVI)
             {
+                Stopwatch stopwatch = new();
+                stopwatch.Start();
                 List<ITreeViewItem> Childs = ITVI.Childrens();
+                stopwatch.Stop();
+                Debug.WriteLine($"All BusinessFlow TreeViewItems loaded in {new DateTime(stopwatch.Elapsed.Ticks).ToString("ss.fff")}s");
 
                 TVI.Items.Clear();
                 if (Childs != null)
@@ -325,26 +337,46 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                         try
                         {
                             mSetTreeNodeItemChildsEvent = new AutoResetEvent(false);
-                            foreach (ITreeViewItem item in Childs)
+                            Stopwatch stopwatch2 = new();
+                            stopwatch2.Start();
+                            Dispatcher.Invoke(() =>
                             {
-
-                                if (TreeChildFolderOnly == true && item.IsExpandable() == false)
+                                //Stopwatch stopwatch3 = new();
+                                //stopwatch3.Start();
+                                foreach (ITreeViewItem item in Childs)
                                 {
-                                    continue;
-                                }
-                                if (TreeNodesFilterByField != null)
-                                {
-                                    if (IsTreeItemFitsFilter(item))
+                                    //Stopwatch stopwatch4 = new();
+                                    //stopwatch4.Start();
+                                    if (TreeChildFolderOnly == true && item.IsExpandable() == false)
                                     {
-                                        Dispatcher.Invoke(() => AddItem(item, TVI));
+                                        continue;
                                     }
+                                    if (TreeNodesFilterByField != null)
+                                    {
+                                        if (IsTreeItemFitsFilter(item))
+                                        {
+                                            //Dispatcher.Invoke(() =>
+                                            //{
+                                                AddItem(item, TVI);
+                                            //});
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //Dispatcher.Invoke(() =>
+                                        //{
+                                            AddItem(item, TVI);
+                                        //});
+                                    }
+                                    //Thread.Sleep(5);
+                                    //stopwatch4.Stop();
+                                    //Debug.WriteLine($"BusinessFlow TVI Item added to Tree in {stopwatch4.Elapsed.TotalMilliseconds}ms");
                                 }
-                                else
-                                {
-                                    Dispatcher.Invoke(() => AddItem(item, TVI));
-                                }
-                                Thread.Sleep(5);
-                            }
+                                //stopwatch3.Stop();
+                                //Debug.WriteLine($"All BusinessFlow TVI Items added to Tree from Dispatcher in {stopwatch3.Elapsed.TotalSeconds}s");
+                            });
+                            stopwatch2.Stop();
+                            Debug.WriteLine($"All BusinessFlow TVI Items added to Tree in {stopwatch2.Elapsed.TotalSeconds}s");
                             mSetTreeNodeItemChildsEvent.Set();
                             if (tviChildNodesLoadTaskMap.ContainsKey(TVI))
                             {

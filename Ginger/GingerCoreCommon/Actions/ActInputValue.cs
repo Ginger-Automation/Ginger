@@ -18,7 +18,11 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Ginger.UserControlsLib.ActionInputValueUserControlLib;
 using Newtonsoft.Json;
 
@@ -224,5 +228,17 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
+        public ActInputValue() { }
+
+        public ActInputValue(DeserializedSnapshot snapshot) : base(snapshot)
+        {
+            Param = snapshot.GetValue(nameof(Param));
+        }
+
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
+        {
+            return base.WriteSnapshotProperties(snapshotBuilder)
+                .WithValue(nameof(Param), Param);
+        }
     }
 }

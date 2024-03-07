@@ -24,14 +24,23 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Xml;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
+using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
+using GingerCore;
+using GingerCore.Actions;
 using GingerCore.GeneralLib;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using Newtonsoft.Json.Linq;
+using NJsonSchema.Infrastructure;
 
 namespace Amdocs.Ginger.Repository
 {
@@ -123,6 +132,33 @@ namespace Amdocs.Ginger.Repository
                 // like APIModel - SOAP/REST we want both file name to be with same extension - ApplicationAPIModel
                 return RepositorySerializer.FileExt(this);
             }
+        }
+
+        public RepositoryItemBase() { }
+
+        public RepositoryItemBase(DeserializedSnapshot snapshot)
+        {
+            Guid = snapshot.GetValueAsGuid(nameof(Guid));
+            ParentGuid = snapshot.GetValueAsGuid(nameof(ParentGuid));
+            //ExternalID = snapshot.GetValue(nameof(ExternalID), defaultValue: string.Empty);
+            //ExternalID2 = snapshot.GetValue(nameof(ExternalID2), defaultValue: string.Empty);
+        }
+
+        public virtual SerializedSnapshot CreateSnapshot()
+        {
+            SerializedSnapshot.Builder snapshotBuilder = new();
+            snapshotBuilder.SetName(GetType().Name);
+            WriteSnapshotProperties(snapshotBuilder);
+            return snapshotBuilder.Build();
+        }
+
+        protected virtual SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
+        {
+            return snapshotBuilder
+                .WithValue(nameof(Guid), Guid.ToString())
+                .WithValue(nameof(ParentGuid), ParentGuid.ToString())
+                .WithValue(nameof(ExternalID), ExternalID)
+                .WithValue(nameof(ExternalID2), ExternalID2);
         }
 
         public static string FolderName(Type T)
@@ -1532,6 +1568,5 @@ namespace Amdocs.Ginger.Repository
         }
 
         public Guid ExecutionParentGuid { get; set; } = Guid.Empty;
-
     }
 }

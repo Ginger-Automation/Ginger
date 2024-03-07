@@ -19,10 +19,12 @@ limitations under the License.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 
@@ -49,8 +51,19 @@ namespace GingerCore.Activities
             set { _executionLoggerStatus = value; }
         }
 
-        public ActivitiesGroup()
+        public ActivitiesGroup() { }
+
+        public ActivitiesGroup(DeserializedSnapshot snapshot) : base(snapshot)
         {
+            Name = snapshot.GetValue(nameof(Name));
+            ActivitiesIdentifiers = new(snapshot.GetValues<ActivityIdentifiers>(nameof(ActivitiesIdentifiers)));
+        }
+
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
+        {
+            return base.WriteSnapshotProperties(snapshotBuilder)
+                .WithValue(nameof(Name), Name)
+                .WithValues(nameof(ActivitiesIdentifiers), ActivitiesIdentifiers.Cast<RepositoryItemBase>());
         }
 
         private string mName;
@@ -520,6 +533,5 @@ namespace GingerCore.Activities
                 ExternalIdCalculated = ve.ValueCalculated;
             }
         }
-
     }
 }

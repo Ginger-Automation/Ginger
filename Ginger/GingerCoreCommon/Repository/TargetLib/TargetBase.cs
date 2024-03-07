@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -16,7 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Repository;
+using GingerCore.Platforms;
 
 namespace Amdocs.Ginger.Common.Repository
 {
@@ -40,5 +42,14 @@ namespace Amdocs.Ginger.Common.Repository
         // Save the last agent who executed on this Target
         [IsSerializedForLocalRepository]
         public string LastExecutingAgentName { get; set; }
+
+        public TargetBase() { }
+
+        public TargetBase(DeserializedSnapshot snapshot) : base(snapshot) { }
+
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
+        {
+            return base.WriteSnapshotProperties(snapshotBuilder);
+        }
     }
 }

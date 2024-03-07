@@ -17,7 +17,10 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Platforms
@@ -63,6 +66,19 @@ namespace GingerCore.Platforms
                     OnPropertyChanged(nameof(Name));
                 }
             }
+        }
+
+        public TargetApplication() { }
+
+        public TargetApplication(DeserializedSnapshot snapshot)
+        {
+            AppName = snapshot.GetValue(nameof(AppName));
+        }
+
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
+        {
+            return base.WriteSnapshotProperties(snapshotBuilder)
+                .WithValue(nameof(AppName), AppName);
         }
     }
 }

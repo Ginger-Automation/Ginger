@@ -23,6 +23,7 @@ using System.Reflection;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Repository;
 
 namespace GingerCore.Variables
@@ -241,6 +242,27 @@ namespace GingerCore.Variables
                 return mDiffrentFromOrigin;
             }
             set { if (mDiffrentFromOrigin != value) { mDiffrentFromOrigin = value; OnPropertyChanged(nameof(DiffrentFromOrigin)); } }
+        }
+
+        public VariableBase() { }
+
+        public VariableBase(DeserializedSnapshot snapshot) : base(snapshot)
+        {
+            Name = snapshot.GetValue(nameof(Name));
+            Description = snapshot.GetValue(nameof(Description));
+            MappedOutputType = snapshot.GetValueAsEnum<eOutputType>(nameof(MappedOutputType));
+            ParentName = snapshot.GetValue(nameof(ParentName));
+            ParentType = snapshot.GetValue(nameof(ParentType));
+        }
+
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
+        {
+            return base.WriteSnapshotProperties(snapshotBuilder)
+                .WithValue(nameof(Name), Name)
+                .WithValue(nameof(Description), Description)
+                .WithValue(nameof(MappedOutputType), MappedOutputType.ToString())
+                .WithValue(nameof(ParentName), ParentName)
+                .WithValue(nameof(ParentType), ParentType);
         }
 
         public string NameBeforeEdit;

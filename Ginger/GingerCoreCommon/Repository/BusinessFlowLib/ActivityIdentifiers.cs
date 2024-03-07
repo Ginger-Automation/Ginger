@@ -17,14 +17,34 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Repository;
+using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace GingerCore.Activities
 {
     public class ActivityIdentifiers : RepositoryItemBase
     {
-        public ActivityIdentifiers()
+        public ActivityIdentifiers() { }
+
+        public ActivityIdentifiers(DeserializedSnapshot snapshot) : base(snapshot)
         {
+            ActivityAutomationStatus = snapshot.GetValueAsEnum<eActivityAutomationStatus>(nameof(ActivityAutomationStatus));
+            ActivityGuid = snapshot.GetValueAsGuid(nameof(ActivityGuid));
+            ActivityName = snapshot.GetValue(nameof(ActivityName));
+            ActivityParentGuid = snapshot.GetValueAsGuid(nameof(ActivityParentGuid));
+        }
+
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
+        {
+            return base.WriteSnapshotProperties(snapshotBuilder)
+                .WithValue(nameof(ActivityAutomationStatus), ActivityAutomationStatus.ToString())
+                .WithValue(nameof(ActivityGuid), ActivityGuid.ToString())
+                .WithValue(nameof(ActivityName), ActivityName)
+                .WithValue(nameof(ActivityParentGuid), ActivityParentGuid.ToString());
         }
 
         [IsSerializedForLocalRepository]

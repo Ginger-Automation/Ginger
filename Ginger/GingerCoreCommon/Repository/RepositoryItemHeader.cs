@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -17,12 +17,22 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Xml;
+using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
+using Amdocs.Ginger.Common.SourceControlLib;
+using GingerCore;
+using Microsoft.CodeAnalysis.Operations;
+using Newtonsoft.Json.Linq;
 
 namespace Amdocs.Ginger.Repository
 {
 
     public class RepositoryItemHeader
     {
+        public const string XmlElementName = "Header";
+
         // Keep it first attr since it will help find object based on Guid without reading other attr, write it first!
         public Guid ItemGuid { get; set; }
         // We keep the class type of the content obj RI in the header so when we want to read only headers first we will know the type of the RI from header        
@@ -57,6 +67,39 @@ namespace Amdocs.Ginger.Repository
         //TODO: External ID - for example to QC - need to be only in class itself not here, BF only?
         // public string ExternalID { get; set; }
 
+        public RepositoryItemHeader() { }
 
+        public RepositoryItemHeader(DeserializedSnapshot snapshot)
+        {
+            ItemGuid = snapshot.GetValueAsGuid(nameof(ItemGuid));
+            ItemType = snapshot.GetValue(nameof(ItemType));
+            CreatedBy = snapshot.GetValue(nameof(CreatedBy));
+            Created = snapshot.GetValueAsDateTime(nameof(Created), "yyyyMMddHHmm");
+            GingerVersion = snapshot.GetValue(nameof(GingerVersion));
+            Version = snapshot.GetValueAsInt(nameof(Version));
+            LastUpdateBy = snapshot.GetValue(nameof(LastUpdateBy));
+            LastUpdate = snapshot.GetValueAsDateTime(nameof(LastUpdate), "yyyyMMddHHmm");
+        }
+
+        public virtual SerializedSnapshot CreateSnapshot()
+        {
+            SerializedSnapshot.Builder builder = new();
+            builder.SetName("Header");
+            WriteSnapshotProperties(builder);
+            return builder.Build();
+        }
+
+        protected virtual SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder builder)
+        {
+            return builder
+                .WithValue(nameof(ItemGuid), ItemGuid.ToString())
+                .WithValue(nameof(ItemType), ItemType)
+                .WithValue(nameof(CreatedBy), CreatedBy)
+                .WithValue(nameof(Created), Created.ToString("yyyyMMddHHmm"))
+                .WithValue(nameof(GingerVersion), GingerVersion)
+                .WithValue(nameof(Version), Version.ToString())
+                .WithValue(nameof(LastUpdateBy), LastUpdateBy)
+                .WithValue(nameof(LastUpdate), LastUpdate.ToString("yyyyMMddHHmm"));
+        }
     }
 }

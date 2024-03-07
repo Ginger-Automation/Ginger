@@ -18,6 +18,9 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -26,6 +29,8 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
+using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.Actions;
@@ -33,6 +38,7 @@ using GingerCore.Activities;
 using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Newtonsoft.Json.Linq;
 
 
 //TODO: change add core
@@ -126,6 +132,37 @@ namespace GingerCore
             mAutomationStatus = eActivityAutomationStatus.Development;
             mActionRunOption = eActionRunOption.StopActionsRunOnFailure;
             Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Tags));
+        }
+
+        public Activity(DeserializedSnapshot snapshot) : base(snapshot)
+        {
+            ActionRunOption = snapshot.GetValueAsEnum<eActionRunOption>(nameof(ActionRunOption));
+            Active = snapshot.GetValueAsBool(nameof(Active));
+            ActivitiesGroupID = snapshot.GetValue(nameof(ActivitiesGroupID));
+            ActivityName = snapshot.GetValue(nameof(ActivityName));
+            AutomationStatus = snapshot.GetValueAsEnum<eActivityAutomationStatus>(nameof(AutomationStatus));
+            ErrorHandlerMappingType = snapshot.GetValueAsEnum<eHandlerMappingType>(nameof(ErrorHandlerMappingType));
+            PercentAutomated = snapshot.GetValue(nameof(PercentAutomated));
+            POMMetaDataId = snapshot.GetValueAsGuid(nameof(POMMetaDataId));
+            TargetApplication = snapshot.GetValue(nameof(TargetApplication));
+            Type = snapshot.GetValueAsEnum<eSharedItemType>(nameof(Type));
+            Acts = new(snapshot.GetValues<Act>(nameof(Acts)));
+        }
+
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder builder)
+        {
+            return base.WriteSnapshotProperties(builder)
+                .WithValue(nameof(ActionRunOption), ActionRunOption.ToString())
+                .WithValue(nameof(Active), Active.ToString())
+                .WithValue(nameof(ActivitiesGroupID), ActivitiesGroupID)
+                .WithValue(nameof(ActivityName), ActivityName)
+                .WithValue(nameof(AutomationStatus), AutomationStatus.ToString())
+                .WithValue(nameof(ErrorHandlerMappingType), ErrorHandlerMappingType.ToString())
+                .WithValue(nameof(PercentAutomated), PercentAutomated)
+                .WithValue(nameof(POMMetaDataId), POMMetaDataId.ToString())
+                .WithValue(nameof(TargetApplication), TargetApplication)
+                .WithValue(nameof(Type), Type.ToString())
+                .WithValues(nameof(Acts), Acts.Cast<RepositoryItemBase>());
         }
 
         public override string ToString()

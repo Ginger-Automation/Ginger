@@ -20,12 +20,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.PortableExecutable;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
+using Amdocs.Ginger.Common.Repository.Serialization;
 using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
 using Ginger.Variables;
@@ -36,13 +41,30 @@ using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.CodeAnalysis.Rename;
 namespace GingerCore
 {
     public class BusinessFlow : RepositoryItemBase
     {
 
-        public BusinessFlow()
+        public BusinessFlow() { }
+
+        public BusinessFlow(DeserializedSnapshot snapshot) : base(snapshot)
         {
+            Name = snapshot.GetValue(nameof(Name));
+            Source = snapshot.GetValueAsEnum<eSource>(nameof(Source));
+            Status = snapshot.GetValueAsEnum<eBusinessFlowStatus>(nameof(Status));
+            ActivitiesGroups = new(snapshot.GetValues<ActivitiesGroup>(nameof(ActivitiesGroups)));
+            TargetApplications = new(snapshot.GetValues<TargetBase>(nameof(TargetApplication)));
+            Variables = new(snapshot.GetValues<VariableBase>(nameof(Variables))); 
+            if (LazyLoad)
+            {
+                snapshot.GetValuesLite(nameof(Activities));
+            }
+            else
+            {
+                Activities = new(snapshot.GetValues<Activity>(nameof(Activities)));
+            }
 
         }
 
@@ -59,6 +81,18 @@ namespace GingerCore
             Activities.Add(a);
             Activities.CurrentItem = a;
             CurrentActivity = a;
+        }
+
+        protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder snapshotBuilder)
+        {
+            return base.WriteSnapshotProperties(snapshotBuilder)
+                .WithValue(nameof(Name), Name)
+                .WithValue(nameof(Source), Source.ToString())
+                .WithValue(nameof(Status), Status.ToString())
+                .WithValues(nameof(Activities), Activities.Cast<RepositoryItemBase>())
+                .WithValues(nameof(ActivitiesGroups), ActivitiesGroups.Cast<RepositoryItemBase>())
+                .WithValues(nameof(TargetApplications), TargetApplications.Cast<RepositoryItemBase>())
+                .WithValues(nameof(Variables), Variables.Cast<RepositoryItemBase>());
         }
 
         public override string ToString()
@@ -1922,5 +1956,7 @@ namespace GingerCore
                 ExternalIdCalCulated = ve.ValueCalculated;
             }
         }
+
+        public static bool LazyLoad { get; set; }
     }
 }
