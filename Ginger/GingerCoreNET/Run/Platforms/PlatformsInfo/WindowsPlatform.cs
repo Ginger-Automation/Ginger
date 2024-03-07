@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 mElementLocatorsTypeList.Add(eLocateBy.ByName);
                 mElementLocatorsTypeList.Add(eLocateBy.ByText);
                 mElementLocatorsTypeList.Add(eLocateBy.ByID);
+                mElementLocatorsTypeList.Add(eLocateBy.NA);
             }
             return mElementLocatorsTypeList;
         }

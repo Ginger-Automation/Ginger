@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
+using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
 using Ginger.BusinessFlowPages;
@@ -182,7 +183,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     else
                     {
-                        platformActions.Add(cA);
+                       platformActions.Add(cA);
                     }
                 }
             }
@@ -203,7 +204,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
             mActionsListHelper.ListView = ucListView;
 
 
-            WeakEventManager<UcListView, EventArgs>.AddHandler(source: ucListView, eventName: nameof(UcListView.ItemMouseDoubleClick), handler: ActionsListViewItem_MouseDoubleClick);
+            ucListView.ItemMouseDoubleClick += ActionsListViewItem_MouseDoubleClick;
         }
 
         private void SetActionsListViewData(UcListView ucListView, ObservableList<Act> dataSource)

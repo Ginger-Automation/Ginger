@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,6 +35,10 @@ using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.Common;
 using GingerCore.Activities;
 using GingerCore.Platforms;
+using amdocs.ginger.GingerCoreNET;
+using System.Collections.Specialized;
+using Windows.ApplicationModel.Chat;
+using System.Security.Cryptography;
 
 namespace Ginger.UserControlsLib
 {
@@ -48,6 +52,11 @@ namespace Ginger.UserControlsLib
         {
             InitializeComponent();
             _nodeList = new ObservableCollection<Node>();
+            if (ConsumerSource != null)
+            {
+                CollectionChangedEventManager.AddHandler(ConsumerSource, ConsumerSource_CollectionChanged);
+            }
+            SetText();
         }
 
         #region Dependency Properties
@@ -99,12 +108,31 @@ namespace Ginger.UserControlsLib
         #endregion
 
         #region Events
+
         private static void OnConsumerSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ConsumerComboBox control = (ConsumerComboBox)d;
             control.DisplayInConsumer();
             control.SelectNodes();
             control.SetSelectedConsumer();
+
+            if (e.OldValue != null && e.OldValue is ObservableList<Consumer> oldConsumerSource)
+            {
+                CollectionChangedEventManager.RemoveHandler(oldConsumerSource, control.ConsumerSource_CollectionChanged);
+            }
+
+            if (control.ConsumerSource != null)
+            {
+                CollectionChangedEventManager.RemoveHandler(control.ConsumerSource, control.ConsumerSource_CollectionChanged);
+                CollectionChangedEventManager.AddHandler(control.ConsumerSource, control.ConsumerSource_CollectionChanged);
+            }
+        }
+
+        private void ConsumerSource_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            DisplayInConsumer();
+            SelectNodes();
+            SetSelectedConsumer();
         }
 
         private static void OnSelectedConsumerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -115,26 +143,45 @@ namespace Ginger.UserControlsLib
         }
 
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         public void OnPropertyChanged(string propertyName)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
+            PropertyChangedEventHandler? handler = PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
 
-        private void ConsumerCheckBox_Click(object sender, RoutedEventArgs e)
+        private void ConsumerGrid_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            CheckBox clickedBox = (CheckBox)sender;
+            //to handle click of entire ComboBox item we also intercept Grid MouseUp event
+            Grid grid = (Grid)sender;
+            CheckBox checkBox = (CheckBox)grid.Children[0];
+            if (checkBox.IsChecked == null)
+            {
+                return;
+            }
 
-               
-                
-            
+            bool isChecked = (bool)checkBox.IsChecked;
+            checkBox.IsChecked = !isChecked;
+            if (isChecked)
+            {
+                checkBox.RaiseEvent(new RoutedEventArgs(CheckBox.UncheckedEvent));
+            }
+            else
+            {
+                checkBox.RaiseEvent(new RoutedEventArgs(CheckBox.CheckedEvent));
+            }
+
+            //prevent ComboBox dropdown from closing after clicking an item
+            e.Handled = true;
+        }
+
+        private void CheckBox_CheckedUnchecked(object sender, RoutedEventArgs e)
+        {
             SetSelectedConsumer();
             SetText();
-
         }
         #endregion
 
@@ -157,17 +204,24 @@ namespace Ginger.UserControlsLib
 
         private void SetSelectedConsumer()
         {
+            if (SelectedConsumer == null)
+            {
+                return;
+            }
+
             ObservableList<Consumer> temp = new ObservableList<Consumer>();
             foreach (Node node in _nodeList)
             {
-               
-                    if (node.IsSelected)
-                    {
-                       temp.Add(node.Consumer);
-                    }
-                
+                if (node.IsSelected)
+                {
+                    temp.Add(node.Consumer);
+                }
             }
-            SelectedConsumer = new ObservableList<Consumer>(temp);
+            SelectedConsumer.ClearAll();
+            foreach (Consumer consumer in temp)
+            {
+                SelectedConsumer.Add(consumer);
+            }
         }
 
         private void DisplayInConsumer()
@@ -187,13 +241,14 @@ namespace Ginger.UserControlsLib
             if (this.SelectedConsumer != null)
             {
                 StringBuilder displayText = new StringBuilder();
-                foreach (Node s in _nodeList)
+                foreach (Consumer consumer in SelectedConsumer)
                 {
-                     if (s.IsSelected)
+                    if (consumer.Name == null)
                     {
-                        displayText.Append(s.Title);
-                        displayText.Append(',');
+                        consumer.Name = GetConsumerName(consumer.ConsumerGuid);
                     }
+                    displayText.Append(consumer.Name);
+                    displayText.Append(',');
                 }
                 Text = displayText.ToString().TrimEnd(',');
             }
@@ -202,6 +257,17 @@ namespace Ginger.UserControlsLib
             {
                 Text = DefaultText;
             }
+        }
+
+        private string? GetConsumerName(Guid consumerGuid)
+        {
+            return 
+                WorkSpace
+                .Instance
+                .Solution
+                .GetSolutionTargetApplications()
+                .FirstOrDefault(targetApp => targetApp.Guid == consumerGuid)
+                ?.Name;
         }
 
 

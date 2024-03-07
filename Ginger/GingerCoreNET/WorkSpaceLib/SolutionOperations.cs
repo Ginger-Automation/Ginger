@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -311,7 +311,13 @@ namespace Ginger.SolutionGeneral
                 Ginger.Reports.GingerExecutionReport.ExtensionMethods.GetSolutionHTMLReportConfigurations();
                 ExecutionLoggerConfiguration executionLoggerConfiguration = Solution.LoggerConfigurations;
 
+                // This is used for backward compatibility. Please check the comment above the CentralizedHTMLURL attribute.
 
+
+                if (string.IsNullOrEmpty(executionLoggerConfiguration.CentralizedHtmlReportServiceURL))
+                {
+                    executionLoggerConfiguration.CentralizedHtmlReportServiceURL = Solution.HTMLReportsConfigurationSetList.FirstOrDefault((htmlReport) => htmlReport.IsSelected).CentralizedHTMLURL;
+                }
                 // !!!!!!!!!!!!! FIXME
                 // ExecutionLogger executionLogger = App.AutomateTabGingerRunner.ExecutionLogger;
                 // executionLogger.Configuration = executionLoggerConfiguration;

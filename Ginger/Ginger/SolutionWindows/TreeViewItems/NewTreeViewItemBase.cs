@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -98,7 +98,9 @@ namespace GingerWPF.TreeViewItemsLib
             {
                 if (!deleteWithoutAsking)
                 {
-                    if (Reporter.ToUser(eUserMsgKey.DeleteItem, repoItem.GetNameForFileName()) == Amdocs.Ginger.Common.eUserMsgSelection.No)
+                    var result = Reporter.ToUser(eUserMsgKey.DeleteItem, repoItem.GetNameForFileName());
+                    // None = when user clicks on the cross button
+                    if ( result.Equals(eUserMsgSelection.No) || result.Equals(eUserMsgSelection.None))
                     {
                         return false;
                     }

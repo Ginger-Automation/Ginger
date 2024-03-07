@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -492,7 +492,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 if (WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>().Any())
                 {
                     mRunsetExecutor.RunsetExecutionEnvironment = WorkSpace.Instance.SolutionRepository.GetFirstRepositoryItem<ProjEnvironment>();
-                    Reporter.ToLog(eLogLevel.INFO, "Auto Selected the default Environment: '" + mRunsetExecutor.RunsetExecutionEnvironment.Name + "'");
+                    Reporter.ToLog(eLogLevel.INFO, $"Auto Selected the default Environment: '{ mRunsetExecutor.RunsetExecutionEnvironment.Name }'");
                 }
                 else
                 {
@@ -516,7 +516,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SetSourceControlBranch(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlBranch: '" + value + "'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlBranch: '{ value }'");
             WorkSpace.Instance.UserProfile.SolutionSourceControlBranch = value;
         }
 
@@ -603,7 +603,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void PasswordEncrypted(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "PasswordEncrypted: '" + value + "'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"PasswordEncrypted: '{ value }'");
             string pswd = WorkSpace.Instance.UserProfile.SourceControlPass;
             if (value == "Y" || value == "true" || value == "True")
             {
@@ -634,13 +634,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = true;
             }
 
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyPort: '" + value + "'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlProxyPort: '{ value }'");
             WorkSpace.Instance.UserProfile.SolutionSourceControlProxyPort = value;
         }
 
         internal void SourceControlProxyServer(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlProxyServer: '" + value + "'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlProxyServer: '{ value }'");
             if (string.IsNullOrEmpty(value))
             {
                 WorkSpace.Instance.UserProfile.SolutionSourceControlConfigureProxy = false;
@@ -659,7 +659,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SetSourceControlUser(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUser: '" + value + "'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlUser: '{ value }'");
             if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.GIT && value == "")
             {
                 value = "Test";
@@ -671,16 +671,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SetSourceControlURL(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlUrl: '" + value + "'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlUrl: '{ value }'");
             if (WorkSpace.Instance.UserProfile.SourceControlType == SourceControlBase.eSourceControlType.SVN)
             {
                 if (!value.ToUpper().Contains("/SVN") && !value.ToUpper().Contains("/SVN/"))
                 {
-                    value = value + "svn/";
+                    value = $"{value}svn/";
                 }
                 if (!value.ToUpper().EndsWith("/"))
                 {
-                    value = value + "/";
+                    value = $"{value}/";
                 }
             }
             WorkSpace.Instance.UserProfile.SourceControlURL = value;
@@ -689,7 +689,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
 
         internal void SetSourceControlType(string value)
         {
-            Reporter.ToLog(eLogLevel.DEBUG, "Selected SourceControlType: '" + value + "'");
+            Reporter.ToLog(eLogLevel.DEBUG, $"Selected SourceControlType: '{ value }'");
             if (value.Equals("GIT"))
             {
                 WorkSpace.Instance.UserProfile.SourceControlType = SourceControlBase.eSourceControlType.GIT;

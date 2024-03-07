@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -4854,8 +4854,10 @@ namespace GingerCore.Drivers
                 {
                     if (CurrentWindow != null)
                     {
-                        Bitmap tempBmp = GetCurrentWindowBitmap();
-                        act.AddScreenShot(tempBmp);
+                        using (Bitmap tempBmp = GetCurrentWindowBitmap())
+                        {
+                            act.AddScreenShot(tempBmp);
+                        }
                     }
                 }
                 return;
@@ -4873,8 +4875,7 @@ namespace GingerCore.Drivers
 
         public override Bitmap GetCurrentWindowBitmap()
         {
-            Bitmap bmp = WindowToBitmap(CurrentWindow);
-            return bmp;
+            return WindowToBitmap(CurrentWindow);
         }
 
         public List<AppWindow> GetCurrentAppWindows()
@@ -4900,8 +4901,7 @@ namespace GingerCore.Drivers
             try
             {
                 UIAuto.AutomationElement tempWindow = (UIAuto.AutomationElement)((UIAElementInfo)aw.RefObject).ElementObject;
-                Bitmap bmp = WindowToBitmap(tempWindow);
-                return bmp;
+                return WindowToBitmap(tempWindow);
             }
             catch (Exception ex)
             {
@@ -4929,27 +4929,22 @@ namespace GingerCore.Drivers
             for (int i = 0; i < AEList.Count; i++)
             {
                 UIAuto.AutomationElement ele = AEList[i];
-                Bitmap bmp = WindowToBitmap(ele);
-                bList.Add(bmp);
+                bList.Add(WindowToBitmap(ele));
             }
             for (int i = 0; i < AEList1.Count; i++)
             {
                 UIAuto.AutomationElement ele = AEList1[i];
-                Bitmap bmp = WindowToBitmap(ele);
-                bList.Add(bmp);
+                bList.Add(WindowToBitmap(ele));
+
             }
 
             for (int i = 0; i < AEListWindows.Count; i++)
             {
-                List<Bitmap> winPopup = new List<Bitmap>();
                 if (AEListWindows[i].Current.BoundingRectangle.X != 0 && AEListWindows[i].Current.BoundingRectangle.Y != 0)
                 {
-                    Bitmap bmp = WindowToBitmap(AEListWindows[i]);
-                    winPopup.Add(bmp); //adding screenshot of element type "window"
+                    bList.Add(WindowToBitmap(AEListWindows[i]));//adding screenshot of element type "window"
                 }
-                bList.AddRange(winPopup);
             }
-
             return bList;
         }
 

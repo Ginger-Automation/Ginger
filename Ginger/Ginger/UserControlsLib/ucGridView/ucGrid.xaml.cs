@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -88,11 +88,14 @@ namespace Ginger
             }
         }
 
+        public delegate bool TextFilterCallback(object item, string searchText);
+        public TextFilterCallback TextFilter;
+
         public bool ActiveStatus = false;
         private bool UsingDataTableAsSource = false;
 
         public ObservableList<Guid> Tags = null;
-        ICollectionView mCollectionView;
+        private ICollectionView mCollectionView;
 
         List<Button> mFloatingButtons = new List<Button>();
 
@@ -196,7 +199,17 @@ namespace Ginger
             //Filter by search text            
             if (!string.IsNullOrEmpty(mFilterSearchText))
             {
-                if (TextFilter(obj, mFilterSearchText) == true)
+                bool matchedSearchText;
+                if (TextFilter != null)
+                {
+                    matchedSearchText = TextFilter.Invoke(obj, mFilterSearchText);
+                }
+                else
+                {
+                    matchedSearchText = DefaultTextFilter(obj, mFilterSearchText);
+                }
+
+                if (matchedSearchText)
                 {
                     return true;
                 }
@@ -214,7 +227,7 @@ namespace Ginger
             return false;
         }
 
-        private bool TextFilter(object obj, string textFilterValue)
+        private bool DefaultTextFilter(object obj, string textFilterValue)
         {
             string ObjTxt = ObjToString(obj);
 
@@ -1188,6 +1201,15 @@ namespace Ginger
         private int GetCurrentRow()
         {
             return grdMain.Items.IndexOf(grdMain.CurrentItem);
+        }
+
+        public IEnumerable<object> GetFilteredItems()
+        {
+            if (mCollectionView == null)
+            {
+                return [];
+            }
+            return mCollectionView.Cast<object>();
         }
 
         public IEnumerable<DataGridRow> GetDataGridRows(DataGrid grid)

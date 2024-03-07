@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -672,7 +672,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             delete.AutomationID = "deleteGroup";
             delete.Header = string.Concat("Delete ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
             delete.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Delete;
-            delete.ToolTip = string.Concat("Delete all " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), GingerDicser.GetTermResValue(eTermResKey.Activities));
+            delete.ToolTip = string.Concat("Delete " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)," and its " ,GingerDicser.GetTermResValue(eTermResKey.Activities));
             delete.OperationHandler = DeleteGroupHandler;
             groupOperationsList.Add(delete);
 
@@ -682,7 +682,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             disable.Header = string.Concat("Disable ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
             disable.ImageSize = 14;
             disable.ImageType = Amdocs.Ginger.Common.Enums.eImageType.InActive;
-            disable.ToolTip = string.Concat("Disable all ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), GingerDicser.GetTermResValue(eTermResKey.Activities));
+            disable.ToolTip = string.Concat("Disable ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup)," and its ",GingerDicser.GetTermResValue(eTermResKey.Activities));
             disable.OperationHandler = DisableGroupHandler;
             groupOperationsList.Add(disable);
 
@@ -692,7 +692,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             activate.Header = string.Concat("Activate ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
             activate.ImageSize = 14;
             activate.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Active;
-            activate.ToolTip = string.Concat("Activate all ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), " ", GingerDicser.GetTermResValue(eTermResKey.Activities));
+            activate.ToolTip = string.Concat("Activate ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), " and its ", GingerDicser.GetTermResValue(eTermResKey.Activities));
             activate.OperationHandler = ActivateGroupHandler;
             groupOperationsList.Add(activate);
 
@@ -731,7 +731,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             export.Group = "ALM Operations";
             export.Header = string.Concat("Export ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup));
             export.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Share;
-            export.ToolTip = string.Concat("Export ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), " and it ", GingerDicser.GetTermResValue(eTermResKey.Activities), " to ALM");
+            export.ToolTip = string.Concat("Export ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), " and its ", GingerDicser.GetTermResValue(eTermResKey.Activities), " to ALM");
             export.OperationHandler = ExportGroupHandler;
             export.Visible = false;
             groupOperationsList.Add(export);
@@ -750,7 +750,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             addToSR.AutomationID = "addGroupToSR";
             addToSR.Header = string.Concat("Add ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), " to Shared Repository");
             addToSR.ImageType = Amdocs.Ginger.Common.Enums.eImageType.SharedRepositoryItem;
-            addToSR.ToolTip = string.Concat("Add ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), " and it ", GingerDicser.GetTermResValue(eTermResKey.Activities), " to Shared Repository");
+            addToSR.ToolTip = string.Concat("Add ", GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup), " and its ", GingerDicser.GetTermResValue(eTermResKey.Activities), " to Shared Repository");
             addToSR.OperationHandler = AddGroupToSRHandler;
             groupOperationsList.Add(addToSR);
 

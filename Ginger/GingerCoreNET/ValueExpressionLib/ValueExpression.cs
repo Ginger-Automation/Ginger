@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -649,7 +649,7 @@ namespace GingerCore
 
             string DSName = p.Substring(9, p.IndexOf(" DST=") - 9);
 
-            if (DSList == null)
+            if (DSList == null || !DSList.Any())
             {
                 DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
             }
@@ -1031,7 +1031,7 @@ namespace GingerCore
                     bool Markasdone = false;
 
                     string litedbquery = p.Substring(p.IndexOf("QUERY=") + 6, p.Length - (p.IndexOf("QUERY=") + 7));
-
+                    bool IsQueryOld = IsQueryFromOldVersion(litedbquery);
                     // Query is with Customized option
                     if (p.Contains("ICOLVAL="))
                     {
@@ -1054,18 +1054,35 @@ namespace GingerCore
                         if (IRow == "NxtAvail")
                         {
                             rowNumber = 0;
+                            if (IsQueryOld)
+                            {
+                                litedbquery = $"SELECT $ FROM {tableName[0]} where GINGER_USED =\"False\"";
+                            }
                         }
                         else if (IRow == "RowNum")
                         {
                             string[] rownum = Name[2].Split(new[] { "ROWNUM=" }, StringSplitOptions.None)[1].Split(splitchar);
                             rowNumber = Int32.Parse(rownum[0]);
+
+                            if (IsQueryOld)
+                            {
+                                litedbquery = $"SELECT $ FROM {tableName[0]}";
+                            }
+                        }
+
+                        else if (IRow.ToLower().Equals("where"))
+                        {
+                            if (IsQueryOld)
+                            {
+                                litedbquery = $"SELECT $ FROM {tableName[0]} {litedbquery[litedbquery.IndexOf("where", StringComparison.CurrentCultureIgnoreCase)..]}";
+                            }
                         }
                         if (markasdone[0] == "Y")
                         {
                             Markasdone = true;
                         }
                         // Get Value query
-                        if (litedbquery.Contains(".find") || litedbquery.Contains(".select $ where"))
+                        if (litedbquery.Contains("select", StringComparison.CurrentCultureIgnoreCase))
                         {
                             // Use Replace because incase, if it is used with something else for example xpath (//*[text() = "<DataSource Query>"]) the whole string should be the output instead of just the result
                             // data source query
@@ -1073,9 +1090,9 @@ namespace GingerCore
                         }
 
                         // Set value Query
-                        else if (litedbquery.Contains(".update") && this.updateValue != null)
+                        else if (litedbquery.Contains("update", StringComparison.CurrentCultureIgnoreCase) && this.updateValue != null)
                         {
-                            if (litedbquery.Contains("where"))
+                            if (litedbquery.Contains("where", StringComparison.CurrentCultureIgnoreCase))
                             {
                                 string[] querysplit = litedbquery.Split(new[] { "where" }, StringSplitOptions.None);
                                 char[] split = { ' ' };
@@ -1146,6 +1163,14 @@ namespace GingerCore
             }
         }
 
+        private static bool IsQueryFromOldVersion(string Query)
+        {
+            if(Query.Contains(".find", StringComparison.CurrentCultureIgnoreCase) || Query.Contains(".select", StringComparison.CurrentCultureIgnoreCase))
+            {
+                return true;
+            }
+            return false;
+        }
 
 
         private void CalculateComplexFormulas()

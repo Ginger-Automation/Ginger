@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,8 +35,17 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
     public class UploadItemToRepositoryWizard : WizardBase
     {
         public override string Title { get { return "Add Items to Shared Repository"; } }
-        public Context Context;
         bool isConvert = false;
+
+        public UploadItemToRepositoryWizard(IEnumerable<UploadItemSelection> items)
+        {
+            UploadItemSelection.mSelectedItems.Clear();
+            foreach (UploadItemSelection item in items)
+            {
+                mSelectedItems.Add(item);
+            }
+            InitializeWizardPages();
+        }
         /// <summary>
         /// Constructor For Uploading List of Repository items
         /// </summary>
@@ -45,10 +54,9 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         public UploadItemToRepositoryWizard(Context context, IEnumerable<object> items)
         {
             UploadItemSelection.mSelectedItems.Clear();
-            Context = context;
             foreach (object i in items)
             {
-                UploadItemSelection.mSelectedItems.Add(CreateUploadItem((RepositoryItemBase)i));
+                UploadItemSelection.mSelectedItems.Add(CreateUploadItem((RepositoryItemBase)i, context));
             }
             InitializeWizardPages();
         }
@@ -59,9 +67,8 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
         public UploadItemToRepositoryWizard(Context context, RepositoryItemBase item, bool IsConvert = false, eActivityInstanceType ConvertType = eActivityInstanceType.LinkInstance)
         {
             UploadItemSelection.mSelectedItems.Clear();
-            Context = context;
             isConvert = IsConvert;
-            UploadItemSelection.mSelectedItems.Add(CreateUploadItem(item, IsConvert, ConvertType));
+            UploadItemSelection.mSelectedItems.Add(CreateUploadItem(item, context, IsConvert, ConvertType));
             InitializeWizardPages();
         }
 
@@ -73,10 +80,11 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             DisableBackBtnOnLastPage = true;
         }
 
-        private UploadItemSelection CreateUploadItem(RepositoryItemBase item, bool IsConvert = false, eActivityInstanceType ConvertType = eActivityInstanceType.LinkInstance)
+        public static UploadItemSelection CreateUploadItem(RepositoryItemBase item, Context context, bool IsConvert = false, eActivityInstanceType ConvertType = eActivityInstanceType.LinkInstance)
         {
             string strComment = "";
             UploadItemSelection uploadItem = new UploadItemSelection();
+            uploadItem.Context = context;
             uploadItem.Selected = true;
             UploadItemSelection.eExistingItemType existingItemType = UploadItemSelection.eExistingItemType.NA;
             RepositoryItemBase existingItem = ExistingItemCheck(item, ref strComment, ref existingItemType);
@@ -101,7 +109,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             {
                 if (activity.ActivitiesGroupID != null && activity.ActivitiesGroupID != string.Empty)
                 {
-                    ActivitiesGroup? group = Context.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => string.Equals(x.Name, activity.ActivitiesGroupID));
+                    ActivitiesGroup? group = context.BusinessFlow.ActivitiesGroups.FirstOrDefault(x => string.Equals(x.Name, activity.ActivitiesGroupID));
                     if (group != null)
                     {
                         ObservableList<ActivitiesGroup> repoGroups = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ActivitiesGroup>();
@@ -126,7 +134,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
             return uploadItem;
         }
 
-        public virtual Type GetTypeOfItemParts(RepositoryItemBase item)
+        public static Type GetTypeOfItemParts(RepositoryItemBase item)
         {
             if (item is Activity)
             {
@@ -151,7 +159,7 @@ namespace Ginger.Repository.AddItemToRepositoryWizard
 
         }
 
-        public RepositoryItemBase ExistingItemCheck(object item, ref string strComment, ref UploadItemSelection.eExistingItemType existingItemType)
+        public static RepositoryItemBase ExistingItemCheck(object item, ref string strComment, ref UploadItemSelection.eExistingItemType existingItemType)
         {
             IEnumerable<object> existingRepoItems = new ObservableList<RepositoryItem>();
             bool existingItemIsExternalID = false;

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2022 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -38,14 +38,10 @@ namespace UnitTests.NonUITests
         [ClassInitialize]
         public static void ClassInitialize(TestContext TestContext)
         {
-            string Connectionstring = "filename=" + TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "DataSources" + Path.DirectorySeparatorChar + "LiteDB.db") + "; mode=Exclusive";
+            string Connectionstring = TestResources.GetTestResourcesFile(@"Solutions" + Path.DirectorySeparatorChar + "BasicSimple" + Path.DirectorySeparatorChar + "DataSources" + Path.DirectorySeparatorChar + "LiteDB.db");
             excelFilePath = TestResources.GetTestResourcesFile(@"Excel" + Path.DirectorySeparatorChar + "ExportedDS.xlsx");
 
             liteDB.FileFullPath = Connectionstring;
-
-
-
-
         }
 
         [TestMethod]
@@ -116,7 +112,7 @@ namespace UnitTests.NonUITests
         public void GetResult()
         {
             //Arrange
-            string Query = "db.MyCustomizedDataTable.find limit 1";
+            string Query = "SELECT $ FROM MyCustomizedDataTable limit 1";
 
             //Act
             object res = liteDB.GetResult(Query);
@@ -147,7 +143,7 @@ namespace UnitTests.NonUITests
 
             //Act
             liteDB.SaveTable(dataTable);
-            var a = liteDB.GetResult("db.MyCustomizedDataTable.count");
+            var a = liteDB.GetRowCount("MyCustomizedDataTable").ToString();
 
             //Assert
             Assert.AreEqual("1", a, "RowCount");
@@ -188,7 +184,7 @@ namespace UnitTests.NonUITests
 
             //Act
             liteDB.SaveTable(dataTable);
-            var a = liteDB.GetResult("db.MyCustomizedDataTable.count");
+            var a = liteDB.GetRowCount("MyCustomizedDataTable").ToString();
 
             //Assert
             Assert.AreEqual("1", a, "RowCount");
@@ -200,7 +196,7 @@ namespace UnitTests.NonUITests
         {
             //Arrange
             ActDSTableElement actDSTable = new ActDSTableElement();
-            string query = "db.MyCustomizedDataTable.find limit 1";
+            string query = "SELECT $ FROM MyCustomizedDataTable limit 1";
             actDSTable.ControlAction = ActDSTableElement.eControlAction.GetValue;
             actDSTable.Customized = true;
             actDSTable.ByNextAvailable = true;
@@ -223,7 +219,7 @@ namespace UnitTests.NonUITests
         {
             //Arrange
             ActDSTableElement actDSTable = new ActDSTableElement();
-            string query = "db.MyCustomizedDataTable.find limit 1";
+            string query = "SELECT $ FROM MyCustomizedDataTable limit 1";
             actDSTable.ControlAction = ActDSTableElement.eControlAction.GetValue;
             actDSTable.Customized = true;
             actDSTable.ByNextAvailable = false;
@@ -247,7 +243,7 @@ namespace UnitTests.NonUITests
         {
             //Arrange
             ActDSTableElement actDSTable = new ActDSTableElement();
-            string query = "db.MyCustomizedDataTable.find limit 1";
+            string query = "SELECT $ FROM MyCustomizedDataTable limit 1";
             actDSTable.ControlAction = ActDSTableElement.eControlAction.GetValue;
             actDSTable.Customized = false;
             actDSTable.ByNextAvailable = false;
@@ -285,12 +281,12 @@ namespace UnitTests.NonUITests
 
             //Clean up
             ActDSTableElement actDSTable = new ActDSTableElement();
-            string query = "db.MyCustomizedDataTable.update GINGER_USED= \"False\"";
+            string query = "update MyCustomizedDataTable SET GINGER_USED = \"False\"";
             actDSTable.ControlAction = ActDSTableElement.eControlAction.MarkAllUnUsed;
             liteDB.Execute(actDSTable, query);
 
             //Arrange
-            query = "db.MyCustomizedDataTable.update GINGER_USED= \"True\"";
+            query = "update MyCustomizedDataTable SET GINGER_USED = \"True\"";
             actDSTable.ControlAction = ActDSTableElement.eControlAction.MarkAsDone;
             actDSTable.DSTableName = "MyCustomizedDataTable";
             actDSTable.Customized = true;
@@ -305,7 +301,7 @@ namespace UnitTests.NonUITests
             liteDB.Execute(actDSTable, query);
 
             //Assert
-            query = "db.MyCustomizedDataTable.find GINGER_USED= \"True\"";
+            query = "SELECT $ FROM MyCustomizedDataTable where GINGER_USED= \"True\"";
             DataTable dt = liteDB.GetQueryOutput(query);
 
             Assert.AreEqual(1, dt.Rows.Count);
@@ -335,7 +331,7 @@ namespace UnitTests.NonUITests
         public void GetQueryOutput()
         {
             //Arrange
-            string Query = "db.MyCustomizedDataTable.find limit 1";
+            string Query = "SELECT $ FROM MyCustomizedDataTable limit 1";
 
             //Act
             DataTable res = liteDB.GetQueryOutput(Query);
@@ -348,7 +344,7 @@ namespace UnitTests.NonUITests
         public void ExportToExcel()
         {
             //Arrange
-            string Query = "db.MyCustomizedDataTable.find limit 1";
+            string Query = "SELECT $ FROM MyCustomizedDataTable limit 1";
 
             //Act
             DataTable dt = liteDB.GetQueryOutput(Query);
@@ -367,7 +363,7 @@ namespace UnitTests.NonUITests
             ObservableList<DataSourceTable> dataSourceTableList = liteDB.GetTablesList();
             DataSourceTable dataSource = null;
             List<string> mColumnNames = null;
-            string Query = "db.MyCustomizedDataTable.find limit 1";
+            string Query = "SELECT $ FROM MyCustomizedDataTable LIMIT 1";
 
             foreach (DataSourceTable dataSourceTable in dataSourceTableList)
             {

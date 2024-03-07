@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -268,6 +268,10 @@ namespace Ginger.ALM.Repository
                 QCTestPlanExplorerPage win = new QCTestPlanExplorerPage();
                 win.xCreateBusinessFlowFolder.Visibility = Visibility.Collapsed;//no need to create separate folder
                 uploadPath = win.ShowAsWindow(eWindowShowStyle.Dialog);
+                if (uploadPath == null)
+                {
+                    return false;
+                }
             }
             //upload the Activities Group
             Reporter.ToStatus(eStatusMsgKey.ExportItemToALM, null, activtiesGroup.Name);

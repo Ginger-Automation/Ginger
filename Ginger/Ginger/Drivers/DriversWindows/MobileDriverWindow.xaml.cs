@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1480,28 +1480,15 @@ namespace Ginger.Drivers.DriversWindows
             try
             {
                 System.Windows.Point pointOnMobile = new System.Windows.Point();
-                double ratio_X = 1;
-                double ratio_Y = 1;
+                double scale_factor_x = 1;
+                double scale_factor_y = 1;
 
                 ((GenericAppiumDriver)mDriver).CalculateSourceMobileImageConvertFactors(eImagePointUsage.Click);
-                ratio_X = (xDeviceScreenshotImage.Source.Width / ((GenericAppiumDriver)mDriver).SourceMobileImageWidthConvertFactor) / xDeviceScreenshotImage.ActualWidth;
-                ratio_Y = (xDeviceScreenshotImage.Source.Height / ((GenericAppiumDriver)mDriver).SourceMobileImageHeightConvertFactor) / xDeviceScreenshotImage.ActualHeight;
+                scale_factor_x = (xDeviceScreenshotImage.Source.Width / ((GenericAppiumDriver)mDriver).mScreenScaleFactorCorrectionX) / xDeviceScreenshotImage.ActualWidth;
+                scale_factor_y = (xDeviceScreenshotImage.Source.Height / ((GenericAppiumDriver)mDriver).mScreenScaleFactorCorrectionY) / xDeviceScreenshotImage.ActualHeight;
 
-                if (mDriver.GetAppType() == eAppType.Web && mDriver.GetDevicePlatformType() == eDevicePlatformType.Android)
-                {
-                    pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
-                    pointOnMobile.Y = (int)((pointOnImage.Y + xDeviceScreenshotImage.ActualHeight / 9) * ratio_Y);
-                    //else
-                    //{
-                    //    pointOnMobile.X = (int)((pointOnImage.X * ratio_X) / 3);
-                    //    pointOnMobile.Y = (int)((pointOnImage.Y * ratio_Y) / 3);
-                    //}
-                }
-                else
-                {
-                    pointOnMobile.X = (int)(pointOnImage.X * ratio_X);
-                    pointOnMobile.Y = (int)(pointOnImage.Y * ratio_Y);
-                }
+                pointOnMobile.X = (int)(pointOnImage.X * scale_factor_x);
+                pointOnMobile.Y = (int)(pointOnImage.Y * scale_factor_y);
 
                 return pointOnMobile;
             }

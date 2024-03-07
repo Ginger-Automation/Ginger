@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@ limitations under the License.
 */
 #endregion
 
-using System.Linq;
-using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.Repository;
-using Microsoft.CodeAnalysis;
 
 namespace Ginger.Reports
 {
@@ -34,6 +31,12 @@ namespace Ginger.Reports
         [IsSerializedForLocalRepository]
         public string Name { get; set; }
 
+        /// <summary>
+        /// used for backward compatibility
+        /// previously(2023.5 and earlier) it was used in this class but later on was shifted to ExecutionLoggerConfiguration.
+        /// To keep track of previously saved HTML URL. we use this attribute.
+        /// </summary>
+        public string CentralizedHTMLURL { get; set; }  
 
         private bool mLimitReportFolderSize;
         [IsSerializedForLocalRepository]
@@ -151,11 +154,9 @@ namespace Ginger.Reports
         {
             if (errorType.Equals(SerializationErrorType.PropertyNotFound))
             {
-                if (name == "CentralizedHtmlReportServiceURL" && GingerCoreCommonWorkSpace.Instance.Solution!=null )
+                if (name == "CentralizedHtmlReportServiceURL" && !string.IsNullOrEmpty(value) )
                 {
-                    GingerCoreCommonWorkSpace.Instance.Solution.
-                        ExecutionLoggerConfigurationSetList.FirstOrDefault((executionLogger)=>executionLogger.IsSelected).CentralizedHtmlReportServiceURL = value;
-
+                    CentralizedHTMLURL = value;    
                     return true;
                 }
 

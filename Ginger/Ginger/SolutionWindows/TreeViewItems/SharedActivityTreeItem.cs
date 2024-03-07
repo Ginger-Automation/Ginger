@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
                 TreeViewUtils.AddMenuItem(mContextMenu, "View Repository Item Usage", ShowUsage, null, eImageType.InstanceLink);
 
-                TreeViewUtils.AddMenuItem(mContextMenu, "Publish To Business Flows", ShowErrorHandlerPublishInfo, null, eImageType.Link);
+                TreeViewUtils.AddMenuItem(mContextMenu, "Publish To " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlows), ShowErrorHandlerPublishInfo, null, eImageType.Link);
 
                 AddSourceControlOptions(mContextMenu);
             }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -28,6 +29,9 @@ namespace GingerCore.Actions
     public class ActSetVariableValue : ActWithoutDriver
     {
         public override string ActionDescription { get { return "Set " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " Action"; } }
+
+        public override eImageType Image { get { return eImageType.Variable; } }
+
         public override string ActionUserDescription { get { return "Allows to set the value of a " + GingerDicser.GetTermResValue(eTermResKey.Variable) + " in run time"; } }
 
         private bool isAutoGenerateValuesucceed;

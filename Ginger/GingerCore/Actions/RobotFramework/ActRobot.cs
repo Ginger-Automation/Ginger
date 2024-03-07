@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Repository;
 using GingerCore.GeneralLib;
@@ -41,6 +42,8 @@ namespace GingerCore.Actions.RobotFramework
         public ActInputValue RobotLibraries => GetOrCreateInputParam(nameof(RobotLibraries));
 
         public override string ActionDescription { get { return "Robot File Action"; } }
+
+        public override eImageType Image { get { return eImageType.Robot; } }
 
         public override string ActionUserDescription { get { return "Description for Robot File Action"; } }
 

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -268,15 +268,62 @@ namespace Ginger.Run
             // temp to be configure later !!!!!!!!!!!!!!!!!!!!!!!
             //RunListeners.Add(new ExecutionProgressReporterListener()); //Disabling till ExecutionLogger code will be enhanced
             RunListeners.Add(new ExecutionLoggerManager(mContext, ExecutedFrom));
+            InitializeAccountReportExecutionLogger();
+            InitializeSealightReportExecutionLogger();
 
-            if (mSelectedExecutionLoggerConfiguration != null && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes)
+            if (WorkSpace.Instance!=null && WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
+            {
+                WorkSpace.Instance.Solution.LoggerConfigurations.PublishToCentralizedDbChanged -= InitializeAccountReportExecutionLogger;
+                WorkSpace.Instance.Solution.LoggerConfigurations.PublishToCentralizedDbChanged += InitializeAccountReportExecutionLogger;
+            }
+
+            if(WorkSpace.Instance != null && WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.SealightsConfiguration!=null)
+            {
+                WorkSpace.Instance.Solution.SealightsConfiguration.SealightsConfigChanged -= InitializeSealightReportExecutionLogger;
+                WorkSpace.Instance.Solution.SealightsConfiguration.SealightsConfigChanged += InitializeSealightReportExecutionLogger;
+            }
+        }
+
+        public void InitializeAccountReportExecutionLogger()
+        {
+            var accountReportExecutionLogger = RunListeners.Find((runListeners) => runListeners.GetType() == typeof(AccountReportExecutionLogger));
+
+            if (mSelectedExecutionLoggerConfiguration != null 
+                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.Yes &&
+                accountReportExecutionLogger == null)
             {
                 RunListeners.Add(new AccountReportExecutionLogger(mContext));
             }
+            
+            else if (
+                mSelectedExecutionLoggerConfiguration != null
+                && mSelectedExecutionLoggerConfiguration.PublishLogToCentralDB == ePublishToCentralDB.No &&
+                accountReportExecutionLogger!=null
+                )
+            {
+                RunListeners.Remove(accountReportExecutionLogger);
+            }
+        }
 
-            if (mSelectedExecutionLoggerConfiguration != null && WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes)
+        public void InitializeSealightReportExecutionLogger()
+        {
+            var seaLightReportExecutionLogger = RunListeners.Find((runListeners) => runListeners.GetType() == typeof(SealightsReportExecutionLogger));
+
+            if(mSelectedExecutionLoggerConfiguration!=null &&
+               WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.Yes &&
+                seaLightReportExecutionLogger == null
+                )
             {
                 RunListeners.Add(new SealightsReportExecutionLogger(mContext));
+            }
+
+            else if(
+                mSelectedExecutionLoggerConfiguration != null &&
+               WorkSpace.Instance.Solution.SealightsConfiguration.SealightsLog == Configurations.SealightsConfiguration.eSealightsLog.No &&
+                seaLightReportExecutionLogger != null
+                )
+            {
+                RunListeners.Remove(seaLightReportExecutionLogger);
             }
         }
 
@@ -410,7 +457,7 @@ namespace Ginger.Run
                         newBFRun.BusinessFlowCustomizedRunVariables.Add(varCopy);
                     }
                 }
-                
+
                 newBFRuns.Add(newBFRun);
             }
 
@@ -434,12 +481,11 @@ namespace Ginger.Run
             return result;
         }
 
-        
 
 
         public void RunRunner(bool doContinueRun = false)
         {
-            bool runnerExecutionSkipped = false;         
+            bool runnerExecutionSkipped = false;
             try
             {
                 if (mGingerRunner.Active == false || BusinessFlows.Count == 0 || BusinessFlows.FirstOrDefault(x => x.Active) == null)
@@ -496,7 +542,7 @@ namespace Ginger.Run
                 {
                     mRunSource = eRunSource.Runner;
                 }
-                int? flowControlIndx = null;          
+                int? flowControlIndx = null;
                 for (int bfIndx = startingBfIndx; bfIndx < BusinessFlows.Count; CalculateNextBFIndx(ref flowControlIndx, ref bfIndx))
                 {
 
@@ -518,7 +564,14 @@ namespace Ginger.Run
                         CalculateBusinessFlowFinalStatus(executedBusFlow);
                         continue;
                     }
-                    if(WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && executedBusFlow.RunStatus == eRunStatus.Passed)
+                    else if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && executedBusFlow.RunStatus == eRunStatus.Skipped)
+                    {
+                        SetBusinessFlowActivitiesAndActionsSkipStatus(executedBusFlow);
+                        CalculateBusinessFlowFinalStatus(executedBusFlow);
+                        continue;
+                    }
+
+                    if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig.ReRunConfigurations.Active && executedBusFlow.RunStatus == eRunStatus.Passed)
                     {
                         SetBusinessFlowActivitiesAndActionsSkipStatus(executedBusFlow);
                         CalculateBusinessFlowFinalStatus(executedBusFlow);
@@ -676,7 +729,7 @@ namespace Ginger.Run
                             {
                                 runsetAction.Status = prevStatus;
                             }
-                        } 
+                        }
                     }
                 });
 
@@ -740,7 +793,7 @@ namespace Ginger.Run
         }
 
 
-
+        private static readonly SemaphoreSlim semaphoreSlim = new(1, 1);
         private void SetupVirtualAgents()
         {
             if (WorkSpace.Instance != null && WorkSpace.Instance.RunsetExecutor != null && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null)
@@ -757,36 +810,43 @@ namespace Ginger.Run
                         {
                             ObservableList<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
 
-                            var agent = (from a in agents where a.Name == applicationAgent.AgentName select a).FirstOrDefault();
-
-                            if (agent != null)
+                            var agent = agents.FirstOrDefault(a => a.Name.Equals(applicationAgent.AgentName));
+                            try
                             {
-                                if (agent.AgentOperations == null)
+                                semaphoreSlim.Wait();
+                                if (agent != null)
                                 {
-                                    AgentOperations agentOperations = new AgentOperations(agent);
-                                    agent.AgentOperations = agentOperations;
+                                    if (agent.AgentOperations == null)
+                                    {
+                                        AgentOperations agentOperations = new AgentOperations(agent);
+                                        agent.AgentOperations = agentOperations;
+                                    }
+                                    //logic for if need to assign virtual agent
+                                    if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Any(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)))
+                                    {
+                                        var virtualagent = agent.CreateCopy(true) as Agent;
+                                        virtualagent.AgentOperations = new AgentOperations(virtualagent);
+                                        virtualagent.ParentGuid = agent.Guid;
+                                        virtualagent.Name = agent.Name + " Virtual";
+                                        virtualagent.IsVirtual = true;
+                                        virtualagent.DriverClass = agent.DriverClass;
+                                        virtualagent.DriverType = agent.DriverType;
+                                        applicationAgent.Agent = virtualagent;
+                                        virtualagent.DriverConfiguration = agent.DriverConfiguration;
+                                    }
                                 }
-                                //logic for if need to assign virtual agent
-                                if (agent.SupportVirtualAgent() && runSetConfig.ActiveAgentList.Where(y => y != null).Any(x => ((Agent)x).Guid == agent.Guid || (((Agent)x).ParentGuid != null && ((Agent)x).ParentGuid == agent.Guid)))
+
+
+                                if (applicationAgent.Agent != null)
                                 {
-                                    var virtualagent = agent.CreateCopy(true) as Agent;
-                                    virtualagent.AgentOperations = new AgentOperations(virtualagent);
-                                    virtualagent.ParentGuid = agent.Guid;
-                                    virtualagent.Name = agent.Name + " Virtual";
-                                    virtualagent.IsVirtual = true;
-                                    virtualagent.DriverClass = agent.DriverClass;
-                                    virtualagent.DriverType = agent.DriverType;
-                                    applicationAgent.Agent = virtualagent;
-                                    virtualagent.DriverConfiguration = agent.DriverConfiguration;
+                                    runSetConfig.ActiveAgentList.Add(applicationAgent.Agent);
                                 }
+
                             }
-
-
-                            if (applicationAgent.Agent != null)
+                            finally
                             {
-                                runSetConfig.ActiveAgentList.Add(applicationAgent.Agent);
+                                semaphoreSlim.Release();
                             }
-
                         }
                     }
 
@@ -1240,7 +1300,7 @@ namespace Ginger.Run
                 RunActivity(CurrentBusinessFlow.CurrentActivity, resetErrorHandlerExecutedFlag: false);
             }
             else if (handlerPostExecutionAction == eErrorHandlerPostExecutionAction.ReRunBusinessFlow)
-            {                
+            {
                 RunBusinessFlow(CurrentBusinessFlow, doResetErrorHandlerExecutedFlag: false);
             }
         }
@@ -1803,7 +1863,7 @@ namespace Ginger.Run
             }
         }
         public void ProcessReturnValueForDriver(Act act)
-          {
+        {
             //Handle all output values, create Value for Driver for each
 
             foreach (ActReturnValue ARV in act.ActReturnValues)
@@ -2696,7 +2756,7 @@ namespace Ginger.Run
                     if (IsConditionTrue)
                     {
                         bool allowInterActivityFlowControls = true;
-                        if(WorkSpace.Instance.RunsetExecutor.RunSetConfig != null)
+                        if (WorkSpace.Instance.RunsetExecutor.RunSetConfig != null)
                         {
                             allowInterActivityFlowControls = WorkSpace.Instance.RunsetExecutor.RunSetConfig.AllowInterActivityFlowControls;
                         }
@@ -3274,76 +3334,74 @@ namespace Ginger.Run
                 {
                     case eOperator.Contains:
                         status = ARC.Actual.Contains(ARC.ExpectedCalculated);
-                        ErrorInfo = string.Format("'{0}' does not Contains '{1}'", ARC.Actual, ARC.ExpectedCalculated);
+                        ErrorInfo = string.Format("Validation failed because '{0}' does not contain '{1}'.", ARC.Actual, ARC.ExpectedCalculated);
                         break;
                     case eOperator.DoesNotContains:
                         status = !ARC.Actual.Contains(ARC.ExpectedCalculated);
-                        ErrorInfo = string.Format("'{0}' contains '{1}'", ARC.Actual, ARC.ExpectedCalculated);
+                        ErrorInfo = string.Format("Validation failed because '{0}' contains '{1}'.", ARC.Actual, ARC.ExpectedCalculated);
                         break;
                     case eOperator.Equals:
                         status = string.Equals(ARC.Actual, ARC.ExpectedCalculated);
-                        ErrorInfo = string.Format("'{0}' does not equals '{1}'", ARC.Actual, ARC.ExpectedCalculated);
+                        ErrorInfo = string.Format("Validation failed because '{0}' does not equal '{1}'.", ARC.Actual, ARC.ExpectedCalculated);
                         break;
                     case eOperator.Evaluate:
                         Expression = ARC.ExpectedCalculated;
-                        ErrorInfo = "Function evaluation didn't resulted in True";
+                        ErrorInfo = "Validation failed because expression does not evaluate to 'true'.";
                         break;
                     case eOperator.GreaterThan:
                         if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
                         {
                             status = false;
-                            ErrorInfo = "Actual and Expected both values should be numeric";
+                            ErrorInfo = "Validation failed because both Actual and Expected values must be numeric.";
                         }
                         else
                         {
                             Expression = ARC.Actual + ">" + ARC.ExpectedCalculated;
-                            ErrorInfo = string.Format("'{0}' is not greater than '{1}'", ARC.Actual, ARC.ExpectedCalculated);
+                            ErrorInfo = string.Format("Validation failed because '{0}' is not greater than '{1}'.", ARC.Actual, ARC.ExpectedCalculated);
                         }
                         break;
                     case eOperator.GreaterThanEquals:
                         if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
                         {
                             status = false;
-                            ErrorInfo = "Actual and Expected both values should be numeric";
+                            ErrorInfo = "Validation failed because both Actual and Expected values must be numeric.";
                         }
                         else
                         {
                             Expression = ARC.Actual + ">=" + ARC.ExpectedCalculated;
-
-                            ErrorInfo = string.Format("'{0}' is not greater or equals to '{1}'", ARC.Actual, ARC.ExpectedCalculated);
+                            ErrorInfo = string.Format("Validation failed because '{0}' is neither greater than nor equal to '{1}'.", ARC.Actual, ARC.ExpectedCalculated);
                         }
                         break;
                     case eOperator.LessThan:
                         if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
                         {
                             status = false;
-                            ErrorInfo = "Actual and Expected both values should be numeric";
+                            ErrorInfo = "Validation failed because both Actual and Expected values must be numeric.";
                         }
                         else
                         {
                             Expression = ARC.Actual + "<" + ARC.ExpectedCalculated;
-                            ErrorInfo = string.Format("'{0}' is not less than '{1}'", ARC.Actual, ARC.ExpectedCalculated);
-
+                            ErrorInfo = string.Format("Validation failed because '{0}' is not less than '{1}'.", ARC.Actual, ARC.ExpectedCalculated);
                         }
                         break;
                     case eOperator.LessThanEquals:
                         if (!CheckIfValuesCanbecompared(ARC.Actual, ARC.ExpectedCalculated))
                         {
                             status = false;
-                            ErrorInfo = "Actual and Expected both values should be numeric";
+                            ErrorInfo = "Validation failed because both Actual and Expected values must be numeric.";
                         }
                         else
                         {
                             Expression = ARC.Actual + "<=" + ARC.ExpectedCalculated;
-                            ErrorInfo = string.Format("'{0}' is not less or equals to '{1}'", ARC.Actual, ARC.ExpectedCalculated);
+                            ErrorInfo = string.Format("Validation failed because '{0}' is neither less than nor equal to '{1}'.", ARC.Actual, ARC.ExpectedCalculated);
                         }
                         break;
                     case eOperator.NotEquals:
                         status = !string.Equals(ARC.Actual, ARC.ExpectedCalculated);
-                        ErrorInfo = string.Format("'{0}' is equals to '{1}'", ARC.Actual, ARC.ExpectedCalculated);
+                        ErrorInfo = string.Format("Validation failed because '{0}' equals '{1}'.", ARC.Actual, ARC.ExpectedCalculated);
                         break;
                     default:
-                        ErrorInfo = "Not Supported Operation";
+                        ErrorInfo = "Unsupported Operation!";
                         break;
 
                 }
@@ -3372,8 +3430,6 @@ namespace Ginger.Run
         {
             try
             {
-
-
                 double.Parse(actual);
                 double.Parse(actual);
                 return true;
@@ -4538,7 +4594,7 @@ namespace Ginger.Run
                         if (currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Passed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Failed && currentActivityGroup.RunStatus != eActivitiesGroupRunStatus.Stopped)
                         {
                             currentActivityGroup.ExecutionLoggerStatus = executionLoggerStatus.NotStartedYet;
-                        }                       
+                        }
                         else
                         {
                             switch (currentActivityGroup.ExecutionLoggerStatus)
@@ -4875,7 +4931,7 @@ namespace Ginger.Run
                     applicationAgent.Agent == null &&
                     applicationAgent.AppPlatform != null &&
                     applicationAgent.AppPlatform.Platform != ePlatformType.NA &&
-                    availableAgentForApp != null; 
+                    availableAgentForApp != null;
 
                 if (appNotMappedInBF || appHasNonNAPlatformButNoAgent)
                 {

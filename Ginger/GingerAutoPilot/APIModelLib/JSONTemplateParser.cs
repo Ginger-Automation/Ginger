@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,11 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Repository;
+using Microsoft.CodeAnalysis;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NJsonSchema.Infrastructure;
+using NJsonSchema.Validation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -100,6 +104,25 @@ namespace Amdocs.Ginger.Common.APIModelLib
                 {
                     continue;
                 }
+                JToken jt2 = jt.SelectToken(Jn.Path);
+                if (IsValidJson(Jn.JsonString))
+                {
+                    JsonExtended je4Jn = new JsonExtended(Jn.JsonString);
+                    IEnumerable<JsonExtended> EEEL = je4Jn.GetEndingNodes();
+
+                    if (EEEL.FirstOrDefault() != null)
+                    {
+                        object[] BodyParamArrayTemp = GenerateBodyANdModelParameters(Jn.JsonString);
+
+                        foreach (var item in (ObservableList<AppModelParameter>)BodyParamArrayTemp[1])
+                        {
+                            AppModelParameters.Add(item);
+                        }
+
+                        ((JValue)jt2).Value = (string)BodyParamArrayTemp[0];
+                        continue;
+                    }
+                }
 
                 string tagName = Jn.Path.Split('.').LastOrDefault();
                 string paramname = tagName.ToUpper();
@@ -112,14 +135,14 @@ namespace Amdocs.Ginger.Common.APIModelLib
                 }
 
                 ParamPath.Add(param, Jn.Path);
-                JToken jt2 = jt.SelectToken(Jn.Path);
+
                 try
                 {
                     if (jt2.Type != JTokenType.String && jt2.Type != JTokenType.Object && jt2.Type != JTokenType.Array)
                     {
                         consts.Add(param);
                     }
-                    if(jt2.Type != JTokenType.Array && param=="<ID2>")
+                    if (jt2.Type != JTokenType.Array && param == "<ID2>")
                     {
                         consts.Add(param);
                     }
@@ -132,7 +155,7 @@ namespace Amdocs.Ginger.Common.APIModelLib
                     else
                     {
                         ((JValue)jt2).Value = param;
-                        
+
                     }
                 }
 
@@ -147,7 +170,8 @@ namespace Amdocs.Ginger.Common.APIModelLib
                     }
                     jt2.Replace(param);
                 }
-                AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue>()));
+                AppModelParameters.Add(new AppModelParameter(param, "", tagName, Jn.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = Jn.JsonString.Replace("\"", ""), IsDefault=true } }));
+
 
             }
             string body = jt.ToString();
@@ -158,6 +182,47 @@ namespace Amdocs.Ginger.Common.APIModelLib
             BodyParamArray[0] = body;
             BodyParamArray[1] = AppModelParameters;
             return BodyParamArray;
+        }
+
+        private static bool IsValidJson(string json)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(json) || !json.Contains('{'))
+                {
+                    return false;
+                }
+
+                JToken.Parse(json);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static void SetOptionalValuesList(IEnumerable<JsonExtended> EndingNodesOFEN, ObservableList<AppModelParameter> AppModelParameters)
+        {
+            foreach (var optionalValueItem in EndingNodesOFEN)
+            {
+                if (optionalValueItem == null)
+                {
+                    continue;
+                }
+                else
+                {
+
+                    string insidetagName = optionalValueItem.Path.Split('.').LastOrDefault();
+                    string insideparamname = insidetagName.ToUpper();
+
+                    insideparamname = "<" + insideparamname + ">";
+
+
+                    AppModelParameters.Add(new AppModelParameter(insideparamname, "", insidetagName, optionalValueItem.Path, new ObservableList<OptionalValue> { new OptionalValue() { Value = optionalValueItem.JsonString } }));
+
+                }
+            }
         }
     }
 }

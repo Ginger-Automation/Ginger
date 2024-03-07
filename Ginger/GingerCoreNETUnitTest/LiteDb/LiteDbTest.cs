@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.CoreNET.LiteDBFolder;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using LiteDB;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -28,7 +46,7 @@ namespace GingerCoreNETUnitTest.LiteDb
         public void ReadAndUpdateLiteDbData()
         {
             var bfLiteColl = dbConector.GetCollection<GingerBusinessFlow>("BusinessFlows");
-            var filterData = dbConector.FilterCollection(bfLiteColl, Query.Contains("Name", "bf name"));
+            var filterData = dbConector.FilterCollection(GingerBusinessFlow.IncludeAllReferences(bfLiteColl), Query.Contains("Name", "bf name"));
             filterData.ForEach(a => a.Name = a.Name + " Modified BF");
             dbConector.SetCollection(bfLiteColl, filterData);
             Assert.IsTrue(bfLiteColl.Count() > 0);
@@ -83,12 +101,12 @@ namespace GingerCoreNETUnitTest.LiteDb
 
         }
 
-        private LiteCollection<GingerBusinessFlow> GetBfLiteData()
+        private ILiteCollection<GingerBusinessFlow> GetBfLiteData()
         {
             return dbConector.GetCollection<GingerBusinessFlow>("BusinessFlows");
         }
 
-        private LiteCollection<GingerActvityGroup> GetActGrLiteData()
+        private ILiteCollection<GingerActvityGroup> GetActGrLiteData()
         {
             return dbConector.GetCollection<GingerActvityGroup>("ActivityGroups");
         }

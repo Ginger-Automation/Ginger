@@ -318,7 +318,7 @@
                         </DockPanel>
                         <Grid x:Name="xActivitiesDataGrid" DockPanel.Dock="Top" Visibility="Visible" Background="Transparent">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="650"/>
+                                <ColumnDefinition Width="550"/>
                                 <ColumnDefinition Width="300*"/>
                                 <ColumnDefinition x:Name="xAddActionsColumn" Width="5" MinWidth="5" MaxWidth="1300"/>
                             </Grid.ColumnDefinitions>
@@ -327,7 +327,7 @@
                                 <Frame x:Name="xActivitiesListFrame"  Content="Activities List Frame" Margin="10,0,10,0" NavigationUIVisibility="Hidden"  />
                             </Border>
 
-                            <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="1" HorizontalAlignment="Left" Background="DarkGray"  VerticalAlignment="Stretch"  IsEnabled="True" Margin="0,0,0,0"/>
+                            <GridSplitter x:Name="xActivityDetailsSectionSpliter" ResizeDirection="Columns" Grid.Column="1" Width="1" HorizontalAlignment="Left" Background="DarkGray"  VerticalAlignment="Stretch"  IsEnabled="True" Margin="0,0,0,10"/>
 
                             <StackPanel x:Name="xCurrentActivityLoadingIconPnl" Grid.Column="1" HorizontalAlignment="Center" Visibility="Collapsed" VerticalAlignment="Center" >
                                 <UserControls:ImageMakerControl x:Name="xCurrentActivityLoadingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />

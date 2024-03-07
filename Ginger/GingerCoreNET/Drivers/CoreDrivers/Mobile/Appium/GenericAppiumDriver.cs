@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ limitations under the License.
 
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -95,6 +95,16 @@ namespace Amdocs.Ginger.CoreNET
         public String Proxy { get; set; }
 
         [UserConfigured]
+        [UserConfiguredDefault("Default")]
+        [UserConfiguredDescription("Screen Scale Factor Correction for X coordinate, needed for fixing screen mouse click/point accuracy (decimal number)")]
+        public String ScreenScaleFactorCorrectionX { get; set; }
+
+        [UserConfigured]
+        [UserConfiguredDefault("Default")]
+        [UserConfiguredDescription("Screen Scale Factor Correction for Y coordinate, needed for fixing screen mouse click/point accuracy (decimal number)")]
+        public String ScreenScaleFactorCorrectionY { get; set; }
+
+        [UserConfigured]
         [UserConfiguredEnumType(typeof(eDevicePlatformType))]
         [UserConfiguredDefault("Android")]
         [UserConfiguredDescription("Device platform type 'Android' or 'iOS'")]
@@ -149,8 +159,8 @@ namespace Amdocs.Ginger.CoreNET
         bool mIsDeviceConnected = false;
         string mDefaultURL = null;
 
-        public double SourceMobileImageWidthConvertFactor = 1;
-        public double SourceMobileImageHeightConvertFactor = 1;
+        public double mScreenScaleFactorCorrectionX = 1;
+        public double mScreenScaleFactorCorrectionY = 1;
 
         public bool IsDeviceConnected
         {
@@ -167,7 +177,6 @@ namespace Amdocs.Ginger.CoreNET
 
         private AppiumDriver Driver;//appium 
         private SeleniumDriver mSeleniumDriver;//selenium 
-
         public override bool StopProcess
         {
             get
@@ -909,11 +918,11 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeDown:
-                        SwipeScreen(eSwipeSide.Down, 0.25);
+                        SwipeScreen(eSwipeSide.Down, 1);
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.SwipeUp:
-                        SwipeScreen(eSwipeSide.Up, 0.25);
+                        SwipeScreen(eSwipeSide.Up, 1);
                         break;
                     case ActMobileDevice.eMobileDeviceAction.SwipeLeft:
                         SwipeScreen(eSwipeSide.Left);
@@ -1094,14 +1103,29 @@ namespace Amdocs.Ginger.CoreNET
         }
         public string CameraAndBarcodeSimulationRequest(Bitmap picture, ImageFormat format, string contentType, string fileName, string action)
         {
-            MemoryStream ms = new MemoryStream();
             string encodeString = "0";
-            if (picture != null)
+            Byte[] bytes = null;
+            try
             {
-                picture.Save(ms, format);
-                Byte[] bytes = ms.ToArray();
-                encodeString = Convert.ToBase64String(bytes);
+                using (MemoryStream ms = new MemoryStream())
+                {
+
+                    if (picture != null)
+                    {
+                        picture.Save(ms, format);
+                        bytes = ms.ToArray();
+                        encodeString = Convert.ToBase64String(bytes);
+                    }
+                }
             }
+            finally
+            {
+                if (bytes != null)
+                {
+                    Array.Clear(bytes);
+                }
+            }
+            
             Dictionary<string, string> sensorSimulationMap = new Dictionary<string, string>
             {
                 { "uploadMedia", encodeString },
@@ -1409,7 +1433,6 @@ namespace Amdocs.Ginger.CoreNET
 
         public void SwipeScreen(eSwipeSide side, double impact = 1)
         {
-            impact = 1;
             System.Drawing.Size sz = Driver.Manage().Window.Size;
             double startX;
             double startY;
@@ -1421,24 +1444,24 @@ namespace Amdocs.Ginger.CoreNET
                     startX = sz.Width * 0.5;
                     startY = sz.Height * 0.3;
                     endX = sz.Width * 0.5;
-                    endY = sz.Height * 0.7 * impact;
+                    endY = startY + (sz.Height * 0.4 * impact);
                     break;
                 case eSwipeSide.Up: // center of header
                     startX = sz.Width * 0.5;
-                    startY = sz.Height * 0.7 * impact;
+                    startY = sz.Height * 0.7;
                     endX = sz.Width * 0.5;
-                    endY = sz.Height * 0.3;
+                    endY = startY - (sz.Height * 0.4 * impact);
                     break;
                 case eSwipeSide.Right: // center of left side
-                    startX = sz.Width * 0.8 * impact;
+                    startX = sz.Width * 0.3;
                     startY = sz.Height * 0.5;
-                    endX = sz.Width * 0.1;
+                    endX = startX + (sz.Width * 0.4 * impact);
                     endY = sz.Height * 0.5;
                     break;
                 case eSwipeSide.Left: // center of right side
-                    startX = sz.Width * 0.1;
+                    startX = sz.Width * 0.7;
                     startY = sz.Height * 0.5;
-                    endX = sz.Width * 0.8 * impact;
+                    endX = startX - (sz.Width * 0.4 * impact);
                     endY = sz.Height * 0.5;
                     break;
                 default:
@@ -1448,25 +1471,14 @@ namespace Amdocs.Ginger.CoreNET
             (BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();            
         }
 
-        public ITouchAction BuildTouchAction(AppiumDriver driver, double startX, double startY, double endX, double endY, int waitDuration=200)
+        public ITouchAction BuildTouchAction(AppiumDriver driver, double startX, double startY, double endX, double endY, int waitDuration = 200)
         {
             ITouchAction touchAction;
-            
-            if (DevicePlatformType == eDevicePlatformType.Android)
-            {
-                touchAction = new TouchAction(driver)
-               .Press(startX, startY)
-               .MoveTo(endX, endY)
-               .Release();
-            }
-            else //iOS
-            {
-                touchAction = new TouchAction(driver)
-                .Press(startX, startY)
-                .Wait(waitDuration)
-                .MoveTo(endX, endY)
-                .Release();
-            }
+            touchAction = new TouchAction(driver)
+            .Press(startX, startY)
+            .Wait(waitDuration)
+            .MoveTo(endX, endY)
+            .Release();
 
             return touchAction;
         }
@@ -1589,7 +1601,7 @@ namespace Amdocs.Ginger.CoreNET
             //NA
         }
 
-        async void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        async void IWindowExplorer.HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
             if (AppType == eAppType.Web)
             {
@@ -2480,7 +2492,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     default:
-                        elem = mSeleniumDriver.LocateElementByLocator(EL);
+                        elem = mSeleniumDriver.LocateElementByLocator(EL, Driver); 
                         break;
                 }
             }
@@ -2686,7 +2698,7 @@ namespace Amdocs.Ginger.CoreNET
         {
             Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
             string filename = Path.GetTempFileName();
-            ss.SaveAsFile(filename, ScreenshotImageFormat.Png);
+            ss.SaveAsFile(filename);
             return new System.Drawing.Bitmap(filename);
         }
 
@@ -2885,38 +2897,45 @@ namespace Amdocs.Ginger.CoreNET
 
         public void CalculateSourceMobileImageConvertFactors(eImagePointUsage factorUsage)
         {
-            SourceMobileImageWidthConvertFactor = 1;
-            SourceMobileImageHeightConvertFactor = 1;
+            mScreenScaleFactorCorrectionX = 1;
+            mScreenScaleFactorCorrectionY = 1;
+           
 
-            if (factorUsage == eImagePointUsage.Explore && AppType == eAppType.Web)
+            //override with user configuration
+            double userScreenScaleFactorCorrectionX;
+            if (double.TryParse(ScreenScaleFactorCorrectionX, out userScreenScaleFactorCorrectionX))
             {
-                SourceMobileImageWidthConvertFactor = 3;
-                SourceMobileImageHeightConvertFactor = 3;
+                mScreenScaleFactorCorrectionX = userScreenScaleFactorCorrectionX;
+            }
+            double userScreenScaleFactorCorrectionY;
+            if (double.TryParse(ScreenScaleFactorCorrectionY, out userScreenScaleFactorCorrectionY))
+            {
+                mScreenScaleFactorCorrectionY = userScreenScaleFactorCorrectionY;
             }
         }       
 
         public override Point GetPointOnAppWindow(Point clickedPoint, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight)
-        {
-            Point pointOnAppScreen = new Point();
-            double ratio_X = 1, ratio_Y = 1;
+        {           
+            double scale_factor_x = 1, scale_factor_y = 1;
             CalculateSourceMobileImageConvertFactors(eImagePointUsage.Explore);
-            ratio_X = (SrcWidth / SourceMobileImageWidthConvertFactor) / ActWidth;
-            ratio_Y = (SrcHeight / SourceMobileImageHeightConvertFactor) / ActHeight;
+            scale_factor_x = (SrcWidth / mScreenScaleFactorCorrectionX) / ActWidth;
+            scale_factor_y = (SrcHeight / mScreenScaleFactorCorrectionY) / ActHeight;
 
-            pointOnAppScreen.X = (int)(clickedPoint.X * ratio_X);
-            pointOnAppScreen.Y = (int)(clickedPoint.Y * ratio_Y);
+            Point pointOnAppScreen = new Point();
+            pointOnAppScreen.X = (int)(clickedPoint.X * scale_factor_x);
+            pointOnAppScreen.Y = (int)(clickedPoint.Y * scale_factor_y);
 
             return pointOnAppScreen;
         }
 
         public override bool SetRectangleProperties(ref Point ElementStartPoints, ref Point ElementMaxPoints, double SrcWidth, double SrcHeight, double ActWidth, double ActHeight, ElementInfo clickedElementInfo)
         {
-            double ratio_X, ratio_Y;
+            double scale_factor_x, scale_factor_y;
             XmlNode rectangleXmlNode = clickedElementInfo.ElementObject as XmlNode;
 
             CalculateSourceMobileImageConvertFactors(eImagePointUsage.Explore);
-            ratio_X = (SrcWidth / SourceMobileImageWidthConvertFactor) / ActWidth;
-            ratio_Y = (SrcHeight / SourceMobileImageHeightConvertFactor) / ActHeight;
+            scale_factor_x = (SrcWidth / mScreenScaleFactorCorrectionX) / ActWidth;
+            scale_factor_y = (SrcHeight / mScreenScaleFactorCorrectionY) / ActHeight;
 
             switch (DevicePlatformType)
             {
@@ -2924,14 +2943,14 @@ namespace Amdocs.Ginger.CoreNET
 
                     if (AppType == eAppType.Web)
                     {
-                        ratio_X = (SrcWidth * 3) / ActWidth;
-                        ratio_Y = (SrcHeight * 3) / ActHeight;
+                        scale_factor_x = (SrcWidth * 3) / ActWidth;
+                        scale_factor_y = (SrcHeight * 3) / ActHeight;
 
-                        ElementStartPoints.X = (int)(ElementStartPoints.X * ratio_X);
-                        ElementStartPoints.Y = (int)(ElementStartPoints.Y * ratio_Y);
+                        ElementStartPoints.X = (int)(ElementStartPoints.X * scale_factor_x);
+                        ElementStartPoints.Y = (int)(ElementStartPoints.Y * scale_factor_y);
 
-                        ElementMaxPoints.X = (int)(ElementMaxPoints.X * ratio_X);
-                        ElementMaxPoints.Y = (int)(ElementMaxPoints.Y * ratio_Y);
+                        ElementMaxPoints.X = (int)(ElementMaxPoints.X * scale_factor_x);
+                        ElementMaxPoints.Y = (int)(ElementMaxPoints.Y * scale_factor_y);
                     }
                     else
                     {
@@ -2942,11 +2961,11 @@ namespace Amdocs.Ginger.CoreNET
                         string[] boundsXY = bounds.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                         if (boundsXY.Count() == 4)
                         {
-                            ElementStartPoints.X = (int)(Convert.ToInt64(boundsXY[0]) / ratio_X);
-                            ElementStartPoints.Y = (int)(Convert.ToInt64(boundsXY[1]) / ratio_Y);
+                            ElementStartPoints.X = (int)(Convert.ToInt64(boundsXY[0]) / scale_factor_x);
+                            ElementStartPoints.Y = (int)(Convert.ToInt64(boundsXY[1]) / scale_factor_y);
 
-                            ElementMaxPoints.X = (int)(Convert.ToInt64(boundsXY[2]) / ratio_X);
-                            ElementMaxPoints.Y = (int)(Convert.ToInt64(boundsXY[3]) / ratio_Y);
+                            ElementMaxPoints.X = (int)(Convert.ToInt64(boundsXY[2]) / scale_factor_x);
+                            ElementMaxPoints.Y = (int)(Convert.ToInt64(boundsXY[3]) / scale_factor_y);
                         }
                     }
                     break;
@@ -2954,10 +2973,10 @@ namespace Amdocs.Ginger.CoreNET
                 case eDevicePlatformType.iOS:
                     if (AppType == eAppType.Web)
                     {
-                        ElementStartPoints.X = (int)(ElementStartPoints.X / ratio_X);
-                        ElementStartPoints.Y = (int)(ElementStartPoints.Y / ratio_Y);
-                        ElementMaxPoints.X = (int)(ElementMaxPoints.X / ratio_X);
-                        ElementMaxPoints.Y = (int)(ElementMaxPoints.Y / ratio_Y);
+                        ElementStartPoints.X = (int)(ElementStartPoints.X / scale_factor_x);
+                        ElementStartPoints.Y = (int)(ElementStartPoints.Y / scale_factor_y);
+                        ElementMaxPoints.X = (int)(ElementMaxPoints.X / scale_factor_x);
+                        ElementMaxPoints.Y = (int)(ElementMaxPoints.Y / scale_factor_y);
                     }
                     else
                     {
@@ -2966,11 +2985,11 @@ namespace Amdocs.Ginger.CoreNET
                         string hgt = GetAttrValue(rectangleXmlNode, "height");
                         string wdth = GetAttrValue(rectangleXmlNode, "width");
 
-                        ElementStartPoints.X = (int)(Convert.ToInt32(x) / ratio_X);
-                        ElementStartPoints.Y = (int)(Convert.ToInt32(y) / ratio_Y);
+                        ElementStartPoints.X = (int)(Convert.ToInt32(x) / scale_factor_x);
+                        ElementStartPoints.Y = (int)(Convert.ToInt32(y) / scale_factor_y);
 
-                        ElementMaxPoints.X = ElementStartPoints.X + Convert.ToInt32(Convert.ToInt32(wdth) / ratio_X);
-                        ElementMaxPoints.Y = ElementStartPoints.Y + Convert.ToInt32(Convert.ToInt32(hgt) / ratio_Y);
+                        ElementMaxPoints.X = ElementStartPoints.X + Convert.ToInt32(Convert.ToInt32(wdth) / scale_factor_x);
+                        ElementMaxPoints.Y = ElementStartPoints.Y + Convert.ToInt32(Convert.ToInt32(hgt) / scale_factor_y);
                     }
 
                     break;

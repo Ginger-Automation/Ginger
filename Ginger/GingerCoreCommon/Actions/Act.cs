@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1023,8 +1023,11 @@ namespace GingerCore.Actions
         {
             try
             {
-                ScreenShots.Add(SaveScreenshotToTempFile(bmp));
-                ScreenShotsNames.Add(Name);
+                using (bmp)
+                {
+                    ScreenShots.Add(SaveScreenshotToTempFile(bmp));
+                    ScreenShotsNames.Add(Name);
+                }        
             }
             catch (Exception ex)
             {
@@ -1035,9 +1038,10 @@ namespace GingerCore.Actions
 
         public void AddScreenShot(string Base64String, string Name = "")
         {
+            byte[] bytes = Convert.FromBase64String(Base64String);
             try
             {
-                byte[] bytes = Convert.FromBase64String(Base64String);
+                
                 string filePath = GetScreenShotRandomFileName();
                 using (FileStream fs = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
                 {
@@ -1052,8 +1056,15 @@ namespace GingerCore.Actions
                 Error = "Failed to save the screenshot bitmap to temp file. Error= " + ex.Message;
                 Reporter.ToLog(eLogLevel.ERROR, Error, ex);
             }
+            finally
+            {
+                if(bytes != null)
+                {
+                    Array.Clear(bytes);
+                }
+                
+            }
         }
-
 
         public void AddScreenShot(byte[] bytes, string Name)
         {
@@ -1070,6 +1081,13 @@ namespace GingerCore.Actions
             catch (Exception ex)
             {
                 Error += "Unable to add Screen shot " + ex.Message;
+            }
+            finally
+            {
+                if (bytes != null)
+                {
+                    Array.Clear(bytes);
+                }
             }
         }
 

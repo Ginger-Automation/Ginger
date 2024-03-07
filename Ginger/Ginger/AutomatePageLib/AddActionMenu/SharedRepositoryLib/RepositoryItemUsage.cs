@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using GingerCore;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Ginger.Repository
@@ -179,6 +180,19 @@ namespace Ginger.Repository
             {
                 mActivityList = value;
                 OnPropertyChanged(nameof(ActivityNameList));
+            }
+        }
+
+        private Dictionary<string, string> mActivityGroupMapping = new Dictionary<string, string>();
+        public Dictionary<string, string> ActivityGroupMapping
+        {
+            get
+            {
+                return mActivityGroupMapping;
+            }
+            set
+            {
+                mActivityGroupMapping = value;
             }
         }
 

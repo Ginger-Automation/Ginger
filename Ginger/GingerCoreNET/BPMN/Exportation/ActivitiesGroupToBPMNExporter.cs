@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,32 +27,43 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using GingerUtils;
 
+#nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
 {
     public sealed class ActivitiesGroupToBPMNExporter
     {
         private readonly ActivitiesGroup _activityGroup;
+        private readonly CollaborationFromActivityGroupCreator.Options? _activityGroupCollaborationOptions;
         private readonly string _exportPath;
 
         public ActivitiesGroupToBPMNExporter(ActivitiesGroup activityGroup, string exportPath)
         {
             _activityGroup = activityGroup;
+            _activityGroupCollaborationOptions = null;
+            _exportPath = exportPath;
+        }
+
+        public ActivitiesGroupToBPMNExporter(ActivitiesGroup activityGroup, CollaborationFromActivityGroupCreator.Options activityGroupCollaborationOptions, string exportPath)
+        {
+            _activityGroup = activityGroup;
+            _activityGroupCollaborationOptions = activityGroupCollaborationOptions;
             _exportPath = exportPath;
         }
 
         public string Export()
         {
-            BPMNFileData activityGroupBPMNFileData = CreateActivityGroupBPMNFileData(_activityGroup);
+            BPMNFileData activityGroupBPMNFileData = CreateActivityGroupBPMNFileData();
             string filePath = CreateBPMNFile(activityGroupBPMNFileData);
             return filePath;
         }
 
-        private BPMNFileData CreateActivityGroupBPMNFileData(ActivitiesGroup activityGroup)
+        private BPMNFileData CreateActivityGroupBPMNFileData()
         {
-            Collaboration activityGroupCollaboration = CreateCollaborationFromActivityGroup(activityGroup);
+            Collaboration activityGroupCollaboration = CreateCollaborationFromActivityGroup();
             string activityGroupCollaborationXML = SerializeCollaborationToXML(activityGroupCollaboration);
-            string activityGroupCollaborationBPMNFileName = $"subprocess-{activityGroup.Guid}.bpmn";
+            string activityGroupCollaborationBPMNFileName = $"subprocess-{_activityGroup.Name}.bpmn";
             return new BPMNFileData(activityGroupCollaborationBPMNFileName, activityGroupCollaborationXML);
         }
 
@@ -63,9 +74,17 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             return xml;
         }
 
-        private Collaboration CreateCollaborationFromActivityGroup(ActivitiesGroup activityGroup)
+        private Collaboration CreateCollaborationFromActivityGroup()
         {
-            CollaborationFromActivityGroupCreator collaborationFromActivityGroupCreator = new(activityGroup);
+            CollaborationFromActivityGroupCreator collaborationFromActivityGroupCreator;
+            if (_activityGroupCollaborationOptions != null)
+            {
+                collaborationFromActivityGroupCreator = new(_activityGroup, _activityGroupCollaborationOptions);
+            }
+            else
+            {
+                collaborationFromActivityGroupCreator = new(_activityGroup);
+            }
             Collaboration activityGroupCollaboration = collaborationFromActivityGroupCreator.Create();
             return activityGroupCollaboration;
         }
@@ -76,8 +95,13 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             {
                 Directory.CreateDirectory(_exportPath);
             }
+            
             string filePath = Path.Combine(_exportPath, bpmnFile.Name);
+
+            filePath = FileUtils.GetUniqueFilePath(filePath);
+
             File.WriteAllText(filePath, bpmnFile.Content);
+            
             return filePath;
         }
 

@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -73,6 +73,9 @@ namespace Amdocs.Ginger.Common
 
         // CDL
         public bool ShowCDL { get { return GetFeature(nameof(ShowCDL)).Selected; } set { UpdateFeature(nameof(ShowCDL), value); } }
+        
+        //Action 
+        public bool ShowAccessibilityTesting { get { return GetFeature(nameof(ShowAccessibilityTesting)).Selected; } set { UpdateFeature(nameof(ShowAccessibilityTesting), value); } }
 
         public BetaFeatures()
         {
@@ -103,7 +106,8 @@ namespace Amdocs.Ginger.Common
 
             //CDL            
             mFeatures.Add(new BetaFeature() { Group = "CDL", Description = "Show CDL - Change Definition Language", ID = nameof(ShowCDL) });
-
+            //Actions
+            mFeatures.Add(new BetaFeature() { Group = "Action", Description = "Show Accessibility Testing", ID = nameof(ShowAccessibilityTesting) });
             //hook prop change
             foreach (BetaFeature f in mFeatures)
             {

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -25,6 +25,6 @@ namespace GingerCore.ALM.QC
     {
         public string TestSetName { get; set; }
         public dynamic TestSetID { get; set; }
-        public List<string[]> TestSetStatuses { get; set; }
+        public dynamic TestSetStatuses { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -179,7 +179,12 @@ namespace GingerCore.Actions
             [EnumValueDescription("Set Blocked Urls")]
             SetBlockedUrls,
             [EnumValueDescription("Unblock Urls")]
-            UnblockeUrls
+            UnblockeUrls,
+            [EnumValueDescription("Switch To Shadow DOM")]
+            SwitchToShadowDOM,
+            [EnumValueDescription("Switch To Default DOM")]
+            SwitchToDefaultDOM
+
         }
 
         //TODO: For ActBroswer ObjectLocatrosConfigNeeded is false 

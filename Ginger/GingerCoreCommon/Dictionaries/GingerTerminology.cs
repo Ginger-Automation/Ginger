@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -89,8 +89,8 @@ namespace GingerCore
 
         static List<KeyValuePair<string, string>> gingerTermMBTList = new List<KeyValuePair<string, string>>()
         {
-            new KeyValuePair<string, string>("BusinessFlow", "Business Flow"),
-            new KeyValuePair<string, string>("BusinessFlows", "Business Flows"),
+            new KeyValuePair<string, string>("BusinessFlow", "Use Case"),
+            new KeyValuePair<string, string>("BusinessFlows", "Use Cases"),
             new KeyValuePair<string, string>("ActivitiesGroup", "Sub process"),
             new KeyValuePair<string, string>("ActivitiesGroups", "Sub processes"),
             new KeyValuePair<string, string>("Activity", "Interface"),
@@ -98,8 +98,8 @@ namespace GingerCore
             new KeyValuePair<string, string>("Variable", "Element"),
             new KeyValuePair<string, string>("TargetApplication", "System"),
             new KeyValuePair<string, string>("Variables", "Elements"),
-            new KeyValuePair<string, string>("RunSet", "Run Set"),
-            new KeyValuePair<string, string>("RunSets", "Run Sets"),
+            new KeyValuePair<string, string>("RunSet", "Test Suite"),
+            new KeyValuePair<string, string>("RunSets", "Test Suites"),
             new KeyValuePair<string, string>("ALM", "ALM")
         };
 

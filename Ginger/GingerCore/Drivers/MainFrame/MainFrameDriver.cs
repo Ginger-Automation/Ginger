@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -514,24 +514,26 @@ namespace GingerCore.Drivers.MainFrame
 
         public void TakeScreenShot(Act act)
         {
-            int width = (int)mDriverWindow.Width;
-            int height = (int)mDriverWindow.Height;
-            RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
-            renderTargetBitmap.Render(mDriverWindow);
+                int width = (int)mDriverWindow.Width;
+                int height = (int)mDriverWindow.Height;
+                RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+                renderTargetBitmap.Render(mDriverWindow);
 
-            PngBitmapEncoder pngImage = new PngBitmapEncoder();
-            pngImage.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
-            string FileName = Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
-            using (Stream fileStream = File.Create(FileName))
+                PngBitmapEncoder pngImage = new PngBitmapEncoder();
+                pngImage.Frames.Add(BitmapFrame.Create(renderTargetBitmap));
+                string FileName = Path.GetTempPath() + Guid.NewGuid().ToString() + ".png";
+                using (Stream fileStream = File.Create(FileName))
+                {
+                    pngImage.Save(fileStream);
+                    fileStream.Close();
+                }
+
+            using (Bitmap bmp = (Bitmap)Image.FromFile(FileName))
             {
-                pngImage.Save(fileStream);
-                fileStream.Close();
+                //TODO: Remove the temporary File created
+
+                act.AddScreenShot(bmp);
             }
-
-            Bitmap bmp = (Bitmap)Image.FromFile(FileName);
-            //TODO: Remove the temporary File created
-
-            act.AddScreenShot(bmp);
         }
 
         #endregion GingerFunctions
@@ -699,7 +701,7 @@ namespace GingerCore.Drivers.MainFrame
 
         #region WindowDriverFunctions
 
-        public void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false)
+        public void HighLightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> MappedUIElements = null)
         {
         }
 

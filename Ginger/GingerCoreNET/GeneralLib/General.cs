@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -475,10 +475,11 @@ namespace GingerCoreNET.GeneralLib
 
         public static string CreateTempTextFile(string content)
         {
+            byte[] bytes = null;
             try
             {
                 string filePath = System.IO.Path.GetTempFileName();
-                byte[] bytes = System.Text.Encoding.Default.GetBytes(content);
+                bytes = System.Text.Encoding.Default.GetBytes(content);
                 File.WriteAllBytes(filePath, bytes);
                 return filePath;
             }
@@ -486,6 +487,13 @@ namespace GingerCoreNET.GeneralLib
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Failed to create temp text file", ex);
                 return null;
+            }
+            finally
+            {
+                if (bytes != null)
+                {
+                    Array.Clear(bytes);
+                }
             }
         }
 

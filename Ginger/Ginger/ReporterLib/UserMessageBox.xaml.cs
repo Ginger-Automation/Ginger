@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -44,8 +44,8 @@ namespace Ginger.ReporterLib
 
             if (txt.Length > 200)
             { 
-                this.Width = 550;
-                this.Height = 250;
+                this.Width = 530;
+                this.Height = 230;
             }
 
             xOKButton.Visibility = Visibility.Collapsed;

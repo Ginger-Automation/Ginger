@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1008,6 +1008,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                     list.Add(ActUIElement.eTableAction.MousePressAndRelease);
                     list.Add(ActUIElement.eTableAction.IsChecked);
                     list.Add(ActUIElement.eTableAction.RightClick);
+                    list.Add(ActUIElement.eTableAction.ContextMenuClick);
                     break;
                 case ActUIElement.eElementAction.TableRowAction:
                     list.Add(ActUIElement.eTableAction.GetSelectedRow);

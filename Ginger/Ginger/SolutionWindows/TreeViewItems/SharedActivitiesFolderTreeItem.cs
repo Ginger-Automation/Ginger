@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Ginger.AutomatePageLib.AddActionMenu.SharedRepositoryLib;
 using Ginger.Repository;
 using GingerCore;
 using GingerWPF.TreeViewItemsLib;
@@ -126,11 +128,20 @@ namespace Ginger.SolutionWindows.TreeViewItems
                 }
 
                 AddSourceControlOptions(mContextMenu, false, false);
+
+                TreeViewUtils.AddMenuItem(mContextMenu, Header: "Bulk Update", BulkUpdateSubMenuItemHandler, imageType: Amdocs.Ginger.Common.Enums.eImageType.Asterisk);
             }
             else
             {
                 AddFolderNodeBasicManipulationsOptions(mContextMenu, GingerDicser.GetTermResValue(eTermResKey.Activity), false, false, false, false, false, false, false, false, false, false);
             }
+        }
+
+        private void BulkUpdateSubMenuItemHandler(object? sender, RoutedEventArgs e)
+        {
+            IEnumerable<Activity> activitiesForBulkUpdate = mActivitiesFolder.GetFolderItemsRecursive();
+            BulkUpdateSharedRepositoryActivitiesPage bulkUpdatePage = new(activitiesForBulkUpdate);
+            bulkUpdatePage.ShowAsWindow();
         }
     }
 }

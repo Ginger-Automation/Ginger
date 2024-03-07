@@ -35,6 +35,26 @@ function define_GingerLibLiveSpy() {
     //----------------------------------------------------------------------------------------------------------------------
     // Add Java Script to page
     //----------------------------------------------------------------------------------------------------------------------
+
+    // Function to get all shadow roots recursively
+    function getAllShadowRoots(node, result = []) {
+        if (node.shadowRoot) {
+            result.push(node.shadowRoot);
+            // Recursively get shadow roots inside the current shadow root
+            getAllShadowRoots(node.shadowRoot, result);
+        }
+
+        node = node.firstChild;
+        while (node) {
+            getAllShadowRoots(node, result);
+            node = node.nextSibling;
+        }
+
+        return result;
+    }
+
+    // Get all shadow roots in the entire document
+    const allShadowRoots = getAllShadowRoots(document);
     GingerLibLiveSpy.AddScript = function (JavaScriptCode) {
         var script = document.createElement('script');
         script.type = "text/javascript";
@@ -99,6 +119,37 @@ function define_GingerLibLiveSpy() {
         }
     }
 
+    GingerLibLiveSpy.ElementFromPoint = function () {
+        const X = GingerLibLiveSpy.GetXPoint();
+        const Y = GingerLibLiveSpy.GetYPoint();
+        let depth = 0;
+        let resultElementFromPoint = null;
+        function getCurrentDepth(element) {
+            let depth = 0;
+
+            while (element.parentNode) {
+                element = element.parentNode;
+                depth++;
+            }
+            return depth;
+        }
+
+        allShadowRoots.forEach((shadowRoot) => {
+            let element = shadowRoot.elementFromPoint(X, Y);
+            const currentDepth = getCurrentDepth(element);
+
+            if (depth < currentDepth) {
+                depth = currentDepth;
+                resultElementFromPoint = element;
+            }
+        });
+
+        if (!resultElementFromPoint) {
+            return document.elementFromPoint(X, Y);
+        }
+
+        return resultElementFromPoint;
+    }
     GingerLibLiveSpy.IsLiveSpyExist = function () {
         //  Return true if there is click event on the element
         //  Return el.haveclickevent…

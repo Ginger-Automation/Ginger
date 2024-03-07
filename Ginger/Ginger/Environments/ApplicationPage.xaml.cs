@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ namespace Ginger.Environments
 
         private void UpdateDBsTabHeader()
         {
-            xDBsTabHeaderText.Text = string.Format("DataBases ({0})", mEnvApplication.Dbs.Count);
+            xDBsTabHeaderText.Text = string.Format("Databases ({0})", mEnvApplication.Dbs.Count);
         }
 
         private void AppTab_SelectionChanged(object sender, SelectionChangedEventArgs e)

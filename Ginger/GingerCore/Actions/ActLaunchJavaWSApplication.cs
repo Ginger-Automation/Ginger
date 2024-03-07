@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 
 extern alias UIAComWrapperNetstandard;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Drivers.CommunicationProtocol;
 using Amdocs.Ginger.Repository;
@@ -40,6 +41,7 @@ namespace GingerCore.Actions
     public class ActLaunchJavaWSApplication : ActWithoutDriver
     {
         public override string ActionDescription { get { return "Launch Java Application"; } }
+        public override eImageType Image { get { return eImageType.Java; } }
         public override string ActionUserDescription { get { return "Launch Java Application"; } }
 
         public override void ActionUserRecommendedUseCase(ITextBoxFormatter TBH)

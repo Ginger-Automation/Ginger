@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -56,36 +56,38 @@ namespace GingerCore.Actions.VisualTesting
                 IEnumerable<VisualElement> listwithnomatch = from x in VE1.Elements where x.Text != "" && x.MatchingElement == null select x;
 
                 // Create compare bitmap for VE1
-                Bitmap bmp = new Bitmap(VE1.Bitmap);
-                // mark element with no match
-                foreach (VisualElement VE in listwithnomatch)
+                using (Bitmap bmp = new Bitmap(VE1.Bitmap))
                 {
-                    using (Graphics gr = Graphics.FromImage(bmp))
+                    // mark element with no match
+                    foreach (VisualElement VE in listwithnomatch)
                     {
-                        gr.SmoothingMode = SmoothingMode.AntiAlias;
-
-                        //TODO: check the -3 or + 6 will not go out of bitmap
-                        Rectangle rect = new Rectangle(VE.X - 3, VE.Y - 3, VE.Width + 6, VE.Height + 6);
-
-                        gr.FillRectangle(Brushes.Transparent, rect);
-                        using (Pen thick_pen = new Pen(Color.HotPink, 2))
+                        using (Graphics gr = Graphics.FromImage(bmp))
                         {
-                            gr.DrawRectangle(thick_pen, rect);
+                            gr.SmoothingMode = SmoothingMode.AntiAlias;
+
+                            //TODO: check the -3 or + 6 will not go out of bitmap
+                            Rectangle rect = new Rectangle(VE.X - 3, VE.Y - 3, VE.Width + 6, VE.Height + 6);
+
+                            gr.FillRectangle(Brushes.Transparent, rect);
+                            using (Pen thick_pen = new Pen(Color.HotPink, 2))
+                            {
+                                gr.DrawRectangle(thick_pen, rect);
+                            }
                         }
                     }
+
+                    mAct.CompareResult = bmp;
+
+                    // Add output of mismatch
+                    mAct.AddOrUpdateReturnParamActual("Mismatch elements in target", listwithnomatch.Count() + "");
+
+                    //TODO: if output each mismatch then do output
+
+
+                    mAct.AddScreenShot(bmp, "Compare Result");
+                    //TODO: add small bitmap of mismatch elem
+
                 }
-
-                mAct.CompareResult = bmp;
-
-                // Add output of mismatch
-                mAct.AddOrUpdateReturnParamActual("Mismatch elements in target", listwithnomatch.Count() + "");
-
-                //TODO: if output each mismatch then do output
-
-
-                mAct.AddScreenShot(bmp, "Compare Result");
-
-                //TODO: add small bitmap of mismatch elem
             }
         }
 

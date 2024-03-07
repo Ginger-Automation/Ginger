@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@ namespace Ginger.Configurations
 
     public class SealightsConfiguration : RepositoryItemBase
     {
+        public delegate void SealightsConfigurationChangedEvent();
+        public event SealightsConfigurationChangedEvent SealightsConfigChanged;
+
         public enum eSealightsEntityLevel
         {
             [EnumValueDescription("Business Flow")]
@@ -55,6 +58,7 @@ namespace Ginger.Configurations
                 {
                     mSealightsLog = value;
                     OnPropertyChanged(nameof(SealightsLog));
+                    SealightsConfigChanged?.Invoke();
                 }
             }
         }

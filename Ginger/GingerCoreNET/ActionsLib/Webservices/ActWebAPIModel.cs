@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run;
 using Amdocs.Ginger.Repository;
@@ -41,6 +42,8 @@ namespace GingerCore.Actions.WebServices.WebAPI
         }
 
         public override string ActionDescription { get { return "Web API Model Action"; } }
+
+        public override eImageType Image { get { return eImageType.Exchange; } }
 
         public override bool ObjectLocatorConfigsNeeded { get { return false; } }
 

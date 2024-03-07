@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -121,8 +121,11 @@ namespace Ginger.UserControlsLib.UCListView
                 Tags = new ObservableList<Guid>();
             }
 
-            xTagsFilter.Init(Tags);
-            xTagsFilter.TagsStackPanlChanged += TagsFilter_TagsStackPanlChanged;
+            if (xTagsFilter != null)
+            {
+                xTagsFilter.Init(Tags);
+                xTagsFilter.TagsStackPanlChanged += TagsFilter_TagsStackPanlChanged;
+            }
         }
 
         private void ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -298,12 +301,15 @@ namespace Ginger.UserControlsLib.UCListView
         {
             this.Dispatcher.Invoke(() =>
             {
-                if (mObjList.CurrentItem != xListView.SelectedItem)
+                if(mObjList.CurrentItem != null && xListView.Items.Count > 0)
                 {
-                    xListView.SelectedItem = mObjList.CurrentItem;
-                    int index = xListView.Items.IndexOf(mObjList.CurrentItem);
-                    xListView.SelectedIndex = index;
-                    ScrollToViewCurrentItem();
+                    if (mObjList.CurrentItem != xListView.SelectedItem)
+                    {
+                        xListView.SelectedItem = mObjList.CurrentItem;
+                        int index = xListView.Items.IndexOf(mObjList.CurrentItem);
+                        xListView.SelectedIndex = index;
+                        ScrollToViewCurrentItem();
+                    }
                 }
             });
         }
@@ -938,6 +944,7 @@ namespace Ginger.UserControlsLib.UCListView
 
         private async void xSearchTextBox_TextChangedAsync(object sender, TextChangedEventArgs e)
         {
+
             if (string.IsNullOrWhiteSpace(xSearchTextBox.Text))
             {
                 xSearchClearBtn.Visibility = Visibility.Collapsed;
@@ -961,14 +968,21 @@ namespace Ginger.UserControlsLib.UCListView
                 }
             }
 
+            
             mSearchString = xSearchTextBox.Text;
+
+            if (mObjList is null)
+            {
+                Reporter.ToUser(eUserMsgKey.ElementNotSelected);
+                return;
+            }
             CollectFilterData();
             filteredView.Refresh();
         }
 
         private void xSearchClearBtn_Click(object sender, RoutedEventArgs e)
         {
-            xSearchTextBox.Text = "";
+            xSearchTextBox.Clear();
             mSearchString = null;
         }
 

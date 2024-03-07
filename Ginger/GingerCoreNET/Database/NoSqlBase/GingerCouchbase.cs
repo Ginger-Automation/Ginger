@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -153,25 +153,25 @@ namespace GingerCore.NoSqlBase
         private string GetBucketName(string inputSQL)
         {
             string bucketName = string.Empty;
+            string inputSQLLower = inputSQL.ToLower();
+            int bucket1 = 0;
+            int bucket2 = 0;
             if (Action == ActDBValidation.eDBValidationType.RecordCount)
             {
                 bucketName = inputSQL.Replace("`", "");
-                bucketName = bucketName.Replace("'", "");
-            }
-            else
+            }else
             {
-                bucketName = inputSQL.Substring(inputSQL.ToLower().IndexOf(" from ") + 6);
-                bucketName = bucketName.Trim();
-                int index = bucketName.IndexOf(" ");
-                if (index != -1)
-                {
-                    bucketName = bucketName.Substring(0, index).Replace("`", "");
+                if (Action == ActDBValidation.eDBValidationType.UpdateDB){
+                    bucket1 = inputSQLLower.IndexOf("`");
+                }else{
+                    bucket1 = inputSQLLower.IndexOf(" from ") + 6;
                 }
-                else
-                {
-                    bucketName = bucketName.Substring(0, bucketName.Length - 1).Replace("`", "");
-                }
+                bucket2 = inputSQLLower.IndexOf("`", bucket1 + 1);
+                bucketName = inputSQL.Substring(bucket1, bucket2 - bucket1);
+
             }
+            bucketName = bucketName.Replace("`", "");
+            bucketName = bucketName.Replace("'", "");
             return bucketName;
         }
 
@@ -205,7 +205,8 @@ namespace GingerCore.NoSqlBase
                             break;
                         case Actions.ActDBValidation.eDBValidationType.RecordCount:
                             result = clusterCB.Query<dynamic>("Select Count(*) as RECORDCOUNT from `" + bucketName + "`");
-                            Act.ParseJSONToOutputValues(result.Rows[0].ToString(), 1);
+                            var count = result.Rows[0];
+                            Act.ParseJSONToOutputValues(count.ToString(), 1);
                             break;
                         case Actions.ActDBValidation.eDBValidationType.UpdateDB:
                             result = clusterCB.Query<dynamic>(SQLCalculated);

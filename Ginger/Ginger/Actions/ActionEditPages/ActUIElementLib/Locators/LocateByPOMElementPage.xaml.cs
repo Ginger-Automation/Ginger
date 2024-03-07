@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ using Ginger.Run;
 using Ginger.SolutionWindows.TreeViewItems.ApplicationModelsTreeItems;
 using Ginger.UserControls;
 using GingerCore;
+using GingerCore.Drivers;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms;
 using GingerWPF.UserControlsLib.UCTreeView;
@@ -341,7 +342,8 @@ namespace Ginger.Actions._Common.ActUIElementLib
             }
             else
             {
-                ((IWindowExplorer)((AgentOperations)((Agent)currentAgent.Agent).AgentOperations).Driver).HighLightElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, true);
+                IWindowExplorer windowExplorer = ((IWindowExplorer)((AgentOperations)((Agent)currentAgent.Agent).AgentOperations).Driver);
+                windowExplorer.HighLightElement((ElementInfo)xPOMElementsGrid.Grid.SelectedItem, true, SelectedPOM.MappedUIElements);
             }
         }
 

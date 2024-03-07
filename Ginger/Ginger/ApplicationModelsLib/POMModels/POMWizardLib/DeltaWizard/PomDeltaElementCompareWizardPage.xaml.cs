@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -106,7 +106,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
         private void InitilizePomElementsMappingPage()
         {
-            mPomDeltaViewPage = new PomDeltaViewPage(mWizard.mPomDeltaUtils.DeltaViewElements, null, mWizard.mPomDeltaUtils.Agent);
+            mPomDeltaViewPage = new PomDeltaViewPage(mWizard.mPomDeltaUtils, null, mWizard.mPomDeltaUtils.Agent);
             mPomDeltaViewPage.SetAgent(mWizard.mPomDeltaUtils.Agent);
             xPomElementsMappingPageFrame.ClearAndSetContent(mPomDeltaViewPage);
         }

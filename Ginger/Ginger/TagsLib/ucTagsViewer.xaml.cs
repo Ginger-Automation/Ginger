@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -60,7 +60,7 @@ namespace Ginger
 
         private void BaseInit(ObservableList<RepositoryItemTag> fullTagsList = null)
         {
-            if (WorkSpace.Instance.Solution == null)
+            if (WorkSpace.Instance == null || WorkSpace.Instance.Solution == null)
             {
                 return;
             }

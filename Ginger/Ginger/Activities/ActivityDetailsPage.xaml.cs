@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -182,8 +182,9 @@ namespace Ginger.BusinessFlowPages
             xTargetApplicationlbl.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
             xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
+            mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Paused;
             BindingHandler.ObjFieldBinding(xTargetApplicationComboBox, ComboBox.SelectedValueProperty, mActivity, nameof(Activity.TargetApplication));
-            
+            mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Started;
             if (mActivity.GetType() == typeof(ErrorHandler))
             {
                 xHandlerTypeStack.Visibility = Visibility.Visible;
@@ -217,8 +218,9 @@ namespace Ginger.BusinessFlowPages
                 CollectionChangedEventManager.RemoveHandler(source: mContext.BusinessFlow.TargetApplications, handler: AutoUpdate_ConsumerList);
                 CollectionChangedEventManager.AddHandler(source: mContext.BusinessFlow.TargetApplications, handler: AutoUpdate_ConsumerList);
             }
-
+            mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Paused;
             TargetAppSelectedComboBox();
+            mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Started;
         }
 
         private void UserProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -289,16 +291,19 @@ namespace Ginger.BusinessFlowPages
 
         public void TargetAppSelectedComboBox()
         {
-            if (xTargetApplicationComboBox.SelectedItem != null &&
-                           WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+            Dispatcher.Invoke(() =>
             {
-                PrepareAndLoadConsumerComboBox();
-            }
-            else
-            {
-                xConsumerStack.Visibility = Visibility.Collapsed;
-                BindingOperations.ClearAllBindings(xConsumerCB);
-            }
+                if (xTargetApplicationComboBox.SelectedItem != null &&
+                               WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+                {
+                    PrepareAndLoadConsumerComboBox();
+                }
+                else
+                {
+                    xConsumerStack.Visibility = Visibility.Collapsed;
+                    BindingOperations.ClearAllBindings(xConsumerCB);
+                }
+            });
         }
         private void PrepareAndLoadConsumerComboBox()
         {
