@@ -26,10 +26,8 @@ namespace RepositorySerializerBenchmarks.Benchmarks
     }
 
     [Config(typeof(SerializationBenchmarkConfig))]
-    [MemoryDiagnoser]
     [MinColumn]
     [MaxColumn]
-    [RPlotExporter]
     [ShortRunJob]
     public class SerializationBenchmark
     {

@@ -69,12 +69,6 @@ namespace Amdocs.Ginger.Repository
 
         public RepositoryItemHeader() { }
 
-        //public RepositoryItemHeader(RIBXmlReader reader)
-        //{
-        //    //Load(reader);
-        //    reader.Load(DeserializeProperty);
-        //}
-
         public RepositoryItemHeader(DeserializedSnapshot snapshot)
         {
             ItemGuid = snapshot.GetValueAsGuid(nameof(ItemGuid));

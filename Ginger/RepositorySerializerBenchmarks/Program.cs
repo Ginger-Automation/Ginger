@@ -11,8 +11,8 @@ using RepositorySerializerBenchmarks.Enhancements;
 using RepositorySerializerBenchmarks.Enhancements.LiteXML;
 using System.Xml;
 
-//Summary summary = BenchmarkRunner.Run<SerializationBenchmark>();
-Summary summary = BenchmarkRunner.Run<DeserializationBenchmark>();
+Summary summary = BenchmarkRunner.Run<SerializationBenchmark>();
+//Summary summary = BenchmarkRunner.Run<DeserializationBenchmark>();
 //Summary summary = BenchmarkRunner.Run<LazyLoadBenchmark>();
 //Summary summary = BenchmarkRunner.Run<DeserializedSnapshot2Benchmarks>();
 

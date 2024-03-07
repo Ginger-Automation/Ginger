@@ -1,17 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using Amdocs.Ginger.Common.Repository.Serialization.Exceptions;
-using Amdocs.Ginger.Common.SourceControlLib;
 using Amdocs.Ginger.Repository;
-using System.Xml.Linq;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 #nullable enable
 namespace Amdocs.Ginger.Common.Repository.Serialization
