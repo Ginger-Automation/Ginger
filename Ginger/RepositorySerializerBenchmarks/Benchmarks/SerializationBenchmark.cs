@@ -30,13 +30,13 @@ namespace RepositorySerializerBenchmarks.Benchmarks
     [MinColumn]
     [MaxColumn]
     [RPlotExporter]
-    [SimpleJob]
+    [ShortRunJob]
     public class SerializationBenchmark
     {
         private NewRepositorySerializer _newRepositorySerializer = null!;
         private BetterRepositorySerializer _betterRepositorySerializer = null!;
 
-        [Params(1, 10)]
+        [Params(1, 10, 100)]
         public int TestDataSize { get; set; }
 
         private RepositoryItemBase[] TestData { get; set; } = [];

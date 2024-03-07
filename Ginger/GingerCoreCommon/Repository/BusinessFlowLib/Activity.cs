@@ -156,10 +156,7 @@ namespace GingerCore
             }
             else
             {
-                //Console.WriteLine("Started loading actions");
-                //long start = DateTime.Now.Ticks;
                 Acts = new(snapshot.GetValues<Act>(nameof(Acts)));
-                //Console.WriteLine($"Completed loading actions in {TimeSpan.FromTicks(DateTime.Now.Ticks - start).TotalMilliseconds}ms");
             }
         }
 

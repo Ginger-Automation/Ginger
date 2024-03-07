@@ -16,15 +16,30 @@ using System.Xml;
 //Summary summary = BenchmarkRunner.Run<LazyLoadBenchmark>();
 //Summary summary = BenchmarkRunner.Run<DeserializedSnapshot2Benchmarks>();
 
-DeserializationBenchmark b = new();
-b.TestDataSize = 500;
+//DeserializationBenchmark b = new();
+//b.TestDataSize = 500;
+//b.GlobalSetup();
+//Console.WriteLine("Starting to deserialize");
+//Thread.Sleep(5000);
+//b.Old_Lazy();
+//Console.WriteLine("completed");
+//Thread.Sleep(5000);
+//GC.Collect();
+//Console.WriteLine("Garbage Collected");
+//Thread.Sleep(5000);
+
+SerializationBenchmark b = new();
+b.TestDataSize = 50;
 b.GlobalSetup();
-Console.WriteLine("Starting to deserialize");
+Console.WriteLine("Starting to serialize");
 Thread.Sleep(5000);
-Console.WriteLine("started");
-b.New2_Lazy();
+b.New();
 Console.WriteLine("completed");
 Thread.Sleep(5000);
+GC.Collect();
+Console.WriteLine("Garbage Collected");
+Thread.Sleep(5000);
+
 //Console.WriteLine("Created following objects from RepositoryItemBaseFactory, ");
 //foreach (var nameCount in RepositoryItemBaseFactory.ObjectCreationCounts)
 //{

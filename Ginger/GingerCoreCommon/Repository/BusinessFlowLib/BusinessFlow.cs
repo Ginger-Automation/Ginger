@@ -65,12 +65,7 @@ namespace GingerCore
             }
             else
             {
-                //Console.WriteLine("Starting to load activities");
-                //Thread.Sleep(5000);
-                //long startTime = DateTime.Now.Ticks;
                 Activities = new(snapshot.GetValues<Activity>(nameof(Activities)));
-                //Console.WriteLine($"Activities loaded in {TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds}ms");
-                //Thread.Sleep(5000);
             }
 
         }
@@ -117,16 +112,11 @@ namespace GingerCore
             {
                 if (LazyLoad)
                 {
-                    if (Lite)
-                        property.GetValuesLite();
-                    else
-                        property.GetValuesLazy();
+                    property.GetValuesLite();
                 }
                 else
                 {
-                    //long startTime = DateTime.Now.Ticks;
                     Activities = new(property.GetValues<Activity>());
-                    //Console.WriteLine($"Activities loaded in {TimeSpan.FromTicks(DateTime.Now.Ticks - startTime).TotalMilliseconds}ms");
                 }
             }
             else if (property.HasName(nameof(ActivitiesGroups)))
