@@ -30,9 +30,7 @@ namespace GingerCore.Activities
     {
         public ActivityIdentifiers() { }
 
-        public ActivityIdentifiers(DeserializedSnapshot snapshot) : base(snapshot) { }
-
-        public ActivityIdentifiers(DeserializedSnapshot2 snapshot) : base(snapshot)
+        public ActivityIdentifiers(DeserializedSnapshot snapshot) : base(snapshot)
         {
             ActivityAutomationStatus = snapshot.GetValueAsEnum<eActivityAutomationStatus>(nameof(ActivityAutomationStatus));
             ActivityGuid = snapshot.GetValueAsGuid(nameof(ActivityGuid));
@@ -47,19 +45,6 @@ namespace GingerCore.Activities
                 .WithValue(nameof(ActivityGuid), ActivityGuid.ToString())
                 .WithValue(nameof(ActivityName), ActivityName)
                 .WithValue(nameof(ActivityParentGuid), ActivityParentGuid.ToString());
-        }
-
-        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
-        {
-            base.ReadSnapshotProperties(property);
-            if (property.HasName(nameof(ActivityAutomationStatus)))
-                ActivityAutomationStatus = property.GetValueAsEnum<eActivityAutomationStatus>();
-            else if (property.HasName(nameof(ActivityGuid)))
-                ActivityGuid = property.GetValueAsGuid();
-            else if (property.HasName(nameof(ActivityName)))
-                ActivityName = property.GetValue();
-            else if (property.HasName(nameof(ActivityParentGuid)))
-                ActivityParentGuid = property.GetValueAsGuid();
         }
 
         [IsSerializedForLocalRepository]

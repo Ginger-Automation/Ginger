@@ -230,9 +230,7 @@ namespace Amdocs.Ginger.Repository
 
         public ActInputValue() { }
 
-        public ActInputValue(DeserializedSnapshot snapshot) : base(snapshot) { }
-
-        public ActInputValue(DeserializedSnapshot2 snapshot) : base(snapshot)
+        public ActInputValue(DeserializedSnapshot snapshot) : base(snapshot)
         {
             Param = snapshot.GetValue(nameof(Param));
         }
@@ -241,13 +239,6 @@ namespace Amdocs.Ginger.Repository
         {
             return base.WriteSnapshotProperties(snapshotBuilder)
                 .WithValue(nameof(Param), Param);
-        }
-
-        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
-        {
-            base.ReadSnapshotProperties(property);
-            if (property.HasName(nameof(Param)))
-                Param = property.GetValue();
         }
     }
 }

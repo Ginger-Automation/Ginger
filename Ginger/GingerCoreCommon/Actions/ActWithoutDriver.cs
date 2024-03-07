@@ -34,8 +34,6 @@ namespace GingerCore.Actions
 
         public ActWithoutDriver(DeserializedSnapshot snapshot) : base(snapshot) { }
 
-        public ActWithoutDriver(DeserializedSnapshot2 snapshot) : base(snapshot) { }
-
         public abstract void Execute();
     }
 }

@@ -28,7 +28,6 @@ namespace RepositorySerializerBenchmarks.Benchmarks
     }
 
     [Config(typeof(DeserializationBenchmarkConfig))]
-    [MemoryDiagnoser]
     [MinColumn]
     [MaxColumn]
     [ShortRunJob]
@@ -37,7 +36,7 @@ namespace RepositorySerializerBenchmarks.Benchmarks
         private NewRepositorySerializer _newRepositorySerializer = null!;
         private BetterRepositorySerializer _betterRepositorySerializer = null!;
 
-        [Params(1)]
+        [Params(1, 10, 100)]
         public int TestDataSize { get; set; }
 
         private string[] TestData { get; set; } = [];
@@ -56,177 +55,36 @@ namespace RepositorySerializerBenchmarks.Benchmarks
             new ActDummy();
         }
 
-        [Benchmark(Baseline = true)]
-        public void Old_Full()
-        {
-            BusinessFlow.LazyLoad = false;
-            NewRepositorySerializer.LazyLoad = false;
-            foreach (string repositoryItemBaseXML in TestData)
-                Amdocs.Ginger.Repository.NewRepositorySerializer.DeserializeFromText(repositoryItemBaseXML);
-        }
+        //[Benchmark(Baseline = true)]
+        //public void Old_Full()
+        //{
+        //    NewRepositorySerializer.LazyLoad = false;
+        //    foreach (string repositoryItemBaseXML in TestData)
+        //        Amdocs.Ginger.Repository.NewRepositorySerializer.DeserializeFromText(repositoryItemBaseXML);
+        //}
 
-        [Benchmark]
+        [Benchmark(Baseline = true)]
         public void Old_Lazy()
         {
-            NewRepositorySerializer.LazyLoad = true;
+            //NewRepositorySerializer.LazyLoad = true;
             foreach (string repositoryItemBaseXML in TestData)
                 Amdocs.Ginger.Repository.NewRepositorySerializer.DeserializeFromText(repositoryItemBaseXML);
         }
 
-        [Benchmark]
-        public void New_Full()
-        {
-            BusinessFlow.LazyLoad = false;
-            Activity.LazyLoad = false;
-            Act.LazyLoad = false;
-            BetterRepositorySerializer.UseDeserializer2 = false;
-            foreach (string repositoryItemBaseXML in TestData)
-                _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
-        }
+        //[Benchmark]
+        //public void New_Full()
+        //{
+        //    BusinessFlow.LazyLoad = false;
+        //    foreach (string repositoryItemBaseXML in TestData)
+        //        _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
+        //}
 
         [Benchmark]
         public void New_Lazy()
         {
             BusinessFlow.LazyLoad = true;
-            Activity.LazyLoad = false;
-            Act.LazyLoad = false;
-            BetterRepositorySerializer.UseDeserializer2 = false;
             foreach (string repositoryItemBaseXML in TestData)
                 _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
         }
-
-        [Benchmark]
-        public void New2_Full()
-        {
-            BusinessFlow.LazyLoad = false;
-            Activity.LazyLoad = false;
-            Act.LazyLoad = false;
-            BetterRepositorySerializer.UseDeserializer2 = true;
-            foreach (string repositoryItemBaseXML in TestData)
-                _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
-        }
-
-        [Benchmark]
-        public void New2_Lazy()
-        {
-            BusinessFlow.LazyLoad = true;
-            Activity.LazyLoad = false;
-            Act.LazyLoad = false;
-            BetterRepositorySerializer.UseDeserializer2 = true;
-            foreach (string repositoryItemBaseXML in TestData)
-                _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML);
-        }
-
-        //[Benchmark]
-        //public void Old_Full_Parallel()
-        //{
-        //    NewRepositorySerializer.LazyLoad = false;
-        //    Parallel.ForEach(TestData, repositoryItemBaseXML =>
-        //        Amdocs.Ginger.Repository.NewRepositorySerializer.DeserializeFromText(repositoryItemBaseXML));
-        //}
-
-        //[Benchmark]
-        //public void Old_Lazy_Parallel()
-        //{
-        //    NewRepositorySerializer.LazyLoad = true;
-        //    Parallel.ForEach(TestData, repositoryItemBaseXML =>
-        //        Amdocs.Ginger.Repository.NewRepositorySerializer.DeserializeFromText(repositoryItemBaseXML));
-        //}
-
-        //[Benchmark]
-        //public void New_Full_Parallel()
-        //{
-        //    BusinessFlow.LazyLoad = false;
-        //    Parallel.ForEach(TestData, repositoryItemBaseXML =>
-        //        _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML));
-        //}
-
-        //[Benchmark]
-        //public void New_Lazy_Parallel()
-        //{
-        //    BusinessFlow.LazyLoad = true;
-        //    Parallel.ForEach(TestData, repositoryItemBaseXML =>
-        //        _betterRepositorySerializer.Deserialize<BusinessFlow>(repositoryItemBaseXML));
-        //}
-
-        #region old benchmarks
-        //[Benchmark]
-        //public void New_Full_XmlDocument()
-        //{
-        //    foreach (string repositoryItemBaseXML in TestData)
-        //        _betterRepositorySerializer.DeserializeViaXmlDocument<BusinessFlow>(repositoryItemBaseXML, lazyLoad: false);
-        //}
-
-        //[Benchmark]
-        //public void New_Lazy_XmlDocument()
-        //{
-        //    foreach (string repositoryItemBaseXML in TestData)
-        //        _betterRepositorySerializer.DeserializeViaXmlDocument<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
-        //}
-
-        //[Benchmark]
-        //public void New_Full_XmlReader()
-        //{
-        //    foreach (string repositoryItemBaseXML in TestData)
-        //        _betterRepositorySerializer.DeserializeViaXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: false);
-        //}
-
-        //[Benchmark]
-        //public void New_Lazy_XmlReader()
-        //{
-        //    foreach (string repositoryItemBaseXML in TestData)
-        //        _betterRepositorySerializer.DeserializeViaXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
-        //}
-
-        //[Benchmark]
-        //public void New_Full_LiteXMLElement()
-        //{
-        //    foreach (string repositoryItemBaseXML in TestData)
-        //        _betterRepositorySerializer.DeserializeViaLiteXMLElement<BusinessFlow>(repositoryItemBaseXML, lazyLoad: false);
-        //}
-
-        //[Benchmark]
-        //public void New_Lazy_LiteXMLElement()
-        //{
-        //    foreach (string repositoryItemBaseXML in TestData)
-        //        _betterRepositorySerializer.DeserializeViaLiteXMLElement<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
-        //}
-
-        //[Benchmark]
-        //public void New_Full_RIBXmlReader_PropertyParser()
-        //{
-        //    RepositoryItemBase.UsePropertyParsers = true;
-        //    RepositoryItemHeader.UsePropertyParsers = true;
-        //    foreach (string repositoryItemBaseXML in TestData)
-        //        _betterRepositorySerializer.DeserializeViaRIBXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: false);
-        //}
-
-        //[Benchmark]
-        //public void New_Lazy_RIBXmlReader_PropertyParser()
-        //{
-        //    RepositoryItemBase.UsePropertyParsers = true;
-        //    RepositoryItemHeader.UsePropertyParsers = true;
-        //    foreach (string repositoryItemBaseXML in TestData)
-        //        _betterRepositorySerializer.DeserializeViaRIBXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
-        //}
-
-        //[Benchmark]
-        //public void New_Full_RIBXmlReader()
-        //{
-        //    RepositoryItemBase.UsePropertyParsers = false;
-        //    RepositoryItemHeader.UsePropertyParsers = false;
-        //    foreach (string repositoryItemBaseXML in TestData)
-        //        _betterRepositorySerializer.DeserializeViaRIBXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: false);
-        //}
-
-        //[Benchmark]
-        //public void New_Lazy_RIBXmlReader()
-        //{
-        //    RepositoryItemBase.UsePropertyParsers = false;
-        //    RepositoryItemHeader.UsePropertyParsers = false;
-        //    foreach (string repositoryItemBaseXML in TestData)
-        //        _betterRepositorySerializer.DeserializeViaRIBXmlReader<BusinessFlow>(repositoryItemBaseXML, lazyLoad: true);
-        //}
-        #endregion
     }
 }

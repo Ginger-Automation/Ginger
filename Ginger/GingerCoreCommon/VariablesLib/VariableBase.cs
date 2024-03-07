@@ -246,9 +246,7 @@ namespace GingerCore.Variables
 
         public VariableBase() { }
 
-        public VariableBase(DeserializedSnapshot snapshot) : base(snapshot) { }
-
-        public VariableBase(DeserializedSnapshot2 snapshot) : base(snapshot)
+        public VariableBase(DeserializedSnapshot snapshot) : base(snapshot)
         {
             Name = snapshot.GetValue(nameof(Name));
             Description = snapshot.GetValue(nameof(Description));
@@ -265,21 +263,6 @@ namespace GingerCore.Variables
                 .WithValue(nameof(MappedOutputType), MappedOutputType.ToString())
                 .WithValue(nameof(ParentName), ParentName)
                 .WithValue(nameof(ParentType), ParentType);
-        }
-
-        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
-        {
-            base.ReadSnapshotProperties(property);
-            if (property.HasName(nameof(Name)))
-                Name = property.GetValue();
-            else if (property.HasName(nameof(Description)))
-                Description = property.GetValue();
-            else if (property.HasName(nameof(MappedOutputType)))
-                MappedOutputType = property.GetValueAsEnum<eOutputType>();
-            else if (property.HasName(nameof(ParentName)))
-                ParentName = property.GetValue();
-            else if (property.HasName(nameof(ParentType)))
-                ParentType = property.GetValue();
         }
 
         public string NameBeforeEdit;

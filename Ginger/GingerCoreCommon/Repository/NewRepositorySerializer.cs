@@ -1042,7 +1042,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public static bool LazyLoad { get; set; } = true;
+        //public static bool LazyLoad { get; set; } = true;
 
         private static void SetObjectListAttrs(XmlReader xdr, object obj)
         {
@@ -1130,7 +1130,7 @@ namespace Amdocs.Ginger.Repository
                                 }
                             }
                             //Check if Lazy Load - //TODO: Think/check if we want to make all observe as lazy load
-                            if (LazyLoad && ((mi.MemberType == MemberTypes.Property) && (Attribute.IsDefined(((PropertyInfo)mi), typeof(IsLazyLoadAttribute)))
+                            if (/*LazyLoad && */((mi.MemberType == MemberTypes.Property) && (Attribute.IsDefined(((PropertyInfo)mi), typeof(IsLazyLoadAttribute)))
                                  || (mi.MemberType == MemberTypes.Field) && (Attribute.IsDefined(((FieldInfo)mi), typeof(IsLazyLoadAttribute)))))
                             {
                                 //DO Lazy Load setup

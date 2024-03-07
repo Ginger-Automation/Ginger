@@ -102,9 +102,7 @@ namespace GingerCore.Variables
 
         public override bool SupportAutoValue { get { return false; } }
 
-        public VariableString(DeserializedSnapshot snapshot) : base(snapshot) { }
-
-        public VariableString(DeserializedSnapshot2 snapshot) : base(snapshot)
+        public VariableString(DeserializedSnapshot snapshot) : base(snapshot)
         {
             InitialStringValue = snapshot.GetValue(nameof(InitialStringValue));
         }
@@ -113,13 +111,6 @@ namespace GingerCore.Variables
         {
             return base.WriteSnapshotProperties(snapshotBuilder)
                 .WithValue(nameof(InitialStringValue), InitialStringValue);
-        }
-
-        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
-        {
-            base.ReadSnapshotProperties(property);
-            if (property.HasName(nameof(InitialStringValue)))
-                InitialStringValue = property.GetValue();
         }
     }
 }

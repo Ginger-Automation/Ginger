@@ -68,8 +68,6 @@ namespace GingerCore.Actions
 
         public ActDummy(DeserializedSnapshot snapshot) : base(snapshot) { }
 
-        public ActDummy(DeserializedSnapshot2 snapshot) : base(snapshot) { }
-
         public override void Execute()
         {
 

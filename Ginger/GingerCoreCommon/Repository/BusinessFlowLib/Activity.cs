@@ -134,11 +134,7 @@ namespace GingerCore
             Tags.CollectionChanged += (_, _) => OnPropertyChanged(nameof(Tags));
         }
 
-        public Activity(DeserializedSnapshot snapshot) : base(snapshot) { }
-
-        public static bool LazyLoad { get; set; } = false;
-
-        public Activity(DeserializedSnapshot2 snapshot) : base(snapshot)
+        public Activity(DeserializedSnapshot snapshot) : base(snapshot)
         {
             ActionRunOption = snapshot.GetValueAsEnum<eActionRunOption>(nameof(ActionRunOption));
             Active = snapshot.GetValueAsBool(nameof(Active));
@@ -150,14 +146,7 @@ namespace GingerCore
             POMMetaDataId = snapshot.GetValueAsGuid(nameof(POMMetaDataId));
             TargetApplication = snapshot.GetValue(nameof(TargetApplication));
             Type = snapshot.GetValueAsEnum<eSharedItemType>(nameof(Type));
-            if (LazyLoad)
-            {
-                snapshot.GetValuesLite(nameof(Acts));
-            }
-            else
-            {
-                Acts = new(snapshot.GetValues<Act>(nameof(Acts)));
-            }
+            Acts = new(snapshot.GetValues<Act>(nameof(Acts)));
         }
 
         protected override SerializedSnapshot.Builder WriteSnapshotProperties(SerializedSnapshot.Builder builder)
@@ -174,38 +163,6 @@ namespace GingerCore
                 .WithValue(nameof(TargetApplication), TargetApplication)
                 .WithValue(nameof(Type), Type.ToString())
                 .WithValues(nameof(Acts), Acts.Cast<RepositoryItemBase>());
-        }
-
-        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
-        {
-            base.ReadSnapshotProperties(property);
-            if (property.HasName(nameof(ActionRunOption)))
-                ActionRunOption = property.GetValueAsEnum<eActionRunOption>();
-            else if (property.HasName(nameof(Active)))
-                Active = property.GetValueAsBool();
-            else if (property.HasName(nameof(ActivitiesGroupID)))
-                ActivitiesGroupID = property.GetValue();
-            else if (property.HasName(nameof(ActivityName)))
-                ActivityName = property.GetValue();
-            else if (property.HasName(nameof(AutomationStatus)))
-                AutomationStatus = property.GetValueAsEnum<eActivityAutomationStatus>();
-            else if (property.HasName(nameof(ErrorHandlerMappingType)))
-                ErrorHandlerMappingType = property.GetValueAsEnum<eHandlerMappingType>();
-            else if (property.HasName(nameof(PercentAutomated)))
-                PercentAutomated = property.GetValue();
-            else if (property.HasName(nameof(POMMetaDataId)))
-                POMMetaDataId = property.GetValueAsGuid();
-            else if (property.HasName(nameof(TargetApplication)))
-                TargetApplication = property.GetValue();
-            else if (property.HasName(nameof(Type)))
-                Type = property.GetValueAsEnum<eSharedItemType>();
-            else if (property.HasName(nameof(Acts)))
-            {
-                if (LazyLoad)
-                    property.GetValuesLite();
-                else
-                    Acts = new(property.GetValues<Act>());
-            }
         }
 
         public override string ToString()

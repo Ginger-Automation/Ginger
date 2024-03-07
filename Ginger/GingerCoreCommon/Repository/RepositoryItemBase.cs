@@ -138,11 +138,6 @@ namespace Amdocs.Ginger.Repository
 
         public RepositoryItemBase(DeserializedSnapshot snapshot)
         {
-            snapshot.ReadProperties(ReadSnapshotProperties);
-        }
-
-        public RepositoryItemBase(DeserializedSnapshot2 snapshot)
-        {
             Guid = snapshot.GetValueAsGuid(nameof(Guid));
             ParentGuid = snapshot.GetValueAsGuid(nameof(ParentGuid));
             //ExternalID = snapshot.GetValue(nameof(ExternalID), defaultValue: string.Empty);
@@ -164,18 +159,6 @@ namespace Amdocs.Ginger.Repository
                 .WithValue(nameof(ParentGuid), ParentGuid.ToString())
                 .WithValue(nameof(ExternalID), ExternalID)
                 .WithValue(nameof(ExternalID2), ExternalID2);
-        }
-
-        protected virtual void ReadSnapshotProperties(DeserializedSnapshot.Property property)
-        {
-            if (property.HasName(nameof(Guid)))
-                Guid = property.GetValueAsGuid();
-            else if (property.HasName(nameof(ParentGuid)))
-                ParentGuid = property.GetValueAsGuid();
-            else if (property.HasName(nameof(ExternalID)))
-                ExternalID = property.GetValue();
-            else if (property.HasName(nameof(ExternalID2)))
-                ExternalID2 = property.GetValue();
         }
 
         public static string FolderName(Type T)

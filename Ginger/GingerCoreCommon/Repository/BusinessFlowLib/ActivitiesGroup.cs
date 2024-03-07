@@ -53,9 +53,7 @@ namespace GingerCore.Activities
 
         public ActivitiesGroup() { }
 
-        public ActivitiesGroup(DeserializedSnapshot snapshot) : base(snapshot) { }
-
-        public ActivitiesGroup(DeserializedSnapshot2 snapshot) : base(snapshot)
+        public ActivitiesGroup(DeserializedSnapshot snapshot) : base(snapshot)
         {
             Name = snapshot.GetValue(nameof(Name));
             ActivitiesIdentifiers = new(snapshot.GetValues<ActivityIdentifiers>(nameof(ActivitiesIdentifiers)));
@@ -66,15 +64,6 @@ namespace GingerCore.Activities
             return base.WriteSnapshotProperties(snapshotBuilder)
                 .WithValue(nameof(Name), Name)
                 .WithValues(nameof(ActivitiesIdentifiers), ActivitiesIdentifiers.Cast<RepositoryItemBase>());
-        }
-
-        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
-        {
-            base.ReadSnapshotProperties(property);
-            if (property.HasName(nameof(Name)))
-                Name = property.GetValue();
-            else if (property.HasName(nameof(ActivitiesIdentifiers)))
-                ActivitiesIdentifiers = new(property.GetValues<ActivityIdentifiers>());
         }
 
         private string mName;

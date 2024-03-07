@@ -70,9 +70,7 @@ namespace GingerCore.Platforms
 
         public TargetApplication() { }
 
-        public TargetApplication(DeserializedSnapshot snapshot) { }
-
-        public TargetApplication(DeserializedSnapshot2 snapshot)
+        public TargetApplication(DeserializedSnapshot snapshot)
         {
             AppName = snapshot.GetValue(nameof(AppName));
         }
@@ -81,13 +79,6 @@ namespace GingerCore.Platforms
         {
             return base.WriteSnapshotProperties(snapshotBuilder)
                 .WithValue(nameof(AppName), AppName);
-        }
-
-        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
-        {
-            base.ReadSnapshotProperties(property);
-            if (property.HasName(nameof(AppName)))
-                AppName = property.GetValue();
         }
     }
 }

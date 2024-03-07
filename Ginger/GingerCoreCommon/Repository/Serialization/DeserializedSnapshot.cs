@@ -1,170 +1,219 @@
 ﻿using System;
 using System.Collections.Generic;
-using Amdocs.Ginger.Common.Repository.Serialization.Exceptions;
-using Amdocs.Ginger.Repository;
+using System.Linq;
+using System.Reflection.PortableExecutable;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
-using MethodTimer;
+using Amdocs.Ginger.Common.Repository.Serialization.Exceptions;
+using Amdocs.Ginger.Common.SourceControlLib;
+using Amdocs.Ginger.Repository;
 using System.Xml.Linq;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 #nullable enable
 namespace Amdocs.Ginger.Common.Repository.Serialization
 {
     public sealed class DeserializedSnapshot
     {
-        private readonly XmlReader _reader;
-        private readonly string _name;
+        public string Name => _rootElement.Name;
 
-        public string Name => _name;
+        private readonly LiteXmlElement _rootElement;
 
-        public DeserializedSnapshot(XmlReader reader)
+        private DeserializedSnapshot(LiteXmlElement rootElement)
         {
-            _reader = reader;
-            _name = _reader.Name;
+            _rootElement = rootElement;
         }
 
-        public void ReadProperties(Action<Property> propertyProcessor)
+        public static DeserializedSnapshot Load(XmlReader reader)
         {
-            //MutableProperty property = new(_reader);
-            _reader.ReadAttributes((name, value) =>
-            {
-                propertyProcessor(new Property(_reader));
-                //propertyProcessor(property);
-            });
-
-            _reader.ReadChildElements(childReader =>
-            {
-                propertyProcessor(new Property(childReader));
-                //property.Reader = childReader;
-                //propertyProcessor(property);
-            });
+            DeserializedSnapshot snapshot = new(LiteXmlElement.Load(reader));
+            return snapshot;
         }
 
-        public class MutableProperty : Property
+        public string GetValue(string propertyName)
         {
-            public XmlReader Reader
+            Span<LiteXmlAttribute> attributes = _rootElement.Attributes;
+            for (int attributeIndex = 0; attributeIndex < attributes.Length; attributeIndex++)
             {
-                get => _reader;
-                set => _reader = value;
+                if (string.Equals(attributes[attributeIndex].Name, propertyName))
+                    return attributes[attributeIndex].Value;
             }
 
-            public MutableProperty(XmlReader reader) : base(reader) { }
+            throw DeserializedPropertyNotFoundException.WithDefaultMessage(propertyName);
         }
 
-        public class Property
+        public string GetValue(string propertyName, string defaultValue)
         {
-            private protected XmlReader _reader;
-
-            public string Name => _reader.Name;
-
-            private string Value => _reader.Value;
-
-            public Property(XmlReader reader)
+            try
             {
-                _reader = reader;
+                return GetValue(propertyName);
+            }
+            catch (DeserializedPropertyNotFoundException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public Guid GetValueAsGuid(string propertyName)
+        {
+            return Guid.Parse(GetValue(propertyName));
+        }
+
+        public Guid GetValueAsGuid(string propertyName, Guid defaultValue)
+        {
+            try
+            {
+                return GetValueAsGuid(propertyName);
+            }
+            catch (DeserializedPropertyNotFoundException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public int GetValueAsInt(string propertyName)
+        {
+            return int.Parse(GetValue(propertyName));
+        }
+
+        public int GetValueAsInt(string propertyName, int defaultValue)
+        {
+            try
+            {
+                return GetValueAsInt(propertyName);
+            }
+            catch (DeserializedPropertyNotFoundException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public bool GetValueAsBool(string propertyName)
+        {
+            return bool.Parse(GetValue(propertyName));
+        }
+
+        public bool GetValueAsBool(string propertyName, bool defaultValue)
+        {
+            try
+            {
+                return GetValueAsBool(propertyName);
+            }
+            catch (DeserializedPropertyNotFoundException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public T GetValueAsEnum<T>(string propertyName) where T : struct
+        {
+            return Enum.Parse<T>(GetValue(propertyName));
+        }
+
+        public T GetValueAsEnum<T>(string propertyName, T defaultValue) where T : struct
+        {
+            try
+            {
+                return GetValueAsEnum<T>(propertyName);
+            }
+            catch (DeserializedPropertyNotFoundException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public DateTime GetValueAsDateTime(string propertyName, string format, IFormatProvider? provider = null)
+        {
+            return DateTime.ParseExact(GetValue(propertyName), format, provider);
+        }
+
+        public DateTime GetValueAsDateTime(string propertyName, DateTime defaultValue, string format, IFormatProvider? provider = null)
+        {
+            try
+            {
+                return GetValueAsDateTime(propertyName, format, provider);
+            }
+            catch (DeserializedPropertyNotFoundException)
+            {
+                return defaultValue;
+            }
+        }
+
+        public TRepositoryItemBase GetValue<TRepositoryItemBase>(string propertyName) where TRepositoryItemBase : RepositoryItemBase
+        {
+            Span<LiteXmlElement> childElements = _rootElement.ChildElements;
+            for (int index = 0; index < childElements.Length; index++)
+            {
+                LiteXmlElement childElement = childElements[index];
+                if (string.Equals(childElement.Name, propertyName))
+                    return (TRepositoryItemBase)RepositoryItemBaseFactory.Create(childElement.Name, new DeserializedSnapshot(childElement));
             }
 
-            public bool HasName(string expected)
-            {
-                return string.Equals(Name, expected);
-            }
+            throw DeserializedPropertyNotFoundException.WithDefaultMessage(propertyName);
+        }
 
-            public string GetValue()
+        public TRepositoryItemBase GetValue<TRepositoryItemBase>(string propertyName, TRepositoryItemBase defaultValue) where TRepositoryItemBase : RepositoryItemBase
+        {
+            try
             {
-                if (Value == null)
-                    throw UnexpectedDeserializedPropertyType.WithDefaultMsg(propertyName: Name, expectedType: "string");
-                return Value;
+                return GetValue<TRepositoryItemBase>(propertyName);
             }
-
-            public Guid GetValueAsGuid()
+            catch (DeserializedPropertyNotFoundException)
             {
-                return Guid.Parse(GetValue());
+                return defaultValue;
             }
+        }
 
-            public int GetValueAsInt()
+        public IEnumerable<TRepositoryItemBase> GetValues<TRepositoryItemBase>(string propertyName) where TRepositoryItemBase : RepositoryItemBase
+        {
+            Span<LiteXmlElement> childElements = _rootElement.ChildElements;
+            for (int index = 0; index < childElements.Length; index++)
             {
-                return int.Parse(GetValue());
-            }
-
-            public bool GetValueAsBool()
-            {
-                return bool.Parse(GetValue());
-            }
-
-            public T GetValueAsEnum<T>() where T : struct 
-            {
-                return Enum.Parse<T>(GetValue());
-            }
-
-            public DateTime GetValueAsDateTime(string format, IFormatProvider? provider = null)
-            {
-                return DateTime.ParseExact(GetValue(), format, provider);
-            }
-
-            public T GetValue<T>() where T : RepositoryItemBase
-            {
-                if (_reader == null)
-                    throw UnexpectedDeserializedPropertyType.WithDefaultMsg(propertyName: Name, expectedType: typeof(T).Name);
-                DeserializedSnapshot snapshot = new(_reader);
-                return RepositoryItemBaseFactory.Create<T>(snapshot);
-            }
-
-            public IEnumerable<T> GetValues<T>() where T : RepositoryItemBase
-            {
-                if (_reader == null)
-                    throw UnexpectedDeserializedPropertyType.WithDefaultMsg(propertyName: Name, expectedType: typeof(IEnumerable<T>).Name);
-                List<T> values = [];
-                _reader.ReadChildElements(childReader =>
+                LiteXmlElement childElement = childElements[index];
+                if (string.Equals(childElement.Name, propertyName))
                 {
-                    DeserializedSnapshot snapshot = new(childReader);
-                    T item = (T)RepositoryItemBaseFactory.Create(snapshot.Name, snapshot);
-                    values.Add(item);
-                });
-                return values;
-            }
-
-            public LazyLoadListDetails GetValuesLazy()
-            {
-                LazyLoadListDetails details = new()
-                {
-                    Config = new()
+                    Span<LiteXmlElement> valuesXml = childElement.ChildElements;
+                    TRepositoryItemBase[] values = new TRepositoryItemBase[valuesXml.Length];
+                    for (int valueIndex = 0; valueIndex < valuesXml.Length; valueIndex++)
                     {
-                        ListName = _reader.Name,
-                        LazyLoadType = LazyLoadListConfig.eLazyLoadType.StringData
-                    },
-                    DataAsString = _reader.ReadOuterXml()
-                };
-                return details;
+                        LiteXmlElement value = valuesXml[valueIndex];
+                        values[valueIndex] = (TRepositoryItemBase)RepositoryItemBaseFactory.Create(value.Name, new DeserializedSnapshot(value));
+                    }
+                    return values;
+                }
             }
 
-            public LiteXmlElement GetValuesLite()
+            return Array.Empty<TRepositoryItemBase>();
+        }
+
+        public LiteXmlElement GetValuesLite(string propertyName)
+        {
+            Span<LiteXmlElement> childElements = _rootElement.ChildElements;
+            for (int index = 0; index < childElements.Length; index++)
             {
-                //return CreateLiteXmlElement(_reader);
-                return LiteXmlElement.Load(_reader);
+                LiteXmlElement childElement = childElements[index];
+                if (Equals(childElement.Name, propertyName))
+                {
+                    return childElement;
+                }
             }
+            
+            throw DeserializedPropertyNotFoundException.WithDefaultMessage(propertyName);
+        }
 
-            //private LiteXmlElement CreateLiteXmlElement(XmlReader reader)
-            //{
-            //    string name = reader.Name;
-
-            //    List<LiteXmlAttribute> attributes = [];
-            //    reader.ReadAttributes((name, value) =>
-            //        attributes.Add(new()
-            //        {
-            //            Name = name,
-            //            Value = value
-            //        }));
-
-            //    List<LiteXmlElement> childElements = [];
-            //    reader.ReadChildElements(childReader =>
-            //        childElements.Add(CreateLiteXmlElement(childReader)));
-
-            //    return new LiteXmlElement()
-            //    {
-            //        Name = name,
-            //        Attributes = attributes,
-            //        ChildElements = childElements
-            //    };
-            //}
+        public IEnumerable<TRepositoryItemBase> GetValues<TRepositoryItemBase>(string propertyName, IEnumerable<TRepositoryItemBase> defaultValue) where TRepositoryItemBase : RepositoryItemBase
+        {
+            try
+            {
+                return GetValues<TRepositoryItemBase>(propertyName);
+            }
+            catch (DeserializedPropertyNotFoundException)
+            {
+                return defaultValue;
+            }
         }
     }
 }

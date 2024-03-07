@@ -49,9 +49,7 @@ namespace GingerCore
 
         public BusinessFlow() { }
 
-        public BusinessFlow(DeserializedSnapshot snapshot) : base(snapshot) { }
-
-        public BusinessFlow(DeserializedSnapshot2 snapshot) : base(snapshot)
+        public BusinessFlow(DeserializedSnapshot snapshot) : base(snapshot)
         {
             Name = snapshot.GetValue(nameof(Name));
             Source = snapshot.GetValueAsEnum<eSource>(nameof(Source));
@@ -95,36 +93,6 @@ namespace GingerCore
                 .WithValues(nameof(ActivitiesGroups), ActivitiesGroups.Cast<RepositoryItemBase>())
                 .WithValues(nameof(TargetApplications), TargetApplications.Cast<RepositoryItemBase>())
                 .WithValues(nameof(Variables), Variables.Cast<RepositoryItemBase>());
-        }
-
-        public static bool Lite { get; set; } = false;
-
-        protected override void ReadSnapshotProperties(DeserializedSnapshot.Property property)
-        {
-            base.ReadSnapshotProperties(property);
-            if (property.HasName(nameof(Name)))
-                Name = property.GetValue();
-            else if (property.HasName(nameof(Source)))
-                Source = property.GetValueAsEnum<eSource>();
-            else if (property.HasName(nameof(Status)))
-                Status = property.GetValueAsEnum<eBusinessFlowStatus>();
-            else if (property.HasName(nameof(Activities)))
-            {
-                if (LazyLoad)
-                {
-                    property.GetValuesLite();
-                }
-                else
-                {
-                    Activities = new(property.GetValues<Activity>());
-                }
-            }
-            else if (property.HasName(nameof(ActivitiesGroups)))
-                ActivitiesGroups = new(property.GetValues<ActivitiesGroup>());
-            else if (property.HasName(nameof(TargetApplications)))
-                TargetApplications = new(property.GetValues<TargetBase>());
-            else if (property.HasName(nameof(Variables)))
-                Variables = new(property.GetValues<VariableBase>());
         }
 
         public override string ToString()
