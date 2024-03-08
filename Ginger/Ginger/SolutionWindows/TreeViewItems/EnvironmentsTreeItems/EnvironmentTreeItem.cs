@@ -139,7 +139,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                     {
                         AllEnvironments.ForEach((env) =>
                         {
-                            if (!env.Guid.Equals(ProjEnvironment.Guid))
+                            if (!env.Guid.Equals(ProjEnvironment.Guid) && !SelectedApplications.Any((app)=>env.CheckIfApplicationPlatformExists(app.Guid , app.AppName)))
                             {
                                 env.AddApplications(SelectedApplications);
                             }
