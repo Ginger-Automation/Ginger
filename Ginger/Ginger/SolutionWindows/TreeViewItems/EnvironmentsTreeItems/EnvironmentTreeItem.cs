@@ -16,13 +16,19 @@ limitations under the License.
 */
 #endregion
 
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Ginger.Environments;
+using Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems;
 using GingerCore.Environments;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.TreeViewItemsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
+using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -110,16 +116,26 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void AddApplication(object sender, RoutedEventArgs e)
         {
+            var ApplicationPlatforms = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where((app) => !ProjEnvironment.CheckIfApplicationPlatformExists(app.Guid , app.AppName))?.ToList();
             string appName = string.Empty;
-            EnvApplication app = new EnvApplication();
-            if (GingerCore.General.GetInputWithValidation("Add Application", "Application Name:", ref appName, null, false, app))
+            ObservableList<ApplicationPlatform> DisplayedApplicationPlatforms = GingerCore.General.ConvertListToObservableList(ApplicationPlatforms);
+
+            EnvironmentApplicationList applicationList = new(DisplayedApplicationPlatforms);
+            applicationList.ShowAsWindow();
+
+            IEnumerable<ApplicationPlatform> SelectedApplications = DisplayedApplicationPlatforms.Where((displayedApp) => displayedApp.Selected);
+
+            SelectedApplications.ForEach((selectedApplication) =>
+             {
+                 EnvApplication envApplication = new EnvApplication();
+                 envApplication.Name = selectedApplication.AppName;
+                 envApplication.ParentGuid = selectedApplication.Guid;
+                 ProjEnvironment.Applications.Add(envApplication);
+             });
+
+            if (SelectedApplications.Any())
             {
-                app.Name = appName;
-                ProjEnvironment.Applications.Add(app);
-                if (mTreeView != null && mTreeView.Tree != null)
-                {
-                    mTreeView.Tree.RefreshSelectedTreeNodeParent();
-                }
+                mTreeView?.Tree?.RefreshSelectedTreeNodeParent();
             }
         }
     }
