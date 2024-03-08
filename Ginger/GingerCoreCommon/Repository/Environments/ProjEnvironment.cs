@@ -23,7 +23,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
-
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 namespace GingerCore.Environments
 {
     public class ProjEnvironment : RepositoryItemBase
@@ -144,5 +144,18 @@ namespace GingerCore.Environments
         {
             return this.Applications.Any((app) => app.ParentGuid.Equals(ParentGuid) || app.Name.Equals(AppName));
         }
+
+        public void AddApplications(IEnumerable<ApplicationPlatform> SelectedApplications)
+        {
+
+            foreach(ApplicationPlatform SelectedApplication in SelectedApplications)
+            {
+                EnvApplication envApplication = new ();
+                envApplication.Name = SelectedApplication.AppName;
+                envApplication.ParentGuid = SelectedApplication.Guid;
+                this.Applications.Add(envApplication);
+            }
+        }
+
     }
 }

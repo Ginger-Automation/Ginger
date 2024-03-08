@@ -16,9 +16,9 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.WorkSpaceLib;
 using Ginger.Environments;
 using Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems;
 using GingerCore.Environments;
@@ -116,7 +116,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
         private void AddApplication(object sender, RoutedEventArgs e)
         {
-            var ApplicationPlatforms = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.Where((app) => !ProjEnvironment.CheckIfApplicationPlatformExists(app.Guid , app.AppName))?.ToList();
+            var ApplicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms.Where((app) => !ProjEnvironment.CheckIfApplicationPlatformExists(app.Guid , app.AppName))?.ToList();
             string appName = string.Empty;
             ObservableList<ApplicationPlatform> DisplayedApplicationPlatforms = GingerCore.General.ConvertListToObservableList(ApplicationPlatforms);
 
@@ -125,18 +125,34 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
             IEnumerable<ApplicationPlatform> SelectedApplications = DisplayedApplicationPlatforms.Where((displayedApp) => displayedApp.Selected);
 
-            SelectedApplications.ForEach((selectedApplication) =>
-             {
-                 EnvApplication envApplication = new EnvApplication();
-                 envApplication.Name = selectedApplication.AppName;
-                 envApplication.ParentGuid = selectedApplication.Guid;
-                 ProjEnvironment.Applications.Add(envApplication);
-             });
+            ProjEnvironment.AddApplications(SelectedApplications);
 
             if (SelectedApplications.Any())
             {
+
+                ObservableList<ProjEnvironment> AllEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+                if(AllEnvironments.Count > 1)
+                {
+                     eUserMsgSelection eUserMsg = Reporter.ToUser(eUserMsgKey.PublishApplicationToOtherEnv);
+
+                    if (eUserMsg.Equals(eUserMsgSelection.Yes))
+                    {
+                        AllEnvironments.ForEach((env) =>
+                        {
+                            if (!env.Guid.Equals(ProjEnvironment.Guid))
+                            {
+                                env.AddApplications(SelectedApplications);
+                            }
+                        });
+                    }
+                }
+
                 mTreeView?.Tree?.RefreshSelectedTreeNodeParent();
             }
         }
+  
+
+
+
     }
 }
