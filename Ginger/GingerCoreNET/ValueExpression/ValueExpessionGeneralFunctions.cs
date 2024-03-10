@@ -62,6 +62,16 @@ namespace Amdocs.Ginger.CoreNET.ValueExpression
         }
 
         [ValueExpressionFunctionAttribute]
+        [ValueExpressionFunctionDescription("Get Downloads Folder Path")]
+        [ValueExpressionFunctionExpression("{Function Fun=GetDownloadsFolderPath()}")]
+        [ValueExpressionFunctionCategory("Data")]
+        [ValueExpressionFunctionSubCategory("Functions")]
+        public string GetDownloadsFolderPath()
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\Downloads";
+        }
+
+        [ValueExpressionFunctionAttribute]
         [ValueExpressionFunctionDescription("Generate HashCode")]
         [ValueExpressionFunctionExpression("{Function Fun=GenerateHashCode(\"Hello\")}")]
         [ValueExpressionFunctionCategory("Data Operations")]
