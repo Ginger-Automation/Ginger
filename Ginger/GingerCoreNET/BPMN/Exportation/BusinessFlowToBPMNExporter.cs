@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.CoreNET.BPMN.Conversion;
+using Amdocs.Ginger.CoreNET.BPMN.Exceptions;
 using Amdocs.Ginger.CoreNET.BPMN.Models;
 using Amdocs.Ginger.CoreNET.BPMN.Serialization;
 using GingerCore;
@@ -35,17 +36,22 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
 {
     public sealed class BusinessFlowToBPMNExporter
     {
+        public sealed class Options
+        {
+            public CollaborationFromActivityGroupCreator.Options GroupConversionOptions { get; init; } = new();
+
+            public bool IgnoreGroupWithNoValidActivity { get; init; } = false;
+
+            public required string ExportPath { get; init; }
+        }
+
         private readonly BusinessFlow _businessFlow;
-        private readonly CollaborationFromActivityGroupCreator.Options _activityGroupCollaborationOptions;
-        private readonly string _exportPath;
+        private readonly Options _options;
 
-        public BusinessFlowToBPMNExporter(BusinessFlow businessFlow, string exportPath) : this(businessFlow, new CollaborationFromActivityGroupCreator.Options(), exportPath) { }
-
-        public BusinessFlowToBPMNExporter(BusinessFlow businessFlow, CollaborationFromActivityGroupCreator.Options activityGroupCollaborationOptions, string exportPath)
+        public BusinessFlowToBPMNExporter(BusinessFlow businessFlow, Options options)
         {
             _businessFlow = businessFlow;
-            _activityGroupCollaborationOptions = activityGroupCollaborationOptions;
-            _exportPath = exportPath;
+            _options = options;
         }
 
         public string Export()
@@ -73,7 +79,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
         {
             Collaboration businessFlowCollaboration = CreateCollaborationFromBusinessFlow(businessFlow);
             string businessFlowCollaborationXML = SerializeCollaborationToXML(businessFlowCollaboration);
-            string businessFlowCollaborationBPMNFileName = $"usecase-{businessFlow.Guid}.bpmn";
+            string businessFlowCollaborationBPMNFileName = $"usecase-{businessFlow.Name}.bpmn";
             return new BPMNFileData(businessFlowCollaborationBPMNFileName, businessFlowCollaborationXML);
         }
 
@@ -86,7 +92,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
             }
 
             string activityGroupCollaborationXML = SerializeCollaborationToXML(activityGroupCollaboration);
-            string activityGroupCollaborationBPMNFileName = $"subprocess-{activityGroup.Guid}.bpmn";
+            string activityGroupCollaborationBPMNFileName = $"subprocess-{activityGroup.Name}.bpmn";
             return new BPMNFileData(activityGroupCollaborationBPMNFileName, activityGroupCollaborationXML);
         }
 
@@ -106,15 +112,25 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
 
         private Collaboration? CreateCollaborationFromActivityGroup(ActivitiesGroup activityGroup)
         {
-            bool isEmpty = !activityGroup.ActivitiesIdentifiers.Any();
+            bool isEmpty = activityGroup.ActivitiesIdentifiers.Count == 0;
             if (isEmpty)
             {
                 return null;
             }
 
-            CollaborationFromActivityGroupCreator collaborationFromActivityGroupCreator = new(activityGroup, _activityGroupCollaborationOptions);
-            Collaboration activityGroupCollaboration = collaborationFromActivityGroupCreator.Create();
-            return activityGroupCollaboration;
+            CollaborationFromActivityGroupCreator collaborationFromActivityGroupCreator = new(activityGroup, _options.GroupConversionOptions);
+            try
+            {
+                return collaborationFromActivityGroupCreator.Create();
+            }
+            catch (NoValidActivityFoundInGroupException)
+            {
+                if (_options.IgnoreGroupWithNoValidActivity)
+                {
+                    return null;
+                }
+                throw;
+            }
         }
 
         private string CreateReleaseZIP(IEnumerable<BPMNFileData> bpmnFiles)
@@ -133,7 +149,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
 
         private string CreateReleaseZIPDirectory(IEnumerable<BPMNFileData> bpmnFiles)
         {
-            string zipDirectoryRootPath = Path.Combine(_exportPath, _businessFlow.Name);
+            string zipDirectoryRootPath = Path.Combine(_options.ExportPath, _businessFlow.Name);
 
             zipDirectoryRootPath = FileUtils.GetUniqueDirectoryPath(zipDirectoryRootPath);
 

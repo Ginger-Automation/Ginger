@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -318,7 +318,7 @@ namespace Ginger.Actions
                             RowNum.IsChecked = true;
                             p = p.Substring(p.TrimStart().IndexOf("ROWNUM="));
                             int startIndex = p.IndexOf("ROWNUM=") + 7;
-                            int endIndex = p.IndexOf(" ");
+                            int endIndex = p.IndexOf("}");
                             int charCount = endIndex > startIndex ? endIndex - startIndex : startIndex - endIndex;
                             rowNum = p.Substring(startIndex, charCount);
                             RowSelectorValue.Text = rowNum;
@@ -359,6 +359,13 @@ namespace Ginger.Actions
                                         {
                                             wCond = ActDSConditon.eCondition.OR;
                                         }
+                                        Regex rxvarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
+                                        MatchCollection matcheslist = rxvarPattern.Matches(arrORCond[iOrCount]);
+                                        for (int i = 0; i < matcheslist.Count; i++)
+                                        {
+                                            var trimmeddata = matcheslist[i].ToString().Replace(" ", "$$$");
+                                            arrORCond[iOrCount] = arrORCond[iOrCount].Replace(matcheslist[i].ToString(), trimmeddata);
+                                        }
 
                                         string[] condVal = arrORCond[iOrCount].Trim().Split(new string[] { " " }, StringSplitOptions.None);
                                         string wCol = condVal[0].Replace("[", "").Replace("]", "");
@@ -368,10 +375,14 @@ namespace Ginger.Actions
                                             if (arrORCond[iOrCount].IndexOf("'") != -1)
                                             {
                                                 wColVal = arrORCond[iOrCount].Substring(arrORCond[iOrCount].IndexOf("'") + 1, arrORCond[iOrCount].LastIndexOf("'") - arrORCond[iOrCount].IndexOf("'") - 1);
+                                                if (wColVal.Contains("$$$"))
+                                                {
+                                                    wColVal = wColVal.Replace("$$$", " ");
+                                                }
                                             }
                                             else if (condVal.Length > 1)
                                             {
-                                                wColVal = condVal[2];
+                                                wColVal = condVal[2].Replace("$$$", " ");
                                             }
                                         }
                                         else if (condVal[1] == "<>")
@@ -380,10 +391,14 @@ namespace Ginger.Actions
                                             if (arrORCond[iOrCount].IndexOf("'") != -1)
                                             {
                                                 wColVal = arrORCond[iOrCount].Substring(arrORCond[iOrCount].IndexOf("'") + 1, arrORCond[iOrCount].LastIndexOf("'") - arrORCond[iOrCount].IndexOf("'") - 1);
+                                                if (wColVal.Contains("$$$"))
+                                                {
+                                                    wColVal = wColVal.Replace("$$$", " ");
+                                                }
                                             }
                                             else if (condVal.Length > 1)
                                             {
-                                                wColVal = condVal[2];
+                                                wColVal = condVal[2].Replace("$$$", " "); ;
                                             }
                                         }
                                         else if (condVal[1] == "LIKE")

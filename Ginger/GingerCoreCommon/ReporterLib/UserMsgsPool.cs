@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -181,7 +181,9 @@ namespace Amdocs.Ginger.Common
         ConflictsResolvedCount,
         AddActivityGroupsToSharedRepositoryForBPMNConversion, 
         AddActivitiesToSharedRepositoryForBPMNConversion,
-        FailedToDownloadDriver
+        AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport,
+        FailedToDownloadDriver,
+        ShadowRootExists
     }
 
     public static class UserMsgsPool
@@ -235,6 +237,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowNeedTargetApplication, new UserMsg(eUserMsgType.WARN, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} Not Selected", "{0} Not Selected! Please Select at least one {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToUndoChange, new UserMsg(eUserMsgType.WARN, "Undo Changes", "Are you sure you want to undo all changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ShadowRootExists, new UserMsg(eUserMsgType.INFO, "Shadow DOM Element Detected", "This element exists under a shadow root, you will have to manually add the action(s) to locate this element's parent. Please look into 'Switch To Shadow DOM' operation in Browser Action", eUserMsgOption.OK , eUserMsgSelection.OK));
+
 
             #endregion General Application Messages
 
@@ -601,6 +605,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.GingerEntityToBPMNConversionError, new UserMsg(eUserMsgType.ERROR, "BPMN Export Failed", "Error occurred while exporting BPMN.\n{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AddActivityGroupsToSharedRepositoryForBPMNConversion, new UserMsg(eUserMsgType.QUESTION, Caption: "Add Missing Activity Groups to Shared Repository", Message: "All the activity groups must be added to shared repository before generating BPMN.\nWould you like to add now?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AddActivitiesToSharedRepositoryForBPMNConversion, new UserMsg(eUserMsgType.QUESTION, Caption: "Add Missing Activities to Shared Repository", Message: "All the activities must be added to shared repository before generating BPMN.\nWould you like to add now?", eUserMsgOption.YesNoCancel, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport, new UserMsg(eUserMsgType.INFO, Caption: "Activities missing from Shared Repository", Message: "All activities must be added to shared repository for generating BPMN.", eUserMsgOption.OK, eUserMsgSelection.OK));
             #endregion
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed, new UserMsg(eUserMsgType.INFO, "Remote Data deletion", "Remote Execution Results will not be deleted.", eUserMsgOption.OK, eUserMsgSelection.OK));

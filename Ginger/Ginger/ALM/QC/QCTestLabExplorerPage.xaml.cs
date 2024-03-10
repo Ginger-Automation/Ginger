@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -67,9 +67,7 @@ namespace Ginger.ALM.QC
             tvi.Folder = ALMCore.DefaultAlmConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Octane ? "Application Modules" : "Root";
             tvi.Path = ALMCore.DefaultAlmConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Octane ? @"Application Modules" : @"Root";
 
-            tvi.Folder = ALMCore.DefaultAlmConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Azure ? "Test Plans" : "Root";
-            tvi.Path = ALMCore.DefaultAlmConfig.AlmType == GingerCoreNET.ALMLib.ALMIntegrationEnums.eALMType.Azure ? @"Test Plans" : @"Root";
-
+            
             TestLabExplorerTreeView.Tree.AddItem(tvi);
 
             TestLabExplorerTreeView.TreeTitle = "'" + ALMCore.DefaultAlmConfig.ALMDomain + " \\ " + ALMCore.DefaultAlmConfig.ALMProjectName + "' - Test Lab Explorer";

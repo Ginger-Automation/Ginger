@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using System.IO;
 using GingerUtils;
 
+#nullable enable
 namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
 {
     public sealed class ActivitiesGroupToBPMNExporter
@@ -62,7 +63,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Exportation
         {
             Collaboration activityGroupCollaboration = CreateCollaborationFromActivityGroup();
             string activityGroupCollaborationXML = SerializeCollaborationToXML(activityGroupCollaboration);
-            string activityGroupCollaborationBPMNFileName = $"subprocess-{_activityGroup.Guid}.bpmn";
+            string activityGroupCollaborationBPMNFileName = $"subprocess-{_activityGroup.Name}.bpmn";
             return new BPMNFileData(activityGroupCollaborationBPMNFileName, activityGroupCollaborationXML);
         }
 

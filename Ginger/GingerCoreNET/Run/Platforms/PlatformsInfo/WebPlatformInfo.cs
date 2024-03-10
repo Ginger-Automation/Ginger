@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -74,6 +74,8 @@ namespace GingerCore.Platforms.PlatformsInfo
             browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToDefaultFrame);
             browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToParentFrame);
             browserActElementList.Add(ActBrowserElement.eControlAction.SwitchWindow);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToShadowDOM);
+            browserActElementList.Add(ActBrowserElement.eControlAction.SwitchToDefaultDOM);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetWindowTitle);
             browserActElementList.Add(ActBrowserElement.eControlAction.DeleteAllCookies);
             browserActElementList.Add(ActBrowserElement.eControlAction.GetPageSource);
