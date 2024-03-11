@@ -52,7 +52,10 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             RunsetConfig = runSetConfig;
             mContext = context;
             CliHelper = new CLIHelper();
-            AutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, CliHelper);
+            AutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, CliHelper)
+            {
+                ExecutionServiceUrl = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL
+            };
             AutoRunShortcut = new RunSetAutoRunShortcut(AutoRunConfiguration);
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Auto Run Configuration Introduction", Page: new WizardIntroPage("/RunSetLib/CreateAutoRunWizardLib/AutoRunIntroduction.md"));

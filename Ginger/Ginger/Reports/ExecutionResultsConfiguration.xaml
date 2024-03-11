@@ -6,13 +6,23 @@
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:Activities="clr-namespace:Ginger.BusinessFlowWindows"
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
       mc:Ignorable="d" 
       MinHeight="500" MinWidth="585"
 	Title="Execution Logger Configuration">
-
+    <UserControlsLib:GingerUIPage.Resources>
+        <GridLength
+            x:Key="ConfigRowHeight">30</GridLength>
+        <GridLength
+            x:Key="ConfigLabelColWidth">260</GridLength>
+        <GridLength
+            x:Key="ConfigValueColWidth">*</GridLength>
+        <sys:Double
+            x:Key="ConfigValueColMaxWidth">400</sys:Double>
+    </UserControlsLib:GingerUIPage.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
         <DockPanel Background="{StaticResource $BackgroundColor_White}">
-
+            
             <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,0,0,0"/>
 
             <Label Margin="0,5,0,0" Content="Local Execution Logger Settings" DockPanel.Dock="Top" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="16"></Label>
@@ -60,7 +70,7 @@
                     <TextBox x:Name="xFolderMaximumSizeTextBox" Width="75" Style="{StaticResource @TextBoxStyle}"  ></TextBox>
                 </StackPanel>
             </Grid>
-
+            
             <Expander x:Name="xCentralExecutionLoggerExpander" DockPanel.Dock="Top" ExpandDirection="Down"  IsExpanded="True" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,20,0,0">
                 <Expander.Header>
                     <StackPanel Orientation="Horizontal">
@@ -113,7 +123,53 @@
                     </StackPanel>
                 </Expander.Content>
             </Expander>
-
+            <Expander
+                Style="{StaticResource $ExpanderStyle}"
+                IsExpanded="True">
+                <Expander.Header>
+                    <StackPanel
+                        Orientation="Horizontal">
+                        <Label
+                            Content="Execution Handler Settings"
+                            Style="{StaticResource $HorizontalExpanderLabelStyle}" />
+                        <usercontrols:ImageMakerControl
+                            SetAsFontImageWithSize="16"
+                            ToolTip="Enterprise Feature"
+                            ImageType="Building"
+                            Width="20"
+                            Height="16"
+                            Foreground="{StaticResource $BackgroundColor_Black}" />
+                    </StackPanel>
+                </Expander.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition
+                            Height="{StaticResource ConfigRowHeight}" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition
+                            Width="{StaticResource ConfigLabelColWidth}" />
+                        <ColumnDefinition
+                            Width="{StaticResource ConfigValueColWidth}"
+                            MaxWidth="{StaticResource ConfigValueColMaxWidth}"/>
+                    </Grid.ColumnDefinitions>
+                    <Label
+                        Content="Handler URL:"
+                        Grid.Column="0"
+                        Grid.Row="0"
+                        Style="{StaticResource @InputFieldLabelStyle}"
+                        FontSize="12" />
+                    <TextBox
+                        x:Name="HandlerURLTextBox"
+                        Grid.Column="1"
+                        Grid.Row="0"
+                        HorizontalAlignment="Stretch"
+                        VerticalScrollBarVisibility="Auto"
+                        Style="{StaticResource @TextBoxStyle}"
+                        TextWrapping="Wrap"
+                        ToolTip="Hanlder API URL" />
+                </Grid>
+            </Expander>
         </DockPanel>
     </ScrollViewer>
 </UserControlsLib:GingerUIPage>
