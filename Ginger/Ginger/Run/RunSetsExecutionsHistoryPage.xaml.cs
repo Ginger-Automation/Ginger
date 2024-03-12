@@ -110,14 +110,12 @@ namespace Ginger.Run
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView =
             [
-                new()
-                {
+                new(){
                     Field = nameof(RunSetReport.GUID),
                     Header = "Execution ID",
                     WidthWeight = 15
                 },
-                new()
-                {
+                new(){
                     Field = RunSetReport.Fields.Name,
                     WidthWeight = 20,
                     ReadOnly = true
