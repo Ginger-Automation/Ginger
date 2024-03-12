@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -199,23 +199,6 @@ namespace Ginger.Run
             }
         }
 
-        private string mExecutionServiceURLUsed;
-        [IsSerializedForLocalRepository]
-        public string ExecutionServiceURLUsed
-        {
-            get
-            {
-                return mExecutionServiceURLUsed;
-            }
-            set
-            {
-                if (mExecutionServiceURLUsed != value)
-                {
-                    mExecutionServiceURLUsed = value;
-                    OnPropertyChanged(nameof(ExecutionServiceURLUsed));
-                }
-            }
-        }
         // Only for Run time, no need to serialize        
         public DateTime StartTimeStamp { get; set; }
 

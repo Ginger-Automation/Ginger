@@ -63,7 +63,6 @@ namespace Ginger.Run
             get { return mExecutionsHistoryList; }
         }
 
-        string mRunSetExecsRootFolder = string.Empty;
         public RunSetConfig RunsetConfig { get; set; }
 
         public enum eExecutionHistoryLevel
@@ -204,92 +203,137 @@ namespace Ginger.Run
             }
         }
 
-        public string NameInDb<T>()
-        {
-            var name = typeof(T).Name + "s";
-            return name;
-        }
-        private async void LoadExecutionsHistoryData()
+        private void LoadExecutionsHistoryData()
         {
             grdExecutionsHistory.Visibility = Visibility.Collapsed;
             Loading.Visibility = Visibility.Visible;
             mExecutionsHistoryList.Clear();
-            await System.Threading.Tasks.Task.Run(() =>
+
+            _ = Task.Run(async () =>
             {
-                try
+                ObservableList<RunSetReport> executionHistorySortedByDate = [];
+
+                mExecutionsHistoryList = new(await GetExecutionHistoryAsync());
+                if (mExecutionsHistoryList != null && mExecutionsHistoryList.Count > 0)
                 {
-                    if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
-                    {
-                        mRunSetExecsRootFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
-                        //pull all RunSets JSON files from it
-                        string[] runSetsfiles = Directory.GetFiles(mRunSetExecsRootFolder, "RunSet.txt", SearchOption.AllDirectories);
-
-                        foreach (string runSetFile in runSetsfiles)
+                    executionHistorySortedByDate = new ObservableList<RunSetReport>(
+                        mExecutionsHistoryList
+                        .OrderByDescending(item => item.StartTimeStamp)
+                        .Select(item =>
                         {
-                            RunSetReport runSetReport = (RunSetReport)JsonLib.LoadObjFromJSonFile(runSetFile, typeof(RunSetReport));
-                            runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
-                            runSetReport.LogFolder = System.IO.Path.GetDirectoryName(runSetFile);
-                            if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
-                            {
-                                //filer the run sets by GUID
-                                if (RunsetConfig != null && string.IsNullOrEmpty(runSetReport.GUID) == false)
-                                {
-                                    Guid runSetReportGuid = Guid.Empty;
-                                    Guid.TryParse(runSetReport.GUID, out runSetReportGuid);
-                                    if (RunsetConfig.Guid.Equals(runSetReportGuid))
-                                    {
-                                        mExecutionsHistoryList.Add(runSetReport);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                mExecutionsHistoryList.Add(runSetReport);
-                            }
-                        }
-                        LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "GingerExecutionResults.db"));
-                        var rsLiteColl = dbConnector.GetCollection<LiteDbRunSet>(NameInDb<LiteDbRunSet>());
-
-                        IEnumerable<LiteDbRunSet> runSetDataColl = null;
-                        if (RunsetConfig != null)
-                        {
-                            runSetDataColl = rsLiteColl.Find(x => x.GUID == RunsetConfig.Guid);
-                        }
-                        else
-                        {
-                            runSetDataColl = rsLiteColl.FindAll();
-                        }
-
-                        foreach (var runSet in runSetDataColl)
-                        {
-                            RunSetReport runSetReport = new RunSetReport();
-                            runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB;
-                            runSetReport.SetLiteDBData(runSet);
-                            mExecutionsHistoryList.Add(runSetReport);
-                        }
-                        AddRemoteExucationRunsetData();
-                    }
+                            item.StartTimeStamp = item.StartTimeStamp.ToLocalTime();
+                            item.EndTimeStamp = item.EndTimeStamp.ToLocalTime();
+                            return item;
+                        }));
                 }
-                catch (Exception ex)
+
+                Dispatcher.Invoke(() =>
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error Occurred during LoadExecutionHistory.", ex);
-                }
+                    grdExecutionsHistory.DataSourceList = executionHistorySortedByDate;
+                    grdExecutionsHistory.Visibility = Visibility.Visible;
+                    Loading.Visibility = Visibility.Collapsed;
+                });
             });
+        }
 
-            ObservableList<RunSetReport> executionsHistoryListSortedByDate = new ObservableList<RunSetReport>();
-            if (mExecutionsHistoryList != null && mExecutionsHistoryList.Count > 0)
+
+        private async Task<IEnumerable<RunSetReport>> GetExecutionHistoryAsync()
+        {
+            IEnumerable<RunSetReport> history = Array.Empty<RunSetReport>();
+            await Task.Run(() =>
             {
-                foreach (RunSetReport runSetReport in mExecutionsHistoryList.OrderByDescending(item => item.StartTimeStamp))
+                if (WorkSpace.Instance.Solution == null || WorkSpace.Instance.Solution.LoggerConfigurations == null)
                 {
-                    runSetReport.StartTimeStamp = runSetReport.StartTimeStamp.ToLocalTime();
-                    runSetReport.EndTimeStamp = runSetReport.EndTimeStamp.ToLocalTime();
-                    executionsHistoryListSortedByDate.Add(runSetReport);
+                    return;
+                }
+
+                history = Array.Empty<RunSetReport>()
+                    .Concat(GetExecutionHistoryFromTextFileLogs())
+                    .Concat(GetExecutionHistoryFromLiteDb())
+                    .Concat(GetExecutionHistoryFromAccountReport())
+                    .ToList();
+            });
+            return history;
+        }
+
+        private IEnumerable<RunSetReport> GetExecutionHistoryFromTextFileLogs()
+        {
+            List<RunSetReport> history = [];
+
+            string runsetExecsRootFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+            //pull all RunSets JSON files from it
+            string[] runsetFiles = Directory.GetFiles(runsetExecsRootFolder, "RunSet.txt", SearchOption.AllDirectories);
+
+            foreach (string runsetFile in runsetFiles)
+            {
+                RunSetReport runSetReport = (RunSetReport)JsonLib.LoadObjFromJSonFile(runsetFile, typeof(RunSetReport));
+                runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
+                runSetReport.LogFolder = Path.GetDirectoryName(runsetFile);
+
+                if (mExecutionHistoryLevel == eExecutionHistoryLevel.Solution)
+                {
+                    history.Add(runSetReport);
+                    continue;
+                }
+
+                if (RunsetConfig == null || string.IsNullOrEmpty(runSetReport.GUID))
+                {
+                    continue;
+                }
+
+                _ = Guid.TryParse(runSetReport.GUID, out Guid runSetReportGuid);
+
+                if (RunsetConfig.Guid.Equals(runSetReportGuid))
+                {
+                    history.Add(runSetReport);
                 }
             }
 
-            grdExecutionsHistory.DataSourceList = executionsHistoryListSortedByDate;
-            grdExecutionsHistory.Visibility = Visibility.Visible;
-            Loading.Visibility = Visibility.Collapsed;
+            return history;
+        }
+
+        private IEnumerable<RunSetReport> GetExecutionHistoryFromLiteDb()
+        {
+            List<RunSetReport> history = [];
+
+            string runsetExecsRootFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+            LiteDbConnector dbConnector = new(Path.Combine(runsetExecsRootFolder, "GingerExecutionResults.db"));
+            string collectionNameInDb = typeof(LiteDbRunSet).Name + "s";
+            var runsetCollection = dbConnector.GetCollection<LiteDbRunSet>(collectionNameInDb);
+
+            IEnumerable<LiteDbRunSet> runsets;
+            if (RunsetConfig != null)
+            {
+                runsets = runsetCollection.Find(x => x.GUID == RunsetConfig.Guid);
+            }
+            else
+            {
+                runsets = runsetCollection.FindAll();
+            }
+            foreach (var runset in runsets)
+            {
+                RunSetReport runsetReport = new()
+                {
+                    DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB
+                };
+                runsetReport.SetLiteDBData(runset);
+                mExecutionsHistoryList.Add(runsetReport);
+            }
+
+            return history;
+        }
+
+        private IEnumerable<RunSetReport> GetExecutionHistoryFromAccountReport()
+        {
+            GingerRemoteExecutionUtils remoteExecutionUtils = new();
+            if (RunsetConfig != null)
+            {
+                return remoteExecutionUtils.GetRunsetExecutionInfo(WorkSpace.Instance.Solution.Guid, RunsetConfig.Guid);
+            }
+            else
+            {
+                return remoteExecutionUtils.GetSolutionRunsetsExecutionInfo(WorkSpace.Instance.Solution.Guid);
+            }
         }
 
         private void AddRemoteExucationRunsetData()
@@ -335,7 +379,8 @@ namespace Ginger.Run
                     var result = dbManager.GetRunSetLiteData();
                     List<LiteDbRunSet> filterData = LiteDbRunSet.IncludeAllReferences(result).Find(a => a._id.Equals(new LiteDB.ObjectId(runSetReport.GUID))).ToList();
 
-                    LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(mRunSetExecsRootFolder, "GingerExecutionResults.db"));
+                    string runSetExecsRootFolder = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder);
+                    LiteDbConnector dbConnector = new LiteDbConnector(Path.Combine(runSetExecsRootFolder, "GingerExecutionResults.db"));
                     dbConnector.DeleteDocumentByLiteDbRunSet(filterData[0]);
                 }
                 else if (runSetReport.DataRepMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile)
