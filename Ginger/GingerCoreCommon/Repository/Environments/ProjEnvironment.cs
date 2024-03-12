@@ -153,6 +153,7 @@ namespace GingerCore.Environments
                 EnvApplication envApplication = new ();
                 envApplication.Name = SelectedApplication.AppName;
                 envApplication.ParentGuid = SelectedApplication.Guid;
+                envApplication.Description = SelectedApplication.Description;
                 this.Applications.Add(envApplication);
             }
         }
