@@ -184,7 +184,8 @@ namespace Amdocs.Ginger.Common
         AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport,
         FailedToDownloadDriver,
         ShadowRootExists,
-        PublishApplicationToOtherEnv
+        PublishApplicationToOtherEnv,
+        NoApplicationPlatformLeft
     }
 
     public static class UserMsgsPool
@@ -240,6 +241,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToUndoChange, new UserMsg(eUserMsgType.WARN, "Undo Changes", "Are you sure you want to undo all changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ShadowRootExists, new UserMsg(eUserMsgType.INFO, "Shadow DOM Element Detected", "This element exists under a shadow root, you will have to manually add the action(s) to locate this element's parent. Please look into 'Switch To Shadow DOM' operation in Browser Action", eUserMsgOption.OK , eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.PublishApplicationToOtherEnv, new UserMsg(eUserMsgType.QUESTION, "Publish Application to other Environment", "Do you want to publish this application to all the other existing environments?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.NoApplicationPlatformLeft, new UserMsg(eUserMsgType.INFO, "No Application can be added", "All the applications are already available in {0}. Please add new application in the Configurations-> Target application page to add application here", eUserMsgOption.OK, eUserMsgSelection.None));
 
 
             #endregion General Application Messages

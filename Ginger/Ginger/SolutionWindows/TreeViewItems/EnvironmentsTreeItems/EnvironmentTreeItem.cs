@@ -117,6 +117,18 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void AddApplication(object sender, RoutedEventArgs e)
         {
             var ApplicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms.Where((app) => !ProjEnvironment.CheckIfApplicationPlatformExists(app.Guid , app.AppName))?.ToList();
+
+
+
+            if( ApplicationPlatforms == null || ApplicationPlatforms?.Count == 0)
+            {
+
+                Reporter.ToUser(eUserMsgKey.NoApplicationPlatformLeft, ProjEnvironment.Name);
+
+                return;
+            }
+
+
             string appName = string.Empty;
             ObservableList<ApplicationPlatform> DisplayedApplicationPlatforms = GingerCore.General.ConvertListToObservableList(ApplicationPlatforms);
 
