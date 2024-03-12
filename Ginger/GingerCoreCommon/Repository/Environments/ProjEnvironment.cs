@@ -154,6 +154,7 @@ namespace GingerCore.Environments
                 envApplication.Name = SelectedApplication.AppName;
                 envApplication.ParentGuid = SelectedApplication.Guid;
                 envApplication.Description = SelectedApplication.Description;
+                envApplication.ItemImageType = SelectedApplication.PlatformImage;
                 this.Applications.Add(envApplication);
             }
         }
