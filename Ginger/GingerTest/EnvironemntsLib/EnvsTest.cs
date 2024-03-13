@@ -16,7 +16,10 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using GingerCore.Environments;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerTestHelper;
 using GingerWPFUnitTest.POMs;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -26,7 +29,6 @@ using System.Threading;
 
 namespace GingerTest
 {
-    [Ignore]  // temp fail on Azure on class init
     [TestClass]
     [Level3]
 
@@ -130,6 +132,31 @@ namespace GingerTest
             Assert.AreEqual("aaa", aaa.Name);
         }
 
+        [TestMethod]
+        
+        public void AddApplication()
+        {
+            EnvironmentsPOM EnvsPOM = mGingerAutomator.MainWindowPOM.GotoEnvironments();
+            ApplicationPlatform applicationPlatform = new ApplicationPlatform();
+
+            applicationPlatform.AppName = "Web-App-Manas";
+            applicationPlatform.Platform = ePlatformType.Web;
+            
+            WorkSpace.Instance.Solution.ApplicationPlatforms.Add(applicationPlatform);
+
+            ProjEnvironment e1 = new ProjEnvironment() { Name = "aaa" };
+            e1.AddApplications(WorkSpace.Instance.Solution.ApplicationPlatforms);
+            
+            ObservableList<EnvApplication> expectedApplicationList = e1.Applications;
+
+            string txt = e1.RepositorySerializer.SerializeToString(e1);
+            string fileName = Path.Combine(SolutionFolder, @"Environments\aaa.Ginger.Environment.xml");
+            File.WriteAllText(fileName, txt);
+
+            ProjEnvironment aaa = EnvsPOM.SelectEnvironment("aaa");
+
+            Assert.AreEqual(expectedApplicationList.Count, aaa.Applications.Count);
+        }
 
 
         [TestMethod]
@@ -155,9 +182,10 @@ namespace GingerTest
 
         }
 
-        [Ignore] // TODO: FIXME not showing in tree b is false
+    // TODO: FIXME not showing in tree b is false
         [TestMethod]
         [Timeout(60000)]
+        [Ignore]
         public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
         {
             //Arrange
@@ -223,8 +251,9 @@ namespace GingerTest
             Assert.IsTrue(notExistAfterDelete);
         }
 
-        [Ignore] //TODO: FIXME 2nd assert fail
+        //TODO: FIXME 2nd assert fail
         [TestMethod]
+        [Ignore]
         [Timeout(60000)]
         public void RenameEnvFolderSyncWithTree()
         {
