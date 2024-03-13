@@ -110,66 +110,63 @@ namespace Ginger.Run
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView =
             [
-                new(){
-                    Field = nameof(RunSetReport.GUID),
-                    Header = "Execution ID",
-                    WidthWeight = 15
+                new(){ 
+                    Field = nameof(RunSetReport.GUID), 
+                    Header = "Execution ID", 
+                    WidthWeight = 15 
                 },
-                new(){
-                    Field = RunSetReport.Fields.Name,
-                    WidthWeight = 20,
-                    ReadOnly = true
+                new(){ 
+                    Field = RunSetReport.Fields.Name, 
+                    WidthWeight = 20, 
+                    ReadOnly = true },
+                new()
+                { 
+                    Field = RunSetReport.Fields.Description, 
+                    WidthWeight = 20, 
+                    ReadOnly = true },
+                new()
+                { 
+                    Field = RunSetReport.Fields.StartTimeStamp, 
+                    Header = "Execution Start Time", 
+                    WidthWeight = 10, 
+                    ReadOnly = true 
                 },
                 new()
-                {
-                    Field = RunSetReport.Fields.Description,
-                    WidthWeight = 20,
-                    ReadOnly = true
+                { 
+                    Field = RunSetReport.Fields.EndTimeStamp, 
+                    Header = "Execution End Time", 
+                    WidthWeight = 10, 
+                    ReadOnly = true 
                 },
                 new()
-                {
-                    Field = RunSetReport.Fields.StartTimeStamp,
-                    Header = "Execution Start Time",
-                    WidthWeight = 10,
-                    ReadOnly = true
+                { 
+                    Field = RunSetReport.Fields.ExecutionDurationHHMMSS, 
+                    Header = "Execution Duration", 
+                    WidthWeight = 10, 
+                    ReadOnly = true 
                 },
                 new()
-                {
-                    Field = RunSetReport.Fields.EndTimeStamp,
-                    Header = "Execution End Time",
-                    WidthWeight = 10,
-                    ReadOnly = true
+                { 
+                    Field = RunSetReport.Fields.RunSetExecutionStatus, 
+                    Header = "Execution Status", 
+                    WidthWeight = 10, 
+                    ReadOnly = true, 
+                    BindingMode = BindingMode.OneWay 
                 },
                 new()
-                {
-                    Field = RunSetReport.Fields.ExecutionDurationHHMMSS,
-                    Header = "Execution Duration",
-                    WidthWeight = 10,
-                    ReadOnly = true
-                },
-                new()
-                {
-                    Field = RunSetReport.Fields.RunSetExecutionStatus,
-                    Header = "Execution Status",
-                    WidthWeight = 10,
+                { 
+                    Field = RunSetReport.Fields.DataRepMethod, 
+                    Header = "Type", 
+                    Visible = true, 
                     ReadOnly = true,
-                    BindingMode = BindingMode.OneWay
+                    WidthWeight = 5, 
+                    BindingMode = BindingMode.OneWay 
                 },
-                new()
-                {
-                    Field = RunSetReport.Fields.DataRepMethod,
-                    Header = "Type",
-                    Visible = true,
-                    ReadOnly = true,
-                    WidthWeight = 5,
-                    BindingMode = BindingMode.OneWay
-                },
-                new()
-                {
-                    Field = "Generate Report",
-                    WidthWeight = 8,
-                    StyleType = GridColView.eGridColStyleType.Template,
-                    CellTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"]
+                new(){ 
+                    Field = "Generate Report", 
+                    WidthWeight = 8, 
+                    StyleType = GridColView.eGridColStyleType.Template, 
+                    CellTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"] 
                 },
                 new()
                 {
