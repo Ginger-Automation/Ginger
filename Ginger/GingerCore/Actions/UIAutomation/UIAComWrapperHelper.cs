@@ -3092,11 +3092,12 @@ namespace GingerCore.Drivers
                 startPoint = (int)element.Current.BoundingRectangle.X + 5;
                 y1 = (int)((element.Current.BoundingRectangle.Y + initialTab.Current.BoundingRectangle.Y) / 2);
             }
-
+    
             while (startPoint < endPoint && !taskFinished)
             {
                 winAPI.SendClickOnXYPoint(element, startPoint, y1);
                 UIAuto.AutomationElement currentAE = element.FindFirst(Interop.UIAutomationClient.TreeScope.TreeScope_Descendants, tabSelectCondition);
+
                 if (currentAE != childAE)
                 {
                     childAE = currentAE;
