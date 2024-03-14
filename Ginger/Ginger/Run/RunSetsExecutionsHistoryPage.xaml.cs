@@ -18,12 +18,18 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.Run.RemoteExecution;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
+using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Amdocs.Ginger.CoreNET.Utility;
+using Amdocs.Ginger.Repository;
+using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Responses;
+using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.Reports;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
@@ -37,6 +43,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -110,63 +118,63 @@ namespace Ginger.Run
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView =
             [
-                new(){ 
-                    Field = nameof(RunSetReport.GUID), 
-                    Header = "Execution ID", 
-                    WidthWeight = 15 
+                new() {
+                    Field = nameof(RunSetReport.GUID),
+                    Header = "Execution ID",
+                    WidthWeight = 15
                 },
-                new(){ 
-                    Field = RunSetReport.Fields.Name, 
-                    WidthWeight = 20, 
+                new() {
+                    Field = RunSetReport.Fields.Name,
+                    WidthWeight = 20,
                     ReadOnly = true },
                 new()
-                { 
-                    Field = RunSetReport.Fields.Description, 
-                    WidthWeight = 20, 
+                {
+                    Field = RunSetReport.Fields.Description,
+                    WidthWeight = 20,
                     ReadOnly = true },
                 new()
-                { 
-                    Field = RunSetReport.Fields.StartTimeStamp, 
-                    Header = "Execution Start Time", 
-                    WidthWeight = 10, 
-                    ReadOnly = true 
+                {
+                    Field = RunSetReport.Fields.StartTimeStamp,
+                    Header = "Execution Start Time",
+                    WidthWeight = 10,
+                    ReadOnly = true
                 },
                 new()
-                { 
-                    Field = RunSetReport.Fields.EndTimeStamp, 
-                    Header = "Execution End Time", 
-                    WidthWeight = 10, 
-                    ReadOnly = true 
+                {
+                    Field = RunSetReport.Fields.EndTimeStamp,
+                    Header = "Execution End Time",
+                    WidthWeight = 10,
+                    ReadOnly = true
                 },
                 new()
-                { 
-                    Field = RunSetReport.Fields.ExecutionDurationHHMMSS, 
-                    Header = "Execution Duration", 
-                    WidthWeight = 10, 
-                    ReadOnly = true 
+                {
+                    Field = RunSetReport.Fields.ExecutionDurationHHMMSS,
+                    Header = "Execution Duration",
+                    WidthWeight = 10,
+                    ReadOnly = true
                 },
                 new()
-                { 
-                    Field = RunSetReport.Fields.RunSetExecutionStatus, 
-                    Header = "Execution Status", 
-                    WidthWeight = 10, 
-                    ReadOnly = true, 
-                    BindingMode = BindingMode.OneWay 
-                },
-                new()
-                { 
-                    Field = RunSetReport.Fields.DataRepMethod, 
-                    Header = "Type", 
-                    Visible = true, 
+                {
+                    Field = RunSetReport.Fields.RunSetExecutionStatus,
+                    Header = "Execution Status",
+                    WidthWeight = 10,
                     ReadOnly = true,
-                    WidthWeight = 5, 
-                    BindingMode = BindingMode.OneWay 
+                    BindingMode = BindingMode.OneWay
                 },
-                new(){ 
-                    Field = "Generate Report", 
-                    WidthWeight = 8, 
-                    StyleType = GridColView.eGridColStyleType.Template, 
-                    CellTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"] 
+                new()
+                {
+                    Field = RunSetReport.Fields.DataRepMethod,
+                    Header = "Type",
+                    Visible = true,
+                    ReadOnly = true,
+                    WidthWeight = 5,
+                    BindingMode = BindingMode.OneWay
+                },
+                new() {
+                    Field = "Generate Report",
+                    WidthWeight = 8,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"]
                 },
                 new()
                 {
@@ -174,6 +182,13 @@ namespace Ginger.Run
                     WidthWeight = 8,
                     StyleType = GridColView.eGridColStyleType.Template,
                     CellTemplate = (DataTemplate)this.pageGrid.Resources["BPMNButtonDataTemplate"]
+                },
+                new()
+                {
+                    Field = "Load Runset",
+                    WidthWeight = 8,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = (DataTemplate)this.pageGrid.Resources["LoadRunsetDataTemplate"]
                 },
             ];
 
@@ -444,6 +459,93 @@ namespace Ginger.Run
                     System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder + "\\" + "GingerExecutionReport.html", UseShellExecute = true });
                 }
             }
+        }
+
+        public delegate void LoadRunsetEventHandler(RunSetConfig runset);
+
+        public event LoadRunsetEventHandler LoadRunset;
+
+        private void LoadRunsetButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button LoadRunsetButton = (Button)sender;
+            RunSetReport runsetReport = (RunSetReport)LoadRunsetButton.Tag;
+
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    string executionId = runsetReport.GUID;
+                    RunSetConfig? runset = await GetRunsetFromExecutionHandler(executionId);
+                    if (runset == null)
+                    {
+                        //execution details not found in ExecutionHandler
+                        runset = GetRunsetFromSolutionRepository(runsetReport.Name);
+                    }
+
+                    if (runset == null)
+                    {
+                        Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.RunsetNotFoundForLoading));
+                        return;
+                    }
+                    Dispatcher.Invoke(() =>
+                    {
+                        WorkSpace.Instance.SolutionRepository.AddRepositoryItem(runset, doNotSave: true);
+                        runset.Name += "_";
+                        LoadRunsetEventHandler? handler = LoadRunset;
+                        handler?.Invoke(runset);
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while loading runset", ex);
+                }
+            });
+        }
+
+        private async Task<RunSetConfig?> GetRunsetFromExecutionHandler(string executionId)
+        {
+            ExecutionHandlerAPIClient apiClient = new(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL);
+            ExecutionHandlerAPIClient.ExecutionDetailsOptions options = new()
+            {
+                IncludeRequestDetails = true
+            };
+            ExecutionDetailsResponse? response = await apiClient.GetExecutionDetailsAsync(executionId, options);
+            
+            if (response == null)
+            {
+                return null;
+            }
+            
+            JsonSerializerOptions serializerOptions = new();
+            serializerOptions.Converters.Add(new JsonStringEnumConverter());
+            GingerExecConfig executionConfig = JsonSerializer.Deserialize<GingerExecConfig>(response.RequestDetails.ExecutionConfigurations, serializerOptions)!;
+            
+            RunSetConfig runset = DynamicExecutionManager.LoadRunsetFromExecutionConfig(executionConfig);
+
+            return runset;
+        }
+
+        private RunSetConfig? GetRunsetFromSolutionRepository(string runsetName)
+        {
+            return WorkSpace
+                .Instance
+                .SolutionRepository
+                .GetAllRepositoryItems<RunSetConfig>()
+                .FirstOrDefault(r => string.Equals(r.Name, runsetName));
+        }
+
+        private const string VirtualRunsetCacheDirectoryName = "Cache";
+
+        private void CacheVirtualRunset(RunSetConfig runset)
+        {
+            RepositoryFolder<RunSetConfig> runsetRootFolder = WorkSpace
+                .Instance
+                .SolutionRepository
+                .GetRepositoryItemRootFolder<RunSetConfig>();
+            runsetRootFolder.AddSubFolder(VirtualRunsetCacheDirectoryName);
+            RepositoryFolder<RunSetConfig> virtualRunsetFolder = runsetRootFolder.GetSubFolder(VirtualRunsetCacheDirectoryName);
+
+            virtualRunsetFolder.AddRepositoryItem(runset, doNotSave: true);
         }
 
         private void BPMNButton_Click(object sender, RoutedEventArgs e)

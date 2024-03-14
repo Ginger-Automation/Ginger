@@ -1724,6 +1724,12 @@ namespace Ginger.Run
             UpdateRunsetExecutionHistoryTabHeader();
         }
 
+        public void RunSetExecutionHistoryPage_LoadRunset(RunSetConfig runset)
+        {
+            LoadRunSetConfig(runset);
+            RunTab.SelectedItem = xRunnersTab;
+        }
+
         private void InitALMDefectsOpeningSection()
         {
             if (mRunSetsALMDefectsOpeningPage == null)

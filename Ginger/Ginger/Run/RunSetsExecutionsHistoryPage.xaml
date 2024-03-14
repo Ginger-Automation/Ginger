@@ -38,6 +38,20 @@
                         Width="16" />
                 </Button>
             </DataTemplate>
+            <DataTemplate
+                x:Key="LoadRunsetDataTemplate">
+                <Button
+                    x:Name="LoadRunsetButton"
+                    Click="LoadRunsetButton_Click"
+                    ToolTip="Load Runset"
+                    Style="{StaticResource @InputImageGridCellButtonStyle}"
+                    Tag="{Binding .}">
+                    <Image
+                        Source="{StaticResource @Report2_16x16}"
+                        Height="16"
+                        Width="16" />
+                </Button>
+            </DataTemplate>
         </Grid.Resources>
         <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto"  >
             <Ginger:ucGrid x:Name="grdExecutionsHistory" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" IsReadOnly="False" ShowTagsFilter="Collapsed" ShowTitle="Collapsed">
