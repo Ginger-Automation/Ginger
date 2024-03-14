@@ -93,6 +93,8 @@ namespace Ginger.Environments
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Active), WidthWeight = 100, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Name), WidthWeight = 100 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Platform), WidthWeight = 100 });
+
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Description), WidthWeight = 200 });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Vendor), WidthWeight = 50 });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.CoreVersion), WidthWeight = 100, Header = "Core Version" });
@@ -106,7 +108,7 @@ namespace Ginger.Environments
 
         private void SetGridData()
         {
-            AppEnvironmnet.Applications.ForEach((app) => app.SetPlatFormImage(WorkSpace.Instance.Solution.ApplicationPlatforms));
+            AppEnvironmnet.Applications.ForEach((app) => app.SetDataFromAppPlatform(WorkSpace.Instance.Solution.ApplicationPlatforms));
             grdApps.DataSourceList = AppEnvironmnet.Applications;
         }
 

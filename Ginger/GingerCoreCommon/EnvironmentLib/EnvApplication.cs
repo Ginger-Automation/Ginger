@@ -123,14 +123,17 @@ namespace GingerCore.Environments
         {
             get;
             set;
-        }
-        public void SetPlatFormImage(ObservableList<ApplicationPlatform> ApplicationPlatforms)
+        } = ePlatformType.NA;
+
+        public void SetDataFromAppPlatform(ObservableList<ApplicationPlatform> ApplicationPlatforms)
         {
-            ApplicationPlatform applicationPlatform =  ApplicationPlatforms.FirstOrDefault((app)=>app.Guid.Equals(this.ParentGuid));
+            ApplicationPlatform applicationPlatform =  ApplicationPlatforms.FirstOrDefault((app)=>app.Guid.Equals(this.ParentGuid) || app.AppName.Equals(this.Name));
+           
             if(applicationPlatform != null)
             {
                 this.ItemImageType = applicationPlatform.PlatformImage;
                 this.Name = applicationPlatform.AppName;
+                this.Platform = applicationPlatform.Platform;
             }
             else
             {
