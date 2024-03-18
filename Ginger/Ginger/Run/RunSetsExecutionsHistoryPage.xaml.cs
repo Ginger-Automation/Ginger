@@ -490,9 +490,9 @@ namespace Ginger.Run
                     Dispatcher.Invoke(() =>
                     {
                         WorkSpace.Instance.SolutionRepository.AddRepositoryItem(runset, doNotSave: true);
-                        runset.Name += "_";
                         LoadRunsetEventHandler? handler = LoadRunset;
                         handler?.Invoke(runset);
+                        runset.DirtyStatus = eDirtyStatus.Modified;
                     });
                 }
                 catch(Exception ex)
