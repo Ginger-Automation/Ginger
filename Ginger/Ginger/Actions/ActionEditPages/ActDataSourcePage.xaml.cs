@@ -375,6 +375,10 @@ namespace Ginger.Actions
                                             if (arrORCond[iOrCount].IndexOf("'") != -1)
                                             {
                                                 wColVal = arrORCond[iOrCount].Substring(arrORCond[iOrCount].IndexOf("'") + 1, arrORCond[iOrCount].LastIndexOf("'") - arrORCond[iOrCount].IndexOf("'") - 1);
+                                                if (wColVal.Contains("$$$"))
+                                                {
+                                                    wColVal = wColVal.Replace("$$$", " ");
+                                                }
                                             }
                                             else if (condVal.Length > 1)
                                             {
@@ -387,6 +391,10 @@ namespace Ginger.Actions
                                             if (arrORCond[iOrCount].IndexOf("'") != -1)
                                             {
                                                 wColVal = arrORCond[iOrCount].Substring(arrORCond[iOrCount].IndexOf("'") + 1, arrORCond[iOrCount].LastIndexOf("'") - arrORCond[iOrCount].IndexOf("'") - 1);
+                                                if (wColVal.Contains("$$$"))
+                                                {
+                                                    wColVal = wColVal.Replace("$$$", " ");
+                                                }
                                             }
                                             else if (condVal.Length > 1)
                                             {

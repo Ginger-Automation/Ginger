@@ -11,7 +11,7 @@
     <Grid Background="{StaticResource $BackgroundColor_White}" Margin="0,-7,0,7">
         <DockPanel Margin="10,0,0,0">
             <StackPanel x:Name="xTargetPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
-                <Label x:Name="xTargetLbl" Style="{StaticResource $LabelStyle}">Target :</Label>
+                <Label x:Name="xTargetLbl" Style="{StaticResource $LabelStyle}" Margin="0,10,0,0" Content="Target :"></Label>
                 <StackPanel x:Name="xTargetRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="65,0,0,0">
                     <UserControlsLib:UCRadioButtons x:Name="xTargetRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 </StackPanel>
@@ -48,20 +48,20 @@
 
 
             <StackPanel x:Name="xAnalyzerPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
-                <Label x:Name="xAnalyzerLbl" Grid.Column="0" Style="{StaticResource $LabelStyle}">Analyze Option:</Label>
+                <Label x:Name="xAnalyzerLbl" Grid.Column="0" Style="{StaticResource $LabelStyle}" Margin="0,10,0,0" Content="Analyze Option :"></Label>
                 <StackPanel x:Name="xAnalyzerRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="18,0,0,0">
                     <UserControlsLib:UCRadioButtons x:Name="xAnalyzerRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 </StackPanel>
             </StackPanel>
 
             <StackPanel x:Name="xStdStack" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
-                <Label x:Name="xStdlbl" Grid.Column="0" Style="{StaticResource $LabelStyle}" Content="Standards :"/>
-                <UserControlsLib:MultiSelectComboBox Grid.Column="1" x:Name="xStdCB" Margin="70,0,0,0" HorizontalContentAlignment="left"  MinWidth="300" Width="auto"/>
+                <Label x:Name="xStdlbl" Grid.Column="0" Style="{StaticResource $LabelStyle}" Margin="0,10,0,0" Content="Standards :"/>
+                <UserControlsLib:MultiSelectComboBox Grid.Column="1" x:Name="xStdCB" Margin="75,0,0,0" HorizontalContentAlignment="Left" Width="auto"/>
             </StackPanel>
 
             <StackPanel x:Name="xSeverityStack" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
-                <Label x:Name="xSeveritylbl" Grid.Column="0" Width="140" Style="{StaticResource $LabelStyle}" Content="Acceptable Severities :"/>
-                <UserControlsLib:MultiSelectComboBox Grid.Column="1" x:Name="xSeverityCB" Margin="8,0,0,0" HorizontalAlignment="Left" MinWidth="300" Width="auto" />
+                <Label x:Name="xSeveritylbl" Grid.Column="0" Width="140" Style="{StaticResource $LabelStyle}" Margin="0,10,0,0" Content="Acceptable Severities :"/>
+                <UserControlsLib:MultiSelectComboBox Grid.Column="1" x:Name="xSeverityCB" Margin="8,0,0,0" HorizontalAlignment="Left" Width="auto" />
             </StackPanel>
 
         </DockPanel>

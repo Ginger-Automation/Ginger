@@ -6,61 +6,189 @@
       xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
       xmlns:Activities="clr-namespace:Ginger.BusinessFlowWindows"
       xmlns:UserControlsLib="clr-namespace:Ginger.UserControlsLib"
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
       mc:Ignorable="d" 
       MinHeight="500" MinWidth="585"
 	Title="Execution Logger Configuration">
-
+    <UserControlsLib:GingerUIPage.Resources>
+        <GridLength
+            x:Key="ConfigRowHeight">30</GridLength>
+        <GridLength
+            x:Key="ConfigLabelColWidth">260</GridLength>
+        <GridLength
+            x:Key="ConfigValueColWidth">*</GridLength>
+        <sys:Double
+            x:Key="ConfigValueColMaxWidth">400</sys:Double>
+    </UserControlsLib:GingerUIPage.Resources>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
         <DockPanel Background="{StaticResource $BackgroundColor_White}">
-
-            <usercontrols:ucButton x:Name="xSaveButton" DockPanel.Dock="Top" ButtonType="ImageButton"  ButtonFontImageSize="25" ButtonImageWidth="25" ButtonImageHeight="25" ButtonImageType="Save" Click="xSaveButton_Click" Visibility="Collapsed" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-
-            <Label Margin="0,5,0,0" Content="Local Execution Logger Settings" DockPanel.Dock="Top" Style="{StaticResource @LabelStyle}" FontWeight="Bold" FontSize="16"></Label>
-
-            <Grid DockPanel.Dock="Top" Margin="0,10,0,0" >
-                <Grid.RowDefinitions>
-                    <RowDefinition  Height="30"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="250"/>
-                    <ColumnDefinition Width="350*"/>
-                </Grid.ColumnDefinitions>
-
-                <Label  Content="Execution Logger Result Producing:" Grid.Row="0" Grid.Column="0"  Style="{StaticResource @LabelStyle}" VerticalAlignment="Center" FontSize="12"></Label>
-                <StackPanel Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Orientation="Horizontal"  HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <RadioButton x:Name="executionResultOnRadioBtnsPnl" Content="Yes" Padding="5,0,5,0" IsChecked="True" VerticalAlignment="Center" Checked="executionResultOnRadioBtnsPnl_Checked"></RadioButton>
-                    <RadioButton x:Name="executionResultOffRadioBtnsPnl" Content="No" Padding="5,0,0,0" Checked="executionResultOffRadioBtnsPnl_Checked" VerticalAlignment="Center"></RadioButton>
-                </StackPanel>
-            </Grid>
-
-            <Grid DockPanel.Dock="Top" Margin="0,10,0,0" Name="xLoggerSettingsGrid">
-                <Grid.RowDefinitions>
-                    <RowDefinition  Height="30"/>
-                    <RowDefinition  Height="10"/>
-                    <RowDefinition  Height="30"/>
-                    <RowDefinition  Height="10"/>
-                    <RowDefinition x:Name="xFolderMaximumSizeRow"  Height="30"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="250"/>
-                    <ColumnDefinition Width="350*"/>
-                </Grid.ColumnDefinitions>
-                <Label Content="Data Save Options:" Grid.Row="0" Grid.Column="0" Style="{StaticResource @LabelStyle}"  FontSize="12"></Label>
-                <StackPanel x:Name="dataSaveOptionsRadioBtnsPnl" Margin="10,0,0,0" Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-                    <RadioButton x:Name="liteDbRadioBtnsPnl" Content="LiteDB" Padding="5,0,5,0" Checked="LiteDbRadioBtnsPnl_Checked"></RadioButton>
-                    <RadioButton x:Name="textFileRadioBtnsPnl" Content="Text File" Padding="5,0,0,0" Checked="TextFileRadioBtnsPnl_Checked"></RadioButton>
-                </StackPanel>
-                <Label Content="Execution Logger Results Folder:" Grid.Row="2" Grid.Column="0" Style="{StaticResource @LabelStyle}"  FontSize="12"></Label>
-                <StackPanel Margin="10,0,0,0" Grid.Row="2" Grid.Column="1" Orientation="Horizontal" >
-                    <TextBox x:Name="FolderTextBox" Width="400" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"  Style="{StaticResource @TextBoxStyle}"></TextBox>
-                    <Button x:Name="SelectFolderButton" Click="SelectFolderButton_Click" Style="{StaticResource @InputButtonStyle}" Width="50" Margin="5,0,0,0" VerticalAlignment="Center" Content="Select"/>
-                </StackPanel>
-                <Label x:Name="xFolderMaximumSizeLabel" Grid.Row="4" Grid.Column="0" Style="{StaticResource @LabelStyle}" FontSize="12">Folder Maximal Size (Must be in MB):</Label>
-                <StackPanel Margin="10,0,0,0" Grid.Row="4" Grid.Column="1" Orientation="Horizontal" >
-                    <TextBox x:Name="xFolderMaximumSizeTextBox" Width="75" Style="{StaticResource @TextBoxStyle}"  ></TextBox>
-                </StackPanel>
-            </Grid>
-
+            <Expander
+                DockPanel.Dock="Top"
+                ExpandDirection="Down"
+                IsExpanded="True"
+                Style="{StaticResource $ExpanderStyle}"
+                HorizontalAlignment="Left"
+                Margin="0,20,0,0">
+                <Expander.Header>
+                    <Label
+                        Margin="0,5,0,0"
+                        Content="Local Execution Logger Settings"
+                        DockPanel.Dock="Top"
+                        Style="{StaticResource @LabelStyle}"
+                        FontWeight="Bold"
+                        FontSize="16" />
+                </Expander.Header>
+                <Expander.Content>
+                    <DockPanel>
+                        <usercontrols:ucButton
+                            x:Name="xSaveButton"
+                            DockPanel.Dock="Top"
+                            ButtonType="ImageButton"
+                            ButtonFontImageSize="25"
+                            ButtonImageWidth="25"
+                            ButtonImageHeight="25"
+                            ButtonImageType="Save"
+                            Click="xSaveButton_Click"
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Left"
+                            Margin="0,0,0,0" />
+                        <Grid
+                            DockPanel.Dock="Top"
+                            Margin="0,10,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition
+                                    Height="30" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition
+                                    Width="250" />
+                                <ColumnDefinition
+                                    Width="350*" />
+                            </Grid.ColumnDefinitions>
+                            <Label
+                                Content="Execution Logger Result Producing:"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Style="{StaticResource @LabelStyle}"
+                                VerticalAlignment="Center"
+                                FontSize="12" />
+                            <StackPanel
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Margin="10,0,0,0"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center">
+                                <RadioButton
+                                    x:Name="executionResultOnRadioBtnsPnl"
+                                    Content="Yes"
+                                    Padding="5,0,5,0"
+                                    IsChecked="True"
+                                    VerticalAlignment="Center"
+                                    Checked="executionResultOnRadioBtnsPnl_Checked" />
+                                <RadioButton
+                                    x:Name="executionResultOffRadioBtnsPnl"
+                                    Content="No"
+                                    Padding="5,0,0,0"
+                                    Checked="executionResultOffRadioBtnsPnl_Checked"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
+                        <Grid
+                            DockPanel.Dock="Top"
+                            Margin="0,10,0,0"
+                            Name="xLoggerSettingsGrid">
+                            <Grid.RowDefinitions>
+                                <RowDefinition
+                                    Height="30" />
+                                <RowDefinition
+                                    Height="10" />
+                                <RowDefinition
+                                    Height="30" />
+                                <RowDefinition
+                                    Height="10" />
+                                <RowDefinition
+                                    x:Name="xFolderMaximumSizeRow"
+                                    Height="30" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition
+                                    Width="250" />
+                                <ColumnDefinition
+                                    Width="350*" />
+                            </Grid.ColumnDefinitions>
+                            <Label
+                                Content="Data Save Options:"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Style="{StaticResource @LabelStyle}"
+                                FontSize="12" />
+                            <StackPanel
+                                x:Name="dataSaveOptionsRadioBtnsPnl"
+                                Margin="10,0,0,0"
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center">
+                                <RadioButton
+                                    x:Name="liteDbRadioBtnsPnl"
+                                    Content="LiteDB"
+                                    Padding="5,0,5,0"
+                                    Checked="LiteDbRadioBtnsPnl_Checked" />
+                                <RadioButton
+                                    x:Name="textFileRadioBtnsPnl"
+                                    Content="Text File"
+                                    Padding="5,0,0,0"
+                                    Checked="TextFileRadioBtnsPnl_Checked" />
+                            </StackPanel>
+                            <Label
+                                Content="Execution Logger Results Folder:"
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Style="{StaticResource @LabelStyle}"
+                                FontSize="12" />
+                            <StackPanel
+                                Margin="10,0,0,0"
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Orientation="Horizontal">
+                                <TextBox
+                                    x:Name="FolderTextBox"
+                                    Width="400"
+                                    TextWrapping="Wrap"
+                                    VerticalScrollBarVisibility="Auto"
+                                    Style="{StaticResource @TextBoxStyle}" />
+                                <Button
+                                    x:Name="SelectFolderButton"
+                                    Click="SelectFolderButton_Click"
+                                    Style="{StaticResource @InputButtonStyle}"
+                                    Width="50"
+                                    Margin="5,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Content="Select" />
+                            </StackPanel>
+                            <Label
+                                x:Name="xFolderMaximumSizeLabel"
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                Style="{StaticResource @LabelStyle}"
+                                FontSize="12"
+                                Content="Folder Maximal Size (Must be in MB):" />
+                            <StackPanel
+                                Margin="10,0,0,0"
+                                Grid.Row="4"
+                                Grid.Column="1"
+                                Orientation="Horizontal">
+                                <TextBox
+                                    x:Name="xFolderMaximumSizeTextBox"
+                                    Width="75"
+                                    Style="{StaticResource @TextBoxStyle}" />
+                            </StackPanel>
+                        </Grid>
+                    </DockPanel>
+                </Expander.Content>
+            </Expander>
             <Expander x:Name="xCentralExecutionLoggerExpander" DockPanel.Dock="Top" ExpandDirection="Down"  IsExpanded="True" Style="{StaticResource $ExpanderStyle}" HorizontalAlignment="Left" Margin="0,20,0,0">
                 <Expander.Header>
                     <StackPanel Orientation="Horizontal">
@@ -113,7 +241,54 @@
                     </StackPanel>
                 </Expander.Content>
             </Expander>
-
+            <Expander
+                Style="{StaticResource $ExpanderStyle}"
+                IsExpanded="True"
+                Margin="0,20,0,0">
+                <Expander.Header>
+                    <StackPanel
+                        Orientation="Horizontal">
+                        <Label
+                            Content="Execution Handler Settings"
+                            Style="{StaticResource $HorizontalExpanderLabelStyle}" />
+                        <usercontrols:ImageMakerControl
+                            SetAsFontImageWithSize="16"
+                            ToolTip="Enterprise Feature"
+                            ImageType="Building"
+                            Width="20"
+                            Height="16"
+                            Foreground="{StaticResource $BackgroundColor_Black}" />
+                    </StackPanel>
+                </Expander.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition
+                            Height="{StaticResource ConfigRowHeight}" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition
+                            Width="{StaticResource ConfigLabelColWidth}" />
+                        <ColumnDefinition
+                            Width="{StaticResource ConfigValueColWidth}"
+                            MaxWidth="{StaticResource ConfigValueColMaxWidth}"/>
+                    </Grid.ColumnDefinitions>
+                    <Label
+                        Content="Handler URL:"
+                        Grid.Column="0"
+                        Grid.Row="0"
+                        Style="{StaticResource @InputFieldLabelStyle}"
+                        FontSize="12" />
+                    <TextBox
+                        x:Name="HandlerURLTextBox"
+                        Grid.Column="1"
+                        Grid.Row="0"
+                        HorizontalAlignment="Stretch"
+                        VerticalScrollBarVisibility="Auto"
+                        Style="{StaticResource @TextBoxStyle}"
+                        TextWrapping="Wrap"
+                        ToolTip="Hanlder API URL" />
+                </Grid>
+            </Expander>
         </DockPanel>
     </ScrollViewer>
 </UserControlsLib:GingerUIPage>
