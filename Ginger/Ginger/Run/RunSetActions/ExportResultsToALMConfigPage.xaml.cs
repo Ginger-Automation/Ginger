@@ -62,6 +62,7 @@ namespace Ginger.Run
             BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.VariableForTCRunName));
             BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.isVariableInTCRunUsed));
             BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.toAttachActivitiesGroupReport));
+            BindingHandler.ObjFieldBinding(SearchChildEntityByName, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.SearchEntityByName));
             xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));
             xALMTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType),
                 GingerCore.General.GetEnumValuesForComboAndAddExtraValues(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = RunSetActionPublishToQC.AlmTypeDefault, Value = RunSetActionPublishToQC.AlmTypeDefault } }), ComboBox.TextProperty);
@@ -256,6 +257,7 @@ namespace Ginger.Run
             {
                 xExportTypePanel.Visibility = Visibility.Collapsed;
                 xExportDestinationFolder.Visibility = Visibility.Collapsed;
+                SearchChildEntityByName.Visibility = Visibility.Collapsed;
                 return;
             }
             xExportTypePanel.Visibility = Visibility.Visible;
@@ -266,10 +268,12 @@ namespace Ginger.Run
             if (xExportTypeCbx.ComboBoxSelectedValue is null) //&& xExportTypeCbx.ComboBoxSelectedValue.ToString().Equals(eExportType.ResultsOnly.ToString()))
             {
                 xExportDestinationFolder.Visibility = Visibility.Collapsed;
+                SearchChildEntityByName.Visibility = Visibility.Collapsed;
                 return;
             }
             xExportDestinationFolder.Visibility = Visibility.Visible;
             xExportTypeCbx.ComboBox.SelectedValue = eExportType.EntitiesAndResults;
+            SearchChildEntityByName.Visibility = Visibility.Collapsed;
             xExportTypeCbx.IsEnabled = false;
         }
         private void xALMTypeCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -314,6 +318,16 @@ namespace Ginger.Run
                     });
                 }
             }
+        }
+
+        private void SearchChildEntityByName_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SearchChildEntityByName_Checked(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

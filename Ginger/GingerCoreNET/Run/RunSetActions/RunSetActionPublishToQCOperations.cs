@@ -26,6 +26,8 @@ using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using static Ginger.Run.RunSetActions.RunSetActionBase;
 using static GingerCore.ALM.PublishToALMConfig;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
@@ -78,6 +80,7 @@ namespace Ginger.Run.RunSetActions
             PublishToALMConfig.AlmFields = RunSetActionPublishToQC.AlmFields;
             PublishToALMConfig.TestSetFolderDestination = RunSetActionPublishToQC.TestSetFolderDestination;
             PublishToALMConfig.TestCaseFolderDestination = RunSetActionPublishToQC.TestCaseFolderDestination;
+            PublishToALMConfig.IsEntitySearchByName = RunSetActionPublishToQC.SearchEntityByName;
         }
         public void Execute(IReportInfo RI)
         {
@@ -108,6 +111,7 @@ namespace Ginger.Run.RunSetActions
                         Reporter.ToLog(eLogLevel.WARN, "Export Business Flow to ALM failed while publish results to ALM");
                     }
                 }
+                UpdateAlmIdtoRunset(bfs[0], RI);
             }
             else
             {
@@ -150,6 +154,16 @@ namespace Ginger.Run.RunSetActions
                 virtualBF.RunStatus = runSetExec.RunSetConfig.RunSetExecutionStatus;
                 virtualBF.StartTimeStamp = runSetExec.RunSetConfig.StartTimeStamp;
                 virtualBF.EndTimeStamp = runSetExec.RunSetConfig.EndTimeStamp;
+                virtualBF.ALMTestSetLevel = PublishToALMConfig.ALMTestSetLevel.ToString();
+                if (!string.IsNullOrEmpty(runSetExec.RunSetConfig.ExternalID))
+                {
+                    virtualBF.ExternalID = runSetExec.RunSetConfig.ExternalID;
+                }
+                else
+                {
+                    virtualBF.ExternalID = string.Empty;
+                }
+
                 virtualBF.Activities = new ObservableList<Activity>();
                 foreach (GingerRunner runSetrunner in runSetExec.Runners)
                 {
@@ -163,7 +177,8 @@ namespace Ginger.Run.RunSetActions
                         ActivitiesGroup virtualAG = new ActivitiesGroup();
                         virtualAG.Name = runSetBF.Name;
                         virtualAG.Description = runSetBF.Description;
-                        
+                        virtualAG.ExternalID = !string.IsNullOrEmpty(runSetBF.ExternalID) ? runSetBF.ExternalID : string.Empty;
+                        virtualAG.BusinessFlowGuid = runSetBF.Guid;
                         if (Enum.IsDefined(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString()))
                         {
                             virtualAG.RunStatus = (eActivitiesGroupRunStatus)Enum.Parse(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString());
@@ -185,6 +200,47 @@ namespace Ginger.Run.RunSetActions
             {
                 Reporter.ToLog(eLogLevel.ERROR, $"Failed to convert Run Set to BF for ALM Export", ex);
                 return null;
+            }
+        }
+
+        private void UpdateAlmIdtoRunset(BusinessFlow businessFlow, IReportInfo reportInfo)
+        {
+            RunsetExecutor runSetExec = WorkSpace.Instance.RunsetExecutor;
+            try
+            {
+                if (reportInfo == null)
+                {
+                    return;
+                }
+                if (businessFlow != null && !string.IsNullOrEmpty(businessFlow.ExternalID))
+                {
+                    runSetExec.RunSetConfig.ExternalID = businessFlow.ExternalID;
+                }
+
+                foreach (GingerRunner runSetrunner in runSetExec.Runners)
+                {
+                    // if executor is null when run if from file
+                    if (runSetrunner.Executor is null)
+                    {
+                        runSetrunner.Executor = new GingerExecutionEngine(runSetrunner);
+                    }
+
+                    List<BusinessFlow> Bflist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
+
+                    foreach (BusinessFlow bFlow in Bflist)
+                    {
+                        ActivitiesGroup activitiesGroup = businessFlow.ActivitiesGroups.FirstOrDefault(x => x.BusinessFlowGuid == bFlow.Guid);
+                        if(activitiesGroup != null)
+                        {
+                            bFlow.ExternalID = activitiesGroup.ExternalID;
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+
             }
         }
     }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -520,6 +520,8 @@ namespace GingerCore.Activities
                 ExternalIdCalculated = ve.ValueCalculated;
             }
         }
+
+        public Guid BusinessFlowGuid { get; set; }
 
     }
 }
