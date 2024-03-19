@@ -19,7 +19,7 @@
         <StackPanel>
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Label Style="{StaticResource $LabelStyle}" Content="Environment Name:"/>
+                    <Label Style="{StaticResource $LabelStyle}" Content="Environment:"/>
                     <usercontrols:ucShowItemID x:Name="xShowIDUC" VerticalAlignment="Center" />
                 </StackPanel>
                 <TextBox x:Name="EnvNameTextBox" Style="{StaticResource @TextBoxStyle}" HorizontalAlignment="Left" MinWidth="500px" FontSize="14" FontWeight="Bold" TextChanged="EnvNameTextBox_TextChanged"></TextBox>
