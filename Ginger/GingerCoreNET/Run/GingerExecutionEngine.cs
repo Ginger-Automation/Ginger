@@ -35,6 +35,7 @@ using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
+using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
@@ -1913,7 +1914,19 @@ namespace Ginger.Run
                         {
                             try
                             {
-                                IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                                string valueForDriver = string.Empty;
+                                if (act is ActWebAPIModel)
+                                {
+                                    valueForDriver = EvaluateWebApiModelParameterValue(IV.Value, subList);
+                                }
+                                if (!string.IsNullOrEmpty(valueForDriver))
+                                {
+                                    IV.ValueForDriver = act.ValueExpression.Calculate(valueForDriver);
+                                }
+                                else
+                                {
+                                    IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                                }
                                 IV.DisplayValue = act.ValueExpression.EncryptedValue;
                             }
                             catch (Exception ex)
@@ -1928,7 +1941,23 @@ namespace Ginger.Run
                     }
                 }
             }
-            act.ValueExpression.DecryptFlag = true;
+             act.ValueExpression.DecryptFlag = true;
+        }
+
+        private static string EvaluateWebApiModelParameterValue(string valueToEvaluate, ObservableList<ActInputValue> subList)
+        {
+            foreach (var item_toCompare in subList)
+            {
+                if (valueToEvaluate.Contains(item_toCompare.ItemName))
+                {
+                    if (item_toCompare.ValueForDriver != null)
+                    {
+                        return valueToEvaluate.Replace(item_toCompare.ItemName, item_toCompare.ValueForDriver);
+                    }                    
+                }
+            }
+
+            return string.Empty;
         }
 
         private void ProcessWait(Act act, Stopwatch st)

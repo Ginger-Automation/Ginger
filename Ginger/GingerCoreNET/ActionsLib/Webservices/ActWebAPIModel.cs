@@ -204,11 +204,6 @@ namespace GingerCore.Actions.WebServices.WebAPI
             actWebAPIBase.ReturnValues = actWebAPIModel.ReturnValues;
             actWebAPIBase.Context = actWebAPIModel.Context;
 
-            Context context = Amdocs.Ginger.Common.Context.GetAsContext(actWebAPIBase.Context);
-            if (context != null && context.Runner != null)
-            {
-                context.Runner.PrepActionValueExpression(actWebAPIBase, context.BusinessFlow);
-            }
         }
         private ObservableList<ActInputValue> ConvertAPIModelKeyValueToActInputValues(ObservableList<APIModelKeyValue> GingerCoreNETHttpHeaders, ActWebAPIModel actWebAPIModel)
         {

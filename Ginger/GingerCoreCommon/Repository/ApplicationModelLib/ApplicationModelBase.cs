@@ -288,7 +288,7 @@ namespace Amdocs.Ginger.Repository
             soapHeaderContent.Append("\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\"");
             soapHeaderContent.Append(">\n");
             soapHeaderContent.Append("\t\t\t\t<wsse:UsernameToken wsu:Id=");
-            soapHeaderContent.Append("\"UsernameToken-{Function Fun=GetHashCode({Function Fun=GetGUID()})}");
+            soapHeaderContent.Append("\"UsernameToken-{GET_HASH_CODE}");
             soapHeaderContent.Append("\">\n\t\t\t\t<wsse:Username>");
             soapHeaderContent.Append("{WSSECUSERNAME}");
             soapHeaderContent.Append("</wsse:Username>\n\t\t\t\t<wsse:Password Type=");
@@ -297,14 +297,16 @@ namespace Amdocs.Ginger.Repository
             soapHeaderContent.Append("{WSSECPASSWORD}");
             soapHeaderContent.Append("</wsse:Password>\n\t\t\t\t<wsse:Nonce EncodingType=");
             soapHeaderContent.Append("\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary\"");
-            soapHeaderContent.Append(">" + "{Function Fun=GenerateHashCode(\"{Function Fun=GetGUID()}{WSSECPASSWORD}\")}" + "=");
+            soapHeaderContent.Append(">" + "{GET_HASHED_WSSECPASSWORD}" + "=");
             soapHeaderContent.Append("</wsse:Nonce>\n\t\t\t\t<wsu:Created>");
-            soapHeaderContent.Append("{Function Fun=GetUTCTimeStamp()}");
+            soapHeaderContent.Append("{GETUTCTIMESTAMP}");
             soapHeaderContent.Append("</wsu:Created>\n\t\t\t</wsse:UsernameToken>\n\t\t</wsse:Security>\n\t</soapenv:Header>\n");
             SecuritryContent.Add(soapHeaderContent.ToString());
             SecuritryContent.Add("{WSSECUSERNAME}");
             SecuritryContent.Add("{WSSECPASSWORD}");
-
+            SecuritryContent.Add("{GETUTCTIMESTAMP}");
+            SecuritryContent.Add("{GET_HASHED_WSSECPASSWORD}");
+            SecuritryContent.Add("{GET_HASH_CODE}");            
 
             string wsSecuritySettings = SecuritryContent.ElementAt(0);
             string pattern1 = "<soapenv:Header>(.*?)</soapenv:Header>|<soapenv:Header/>|<(\\s)soapenv:Header(\\s)/>";
