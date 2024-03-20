@@ -3,6 +3,7 @@ using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -38,7 +39,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
 
         public async Task<ExecutionDetailsResponse?> GetExecutionDetailsAsync(string executionId, ExecutionDetailsOptions options)
         {
-            return (await GetExecutionDetailsAsync(new string[] { executionId }, options)).First();
+            return (await GetExecutionDetailsAsync(new string[] { executionId }, options)).FirstOrDefault();
         }
 
         public async Task<IEnumerable<ExecutionDetailsResponse?>> GetExecutionDetailsAsync(IEnumerable<string> executionIds, ExecutionDetailsOptions options)
@@ -46,6 +47,14 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
             if (executionIds == null || !executionIds.Any())
             {
                 throw new ArgumentException($"{nameof(executionIds)} cannot be null or empty.");
+            }
+
+            List<ExecutionDetailsResponse?> executionDetails = [];
+            executionIds = executionIds.Where(id => Guid.TryParse(id, out Guid _)).ToList();
+
+            if (!executionIds.Any())
+            {
+                return executionDetails;
             }
 
             try
@@ -82,6 +91,10 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
 
                 HttpResponseMessage response = await _httpClient.SendAsync(request);
 
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return executionDetails;
+                }
                 if (!response.IsSuccessStatusCode)
                 {
                     throw new Exception($"ExecutionHandler API returned unsuccessful response code({response.StatusCode}).");
@@ -93,7 +106,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 };
                 serializerOptions.Converters.Add(new JsonStringEnumConverter());
-                IEnumerable<ExecutionDetailsResponse?> executionDetails = JsonSerializer.Deserialize<IEnumerable<ExecutionDetailsResponse?>>(responseJson, serializerOptions)!;
+                executionDetails.AddRange(JsonSerializer.Deserialize<IEnumerable<ExecutionDetailsResponse?>>(responseJson, serializerOptions)!);
 
                 return executionDetails;
             }

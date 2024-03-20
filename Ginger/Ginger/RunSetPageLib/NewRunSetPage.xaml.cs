@@ -1675,7 +1675,7 @@ namespace Ginger.Run
                     mRunSetConfig.AllowAutoSave = true;
                     xRunSetLoadingPnl.Visibility = Visibility.Collapsed;
                     xRunsetPageGrid.Visibility = Visibility.Visible;
-                    mRunSetConfig.DirtyStatus = eDirtyStatus.NoChange;
+                    //mRunSetConfig.DirtyStatus = eDirtyStatus.NoChange;
                     if (xAddBusinessflowBtn.IsLoaded && mRunSetConfig != null)
                     {
                         General.DoEvents();

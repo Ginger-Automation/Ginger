@@ -492,7 +492,6 @@ namespace Ginger.Run
                         WorkSpace.Instance.SolutionRepository.AddRepositoryItem(runset, doNotSave: true);
                         LoadRunsetEventHandler? handler = LoadRunset;
                         handler?.Invoke(runset);
-                        runset.DirtyStatus = eDirtyStatus.Modified;
                     });
                 }
                 catch(Exception ex)
@@ -521,6 +520,7 @@ namespace Ginger.Run
             GingerExecConfig executionConfig = JsonSerializer.Deserialize<GingerExecConfig>(response.RequestDetails.ExecutionConfigurations, serializerOptions)!;
             
             RunSetConfig runset = DynamicExecutionManager.LoadRunsetFromExecutionConfig(executionConfig);
+            runset.DirtyStatus = eDirtyStatus.Modified;
 
             return runset;
         }
