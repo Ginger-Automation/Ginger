@@ -186,9 +186,9 @@ namespace Ginger.Run.RunSetActions
             return ALMTestSetLevel;
         }
 
-        private bool mSearchEntityByName;
+        private bool mSearchALMEntityByName;
         [IsSerializedForLocalRepository]
-        public bool SearchEntityByName { get { return mSearchEntityByName; } set { if (mSearchEntityByName != value) { mSearchEntityByName = value; OnPropertyChanged(nameof(SearchEntityByName)); } } }
+        public bool SearchALMEntityByName { get { return mSearchALMEntityByName; } set { if (mSearchALMEntityByName != value) { mSearchALMEntityByName = value; OnPropertyChanged(nameof(SearchALMEntityByName)); } } }
 
 
     }

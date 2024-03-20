@@ -80,7 +80,7 @@ namespace Ginger.Run.RunSetActions
             PublishToALMConfig.AlmFields = RunSetActionPublishToQC.AlmFields;
             PublishToALMConfig.TestSetFolderDestination = RunSetActionPublishToQC.TestSetFolderDestination;
             PublishToALMConfig.TestCaseFolderDestination = RunSetActionPublishToQC.TestCaseFolderDestination;
-            PublishToALMConfig.IsEntitySearchByName = RunSetActionPublishToQC.SearchEntityByName;
+            PublishToALMConfig.IsEntitySearchByName = RunSetActionPublishToQC.SearchALMEntityByName;
         }
         public void Execute(IReportInfo RI)
         {
@@ -178,7 +178,7 @@ namespace Ginger.Run.RunSetActions
                         virtualAG.Name = runSetBF.Name;
                         virtualAG.Description = runSetBF.Description;
                         virtualAG.ExternalID = !string.IsNullOrEmpty(runSetBF.ExternalID) ? runSetBF.ExternalID : string.Empty;
-                        virtualAG.BusinessFlowGuid = runSetBF.Guid;
+                        virtualAG.ParentGuid = runSetBF.Guid;//Guid passing in Parent Guid to Update External Id back
                         if (Enum.IsDefined(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString()))
                         {
                             virtualAG.RunStatus = (eActivitiesGroupRunStatus)Enum.Parse(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString());
@@ -225,11 +225,11 @@ namespace Ginger.Run.RunSetActions
                         runSetrunner.Executor = new GingerExecutionEngine(runSetrunner);
                     }
 
-                    List<BusinessFlow> Bflist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>().ToList();
+                    ObservableList<BusinessFlow> Bflist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
                     foreach (BusinessFlow bFlow in Bflist)
                     {
-                        ActivitiesGroup activitiesGroup = businessFlow.ActivitiesGroups.FirstOrDefault(x => x.BusinessFlowGuid == bFlow.Guid);
+                        ActivitiesGroup activitiesGroup = businessFlow.ActivitiesGroups.FirstOrDefault(x => x.ParentGuid == bFlow.Guid);
                         if(activitiesGroup != null)
                         {
                             bFlow.ExternalID = activitiesGroup.ExternalID;
@@ -240,7 +240,7 @@ namespace Ginger.Run.RunSetActions
             }
             catch (Exception ex)
             {
-
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to update ALM ID in the runset", ex);
             }
         }
     }

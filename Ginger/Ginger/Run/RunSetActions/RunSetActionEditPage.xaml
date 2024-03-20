@@ -33,11 +33,11 @@
                         </Grid.RowDefinitions>
                         <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
                             <Label Style="{StaticResource @LabelStyle}" VerticalAlignment="Center">Run at:</Label>
-                            <UserControlsLib:UCComboBox x:Name="RunAtComboBox" Margin="28,0,0,0" Width="300"></UserControlsLib:UCComboBox>
+                            <UserControlsLib:UCComboBox x:Name="RunAtComboBox" Margin="180,0,0,0" Width="300"></UserControlsLib:UCComboBox>
                         </StackPanel>
                         <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
                             <Label Style="{StaticResource @LabelStyle}" VerticalAlignment="Center">Condition:</Label>
-                            <ComboBox x:Name="ConditionComboBox" Margin="10,0,0,0" Width="300" Style="{StaticResource $FlatInputComboBoxStyle}"/>
+                            <ComboBox x:Name="ConditionComboBox" Margin="160,0,0,0" Width="300" Style="{StaticResource $FlatInputComboBoxStyle}"/>
                         </StackPanel>
 
                         <Frame x:Name="ActionEditPageFrame" Grid.Row="2"></Frame>

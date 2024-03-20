@@ -833,6 +833,7 @@ namespace GingerCore.ALM.RQM
             testPlan.EntityName = businessFlow.Name;
             testPlan.EntityDesc = businessFlow.Description == null ? "" : businessFlow.Description;
             testPlan.IsEntitySearchByName = businessFlow.IsEntitySearchByName;
+            testPlan.ALMTestSetLevel = businessFlow.ALMTestSetLevel;
             List<TestSuite> testSuites = new List<TestSuite>();
             if (ALMCore.DefaultAlmConfig.IsTestSuite == "True")
             {

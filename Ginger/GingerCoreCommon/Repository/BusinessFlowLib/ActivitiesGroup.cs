@@ -521,7 +521,5 @@ namespace GingerCore.Activities
             }
         }
 
-        public Guid BusinessFlowGuid { get; set; }
-
     }
 }
