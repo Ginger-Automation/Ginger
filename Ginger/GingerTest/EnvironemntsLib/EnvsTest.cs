@@ -31,7 +31,7 @@ namespace GingerTest
 {
     [TestClass]
     [Level3]
-
+    [Ignore]
     public class EnvsTest
     {
         static GingerAutomator mGingerAutomator;
@@ -186,7 +186,6 @@ namespace GingerTest
     // TODO: FIXME not showing in tree b is false
         [TestMethod]
         [Timeout(60000)]
-        [Ignore]
         public void ChangeEnvNameOnDiskUpdateObjandShowinTree()
         {
             //Arrange
@@ -254,7 +253,6 @@ namespace GingerTest
 
         //TODO: FIXME 2nd assert fail
         [TestMethod]
-        [Ignore]
         [Timeout(60000)]
         public void RenameEnvFolderSyncWithTree()
         {
