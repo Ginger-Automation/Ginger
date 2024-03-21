@@ -333,11 +333,12 @@ namespace Ginger.UserControlsLib
             if (this.SelectedItems != null)
             {
                 StringBuilder displayText = new StringBuilder();
+                bool allSelected = _nodeList.Any() ? _nodeList.Where(x => x.IsSelected).Count() == _nodeList.Count() - 1 : false;
                 foreach (Node s in _nodeList)
                 {
                     if (s._ShowEnumDesc)
                     {
-                        if (s.IsSelected && s._title == "All")
+                        if (allSelected || (s.IsSelected && s._title == "All"))
                         {
                             displayText = new StringBuilder();
                             displayText.Append("All");
@@ -351,7 +352,7 @@ namespace Ginger.UserControlsLib
                     }
                     else
                     {
-                        if (s.IsSelected && s.Title == "All")
+                        if (allSelected || (s.IsSelected && s.Title == "All"))
                         {
                             displayText = new StringBuilder();
                             displayText.Append("All");

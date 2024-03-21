@@ -744,8 +744,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     {
                         Directory.CreateDirectory(folderPath);
                     }
-                    string DatetimeFormate = DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff");
-                    string reportname = $"{ItemName}{DatetimeFormate}_AccessibilityReport.html";
+                    string DatetimeFormate = DateTime.Now.ToString("ddMMyyyyHHmmssfff");
+                    string reportname = $"{ItemName}_AccessibilityReport{DatetimeFormate}.html";
                     path = $"{folderPath}{Path.DirectorySeparatorChar}{reportname}";
                 }
 
@@ -824,12 +824,12 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         {
             bool hasAnyViolations = axeResult.Violations.Any();
             bool ActionResult = true;
-
+            List<string> AcceptableSeverity = new List<string>();
             if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString() && SeverityList != null && SeverityList.Any())
             {
-                List<string> sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
+                AcceptableSeverity = SeverityList.Select(x => x.Value.ToLower()).ToList();
                 List<string> Violationsevrity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()).ToList() : new List<string>();
-                foreach (string severity in sevritylist)
+                foreach (string severity in AcceptableSeverity)
                 {
                     ActionResult = !Violationsevrity.Any(y => y.Equals(severity));
                 }
@@ -859,6 +859,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 Error = $"Accessibility testing resulted in violations.";
                 AddOrUpdateReturnParamActual(ParamName: "ViolationCount", ActualValue: axeResult.Violations.Length.ToString());
                 AddOrUpdateReturnParamActual(ParamName: "ViolationList", ActualValue: String.Join(",", axeResult.Violations.Select(x => x.Id)));
+                AddOrUpdateReturnParamActual(ParamName: "AcceptableSeverity", ActualValue: string.Join(",", AcceptableSeverity));
                 int violatedNodeIndex = 0;
                 foreach (AxeResultItem violation in axeResult.Violations)
                 {
