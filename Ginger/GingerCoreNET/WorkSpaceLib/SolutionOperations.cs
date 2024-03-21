@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -364,6 +365,20 @@ namespace Ginger.SolutionGeneral
                 return new ObservableList<SolutionCategoryValue>();
             }
 
+        }
+
+        public void CleanUpCacheDirectory()
+        {
+            Type[] repositoryItemTypes = [typeof(RunSetConfig), typeof(BusinessFlow)];
+            foreach (Type repositoryItemType in repositoryItemTypes)
+            {
+                string rootFolderPath = WorkSpace.Instance.SolutionRepository.GetSolutionRepositoryItemInfo(repositoryItemType).ItemRootRepositoryFolder.FolderFullPath;
+                string cacheFolderPath = Path.Combine(rootFolderPath, Solution.CacheDirectoryName);
+                if (Directory.Exists(cacheFolderPath))
+                {
+                    Directory.Delete(cacheFolderPath, recursive: true);
+                }
+            }
         }
 
     }

@@ -23,6 +23,7 @@ using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.Reports;
 using Amdocs.Ginger.CoreNET.Run.RemoteExecution;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
@@ -469,107 +470,31 @@ namespace Ginger.Run
         {
             Button LoadRunsetButton = (Button)sender;
             RunSetReport runsetReport = (RunSetReport)LoadRunsetButton.Tag;
-
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    string executionId = runsetReport.GUID;
-                    RunSetConfig? runset = await GetRunsetFromExecutionHandler(executionId);
-                    if (runset == null)
-                    {
-                        //execution details not found in ExecutionHandler
-                        runset = GetRunsetFromSolutionRepository(runsetReport.Name);
-                    }
+                    RunsetFromReportLoader runsetFromReportLoader = new();
+                    RunSetConfig? runset = await runsetFromReportLoader.LoadAsync(runsetReport);
 
                     if (runset == null)
                     {
-                        Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.RunsetNotFoundForLoading));
+                        Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.RunsetNotFoundForLoading, "name", runsetReport.Name));
                         return;
                     }
+
                     Dispatcher.Invoke(() =>
                     {
                         LoadRunsetEventHandler? handler = LoadRunset;
                         handler?.Invoke(runset);
                     });
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while loading runset", ex);
                 }
             });
         }
-
-        private async Task<RunSetConfig?> GetRunsetFromExecutionHandler(string executionId)
-        {
-            ExecutionHandlerAPIClient apiClient = new(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL);
-            ExecutionHandlerAPIClient.ExecutionDetailsOptions options = new()
-            {
-                IncludeRequestDetails = true
-            };
-            ExecutionDetailsResponse? response = await apiClient.GetExecutionDetailsAsync(executionId, options);
-            
-            if (response == null)
-            {
-                return null;
-            }
-            
-            JsonSerializerOptions serializerOptions = new();
-            serializerOptions.Converters.Add(new JsonStringEnumConverter());
-            GingerExecConfig executionConfig = JsonSerializer.Deserialize<GingerExecConfig>(response.RequestDetails.ExecutionConfigurations, serializerOptions)!;
-            
-            RunSetConfig runset = DynamicExecutionManager.LoadRunsetFromExecutionConfig(executionConfig);
-
-            RepositoryFolderBase bfFolder = WorkSpace.Instance.SolutionRepository.GetSolutionRepositoryItemInfo(typeof(BusinessFlow)).ItemRootRepositoryFolder;
-            RepositoryFolderBase? bfCacheFolder = bfFolder.GetSubFolderByName(VirtualCacheDirectoryName);
-            if (bfCacheFolder == null)
-            {
-                bfCacheFolder = bfFolder.AddSubFolder(VirtualCacheDirectoryName);
-            }
-            foreach(BusinessFlowRun bfRun in runset.GingerRunners.SelectMany(runner => runner.BusinessFlowsRunList))
-            {
-                BusinessFlow bf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(bfRun.BusinessFlowGuid);
-                WorkSpace.Instance.SolutionRepository.MoveItem(bf, bfCacheFolder.FolderFullPath);
-                bf.DynamicPostSaveHandler = () =>
-                {
-                    if (!string.Equals(bf.ContainingFolder, bfFolder.FolderRelativePath))
-                    {
-                        WorkSpace.Instance.SolutionRepository.MoveItem(bf, bfFolder.FolderFullPath);
-                    }    
-                };
-                bf.DirtyStatus = eDirtyStatus.Modified;
-            }
-
-            RepositoryFolderBase runsetFolder = WorkSpace.Instance.SolutionRepository.GetSolutionRepositoryItemInfo(typeof(RunSetConfig)).ItemRootRepositoryFolder;
-            RepositoryFolderBase? runsetCacheFolder = runsetFolder.GetSubFolderByName(VirtualCacheDirectoryName, recursive: false);
-            if (runsetCacheFolder == null)
-            {
-                runsetCacheFolder = runsetFolder.AddSubFolder(VirtualCacheDirectoryName);
-            }
-            runsetCacheFolder.AddRepositoryItem(runset, doNotSave: false);
-
-            runset.DynamicPostSaveHandler = () =>
-            {
-                if (!string.Equals(runset.ContainingFolder, runsetFolder.FolderRelativePath))
-                {
-                    WorkSpace.Instance.SolutionRepository.MoveItem(runset, runsetFolder.FolderFullPath);
-                }
-            };
-            runset.DirtyStatus = eDirtyStatus.Modified;
-
-            return runset;
-        }
-
-        private RunSetConfig? GetRunsetFromSolutionRepository(string runsetName)
-        {
-            return WorkSpace
-                .Instance
-                .SolutionRepository
-                .GetAllRepositoryItems<RunSetConfig>()
-                .FirstOrDefault(r => string.Equals(r.Name, runsetName));
-        }
-
-        private const string VirtualCacheDirectoryName = "Cache";
 
         private void BPMNButton_Click(object sender, RoutedEventArgs e)
         {

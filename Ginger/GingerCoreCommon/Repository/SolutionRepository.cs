@@ -257,7 +257,7 @@ namespace Amdocs.Ginger.Repository
                     else if (new Uri(folder.FolderFullPath + "\\").IsBaseOf(inputURI))
                     {
                         string relPath = "~" + folderPath.Replace(SolutionFolder, "");
-                        repoFolder = folder.GetSubFolderByName(relPath, true);
+                        repoFolder = folder.GetSubFolderByRelativePath(relPath, true);
                     }
                 }
             });

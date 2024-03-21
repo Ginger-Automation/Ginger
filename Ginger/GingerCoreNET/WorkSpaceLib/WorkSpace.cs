@@ -195,6 +195,7 @@ namespace amdocs.ginger.GingerCoreNET
                     CloseAllRunningAgents();
                     PlugInsManager.CloseAllRunningPluginProcesses();
                     SolutionRepository.StopAllRepositoryFolderWatchers();
+                    Solution.SolutionOperations.CleanUpCacheDirectory();
                 }
 
                 if (!RunningInExecutionMode)
@@ -693,6 +694,7 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     AppSolutionAutoSave.SolutionAutoSaveEnd();
                 }
+                Solution.SolutionOperations.CleanUpCacheDirectory();
             }
 
             //Reset values
