@@ -239,7 +239,7 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToUndoChange, new UserMsg(eUserMsgType.WARN, "Undo Changes", "Are you sure you want to undo all changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ShadowRootExists, new UserMsg(eUserMsgType.INFO, "Shadow DOM Element Detected", "This element exists under a shadow root, you will have to manually add the action(s) to locate this element's parent. Please look into 'Switch To Shadow DOM' operation in Browser Action", eUserMsgOption.OK , eUserMsgSelection.OK));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.RunsetNotFoundForLoading, new UserMsg(eUserMsgType.ERROR, "RunSet Not Found", "No runset found with {0} '{1}'.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RunsetNotFoundForLoading, new UserMsg(eUserMsgType.ERROR, "RunSet Not Found", "No runset details were found.", eUserMsgOption.OK, eUserMsgSelection.OK));
 
 
             #endregion General Application Messages

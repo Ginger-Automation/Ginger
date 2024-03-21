@@ -479,7 +479,7 @@ namespace Ginger.Run
 
                     if (runset == null)
                     {
-                        Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.RunsetNotFoundForLoading, "name", runsetReport.Name));
+                        Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.RunsetNotFoundForLoading));
                         return;
                     }
 
