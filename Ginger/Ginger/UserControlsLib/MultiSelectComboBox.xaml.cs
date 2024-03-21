@@ -333,7 +333,7 @@ namespace Ginger.UserControlsLib
             if (this.SelectedItems != null)
             {
                 StringBuilder displayText = new StringBuilder();
-                bool allSelected = _nodeList.Any() ? _nodeList.Where(x => x.IsSelected).Count() == _nodeList.Count() - 1 : false;
+                bool allSelected = _nodeList.Count(x => x.IsSelected) == _nodeList.Count - 1;
                 foreach (Node s in _nodeList)
                 {
                     if (s._ShowEnumDesc)

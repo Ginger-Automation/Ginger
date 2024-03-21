@@ -744,7 +744,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                     {
                         Directory.CreateDirectory(folderPath);
                     }
-                    string DatetimeFormate = DateTime.Now.ToString("ddMMyyyyHHmmssfff");
+                    string DatetimeFormate = DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
                     string reportname = $"{ItemName}_AccessibilityReport{DatetimeFormate}.html";
                     path = $"{folderPath}{Path.DirectorySeparatorChar}{reportname}";
                 }
@@ -829,10 +829,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             {
                 AcceptableSeverity = SeverityList.Select(x => x.Value.ToLower()).ToList();
                 List<string> Violationsevrity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()).ToList() : new List<string>();
-                foreach (string severity in AcceptableSeverity)
-                {
-                    ActionResult = !Violationsevrity.Any(y => y.Equals(severity));
-                }
+                ActionResult = Violationsevrity.Intersect(AcceptableSeverity).Any();
             }
             else if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString() && SeverityList != null && SeverityList.Any())
             {
