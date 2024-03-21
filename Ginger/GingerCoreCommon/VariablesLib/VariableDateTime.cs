@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -246,6 +246,11 @@ namespace GingerCore.Variables
                 return false;
             }
 
+        }
+
+        public override void SetInitialValue(string InitialValue)
+        {
+            this.InitialDateTime = InitialValue;
         }
     }
 }

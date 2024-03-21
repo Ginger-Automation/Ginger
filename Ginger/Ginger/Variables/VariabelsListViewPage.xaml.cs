@@ -27,6 +27,7 @@ using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore;
+using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerWPF.DragDropLib;
@@ -96,6 +97,10 @@ namespace Ginger.BusinessFlowPages
             {
                 return ((Activity)mVariabelsParent).Variables;
             }
+            else if (mVariabelsParent is EnvApplication envApplication)
+            {
+                return envApplication.Variables;
+            }
             else
             {
                 return null;
@@ -115,6 +120,10 @@ namespace Ginger.BusinessFlowPages
             else if (mVariabelsParent is Activity)
             {
                 return eVariablesLevel.Activity;
+            }
+            else if (mVariabelsParent is EnvApplication envApplication)
+            {
+                return eVariablesLevel.EnvApplication;
             }
             else
             {
@@ -167,6 +176,11 @@ namespace Ginger.BusinessFlowPages
                     {
                         mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Default, parent: mVariabelsParent);
                     }
+                }
+                else if (mVariabelsParent is EnvApplication)
+                {
+                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Global, parent: mVariabelsParent);
+
                 }
                 xMainFrame.SetContent(mVariabelEditPage);
             }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -357,6 +357,11 @@ namespace GingerCore.Variables
             OptionalValuesList.Add(newVal1);
             OptionalValue newVal2 = new OptionalValue("Value2");
             OptionalValuesList.Add(newVal2);
+        }
+
+        public override void SetInitialValue(string InitialValue)
+        {
+            SetValue(InitialValue);
         }
     }
 }

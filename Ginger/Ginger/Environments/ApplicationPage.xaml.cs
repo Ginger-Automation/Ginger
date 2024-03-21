@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Ginger.BusinessFlowPages;
 using Ginger.UserControlsLib;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
@@ -93,7 +94,7 @@ namespace Ginger.Environments
             {
                 if (ParamsFrame.Content == null)
                 {
-                    ParamsFrame.ClearAndSetContent(new AppGeneralParamsPage(mEnvApplication));
+                    ParamsFrame.ClearAndSetContent(new VariabelsListViewPage(mEnvApplication, null, General.eRIPageViewMode.Standalone));
                 }
                 return;
             }

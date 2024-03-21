@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -81,6 +81,11 @@ namespace GingerCore.Variables
         public override List<VariableBase.eSetValueOptions> GetSupportedOperations()
         {
             throw new System.NotImplementedException();
+        }
+
+        public override void SetInitialValue(string InitialValue)
+        {
+            Password = EncryptionHandler.EncryptwithKey(InitialValue);
         }
 
         public override bool SupportResetValue { get { return true; } }

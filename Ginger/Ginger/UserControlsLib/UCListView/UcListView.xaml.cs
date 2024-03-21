@@ -382,6 +382,45 @@ namespace Ginger.UserControlsLib.UCListView
         {
             xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
         }
+        public Visibility SearchGridVisibility
+        {
+            get
+            {
+                return xSearchGrid.Visibility;
+            }
+            set
+            {
+                xSearchGrid.Visibility = value;
+            }
+        }
+
+
+        public Visibility TagsVisibility
+        {
+            get
+            {
+                return xTagsFilter.Visibility;
+            }
+
+
+            set
+            {
+                xTagsFilter.Visibility = value;
+            }
+        }
+
+        public Visibility VariableDetailsDockPanel
+        {
+            get
+            {
+                return xVariableDetailsDockPanel.Visibility;
+            }
+
+            set
+            {
+                xVariableDetailsDockPanel.Visibility = value;
+            }
+        }
 
         public Visibility ListOperationsBarPnlVisiblity
         {
@@ -395,7 +434,20 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-
+        public Visibility NameErrorVisibility
+        {
+            set
+            {
+                NameError.Visibility = value;
+            }
+        }
+        public Visibility ValueErrorVisibility
+        {
+            set
+            {
+                ValueError.Visibility = value;
+            }
+        }
         public Visibility ListTitleVisibility
         {
             get

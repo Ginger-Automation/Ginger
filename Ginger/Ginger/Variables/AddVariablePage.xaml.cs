@@ -22,8 +22,12 @@ using Amdocs.Ginger.Repository;
 using Ginger.BusinessFlowPages.ListHelpers;
 using Ginger.SolutionGeneral;
 using GingerCore;
+using GingerCore.Environments;
 using GingerCore.Variables;
+using Microsoft.VisualStudio.Services.Common;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -60,17 +64,31 @@ namespace Ginger.Variables
             mLibraryVarsList = LoadLibraryVarsList();
             mLibraryVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add);
             mLibraryVarsHelper.AllowExpandItems = false;
-            xLibraryTabHeaderText.Text = string.Format("{0} Library ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mLibraryVarsList.Count);
+
             xLibraryTabListView.SetDefaultListDataTemplate(mLibraryVarsHelper);
             xLibraryTabListView.DataSourceList = mLibraryVarsList;
             xLibraryTabListView.MouseDoubleClick += XLibraryTabListView_MouseDoubleClick;
+            xLibraryTabListView.ExpandCollapseBtnVisiblity = Visibility.Collapsed;
+            xLibraryTabListView.SearchGridVisibility = Visibility.Collapsed;
+            xLibraryTabListView.TagsVisibility = Visibility.Collapsed;
+            xLibraryTabListView.VariableDetailsDockPanel = Visibility.Visible;
+            if (mVariablesLevel.Equals(eVariablesLevel.EnvApplication))
+            {
+                xLibraryTabHeaderText.Text = string.Format("{0} Library ({1})", "Parameter", mLibraryVarsList.Count);
 
-            mSharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
-            mSharedRepoVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.AddFromShardRepository);
-            xSharedRepoTabHeaderText.Text = string.Format("Shared Repository {0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mSharedRepoVarsList.Count);
-            xSharedRepoTabListView.SetDefaultListDataTemplate(mSharedRepoVarsHelper);
-            xSharedRepoTabListView.DataSourceList = mSharedRepoVarsList;
-            xSharedRepoTabListView.MouseDoubleClick += XSharedRepoTabListView_MouseDoubleClick;
+                xSharedRepoTabListView.Visibility = Visibility.Collapsed;
+                xSharedRepoTab.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                xLibraryTabHeaderText.Text = string.Format("{0} Library ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mLibraryVarsList.Count);
+                mSharedRepoVarsList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<VariableBase>();
+                mSharedRepoVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.AddFromShardRepository);
+                xSharedRepoTabHeaderText.Text = string.Format("Shared Repository {0} ({1})", GingerDicser.GetTermResValue(eTermResKey.Variables), mSharedRepoVarsList.Count);
+                xSharedRepoTabListView.SetDefaultListDataTemplate(mSharedRepoVarsHelper);
+                xSharedRepoTabListView.DataSourceList = mSharedRepoVarsList;
+                xSharedRepoTabListView.MouseDoubleClick += XSharedRepoTabListView_MouseDoubleClick;
+            }
         }
 
         private void XLibraryTabListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -93,11 +111,21 @@ namespace Ginger.Variables
 
         private ObservableList<VariableBase> LoadLibraryVarsList()
         {
+
             ObservableList<VariableBase> list = new ObservableList<VariableBase>();
+
             var varTypes = from type in typeof(VariableBase).Assembly.GetTypes()
                            where type.IsSubclassOf(typeof(VariableBase))
                            && type != typeof(VariableBase)
                            select type;
+
+            if (mVariablesLevel.Equals(eVariablesLevel.EnvApplication))
+            {
+                var selectedVarTypes = varTypes.Where((type) => type.Name.Equals(typeof(VariablePasswordString).Name) || type.Name.Equals(typeof(VariableString).Name) || type.Name.Equals(typeof(VariableNumber).Name));
+
+                varTypes = selectedVarTypes;    
+            }
+
 
             foreach (Type t in varTypes)
             {
@@ -109,53 +137,128 @@ namespace Ginger.Variables
                 }
             }
 
+
             return list;
         }
 
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
-            this.Title = "Add " + GingerDicser.GetTermResValue(eTermResKey.Variable);
 
-            Button addVarBtn = new Button();
-            addVarBtn.Content = "Add " + GingerDicser.GetTermResValue(eTermResKey.Variable);
-            addVarBtn.Click += new RoutedEventHandler(AddVariableButton_Click);
+            ObservableList<Button> buttons = new();
+
+            if (mVariablesLevel.Equals(eVariablesLevel.EnvApplication))
+            {
+                this.Title = "Add Parameter";
+
+                Button addParameterBtn = new();
+                addParameterBtn.Content = "Add Parameter";
+                addParameterBtn.Click += new RoutedEventHandler(AddVariableButton_Click);
+
+                Button addParameterBtnToAllEn = new();
+                addParameterBtnToAllEn.Content = "Add Parameter to all Environments";
+                addParameterBtnToAllEn.Click += new RoutedEventHandler(AddVariablesToAllTheEnvironmentsButton_Click);
+                buttons.Add(addParameterBtn);
+                buttons.Add(addParameterBtnToAllEn);
+            }
+
+            else
+            {
+                this.Title = "Add " + GingerDicser.GetTermResValue(eTermResKey.Variable);
+                Button addVarBtn = new Button();
+                addVarBtn.Content = "Add " + GingerDicser.GetTermResValue(eTermResKey.Variable);
+                addVarBtn.Click += new RoutedEventHandler(AddVariableButton_Click);
+                buttons.Add(addVarBtn);
+            }
 
             this.Width = 400;
             this.Height = 400;
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, new ObservableList<Button> { addVarBtn });
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, buttons);
         }
 
         private void AddVariableButton_Click(object sender, RoutedEventArgs e)
         {
+            bool isVariableAdded = false;
             if (xLibraryTab.IsSelected)
             {
-                AddLibraryVariables();
+                isVariableAdded = AddLibraryVariables();
             }
             else
             {
-                AddSharedRepoVariables();
+                isVariableAdded = AddSharedRepoVariables();
             }
 
-            _pageGenericWin.Close();
+            if (isVariableAdded)
+            {
+                _pageGenericWin.Close();
+            }
         }
 
-        private void AddLibraryVariables()
+
+        /// <summary>
+        /// ONLY for Environment Page
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddVariablesToAllTheEnvironmentsButton_Click(object sender, RoutedEventArgs e)
         {
+
+            foreach (VariableBase varToAdd in xLibraryTabListView.List.SelectedItems)
+            {
+                ObservableList<ProjEnvironment> ProjEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+
+                ProjEnvironments.ForEach((projEnv) =>
+
+                    projEnv.Applications.ForEach((envApp) =>
+                    {
+                        if ( envApp.Name.Equals(((EnvApplication)mVariablesParentObj).Name)  && !envApp.Variables.Any((var) => var.Name.Equals(varToAdd.Name)))
+                        {
+                            envApp.Variables.Add(varToAdd);
+                        }
+                    })
+                );
+            }
+        }
+
+        private bool AddLibraryVariables()
+        {
+            string Name = xLibraryTabListView.variableName.Text;
+            string Description = xLibraryTabListView.variableDescription.Text;
+            string Value = xLibraryTabListView.variableValue.Text;
+
+            if(Name.Trim().Length == 0)
+            {
+                xLibraryTabListView.NameErrorVisibility = Visibility.Visible;
+                return false;
+            }
+
+            if(Value.Trim().Length == 0)
+            {
+                xLibraryTabListView.ValueErrorVisibility = Visibility.Visible;
+                return false;
+            }
+
             foreach (VariableBase varToAdd in xLibraryTabListView.List.SelectedItems)
             {
                 VariableBase addedVar = (VariableBase)varToAdd.CreateCopy();
                 addedVar.SetInitialSetup();
+                addedVar.Name = Name;
+                addedVar.Description = Description;
+                addedVar.SetInitialValue(Value);
                 AddVarToParent(addedVar);
             }
+
+            return true;
         }
 
-        private void AddSharedRepoVariables()
+        private bool AddSharedRepoVariables()
         {
             foreach (VariableBase varToAdd in xSharedRepoTabListView.List.SelectedItems)
             {
                 AddVarToParent((VariableBase)varToAdd.CreateInstance(true));
             }
+
+            return true;
         }
 
         private void AddVarToParent(VariableBase newVar)
@@ -194,6 +297,10 @@ namespace Ginger.Variables
                         ((Activity)mVariablesParentObj).AddVariable(newVar);
                     }
                      ((Activity)mVariablesParentObj).Variables.CurrentItem = newVar;
+                    break;
+                case eVariablesLevel.EnvApplication:
+
+                    ((EnvApplication)mVariablesParentObj).AddVariable(newVar);
                     break;
             }
         }
