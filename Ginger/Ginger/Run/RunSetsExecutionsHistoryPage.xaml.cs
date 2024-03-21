@@ -519,7 +519,42 @@ namespace Ginger.Run
             GingerExecConfig executionConfig = JsonSerializer.Deserialize<GingerExecConfig>(response.RequestDetails.ExecutionConfigurations, serializerOptions)!;
             
             RunSetConfig runset = DynamicExecutionManager.LoadRunsetFromExecutionConfig(executionConfig);
-            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(runset, doNotSave: true);
+
+            RepositoryFolderBase bfFolder = WorkSpace.Instance.SolutionRepository.GetSolutionRepositoryItemInfo(typeof(BusinessFlow)).ItemRootRepositoryFolder;
+            RepositoryFolderBase? bfCacheFolder = bfFolder.GetSubFolderByName(VirtualCacheDirectoryName);
+            if (bfCacheFolder == null)
+            {
+                bfCacheFolder = bfFolder.AddSubFolder(VirtualCacheDirectoryName);
+            }
+            foreach(BusinessFlowRun bfRun in runset.GingerRunners.SelectMany(runner => runner.BusinessFlowsRunList))
+            {
+                BusinessFlow bf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(bfRun.BusinessFlowGuid);
+                WorkSpace.Instance.SolutionRepository.MoveItem(bf, bfCacheFolder.FolderFullPath);
+                bf.DynamicPostSaveHandler = () =>
+                {
+                    if (!string.Equals(bf.ContainingFolder, bfFolder.FolderRelativePath))
+                    {
+                        WorkSpace.Instance.SolutionRepository.MoveItem(bf, bfFolder.FolderFullPath);
+                    }    
+                };
+                bf.DirtyStatus = eDirtyStatus.Modified;
+            }
+
+            RepositoryFolderBase runsetFolder = WorkSpace.Instance.SolutionRepository.GetSolutionRepositoryItemInfo(typeof(RunSetConfig)).ItemRootRepositoryFolder;
+            RepositoryFolderBase? runsetCacheFolder = runsetFolder.GetSubFolderByName(VirtualCacheDirectoryName, recursive: false);
+            if (runsetCacheFolder == null)
+            {
+                runsetCacheFolder = runsetFolder.AddSubFolder(VirtualCacheDirectoryName);
+            }
+            runsetCacheFolder.AddRepositoryItem(runset, doNotSave: false);
+
+            runset.DynamicPostSaveHandler = () =>
+            {
+                if (!string.Equals(runset.ContainingFolder, runsetFolder.FolderRelativePath))
+                {
+                    WorkSpace.Instance.SolutionRepository.MoveItem(runset, runsetFolder.FolderFullPath);
+                }
+            };
             runset.DirtyStatus = eDirtyStatus.Modified;
 
             return runset;
@@ -534,19 +569,7 @@ namespace Ginger.Run
                 .FirstOrDefault(r => string.Equals(r.Name, runsetName));
         }
 
-        private const string VirtualRunsetCacheDirectoryName = "Cache";
-
-        private void CacheVirtualRunset(RunSetConfig runset)
-        {
-            RepositoryFolder<RunSetConfig> runsetRootFolder = WorkSpace
-                .Instance
-                .SolutionRepository
-                .GetRepositoryItemRootFolder<RunSetConfig>();
-            runsetRootFolder.AddSubFolder(VirtualRunsetCacheDirectoryName);
-            RepositoryFolder<RunSetConfig> virtualRunsetFolder = runsetRootFolder.GetSubFolder(VirtualRunsetCacheDirectoryName);
-
-            virtualRunsetFolder.AddRepositoryItem(runset, doNotSave: true);
-        }
+        private const string VirtualCacheDirectoryName = "Cache";
 
         private void BPMNButton_Click(object sender, RoutedEventArgs e)
         {

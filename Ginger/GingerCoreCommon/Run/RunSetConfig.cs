@@ -412,6 +412,14 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
             base.UpdateBeforeSave();
         }
 
+        public Action DynamicPostSaveHandler;
+
+        public override void PostSaveHandler()
+        {
+            base.PostSaveHandler();
+            DynamicPostSaveHandler?.Invoke();
+        }
+
         [IsSerializedForLocalRepository]
         public ObservableList<SolutionCategoryDefinition> CategoriesDefinitions = new ObservableList<SolutionCategoryDefinition>();
 

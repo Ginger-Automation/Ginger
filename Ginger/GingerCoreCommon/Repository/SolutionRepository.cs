@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -564,7 +564,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        internal void SaveNewRepositoryItem(RepositoryItemBase repositoryItem)
+        public void SaveNewRepositoryItem(RepositoryItemBase repositoryItem)
         {
             //check if file already exist
             string filePath = CreateRepositoryItemFileName(repositoryItem);
