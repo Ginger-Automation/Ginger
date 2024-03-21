@@ -52,6 +52,13 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             RunsetConfig = runSetConfig;
             mContext = context;
             CliHelper = new CLIHelper();
+
+            string executionServiceURLFromRunset = RunsetConfig.GetExecutionServiceURLUsed();
+            if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL) && !string.IsNullOrEmpty(executionServiceURLFromRunset))
+            {
+                WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL = executionServiceURLFromRunset;
+            }
+
             AutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, CliHelper)
             {
                 ExecutionServiceUrl = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL
