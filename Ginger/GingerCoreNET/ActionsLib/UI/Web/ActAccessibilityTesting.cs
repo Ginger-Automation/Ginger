@@ -37,6 +37,7 @@ using HtmlAgilityPack;
 using Newtonsoft.Json;
 using OpenQA.Selenium;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -745,7 +746,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                         Directory.CreateDirectory(folderPath);
                     }
                     string DatetimeFormate = DateTime.Now.ToString("ddMMyyyy_HHmmssfff");
-                    string reportname = $"{ItemName}_AccessibilityReport{DatetimeFormate}.html";
+                    string reportname = $"{ItemName}_AccessibilityReport_{DatetimeFormate}.html";
                     path = $"{folderPath}{Path.DirectorySeparatorChar}{reportname}";
                 }
 
@@ -824,20 +825,20 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
         {
             bool hasAnyViolations = axeResult.Violations.Any();
             bool ActionResult = true;
-            List<string> AcceptableSeverity = new List<string>();
+            IEnumerable<string> AcceptableSeverity = Enumerable.Empty<string>().ToList();
             if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString() && SeverityList != null && SeverityList.Any())
             {
                 AcceptableSeverity = SeverityList.Select(x => x.Value.ToLower()).ToList();
-                List<string> Violationsevrity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()).ToList() : new List<string>();
-                ActionResult = Violationsevrity.Intersect(AcceptableSeverity).Any();
+                IEnumerable<string> Violationseverity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()) : Enumerable.Empty<string>().ToList();
+                ActionResult = Violationseverity.Intersect(AcceptableSeverity).Any();
             }
             else if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString() && SeverityList != null && SeverityList.Any())
             {
                 List<string> sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
-                List<string> Violationsevrity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()).ToList() : new List<string>();
+                IEnumerable<string> Violationseverity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()) : Enumerable.Empty<string>().ToList();
                 foreach (string severity in sevritylist)
                 {
-                    ActionResult = Violationsevrity.Any(y => y.Equals(severity));
+                    ActionResult = Violationseverity.Any(y => y.Equals(severity));
                 }
             }
             var jsonresponse = JsonConvert.SerializeObject(axeResult, Newtonsoft.Json.Formatting.Indented);
