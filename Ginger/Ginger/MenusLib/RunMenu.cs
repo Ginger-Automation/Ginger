@@ -89,9 +89,9 @@ namespace Ginger.MenusLib
             return executionsHistoryPage;
         }
 
-        private static void ExecutionsHistoryPage_LoadRunset(RunSetConfig runset)
+        private static void ExecutionsHistoryPage_LoadRunset(RunSetConfig runset, bool isVirtual)
         {
-            runSetPage.RunSetExecutionHistoryPage_LoadRunset(runset);
+            runSetPage.RunSetExecutionHistoryPage_LoadRunset(runset, isVirtual);
             mMenusPage.SelectTopMenu(0);
         }
 

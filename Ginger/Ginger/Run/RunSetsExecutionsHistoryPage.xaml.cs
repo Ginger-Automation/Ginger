@@ -462,7 +462,7 @@ namespace Ginger.Run
             }
         }
 
-        public delegate void LoadRunsetEventHandler(RunSetConfig runset);
+        public delegate void LoadRunsetEventHandler(RunSetConfig runset, bool isVirtual);
 
         public event LoadRunsetEventHandler LoadRunset;
 
@@ -475,9 +475,9 @@ namespace Ginger.Run
                 try
                 {
                     RunsetFromReportLoader runsetFromReportLoader = new();
-                    RunSetConfig? runset = await runsetFromReportLoader.LoadAsync(runsetReport);
+                    RunsetFromReportLoader.RunsetLoadResult result = await runsetFromReportLoader.LoadAsync(runsetReport);
 
-                    if (runset == null)
+                    if (result.Runset == null)
                     {
                         Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.RunsetNotFoundForLoading));
                         return;
@@ -486,7 +486,7 @@ namespace Ginger.Run
                     Dispatcher.Invoke(() =>
                     {
                         LoadRunsetEventHandler? handler = LoadRunset;
-                        handler?.Invoke(runset);
+                        handler?.Invoke(result.Runset, result.IsVirtual);
                     });
                 }
                 catch (Exception ex)

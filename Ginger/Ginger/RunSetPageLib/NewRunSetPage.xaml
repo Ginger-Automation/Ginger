@@ -15,7 +15,6 @@
       d:DesignHeight="1000" d:DesignWidth="2000"
       Title="Runset"  Loaded="Page_loaded">
 
-
     <Grid Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <StackPanel x:Name="xRunSetLoadingPnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" >
             <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />

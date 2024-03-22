@@ -33,7 +33,7 @@
                     Style="{StaticResource @InputImageGridCellButtonStyle}"
                     Tag="{Binding .}">
                     <Image
-                        Source="{StaticResource @Report2_16x16}"
+                        Source="{StaticResource @BPMN_32x32.png}"
                         Height="16"
                         Width="16" />
                 </Button>
@@ -47,7 +47,7 @@
                     Style="{StaticResource @InputImageGridCellButtonStyle}"
                     Tag="{Binding .}">
                     <Image
-                        Source="{StaticResource @Report2_16x16}"
+                        Source="{StaticResource @Load_Arrow_32x32.png}"
                         Height="16"
                         Width="16" />
                 </Button>

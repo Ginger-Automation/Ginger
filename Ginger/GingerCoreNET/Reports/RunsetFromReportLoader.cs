@@ -26,24 +26,37 @@ namespace Amdocs.Ginger.CoreNET.Reports
     {
         private readonly JsonSerializerOptions GingerExecConfigSerializationOptions;
 
+        public sealed class RunsetLoadResult
+        {
+            public required RunSetConfig? Runset { get; init; }
+
+            public required bool IsVirtual { get; init; }
+        }
+
         public RunsetFromReportLoader()
         {
             GingerExecConfigSerializationOptions = new();
             GingerExecConfigSerializationOptions.Converters.Add(new JsonStringEnumConverter());
         }
 
-        public async Task<RunSetConfig?> LoadAsync(RunSetReport runsetReport)
+        public async Task<RunsetLoadResult> LoadAsync(RunSetReport runsetReport)
         {
             string runsetName = runsetReport.Name;
             RunSetConfig? runset = GetRunsetFromSolutionRepository(runsetName);
-            
+            bool isVirtual = false;
+
             if (runset == null)
             {
                 string executionId = runsetReport.GUID;
                 runset = await GetRunsetFromExecutionHandler(executionId);
+                isVirtual = runset != null;
             }
 
-            return runset;
+            return new RunsetLoadResult()
+            {
+                Runset = runset,
+                IsVirtual = isVirtual
+            };
         }
 
         private RunSetConfig? GetRunsetFromSolutionRepository(string runsetName)

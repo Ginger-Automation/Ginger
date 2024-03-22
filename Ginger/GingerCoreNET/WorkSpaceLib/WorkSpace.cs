@@ -506,6 +506,8 @@ namespace amdocs.ginger.GingerCoreNET
                 SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
                 SolutionRepository.Open(solutionFolder);
 
+                solution.SolutionOperations.CleanUpCacheDirectory();
+
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Loading needed Plugins");
                 mPluginsManager = new PluginsManager();
                 mPluginsManager.SolutionChanged(SolutionRepository);
