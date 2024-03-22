@@ -254,6 +254,8 @@
     <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.2" />
+  
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.1" />
     
     <PackageReference Include="HBaseNet" Version="0.1.0" />
     
@@ -329,6 +331,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="ACL_Data_Contract">
+      <HintPath>DLLS\ACL_Data_Contract.dll</HintPath>
+    </Reference>
     <Reference Include="AlmDataContractsStd">
       <HintPath>DLLS\AlmDataContractsStd.dll</HintPath>
     </Reference>
@@ -340,9 +345,6 @@
     </Reference>
     <Reference Include="AzureDevOpsRepo">
       <HintPath>..\..\..\..\ALMInteraction\AzureRepositoryStd\bin\Debug\net8.0\AzureDevOpsRepo.dll</HintPath>
-    </Reference>
-    <Reference Include="Ginger.ExecuterService.Contracts">
-      <HintPath>DLLS\Ginger.ExecuterService.Contracts.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
