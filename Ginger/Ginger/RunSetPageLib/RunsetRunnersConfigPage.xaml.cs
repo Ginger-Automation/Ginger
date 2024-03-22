@@ -19,6 +19,7 @@ limitations under the License.
 using GingerCore.GeneralLib;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Ginger.Run
 {
@@ -26,7 +27,7 @@ namespace Ginger.Run
     {
         GenericWindow mGenWin = null;
         RunSetConfig mRunSetConfig = null;
-
+      
         public RunsetRunnersConfigPage(RunSetConfig runSetConfig)
         {
             InitializeComponent();
@@ -66,7 +67,18 @@ namespace Ginger.Run
 
         public void ShowAsWindow()
         {
-            GingerCore.General.LoadGenericWindow(ref mGenWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this);
+            Button doneBtn = new()
+            {
+                Content = "Done"
+            };
+
+            Amdocs.Ginger.Common.ObservableList<Button> winButtons = [doneBtn];
+
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: doneBtn, eventName: nameof(ButtonBase.Click), handler: (_, e) =>
+            {
+                mGenWin.Close();
+            });
+            GingerCore.General.LoadGenericWindow(ref mGenWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, winButtons);
         }
     }
 }
