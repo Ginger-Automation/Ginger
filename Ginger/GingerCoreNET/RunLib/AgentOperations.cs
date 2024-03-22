@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -354,6 +354,8 @@ namespace GingerCore
                 Agent.BusinessFlow = new GingerCore.BusinessFlow();//to avoid value expertion exception
             }
             ValueExpression ve = new ValueExpression(Agent.ProjEnvironment, Agent.BusinessFlow, Agent.DSList);
+
+            ve.DecryptFlag = true;
 
             if (Agent.AgentType == Agent.eAgentType.Service)
             {

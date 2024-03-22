@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -201,6 +201,21 @@ namespace Ginger.Reports
                 {
                     mCentralLoggerEndPointUrl = value;
                     OnPropertyChanged(nameof(CentralLoggerEndPointUrl));
+                }
+            }
+        }
+
+        private string mExecutionHandlerURL;
+        [IsSerializedForLocalRepository]
+        public string ExecutionHandlerURL
+        {
+            get => mExecutionHandlerURL;
+            set
+            {
+                if (!string.Equals(mExecutionHandlerURL, value))
+                {
+                    mExecutionHandlerURL = value;
+                    OnPropertyChanged(nameof(ExecutionHandlerURL));
                 }
             }
         }

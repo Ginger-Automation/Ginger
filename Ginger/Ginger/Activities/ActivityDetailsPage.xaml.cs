@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -291,16 +291,19 @@ namespace Ginger.BusinessFlowPages
 
         public void TargetAppSelectedComboBox()
         {
-            if (xTargetApplicationComboBox.SelectedItem != null &&
-                           WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+            Dispatcher.Invoke(() =>
             {
-                PrepareAndLoadConsumerComboBox();
-            }
-            else
-            {
-                xConsumerStack.Visibility = Visibility.Collapsed;
-                BindingOperations.ClearAllBindings(xConsumerCB);
-            }
+                if (xTargetApplicationComboBox.SelectedItem != null &&
+                               WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
+                {
+                    PrepareAndLoadConsumerComboBox();
+                }
+                else
+                {
+                    xConsumerStack.Visibility = Visibility.Collapsed;
+                    BindingOperations.ClearAllBindings(xConsumerCB);
+                }
+            });
         }
         private void PrepareAndLoadConsumerComboBox()
         {

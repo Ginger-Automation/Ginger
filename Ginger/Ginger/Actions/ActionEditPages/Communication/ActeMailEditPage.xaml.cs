@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -227,14 +227,12 @@ namespace Ginger.Actions.Communication
             xEmailConfigView.EmailMethodChanged += xSendEMailConfigView_EmailMethodChanged;
             xEmailConfigView.ActionTypeChanged += xSendEMailConfigView_ActionTypeChanged;
             xEmailConfigView.HasAttachmentsSelectionChanged += xSendEMailConfigView_HasAttachmentsSelectionChanged;
-            xEmailConfigView.ReadmailMethodChanged += xReadEmailConfigView_ReadMethodChanged;            ;
+            xEmailConfigView.ReadmailMethodChanged += xReadEmailConfigView_ReadMethodChanged;     
+            xEmailConfigView.AddFileAttachment += xSendEMailConfigView_FileAdded;
+            xEmailConfigView.AttachmentNameVEButtonClick += xSendEMailConfigView_NameValueExpressionButtonClick;
 
             WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xEmailConfigView.xFilterFolderAllRadioButton, eventName: nameof(ToggleButton.Checked), handler: xFilterFolderRadioButton_SelectionChanged);
             WeakEventManager<ToggleButton, RoutedEventArgs>.AddHandler(source: xEmailConfigView.xFilterFolderSpecificRadioButton, eventName: nameof(ToggleButton.Checked), handler: xFilterFolderRadioButton_SelectionChanged);
-
-            WeakEventManager<UCEmailConfigView, RoutedEventArgs>.AddHandler(source: xEmailConfigView, eventName: nameof(UCEmailConfigView.AddFileAttachment), handler: xSendEMailConfigView_FileAdded);
-            WeakEventManager<UCEmailConfigView, RoutedEventArgs>.AddHandler(source: xEmailConfigView, eventName: nameof(UCEmailConfigView.AttachmentNameVEButtonClick), handler: xSendEMailConfigView_NameValueExpressionButtonClick);
-
         }
 
         private static ComboEnumItem FindComboBoxItem(ComboBox comboBox, Predicate<ComboEnumItem> predicate)
