@@ -144,20 +144,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
-        public string ExecutionServiceUrl
-        {
-            get
-            {
-                return mRunsetExecutor.RunSetConfig.ExecutionServiceURLUsed;
-            }
-            set
-            {
-                if (mRunsetExecutor.RunSetConfig.ExecutionServiceURLUsed != value)
-                {
-                    mRunsetExecutor.RunSetConfig.ExecutionServiceURLUsed = value;
-                }
-            }
-        }
+
+        public string ExecutionServiceUrl { get; set; } = string.Empty;
+
         public string ConfigFileName
         {
             get

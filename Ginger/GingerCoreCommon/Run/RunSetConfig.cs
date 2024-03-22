@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -200,22 +200,9 @@ namespace Ginger.Run
         }
 
         private string mExecutionServiceURLUsed;
-        [IsSerializedForLocalRepository]
-        public string ExecutionServiceURLUsed
-        {
-            get
-            {
-                return mExecutionServiceURLUsed;
-            }
-            set
-            {
-                if (mExecutionServiceURLUsed != value)
-                {
-                    mExecutionServiceURLUsed = value;
-                    OnPropertyChanged(nameof(ExecutionServiceURLUsed));
-                }
-            }
-        }
+
+        public string GetExecutionServiceURLUsed() => mExecutionServiceURLUsed;
+
         // Only for Run time, no need to serialize        
         public DateTime StartTimeStamp { get; set; }
 
@@ -493,6 +480,11 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
                 if (name == "SealighsBuildSessionID")
                 {
                     this.mSealightsBuildSessionID = value;
+                    return true;
+                }
+                if (string.Equals("ExecutionServiceURLUsed", name))
+                {
+                    this.mExecutionServiceURLUsed = value;
                     return true;
                 }
             }
