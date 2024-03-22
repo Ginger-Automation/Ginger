@@ -1903,45 +1903,71 @@ namespace Ginger.Run
             }
 
             //Handle actions which needs VE processing like Tuxedo, we need to calculate the UD file values before execute, which is in different list not in ACT.Input list
+
             List<ObservableList<ActInputValue>> list = act.GetInputValueListForVEProcessing();
             if (list != null) // Will happen only if derived action implemented this function, since it needs processing for VEs
             {
-                foreach (var subList in list)
+                if (act is ActWebAPIModel)
                 {
-                    foreach (var IV in subList)
+                    foreach (var subList in list)
                     {
-                        if (!string.IsNullOrEmpty(IV.Value))
+                        foreach (var IV in subList)
                         {
-                            try
+                            if (!string.IsNullOrEmpty(IV.Value))
                             {
-                                string valueForDriver = string.Empty;
-                                if (act is ActWebAPIModel)
+                                try
                                 {
-                                    valueForDriver = EvaluateWebApiModelParameterValue(IV.Value, subList);
+                                    string valueToEvaluate = EvaluateWebApiModelParameterValue(IV.Value, subList);
+                                    if (valueToEvaluate!= null)
+                                    {
+                                        IV.ValueForDriver = act.ValueExpression.Calculate(valueToEvaluate);
+                                    }
+                                    else
+                                    {
+                                        IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                                    }
+                                    IV.DisplayValue = act.ValueExpression.EncryptedValue;
                                 }
-                                if (!string.IsNullOrEmpty(valueForDriver))
+                                catch (Exception ex)
                                 {
-                                    IV.ValueForDriver = act.ValueExpression.Calculate(valueForDriver);
+                                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to calculate VE for the Action Input value '{0}'", IV.Value), ex);
                                 }
-                                else
-                                {
-                                    IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
-                                }
-                                IV.DisplayValue = act.ValueExpression.EncryptedValue;
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to calculate VE for the Action Input value '{0}'", IV.Value), ex);
+                                IV.ValueForDriver = string.Empty;
                             }
                         }
-                        else
+                    }
+                }
+                else
+                {
+                    foreach (var subList in list)
+                    {
+                        foreach (var IV in subList)
                         {
-                            IV.ValueForDriver = string.Empty;
+                            if (!string.IsNullOrEmpty(IV.Value))
+                            {
+                                try
+                                {
+                                    IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                                    IV.DisplayValue = act.ValueExpression.EncryptedValue;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to calculate VE for the Action Input value '{0}'", IV.Value), ex);
+                                }
+                            }
+                            else
+                            {
+                                IV.ValueForDriver = string.Empty;
+                            }
                         }
                     }
                 }
             }
-             act.ValueExpression.DecryptFlag = true;
+
+            act.ValueExpression.DecryptFlag = true;
         }
 
         private static string EvaluateWebApiModelParameterValue(string valueToEvaluate, ObservableList<ActInputValue> subList)
