@@ -85,7 +85,7 @@
     </Content>
   </ItemGroup>
   
-  <ItemGroup>
+  <ItemGroup>    
     <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.5.1" />
     <PackageReference Include="GingerTestHelper" Version="2.0.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.7.0" />
@@ -94,6 +94,10 @@
     <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
     <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+    <PackageReference Include="Testcontainers" Version="3.7.0" />
+    <PackageReference Include="Testcontainers.Couchbase" Version="3.7.0" />
+    <PackageReference Include="Testcontainers.Oracle" Version="3.7.0" />
+    <PackageReference Include="Testcontainers.PostgreSql" Version="3.7.0" />
   </ItemGroup>
 
   <ItemGroup>
