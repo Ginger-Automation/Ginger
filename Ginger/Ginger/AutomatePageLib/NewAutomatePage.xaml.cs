@@ -1045,72 +1045,70 @@ namespace GingerWPF.BusinessFlowsLib
             // set errorhandler execution status
                   actionToExecute.ErrorHandlerExecuted = false;
 
-                if (!parentActivity.Acts.Any() && !skipInternalValidations)
+            if (!parentActivity.Acts.Any() && !skipInternalValidations)
+            {
+                Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to Run.");
+                return;
+            }
+
+            // If no action selected move to the first.
+            if (actionToExecute == null)
+            {
+                actionToExecute = (Act)parentActivity.Acts[0];
+            }
+
+            try
+            {
+                //mExecutionIsInProgress = true;
+                //SetUIElementsBehaverDuringExecution();
+
+                mBusinessFlow.CurrentActivity = parentActivity;
+                if (!skipInternalValidations)
                 {
-                    Reporter.ToUser(eUserMsgKey.StaticInfoMessage, "No Action to Run.");
-                    return;
+                    mBusinessFlow.CurrentActivity.Acts.CurrentItem = actionToExecute;
+                }
+                mExecutionEngine.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+
+                //No need of agent for actions like DB and read for excel. For other need agent  
+                Type actType = actionToExecute.GetType();
+                if (!(typeof(ActWithoutDriver).IsAssignableFrom(actType)) || actType == typeof(ActAgentManipulation))   // ActAgentManipulation not needed
+                {
+                    mExecutionEngine.SetCurrentActivityAgent();
+                }
+                else if ((typeof(ActPlugIn).IsAssignableFrom(actType)))
+                {
+                    mExecutionEngine.SetCurrentActivityAgent();
                 }
 
-                // If no action selected move to the first.
-                if (actionToExecute == null)
+                mExecutionEngine.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
+
+                var result = await mExecutionEngine.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, moveToNextAction).ConfigureAwait(false);
+
+                if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
                 {
-                    actionToExecute = (Act)parentActivity.Acts[0];
+                    mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, parentActivity);
+                    mExecutionEngine.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
+                    ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
                 }
 
-                try
+            }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Exception in RunAutomatePageAction", ex);
+            }
+            finally
+            {
+                if (mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
                 {
-                    //mExecutionIsInProgress = true;
-                    //SetUIElementsBehaverDuringExecution();
+                    if (((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).Status == Agent.eStatus.NotStarted)
+                    {
 
-                    mBusinessFlow.CurrentActivity = parentActivity;
-                    if (!skipInternalValidations)
-                    {
-                        mBusinessFlow.CurrentActivity.Acts.CurrentItem = actionToExecute;
-                    }
-                    mExecutionEngine.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-
-                    //No need of agent for actions like DB and read for excel. For other need agent  
-                    Type actType = actionToExecute.GetType();
-                    if (!(typeof(ActWithoutDriver).IsAssignableFrom(actType)) || actType == typeof(ActAgentManipulation))   // ActAgentManipulation not needed
-                    {
-                        mExecutionEngine.SetCurrentActivityAgent();
-                    }
-                    else if ((typeof(ActPlugIn).IsAssignableFrom(actType)))
-                    {
-                        mExecutionEngine.SetCurrentActivityAgent();
+                        ((AgentOperations)((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Close();
                     }
 
-                    mExecutionEngine.ExecutionLoggerManager.Configuration.ExecutionLoggerAutomationTabContext = ExecutionLoggerConfiguration.AutomationTabContext.ActionRun;
-
-                    var result = await mExecutionEngine.RunActionAsync(actionToExecute, checkIfActionAllowedToRun, moveToNextAction).ConfigureAwait(false);
-
-                    if (mExecutionEngine.ExecutionLoggerManager.Configuration.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
-                    {
-                        mExecutionEngine.ExecutionLoggerManager.ActivityEnd(0, parentActivity);
-                        mExecutionEngine.ExecutionLoggerManager.BusinessFlowEnd(0, mBusinessFlow);
-                        ((ExecutionLogger)mExecutionEngine.ExecutionLoggerManager.mExecutionLogger).RunSetUpdate(mRunSetLiteDbId, mRunnerLiteDbId, mExecutionEngine);
-                    }
-
+                    ((AgentOperations)((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).IsFailedToStart = false;
                 }
-                catch (Exception ex)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "Exception in RunAutomatePageAction", ex);
-                }
-                finally
-                {
-                    if (mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
-                    {
-                        if (((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).Status == Agent.eStatus.NotStarted)
-                        {
-
-                            ((AgentOperations)((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Close();
-                        }
-
-                        ((AgentOperations)((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).IsFailedToStart = false;
-                    }
-                }
-            
-
+            }
         }
 
         private async Task ContinueRunFromAutomatePage(eContinueFrom continueFrom, object executedItem = null)
