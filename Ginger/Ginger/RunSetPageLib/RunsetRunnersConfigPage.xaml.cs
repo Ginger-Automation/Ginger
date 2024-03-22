@@ -74,7 +74,7 @@ namespace Ginger.Run
 
             Amdocs.Ginger.Common.ObservableList<Button> winButtons = [doneBtn];
 
-            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: doneBtn, eventName: nameof(ButtonBase.Click), handler: (_, e) =>
+            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: doneBtn, eventName: nameof(ButtonBase.Click), handler: (_, _) =>
             {
                 mGenWin.Close();
             });
