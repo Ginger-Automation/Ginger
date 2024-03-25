@@ -31,6 +31,7 @@ using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
+using Ginger.SolutionGeneral;
 
 namespace Ginger.Run
 {
@@ -490,6 +491,45 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
             return false;
         }
 
+        public bool IsVirtual(Solution solution)
+        {
+            if (string.IsNullOrEmpty(ContainingFolder) && string.IsNullOrEmpty(ContainingFolderFullPath))
+            {
+                return true;
+            }
+
+            if (string.IsNullOrEmpty(ContainingFolderFullPath))
+            {
+                ContainingFolderFullPath = solution.SolutionOperations.ConvertSolutionRelativePath(ContainingFolder);
+            }
+
+            string currentDirectory = ContainingFolderFullPath;
+            if (!currentDirectory.EndsWith(Path.DirectorySeparatorChar))
+            {
+                currentDirectory = $"{currentDirectory}{Path.DirectorySeparatorChar}";
+            }
+            string solutionDirectory = solution.ContainingFolderFullPath;
+            if (!solutionDirectory.EndsWith(Path.DirectorySeparatorChar))
+            {
+                solutionDirectory = $"{solutionDirectory}{Path.DirectorySeparatorChar}";
+            }
+
+            while(!string.Equals(currentDirectory, solutionDirectory))
+            {
+                string currentDirectoryName = Path.GetFileName(Path.GetDirectoryName(currentDirectory));
+                if (string.Equals(currentDirectoryName, Solution.CacheDirectoryName))
+                {
+                    return true;
+                }
+                currentDirectory = Directory.GetParent(Path.GetDirectoryName(currentDirectory)).FullName; 
+                if (!currentDirectory.EndsWith(Path.DirectorySeparatorChar))
+                {
+                    currentDirectory = $"{currentDirectory}{Path.DirectorySeparatorChar}";
+                }
+            }
+
+            return false;
+        }
 
         public ReRunConfig ReRunConfigurations = new ReRunConfig();
 

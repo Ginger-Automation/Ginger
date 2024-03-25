@@ -474,6 +474,7 @@ namespace Ginger.Run
             {
                 try
                 {
+                    Reporter.ToStatus(eStatusMsgKey.LoadingRunSet, messageArgs: runsetReport.Name);
                     RunsetFromReportLoader runsetFromReportLoader = new();
                     RunsetFromReportLoader.RunsetLoadResult result = await runsetFromReportLoader.LoadAsync(runsetReport);
 
@@ -492,6 +493,10 @@ namespace Ginger.Run
                 catch (Exception ex)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, "Error occurred while loading runset", ex);
+                }
+                finally
+                {
+                    Reporter.HideStatusMessage();
                 }
             });
         }

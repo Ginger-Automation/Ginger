@@ -1608,6 +1608,7 @@ namespace Ginger.Run
         }
         public async void LoadRunSetConfig(RunSetConfig runSetConfig, bool runAsync = true, bool ViewMode = false, bool isVirtual = false)
         {
+            isVirtual = runSetConfig.IsVirtual(WorkSpace.Instance.Solution);
             try
             {
                 //show current Run set UI
