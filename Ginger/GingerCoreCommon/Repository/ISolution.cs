@@ -25,7 +25,7 @@ namespace Amdocs.Ginger.Repository
 {
     public interface ISolution
     {
-        public const string CacheDirectoryName = "Cache";
+        public static readonly string CacheDirectoryName = "Cache";
 
         string Name { get; set; }
         string Folder { get; set; }

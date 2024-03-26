@@ -26,7 +26,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
             _httpClient = new();
         }
 
-        public struct ExecutionDetailsOptions
+        public struct ExecutionDetailsOptions : IEquatable<ExecutionDetailsOptions>
         {
             public bool IncludeRequestDetails { get; init; }
             public bool IncludeExecutionErrors { get; init; }
@@ -34,11 +34,21 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
             public bool IncludeExecutionFlowsDetails { get; init; }
             public bool IncludeExecutionRunnersDetails { get; init; }
             public bool IncludeExecutionLog { get; init; }
+
+            public readonly bool Equals(ExecutionDetailsOptions other)
+            {
+                return
+                    IncludeRequestDetails == other.IncludeRequestDetails &&
+                    IncludeExecutionErrors == other.IncludeExecutionErrors &&
+                    IncludeExecutionOutputValues == other.IncludeExecutionOutputValues &&
+                    IncludeExecutionFlowsDetails == other.IncludeExecutionFlowsDetails &&
+                    IncludeExecutionLog == other.IncludeExecutionLog;
+            }
         }
 
         public async Task<ExecutionDetailsResponse?> GetExecutionDetailsAsync(string executionId, ExecutionDetailsOptions options)
         {
-            return (await GetExecutionDetailsAsync(new string[] { executionId }, options)).FirstOrDefault();
+            return (await GetExecutionDetailsAsync(new[] { executionId }, options)).FirstOrDefault();
         }
 
         public async Task<IEnumerable<ExecutionDetailsResponse?>> GetExecutionDetailsAsync(IEnumerable<string> executionIds, ExecutionDetailsOptions options)

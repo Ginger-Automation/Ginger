@@ -917,11 +917,9 @@ namespace Ginger.Run
 
         private void mRunSetConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            switch(e.PropertyName)
+            if (string.Equals(nameof(RunSetConfig.Name), e.PropertyName))
             {
-                case nameof(RunSetConfig.Name):
-                    xRunSetUcLabel.xNameTextBlock.ToolTip = GetToolTipForRunSetLabel();
-                    break;
+                xRunSetUcLabel.xNameTextBlock.ToolTip = GetToolTipForRunSetLabel();
             }
         }
 
@@ -1700,7 +1698,6 @@ namespace Ginger.Run
                     mRunSetConfig.AllowAutoSave = true;
                     xRunSetLoadingPnl.Visibility = Visibility.Collapsed;
                     xRunsetPageGrid.Visibility = Visibility.Visible;
-                    //mRunSetConfig.DirtyStatus = eDirtyStatus.NoChange;
                     if (xAddBusinessflowBtn.IsLoaded && mRunSetConfig != null)
                     {
                         General.DoEvents();
