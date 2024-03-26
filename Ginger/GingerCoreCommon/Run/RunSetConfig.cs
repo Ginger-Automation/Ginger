@@ -200,6 +200,10 @@ namespace Ginger.Run
             }
         }
 
+        private string mExecutionServiceURLUsed;
+
+        public string GetExecutionServiceURLUsed() => mExecutionServiceURLUsed;
+
         // Only for Run time, no need to serialize        
         public DateTime StartTimeStamp { get; set; }
 
@@ -499,6 +503,11 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
                 if (name == "SealighsBuildSessionID")
                 {
                     this.mSealightsBuildSessionID = value;
+                    return true;
+                }
+                if (string.Equals("ExecutionServiceURLUsed", name))
+                {
+                    this.mExecutionServiceURLUsed = value;
                     return true;
                 }
             }
