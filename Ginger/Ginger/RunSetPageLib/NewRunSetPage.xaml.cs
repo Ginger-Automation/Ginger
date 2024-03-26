@@ -51,6 +51,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -1606,21 +1607,14 @@ namespace Ginger.Run
                 GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xRunnersCombo, ComboBox.SelectedItemProperty, mRunSetConfig.GingerRunners, nameof(GingerRunner.Guid));
             }
         }
-        public async void LoadRunSetConfig(RunSetConfig runSetConfig, bool runAsync = true, bool ViewMode = false, bool isVirtual = false)
+
+        public async void LoadRunSetConfig(RunSetConfig runSetConfig, bool runAsync = true, bool ViewMode = false)
         {
-            isVirtual = runSetConfig.IsVirtual(WorkSpace.Instance.Solution);
             try
             {
                 //show current Run set UI
                 xRunsetPageGrid.Visibility = Visibility.Visible;
-                if (isVirtual)
-                {
-                    xRunSetUcLabel.xNameTextBlock.Foreground = (SolidColorBrush)Application.Current.Resources["$HighlightColor_LightBlue"];
-                }
-                else
-                {
-                    xRunSetUcLabel.xNameTextBlock.Foreground = (SolidColorBrush)Application.Current.Resources["$SelectionColor_Pink"];
-                }
+                BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ForegroundProperty, runSetConfig, nameof(RunSetConfig.IsVirtual), new BoolToRunsetLabelColorValueConverter());
 
                 bool isSolutionSame = mRunSetConfig != null && mRunSetConfig.ContainingFolderFullPath != null && mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName);
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              
@@ -1733,9 +1727,9 @@ namespace Ginger.Run
             UpdateRunsetExecutionHistoryTabHeader();
         }
 
-        public void RunSetExecutionHistoryPage_LoadRunset(RunSetConfig runset, bool isVirtual)
+        public void RunSetExecutionHistoryPage_LoadRunset(RunSetConfig runset)
         {
-            LoadRunSetConfig(runset, isVirtual: isVirtual);
+            LoadRunSetConfig(runset);
             RunTab.SelectedItem = xRunnersTab;
         }
 
@@ -3264,6 +3258,26 @@ namespace Ginger.Run
 
             GingerSelfHealingConfiguration selfHealingConfiguration = new GingerSelfHealingConfiguration(mRunSetConfig);
             selfHealingConfiguration.ShowAsWindow();
+        }
+
+        private sealed class BoolToRunsetLabelColorValueConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                if (value is bool boolValue && boolValue)
+                {
+                    return (SolidColorBrush)Application.Current.Resources["$HighlightColor_LightBlue"];
+                }
+                else
+                {
+                    return (SolidColorBrush)Application.Current.Resources["$SelectionColor_Pink"];
+                }
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

@@ -103,6 +103,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
         private RunSetConfig CreateVirtualRunset(GingerExecConfig executionConfig)
         {
             RunSetConfig runset = DynamicExecutionManager.LoadRunsetFromExecutionConfig(executionConfig);
+            runset.IsVirtual = true;
 
             RepositoryFolderBase bfFolder = GetRootRepositoryFolder<BusinessFlow>();
             RepositoryFolderBase bfCacheFolder = GetOrCreateRepositoryFolder(Solution.CacheDirectoryName, bfFolder);
@@ -131,6 +132,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
             runset.DynamicPostSaveHandler = () =>
             {
                 MoveRepositoryItemToFolder(runset, runsetFolder.FolderFullPath);
+                runset.IsVirtual = false;
             };
             runset.DirtyStatus = eDirtyStatus.Modified;
 

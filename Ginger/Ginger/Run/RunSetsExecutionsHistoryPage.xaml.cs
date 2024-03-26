@@ -462,7 +462,7 @@ namespace Ginger.Run
             }
         }
 
-        public delegate void LoadRunsetEventHandler(RunSetConfig runset, bool isVirtual);
+        public delegate void LoadRunsetEventHandler(RunSetConfig runset);
 
         public event LoadRunsetEventHandler LoadRunset;
 
@@ -487,7 +487,7 @@ namespace Ginger.Run
                     Dispatcher.Invoke(() =>
                     {
                         LoadRunsetEventHandler? handler = LoadRunset;
-                        handler?.Invoke(result.Runset, result.IsVirtual);
+                        handler?.Invoke(result.Runset);
                     });
                 }
                 catch (Exception ex)

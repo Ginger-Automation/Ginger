@@ -396,6 +396,20 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
             }
         }
 
+        private bool _isVirtual;
+        public bool IsVirtual 
+        { 
+            get => _isVirtual;
+            set
+            {
+                if (_isVirtual != value)
+                {
+                    _isVirtual = value;
+                    OnPropertyChanged(nameof(IsVirtual));
+                }
+            } 
+        }
+
         public void UpdateRunnersBusinessFlowRunsList()
         {
             foreach (GingerRunner GR in GingerRunners)
@@ -488,46 +502,6 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
                     return true;
                 }
             }
-            return false;
-        }
-
-        public bool IsVirtual(Solution solution)
-        {
-            if (string.IsNullOrEmpty(ContainingFolder) && string.IsNullOrEmpty(ContainingFolderFullPath))
-            {
-                return true;
-            }
-
-            if (string.IsNullOrEmpty(ContainingFolderFullPath))
-            {
-                ContainingFolderFullPath = solution.SolutionOperations.ConvertSolutionRelativePath(ContainingFolder);
-            }
-
-            string currentDirectory = ContainingFolderFullPath;
-            if (!currentDirectory.EndsWith(Path.DirectorySeparatorChar))
-            {
-                currentDirectory = $"{currentDirectory}{Path.DirectorySeparatorChar}";
-            }
-            string solutionDirectory = solution.ContainingFolderFullPath;
-            if (!solutionDirectory.EndsWith(Path.DirectorySeparatorChar))
-            {
-                solutionDirectory = $"{solutionDirectory}{Path.DirectorySeparatorChar}";
-            }
-
-            while(!string.Equals(currentDirectory, solutionDirectory))
-            {
-                string currentDirectoryName = Path.GetFileName(Path.GetDirectoryName(currentDirectory));
-                if (string.Equals(currentDirectoryName, Solution.CacheDirectoryName))
-                {
-                    return true;
-                }
-                currentDirectory = Directory.GetParent(Path.GetDirectoryName(currentDirectory)).FullName; 
-                if (!currentDirectory.EndsWith(Path.DirectorySeparatorChar))
-                {
-                    currentDirectory = $"{currentDirectory}{Path.DirectorySeparatorChar}";
-                }
-            }
-
             return false;
         }
 
