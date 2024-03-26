@@ -467,11 +467,6 @@ namespace Ginger.UserControlsLib.UCListView
                 return;
             }
 
-
-            if (mObjList.Count > 0)
-            {
-                BorderSection.Visibility = Visibility.Visible;
-            }
             
             if (mObjList.CurrentItem == xListView.SelectedItem)
             {
