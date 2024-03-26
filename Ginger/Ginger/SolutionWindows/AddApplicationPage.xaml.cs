@@ -16,11 +16,17 @@ limitations under the License.
 */
 #endregion
 
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.SolutionGeneral;
 using Ginger.UserControls;
+using GingerCore;
+using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.Graph;
+using Microsoft.VisualStudio.Services.Common;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -33,13 +39,14 @@ namespace Ginger.SolutionWindows
     {
         GenericWindow _pageGenericWin = null;
         Solution mSolution;
-
-        public AddApplicationPage(Solution Solution)
+        bool isSolutionNew = false;
+        public AddApplicationPage(Solution Solution , bool isSolutionNew)
         {
             InitializeComponent();
             SetAppsGridView();
             InitGridData();
             mSolution = Solution;
+            this.isSolutionNew = isSolutionNew;
         }
 
         private void InitGridData()
@@ -62,6 +69,7 @@ namespace Ginger.SolutionWindows
             APs.Add(new ApplicationPlatform() { AppName = "MyPowerBuilderApp", Platform = ePlatformType.PowerBuilder, Description = "Power Builder Application" });
             SelectApplicationGrid.DataSourceList = APs;
             SelectApplicationGrid.RowDoubleClick += SelectApplicationGrid_RowDoubleClick;
+            SelectApplicationGrid.SearchVisibility = Visibility.Collapsed;
         }
 
         private void SetAppsGridView()
@@ -75,9 +83,7 @@ namespace Ginger.SolutionWindows
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 40 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Name", WidthWeight = 60 });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Description), WidthWeight = 60 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), Header="Select Platform",  WidthWeight = 40 });
 
             SelectApplicationGrid.SetAllColumnsDefaultView(view);
             SelectApplicationGrid.InitViewItems();
@@ -103,18 +109,56 @@ namespace Ginger.SolutionWindows
             {
                 mSolution.ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
             }
+            var name = variableName.Text.Trim();
+            var description = variableDescription.Text.Trim();
+            if (string.IsNullOrEmpty(name))
+            {
+                NameError.Visibility = Visibility.Visible;
+                return;
+            }
+
+            eUserMsgSelection msgSelection = eUserMsgSelection.None;
+
+            if (!this.isSolutionNew)
+            {
+                msgSelection = Reporter.ToUser(eUserMsgKey.ShareApplicationToEnvironment);
+            }
+
+
+
             foreach (ApplicationPlatform selectedApp in SelectApplicationGrid.Grid.SelectedItems)
             {
                 mSolution.SetUniqueApplicationName(selectedApp);
+
+                selectedApp.AppName = name;
+                selectedApp.Description = description;
+
+
+                if (!this.isSolutionNew && msgSelection.Equals(eUserMsgSelection.Yes))
+                {
+                    var ProjEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+
+                    // Add ItemImageType, Platform and PlatformType
+                    ProjEnvironments.ForEach((projEnv) => { projEnv.StartDirtyTracking(); projEnv.Applications.Add(new EnvApplication() { Name = selectedApp.AppName, ParentGuid = selectedApp.Guid }); });
+
+                }
+
                 mSolution.ApplicationPlatforms.Add(selectedApp);
+
+                var DoesPlatformExist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Any((agent)=>agent.Platform.Equals(selectedApp.Platform));
+
+                if (!DoesPlatformExist)
+                {
+                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(new Agent() { Platform = selectedApp.Platform, Name = selectedApp.AppName});
+                }
             }
+
             _pageGenericWin.Close();
         }
 
         private void SelectApplicationGrid_RowDoubleClick(object sender, EventArgs e)
         {
-            mSolution.SetUniqueApplicationName((ApplicationPlatform)SelectApplicationGrid.Grid.SelectedItem);
-            mSolution.ApplicationPlatforms.Add((ApplicationPlatform)SelectApplicationGrid.Grid.SelectedItem);
+            OKButton_Click(sender, null);
             _pageGenericWin.Close();
         }
     }

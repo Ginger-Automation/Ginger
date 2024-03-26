@@ -135,7 +135,7 @@ namespace Ginger.SolutionWindows
 
         private void AddApplication(object sender, RoutedEventArgs e)
         {
-            AddApplicationPage AAP = new AddApplicationPage(WorkSpace.Instance.Solution);
+            AddApplicationPage AAP = new AddApplicationPage(WorkSpace.Instance.Solution, false);
             AAP.ShowAsWindow();
         }
 
