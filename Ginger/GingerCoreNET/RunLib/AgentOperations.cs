@@ -355,6 +355,8 @@ namespace GingerCore
             }
             ValueExpression ve = new ValueExpression(Agent.ProjEnvironment, Agent.BusinessFlow, Agent.DSList);
 
+            ve.DecryptFlag = true;
+
             if (Agent.AgentType == Agent.eAgentType.Service)
             {
                 SetServiceConfiguration();
