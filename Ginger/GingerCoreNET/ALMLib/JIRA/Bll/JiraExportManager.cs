@@ -689,7 +689,11 @@ namespace GingerCore.ALM.JIRA.Bll
                             {
                                 var tcRuns = (b.ExternalID2 ?? "").Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                                 if (!tcRuns.Contains(pattern))
+                                {
+
                                     tcRuns.Add(pattern);
+                                }
+
                                 b.ExternalID2 = string.Join("||", tcRuns);
                             }
                         }
