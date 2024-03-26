@@ -99,6 +99,7 @@ namespace Ginger.BusinessFlowPages
             }
             else if (mVariabelsParent is EnvApplication envApplication)
             {
+                envApplication.ConvertGeneralParamsToVariable();
                 return envApplication.Variables;
             }
             else

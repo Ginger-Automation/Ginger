@@ -4,7 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
-             xmlns:Ginger="clr-namespace:Ginger"
+             xmlns:Ginger="clr-namespace:Ginger" 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="500" KeyDown="UserControl_KeyDown">
     <UserControl.Resources>
@@ -31,7 +31,7 @@
                 </StackPanel>
             </StackPanel> 
 
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" >
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Name="ValueStackPanel" Visibility="Collapsed" >
                 <Label Style="{StaticResource $LabelStyle}" MinWidth="115" Content="Value:"/>
                 <StackPanel Orientation="Vertical">
                     <TextBox  Height="25" Width="250" Style="{StaticResource $TextBoxStyle}"  Name="variableValue"/>

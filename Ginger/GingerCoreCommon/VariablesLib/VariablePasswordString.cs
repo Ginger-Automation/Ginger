@@ -85,7 +85,14 @@ namespace GingerCore.Variables
 
         public override void SetInitialValue(string InitialValue)
         {
-            Password = EncryptionHandler.EncryptwithKey(InitialValue);
+            if (!EncryptionHandler.IsStringEncrypted(InitialValue))
+            {
+                Password = EncryptionHandler.EncryptwithKey(InitialValue);
+            }
+            else
+            {
+                Password = InitialValue;
+            }
         }
 
         public override bool SupportResetValue { get { return true; } }

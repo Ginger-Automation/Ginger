@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using GingerCore.GeneralLib;
+using GingerCore.Variables;
 using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
@@ -509,6 +510,24 @@ namespace Ginger.UserControlsLib.UCListView
                 SetSourceCurrentItemAsListSelectedItem();
             }
 
+            if(mObjList is ObservableList<VariableBase>)
+            {
+                if(xListView.SelectedItem is VariableRandomNumber || xListView.SelectedItem is VariableRandomString)
+                {
+                    ValueStackPanel.Visibility = Visibility.Collapsed;
+                }
+
+                else if(xListView.SelectedItem is VariableString || xListView.SelectedItem is VariableNumber || xListView.SelectedItem is VariableTimer || xListView.SelectedItem is VariablePasswordString || xListView.SelectedItem is VariableSequence || xListView.SelectedItem is VariableDynamic)
+                {
+                    ValueStackPanel.Visibility = Visibility.Visible;
+                }
+
+                else if (xListView.SelectedItem is VariableDateTime)
+                {
+                    ValueStackPanel.Visibility = Visibility.Collapsed;
+                }
+            }
+
             //e.Handled = true;
         }
 
@@ -518,7 +537,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 return;
             }
-
+            
             if (mObjList.CurrentItem == xListView.SelectedItem)
             {
                 return;

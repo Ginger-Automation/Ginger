@@ -120,8 +120,37 @@ namespace GingerCore.Environments
             var.Name = var.Name + "_" + counter.ToString();
         }
 
+        public void ConvertGeneralParamsToVariable()
+        {
+            if (GeneralParams == null || GeneralParams.Count == 0) return;
 
+            foreach (var generalParam in GeneralParams)
+            {
+                if (generalParam.Encrypt)
+                {
+                    var variablePassword = new VariablePasswordString()
+                    {
+                        Description = generalParam.Description,
+                        Name = generalParam.Name
+                    };
 
+                    variablePassword.SetInitialValue(generalParam.Value);
+                    Variables.Add(variablePassword);
+                }
+                else
+                {
+                    Variables.Add(
+                         new VariableString()
+                         {
+                             Name = generalParam.Name,
+                             Description = generalParam.Description,
+                             InitialStringValue = generalParam.Value
+                         }
+                        );
+                }
+            }
+            GeneralParams.Clear();
+        }
 
         public override eImageType ItemImageType
         {
