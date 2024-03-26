@@ -31,6 +31,7 @@ using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerWPF.DragDropLib;
+using OctaneRepositoryStd.BLL;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -230,9 +231,8 @@ namespace Ginger.BusinessFlowPages
             if (mVariabelsListView == null)
             {
                 mVariabelsListView = new UcListView();
-                mVariabelsListView.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
-                mVariabelsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Variable;
-
+                mVariabelsListView.ListTitleVisibility = Visibility.Collapsed;
+                mVariabelsListView.ListImageVisibility = Visibility.Collapsed;
                 mVariabelListHelper = new VariablesListViewHelper(GetVariablesList(), mVariabelsParent, mVariablesLevel, mContext, mPageViewMode);
                 mVariabelListHelper.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
                 mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);

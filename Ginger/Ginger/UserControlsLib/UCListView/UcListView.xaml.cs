@@ -449,6 +449,14 @@ namespace Ginger.UserControlsLib.UCListView
                 ValueError.Visibility = value;
             }
         }
+
+        public Visibility ListImageVisibility
+        {
+            set
+            {
+                xListTitleImage.Visibility = value;
+            }
+        }
         public Visibility ListTitleVisibility
         {
             get
