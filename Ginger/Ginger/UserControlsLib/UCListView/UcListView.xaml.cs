@@ -498,7 +498,20 @@ namespace Ginger.UserControlsLib.UCListView
                 xListTitleImage.ImageType = value;
             }
         }
-
+        public Visibility SelectTitleVisibility
+        {
+            set
+            {
+                SelectionTitle.Visibility = value;  
+            }
+        }
+        public string SelectTitleContent
+        {
+            set
+            {
+                SelectionTitle.Content = value;
+            }
+        }
         public void ScrollToViewCurrentItem()
         {
             if (mObjList != null && mObjList.CurrentItem != null)
@@ -523,16 +536,20 @@ namespace Ginger.UserControlsLib.UCListView
                 if(xListView.SelectedItem is VariableRandomNumber || xListView.SelectedItem is VariableRandomString)
                 {
                     ValueStackPanel.Visibility = Visibility.Collapsed;
+                    DateTimePanel.Visibility = Visibility.Collapsed;
                 }
 
                 else if(xListView.SelectedItem is VariableString || xListView.SelectedItem is VariableNumber || xListView.SelectedItem is VariableTimer || xListView.SelectedItem is VariablePasswordString || xListView.SelectedItem is VariableSequence || xListView.SelectedItem is VariableDynamic)
                 {
                     ValueStackPanel.Visibility = Visibility.Visible;
+                    DateTimePanel.Visibility = Visibility.Collapsed;
+
                 }
 
                 else if (xListView.SelectedItem is VariableDateTime)
                 {
                     ValueStackPanel.Visibility = Visibility.Collapsed;
+                    DateTimePanel.Visibility = Visibility.Visible;
                 }
             }
 
@@ -541,9 +558,17 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetSourceCurrentItemAsListSelectedItem()
         {
-            if (mObjList == null)
+
+            if (mObjList == null || mObjList.Count == 0)
             {
+                BorderSection.Visibility = Visibility.Collapsed;
                 return;
+            }
+            
+
+            if (mObjList.Count > 0)
+            {
+                BorderSection.Visibility = Visibility.Visible;
             }
             
             if (mObjList.CurrentItem == xListView.SelectedItem)

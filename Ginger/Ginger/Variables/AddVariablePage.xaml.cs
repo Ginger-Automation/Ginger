@@ -224,7 +224,7 @@ namespace Ginger.Variables
         {
             string Name = xLibraryTabListView.variableName.Text;
             string Description = xLibraryTabListView.variableDescription.Text;
-            string Value = xLibraryTabListView.variableValue.Text;
+            string? Value = xLibraryTabListView?.dtpInitialDate?.Value.ToString() ?? xLibraryTabListView?.variableValue.Text;
 
             if(Name.Trim().Length == 0)
             {
@@ -232,7 +232,7 @@ namespace Ginger.Variables
                 return false;
             }
 
-            if(Value.Trim().Length == 0)
+            if(Value?.Trim().Length == 0)
             {
                 xLibraryTabListView.ValueErrorVisibility = Visibility.Visible;
                 return false;
