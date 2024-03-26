@@ -26,10 +26,12 @@ using Amdocs.Ginger.Repository;
 using GingerCore.Activities;
 using GingerCore.ALM.JIRA.Data_Contracts;
 using GingerCore.Variables;
+using JiraRepositoryStd;
 using JiraRepositoryStd.BLL;
 using JiraRepositoryStd.Data_Contracts;
 using JiraRepositoryStd.Helpers;
 using JiraRepositoryStd.Settings;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO.Compression;
@@ -320,7 +322,7 @@ namespace GingerCore.ALM.JIRA.Bll
                 ALMCore AlmCore = new JiraCore();
                 ObservableList<ExternalItemFieldBase> mergedFields = AlmCore.RefreshALMItemFields(exitingFields, latestALMFields);
 
-                var testExecutionFields = mergedFields.Where(a => a.ItemType == "TEST_EXECUTION" && (a.ToUpdate || a.Mandatory));
+                var testExecutionFields = mergedFields.Where(a => a.ItemType == "TEST_EXECUTION" && (a.ToUpdate || a.Mandatory)).ToList();
                 var isCreated = CreateTestExecution(bizFlow, tcArray, testExecutionFields);
                 //get the Test set TC's                
 
@@ -664,30 +666,55 @@ namespace GingerCore.ALM.JIRA.Bll
         {
 
             var thisTestExecution = jiraRepObj.GetJiraIssueById(ALMCore.DefaultAlmConfig.ALMUserName, ALMCore.DefaultAlmConfig.ALMPassword, ALMCore.DefaultAlmConfig.ALMServerURL, ALMCore.DefaultAlmConfig.ALMProjectName, testExecutionKey, ResourceType.TEST_CASE_EXECUTION_RECORDS);
+            int jiraVersion = jiraRepObj.GetJiraVersion(ALMCore.DefaultAlmConfig.ALMServerURL);
             if (thisTestExecution != null && thisTestExecution.fields != null)
             {
                 dynamic dc = null;
                 thisTestExecution.fields.TryGetValue(testCaseTemplate.key, out dc);
                 if (dc != null)
                 {
-                    foreach (var tc in dc)
+                    if (jiraVersion >= 9)
                     {
-                        businessFlow.ActivitiesGroups.Where(a => a.ExternalID == tc.b.Value).ToList().ForEach(b =>
+                        foreach (var tc in dc)
                         {
-                            string patern = testExecutionKey + "***" + tc.c.Value;
-                            List<string> tcRuns = new List<string>();
-                            if (!string.IsNullOrEmpty(b.ExternalID2))
-                            {
-                                tcRuns = b.ExternalID2.Split(new string[] { "||" }, StringSplitOptions.RemoveEmptyEntries).ToList();
-                            }
+                            // tc is coming as JObject, extracting the values of testkey and tesrunId
+                            var testKey = tc["testKey"].ToString();
+                            var testRunId = tc["testRunId"].ToString();
 
-                            if (!tcRuns.Contains(patern))
-                            {
-                                tcRuns.Add(patern);
-                            }
+                            // converting testRunId value to tc.c.Value
+                            tc["c"] = new JObject(new JProperty("Value", testRunId));
 
-                            b.ExternalID2 = string.Join("||", tcRuns);
-                        });
+                            var pattern = $"{testExecutionKey}***{testRunId}";
+                            foreach (var b in businessFlow.ActivitiesGroups.Where(a => a.ExternalID == testKey))
+                            {
+                                var tcRuns = (b.ExternalID2 ?? "").Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                                if (!tcRuns.Contains(pattern))
+                                    tcRuns.Add(pattern);
+                                b.ExternalID2 = string.Join("||", tcRuns);
+                            }
+                        }
+                    }
+                    else if(jiraVersion <= 8)
+                    {
+                        foreach (var tc in dc)
+                        {
+                            businessFlow.ActivitiesGroups.Where(a => a.ExternalID == tc.b.Value).ToList().ForEach(b =>
+                            {
+                                string patern = testExecutionKey + "***" + tc.c.Value;
+                                List<string> tcRuns = new List<string>();
+                                if (!string.IsNullOrEmpty(b.ExternalID2))
+                                {
+                                    tcRuns = b.ExternalID2.Split(new string[] { "||" }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                                }
+
+                                if (!tcRuns.Contains(patern))
+                                {
+                                    tcRuns.Add(patern);
+                                }
+
+                                b.ExternalID2 = string.Join("||", tcRuns);
+                            });
+                        }
                     }
                 }
             }
