@@ -937,6 +937,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public static RunSetConfig LoadRunsetFromExecutionConfig(GingerExecConfig gingerExecConfig)
         {
+            if (gingerExecConfig == null)
+            {
+                throw new ArgumentNullException(nameof(gingerExecConfig));
+            }
+
             RunsetExecConfig dynamicRunsetConfigs = gingerExecConfig.Runset;
             RunSetConfig runSetConfig = null;
 
