@@ -18,19 +18,13 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Reports;
-using Amdocs.Ginger.CoreNET.Run.RemoteExecution;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
-using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Amdocs.Ginger.CoreNET.Utility;
-using Amdocs.Ginger.Repository;
-using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Responses;
-using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.Reports;
 using Ginger.Repository.AddItemToRepositoryWizard;
 using Ginger.Repository.ItemToRepositoryWizard;
@@ -44,12 +38,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Markup;
 using static Amdocs.Ginger.CoreNET.BPMN.Exportation.RunSetExecutionHistoryToBPMNExporter;
 
 namespace Ginger.Run
@@ -171,26 +165,13 @@ namespace Ginger.Run
                     WidthWeight = 5,
                     BindingMode = BindingMode.OneWay
                 },
-                new() {
-                    Field = "Generate Report",
-                    WidthWeight = 8,
-                    StyleType = GridColView.eGridColStyleType.Template,
-                    CellTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"]
-                },
                 new()
                 {
-                    Field = "Export BPMN",
-                    WidthWeight = 8,
+                    Field = "Actions",
+                    WidthWeight = 24,
                     StyleType = GridColView.eGridColStyleType.Template,
-                    CellTemplate = (DataTemplate)this.pageGrid.Resources["BPMNButtonDataTemplate"]
-                },
-                new()
-                {
-                    Field = "Load Runset",
-                    WidthWeight = 8,
-                    StyleType = GridColView.eGridColStyleType.Template,
-                    CellTemplate = (DataTemplate)this.pageGrid.Resources["LoadRunsetDataTemplate"]
-                },
+                    CellTemplate = GetActionsDataTemplate()
+                }
             ];
 
             grdExecutionsHistory.SetAllColumnsDefaultView(view);
@@ -206,6 +187,38 @@ namespace Ginger.Run
             {
                 grdExecutionsHistory.AddCheckBox("Auto Load Execution History", new RoutedEventHandler(AutoLoadExecutionHistory));
             }
+        }
+
+        private DataTemplate GetActionsDataTemplate()
+        {
+            DataTemplate reportButtonDataTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"];
+            DataTemplate bpmnButtonDataTemplate = (DataTemplate)this.pageGrid.Resources["BPMNButtonDataTemplate"];
+            DataTemplate loadRunsetDataTemplate = (DataTemplate)this.pageGrid.Resources["LoadRunsetDataTemplate"];
+
+            string actionsDataTemplateXaml =
+            $@"<DataTemplate
+                xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""
+	            xmlns:s=""clr-namespace:System;assembly=System.Private.CoreLib""
+	            xmlns:x=""http://schemas.microsoft.com/winfx/2006/xaml"">
+                <StackPanel
+                    Orientation=""Horizontal"">
+                    {GetContentXAMLFromDataTemplate(reportButtonDataTemplate)}
+                    {GetContentXAMLFromDataTemplate(bpmnButtonDataTemplate)}
+                    {(mExecutionHistoryLevel == eExecutionHistoryLevel.Solution 
+                        ? GetContentXAMLFromDataTemplate(loadRunsetDataTemplate) 
+                        : "")}
+                </StackPanel>
+            </DataTemplate>";
+
+            using MemoryStream ms = new(Encoding.UTF8.GetBytes(actionsDataTemplateXaml));
+            return (DataTemplate)XamlReader.Load(ms);
+        }
+
+        private string GetContentXAMLFromDataTemplate(DataTemplate dataTemplate)
+        {
+            using StringWriter stringWriter = new();
+            XamlWriter.Save(dataTemplate.LoadContent(), stringWriter);
+            return stringWriter.ToString();
         }
 
         private void AutoLoadExecutionHistory(object sender, RoutedEventArgs e)
@@ -490,9 +503,9 @@ namespace Ginger.Run
                         handler?.Invoke(result.Runset);
                     });
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
-                    Reporter.ToLog(eLogLevel.ERROR, "Error occurred while loading runset", ex);
+                    Reporter.ToUser(eUserMsgKey.RunSetLoadFromReportError, ex.Message);
                 }
                 finally
                 {

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -113,7 +112,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while getting execution details from ExecutionHandler", ex);
-                return Array.Empty<ExecutionDetailsResponse?>();
+                throw;
             }
         }
 

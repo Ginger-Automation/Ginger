@@ -39,8 +39,6 @@ namespace Ginger.SolutionGeneral
 {
     public class Solution : RepositoryItemBase, ISolution
     {
-        public const string CacheDirectoryName = "Cache";
-
         public readonly string ExternalIntegrationsTabName = "External Integrations";
         public ISolutionOperations SolutionOperations;
 

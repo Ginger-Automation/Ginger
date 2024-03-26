@@ -11,13 +11,20 @@
 
     <Grid Name="pageGrid">
         <Grid.Resources>
+            <Thickness
+                x:Key="@ActionButtonPadding"
+                Left="2"
+                Top="2"
+                Right="2"
+                Bottom="2" />
             <DataTemplate
                 x:Key="ReportButton">
                 <Button
                     x:Name="ReportBtn"
                     Click="ReportBtnClicked"
                     ToolTip="Generate Report"
-                    Style="{StaticResource @InputImageGridCellButtonStyle}">
+                    Style="{StaticResource @InputImageGridCellButtonStyle}"
+                    Padding="{StaticResource @ActionButtonPadding}">
                     <Image
                         Source="{StaticResource @Report2_16x16}"
                         Height="16"
@@ -31,6 +38,7 @@
                     Click="BPMNButton_Click"
                     ToolTip="Generate BPMN"
                     Style="{StaticResource @InputImageGridCellButtonStyle}"
+                    Padding="{StaticResource @ActionButtonPadding}"
                     Tag="{Binding .}">
                     <Image
                         Source="{StaticResource @BPMN_32x32.png}"
@@ -45,6 +53,7 @@
                     Click="LoadRunsetButton_Click"
                     ToolTip="Load Runset"
                     Style="{StaticResource @InputImageGridCellButtonStyle}"
+                    Padding="{StaticResource @ActionButtonPadding}"
                     Tag="{Binding .}">
                     <Image
                         Source="{StaticResource @Load_Arrow_32x32.png}"

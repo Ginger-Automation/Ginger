@@ -887,8 +887,9 @@ namespace Ginger.Run
         {
             BindingOperations.ClearBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.TextProperty);
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
-            BindingOperations.ClearBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ToolTipProperty);
-            BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ToolTipProperty, mRunSetConfig, nameof(RunSetConfig.Name));
+            xRunSetUcLabel.xNameTextBlock.ToolTip = GetToolTipForRunSetLabel();
+            PropertyChangedEventManager.AddHandler(mRunSetConfig, mRunSetConfig_PropertyChanged, propertyName: string.Empty);
+            BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ForegroundProperty, mRunSetConfig, nameof(RunSetConfig.IsVirtual), new BoolToRunsetLabelColorValueConverter());
             if (WorkSpace.Instance.SourceControl == null || !WorkSpace.Instance.UserProfile.ShowSourceControlStatusIcon)
             {
                 xRunSetUcLabel.xSourceControlIcon.Visibility = Visibility.Collapsed;
@@ -912,6 +913,28 @@ namespace Ginger.Run
             mSolutionCategoriesPage.Init(eSolutionCategoriesPageMode.ValuesSelection, mRunSetConfig.CategoriesDefinitions);
             PropertyChangedEventManager.AddHandler(source: mRunSetConfig, handler: RunSetConfig_PropertyChanged, propertyName: allProperties);
             CollectionChangedEventManager.AddHandler(source: mRunSetConfig.Tags, handler: RunSetTags_CollectionChanged);
+        }
+
+        private void mRunSetConfig_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName)
+            {
+                case nameof(RunSetConfig.Name):
+                    xRunSetUcLabel.xNameTextBlock.ToolTip = GetToolTipForRunSetLabel();
+                    break;
+            }
+        }
+
+        private string GetToolTipForRunSetLabel()
+        {
+            if (mRunSetConfig.IsVirtual)
+            {
+                return $"{mRunSetConfig.Name} (Virtual)";
+            }
+            else
+            {
+                return mRunSetConfig.Name;
+            }
         }
 
         private void RunSetTags_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -1614,7 +1637,6 @@ namespace Ginger.Run
             {
                 //show current Run set UI
                 xRunsetPageGrid.Visibility = Visibility.Visible;
-                BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ForegroundProperty, runSetConfig, nameof(RunSetConfig.IsVirtual), new BoolToRunsetLabelColorValueConverter());
 
                 bool isSolutionSame = mRunSetConfig != null && mRunSetConfig.ContainingFolderFullPath != null && mRunSetConfig.ContainingFolderFullPath.Contains(WorkSpace.Instance.Solution.FileName);
                 bool bIsRunsetDirty = mRunSetConfig != null && mRunSetConfig.DirtyStatus == eDirtyStatus.Modified && isSolutionSame;              

@@ -373,7 +373,7 @@ namespace Ginger.SolutionGeneral
             foreach (Type repositoryItemType in repositoryItemTypes)
             {
                 string rootFolderPath = WorkSpace.Instance.SolutionRepository.GetSolutionRepositoryItemInfo(repositoryItemType).ItemRootRepositoryFolder.FolderFullPath;
-                string cacheFolderPath = Path.Combine(rootFolderPath, Solution.CacheDirectoryName);
+                string cacheFolderPath = Path.Combine(rootFolderPath, ISolution.CacheDirectoryName);
                 if (Directory.Exists(cacheFolderPath))
                 {
                     Directory.Delete(cacheFolderPath, recursive: true);

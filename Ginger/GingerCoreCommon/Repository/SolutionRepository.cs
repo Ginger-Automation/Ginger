@@ -53,6 +53,9 @@ namespace Amdocs.Ginger.Repository
              @"ExecutionResults\",
              @"HTMLReports\",
 
+             $@"BusinessFlows\{ISolution.CacheDirectoryName}",
+             $@"RunSetConfigs\{ISolution.CacheDirectoryName}",
+
              @"SharedRepository\Activities\PrevVersions\",
              @"SharedRepository\Actions\PrevVersions\",
              @"SharedRepository\Variables\PrevVersions\",

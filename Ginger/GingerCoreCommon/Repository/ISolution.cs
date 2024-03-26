@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -25,6 +25,8 @@ namespace Amdocs.Ginger.Repository
 {
     public interface ISolution
     {
+        public const string CacheDirectoryName = "Cache";
+
         string Name { get; set; }
         string Folder { get; set; }
         ObservableList<VariableBase> Variables { get; set; }

@@ -1,6 +1,5 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common.Enums;
-using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.CoreNET.Run.RemoteExecution;
 using Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib;
 using Amdocs.Ginger.Repository;
@@ -8,16 +7,13 @@ using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Responses;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.Reports;
 using Ginger.Run;
-using Ginger.SolutionGeneral;
 using GingerCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using static Ginger.ExecuterService.Contracts.V1.GingerParser.ParserApiRoutes;
 
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Reports
@@ -81,12 +77,34 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
         private async Task<GingerExecConfig?> GetExecutionConfigurationAsync(string executionId)
         {
+            string handlerAPIUrl = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL;
+            if (string.IsNullOrEmpty(handlerAPIUrl))
+            {
+                //case: URL is null or empty
+                throw new InvalidOperationException($"Please make sure that the Execution Handler URL on the 'Execution Logger Configurations' page under 'Reports' tab is entered correctly.");
+            }
+
             ExecutionHandlerAPIClient apiClient = new(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL);
             ExecutionHandlerAPIClient.ExecutionDetailsOptions options = new()
             {
                 IncludeRequestDetails = true
             };
-            ExecutionDetailsResponse? response = await apiClient.GetExecutionDetailsAsync(executionId, options);
+            ExecutionDetailsResponse? response;
+            try
+            {
+                response = await apiClient.GetExecutionDetailsAsync(executionId, options);
+            }
+            catch(InvalidOperationException)
+            {
+                //case: URL is invalid like, someDummyText
+                throw new InvalidOperationException($"Please make sure that the Execution Handler URL on the 'Execution Logger Configurations' page under 'Reports' tab is entered correctly.");
+            }
+            catch(Exception)
+            {
+                //case: URL has invalid host name like, https://someDummyHost/ExecuterHandlerService
+                //default case: Any other form of exception
+                throw new InvalidOperationException($"Unable to get details from Execution Handler.");
+            }
 
             if (response == null)
             {
@@ -106,7 +124,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
             runset.IsVirtual = true;
 
             RepositoryFolderBase bfFolder = GetRootRepositoryFolder<BusinessFlow>();
-            RepositoryFolderBase bfCacheFolder = GetOrCreateRepositoryFolder(Solution.CacheDirectoryName, bfFolder);
+            RepositoryFolderBase bfCacheFolder = GetOrCreateRepositoryFolder(ISolution.CacheDirectoryName, bfFolder);
             RepositoryFolderBase bfCacheRunsetFolder = GetOrCreateRepositoryFolder(runset.Name, bfCacheFolder);
 
             IEnumerable<BusinessFlowRun> bfRuns = runset
@@ -126,7 +144,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
             }
 
             RepositoryFolderBase runsetFolder = GetRootRepositoryFolder<RunSetConfig>();
-            RepositoryFolderBase runsetCacheFolder = GetOrCreateRepositoryFolder(Solution.CacheDirectoryName, runsetFolder);
+            RepositoryFolderBase runsetCacheFolder = GetOrCreateRepositoryFolder(ISolution.CacheDirectoryName, runsetFolder);
             runsetCacheFolder.AddRepositoryItem(runset, doNotSave: false);
 
             runset.DynamicPostSaveHandler = () =>
