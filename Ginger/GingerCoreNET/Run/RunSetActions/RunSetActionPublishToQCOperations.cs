@@ -178,7 +178,7 @@ namespace Ginger.Run.RunSetActions
                         virtualAG.Name = runSetBF.Name;
                         virtualAG.Description = runSetBF.Description;
                         virtualAG.ExternalID = !string.IsNullOrEmpty(runSetBF.ExternalID) ? runSetBF.ExternalID : string.Empty;
-                        virtualAG.ParentGuid = runSetBF.Guid;//Guid passing in Parent Guid to Update External Id back
+                        virtualAG.ParentGuid = runSetBF.Guid;//Business flow instance Guid passing in Parent Guid to Update External Id back
                         if (Enum.IsDefined(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString()))
                         {
                             virtualAG.RunStatus = (eActivitiesGroupRunStatus)Enum.Parse(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString());

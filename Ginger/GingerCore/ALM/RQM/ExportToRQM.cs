@@ -746,6 +746,7 @@ namespace GingerCore.ALM.RQM
                     else
                     {
                         businessFlow.ExternalIdCalCulated = $"RQMID={plan.ExportedID.ToString()}";
+                        businessFlow.ExternalID = $"RQMID={plan.ExportedID.ToString()}";
                     }
 
                     int ActivityGroupCounter = 0;
@@ -783,6 +784,7 @@ namespace GingerCore.ALM.RQM
                             else
                             {
                                 businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalIdCalculated = ActivityGroupID;
+                                businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID = ActivityGroupID;
                             }
                             foreach (ACL_Data_Contract.ActivityStep activityStep in act.ActivityData.ActivityStepsColl)
                             {
