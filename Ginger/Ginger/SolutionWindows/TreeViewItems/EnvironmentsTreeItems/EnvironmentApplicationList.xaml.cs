@@ -60,7 +60,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool DontShowCloseBtn = false)
         {
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, null, DontShowCloseBtn, "ok");
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, null, DontShowCloseBtn, "Done");
         }
     
     }
