@@ -740,6 +740,7 @@ namespace Ginger.ALM
             try
             {
                 solutionAlmFields = SetALMTypeAndFieldsFromSolutionToOperation(publishToALMConfig);
+                businessFlow.IsEntitySearchByName = publishToALMConfig.IsEntitySearchByName;
                 Reporter.ToLog(eLogLevel.INFO, ("Exporting virtual " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
                 if (AutoALMProjectConnect(eALMConnectType.Silence, false))
                 {
