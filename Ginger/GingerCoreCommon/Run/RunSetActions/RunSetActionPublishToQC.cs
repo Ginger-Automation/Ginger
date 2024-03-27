@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -185,5 +185,11 @@ namespace Ginger.Run.RunSetActions
         {
             return ALMTestSetLevel;
         }
+
+        private bool mSearchALMEntityByName;
+        [IsSerializedForLocalRepository]
+        public bool SearchALMEntityByName { get { return mSearchALMEntityByName; } set { if (mSearchALMEntityByName != value) { mSearchALMEntityByName = value; OnPropertyChanged(nameof(SearchALMEntityByName)); } } }
+
+
     }
 }

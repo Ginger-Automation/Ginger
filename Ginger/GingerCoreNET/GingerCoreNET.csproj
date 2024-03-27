@@ -255,7 +255,7 @@
   
     <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.2" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.5.1" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.1" />
     
     <PackageReference Include="HBaseNet" Version="0.1.0" />
     
@@ -331,6 +331,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="ACL_Data_Contract">
+      <HintPath>DLLS\ACL_Data_Contract.dll</HintPath>
+    </Reference>
     <Reference Include="AlmDataContractsStd">
       <HintPath>DLLS\AlmDataContractsStd.dll</HintPath>
     </Reference>
