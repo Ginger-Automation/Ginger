@@ -57,20 +57,11 @@ namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
 
             AppsGrid.DataSourceList = FilteredListToBeDisplayed;
         }
-        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool ShowCancelButton = true)
+        public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool DontShowCloseBtn = false)
         {
-            Button okBtn = new Button();
-            okBtn.Content = "Ok";
-            ObservableList<Button> winButtons = new ObservableList<Button>();
-            winButtons.Add(okBtn);
-            WeakEventManager<ButtonBase, RoutedEventArgs>.AddHandler(source: okBtn, eventName: nameof(ButtonBase.Click), handler: OKButton_Click);
 
-            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, winButtons, ShowCancelButton, "Cancel");
+            GingerCore.General.LoadGenericWindow(ref _pageGenericWin, App.MainWindow, windowStyle, this.Title, this, null, DontShowCloseBtn, "ok");
         }
     
-        public void OKButton_Click(object sender, RoutedEventArgs e)
-        {
-            _pageGenericWin?.Close();
-        }
     }
 }
