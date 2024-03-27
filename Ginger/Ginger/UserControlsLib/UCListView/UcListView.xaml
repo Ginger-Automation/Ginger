@@ -15,14 +15,13 @@
     
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" MaxHeight="150"/>
             <RowDefinition x:Name="xListTitleRow"  Height="auto" MaxHeight="40" />
             <RowDefinition x:Name="xListSearchRow" Height="30"/>
             <RowDefinition x:Name="xListFilterRow" Height="auto" MaxHeight="30" />
             <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
         
-        <DockPanel Grid.Row="1" Margin="-7,0,0,0" HorizontalAlignment="Stretch">
+        <DockPanel Grid.Row="0" Margin="-7,0,0,0" HorizontalAlignment="Stretch">
             <usercontrols:ucButton x:Name="xExpandCollapseBtn" DockPanel.Dock="Left"  ToolTip="Expand/Collapse All" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="ExpandAll" Visibility="Visible" Click="XExpandCollapseBtn_Click"  />
 
             <DockPanel x:Name="xListTitlePnl" DockPanel.Dock="Left">
@@ -43,7 +42,7 @@
             </DockPanel>
         </DockPanel>
 
-        <Border Grid.Row="2" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="0.5" CornerRadius="5" Margin="10,0,10,0" Name="xSearchGrid">
+        <Border Grid.Row="1" BorderBrush="{StaticResource $BackgroundColor_Black}" BorderThickness="0.5" CornerRadius="5" Margin="10,0,10,0" Name="xSearchGrid">
             <Grid >
                 <TextBox x:Name="xSearchTextBox" MinWidth="50" Height="25" Margin="5,0,5,0" HorizontalAlignment="Stretch" VerticalContentAlignment="Center"  Background="White" TextChanged="xSearchTextBox_TextChangedAsync" BorderThickness="0" BorderBrush="Transparent" />
                 <usercontrols:ucButton x:Name="xSearchClearBtn" ToolTip="Clear Search" HorizontalAlignment="Right" VerticalAlignment="Center" ButtonType="ImageButton"  ButtonFontImageSize="10" ButtonImageWidth="10" ButtonImageHeight="10" ButtonImageType="Close" Visibility="Collapsed" Click="xSearchClearBtn_Click" BorderBrush="Transparent" Background="Transparent" Grid.Column="1" Margin="0,0,6,0" ></usercontrols:ucButton>
@@ -51,11 +50,11 @@
             </Grid>
         </Border>
 
-        <Ginger:ucTagsViewer x:Name="xTagsFilter" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" AddTags="False"/>
-        <Label Margin="5,0,0,0" x:Name="SelectionTitle" Height="40" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="DemiBold" Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20" Visibility="Hidden"/>
-        <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0" IsEnabled="False" Background="LightGray" />
+        <Ginger:ucTagsViewer x:Name="xTagsFilter" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" AddTags="False"/>
+        <Label Margin="5,0,0,0" x:Name="SelectionTitle" Height="40" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="DemiBold" Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20" Visibility="Hidden"/>
+        <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0" IsEnabled="False" Background="LightGray" />
 
-        <Border Grid.Row="4" Background="{StaticResource $BackgroundColor_VeryLightGray}" BorderThickness="10" CornerRadius="20" Name="BorderSection">
+        <Border Grid.Row="3" Background="{StaticResource $BackgroundColor_VeryLightGray}" BorderThickness="10" CornerRadius="20" >
             <ScrollViewer Margin="5"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                 <ListView x:Name="xListView" 
                   Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" 

@@ -24,7 +24,6 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using GingerCore.GeneralLib;
-using GingerCore.Variables;
 using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
