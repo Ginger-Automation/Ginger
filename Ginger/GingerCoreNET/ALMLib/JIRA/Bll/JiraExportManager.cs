@@ -322,7 +322,7 @@ namespace GingerCore.ALM.JIRA.Bll
                 ALMCore AlmCore = new JiraCore();
                 ObservableList<ExternalItemFieldBase> mergedFields = AlmCore.RefreshALMItemFields(exitingFields, latestALMFields);
 
-                var testExecutionFields = mergedFields.Where(a => a.ItemType == "TEST_EXECUTION" && (a.ToUpdate || a.Mandatory)).ToList();
+                var testExecutionFields = mergedFields.Where(a => a.ItemType == "TEST_EXECUTION" && (a.ToUpdate || a.Mandatory));
                 var isCreated = CreateTestExecution(bizFlow, tcArray, testExecutionFields);
                 //get the Test set TC's                
 
@@ -675,17 +675,19 @@ namespace GingerCore.ALM.JIRA.Bll
                 {
                     if (jiraVersion >= 9)
                     {
+                        string testkey;
+                        string testRunId;
                         foreach (var tc in dc)
                         {
                             // tc is coming as JObject, extracting the values of testkey and tesrunId
-                            var testKey = tc["testKey"].ToString();
-                            var testRunId = tc["testRunId"].ToString();
+                            testkey = tc["testKey"].ToString();
+                            testRunId = tc["testRunId"].ToString();
 
                             // converting testRunId value to tc.c.Value
                             tc["c"] = new JObject(new JProperty("Value", testRunId));
 
                             var pattern = $"{testExecutionKey}***{testRunId}";
-                            foreach (var b in businessFlow.ActivitiesGroups.Where(a => a.ExternalID == testKey))
+                            foreach (var b in businessFlow.ActivitiesGroups.Where(a => a.ExternalID == testkey))
                             {
                                 var tcRuns = (b.ExternalID2 ?? "").Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries).ToList();
                                 if (!tcRuns.Contains(pattern))
