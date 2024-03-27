@@ -210,7 +210,15 @@ namespace Ginger.PlugInsWindows
         private void UninstallPlugin()
         {
             OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;
-            WorkSpace.Instance.PlugInsManager.UninstallPluginPackage(pluginPackageInfo);
+            PluginPackage pluginPackage = WorkSpace.Instance.PlugInsManager.GetPluginPackageById(pluginPackageInfo.Id);
+            if (pluginPackage != null)
+            {
+                WorkSpace.Instance.PlugInsManager.UninstallPluginPackage(pluginPackage);
+            }
+            else
+            {
+                GetPluginsList();
+            }
             pluginPackageInfo.Status = string.Empty;
             pluginPackageInfo.CurrentPackage = string.Empty;
         }
