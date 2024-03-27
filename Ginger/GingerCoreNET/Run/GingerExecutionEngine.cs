@@ -3557,6 +3557,54 @@ namespace Ginger.Run
             return result;
         }
 
+        private void SetMappedValuesToActivityVariables(Activity activity, Activity[] prevActivities)
+        {
+            if (prevActivities.Length == 0)
+            {
+                return;
+            }
+
+            IEnumerable<VariableBase> activityVariables = activity.GetVariables();
+            if (!activityVariables.Any())
+            {
+                return;
+            }
+
+            VariableBase[] mappedTargetVars = activityVariables
+                .Where(var => var.MappedOutputType == VariableBase.eOutputType.ActivityOutputVariable)
+                .ToArray();
+
+            foreach(VariableBase mappedTargetVar in mappedTargetVars)
+            {
+                Activity mappedSourceActivity = prevActivities
+                    .FirstOrDefault(prevActivity => prevActivity.Guid == mappedTargetVar.VariableReferenceEntity);
+                
+                if (mappedSourceActivity == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"No Activity('{mappedTargetVar.VariableReferenceEntity}') found in BusinessFlow before current Activity('{activity.Guid}')");
+                    continue;
+                }
+
+                if (!Guid.TryParse(mappedTargetVar.MappedOutputValue, out Guid mappedSourceVarGuid))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Value {mappedTargetVar.MappedOutputValue} is not a valid GUID.");
+                    continue;
+                }
+
+                VariableBase mappedSourceVar = mappedSourceActivity
+                    .GetVariables()
+                    .FirstOrDefault(var => var.Guid == mappedSourceVarGuid);
+
+                if (mappedSourceVar == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"No Variable('{mappedSourceVarGuid}') found in Activity('{mappedTargetVar.VariableReferenceEntity}')");
+                    continue;
+                }
+
+                mappedTargetVar.SetValue(mappedSourceVar.Value);
+            }
+        }
+
 
         public void RunActivity(Activity activity, bool doContinueRun = false, bool standaloneExecution = false, bool resetErrorHandlerExecutedFlag = false)
         {
@@ -4235,6 +4283,8 @@ namespace Ginger.Run
                     mRunSource = eRunSource.BusinessFlow;
                 }
 
+                List<Activity> previouslyExecutedActivities = [];
+
                 while (ExecutingActivity != null)
                 {
                     if (ExecutingActivity.GetType() == typeof(ErrorHandler) || ExecutingActivity.GetType() == typeof(CleanUpActivity))
@@ -4254,6 +4304,7 @@ namespace Ginger.Run
                     {
                         ExecutingActivity.Status = eRunStatus.Running;
                         GiveUserFeedback();
+                        SetMappedValuesToActivityVariables(ExecutingActivity, previouslyExecutedActivities.ToArray());
                         if (doContinueRun && FirstExecutedActivity.Equals(ExecutingActivity))
                         {
                             // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
@@ -4263,6 +4314,7 @@ namespace Ginger.Run
                         {
                             RunActivity(ExecutingActivity, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
                         }
+                        previouslyExecutedActivities.Add(ExecutingActivity);
                         //TODO: Why this is here? do we need to rehook
                         CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
                         if (ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
