@@ -410,18 +410,6 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        public Visibility VariableDetailsDockPanel
-        {
-            get
-            {
-                return xVariableDetailsDockPanel.Visibility;
-            }
-
-            set
-            {
-                xVariableDetailsDockPanel.Visibility = value;
-            }
-        }
 
         public Visibility ListOperationsBarPnlVisiblity
         {
@@ -435,20 +423,6 @@ namespace Ginger.UserControlsLib.UCListView
             }
         }
 
-        public Visibility NameErrorVisibility
-        {
-            set
-            {
-                NameError.Visibility = value;
-            }
-        }
-        public Visibility ValueErrorVisibility
-        {
-            set
-            {
-                ValueError.Visibility = value;
-            }
-        }
 
         public Visibility ListImageVisibility
         {
@@ -531,45 +505,17 @@ namespace Ginger.UserControlsLib.UCListView
                 SetSourceCurrentItemAsListSelectedItem();
             }
 
-            if(mObjList is ObservableList<VariableBase>)
-            {
-                if(xListView.SelectedItem is VariableRandomNumber || xListView.SelectedItem is VariableRandomString)
-                {
-                    ValueStackPanel.Visibility = Visibility.Collapsed;
-                    DateTimePanel.Visibility = Visibility.Collapsed;
-                }
-
-                else if(xListView.SelectedItem is VariableString || xListView.SelectedItem is VariableNumber || xListView.SelectedItem is VariableTimer || xListView.SelectedItem is VariablePasswordString || xListView.SelectedItem is VariableSequence || xListView.SelectedItem is VariableDynamic)
-                {
-                    ValueStackPanel.Visibility = Visibility.Visible;
-                    DateTimePanel.Visibility = Visibility.Collapsed;
-
-                }
-
-                else if (xListView.SelectedItem is VariableDateTime)
-                {
-                    ValueStackPanel.Visibility = Visibility.Collapsed;
-                    DateTimePanel.Visibility = Visibility.Visible;
-                }
-            }
-
             //e.Handled = true;
         }
 
         private void SetSourceCurrentItemAsListSelectedItem()
         {
 
-            if (mObjList == null || mObjList.Count == 0)
+            if (mObjList == null)
             {
-                BorderSection.Visibility = Visibility.Collapsed;
                 return;
             }
             
-
-            if (mObjList.Count > 0)
-            {
-                BorderSection.Visibility = Visibility.Visible;
-            }
             
             if (mObjList.CurrentItem == xListView.SelectedItem)
             {

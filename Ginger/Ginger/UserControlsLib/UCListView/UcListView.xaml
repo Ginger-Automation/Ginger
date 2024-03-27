@@ -4,8 +4,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
-      xmlns:window="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
              xmlns:Ginger="clr-namespace:Ginger" 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="500" KeyDown="UserControl_KeyDown">
@@ -21,39 +19,8 @@
             <RowDefinition x:Name="xListTitleRow"  Height="auto" MaxHeight="40" />
             <RowDefinition x:Name="xListSearchRow" Height="30"/>
             <RowDefinition x:Name="xListFilterRow" Height="auto" MaxHeight="30" />
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="300*"/>
         </Grid.RowDefinitions>
-
-        <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" Name="xVariableDetailsDockPanel" Visibility="Collapsed" Margin="10,25,0,0">
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                <Label Style="{StaticResource $LabelStyle}" MinWidth="115" Content="Name:"/>
-                <StackPanel Orientation="Vertical">
-                    <TextBox Width="250" Height="25" Style="{StaticResource $TextBoxStyle}" Name="variableName" />
-                    <TextBlock Text="Name is mandatory" Name="NameError" DockPanel.Dock="Bottom" Foreground="Red" Visibility="Hidden"/>
-                </StackPanel>
-            </StackPanel> 
-
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Name="ValueStackPanel" Visibility="Collapsed" >
-                <Label Style="{StaticResource $LabelStyle}" MinWidth="115" Content="Initial Value:"/>
-                <StackPanel Orientation="Vertical">
-                    <TextBox  Height="25" Width="250" Style="{StaticResource $TextBoxStyle}"  Name="variableValue"/>
-                    <TextBlock Text="Value is mandatory" Name="ValueError" DockPanel.Dock="Bottom" Foreground="Red" Visibility="Hidden"/>
-                </StackPanel>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Visibility="Collapsed" Name="DateTimePanel">
-                <TextBlock>Initial Date Time:</TextBlock>
-                <window:WindowsFormsHost Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Width="30" Height="30">
-                    <wf:DateTimePicker    x:Name="dtpInitialDate" Format="Custom" ></wf:DateTimePicker>
-                </window:WindowsFormsHost>
-            </StackPanel>
-
-
-
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                <Label Style="{StaticResource $LabelStyle}" MinWidth="115" Content="Description:"/>
-                <TextBox Height="25" Width="250"  Style="{StaticResource $TextBoxStyle}"  Name="variableDescription"/>
-            </StackPanel>
-        </DockPanel>
         
         <DockPanel Grid.Row="1" Margin="-7,0,0,0" HorizontalAlignment="Stretch">
             <usercontrols:ucButton x:Name="xExpandCollapseBtn" DockPanel.Dock="Left"  ToolTip="Expand/Collapse All" ButtonType="ImageButton" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonFontImageSize="18" ButtonImageWidth="18" ButtonImageHeight="18" ButtonImageType="ExpandAll" Visibility="Visible" Click="XExpandCollapseBtn_Click"  />
@@ -88,7 +55,7 @@
         <Label Margin="5,0,0,0" x:Name="SelectionTitle" Height="40" Grid.Row="3" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="DemiBold" Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20" Visibility="Hidden"/>
         <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0" IsEnabled="False" Background="LightGray" />
 
-        <Border Grid.Row="4" Background="{StaticResource $BackgroundColor_VeryLightGray}" BorderThickness="10" CornerRadius="20" MaxHeight="350" Visibility="Collapsed" Name="BorderSection">
+        <Border Grid.Row="4" Background="{StaticResource $BackgroundColor_VeryLightGray}" BorderThickness="10" CornerRadius="20" Name="BorderSection">
             <ScrollViewer Margin="5"  VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                 <ListView x:Name="xListView" 
                   Margin="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="Transparent" 

@@ -65,13 +65,14 @@ namespace Ginger.Variables
             mLibraryVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add);
             mLibraryVarsHelper.AllowExpandItems = false;
 
+            xLibraryTabListView.xListView.SelectionChanged += OnSelectionChanged;
             xLibraryTabListView.SetDefaultListDataTemplate(mLibraryVarsHelper);
             xLibraryTabListView.DataSourceList = mLibraryVarsList;
             xLibraryTabListView.MouseDoubleClick += XLibraryTabListView_MouseDoubleClick;
             xLibraryTabListView.ExpandCollapseBtnVisiblity = Visibility.Collapsed;
             xLibraryTabListView.SearchGridVisibility = Visibility.Collapsed;
             xLibraryTabListView.TagsVisibility = Visibility.Collapsed;
-            xLibraryTabListView.VariableDetailsDockPanel = Visibility.Visible;
+            xVariableDetailsDockPanel.Visibility = Visibility.Visible;
             if (mVariablesLevel.Equals(eVariablesLevel.EnvApplication))
             {
                 xLibraryTabHeaderText.Text = string.Format("{0} Library ({1})", "Parameter", mLibraryVarsList.Count);
@@ -88,6 +89,30 @@ namespace Ginger.Variables
                 xSharedRepoTabListView.SetDefaultListDataTemplate(mSharedRepoVarsHelper);
                 xSharedRepoTabListView.DataSourceList = mSharedRepoVarsList;
                 xSharedRepoTabListView.MouseDoubleClick += XSharedRepoTabListView_MouseDoubleClick;
+            }
+        }
+
+        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var SelectedListView = xLibraryTabListView.xListView.SelectedItem;
+
+            if (SelectedListView is VariableRandomNumber || SelectedListView is VariableRandomString)
+            {
+                ValueStackPanel.Visibility = Visibility.Collapsed;
+                DateTimePanel.Visibility = Visibility.Collapsed;
+            }
+
+            else if (SelectedListView is VariableString || SelectedListView is VariableNumber || SelectedListView is VariableTimer || SelectedListView is VariablePasswordString || SelectedListView is VariableSequence || SelectedListView is VariableDynamic)
+            {
+                ValueStackPanel.Visibility = Visibility.Visible;
+                DateTimePanel.Visibility = Visibility.Collapsed;
+
+            }
+
+            else if (SelectedListView is VariableDateTime)
+            {
+                ValueStackPanel.Visibility = Visibility.Collapsed;
+                DateTimePanel.Visibility = Visibility.Visible;
             }
         }
 
@@ -222,19 +247,19 @@ namespace Ginger.Variables
 
         private bool AddLibraryVariables()
         {
-            string Name = xLibraryTabListView.variableName.Text;
-            string Description = xLibraryTabListView.variableDescription.Text;
-            string? Value = xLibraryTabListView?.dtpInitialDate?.Value.ToString() ?? xLibraryTabListView?.variableValue.Text;
+            string Name = variableName.Text;
+            string Description = variableDescription.Text;
+            string? Value = xLibraryTabListView.xListView.SelectedItem is VariableDateTime ? dtpInitialDate.Value.ToString() : variableValue.Text;
 
             if(Name.Trim().Length == 0)
             {
-                xLibraryTabListView.NameErrorVisibility = Visibility.Visible;
+                NameError.Visibility = Visibility.Visible;
                 return false;
             }
 
             if(Value?.Trim().Length == 0)
             {
-                xLibraryTabListView.ValueErrorVisibility = Visibility.Visible;
+                ValueError.Visibility = Visibility.Visible;
                 return false;
             }
 
