@@ -67,7 +67,7 @@ namespace Ginger.AnalyzerLib
             }
 
             //check we do not have duplicates Agents
-            if (checks.AreAllFlagsSet(Check.DuplicateAgents) && RSC.RunModeParallel)
+            if (checks.AreAllFlagsSet(Check.DuplicateAgents) && RSC.RunModeParallel && RSC.GingerRunners.Count > 1)// Added count condition for multiple agent will not check on only 1 runner is configured
             {
                 List<Guid> Agents = new List<Guid>();
                 foreach (GingerRunner GR in RSC.GingerRunners)
