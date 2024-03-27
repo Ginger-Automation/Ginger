@@ -130,7 +130,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
 
 
-            string appName = string.Empty;
             ObservableList<ApplicationPlatform> DisplayedApplicationPlatforms = GingerCore.General.ConvertListToObservableList(ApplicationPlatforms);
 
             EnvironmentApplicationList applicationList = new(DisplayedApplicationPlatforms);
