@@ -38,11 +38,11 @@
             <StackPanel x:Name="xExportDestinationFolder" Visibility="Collapsed">
                     <StackPanel Orientation="Horizontal">
                         <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Test Set Export Folder:</Label>
-                        <Actions:UCValueExpression x:Name="xTestSetFolderDestination" Margin="35,10,0,0" Width="300" HorizontalAlignment="Left"/>
+                        <Actions:UCValueExpression x:Name="xTestSetFolderDestination" Margin="100,10,0,0" Width="300" HorizontalAlignment="Left"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">Test Cases Export Folder:</Label>
-                        <Actions:UCValueExpression x:Name="xTestCaseFolderDestination" Margin="20,10,0,0" Width="300" HorizontalAlignment="Left"/>
+                        <Actions:UCValueExpression x:Name="xTestCaseFolderDestination" Margin="85,10,0,0" Width="300" HorizontalAlignment="Left"/>
                     </StackPanel>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
@@ -69,13 +69,12 @@
                     </CheckBox>
             </StackPanel>
             <StackPanel Margin="5,0,0,15" x:Name="VariableForTCRunNamePanel" Orientation="Horizontal" IsEnabled="False">
-                    <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">TC Run Instance Name :</Label>
+                    <Label Style="{StaticResource @LabelStyle}" Margin="0,10,0,0">TC Run Instance Name:</Label>
                 <Actions:UCValueExpression x:Name="VariableForTCRunName" Margin="90,0,0,0" Width="300" ToolTip="From"/>
             </StackPanel>
 
                 <Button x:Name="xExportToALMBtn" Content="Export To ALM" Style="{StaticResource @WindowButtonStyle}" Width="100" Margin="5 0 0 0" HorizontalAlignment="Left" Visibility="Collapsed" Click="xExportToALMBtn_Click"></Button>
-            <usercontrols:ImageMakerControl x:Name="xExportToALMLoadingIcon" Grid.Row="1" ImageType="Processing"  HorizontalAlignment="Left" Width="25" Height="25" Visibility="Collapsed" />
-             </StackPanel>
+            </StackPanel>
         </Grid>
     </ScrollViewer>
 </Page>
