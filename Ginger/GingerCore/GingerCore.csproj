@@ -65,9 +65,6 @@
     <Reference Include="Interop.TDAPIOLELib">
       <HintPath>DLLs\Interop.TDAPIOLELib.dll</HintPath>
     </Reference>
-    <Reference Include="JiraRepositoryStd">
-      <HintPath>..\GingerCoreNET\DLLS\JiraRepositoryStd.dll</HintPath>
-    </Reference>
     <Reference Include="LibGit2Sharp, Version=0.24.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLL's\LibGit2Sharp.dll</HintPath>
