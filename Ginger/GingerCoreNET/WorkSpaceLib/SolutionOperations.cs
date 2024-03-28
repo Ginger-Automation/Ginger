@@ -376,7 +376,14 @@ namespace Ginger.SolutionGeneral
                 string cacheFolderPath = Path.Combine(rootFolderPath, ISolution.CacheDirectoryName);
                 if (Directory.Exists(cacheFolderPath))
                 {
-                    Directory.Delete(cacheFolderPath, recursive: true);
+                    try
+                    {
+                        Directory.Delete(cacheFolderPath, recursive: true);
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while trying to delete directory '{cacheFolderPath}'.", ex);
+                    }
                 }
             }
         }
