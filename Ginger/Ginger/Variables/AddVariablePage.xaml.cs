@@ -143,7 +143,6 @@ namespace Ginger.Variables
                            where type.IsSubclassOf(typeof(VariableBase))
                            && type != typeof(VariableBase)
                            select type;
-
             if (mVariablesLevel.Equals(eVariablesLevel.EnvApplication))
             {
                 var selectedVarTypes = varTypes.Where((type) => type.Name.Equals(typeof(VariablePasswordString).Name) || type.Name.Equals(typeof(VariableString).Name) || type.Name.Equals(typeof(VariableNumber).Name));
@@ -151,17 +150,33 @@ namespace Ginger.Variables
                 varTypes = selectedVarTypes;    
             }
 
-
+            VariableString variableString = null;
+            int varStrIndex = -1;
+            int pointer = 0;
             foreach (Type t in varTypes)
             {
                 VariableBase v = (VariableBase)Activator.CreateInstance(t);
+
+                if(v is VariableString vs)
+                {
+                    variableString = vs;
+                    varStrIndex = pointer;
+                }
                 v.Name = v.VariableUIType;
                 if (!v.IsObsolete)
                 {
                     list.Add(v);
+                    pointer++;
                 }
+
             }
 
+            if (varStrIndex != -1 && variableString!=null)
+            {
+                var tempVariable = list[0];
+                list[0] = variableString;
+                list[varStrIndex] = tempVariable;
+            }
 
             return list;
         }
