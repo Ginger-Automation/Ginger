@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -980,13 +980,16 @@ namespace Amdocs.Ginger.Repository
             }
             set { if (mFilePath != value) { mFilePath = value; OnPropertyChanged(nameof(FilePath)); } }
         }
-
+        private eImageType mItemImageType = eImageType.Null;
         public virtual eImageType ItemImageType
         {
             get
             {
-                //throw new NotImplementedException("ItemImageType not defined for: " + this.GetType().FullName); 
-                return eImageType.Null;
+                return mItemImageType;
+            }
+            set
+            {
+                mItemImageType = value;
             }
         }
 
