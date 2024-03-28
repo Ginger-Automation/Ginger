@@ -59,6 +59,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
                     IncludeExecutionErrors == other.IncludeExecutionErrors &&
                     IncludeExecutionOutputValues == other.IncludeExecutionOutputValues &&
                     IncludeExecutionFlowsDetails == other.IncludeExecutionFlowsDetails &&
+                    IncludeExecutionRunnersDetails == other.IncludeExecutionRunnersDetails &&
                     IncludeExecutionLog == other.IncludeExecutionLog;
             }
         }
