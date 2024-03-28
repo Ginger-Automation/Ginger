@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -34,6 +34,7 @@ namespace GingerCore
             new KeyValuePair<string, string>("Activity", "Activity"),
             new KeyValuePair<string, string>("Activities", "Activities"),
             new KeyValuePair<string, string>("Variable", "Variable"),
+            new KeyValuePair<string, string>("Parameter", "Parameter"),
             new KeyValuePair<string, string>("Variables", "Variables"),
             new KeyValuePair<string, string>("RunSet", "Run Set"),
             new KeyValuePair<string, string>("RunSets", "Run Sets"),

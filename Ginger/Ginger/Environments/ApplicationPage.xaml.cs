@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Ginger.BusinessFlowPages;
 using Ginger.UserControlsLib;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
@@ -50,19 +51,7 @@ namespace Ginger.Environments
             CollectionChangedEventManager.AddHandler(source: app.GeneralParams, handler: GeneralParams_CollectionChanged);
             UpdateDBsTabHeader();
             CollectionChangedEventManager.AddHandler(source: app.Dbs, handler: Dbs_CollectionChanged);
-            UpdateLoginuserTabHeader();
-            CollectionChangedEventManager.AddHandler(source: app.LoginUsers, handler: LoginUsers_CollectionChanged);
             ColorSelectedTab();
-        }
-
-        private void LoginUsers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            UpdateLoginuserTabHeader();
-        }
-
-        private void UpdateLoginuserTabHeader()
-        {
-            xUserTabHeaderText.Text = string.Format("Login Users ({0})", mEnvApplication.LoginUsers.Count);
         }
 
         private void GeneralParams_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -93,7 +82,7 @@ namespace Ginger.Environments
             {
                 if (ParamsFrame.Content == null)
                 {
-                    ParamsFrame.ClearAndSetContent(new AppGeneralParamsPage(mEnvApplication));
+                    ParamsFrame.ClearAndSetContent(new VariabelsListViewPage(mEnvApplication, null, General.eRIPageViewMode.Standalone));
                 }
                 return;
             }
@@ -107,14 +96,6 @@ namespace Ginger.Environments
                 }
             }
 
-            if (((TabItem)AppTab.SelectedItem).Name == xUsersTab.Name)
-            {
-                if (UsersFrame.Content == null)
-                {
-                    UsersFrame.ClearAndSetContent(new AppLoginUsersPage(mEnvApplication));
-                    return;
-                }
-            }
         }
 
         private void ColorSelectedTab()

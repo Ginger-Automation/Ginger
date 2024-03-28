@@ -44,16 +44,6 @@
                 <Frame x:Name="DBsFrame"/>
             </TabItem>
 
-            <TabItem x:Name="xUsersTab" Style="{StaticResource $RoundedTab}">
-                <TabItem.Header>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" >
-                        <UserControls:ImageMakerControl x:Name="xUsersTabTabHeaderImage" ImageType="Agent" Height="20" Width="20"/>
-                        <TextBlock x:Name="xUserTabHeaderText" Text="Login Users" Margin="5,0,0,0" VerticalAlignment="Center" Foreground="{StaticResource $PrimaryColor_Black}" FontWeight="Bold" />
-                    </StackPanel>
-                </TabItem.Header>
-                <Frame x:Name="UsersFrame"/>
-            </TabItem>
-
         </TabControl>
     </Grid>
 </UserControlsLib:GingerUIPage>

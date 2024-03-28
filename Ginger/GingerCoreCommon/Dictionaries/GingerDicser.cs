@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -31,7 +31,8 @@ namespace GingerCore
         ConversionMechanism,
         Variable, Variables,
         RunSet, RunSets,
-        TargetApplication
+        TargetApplication,
+        Parameter
     }
 
     public enum eSkinDicsType

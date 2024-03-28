@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -129,6 +129,11 @@ namespace GingerCore.Variables
         {
             ValueExpression = value;
             return true;
+        }
+
+        public override void SetInitialValue(string InitialValue)
+        {
+            this.Value = InitialValue;
         }
     }
 }
