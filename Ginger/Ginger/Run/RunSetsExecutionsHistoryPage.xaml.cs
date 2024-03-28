@@ -55,6 +55,8 @@ namespace Ginger.Run
     {
         private const string BPMNExportPath = @"~\\Documents\BPMN";
 
+        private readonly RunsetFromReportLoader _runsetFromReportLoader;
+
         ObservableList<RunSetReport> mExecutionsHistoryList = new ObservableList<RunSetReport>();
         ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
 
@@ -76,12 +78,18 @@ namespace Ginger.Run
         }
 
         private eExecutionHistoryLevel mExecutionHistoryLevel;
+
+        public delegate void LoadRunsetEventHandler(RunSetConfig runset);
+
+        public event LoadRunsetEventHandler? LoadRunset;
+
         public RunSetsExecutionsHistoryPage(eExecutionHistoryLevel executionHistoryLevel, RunSetConfig runsetConfig = null)
         {
             InitializeComponent();
 
             mExecutionHistoryLevel = executionHistoryLevel;
             RunsetConfig = runsetConfig;
+            _runsetFromReportLoader = new();
 
             this.Unloaded += OnUnloaded;
 
@@ -95,6 +103,7 @@ namespace Ginger.Run
             {
                 _httpClient.Dispose();
                 _httpClient = null;
+                _runsetFromReportLoader.Dispose();
             }
         }
 
@@ -475,10 +484,6 @@ namespace Ginger.Run
             }
         }
 
-        public delegate void LoadRunsetEventHandler(RunSetConfig runset);
-
-        public event LoadRunsetEventHandler LoadRunset;
-
         private void LoadRunsetButton_Click(object sender, RoutedEventArgs e)
         {
             Button LoadRunsetButton = (Button)sender;
@@ -488,10 +493,9 @@ namespace Ginger.Run
                 try
                 {
                     Reporter.ToStatus(eStatusMsgKey.LoadingRunSet, messageArgs: runsetReport.Name);
-                    RunsetFromReportLoader runsetFromReportLoader = new();
-                    RunsetFromReportLoader.RunsetLoadResult result = await runsetFromReportLoader.LoadAsync(runsetReport);
+                    RunSetConfig? runset = await _runsetFromReportLoader.LoadAsync(runsetReport);
 
-                    if (result.Runset == null)
+                    if (runset == null)
                     {
                         Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.RunsetNotFoundForLoading));
                         return;
@@ -500,7 +504,7 @@ namespace Ginger.Run
                     Dispatcher.Invoke(() =>
                     {
                         LoadRunsetEventHandler? handler = LoadRunset;
-                        handler?.Invoke(result.Runset);
+                        handler?.Invoke(runset);
                     });
                 }
                 catch(Exception ex)

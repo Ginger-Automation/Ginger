@@ -18,41 +18,27 @@ using System.Threading.Tasks;
 #nullable enable
 namespace Amdocs.Ginger.CoreNET.Reports
 {
-    public sealed class RunsetFromReportLoader
+    public sealed class RunsetFromReportLoader : IDisposable
     {
-        private readonly JsonSerializerOptions GingerExecConfigSerializationOptions;
-
-        public sealed class RunsetLoadResult
-        {
-            public required RunSetConfig? Runset { get; init; }
-
-            public required bool IsVirtual { get; init; }
-        }
+        private readonly IExecutionHandlerAPIClient _executionHandlerAPIClient;
 
         public RunsetFromReportLoader()
         {
-            GingerExecConfigSerializationOptions = new();
-            GingerExecConfigSerializationOptions.Converters.Add(new JsonStringEnumConverter());
+            _executionHandlerAPIClient = new ExecutionHandlerAPIClient();
         }
 
-        public async Task<RunsetLoadResult> LoadAsync(RunSetReport runsetReport)
+        public async Task<RunSetConfig?> LoadAsync(RunSetReport runsetReport)
         {
             string runsetName = runsetReport.Name;
             RunSetConfig? runset = GetRunsetFromSolutionRepository(runsetName);
-            bool isVirtual = false;
 
             if (runset == null)
             {
                 string executionId = runsetReport.GUID;
                 runset = await GetRunsetFromExecutionHandler(executionId);
-                isVirtual = runset != null;
             }
 
-            return new RunsetLoadResult()
-            {
-                Runset = runset,
-                IsVirtual = isVirtual
-            };
+            return runset;
         }
 
         private RunSetConfig? GetRunsetFromSolutionRepository(string runsetName)
@@ -84,7 +70,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
                 throw new InvalidOperationException($"Please make sure that the Execution Handler URL on the 'Execution Logger Configurations' page under 'Reports' tab is entered correctly.");
             }
 
-            ExecutionHandlerAPIClient apiClient = new(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL);
+            _executionHandlerAPIClient.URL = handlerAPIUrl;
             ExecutionHandlerAPIClient.ExecutionDetailsOptions options = new()
             {
                 IncludeRequestDetails = true
@@ -92,7 +78,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
             ExecutionDetailsResponse? response;
             try
             {
-                response = await apiClient.GetExecutionDetailsAsync(executionId, options);
+                response = await _executionHandlerAPIClient.GetExecutionDetailsAsync(executionId, options);
             }
             catch(InvalidOperationException)
             {
@@ -113,7 +99,10 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
             GingerExecConfig executionConfig = JsonSerializer.Deserialize<GingerExecConfig>(
                 response.RequestDetails.ExecutionConfigurations, 
-                GingerExecConfigSerializationOptions)!;
+                new JsonSerializerOptions()
+                {
+                    Converters = { new JsonStringEnumConverter() }
+                })!;
             
             return executionConfig;
         }
@@ -193,6 +182,11 @@ namespace Amdocs.Ginger.CoreNET.Reports
                 .Instance
                 .SolutionRepository
                 .GetRepositoryItemByGuid<BusinessFlow>(id);
+        }
+
+        public void Dispose()
+        {
+            _executionHandlerAPIClient.Dispose();
         }
     }
 }

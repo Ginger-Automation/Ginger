@@ -1,4 +1,5 @@
 ﻿using Amdocs.Ginger.Common;
+using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Requests;
 using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Responses;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -16,14 +18,29 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
     public sealed class ExecutionHandlerAPIClient : IExecutionHandlerAPIClient
     {
         private const string ExecutionDetailsEndPoint = "api/v1/executions";
+        private const string StartExecutionEndPoint = "api/v1/executions";
 
-        private readonly string _url;
-        private readonly HttpClient _httpClient;
+        private HttpClient? _httpClient;
+
+        public string URL { get; set; }
+
+        private HttpClient HttpClient
+        {
+            get
+            {
+                if (_httpClient == null)
+                {
+                    _httpClient = new();
+                }
+                return _httpClient;
+            }
+        }
+
+        public ExecutionHandlerAPIClient() : this(string.Empty) { }
 
         public ExecutionHandlerAPIClient(string url)
         {
-            _url = url;
-            _httpClient = new();
+            URL = url;
         }
 
         public struct ExecutionDetailsOptions : IEquatable<ExecutionDetailsOptions>
@@ -71,7 +88,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
                 string executionIdsParam = string.Join(',', executionIds);
                 MediaTypeWithQualityHeaderValue acceptHeader = new("*/*");
 
-                HttpRequestMessage request = new(HttpMethod.Get, $"{_url}{ExecutionDetailsEndPoint}?executionIds={executionIdsParam}");
+                HttpRequestMessage request = new(HttpMethod.Get, $"{URL}{ExecutionDetailsEndPoint}?executionIds={executionIdsParam}");
                 request.Headers.Accept.Add(acceptHeader);
                 if (options.IncludeRequestDetails)
                 {
@@ -98,7 +115,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
                     request.Headers.Add("IncludeExecutionLog", "true");
                 }
 
-                HttpResponseMessage response = await _httpClient.SendAsync(request);
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
 
                 if (response.StatusCode == HttpStatusCode.NotFound)
                 {
@@ -126,9 +143,35 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
             }
         }
 
+        public async Task<bool> StartExectuionAsync(AddExecutionRequest executionRequest)
+        {
+            try
+            {
+                HttpRequestMessage request = new(HttpMethod.Post, $"{URL}{StartExecutionEndPoint}")
+                {
+                    Content = new StringContent(JsonSerializer.Serialize(executionRequest), Encoding.UTF8, "application/json")
+                };
+
+                HttpResponseMessage response = await HttpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Starting remote execution failed, got back unsuccessful response code('{(int)response.StatusCode}').");
+                    return false;
+                }
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Error occurred while starting remote execution.", ex);
+                return false;
+            }
+        }
+
         public void Dispose()
         {
-            _httpClient.Dispose();
+            _httpClient?.Dispose();
         }
     }
 }
