@@ -400,6 +400,9 @@
                             <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}" Margin="-5,0,0,0">Run Description:</Label>
                             <Activities:UCValueExpression x:Name="xRunDescritpion" DockPanel.Dock="Top" HorizontalAlignment="Stretch" />
 
+                            <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}" Margin="-5,0,0,0">ALM ID (ExternalId):</Label>
+                            <Activities:UCValueExpression x:Name="xExternalId" DockPanel.Dock="Top" HorizontalAlignment="Stretch" />
+
                             <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
 
 

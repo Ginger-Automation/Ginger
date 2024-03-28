@@ -69,9 +69,10 @@ namespace GingerWPF.TreeViewItemsLib.NewEnvironmentsTreeItems
 
         public override ITreeViewItem GetTreeItem(object item)
         {
-            if (item is ProjEnvironment)
+            if (item is ProjEnvironment projEnvironment)
             {
-                return new EnvironmentTreeItem() { ProjEnvironment = (ProjEnvironment)item };
+                projEnvironment.StartDirtyTracking();
+                return new EnvironmentTreeItem() { ProjEnvironment = projEnvironment };
             }
 
             if (item is RepositoryFolderBase)

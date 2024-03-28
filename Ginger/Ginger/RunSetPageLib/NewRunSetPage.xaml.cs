@@ -905,6 +905,7 @@ namespace Ginger.Run
 
             UpdateDescription();
             xRunDescritpion.Init(mContext, mRunSetConfig, nameof(RunSetConfig.RunDescription));
+            xExternalId.Init(mContext, mRunSetConfig, nameof(RunSetConfig.ExternalID));
             if (mSolutionCategoriesPage == null)
             {
                 mSolutionCategoriesPage = new SolutionCategoriesPage();

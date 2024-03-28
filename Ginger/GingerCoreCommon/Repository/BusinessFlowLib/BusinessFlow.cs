@@ -1930,5 +1930,8 @@ namespace GingerCore
                 ExternalIdCalCulated = ve.ValueCalculated;
             }
         }
+        public string ALMTestSetLevel { get; set; }
+
+        public bool IsEntitySearchByName { get; set; }
     }
 }
