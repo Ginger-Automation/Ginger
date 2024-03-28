@@ -119,7 +119,11 @@ namespace GingerCore.Environments
                 return nameof(this.Name);
             }
         }
-
+        public ePlatformType Platform
+        {
+            get;
+            set;
+        }
         public void SetPlatFormImage(ObservableList<ApplicationPlatform> ApplicationPlatforms)
         {
             ApplicationPlatform applicationPlatform =  ApplicationPlatforms.FirstOrDefault((app)=>app.Guid.Equals(this.ParentGuid));
