@@ -65,7 +65,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             foreach (EnvApplication app in ProjEnvironment.Applications.OrderBy(nameof(EnvApplication.Name)))
             {
                 EnvApplicationTreeItem EATI = new EnvApplicationTreeItem();
-                app.SetPlatFormImage(WorkSpace.Instance.Solution.ApplicationPlatforms);
+                app.SetDataFromAppPlatform(WorkSpace.Instance.Solution.ApplicationPlatforms);
                 EATI.EnvApplication = app;
                 EATI.ProjEnvironment = ProjEnvironment;
                 Childrens.Add(EATI);
@@ -130,7 +130,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             }
 
 
-            string appName = string.Empty;
             ObservableList<ApplicationPlatform> DisplayedApplicationPlatforms = GingerCore.General.ConvertListToObservableList(ApplicationPlatforms);
 
             EnvironmentApplicationList applicationList = new(DisplayedApplicationPlatforms);

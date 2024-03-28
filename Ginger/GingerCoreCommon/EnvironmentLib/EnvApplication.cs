@@ -119,14 +119,21 @@ namespace GingerCore.Environments
                 return nameof(this.Name);
             }
         }
-
-        public void SetPlatFormImage(ObservableList<ApplicationPlatform> ApplicationPlatforms)
+        public ePlatformType Platform
         {
-            ApplicationPlatform applicationPlatform =  ApplicationPlatforms.FirstOrDefault((app)=>app.Guid.Equals(this.ParentGuid));
+            get;
+            set;
+        } = ePlatformType.NA;
+
+        public void SetDataFromAppPlatform(ObservableList<ApplicationPlatform> ApplicationPlatforms)
+        {
+            ApplicationPlatform applicationPlatform =  ApplicationPlatforms.FirstOrDefault((app)=>app.Guid.Equals(this.ParentGuid) || app.AppName.Equals(this.Name));
+           
             if(applicationPlatform != null)
             {
                 this.ItemImageType = applicationPlatform.PlatformImage;
                 this.Name = applicationPlatform.AppName;
+                this.Platform = applicationPlatform.Platform;
             }
             else
             {

@@ -107,6 +107,7 @@ namespace GingerTest
 
             // assert
             Assert.AreEqual("bbb", bbbEnv.Name);
+            Assert.AreEqual(bbbEnv.Applications.Count, WorkSpace.Instance.Solution.ApplicationPlatforms.Count);
         }
 
 
