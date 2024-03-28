@@ -1686,6 +1686,35 @@
         </Setter>
     </Style>
 
+    <Style TargetType="TabItem" x:Key="$RoundedTabAI">
+        <Setter Property="Height" Value="33"/>
+        <Setter Property="Background" Value="#8a57ea"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabItem">
+                    <!--The four values of CornerRadius represent the four corners of the TabItem.-->
+                    <Border Name="Border" BorderThickness="1,1,1,0" BorderBrush="{StaticResource $BackgroundColor_DarkGray}" CornerRadius="5,5,0,0" Margin="1,0">
+                        <ContentPresenter x:Name="ContentSite"  
+                                    VerticalAlignment="Center"  
+                                    HorizontalAlignment="Center"  
+                                    ContentSource="Header"  
+                                    Margin="10,2"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="#8a57ea" />
+                            <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="False">
+                            <Setter TargetName="Border" Property="Background" Value="#8a57ea" />
+                            <Setter Property="Foreground" Value="{StaticResource $PrimaryColor_Black}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="TabItem" x:Key="$CoolTab">
         <Setter Property="Template">
             <Setter.Value>

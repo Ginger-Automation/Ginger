@@ -591,6 +591,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidOutline.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidWhite.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\ApplitoolsLogo.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\bot.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\Ginger.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogoGray.png" />
@@ -2410,6 +2411,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\ApplitoolsLogo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\bot.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\Ginger.png">

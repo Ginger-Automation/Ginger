@@ -4,6 +4,7 @@
         xmlns:h="clr-namespace:Ginger.Help"
         xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
+        xmlns:local ="clr-namespace:Ginger"
         Title="Ginger by amdocs"        
         Icon="GingerIconNew.ico"
         Height="600" Width="1100" WindowState="Maximized"   SizeChanged="xMainWindow_SizeChanged"      
@@ -298,8 +299,9 @@
                 </DockPanel>
             </Grid>
 
-            <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="Transparent"/>
-
+            <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="Transparent" />
+            <local:ChatbotIcon HorizontalAlignment="Right" Grid.Row="1" VerticalAlignment="Bottom" Margin="10"/>
+            <local:ChatbotWindow HorizontalAlignment="Right" Grid.Row="1" VerticalAlignment="Stretch" Margin="10"/>
             <usercontrols:ImageMakerControl x:Name="xNoLoadedSolutionImg" Grid.Row="1" ImageType="GingerLogoGray" Width="250" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
             <Grid x:Name="xSplashGrid" Width="640" Height="419" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">
@@ -324,7 +326,7 @@
                 </DockPanel>
             </Border>
         </Grid>
-
+       
         <Canvas x:Name="xHelpLayoutCanvas" Panel.ZIndex="2" MouseLeftButtonDown="xHelpLayoutCanvas_MouseLeftButtonDown"  Background="Transparent" Visibility="Collapsed" >
             <Rectangle  x:Name="xHelpLayoutRectangleLeft" Fill="Black" Opacity="0.7" />
             <Rectangle  x:Name="xHelpLayoutRectangleTop" Fill="Black" Opacity="0.7" />

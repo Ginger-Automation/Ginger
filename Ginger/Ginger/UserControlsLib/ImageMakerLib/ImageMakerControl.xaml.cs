@@ -198,6 +198,12 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.SaveGradient:
                     SetAsStaticImage("save-regular-amdocs-gradient.svg");
                     break;
+                case eImageType.Chatbot:
+                    SetAsStaticImage("bot.png");
+                    break;
+                case eImageType.Send:
+                    SetAsStaticImage("send.png");
+                    break;
                 #endregion
 
 
