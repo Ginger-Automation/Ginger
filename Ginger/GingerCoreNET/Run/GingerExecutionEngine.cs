@@ -35,6 +35,7 @@ using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
+using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
@@ -1902,33 +1903,87 @@ namespace Ginger.Run
             }
 
             //Handle actions which needs VE processing like Tuxedo, we need to calculate the UD file values before execute, which is in different list not in ACT.Input list
+
             List<ObservableList<ActInputValue>> list = act.GetInputValueListForVEProcessing();
             if (list != null) // Will happen only if derived action implemented this function, since it needs processing for VEs
             {
-                foreach (var subList in list)
+                if (act is ActWebAPIModel)
                 {
-                    foreach (var IV in subList)
+                    foreach (var subList in list)
                     {
-                        if (!string.IsNullOrEmpty(IV.Value))
+                        foreach (var IV in subList)
                         {
-                            try
+                            if (!string.IsNullOrEmpty(IV.Value))
                             {
-                                IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
-                                IV.DisplayValue = act.ValueExpression.EncryptedValue;
+                                try
+                                {
+                                    string valueToEvaluate = EvaluateWebApiModelParameterValue(IV.Value, subList);
+                                    if (valueToEvaluate!= null)
+                                    {
+                                        IV.ValueForDriver = act.ValueExpression.Calculate(valueToEvaluate);
+                                    }
+                                    else
+                                    {
+                                        IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                                    }
+                                    IV.DisplayValue = act.ValueExpression.EncryptedValue;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to calculate VE for the Action Input value '{0}'", IV.Value), ex);
+                                }
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to calculate VE for the Action Input value '{0}'", IV.Value), ex);
+                                IV.ValueForDriver = string.Empty;
                             }
                         }
-                        else
+                    }
+                }
+                else
+                {
+                    foreach (var subList in list)
+                    {
+                        foreach (var IV in subList)
                         {
-                            IV.ValueForDriver = string.Empty;
+                            if (!string.IsNullOrEmpty(IV.Value))
+                            {
+                                try
+                                {
+                                    IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                                    IV.DisplayValue = act.ValueExpression.EncryptedValue;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to calculate VE for the Action Input value '{0}'", IV.Value), ex);
+                                }
+                            }
+                            else
+                            {
+                                IV.ValueForDriver = string.Empty;
+                            }
                         }
                     }
                 }
             }
+
             act.ValueExpression.DecryptFlag = true;
+        }
+
+        private static string EvaluateWebApiModelParameterValue(string valueToEvaluate, ObservableList<ActInputValue> subList)
+        {
+            foreach (var item_toCompare in subList)
+            {
+                if (valueToEvaluate.Contains(item_toCompare.ItemName))
+                {
+                    if (item_toCompare.ValueForDriver != null)
+                    {
+                        return valueToEvaluate.Replace(item_toCompare.ItemName, item_toCompare.ValueForDriver);
+                    }                    
+                }
+            }
+
+            return string.Empty;
         }
 
         private void ProcessWait(Act act, Stopwatch st)

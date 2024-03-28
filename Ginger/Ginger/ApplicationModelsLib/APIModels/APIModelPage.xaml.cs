@@ -39,7 +39,7 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
     public partial class APIModelPage : GingerUIPage
     {
         ApplicationAPIModel mApplicationAPIModel;
-        ModelParamsPage page;
+        ModelParamsPage modelParamsPage;
         private bool saveWasDone = false;
         General.eRIPageViewMode mPageViewMode;
         public APIModelPage(ApplicationAPIModel applicationAPIModelBase, General.eRIPageViewMode viewMode = General.eRIPageViewMode.Standalone)
@@ -55,8 +55,8 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
             SecondRow.MaxHeight = System.Windows.SystemParameters.PrimaryScreenHeight - 380;
 
             WorkSpace.Instance.RefreshGlobalAppModelParams(mApplicationAPIModel);
-            page = new ModelParamsPage(mApplicationAPIModel, viewMode);
-            xDynamicParamsFrame.ClearAndSetContent(page);
+            modelParamsPage = new ModelParamsPage(mApplicationAPIModel, viewMode);
+            xDynamicParamsFrame.ClearAndSetContent(modelParamsPage);
 
             OutputTemplatePage outputTemplatePage = new OutputTemplatePage(mApplicationAPIModel, viewMode);
             xOutputTemplateFrame.ClearAndSetContent(outputTemplatePage);
@@ -785,7 +785,6 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         {
             string txtBoxBodyContent = RequestBodyTextBox.Text;
             List<string> SoapSecurityContent = ApplicationModelBase.GetSoapSecurityHeaderContent(ref txtBoxBodyContent);
-            string wsSecuritySettings = SoapSecurityContent.ElementAt(0);
 
             RequestBodyTextBox.Text = txtBoxBodyContent;
             ActInputValue user = new ActInputValue();
@@ -803,23 +802,42 @@ namespace GingerWPF.ApplicationModelsLib.APIModels
         {
             for (int i = 1; i < SoapSecurityContent.Count; i++)
             {
-                AppModelParameter newAppModelParam = new AppModelParameter();
-                if (!page.ParamsList.Any())
-                {
-                    newAppModelParam.PlaceHolder = SoapSecurityContent.ElementAt(i);
-                }
-                else
-                {
-                    if (!page.ParamsList.Any(x => x.PlaceHolder.Equals(SoapSecurityContent.ElementAt(i))))
-                    {
-                        newAppModelParam.PlaceHolder = SoapSecurityContent.ElementAt(i);
-                    }
-                }
+                string parameterName = SoapSecurityContent.ElementAt(i);
+                bool isParamsListEmpty = modelParamsPage.ParamsList.Count == 0;
+                bool isParameterAlreadyAdded = modelParamsPage.ParamsList.Any(modelParam => modelParam.PlaceHolder.Equals(parameterName));
 
-                page.ParamsList.Add(newAppModelParam);
+                if (isParamsListEmpty || !isParameterAlreadyAdded)
+                {
+                    AppModelParameter newAppModelParam = new AppModelParameter() { PlaceHolder = parameterName };
+
+                    OptionalValue? optionalValue = GetOptionalValueFor(parameterName);
+                    if (optionalValue != null)
+                    {
+                        newAppModelParam.OptionalValuesList.Add(optionalValue);
+                    }
+
+                    modelParamsPage.ParamsList.Add(newAppModelParam);
+                }
             }
         }
 
+        private static OptionalValue? GetOptionalValueFor(string parameterName)
+        {
+            if (parameterName.Equals("{GETUTCTIMESTAMP}"))
+            {
+                return new OptionalValue() { IsDefault = true, Value = "{Function Fun=GetUTCTimeStamp()}" };
+            }
+            else if (parameterName.Equals("{GET_HASHED_WSSECPASSWORD}"))
+            {
+                return new OptionalValue() { IsDefault = true, Value = @"{Function Fun=GenerateHashCode(""{Function Fun=GetGUID()}{WSSECPASSWORD}"")}=" };
+            }
+            else if (parameterName.Equals("{GET_HASH_CODE}"))
+            {
+                return new OptionalValue() { IsDefault = true, Value = "{Function Fun=GetHashCode({Function Fun=GetGUID()})}" };
+            }
+
+            return null;
+        }
 
         public enum eEditMode
         {
