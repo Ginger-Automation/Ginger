@@ -514,7 +514,7 @@ namespace Ginger.UserControlsLib.UCListView
             {
                 return;
             }
-            
+
             
             if (mObjList.CurrentItem == xListView.SelectedItem)
             {

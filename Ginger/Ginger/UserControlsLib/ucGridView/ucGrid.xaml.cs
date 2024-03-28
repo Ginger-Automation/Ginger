@@ -188,7 +188,13 @@ namespace Ginger
                 mFilterSelectedTags = TagsViewer.GetSelectedTagsList();
             });
         }
-
+        public Visibility SearchVisibility
+        {
+            set
+            {
+                ToolsTray.Visibility = value;
+            }
+        }
         private bool FilterGridRows(object obj)
         {
             if (string.IsNullOrEmpty(mFilterSearchText) && (mFilterSelectedTags == null || mFilterSelectedTags.Count == 0))

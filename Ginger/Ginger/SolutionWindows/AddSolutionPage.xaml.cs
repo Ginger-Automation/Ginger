@@ -285,7 +285,7 @@ namespace Ginger.SolutionWindows
             }
 
             mSolution.ApplicationPlatforms.Clear();
-            AddApplicationPage AAP = new AddApplicationPage(mSolution);
+            AddApplicationPage AAP = new AddApplicationPage(mSolution, true);
             AAP.ShowAsWindow();
 
             if (mSolution.ApplicationPlatforms.Any())

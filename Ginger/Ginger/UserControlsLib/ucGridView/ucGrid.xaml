@@ -30,7 +30,7 @@
 
         <!-- Grid Tools Bar -->
         <Border DockPanel.Dock="Top" Visibility="{Binding  ElementName=ToolsTray, Path=Visibility}" BorderThickness="1" BorderBrush="{StaticResource $BackgroundColor_Black}" Background="{StaticResource $BackgroundColor_White}" >
-            <ToolBarTray x:Name="ToolsTray" Background="{StaticResource $BackgroundColor_White}"  >
+            <ToolBarTray x:Name="ToolsTray" Background="{StaticResource $BackgroundColor_White}"  Height="auto">
                 <ToolBar x:Name="toolbar" ToolBarTray.IsLocked="True" Band="1" Background="{StaticResource $BackgroundColor_White}"
                      IsHitTestVisible="True" ScrollViewer.CanContentScroll="True" Width="{Binding ElementName=ToolsTray,Path=ActualWidth}">
                     <Button x:Name="btnMarkAll" ToolTip="Mark All As InActive"  Visibility="Collapsed" Click="Btn_MarkUnMarkAll">
