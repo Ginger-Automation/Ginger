@@ -567,7 +567,7 @@ namespace Amdocs.Ginger.Repository
             }
         }
 
-        public void SaveNewRepositoryItem(RepositoryItemBase repositoryItem)
+        internal void SaveNewRepositoryItem(RepositoryItemBase repositoryItem)
         {
             //check if file already exist
             string filePath = CreateRepositoryItemFileName(repositoryItem);
