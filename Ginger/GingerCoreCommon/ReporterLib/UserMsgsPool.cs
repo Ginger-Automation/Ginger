@@ -184,7 +184,7 @@ namespace Amdocs.Ginger.Common
         AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport,
         FailedToDownloadDriver,
         PublishApplicationToOtherEnv,
-        NoApplicationPlatformLeft
+        NoApplicationPlatformLeft,
         ShadowRootExists,
         ShareApplicationToEnvironment
     }

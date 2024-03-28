@@ -149,11 +149,57 @@ namespace Ginger.SolutionWindows
 
                 if (!DoesPlatformExist)
                 {
-                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(new Agent() { Platform = selectedApp.Platform, Name = selectedApp.AppName});
+                    SetAgent(selectedApp);
                 }
             }
 
             _pageGenericWin.Close();
+        }
+
+        private void SetAgent(ApplicationPlatform MainApplicationPlatform)
+        {
+            Agent agent = new Agent();
+            AgentOperations agentOperations = new AgentOperations(agent);
+            agent.AgentOperations = agentOperations;
+
+            agent.Name = MainApplicationPlatform.AppName;
+            agent.Platform = MainApplicationPlatform.Platform;
+
+            switch (MainApplicationPlatform.Platform)
+            {
+                case ePlatformType.ASCF:
+                    agent.DriverType = Agent.eDriverType.ASCF;
+                    break;
+                case ePlatformType.DOS:
+                    agent.DriverType = Agent.eDriverType.DOSConsole;
+                    break;
+                case ePlatformType.Mobile:
+                    agent.DriverType = Agent.eDriverType.Appium;
+                    break;
+                case ePlatformType.PowerBuilder:
+                    agent.DriverType = Agent.eDriverType.PowerBuilder;
+                    break;
+                case ePlatformType.Unix:
+                    agent.DriverType = Agent.eDriverType.UnixShell;
+                    break;
+                case ePlatformType.Web:
+                    agent.DriverType = Agent.eDriverType.SeleniumChrome;
+                    break;
+                case ePlatformType.WebServices:
+                    agent.DriverType = Agent.eDriverType.WebServices;
+                    break;
+                case ePlatformType.Windows:
+                    agent.DriverType = Agent.eDriverType.WindowsAutomation;
+                    break;
+                case ePlatformType.Java:
+                    agent.DriverType = Agent.eDriverType.JavaDriver;
+                    break;
+                default:
+                    Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No default driver set for first agent");
+                    break;
+            }
+
+            WorkSpace.Instance.SolutionRepository.AddRepositoryItem(agent);
         }
 
         private void SelectApplicationGrid_RowDoubleClick(object sender, EventArgs e)
