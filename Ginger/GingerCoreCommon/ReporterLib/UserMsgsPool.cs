@@ -186,7 +186,9 @@ namespace Amdocs.Ginger.Common
         FailedToDownloadDriver,
         ShadowRootExists,
         RunsetNotFoundForLoading,
-        RunSetLoadFromReportError
+        RunSetLoadFromReportError,
+        PublishApplicationToOtherEnv,
+        NoApplicationPlatformLeft
     }
 
     public static class UserMsgsPool
@@ -243,6 +245,8 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.ShadowRootExists, new UserMsg(eUserMsgType.INFO, "Shadow DOM Element Detected", "This element exists under a shadow root, you will have to manually add the action(s) to locate this element's parent. Please look into 'Switch To Shadow DOM' operation in Browser Action", eUserMsgOption.OK , eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RunsetNotFoundForLoading, new UserMsg(eUserMsgType.ERROR, "RunSet Not Found", "No runset details were found.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.RunSetLoadFromReportError, new UserMsg(eUserMsgType.ERROR, "Unable To Load RunSet", "{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.PublishApplicationToOtherEnv, new UserMsg(eUserMsgType.QUESTION, "Publish Application to other Environment", "Do you want to publish this application to all the other existing environments?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.NoApplicationPlatformLeft, new UserMsg(eUserMsgType.INFO, "No Application is available to add", "All the applications are already available in {0} Environment. Please add new application in the Configurations-> Target application page to add application here", eUserMsgOption.OK, eUserMsgSelection.None));
 
 
             #endregion General Application Messages
