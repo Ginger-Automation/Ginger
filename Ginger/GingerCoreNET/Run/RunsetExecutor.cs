@@ -263,14 +263,14 @@ namespace Ginger.Run
 
             try
             {
-                if (var.MappedOutputType == VariableBase.eOutputType.OutputVariable && !var.MappedOutputValue.Contains("_"))
+                if (var.MappedOutputType == VariableBase.eOutputType.OutputVariable && !var.MappedOutputValue.Contains('_'))
                 {
                     for (int i = AllPreviousBusinessFlowRuns.Count - 1; i >= 0; i--)//doing in reverse for sorting by latest value in case having the same var more than once
                     {
                         Guid guid = AllPreviousBusinessFlowRuns[i].BusinessFlowGuid;
                         BusinessFlow bf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(guid);
 
-                        if (bf.GetBFandActivitiesVariabeles(false, false, true).FirstOrDefault(x => x.Guid.ToString() == var.MappedOutputValue) != null)
+                        if (bf.GetBFandActivitiesVariabeles(false, false, true).Any(x => x.Guid.ToString().Equals(var.MappedOutputValue)))
                         {
                             var.MappedOutputValue = AllPreviousBusinessFlowRuns[i].BusinessFlowInstanceGuid + "_" + var.MappedOutputValue;
                             break;
@@ -537,8 +537,7 @@ namespace Ginger.Run
                         {
                             GR.Executor.RunRunner();
                         }
-                        else
-                            if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
+                        else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
                         {
                             GR.Executor.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
                             GR.Executor.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);
