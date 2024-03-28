@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -993,7 +993,7 @@ namespace Amdocs.Ginger.Repository
 
             foreach (RepositoryFolder<T> RF in GetSubFolders())
             {
-                if (RF.FolderRelativePath == name)
+                if (string.Equals(RF.DisplayName, name))
                 {
                     return RF;
                 }
@@ -1001,6 +1001,28 @@ namespace Amdocs.Ginger.Repository
                 if (recursive)
                 {
                     RepositoryFolderBase subRF = RF.GetSubFolderByName(name, true);
+                    if (subRF != null)
+                    {
+                        return subRF;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public override RepositoryFolderBase GetSubFolderByRelativePath(string relativePath, bool recursive = false)
+        {
+
+            foreach (RepositoryFolder<T> RF in GetSubFolders())
+            {
+                if (RF.FolderRelativePath == relativePath)
+                {
+                    return RF;
+                }
+                // Recursive scan down the tree
+                if (recursive)
+                {
+                    RepositoryFolderBase subRF = RF.GetSubFolderByRelativePath(relativePath, true);
                     if (subRF != null)
                     {
                         return subRF;

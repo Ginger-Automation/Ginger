@@ -84,7 +84,15 @@ namespace Ginger.MenusLib
 
         private static Page GetExecutionsHistoryPage()
         {
-            return new RunSetsExecutionsHistoryPage(RunSetsExecutionsHistoryPage.eExecutionHistoryLevel.Solution);
+            RunSetsExecutionsHistoryPage executionsHistoryPage = new(RunSetsExecutionsHistoryPage.eExecutionHistoryLevel.Solution);
+            executionsHistoryPage.LoadRunset += ExecutionsHistoryPage_LoadRunset;
+            return executionsHistoryPage;
+        }
+
+        private static void ExecutionsHistoryPage_LoadRunset(RunSetConfig runset)
+        {
+            runSetPage.RunSetExecutionHistoryPage_LoadRunset(runset);
+            mMenusPage.SelectTopMenu(0);
         }
 
         private static Page GetGingerGridPage()

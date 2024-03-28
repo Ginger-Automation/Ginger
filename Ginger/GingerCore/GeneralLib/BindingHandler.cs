@@ -15,7 +15,7 @@ namespace GingerCore.GeneralLib
             ObjFieldBinding(control, dependencyProperty, actInputValue, nameof(ActInputValue.Value), bindingConvertor, BindingMode);
         }
 
-        public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, IValueConverter bindingConvertor, BindingMode BindingMode = BindingMode.TwoWay, object converterParameter = null)
+        public static void ObjFieldBinding(FrameworkElement frameworkElement, DependencyProperty dependencyProperty, object obj, string property, IValueConverter bindingConvertor, BindingMode BindingMode = BindingMode.TwoWay, object converterParameter = null)
         {
             //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
             //TODO: check perf impact + reuse exisitng binding on same obj.prop
@@ -34,7 +34,7 @@ namespace GingerCore.GeneralLib
                     b.ConverterParameter = converterParameter;
                 }
                 b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
-                control.SetBinding(dependencyProperty, b);
+                frameworkElement.SetBinding(dependencyProperty, b);
             }
             catch (Exception ex)
             {
@@ -44,17 +44,19 @@ namespace GingerCore.GeneralLib
                 // Set a tool tip with the error
 
                 // control.IsEnabled = false; // Do not disable as the red will not show
-                control.Style = null; // remove style so red will show
+                frameworkElement.Style = null; // remove style so red will show
                 //control.Foreground = System.Windows.Media.Brushes.Red;
-                control.Background = System.Windows.Media.Brushes.LightPink;
-                control.BorderThickness = new Thickness(2);
-                control.BorderBrush = System.Windows.Media.Brushes.Red;
-
-                control.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
+                if (frameworkElement is Control control)
+                {
+                    control.Background = System.Windows.Media.Brushes.LightPink;
+                    control.BorderThickness = new Thickness(2);
+                    control.BorderBrush = System.Windows.Media.Brushes.Red;
+                }
+                frameworkElement.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
             }
         }
 
-        public static void ObjFieldBinding(System.Windows.Controls.Control control, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
+        public static void ObjFieldBinding(FrameworkElement frameworkElement, DependencyProperty dependencyProperty, object obj, string property, BindingMode BindingMode = BindingMode.TwoWay)
         {
             //TODO: add Inotify on the obj.attr - so code changes to property will be reflected
             //TODO: check perf impact + reuse existing binding on same obj.prop
@@ -66,7 +68,7 @@ namespace GingerCore.GeneralLib
                 b.Mode = BindingMode;
                 b.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
                 b.NotifyOnValidationError = true;
-                control.SetBinding(dependencyProperty, b);
+                frameworkElement.SetBinding(dependencyProperty, b);
             }
             catch (Exception ex)
             {
@@ -75,12 +77,15 @@ namespace GingerCore.GeneralLib
                 // mark the control in red, instead of not openning the Page
                 // Set a tool tip with the error
 
-                control.Style = null; // remove style so red will show
-                control.Background = System.Windows.Media.Brushes.LightPink;
-                control.BorderThickness = new Thickness(2);
-                control.BorderBrush = System.Windows.Media.Brushes.Red;
+                frameworkElement.Style = null; // remove style so red will show
+                if (frameworkElement is Control control)
+                {
+                    control.Background = System.Windows.Media.Brushes.LightPink;
+                    control.BorderThickness = new Thickness(2);
+                    control.BorderBrush = System.Windows.Media.Brushes.Red;
+                }
 
-                control.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
+                frameworkElement.ToolTip = "Error binding control to property: " + Environment.NewLine + property + " Please open a defect with all information,  " + Environment.NewLine + ex.Message;
             }
         }
 

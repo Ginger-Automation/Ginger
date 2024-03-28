@@ -936,9 +936,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             return NewtonsoftJsonUtils.SerializeObject(gingerExecConfig);
         }
 
-
-        public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, GingerExecConfig gingerExecConfig)
+        public static RunSetConfig LoadRunsetFromExecutionConfig(GingerExecConfig gingerExecConfig)
         {
+            if (gingerExecConfig == null)
+            {
+                throw new ArgumentNullException(nameof(gingerExecConfig));
+            }
+
             RunsetExecConfig dynamicRunsetConfigs = gingerExecConfig.Runset;
             RunSetConfig runSetConfig = null;
 
@@ -1639,8 +1643,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runSetConfig.AllowInterActivityFlowControls = (bool)dynamicRunsetConfigs.AllowInterActivityFlowControls;
             }
 
-            // Set config
-            runsetExecutor.RunSetConfig = runSetConfig;
+            return runSetConfig;
         }
 
         public static T FindItemByIDAndName<T>(Tuple<string, Guid?> id, Tuple<string, string> name, ObservableList<T> repoLibrary)
