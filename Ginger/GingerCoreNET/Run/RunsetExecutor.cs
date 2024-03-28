@@ -176,26 +176,26 @@ namespace Ginger.Run
             ConfigureRunnerForExecution((GingerExecutionEngine)runner.Executor);
 
             //Set the Apps agents
-            foreach (ApplicationAgent appagent in runner.ApplicationAgents.ToList())
+            foreach (ApplicationAgent appagent in runner.ApplicationAgents)
             {
                 if (appagent.AgentName != null)
                 {
                     ObservableList<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-                    appagent.Agent = (from a in agents where a.Name == appagent.AgentName select a).FirstOrDefault();
+                    appagent.Agent = agents.FirstOrDefault(a=> a.Name == appagent.AgentName);
                 }
             }
 
             //Load the biz flows     
             ObservableList<BusinessFlow> runnerFlows = new ObservableList<BusinessFlow>();
-            foreach (BusinessFlowRun businessFlowRun in runner.BusinessFlowsRunList.ToList())
+            foreach (BusinessFlowRun businessFlowRun in runner.BusinessFlowsRunList)
             {
                 ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
-                BusinessFlow businessFlow = (from x in businessFlows where x.Guid == businessFlowRun.BusinessFlowGuid select x).FirstOrDefault();
+                BusinessFlow businessFlow = businessFlows.FirstOrDefault(x=> x.Guid == businessFlowRun.BusinessFlowGuid);
                 //Fail over to try and find by name
                 if (businessFlow == null)
                 {
-                    businessFlow = (from x in businessFlows where x.Name == businessFlowRun.BusinessFlowName select x).FirstOrDefault();
+                    businessFlow = businessFlows.FirstOrDefault(x => x.Name == businessFlowRun.BusinessFlowName);
                 }
                 if (businessFlow == null)
                 {
