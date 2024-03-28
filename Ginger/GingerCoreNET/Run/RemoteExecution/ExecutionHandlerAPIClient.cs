@@ -88,7 +88,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
                 string executionIdsParam = string.Join(',', executionIds);
                 MediaTypeWithQualityHeaderValue acceptHeader = new("*/*");
 
-                HttpRequestMessage request = new(HttpMethod.Get, $"{URL}{ExecutionDetailsEndPoint}?executionIds={executionIdsParam}");
+                string requestUri = $"{(URL.EndsWith('/') ? URL : URL + "/")}{ExecutionDetailsEndPoint}?executionIds={executionIdsParam}";
+                HttpRequestMessage request = new(HttpMethod.Get, requestUri);
                 request.Headers.Accept.Add(acceptHeader);
                 if (options.IncludeRequestDetails)
                 {
@@ -147,7 +148,8 @@ namespace Amdocs.Ginger.CoreNET.Run.RemoteExecution
         {
             try
             {
-                HttpRequestMessage request = new(HttpMethod.Post, $"{URL}{StartExecutionEndPoint}")
+                string requestUri = $"{(URL.EndsWith('/') ? URL : URL + "/")}{StartExecutionEndPoint}";
+                HttpRequestMessage request = new(HttpMethod.Post, requestUri)
                 {
                     Content = new StringContent(JsonSerializer.Serialize(executionRequest), Encoding.UTF8, "application/json")
                 };

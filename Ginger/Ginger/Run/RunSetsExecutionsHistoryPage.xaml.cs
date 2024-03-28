@@ -200,27 +200,14 @@ namespace Ginger.Run
 
         private DataTemplate GetActionsDataTemplate()
         {
-            DataTemplate reportButtonDataTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"];
-            DataTemplate bpmnButtonDataTemplate = (DataTemplate)this.pageGrid.Resources["BPMNButtonDataTemplate"];
-            DataTemplate loadRunsetDataTemplate = (DataTemplate)this.pageGrid.Resources["LoadRunsetDataTemplate"];
-
-            string actionsDataTemplateXaml =
-            $@"<DataTemplate
-                xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""
-	            xmlns:s=""clr-namespace:System;assembly=System.Private.CoreLib""
-	            xmlns:x=""http://schemas.microsoft.com/winfx/2006/xaml"">
-                <StackPanel
-                    Orientation=""Horizontal"">
-                    {GetContentXAMLFromDataTemplate(reportButtonDataTemplate)}
-                    {GetContentXAMLFromDataTemplate(bpmnButtonDataTemplate)}
-                    {(mExecutionHistoryLevel == eExecutionHistoryLevel.Solution 
-                        ? GetContentXAMLFromDataTemplate(loadRunsetDataTemplate) 
-                        : "")}
-                </StackPanel>
-            </DataTemplate>";
-
-            using MemoryStream ms = new(Encoding.UTF8.GetBytes(actionsDataTemplateXaml));
-            return (DataTemplate)XamlReader.Load(ms);
+            if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
+            {
+                return (DataTemplate)pageGrid.Resources["ActionsDataTemplateWithoutLoadRunset"];
+            }
+            else
+            {
+                return (DataTemplate)pageGrid.Resources["ActionsDataTemplate"];
+            }
         }
 
         private string GetContentXAMLFromDataTemplate(DataTemplate dataTemplate)
