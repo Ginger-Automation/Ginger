@@ -189,6 +189,21 @@ namespace GingerCore.Actions
                 AddOrUpdateInputParamValue(nameof(IsFullPageScreenshot), value.ToString());
             }
         }
+
+        public bool CreateBaselineImage
+        {
+            get
+            {
+                bool value = false;
+                bool.TryParse(GetOrCreateInputParam(nameof(CreateBaselineImage), value.ToString()).Value, out value);
+                return value;
+            }
+            set
+            {
+                AddOrUpdateInputParamValue(nameof(CreateBaselineImage), value.ToString());
+            }
+        }
+
         public string BaseLineFileName
         {
             get

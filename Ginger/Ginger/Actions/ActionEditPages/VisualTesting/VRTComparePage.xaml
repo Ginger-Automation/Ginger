@@ -25,12 +25,17 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
-        <Label x:Name="xVRTActionLabel" Grid.Row="0" Grid.Column="0" Margin="0,10,0,0" FontWeight="SemiBold" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Content="VRT Action:"/>
+        <Label x:Name="xVRTActionLabel" Grid.Row="0" Grid.Column="0" Margin="0,10,0,0" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Content="VRT Action:"/>
         <UserControlsLib:UCComboBox x:Name="xVRTActionComboBox" Grid.Row="0" Grid.Column="1" Margin="5,10,0,0" HorizontalAlignment="Stretch" Width="auto"/>
 
-        <Label x:Name="xVRTActionByLabel" Grid.Row="1" Grid.Column="0" Margin="0,10,0,0" FontWeight="SemiBold" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Content="Action By:"/>
+        <Label x:Name="xVRTActionByLabel" Grid.Row="1" Grid.Column="0" Margin="0,10,0,0" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Content="Action By:"/>
         <UserControlsLib:UCComboBox x:Name="xActionByComboBox" Grid.Row="1" Grid.Column="1" Margin="5,10,0,0" HorizontalAlignment="Stretch" Width="auto" />
         
         <StackPanel x:Name="xLocateByAndValuePanel" Grid.Row="2" Grid.ColumnSpan="3" >
@@ -40,7 +45,7 @@
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                <Label x:Name="xLocateBy" Grid.Column="0" Content="Locate By:" Margin="0,10,0,0" FontWeight="SemiBold" Style="{StaticResource $LabelStyle}"/>
+                <Label x:Name="xLocateBy" Grid.Column="0" Content="Locate By:" Margin="0,10,0,0" Style="{StaticResource $LabelStyle}"/>
                 <ComboBox x:Name="xElementLocateByComboBox" Grid.Column="1" Margin="5,10,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Stretch" SelectionChanged="ElementLocateByComboBox_SelectionChanged" ToolTip="How to Locate the Element on the screen" Width="auto"/>
                 </Grid>
             <Grid Margin="0,0,0,0">
@@ -49,22 +54,42 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <Label x:Name="xLocateValue" Content="Locate Value:" Margin="0,10,0,0" FontWeight="SemiBold" Grid.Column="0" Style="{StaticResource $LabelStyle}"/>
+                <Label x:Name="xLocateValue" Content="Locate Value:" Margin="0,10,0,0" Grid.Column="0" Style="{StaticResource $LabelStyle}"/>
                 <Actions:UCValueExpression x:Name="xLocateValueVE" Grid.Column="1" Margin="5,10,0,0" HorizontalAlignment="Stretch" Width="auto" ToolTip="How to Locate the Element on the screen" />
                 <Frame x:Name="xLocateValueEditFrame" Grid.Column="1" Grid.ColumnSpan="2" Margin="5,10,0,0" NavigationUIVisibility="Hidden"/>
             </Grid>
         </StackPanel>
 
-        <Label x:Name="xDiffTollerancePercentLabel" Style="{StaticResource $LabelStyle}" Grid.Row="3" Grid.Column="0" Margin="0,10,0,0" FontWeight="SemiBold" VerticalAlignment="Center" Content="Difference Tolerance %:"/>
+        <Label x:Name="xDiffTollerancePercentLabel" Style="{StaticResource $LabelStyle}" Grid.Row="3" Grid.Column="0" Margin="0,10,0,0" VerticalAlignment="Center" Content="Difference Tolerance %:"/>
         <Actions:UCValueExpression x:Name="DiffTollerancePercentUCVE" Grid.Row="3" Grid.Column="1" Margin="5,10,0,0" HorizontalAlignment="Stretch" Width="auto" />
 
-        <Label x:Name="xTestNameLabel" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0" Margin="0,10,0,0" FontWeight="SemiBold" Content="Test Name:"/>
+        <Label x:Name="xTestNameLabel" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Grid.Row="4" Grid.Column="0" Margin="0,10,0,0" Content="Test Name:"/>
         <Actions:UCValueExpression x:Name="xTestNameUCVE" HorizontalAlignment="Stretch" Width="auto" Grid.Row="4" Grid.Column="1" Margin="5,10,0,0" ToolTip="Test/Build Name"/>
 
-        <Label x:Name="xVRTImageNameActionLabel" Style="{StaticResource $LabelStyle}" Grid.Row="5" Grid.Column="0" Margin="0,10,0,0" VerticalAlignment="Center" FontWeight="SemiBold" Content="Image Name By:"/>
+        <Label x:Name="xVRTImageNameActionLabel" Style="{StaticResource $LabelStyle}" Grid.Row="5" Grid.Column="0" Margin="0,10,0,0" VerticalAlignment="Center" Content="Image Name By:"/>
         <UserControlsLib:UCComboBox x:Name="xVRTImageNameActionComboBox" Grid.Row="5" Grid.Column="1" Margin="5,10,0,0" HorizontalAlignment="Stretch" Width="auto" />
 
-        <Label x:Name="xImageNameLabel" Style="{StaticResource $LabelStyle}" Grid.Row="6" Grid.Column="0" Margin="0,10,0,0" VerticalAlignment="Center" FontWeight="SemiBold" Content="Image Name:"/>
+        <Label x:Name="xImageNameLabel" Style="{StaticResource $LabelStyle}" Grid.Row="6" Grid.Column="0" Margin="0,10,0,0" VerticalAlignment="Center" Content="Image Name:"/>
         <Actions:UCValueExpression x:Name="xImageNameUCVE" Grid.Row="6" Grid.Column="1" Margin="5,10,0,0" HorizontalAlignment="Stretch" Width="auto" ToolTip="Image Name"/>
+
+        <Label x:Name="xCreateBaseline" Style="{StaticResource $LabelStyle}" Grid.Row="7" Grid.Column="0" Margin="0,10,0,0" VerticalAlignment="Center" Content="Create Baseline:"/>
+        <CheckBox x:Name="xCreateBaselineCheckbox" Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" Margin="0,10,0,0" Style="{StaticResource @InputCheckBoxStyle}" Checked="xCreateBaselineCheckbox_CheckChanged" Unchecked="xCreateBaselineCheckbox_CheckChanged"/>
+        
+        <Label x:Name="xBaselineImage" Style="{StaticResource $LabelStyle}" Grid.Row="8" Grid.Column="0" Margin="0,10,0,0" VerticalAlignment="Center" Content="Baseline Image:"/>
+        <StackPanel x:Name="xBaselineImageRadioButtonPnl" Grid.Row="8" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="550" Margin="-25,10,0,0">
+            <UserControlsLib:UCRadioButtons x:Name="xBaselineImageRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+        </StackPanel>
+        
+        <Label x:Name="xBaselineImagePath" Style="{StaticResource $LabelStyle}" Grid.Row="9" Grid.Column="0" Margin="0,10,0,0" VerticalAlignment="Center" Content="Select Image:"/>
+        <StackPanel x:Name="VRTCurrentBaselineImagePathTxtBoxPnl" Grid.Row="9" Grid.Column="1">
+            <Actions:UCValueExpression x:Name="VRTCurrentBaselineImagePathTxtBox" Grid.Row="1" Margin="0,10,0,0"/>
+        </StackPanel>
+
+        <Label x:Name="xPreviewImage" Style="{StaticResource $LabelStyle}" Grid.Row="10" Grid.Column="0" Margin="0,10,0,0" VerticalAlignment="Top" Content="Preview Image:"/>
+        <StackPanel x:Name="VRTBaseImageFramePnl" Grid.Row="10" Grid.Column="1">
+            <Frame x:Name="VRTBaseImageFrame" Background="White" Width="500" Height="400" Margin="0,20,5,10"></Frame>
+        </StackPanel>
+        
+        <Label x:Name="xVRTNote" Style="{StaticResource $LabelStyle}" Grid.Row="11" Grid.ColumnSpan="2" Margin="0,10,0,0" VerticalAlignment="Center" Content="Note - Must be configured VRT configuration manually, from Configurations -> External Integrations -> VRT configurations"/>
     </Grid>
 </Page>

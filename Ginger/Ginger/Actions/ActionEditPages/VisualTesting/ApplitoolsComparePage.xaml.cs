@@ -82,7 +82,7 @@ namespace Ginger.Actions.VisualTesting
         {
             ApplitoolsAnalyzer.eApplitoolsAction applitoolsAction = (ApplitoolsAnalyzer.eApplitoolsAction)Enum.Parse(typeof(ApplitoolsAnalyzer.eApplitoolsAction), xApplitoolsActionComboBox.ComboBox.SelectedValue.ToString(), true);
             ApplitoolsAnalyzer.eActionBy actionBy = (ApplitoolsAnalyzer.eActionBy)Enum.Parse(typeof(ApplitoolsAnalyzer.eActionBy), xActionByComboBox.ComboBox.SelectedValue.ToString(), true);
-
+            xApplitoolNotePnl.Visibility = Visibility.Visible;
             switch (applitoolsAction)
             {
                 case ApplitoolsAnalyzer.eApplitoolsAction.OpenEyes:

@@ -23,6 +23,7 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         
 
@@ -75,6 +76,8 @@
         <StackPanel Grid.Row="7" x:Name="xApplitoolsResultsButton" HorizontalAlignment="Left" Margin="0,10,0,0">
             <Button x:Name="OpenResultsURL" Click="OpenResultsURL_Click" Style="{StaticResource @InputButtonStyle}" Width="250">Open Results URL</Button>
         </StackPanel>
-          
+        <StackPanel Grid.Row="8" x:Name="xApplitoolNotePnl" Orientation="Vertical" HorizontalAlignment="Left">
+            <Label x:Name="ApplitoolNote" Content="Note - Must be configured Applitools configuration manually, from From Configurations -> External Integrations -> Applitools configurations"></Label>
+        </StackPanel>
     </Grid>
 </Page>
