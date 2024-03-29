@@ -895,6 +895,12 @@ namespace Ginger.Run
             List<VariableBase> variables = null;
             List<VariableBase> outputVariables = null;
             //do actual value update
+
+            if (inputVars.Count > 0)
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"Mapping {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} {GingerDicser.GetTermResValue(eTermResKey.Variable)} with customized values.");
+            }
+
             foreach (VariableBase inputVar in inputVars)
             {
                 try
