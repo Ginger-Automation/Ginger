@@ -80,7 +80,7 @@ namespace Ginger.Agents
             }
         }
 
-        private void RefreshApplicationAgentsList()
+        public void RefreshApplicationAgentsList()
         {
             this.Dispatcher.Invoke(() =>
             {
@@ -149,7 +149,7 @@ namespace Ginger.Agents
             ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
             applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
 
-            List<IAgent> filteredOptionalAgents = applicationAgent.PossibleAgents;
+             List<IAgent> filteredOptionalAgents = applicationAgent.PossibleAgents;
 
             ((ComboBox)sender).ItemsSource = filteredOptionalAgents;
         }

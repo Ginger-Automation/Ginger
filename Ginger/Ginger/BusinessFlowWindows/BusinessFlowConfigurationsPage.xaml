@@ -29,15 +29,8 @@
             <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}">Run Description:</Label>
             <Activities:UCValueExpression x:Name="xRunDescritpion" DockPanel.Dock="Top" HorizontalAlignment="Stretch" Margin="0,0,0,0"/>
 
-            <StackPanel x:Name="xBfTargetsListPnl" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0">
-                <Label x:Name="xAddTargetApplication" DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}" Content=""></Label>
-                <StackPanel Orientation="Horizontal">
-                    <Ginger:ucGrid x:Name="xAppsGrid" Width="320" ShowSearch="Collapsed" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowRefresh="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed" ShowToolsBar="Collapsed"/>
-                    <Button x:Name="xAddTargetBtn" Click="AddPlatformButton_Click" VerticalAlignment="Top" Content="Edit" Width="40" Grid.Row="0" Style="{StaticResource $InputButtonStyle}" Margin="5,0,0,0"/>
-                </StackPanel>
-            </StackPanel>
 
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Left"  Margin="-5,0,0,0" >
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" HorizontalAlignment="Left"  Margin="-5,15,0,0" >
                 <Label Style="{StaticResource $LabelStyle}" Content="Status:" Width="120" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
                 <ComboBox x:Name="xStatusComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="200" Margin="5,0,0,5" VerticalAlignment="Bottom"/>
             </StackPanel>

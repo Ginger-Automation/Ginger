@@ -167,18 +167,11 @@ namespace Ginger.BusinessFlowPages
             xAutomationStatusCombo.BindControl(mActivity, nameof(Activity.AutomationStatus));
             BindingHandler.ObjFieldBinding(xMandatoryActivityCB, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Mandatory));
             BindingHandler.ObjFieldBinding(xPublishcheckbox, CheckBox.IsCheckedProperty, mActivity, nameof(Activity.Publish));
-            if (mContext != null && mContext.BusinessFlow != null)
-            {
-                //if (!mContext.BusinessFlow.TargetApplications.Any(ta => ta.Equals(mActivity.TargetApplication)))
-                //{
-                  //  mContext.BusinessFlow.MapTAToBF(eUserMsgSelection.None, mActivity, WorkSpace.Instance.Solution.ApplicationPlatforms);
-               // }
-                xTargetApplicationComboBox.ItemsSource = mContext.BusinessFlow.TargetApplications;
-            }
-            else
-            {
-                xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-            }
+
+            
+            xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+            
+            
             xTargetApplicationlbl.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
             xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
