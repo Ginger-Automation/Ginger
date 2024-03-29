@@ -81,6 +81,11 @@ namespace GingerCore.Environments
             GeneralParam GP = (from p in GeneralParams where p.Name == ParamName select p).FirstOrDefault();
             return GP;
         }
+        public VariableBase GetVariable(string ParamName)
+        {
+            return Variables.FirstOrDefault((variable)=>variable.Name.Equals(ParamName));
+
+        }
 
         public override string ItemName
         {

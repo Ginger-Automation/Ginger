@@ -1407,18 +1407,18 @@ namespace GingerCore
             }
             if (app != null)
             {
-                GeneralParam GP = app.GetParam(GlobalParamName);
-                if (GP != null)
+                VariableBase VB = app.GetVariable(GlobalParamName);
+                if (VB != null)
                 {
-                    ParamValue = GP.Value + "";  // Autohandle in case param is null convert to empty string
+                    ParamValue = VB.Value + "";  // Autohandle in case param is null convert to empty string
 
-                    if (DecryptFlag == true && GP.Encrypt == true)
+                    if (DecryptFlag == true && VB is VariablePasswordString)
                     {
-                        string strValuetoPass = EncryptionHandler.DecryptwithKey(GP.Value);
+                        string strValuetoPass = EncryptionHandler.DecryptwithKey(VB.Value);
                         if (!string.IsNullOrEmpty(strValuetoPass))
                         { 
                             mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
-                            mEncryptedValue = GP.Value;
+                            mEncryptedValue = VB.Value;
                         }
                         else
                         {
