@@ -46,6 +46,11 @@ namespace Amdocs.Ginger.CoreNET.Reports
                 runset = await GetRunsetFromExecutionHandler(executionId);
             }
 
+            if (runset != null && runset.IsVirtual)
+            {
+                runset.Description = $"ExecutionId: {runsetReport.GUID}\nExecutionTime: {runsetReport.StartTimeStamp.ToString("O")}";
+            }
+
             return runset;
         }
 
