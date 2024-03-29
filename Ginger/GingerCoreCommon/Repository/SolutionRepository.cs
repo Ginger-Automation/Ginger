@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -52,6 +52,9 @@ namespace Amdocs.Ginger.Repository
              @"Backups\",
              @"ExecutionResults\",
              @"HTMLReports\",
+
+             $@"BusinessFlows\{ISolution.CacheDirectoryName}\",
+             $@"RunSetConfigs\{ISolution.CacheDirectoryName}\",
 
              @"SharedRepository\Activities\PrevVersions\",
              @"SharedRepository\Actions\PrevVersions\",
@@ -257,7 +260,7 @@ namespace Amdocs.Ginger.Repository
                     else if (new Uri(folder.FolderFullPath + "\\").IsBaseOf(inputURI))
                     {
                         string relPath = "~" + folderPath.Replace(SolutionFolder, "");
-                        repoFolder = folder.GetSubFolderByName(relPath, true);
+                        repoFolder = folder.GetSubFolderByRelativePath(relPath, true);
                     }
                 }
             });
