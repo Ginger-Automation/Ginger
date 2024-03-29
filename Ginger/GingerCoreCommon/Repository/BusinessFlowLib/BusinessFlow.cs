@@ -1874,6 +1874,14 @@ namespace GingerCore
             }
         }
 
+        public Action DynamicPostSaveHandler;
+
+        public override void PostSaveHandler()
+        {
+            base.PostSaveHandler();
+            DynamicPostSaveHandler?.Invoke();
+        }
+
         public bool MarkActivityAsLink(Guid activityGuid, Guid parentGuid)
         {
             if (Activities.Any(act => act.Guid == activityGuid))
@@ -1922,5 +1930,8 @@ namespace GingerCore
                 ExternalIdCalCulated = ve.ValueCalculated;
             }
         }
+        public string ALMTestSetLevel { get; set; }
+
+        public bool IsEntitySearchByName { get; set; }
     }
 }

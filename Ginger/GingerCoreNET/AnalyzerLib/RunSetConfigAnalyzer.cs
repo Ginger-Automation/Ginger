@@ -69,8 +69,8 @@ namespace Ginger.AnalyzerLib
                 AGR.Selected = false;
             }
 
-            //check we do not have duplicates Agents
-            if (checks.AreAllFlagsSet(Check.DuplicateAgents) && RSC.RunModeParallel)
+            //check we do not have duplicates Agents, ignore the check for single runner 
+            if (checks.AreAllFlagsSet(Check.DuplicateAgents) && RSC.RunModeParallel && RSC.GingerRunners.Count > 1)
             {
                 List<Guid> Agents = new List<Guid>();
                 foreach (GingerRunner GR in RSC.GingerRunners)
