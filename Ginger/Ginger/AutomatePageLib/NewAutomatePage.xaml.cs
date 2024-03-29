@@ -1036,8 +1036,14 @@ namespace GingerWPF.BusinessFlowsLib
 
             Act actionToExecute = actionToExecuteInfo.Item2;
 
+            if (actionToExecute == null)
+            {
+                Reporter.ToUser(eUserMsgKey.NoActionAvailable);
+                return;
+            }
+         
             // set errorhandler execution status
-            actionToExecute.ErrorHandlerExecuted = false;
+                  actionToExecute.ErrorHandlerExecuted = false;
 
             if (!parentActivity.Acts.Any() && !skipInternalValidations)
             {
@@ -1094,7 +1100,7 @@ namespace GingerWPF.BusinessFlowsLib
             {
                 if (mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent != null)
                 {
-                    if(((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).Status == Agent.eStatus.NotStarted)
+                    if (((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).Status == Agent.eStatus.NotStarted)
                     {
 
                         ((AgentOperations)((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).Close();
@@ -1103,7 +1109,6 @@ namespace GingerWPF.BusinessFlowsLib
                     ((AgentOperations)((Agent)mExecutionEngine.CurrentBusinessFlow.CurrentActivity.CurrentAgent).AgentOperations).IsFailedToStart = false;
                 }
             }
-
         }
 
         private async Task ContinueRunFromAutomatePage(eContinueFrom continueFrom, object executedItem = null)
