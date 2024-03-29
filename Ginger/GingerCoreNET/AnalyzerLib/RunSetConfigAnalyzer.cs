@@ -258,18 +258,18 @@ namespace Ginger.AnalyzerLib
                                 continue;
                             }
 
-
                             VariableBase? sourceVar = sourceActivity
                                 .GetVariables()
+                                .Where(var => var.SetAsOutputValue)
                                 .FirstOrDefault(var => var.Guid == sourceVarGuid);
 
                             if (sourceVar == null)
                             {
                                 RunSetConfigAnalyzer AGR = CreateNewIssue(IssuesList, RSC);
                                 AGR.ItemParent = sourceActivity.ActivityName;
-                                AGR.Description = $"No {GingerDicser.GetTermResValue(eTermResKey.Variable)} found with id '{sourceVarGuid}' for mapping it's output value.";
-                                AGR.Details = $"No {GingerDicser.GetTermResValue(eTermResKey.Variable)} found with id '{sourceVarGuid}' for mapping it's output value.";
-                                AGR.HowToFix = $"Provide valid id for {GingerDicser.GetTermResValue(eTermResKey.Variable)}.";
+                                AGR.Description = $"No output {GingerDicser.GetTermResValue(eTermResKey.Variable)} found with id '{sourceVarGuid}' for mapping it's output value.";
+                                AGR.Details = $"No output {GingerDicser.GetTermResValue(eTermResKey.Variable)} found with id '{sourceVarGuid}' for mapping it's output value.";
+                                AGR.HowToFix = $"Provide valid id for output {GingerDicser.GetTermResValue(eTermResKey.Variable)}.";
                                 AGR.CanAutoFix = eCanFix.No;
                                 AGR.IssueType = eType.Error;
                                 AGR.Impact = "Execution will fail due to wrong data mapping";

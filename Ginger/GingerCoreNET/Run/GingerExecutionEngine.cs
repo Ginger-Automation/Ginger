@@ -3606,6 +3606,7 @@ namespace Ginger.Run
 
                 VariableBase mappedSourceVar = mappedSourceActivity
                     .GetVariables()
+                    .Where(var => var.SetAsOutputValue)
                     .FirstOrDefault(var => var.Guid == mappedSourceVarGuid);
 
                 if (mappedSourceVar == null)
