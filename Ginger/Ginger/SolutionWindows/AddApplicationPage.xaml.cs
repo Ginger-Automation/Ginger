@@ -145,11 +145,11 @@ namespace Ginger.SolutionWindows
 
                 mSolution.ApplicationPlatforms.Add(selectedApp);
 
-                var DoesPlatformExist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>().Any((agent)=>agent.Platform.Equals(selectedApp.Platform));
+                var DoesPlatformExist = WorkSpace.Instance.SolutionRepository?.GetAllRepositoryItems<Agent>().Any((agent)=>agent.Platform.Equals(selectedApp.Platform)) ?? true;
 
                 if (!DoesPlatformExist)
                 {
-                    WorkSpace.Instance.SolutionRepository.AddRepositoryItem(new Agent() { Platform = selectedApp.Platform, Name = selectedApp.AppName});
+                    WorkSpace.Instance.SolutionRepository?.AddRepositoryItem(new Agent() { Platform = selectedApp.Platform, Name = selectedApp.AppName});
                 }
             }
 
