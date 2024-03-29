@@ -61,7 +61,7 @@ namespace Ginger.MenusLib
             runSetMenu.Add(eImageType.RunSet, "", GetRunSetPage, ConsoleKey.R, "", "AID");
             twoLevelMenuGet.Add(runSetMenu);
 
-            TopMenuItem executionsHistoryMenu = new TopMenuItem(eImageType.History, "Executions History", ConsoleKey.E, "Executions History AID", "View executions history of all Run Sets");
+            TopMenuItem executionsHistoryMenu = new TopMenuItem(eImageType.History, "All Executions History", ConsoleKey.E, "Executions History AID", "View executions history of all Run Sets");
             executionsHistoryMenu.Add(eImageType.History, "", GetExecutionsHistoryPage, ConsoleKey.E, "", "AID");
             twoLevelMenuGet.Add(executionsHistoryMenu);
 
