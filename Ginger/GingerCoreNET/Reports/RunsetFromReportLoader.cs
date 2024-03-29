@@ -29,25 +29,32 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
         public async Task<RunSetConfig?> LoadAsync(RunSetReport runsetReport)
         {
-            string runsetName = runsetReport.Name;
-            RunSetConfig? runset = GetRunsetFromSolutionRepository(runsetName);
+            string executionId = runsetReport.GUID;
+            Guid runsetId;
+            if (executionId.Contains('-'))
+            {
+                runsetId = Guid.Parse(executionId);
+            }
+            else
+            {
+                runsetId = Guid.ParseExact(executionId, "N");
+            }
+            RunSetConfig? runset = GetRunsetFromSolutionRepository(runsetId);
 
             if (runset == null)
             {
-                string executionId = runsetReport.GUID;
                 runset = await GetRunsetFromExecutionHandler(executionId);
             }
 
             return runset;
         }
 
-        private RunSetConfig? GetRunsetFromSolutionRepository(string runsetName)
+        private RunSetConfig? GetRunsetFromSolutionRepository(Guid runsetId)
         {
             return WorkSpace
                 .Instance
                 .SolutionRepository
-                .GetAllRepositoryItems<RunSetConfig>()
-                .FirstOrDefault(r => string.Equals(r.Name, runsetName));
+                .GetRepositoryItemByGuid<RunSetConfig>(runsetId);
         }
 
         private async Task<RunSetConfig?> GetRunsetFromExecutionHandler(string executionId)
@@ -103,7 +110,8 @@ namespace Amdocs.Ginger.CoreNET.Reports
                 {
                     Converters = { new JsonStringEnumConverter() }
                 })!;
-            
+            executionConfig.ExecutionID = response.Id;
+
             return executionConfig;
         }
 
@@ -111,6 +119,8 @@ namespace Amdocs.Ginger.CoreNET.Reports
         {
             RunSetConfig runset = DynamicExecutionManager.LoadRunsetFromExecutionConfig(executionConfig);
             runset.IsVirtual = true;
+
+            runset.Name = GetUniqueRunsetName(runset.Name);
 
             RepositoryFolderBase bfFolder = GetRootRepositoryFolder<BusinessFlow>();
             RepositoryFolderBase bfCacheFolder = GetOrCreateRepositoryFolder(ISolution.CacheDirectoryName, bfFolder);
@@ -144,6 +154,34 @@ namespace Amdocs.Ginger.CoreNET.Reports
             runset.DirtyStatus = eDirtyStatus.Modified;
 
             return runset;
+        }
+
+        private string GetUniqueRunsetName(string runsetName)
+        {
+            bool SolutionRepositoryContainsRunsetWithName(string runsetName)
+            {
+                return WorkSpace
+                    .Instance
+                    .SolutionRepository
+                    .GetAllRepositoryItems<RunSetConfig>()
+                    .Any(runset => string.Equals(runset.Name, runsetName));
+            }
+
+            int copyCount = 1;
+            while (SolutionRepositoryContainsRunsetWithName(runsetName))
+            {
+                string copyIdentifier;
+                if (copyCount == 1)
+                {
+                    copyIdentifier = "Copy";
+                }
+                else
+                {
+                    copyIdentifier = $"Copy{copyCount}";
+                }
+                runsetName = $"{runsetName}-{copyIdentifier}";
+            }
+            return runsetName;
         }
 
         private RepositoryFolderBase GetRootRepositoryFolder<T>() where T : RepositoryItemBase
