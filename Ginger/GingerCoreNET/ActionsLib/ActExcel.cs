@@ -311,24 +311,36 @@ namespace GingerCore.Actions
             try
             {
                 DataTable excelDataTable = excelOperator.ReadCellData(CalculatedFileName, CalculatedSheetName, CalculatedFilter, SelectAllRows, CalculatedHeaderRowNum);
-                if (!string.IsNullOrEmpty(SelectRowsWhere) && !SelectAllRows)
-                {
-                    string CellValue = excelDataTable.Rows[0][0].ToString();
-                    AddOrUpdateReturnParamActual(excelDataTable.Columns[0].ColumnName, CellValue);
-                }
-                else
-                {
-                    for (int j = 0; j < excelDataTable.Rows.Count; j++)
+               
+                    if (!string.IsNullOrEmpty(SelectRowsWhere) && !SelectAllRows)
                     {
-                        DataRow r = excelDataTable.Rows[j];
-                        //Read data to return values
-                        // in case the user didn't select cols then get all excel output columns
-                        for (int i = 0; i < excelDataTable.Columns.Count; i++)
+                       
+                        if (excelDataTable == null)
                         {
-                            AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, ((object)r[i]).ToString(), (j + 1).ToString() + (i + 1).ToString());
+                            Error = SelectAllRows ? "No Cells Found" : "Given Cell [" + CalculatedFilter + "] contains empty value";
+                            return;
+                        }
+                        else 
+                        {
+                            string CellValue = excelDataTable.Rows[0][0].ToString();
+                            AddOrUpdateReturnParamActual(excelDataTable.Columns[0].ColumnName, CellValue);
                         }
                     }
-                }
+                    else
+                    {
+                        for (int j = 0; j < excelDataTable.Rows.Count; j++)
+                        {
+                            DataRow r = excelDataTable.Rows[j];
+                            //Read data to return values
+                            // in case the user didn't select cols then get all excel output columns
+                            for (int i = 0; i < excelDataTable.Columns.Count; i++)
+                            {
+                                AddOrUpdateReturnParamActualWithPath(excelDataTable.Columns[i].ColumnName, ((object)r[i]).ToString(), (j + 1).ToString() + (i + 1).ToString());
+                            }
+                        }
+
+                    }
+                
             }
             catch (Exception ex)
             {

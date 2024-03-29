@@ -183,7 +183,10 @@ namespace Amdocs.Ginger.Common
         AddActivitiesToSharedRepositoryForBPMNConversion,
         AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport,
         FailedToDownloadDriver,
-        ShadowRootExists
+        ShadowRootExists,
+        NoActionAvailable,
+        PublishApplicationToOtherEnv,
+        NoApplicationPlatformLeft
     }
 
     public static class UserMsgsPool
@@ -238,6 +241,9 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToUndoChange, new UserMsg(eUserMsgType.WARN, "Undo Changes", "Are you sure you want to undo all changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ShadowRootExists, new UserMsg(eUserMsgType.INFO, "Shadow DOM Element Detected", "This element exists under a shadow root, you will have to manually add the action(s) to locate this element's parent. Please look into 'Switch To Shadow DOM' operation in Browser Action", eUserMsgOption.OK , eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.PublishApplicationToOtherEnv, new UserMsg(eUserMsgType.QUESTION, "Publish Application to other Environment", "Do you want to publish this application to all the other existing environments?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.NoApplicationPlatformLeft, new UserMsg(eUserMsgType.INFO, "No Application is available to add", "All the applications are already available in {0} Environment. Please add new application in the Configurations-> Target application page to add application here", eUserMsgOption.OK, eUserMsgSelection.None));
 
 
             #endregion General Application Messages
@@ -330,6 +336,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.UncommitedChangesPreventCheckout, new UserMsg(eUserMsgType.ERROR, "Uncommited Changes", "Local branch has uncommited changes, check-in them before getting latest.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.IssueWhileAnalyzingConflict, new UserMsg(eUserMsgType.INFO, "Issues with Analyzer", "{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ConflictsResolvedCount, new UserMsg(eUserMsgType.INFO, "Conflicts Resolved", "{0} conflicted file(s) was resolved.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.NoActionAvailable, new UserMsg(eUserMsgType.INFO, "No Action Found", "Please Add Action to run", eUserMsgOption.OK, eUserMsgSelection.OK));
             #endregion SourceControl Messages
 
             #region Validation Messages
