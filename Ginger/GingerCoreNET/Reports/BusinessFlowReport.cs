@@ -256,7 +256,7 @@ namespace Ginger.Reports
                                 AR.LogFolder = folder;
                                 if (ActivitiesGroupReports != null)    // !!!!!!!!!!!!!!!!!!!!!!!!
                                 {
-                                    ActivityGroupReport CurrentActivitiesGroupReport = this.ActivitiesGroupReports.Where(x => x.ExecutedActivitiesGUID.Select(y => y.ToString()).Contains(AR.SourceGuid)).ToList().FirstOrDefault();
+                                    ActivityGroupReport CurrentActivitiesGroupReport = this.ActivitiesGroupReports.FirstOrDefault(x => x.ExecutedActivitiesGUID.Select(y => y.ToString()).Contains(AR.SourceGuid));
                                     if (CurrentActivitiesGroupReport != null)
                                     {
                                         AR.ActivityGroupName = CurrentActivitiesGroupReport.Name;
@@ -365,13 +365,11 @@ namespace Ginger.Reports
             {
                 if (this.ExecutionLoggerIsEnabled)
                 {
-                    int count = (from x in this.Activities where (Amdocs.Ginger.CoreNET.Execution.eRunStatus)Enum.Parse(typeof(Amdocs.Ginger.CoreNET.Execution.eRunStatus), x.RunStatus) == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed select x).Count();
-                    return count;
+                    return Activities.Count(x=> (Amdocs.Ginger.CoreNET.Execution.eRunStatus)Enum.Parse(typeof(Amdocs.Ginger.CoreNET.Execution.eRunStatus), x.RunStatus) == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);                    
                 }
                 else
                 {
-                    int count = (from x in mBusinessFlow.Activities where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed select x).Count();
-                    return count;
+                    return mBusinessFlow.Activities.Count(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
                 }
             }
         }
@@ -382,13 +380,11 @@ namespace Ginger.Reports
             {
                 if (this.ExecutionLoggerIsEnabled)
                 {
-                    int count = (from x in Activities where (Amdocs.Ginger.CoreNET.Execution.eRunStatus)Enum.Parse(typeof(Amdocs.Ginger.CoreNET.Execution.eRunStatus), x.RunStatus) == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed select x).Count();
-                    return count;
+                    return Activities.Count(x => (Amdocs.Ginger.CoreNET.Execution.eRunStatus)Enum.Parse(typeof(Amdocs.Ginger.CoreNET.Execution.eRunStatus), x.RunStatus) == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);                  
                 }
                 else
                 {
-                    int count = (from x in mBusinessFlow.Activities where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed select x).Count();
-                    return count;
+                    return mBusinessFlow.Activities.Count(x=> x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed);                    
                 }
             }
         }
@@ -397,8 +393,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = (from x in Activities where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped.ToString() select x).Count();
-                return count;
+                return Activities.Count(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped.ToString());
             }
         }
 
@@ -406,8 +401,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = TotalActivities - TotalActivitiesFailed - TotalActivitiesPassed - TotalActivitiesStopped;
-                return count;
+                return TotalActivities - TotalActivitiesFailed - TotalActivitiesPassed - TotalActivitiesStopped;                
             }
         }
 
