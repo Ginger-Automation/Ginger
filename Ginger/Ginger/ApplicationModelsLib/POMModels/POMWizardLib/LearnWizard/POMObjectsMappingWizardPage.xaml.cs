@@ -22,6 +22,7 @@ using GingerWPF.WizardLib;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
 {
@@ -91,6 +92,36 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
             }
         }
 
+        private DispatcherTimer timer;
+        private TimeSpan elapsedTime;
+        private void StartTimer()
+        {
+            // Create and configure the DispatcherTimer
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1); // Update every second
+            timer.Tick += Timer_Tick;
+
+            // Initialize elapsed time
+            elapsedTime = TimeSpan.Zero;
+
+            // Start the timer
+            timer.Start();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            // Increment elapsed time by 1 second
+            elapsedTime = elapsedTime.Add(TimeSpan.FromSeconds(1));
+
+            // Update the timer display
+            timerText.Text = $"{(int)elapsedTime.TotalMinutes:00}:{elapsedTime.Seconds:00}";
+        }
+
+        // You can stop the timer if needed
+        private void StopTimer()
+        {
+            timer.Stop();
+        }
         private async void Learn()
         {
             if (!mWizard.IsLearningWasDone)
@@ -99,6 +130,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                 {
                     mWizard.IsLearningWasDone = false;
                     mWizard.ProcessStarted();
+                    StartTimer();
                     xReLearnButton.Visibility = Visibility.Collapsed;
                     xStopLoadButton.ButtonText = "Stop";
                     xStopLoadButton.IsEnabled = true;
@@ -119,6 +151,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xStopLoadButton.Visibility = Visibility.Collapsed;
                     xReLearnButton.Visibility = Visibility.Visible;
                     mWizard.ProcessEnded();
+                    StopTimer();
                 }
             }
         }

@@ -22,7 +22,6 @@ using Amdocs.Ginger.Common.GeneralLib;
 using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.Common.Repository.ApplicationModelLib.POMModelLib;
 using Amdocs.Ginger.Common.UIElement;
-using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.CoreNET.Application_Models.Execution.POM;
 using Amdocs.Ginger.CoreNET.Drivers.CoreDrivers.Web.Selenium;
@@ -31,8 +30,6 @@ using Amdocs.Ginger.CoreNET.GeneralLib;
 using Amdocs.Ginger.CoreNET.RunLib;
 using Amdocs.Ginger.Plugin.Core;
 using Amdocs.Ginger.Repository;
-using Deque.AxeCore.Commons;
-using Deque.AxeCore.Selenium;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.Actions.VisualTesting;
@@ -4732,10 +4729,9 @@ namespace GingerCore.Drivers
                     UnhighlightLast();
 
                     Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
-                    List<ElementInfo> list = new List<ElementInfo>();
                     Driver.SwitchTo().DefaultContent();
                     allReadElem.Clear();
-                    list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData));
+                    List<ElementInfo> list = General.ConvertObservableListToList<ElementInfo>(FindAllElementsFromPOM("", pomSetting, Driver, Guid.Empty, foundElementsList, PomMetaData));
 
                     for (int i = 0; i < list.Count; i++)
                     {
@@ -4777,217 +4773,236 @@ namespace GingerCore.Drivers
 
         private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null)
         {
-            if (PomMetaData == null)
-            {
-                PomMetaData = new ObservableList<POMPageMetaData>();
-            }
-            if (foundElementsList == null)
-            {
-                foundElementsList = new ObservableList<ElementInfo>();
+            // Initialize lists if null
+            PomMetaData ??= new ObservableList<POMPageMetaData>();
+            foundElementsList ??= new ObservableList<ElementInfo>();
 
-            }
-
-            List<HtmlNode> formElementsList = new List<HtmlNode>();
+            // Parse HTML document
             string documentContents = pageSource ?? Driver.PageSource;
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(documentContents);
-            IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x => !x.Name.StartsWith("#"));
-
-            if (htmlElements.Any())
+            IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x => !x.Name.StartsWith('#'));
+            List<HtmlNode> formElementsList = [];
+            // Process HTML elements
+            foreach (HtmlNode htmlElemNode in htmlElements)
             {
-                foreach (HtmlNode htmlElemNode in htmlElements)
+                try
                 {
-                    try
+                    if (StopProcess)
                     {
-                        if (StopProcess)
-                        {
-                            return foundElementsList;
-                        }
-                        //The <noscript> tag defines an alternate content to be displayed to users that have disabled scripts in their browser or have a browser that doesn't support script.
-                        //skip to learn to element which is inside noscript tag
-                        if (htmlElemNode.Name.ToLower().Equals("noscript") || htmlElemNode.XPath.ToLower().Contains("/noscript"))
+                        return foundElementsList;
+                    }
+
+                    // Skip elements inside <noscript> tags
+                    if (htmlElemNode.Name.Equals("noscript", StringComparison.OrdinalIgnoreCase) || htmlElemNode.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    // Determine element type
+                    Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(htmlNode: htmlElemNode);
+
+                    // Check if element should be learned
+                    bool learnElement = ShouldLearnElement(pomSetting, elementTypeEnum.Item2);
+
+                    // Learn element if required
+                    if (learnElement)
+                    {
+
+                        IWebElement webElement = GetWebElement(parentContext, htmlElemNode, elementTypeEnum.Item2, isShadowRootDetected);
+
+                        // Skip invisible elements
+                        if (!IsElementVisible(webElement))
                         {
                             continue;
                         }
-                        //get Element Type
-                        Tuple<string, eElementType> elementTypeEnum = SeleniumDriver.GetElementTypeEnum(htmlNode: htmlElemNode);
 
-                        // set the Flag in case you wish to learn the element or not
-                        bool learnElement = true;
+                        HTMLElementInfo foundElementInfo = CreateHTMLElementInfo(webElement, path, htmlElemNode, elementTypeEnum.Item1, elementTypeEnum.Item2, ParentGUID, pomSetting, foundElementsList.Count.ToString());
 
-                        //filter element if needed, in case we need to learn only the MappedElements .i.e., LearnMappedElementsOnly is checked
-                        if (pomSetting != null && pomSetting.filteredElementType != null)
+                        // Add element to found elements list
+                        foundElementsList.Add(foundElementInfo);
+                        allReadElem.Add(foundElementInfo);
+
+                        // Recursively find elements within shadow DOM
+                        if (pomSetting.LearnShadowDomElements && elementTypeEnum.Item2 != eElementType.Iframe)
                         {
-                            //Case Learn Only Mapped Element : set learnElement to false in case element doesn't exist in the filteredElementType List AND element is not frame element
-                            if (!pomSetting.filteredElementType.Contains(elementTypeEnum.Item2))
-                            {
-                                learnElement = false;
-                            }
-                        }
-
-                        IWebElement webElement = null;
-                        if (learnElement)
-                        {
-                            string xpath = htmlElemNode.XPath;
-                            if (htmlElemNode.Name.ToLower().Equals(eElementType.Svg.ToString().ToLower()))
-                            {
-                                if (!isShadowRootDetected)
-                                {
-                                    xpath = string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()=\'svg\']");
-                                }
-                            }
-
-                            if (parentContext is ShadowRoot shadowRoot)
-                            {
-                                webElement = shadowRoot.FindElement(By.CssSelector(shadowDOM.ConvertXPathToCssSelector(xpath)));
-                            }
-
-                            else
-                            {
-                                webElement = parentContext.FindElement(By.XPath(xpath));
-                            }
-
-                            if (webElement == null)
-                            {
-                                continue;
-                            }
-                            //filter none visible elements
-                            if (!webElement.Displayed || webElement.Size.Width == 0 || webElement.Size.Height == 0)
-                            {
-                                //for some element like select tag el.Displayed is false but element is visible in page
-                                if (webElement.GetCssValue("display").Equals("none", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    continue;
-                                }
-                                else if (webElement.GetCssValue("width").Equals("auto") || webElement.GetCssValue("height").Equals("auto"))
-                                {
-                                    continue;
-                                }
-                            }
-
-                            HTMLElementInfo foundElementInfo = new HTMLElementInfo();
-                            foundElementInfo.ElementType = elementTypeEnum.Item1;
-                            foundElementInfo.ElementTypeEnum = elementTypeEnum.Item2;
-                            foundElementInfo.ElementObject = webElement;
-                            foundElementInfo.Path = path;
-                            // should we remove Xpath from HTMLElementInfo as we have a list for it now
-                            foundElementInfo.HTMLElementObject = htmlElemNode;
-                            foundElementInfo.XPath = xpath;
-                            var ParentPOMGuid = (ParentGUID.Equals(Guid.Empty)) ? Guid.Empty.ToString() : ParentGUID.ToString();
-
-                            ((IWindowExplorer)this).LearnElementInfoDetails(foundElementInfo, pomSetting);
-                            foundElementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentPOMGUID, Value = ParentPOMGuid, ShowOnUI = false });
-                            foundElementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.Sequence, Value = foundElementsList.Count.ToString(), ShowOnUI = false });
-                            if (ExtraLocatorsRequired)
-                            {
-                                GetRelativeXpathElementLocators(foundElementInfo);
-
-                                if (pomSetting != null && pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
-                                {
-                                    foreach (var template in pomSetting.relativeXpathTemplateList)
-                                    {
-                                        CreateXpathFromUserTemplate(template, foundElementInfo);
-                                    }
-                                }
-                            }
-                            //Element Screenshot
-                            if (pomSetting.LearnScreenshotsOfElements)
-                            {
-                                foundElementInfo.ScreenShotImage = TakeElementScreenShot(webElement);
-                            }
-
-                            foundElementInfo.IsAutoLearned = true;
-                            foundElementsList.Add(foundElementInfo);
-
-                            allReadElem.Add(foundElementInfo);
-                            if (!pomSetting.LearnShadowDomElements)
-                            {
-                                continue;
-                            }
-
-                            ISearchContext ShadowRoot = shadowDOM.GetShadowRootIfExists(webElement);
-                            if (ShadowRoot == null)
-                            {
-                                continue;
-                            }
-                            string InnerHTML = shadowDOM.GetHTML(ShadowRoot, Driver);
-                            if (!string.IsNullOrEmpty(InnerHTML))
-                            {
-                                FindAllElementsFromPOM(path, pomSetting, ShadowRoot, foundElementInfo.Guid, foundElementsList, PomMetaData, true, InnerHTML);
-                            }
-                        }
-
-                        if (eElementType.Iframe == elementTypeEnum.Item2)
-                        {
-                            string xpath = htmlElemNode.XPath;
-                            if (webElement == null)
-                            {
-                                if (parentContext is ShadowRoot shadowRoot)
-                                {
-                                    webElement = shadowRoot.FindElement(By.CssSelector(shadowDOM.ConvertXPathToCssSelector(xpath)));
-                                }
-                                else
-                                {
-                                    webElement = parentContext.FindElement(By.XPath(xpath));
-                                }
-                            }
-                            Driver.SwitchTo().Frame(webElement);
-                            string newPath = string.Empty;
-                            if (path == string.Empty)
-                            {
-                                newPath = xpath;
-                            }
-                            else
-                            {
-                                newPath = path + "," + xpath;
-                            }
-                            FindAllElementsFromPOM(newPath, pomSetting, parentContext, ParentGUID, foundElementsList, PomMetaData, isShadowRootDetected, pageSource);
-                            Driver.SwitchTo().ParentFrame();
-                        }
-
-                        if (eElementType.Form == elementTypeEnum.Item2)
-                        {
-                            formElementsList.Add(htmlElemNode);
+                            ProcessShadowDOMElements(pomSetting, webElement, foundElementInfo, path, foundElementsList, PomMetaData);
                         }
                     }
-                    catch (Exception ex)
+
+                    // Handle iframe elements
+                    if (elementTypeEnum.Item2 == eElementType.Iframe)
                     {
-                        Reporter.ToLog(eLogLevel.DEBUG, string.Format("Failed to learn the Web Element '{0}'", htmlElemNode.Name), ex);
+                        ProcessIframeElement(parentContext, htmlElemNode, path, pomSetting, ParentGUID, foundElementsList, PomMetaData, isShadowRootDetected, pageSource);
+                    }
+
+                    // Collect form elements
+                    if (elementTypeEnum.Item2 == eElementType.Form)
+                    {
+                        CollectFormElements(formElementsList, htmlElemNode);
                     }
                 }
-            }
-
-            int pomActivityIndex = 1;
-            if (formElementsList.Any())
-            {
-                foreach (HtmlNode formElement in formElementsList)
+                catch (Exception ex)
                 {
-                    POMPageMetaData pomMetaData = new POMPageMetaData();
-                    pomMetaData.Type = POMPageMetaData.MetaDataType.Form;
-                    pomMetaData.Name = formElement.GetAttributeValue("name", "") != string.Empty ? formElement.GetAttributeValue("name", "") : formElement.GetAttributeValue("id", "");
-                    if (string.IsNullOrEmpty(pomMetaData.Name))
-                    {
-                        pomMetaData.Name = "POM Activity - " + Driver.Title + " " + pomActivityIndex;
-                        pomActivityIndex++;
-                    }
-                    else
-                    {
-                        pomMetaData.Name += " " + Driver.Title;
-                    }
-
-                    IEnumerable<HtmlNode> formInputElements = formElement.Descendants().Where(x => x.Name.StartsWith("input"));
-                    CreatePOMMetaData(foundElementsList, formInputElements.ToList(), pomMetaData, pomSetting);
-                    IEnumerable<HtmlNode> formButtonElements = formElement.Descendants().Where(x => x.Name.StartsWith("button"));
-                    CreatePOMMetaData(foundElementsList, formButtonElements.ToList(), pomMetaData, pomSetting);
-
-                    PomMetaData.Add(pomMetaData);
-
+                    Reporter.ToLog(eLogLevel.DEBUG, $"Failed to learn the Web Element '{htmlElemNode.Name}'", ex);
                 }
             }
+
+            // Process form elements and add metadata
+            ProcessFormElements(formElementsList, Driver, pomSetting, foundElementsList, PomMetaData);
 
             return foundElementsList;
         }
 
+
+        // Method to determine if the element should be learned
+        private bool ShouldLearnElement(PomSetting pomSetting, eElementType elementType)
+        {
+            if (pomSetting == null || pomSetting.filteredElementType == null)
+            {
+                return true; // Learn all elements if no filtering is specified
+            }
+
+            return pomSetting.filteredElementType.Contains(elementType);
+        }
+
+        // Method to retrieve the web element corresponding to the HTML node
+        private IWebElement GetWebElement(ISearchContext parentContext, HtmlNode htmlElemNode, eElementType elementType, bool isShadowRootDetected)
+        {
+            string xpath = htmlElemNode.XPath;
+            if (elementType == eElementType.Svg)
+            {
+                if (!isShadowRootDetected)
+                {
+                    xpath = string.Concat(htmlElemNode.ParentNode.XPath, "//*[local-name()='svg']");
+                }
+            }
+
+            return parentContext is ShadowRoot shadowRoot ? shadowRoot.FindElement(By.CssSelector(shadowDOM.ConvertXPathToCssSelector(xpath))) :
+                                                            parentContext.FindElement(By.XPath(xpath));
+        }
+
+        // Method to check if an element is visible
+        private bool IsElementVisible(IWebElement webElement)
+        {
+            if (!webElement.Displayed || webElement.Size.Width == 0 || webElement.Size.Height == 0)
+            {
+                if (webElement.GetCssValue("display").Equals("none", StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+                else if (webElement.GetCssValue("width").Equals("auto") || webElement.GetCssValue("height").Equals("auto"))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Method to create HTMLElementInfo object
+        private HTMLElementInfo CreateHTMLElementInfo(IWebElement webElement, string path, HtmlNode htmlElemNode, string elementType, eElementType elementTypeEnum, Guid parentGUID, PomSetting pomSetting, string Sequence ="")
+        {
+            string xpath = htmlElemNode.XPath;
+            var parentPOMGuid = parentGUID.Equals(Guid.Empty) ? Guid.Empty.ToString() : parentGUID.ToString();
+            HTMLElementInfo foundElementInfo = new HTMLElementInfo()
+            {
+                ElementType = elementType,
+                ElementTypeEnum = elementTypeEnum,
+                ElementObject = webElement,
+                Path = path,
+                HTMLElementObject = htmlElemNode,
+                XPath = xpath,
+                IsAutoLearned = true
+            };
+
+            ((IWindowExplorer)this).LearnElementInfoDetails(foundElementInfo, pomSetting);
+            foundElementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.ParentPOMGUID, Value = parentPOMGuid, ShowOnUI = false });
+            foundElementInfo.Properties.Add(new ControlProperty() { Name = ElementProperty.Sequence, Value = Sequence, ShowOnUI = false });
+
+            if (ExtraLocatorsRequired)
+            {
+                GetRelativeXpathElementLocators(foundElementInfo);
+
+                if (pomSetting != null && pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
+                {
+                    foreach (var template in pomSetting.relativeXpathTemplateList)
+                    {
+                        CreateXpathFromUserTemplate(template, foundElementInfo);
+                    }
+                }
+            }
+
+            // Element Screenshot
+            if (pomSetting.LearnScreenshotsOfElements)
+            {
+                foundElementInfo.ScreenShotImage = TakeElementScreenShot(webElement);
+            }
+
+            return foundElementInfo;
+        }
+
+        // Method to process elements within shadow DOM
+        private void ProcessShadowDOMElements(PomSetting pomSetting, IWebElement webElement, HTMLElementInfo foundElementInfo, string path, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData)
+        {
+            ISearchContext shadowRoot = shadowDOM.GetShadowRootIfExists(webElement);
+            if (shadowRoot == null)
+            {
+                return;
+            }
+
+            string innerHTML = shadowDOM.GetHTML(shadowRoot, Driver);
+            if (!string.IsNullOrEmpty(innerHTML))
+            {
+                FindAllElementsFromPOM(path, pomSetting, shadowRoot, foundElementInfo.Guid, foundElementsList, PomMetaData, true, innerHTML);
+            }
+        }
+
+        // Method to process iframe elements
+        private void ProcessIframeElement(ISearchContext parentContext, HtmlNode htmlElemNode, string path, PomSetting pomSetting, Guid parentGUID, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData,bool isShadowRootDetected = false, string pageSource = null)
+        {
+            string xpath = htmlElemNode.XPath;
+            IWebElement webElement = parentContext is ShadowRoot shadowRoot ? shadowRoot.FindElement(By.CssSelector(shadowDOM.ConvertXPathToCssSelector(xpath))) :
+                                                                                parentContext.FindElement(By.XPath(xpath));
+            Driver.SwitchTo().Frame(webElement);
+            string newPath = path == string.Empty ? xpath : path + "," + xpath;
+            FindAllElementsFromPOM(newPath, pomSetting, parentContext, parentGUID, foundElementsList, PomMetaData, isShadowRootDetected, pageSource);
+            Driver.SwitchTo().ParentFrame();
+        }
+
+        // Method to collect form elements
+        private void CollectFormElements(List<HtmlNode> formElementsList, HtmlNode formElement)
+        {
+            formElementsList.Add(formElement);
+        }
+
+        // Method to process form elements and add metadata
+        private void ProcessFormElements(List<HtmlNode> formElementsList, IWebDriver driver, PomSetting pomSetting, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData)
+        {
+            int pomActivityIndex = 1;
+            foreach (HtmlNode formElement in formElementsList)
+            {
+                POMPageMetaData pomMetaData = new POMPageMetaData();
+                pomMetaData.Type = POMPageMetaData.MetaDataType.Form;
+                pomMetaData.Name = formElement.GetAttributeValue("name", string.Empty) != string.Empty ? formElement.GetAttributeValue("name", string.Empty) : formElement.GetAttributeValue("id", string.Empty);
+
+                if (string.IsNullOrEmpty(pomMetaData.Name))
+                {
+                    pomMetaData.Name = "POM Activity - " + driver.Title + " " + pomActivityIndex++;
+                }
+                else
+                {
+                    pomMetaData.Name += " " + driver.Title;
+                }
+
+                IEnumerable<HtmlNode> formInputElements = formElement.Descendants().Where(x => x.Name.StartsWith("input"));
+                CreatePOMMetaData(foundElementsList, formInputElements.ToList(), pomMetaData, pomSetting);
+
+                IEnumerable<HtmlNode> formButtonElements = formElement.Descendants().Where(x => x.Name.StartsWith("button"));
+                CreatePOMMetaData(foundElementsList, formButtonElements.ToList(), pomMetaData, pomSetting);
+
+                PomMetaData.Add(pomMetaData);
+            }
+        }
 
         private void CreatePOMMetaData(ObservableList<ElementInfo> foundElementsList, List<HtmlNode> formChildElements, POMPageMetaData pomMetaData, PomSetting pomSetting = null)
         {
@@ -5185,7 +5200,7 @@ namespace GingerCore.Drivers
             else if (htmlNode != null)
             {
                 elementTagName = htmlNode.Name;
-                if (htmlNode.Attributes.FirstOrDefault(x => x.Name == "type") != null)
+                if (htmlNode.Attributes.Any(x => x.Name == "type"))
                 {
                     elementTypeAtt = htmlNode.Attributes["type"].Value;
                 }
@@ -5196,106 +5211,51 @@ namespace GingerCore.Drivers
                 return returnTuple;
             }
 
-            if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "UNDEFINED" || elementTypeAtt.ToUpper() == "TEXT" || elementTypeAtt.ToUpper() == "PASSWORD" || elementTypeAtt.ToUpper() == "EMAIL"
-                                                        || elementTypeAtt.ToUpper() == "TEL" || elementTypeAtt.ToUpper() == "SEARCH" || elementTypeAtt.ToUpper() == "NUMBER" || elementTypeAtt.ToUpper() == "URL"
-                                                        || elementTypeAtt.ToUpper() == "DATE")) || elementTagName.ToUpper() == "TEXTAREA" || elementTagName.ToUpper() == "TEXT")
-            {
-                elementType = eElementType.TextBox;
-            }
-            else if ((elementTagName.ToUpper() == "INPUT" && (elementTypeAtt.ToUpper() == "IMAGE" || elementTypeAtt.ToUpper() == "SUBMIT" || elementTypeAtt.ToUpper() == "BUTTON")) ||
-                    elementTagName.ToUpper() == "BUTTON" || elementTagName.ToUpper() == "SUBMIT" || elementTagName.ToUpper() == "RESET")
-            {
-                elementType = eElementType.Button;
-            }
-            else if (elementTagName.ToUpper() == "TD" || elementTagName.ToUpper() == "TH" || elementTagName.ToUpper() == "TR")
-            {
-                elementType = eElementType.TableItem;
-            }
-            else if (elementTagName.ToUpper() == "LINK" || elementTagName.ToUpper() == "A" || elementTagName.ToUpper() == "LI")
-            {
-                elementType = eElementType.HyperLink;
-            }
-            else if (elementTagName.ToUpper() == "LABEL" || elementTagName.ToUpper() == "TITLE")
-            {
-                elementType = eElementType.Label;
-            }
-            else if (elementTagName.ToUpper() == "SELECT" || elementTagName.ToUpper() == "SELECT-ONE")
-            {
-                elementType = eElementType.ComboBox;
-            }
-            else if (elementTagName.ToUpper() == "TABLE" || elementTagName.ToUpper() == "CAPTION")
-            {
-                elementType = eElementType.Table;
-            }
-            else if (elementTagName.ToUpper() == "JEDITOR.TABLE")
-            {
-                elementType = eElementType.EditorPane;
-            }
-            else if (elementTagName.ToUpper() == "DIV")
-            {
-                elementType = eElementType.Div;
-            }
-            else if (elementTagName.ToUpper() == "SPAN")
-            {
-                elementType = eElementType.Span;
-            }
-            else if (elementTagName.ToUpper() == "IMG" || elementTagName.ToUpper() == "MAP")
-            {
-                elementType = eElementType.Image;
-            }
-            else if ((elementTagName.ToUpper() == "INPUT" && elementTypeAtt.ToUpper() == "CHECKBOX") || (elementTagName.ToUpper() == "CHECKBOX"))
-            {
-                elementType = eElementType.CheckBox;
-            }
-            else if (elementTagName.ToUpper() == "OPTGROUP" || elementTagName.ToUpper() == "OPTION")
-            {
-
-                elementType = eElementType.ComboBoxOption;
-            }
-            else if ((elementTagName.ToUpper() == "INPUT" && elementTypeAtt.ToUpper() == "RADIO") || (elementTagName.ToUpper() == "RADIO"))
-            {
-                elementType = eElementType.RadioButton;
-            }
-            else if (elementTagName.ToUpper() == "IFRAME" || elementTagName.ToUpper() == "FRAME" || elementTagName.ToUpper() == "FRAMESET")
-            {
-                elementType = eElementType.Iframe;
-            }
-            else if (elementTagName.ToUpper() == "CANVAS")
-            {
-                elementType = eElementType.Canvas;
-            }
-            else if (elementTagName.ToUpper() == "FORM")
-            {
-                elementType = eElementType.Form;
-            }
-            else if (elementTagName.ToUpper() == "UL" || elementTagName.ToUpper() == "OL" || elementTagName.ToUpper() == "DL")
-            {
-                elementType = eElementType.List;
-            }
-            else if (elementTagName.ToUpper() == "LI" || elementTagName.ToUpper() == "DT" || elementTagName.ToUpper() == "DD")
-            {
-                elementType = eElementType.ListItem;
-            }
-            else if (elementTagName.ToUpper() == "MENU")
-            {
-                elementType = eElementType.MenuBar;
-            }
-            else if (elementTagName.ToUpper() == "H1" || elementTagName.ToUpper() == "H2" || elementTagName.ToUpper() == "H3" || elementTagName.ToUpper() == "H4" || elementTagName.ToUpper() == "H5" || elementTagName.ToUpper() == "H6" || elementTagName.ToUpper() == "P")
-            {
-                elementType = eElementType.Text;
-            }
-            else if (elementTagName.ToUpper() == "SVG")
-            {
-                elementType = eElementType.Svg;
-            }
-            else
-            {
-                elementType = eElementType.Unknown;
-            }
+            elementType = GetElementType(elementTagName, elementTypeAtt);
 
             returnTuple = new Tuple<string, eElementType>(elementTagName, elementType);
 
             return returnTuple;
+        }
+
+        private static eElementType GetElementType(string elementTagName, string elementTypeAtt)
+        {
+            eElementType elementType;
+            elementType = elementTagName.ToUpper() switch
+            {
+                "INPUT" => elementTypeAtt.ToUpper() switch
+                {
+                    "UNDEFINED" or "TEXT" or "PASSWORD" or "EMAIL" or "TEL" or "SEARCH" or "NUMBER" or "URL" or "DATE" => eElementType.TextBox,
+                    "IMAGE" or "SUBMIT" or "BUTTON" => eElementType.Button,
+                    "CHECKBOX" => eElementType.CheckBox,
+                    "RADIO" => eElementType.RadioButton,
+                    _ => eElementType.Unknown,
+                },
+                "TEXTAREA" or "TEXT" => eElementType.TextBox,
+                "RESET" or "SUBMIT" or "BUTTON" => eElementType.Button,
+                "TD" or "TH" or "TR" => eElementType.TableItem,
+                "LINK" or "A" => eElementType.HyperLink,//case "LI":
+                "LABEL" or "TITLE" => eElementType.Label,
+                "SELECT" or "SELECT-ONE" => eElementType.ComboBox,
+                "TABLE" or "CAPTION" => eElementType.Table,
+                "JEDITOR.TABLE" => eElementType.EditorPane,
+                "DIV" => eElementType.Div,
+                "SPAN" => eElementType.Span,
+                "IMG" or "MAP" => eElementType.Image,
+                "CHECKBOX" => eElementType.CheckBox,
+                "OPTGROUP" or "OPTION" => eElementType.ComboBoxOption,
+                "RADIO" => eElementType.RadioButton,
+                "IFRAME" or "FRAME" or "FRAMESET" => eElementType.Iframe,
+                "CANVAS" => eElementType.Canvas,
+                "FORM" => eElementType.Form,
+                "UL" or "OL" or "DL" => eElementType.List,
+                "LI" or "DT" or "DD" => eElementType.ListItem,
+                "MENU" => eElementType.MenuBar,
+                "H1" or "H2" or "H3" or "H4" or "H5" or "H6" or "P" => eElementType.Text,
+                "SVG" => eElementType.Svg,
+                _ => eElementType.Unknown,
+            };
+            return elementType;
         }
 
         ElementInfo IWindowExplorer.LearnElementInfoDetails(ElementInfo EI, PomSetting pomSetting)
@@ -6643,6 +6603,9 @@ namespace GingerCore.Drivers
         /// <returns>String image base64</returns>
         private string TakeElementScreenShot(IWebElement element)
         {
+            IJavaScriptExecutor js = (IJavaScriptExecutor)Driver;
+            js.ExecuteScript("arguments[0].style.transition = 'none'", element);
+
             var screenshot = ((ITakesScreenshot)element).GetScreenshot();
             Bitmap image = ScreenshotToImage(screenshot);
             byte[] byteImage;
