@@ -152,6 +152,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.AddEditPOMWizardLib
                     xReLearnButton.Visibility = Visibility.Visible;
                     mWizard.ProcessEnded();
                     StopTimer();
+                    Reporter.ToLog(eLogLevel.INFO, $"Total time taken to learn '{mWizard.mPomLearnUtils.POM.Name}' POM is {(int)elapsedTime.TotalMinutes:00}:{elapsedTime.Seconds:00}");
                 }
             }
         }
