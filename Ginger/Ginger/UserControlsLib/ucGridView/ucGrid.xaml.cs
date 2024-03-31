@@ -2540,6 +2540,12 @@ namespace Ginger
             return selectedItemsList;
         }
 
+        public RepositoryItemBase GetSelectedItem()
+        {
+            return (RepositoryItemBase)grdMain.SelectedItem;
+        }
+
+
         public IObservableList GetSourceItemsAsIList()
         {
             return DataSourceList;
