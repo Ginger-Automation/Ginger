@@ -145,7 +145,7 @@ namespace Ginger.Variables
                            select type;
             if (mVariablesLevel.Equals(eVariablesLevel.EnvApplication))
             {
-                var selectedVarTypes = varTypes.Where((type) => type.Name.Equals(typeof(VariablePasswordString).Name) || type.Name.Equals(typeof(VariableString).Name) || type.Name.Equals(typeof(VariableNumber).Name));
+                var selectedVarTypes = varTypes.Where((type) => type.Name.Equals(typeof(VariablePasswordString).Name) || type.Name.Equals(typeof(VariableString).Name) || type.Name.Equals(typeof(VariableNumber).Name) || type.Name.Equals(typeof(VariableDynamic).Name));
 
                 varTypes = selectedVarTypes;    
             }
@@ -197,8 +197,8 @@ namespace Ginger.Variables
                 Button addParameterBtnToAllEn = new();
                 addParameterBtnToAllEn.Content = "Add Parameter to all Environments";
                 addParameterBtnToAllEn.Click += new RoutedEventHandler(AddVariablesToAllTheEnvironmentsButton_Click);
-                buttons.Add(addParameterBtn);
                 buttons.Add(addParameterBtnToAllEn);
+                buttons.Add(addParameterBtn);
             }
 
             else
@@ -242,22 +242,32 @@ namespace Ginger.Variables
         /// <param name="e"></param>
         private void AddVariablesToAllTheEnvironmentsButton_Click(object sender, RoutedEventArgs e)
         {
+            VariableBase varToAdd = (VariableBase)xLibraryTabListView.xListView.SelectedItem;
+            string Name = variableName.Text;
+            string Description = variableDescription.Text;
+            string? Value = varToAdd is VariableDateTime ? dtpInitialDate.Value.ToString() : variableValue.Text;
 
-            foreach (VariableBase varToAdd in xLibraryTabListView.List.SelectedItems)
+            varToAdd.Name = Name;
+            varToAdd.Description = Description;
+            varToAdd.SetInitialValue(Value);
+
+            ObservableList<ProjEnvironment> ProjEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+
+            ProjEnvironments.ForEach((projEnv) =>
             {
-                ObservableList<ProjEnvironment> ProjEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+                projEnv.StartDirtyTracking();
 
-                ProjEnvironments.ForEach((projEnv) =>
-
-                    projEnv.Applications.ForEach((envApp) =>
+                projEnv.Applications.ForEach((envApp) =>
+                {
+                    envApp.StartDirtyTracking();
+                    if (envApp.Name.Equals(((EnvApplication)mVariablesParentObj).Name) && !envApp.Variables.Any((var) => var.Name.Equals(varToAdd.Name)))
                     {
-                        if ( envApp.Name.Equals(((EnvApplication)mVariablesParentObj).Name)  && !envApp.Variables.Any((var) => var.Name.Equals(varToAdd.Name)))
-                        {
-                            envApp.Variables.Add(varToAdd);
-                        }
-                    })
-                );
+                        envApp.Variables.Add(varToAdd);
+                    }
+                });
             }
+            );
+            _pageGenericWin.Close();
         }
 
         private bool AddLibraryVariables()

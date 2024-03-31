@@ -145,11 +145,11 @@ namespace GingerCore.Environments
                 else
                 {
                     Variables.Add(
-                         new VariableString()
+                         new VariableDynamic()
                          {
                              Name = generalParam.Name,
                              Description = generalParam.Description,
-                             InitialStringValue = generalParam.Value
+                             ValueExpression = generalParam.Value
                          }
                         );
                 }

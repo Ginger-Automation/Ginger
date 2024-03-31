@@ -26,6 +26,7 @@ using Ginger.SolutionGeneral;
 using Ginger.UserControlsLib;
 using GingerCore;
 using GingerCore.Actions;
+using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using System;
@@ -145,7 +146,14 @@ namespace Ginger.Variables
             mVariable.PropertyChanged += mVariable_PropertyChanged;
             LoadVarPage();
 
-            SetLinkedVarCombo();
+            if(parent is EnvApplication)
+            {
+                LinkedVariableStackPanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                SetLinkedVarCombo();
+            }
 
             if (mVariable.Tags == null)
             {

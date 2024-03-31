@@ -133,7 +133,7 @@ namespace GingerCore.Variables
 
         public override void SetInitialValue(string InitialValue)
         {
-            this.Value = InitialValue;
+            this.ValueExpression = InitialValue;
         }
     }
 }

@@ -48,7 +48,7 @@ namespace Ginger.Environments
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
 
             UpdateParametersTabHeader();
-            CollectionChangedEventManager.AddHandler(source: app.GeneralParams, handler: GeneralParams_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: app.Variables, handler: GeneralParams_CollectionChanged);
             UpdateDBsTabHeader();
             CollectionChangedEventManager.AddHandler(source: app.Dbs, handler: Dbs_CollectionChanged);
             ColorSelectedTab();
@@ -61,7 +61,7 @@ namespace Ginger.Environments
 
         private void UpdateParametersTabHeader()
         {
-            xParamsTabHeaderText.Text = string.Format("Parameters ({0})", mEnvApplication.GeneralParams.Count);
+            xParamsTabHeaderText.Text = string.Format("Parameters ({0})", mEnvApplication.Variables.Count);
         }
 
         private void Dbs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
