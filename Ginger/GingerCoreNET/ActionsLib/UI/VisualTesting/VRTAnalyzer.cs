@@ -200,7 +200,7 @@ namespace GingerCore.Actions.VisualTesting
                 Image image;
                 if (mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ActionBy).Value == eActionBy.Window.ToString())
                 {
-                    if(mAct.CreateBaselineImage == true)
+                    if(mAct.CreateBaselineImage)
                     {
                         if(mAct.GetInputParamValue(VRTAnalyzer.BaselineImage) == eBaselineImageBy.ActiveWindow.ToString())
                         {

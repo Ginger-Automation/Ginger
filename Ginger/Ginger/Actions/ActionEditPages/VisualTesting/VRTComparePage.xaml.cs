@@ -139,6 +139,7 @@ namespace Ginger.Actions.VisualTesting
                     xCreateBaseline.Visibility = Visibility.Collapsed;
                     xCreateBaselineCheckbox.Visibility = Visibility.Collapsed;
                     xPreviewImage.Visibility = Visibility.Collapsed;
+                    xCreateBaselineNote.Visibility = Visibility.Collapsed;
                     break;
                 case VRTAnalyzer.eVRTAction.Track:
                     xDiffTollerancePercentLabel.Visibility = Visibility.Visible;
@@ -226,6 +227,7 @@ namespace Ginger.Actions.VisualTesting
                     xCreateBaseline.Visibility = Visibility.Collapsed;
                     xCreateBaselineCheckbox.Visibility = Visibility.Collapsed;
                     xPreviewImage.Visibility = Visibility.Collapsed;
+                    xCreateBaselineNote.Visibility = Visibility.Collapsed;
                     break;
             }
         }
