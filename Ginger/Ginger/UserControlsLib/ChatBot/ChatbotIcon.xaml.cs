@@ -13,11 +13,9 @@ namespace Amdocs.Ginger.UserControls
         }
 
 
-        private void ChatbotIcon_Click(object sender, RoutedEventArgs e)
+        private void Lisa_Click(object sender, RoutedEventArgs e)
         {
-            ChatbotWindow chatWindow = new ChatbotWindow();
            
-            
         }
     }
 }

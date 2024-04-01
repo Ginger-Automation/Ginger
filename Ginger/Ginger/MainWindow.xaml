@@ -307,14 +307,11 @@
                 <usercontrols:ImageMakerControl ImageType="GingerSplash"/>
                 <Label x:Name="lblAppVersion" Content="Version 2023.4-Alpha 0.1" Style="{StaticResource $LabelStyle}" Foreground="WhiteSmoke"  FontWeight="Bold"  HorizontalAlignment="Left" Margin="476,374,0,0" Width="164" Height="47" VerticalAlignment="Top"/>
             </Grid>
-            <DockPanel Grid.Row="1" Grid.Column="1">
-                <usercontrols:ChatbotIcon DockPanel.Dock="Bottom" Visibility="Visible"/>
-                <usercontrols:ChatbotWindow Grid.Column="1" Visibility="Collapsed" Margin="850,10,0,0" Background="GhostWhite" BorderBrush="#8a57ea" BorderThickness="3"/>
-            </DockPanel>
 
             <DockPanel LastChildFill="False" Grid.Row="1">
-                <usercontrols:ChatbotIcon DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="10,10,50,10"/>
-               
+                <usercontrols:ChatbotIcon x:Name="xChatbotIcon" MouseDown="ChatbotIcon_MouseDown" Visibility="Visible" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="10,10,50,0"/>
+                <usercontrols:ChatbotWindow x:Name="xChatbotWindow" Grid.Column="1" Visibility="Collapsed" Margin="850,10,0,0" Background="GhostWhite" BorderBrush="#8a57ea" BorderThickness="3"/>
+
             </DockPanel>
 
             <!--<DockPanel LastChildFill="True"  Grid.Row="1">

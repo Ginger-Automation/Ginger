@@ -1647,5 +1647,15 @@ namespace Ginger
                 App.MainWindow.Close();
             }
         }
+
+        private void ChatbotIcon_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if(xChatbotWindow.Visibility == Visibility.Collapsed)
+            {
+                xChatbotWindow.Visibility = Visibility.Visible;
+                xChatbotIcon.Visibility = Visibility.Collapsed;
+            }
+            
+        }
     }
 }

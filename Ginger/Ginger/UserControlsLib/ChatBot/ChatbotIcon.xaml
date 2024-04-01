@@ -5,15 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
              mc:Ignorable="d" 
-             d:DesignHeight="50" d:DesignWidth="50">
-    <Button x:Name="xChatbotIcon" Width="50" Height="50" Click="ChatbotIcon_Click" Background="Blue" Foreground="White" BorderThickness="0" BorderBrush="Transparent" >
-        <Button.Template>
-            <ControlTemplate TargetType="Button">
-                <Grid>
-                    <Ellipse Fill="MediumPurple" />
-                    <usercontrols:ImageMakerControl x:Name="xChatbot" Grid.Row="1" ImageType="Chatbot" Width="50" Foreground="LightGray" />
-                </Grid>
-            </ControlTemplate>
-        </Button.Template>
-    </Button>
+             Height="30" Width="98">
+    <Grid>
+        <Button Click="Lisa_Click" Style="{StaticResource $RoundTextButtonStyle_Generic}" Content="Ask Lisa" Foreground="White" Background="#f05c62" />
+    </Grid>
 </UserControl>
