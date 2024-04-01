@@ -30,15 +30,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
         public async Task<RunSetConfig?> LoadAsync(RunSetReport runsetReport)
         {
             string executionId = runsetReport.GUID;
-            Guid runsetId;
-            if (executionId.Contains('-'))
-            {
-                runsetId = Guid.Parse(executionId);
-            }
-            else
-            {
-                runsetId = Guid.ParseExact(executionId, "N");
-            }
+            Guid runsetId = runsetReport.RunSetGuid;
             RunSetConfig? runset = GetRunsetFromSolutionRepository(runsetId);
 
             if (runset == null)
