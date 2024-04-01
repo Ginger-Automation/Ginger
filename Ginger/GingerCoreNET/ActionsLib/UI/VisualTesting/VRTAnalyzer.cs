@@ -93,7 +93,7 @@ namespace GingerCore.Actions.VisualTesting
 
         public enum eBaselineImageBy
         {
-            [EnumValueDescription("Create baseline from active Window")]
+            [EnumValueDescription("Create baseline from active window")]
             ActiveWindow,
             [EnumValueDescription("Image File")]
             ImageFile,
