@@ -592,14 +592,17 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         var pageViewMode = mContext.Activity.Type == Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation : Ginger.General.eRIPageViewMode.ViewAndExecute;
                         mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode, highlightActivityName:true);
-                        mActivityDetailsPage = new ActivityDetailsPage(mContext.Activity, mContext, pageViewMode);
-                        mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged += OnTargetApplicationChanged;
                     }
                     else
                     {
                         mActivityPage.UpdateActivity(mContext.Activity);
                         ToggleActivityPageUIButtons(!mExecutionIsInProgress);
                     }
+                    mActivityDetailsPage = new ActivityDetailsPage(mContext.Activity, mContext, mContext.Activity.Type == Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation : Ginger.General.eRIPageViewMode.ViewAndExecute);
+
+                    mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged -= OnTargetApplicationChanged;
+                    mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged += OnTargetApplicationChanged;
+
                 }
                 else
                 {
