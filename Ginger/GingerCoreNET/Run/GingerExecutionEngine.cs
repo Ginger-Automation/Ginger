@@ -3589,18 +3589,18 @@ namespace Ginger.Run
 
             foreach(VariableBase mappedTargetVar in mappedTargetVars)
             {
+                if (!Guid.TryParse(mappedTargetVar.MappedOutputValue, out Guid mappedSourceVarGuid))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Value '{mappedTargetVar.MappedOutputValue}' is not a valid GUID for mapping input {GingerDicser.GetTermResValue(eTermResKey.Variable)}.");
+                    continue;
+                }
+
                 Activity mappedSourceActivity = prevActivities
                     .FirstOrDefault(prevActivity => prevActivity.Guid == mappedTargetVar.VariableReferenceEntity);
                 
                 if (mappedSourceActivity == null)
                 {
                     Reporter.ToLog(eLogLevel.ERROR, $"No Activity('{mappedTargetVar.VariableReferenceEntity}') found by id in {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} before current {GingerDicser.GetTermResValue(eTermResKey.Activity)}({activity.Guid}-{activity.ActivityName}).");
-                    continue;
-                }
-
-                if (!Guid.TryParse(mappedTargetVar.MappedOutputValue, out Guid mappedSourceVarGuid))
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, $"Value '{mappedTargetVar.MappedOutputValue}' is not a valid GUID for mapping input {GingerDicser.GetTermResValue(eTermResKey.Variable)}.");
                     continue;
                 }
 
@@ -3616,7 +3616,12 @@ namespace Ginger.Run
                 }
 
                 Reporter.ToLog(eLogLevel.INFO, $"Setting value '{mappedSourceVar.Value}' from {GingerDicser.GetTermResValue(eTermResKey.Variable)}({mappedSourceVar.Guid}-{mappedSourceVar.Name}) to {GingerDicser.GetTermResValue(eTermResKey.Variable)}({mappedTargetVar.Guid}-{mappedTargetVar.Name}).");
-                mappedTargetVar.SetValue(mappedSourceVar.Value);
+                
+                bool wasValueSet = mappedTargetVar.SetValue(mappedSourceVar.Value);
+                if (!wasValueSet)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to set value '{mappedSourceVar.Value}' to {GingerDicser.GetTermResValue(eTermResKey.Variable)}({mappedTargetVar.Guid}-{mappedTargetVar.Name})");
+                }
             }
         }
 
