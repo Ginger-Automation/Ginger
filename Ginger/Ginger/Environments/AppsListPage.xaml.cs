@@ -69,7 +69,7 @@ namespace Ginger.Environments
 
 
 
-            if (ApplicationPlatforms == null || ApplicationPlatforms?.Count == 0)
+            if (ApplicationPlatforms?.Count == 0)
             {
 
                 Reporter.ToUser(eUserMsgKey.NoApplicationPlatformLeft, AppEnvironment.Name);
