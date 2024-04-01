@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Ginger.UserControls;
+using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
@@ -41,7 +42,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Active), Header = " " , StyleType = GridColView.eGridColStyleType.CheckBox });
-            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Name), Header = "Target Application", WidthWeight = 60});
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Name), Header = GingerDicser.GetTermResValue(eTermResKey.TargetApplication), WidthWeight = 60});
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Platform),Header = "Platform Type" , WidthWeight = 40 });
 
