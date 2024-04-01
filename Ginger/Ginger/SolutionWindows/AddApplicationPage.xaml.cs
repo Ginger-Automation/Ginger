@@ -43,6 +43,8 @@ namespace Ginger.SolutionWindows
         public AddApplicationPage(Solution Solution , bool isSolutionNew)
         {
             InitializeComponent();
+            SelectApplicationGrid.SelectionMode = DataGridSelectionMode.Single;
+
             SetAppsGridView();
             InitGridData();
             mSolution = Solution;
