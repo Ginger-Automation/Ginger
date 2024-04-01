@@ -83,6 +83,7 @@ namespace GingerCore.Environments
         }
         public VariableBase GetVariable(string ParamName)
         {
+            ConvertGeneralParamsToVariable();
             return Variables.FirstOrDefault((variable)=>variable.Name.Equals(ParamName));
 
         }
