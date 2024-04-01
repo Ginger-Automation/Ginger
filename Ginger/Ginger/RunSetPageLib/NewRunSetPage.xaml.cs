@@ -2363,8 +2363,8 @@ namespace Ginger.Run
             string imageFolderPath = Path.Combine(clientAppPath, "assets", "screenshots");
 
             int totalRunners = liteDbRunSet.RunnersColl.Count;
-            int totalPassed = liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Passed.ToString()).Count();
-            int totalExecuted = totalRunners - liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Pending.ToString() || runner.RunStatus == eRunStatus.Skipped.ToString() || runner.RunStatus == eRunStatus.Blocked.ToString()).Count();
+            int totalPassed = liteDbRunSet.RunnersColl.Count(runner => runner.RunStatus == eRunStatus.Passed.ToString());
+            int totalExecuted = totalRunners - liteDbRunSet.RunnersColl.Count(runner => runner.RunStatus == eRunStatus.Pending.ToString() || runner.RunStatus == eRunStatus.Skipped.ToString() || runner.RunStatus == eRunStatus.Blocked.ToString());
 
             liteDbRunSet.ExecutionRate = (totalExecuted * 100 / totalRunners).ToString();
             liteDbRunSet.PassRate = (totalPassed * 100 / totalRunners).ToString();
@@ -2373,8 +2373,8 @@ namespace Ginger.Run
             {
 
                 int totalBFs = liteDbRunner.BusinessFlowsColl.Count;
-                int totalPassedBFs = liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Passed.ToString()).Count();
-                int totalExecutedBFs = totalBFs - liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Pending.ToString() || bf.RunStatus == eRunStatus.Skipped.ToString() || bf.RunStatus == eRunStatus.Blocked.ToString()).Count();
+                int totalPassedBFs = liteDbRunner.BusinessFlowsColl.Count(bf => bf.RunStatus == eRunStatus.Passed.ToString());
+                int totalExecutedBFs = totalBFs - liteDbRunner.BusinessFlowsColl.Count(bf => bf.RunStatus == eRunStatus.Pending.ToString() || bf.RunStatus == eRunStatus.Skipped.ToString() || bf.RunStatus == eRunStatus.Blocked.ToString());
 
                 liteDbRunner.ExecutionRate = (totalExecutedBFs * 100 / totalBFs).ToString();
                 liteDbRunner.PassRate = (totalPassedBFs * 100 / totalExecutedBFs).ToString();
@@ -2382,8 +2382,8 @@ namespace Ginger.Run
                 foreach (LiteDbBusinessFlow liteDbBusinessFlow in liteDbRunner.BusinessFlowsColl)
                 {
                     int totalActivities = liteDbBusinessFlow.ActivitiesColl.Count;
-                    int totalPassedActivities = liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
-                    int totalExecutedActivities = totalActivities - liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Pending.ToString() || ac.RunStatus == eRunStatus.Skipped.ToString() || ac.RunStatus == eRunStatus.Blocked.ToString()).Count();
+                    int totalPassedActivities = liteDbBusinessFlow.ActivitiesColl.Count(ac => ac.RunStatus == eRunStatus.Passed.ToString());
+                    int totalExecutedActivities = totalActivities - liteDbBusinessFlow.ActivitiesColl.Count(ac => ac.RunStatus == eRunStatus.Pending.ToString() || ac.RunStatus == eRunStatus.Skipped.ToString() || ac.RunStatus == eRunStatus.Blocked.ToString());
 
                     liteDbBusinessFlow.ExecutionRate = (totalExecutedActivities * 100 / totalActivities).ToString();
                     liteDbBusinessFlow.PassRate = (totalPassedActivities * 100 / totalExecutedActivities).ToString();
@@ -2391,8 +2391,8 @@ namespace Ginger.Run
                     foreach (LiteDbActivity liteDbActivity in liteDbBusinessFlow.ActivitiesColl)
                     {
                         int totalActions = liteDbActivity.ActionsColl.Count;
-                        int totalPassedActions = liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
-                        int totalExecutedActions = totalActions - liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Pending.ToString() || ac.RunStatus == eRunStatus.Skipped.ToString() || ac.RunStatus == eRunStatus.Blocked.ToString()).Count();
+                        int totalPassedActions = liteDbActivity.ActionsColl.Count(ac => ac.RunStatus == eRunStatus.Passed.ToString());
+                        int totalExecutedActions = totalActions - liteDbActivity.ActionsColl.Count(ac => ac.RunStatus == eRunStatus.Pending.ToString() || ac.RunStatus == eRunStatus.Skipped.ToString() || ac.RunStatus == eRunStatus.Blocked.ToString());
 
                         liteDbActivity.ExecutionRate = (totalExecutedActions * 100 / totalActions).ToString();
                         liteDbActivity.PassRate = (totalPassedActions * 100 / totalExecutedActions).ToString();

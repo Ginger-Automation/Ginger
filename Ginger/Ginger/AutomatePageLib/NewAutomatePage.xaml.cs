@@ -1681,7 +1681,7 @@ namespace GingerWPF.BusinessFlowsLib
                     ScenariosGenerator SG = new ScenariosGenerator();
                     SG.CreateScenarios(mBusinessFlow);
                     int cnt = mBusinessFlow.ActivitiesGroups.Count;
-                    int optCount = mBusinessFlow.ActivitiesGroups.Where(z => z.Name.StartsWith("Optimized Activities")).Count();
+                    int optCount = mBusinessFlow.ActivitiesGroups.Count(z => z.Name.StartsWith("Optimized Activities"));
                     if (optCount > 0)
                     {
                         cnt = cnt - optCount;
