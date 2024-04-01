@@ -489,6 +489,25 @@ namespace Ginger.Variables
                         VariableBase.UpdateVariableNameChangeInItem(action, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
                     });
                 }
+                else if (mParent is EnvApplication)
+                {   
+                    EnvApplication envApplication = (EnvApplication)mParent;
+                    envApplication.SetUniqueVariableName(mVariable);
+
+                    ObservableList<BusinessFlow> bfs = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+
+                    foreach (BusinessFlow bf in bfs)
+                    {
+                        foreach (Activity activity in bf.Activities)
+                        {
+                            foreach (Act action in activity.Acts)
+                            {
+                                bool changedwasDone = false;
+                                GeneralParam.UpdateNameChangeInItem(action, envApplication.Name, mVariable.NameBeforeEdit, mVariable.Name, ref changedwasDone);
+                            }
+                        }
+                    }
+                }
                 if (mVariable.SetAsOutputValue || mParent is Solution)
                 {
                     UpdateVariableNameInRunsets();

@@ -35,7 +35,7 @@ namespace GingerCore.Variables
         [IsSerializedForLocalRepository]
         public string ValueExpression
         {
-            set { mValueExpression = value; OnPropertyChanged("Formula"); }
+            set { mValueExpression = value; OnPropertyChanged(nameof(ValueExpression)); }
             get { return mValueExpression; }
         }
 

@@ -1410,7 +1410,15 @@ namespace GingerCore
                 VariableBase VB = app.GetVariable(GlobalParamName);
                 if (VB != null)
                 {
-                    ParamValue = VB.Value + "";  // Autohandle in case param is null convert to empty string
+                    if (VB is VariableDynamic variableDynamic) 
+                    {
+                        ParamValue = variableDynamic.ValueExpression + "";
+                        
+                    }
+                    else
+                    {
+                        ParamValue = VB.Value + "";  // Autohandle in case param is null convert to empty string
+                    }
 
                     if (DecryptFlag == true && VB is VariablePasswordString)
                     {
@@ -1638,6 +1646,11 @@ namespace GingerCore
                         {
                             VarValue = vb.Value;
                         }
+                    }
+                    else if (vb is VariableDynamic variableDynamic)
+                    {
+                        variableDynamic.Init(Env , BF);
+                        VarValue = variableDynamic.Value;
                     }
                     else
                     {
