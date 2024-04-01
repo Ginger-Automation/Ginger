@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 
 
-namespace Ginger
+namespace Amdocs.Ginger.UserControls
 {
     public partial class ChatbotIcon : UserControl
     {

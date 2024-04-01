@@ -300,8 +300,9 @@
             </Grid>
 
             <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="Transparent" />
-            <local:ChatbotIcon HorizontalAlignment="Right" Grid.Row="1" VerticalAlignment="Bottom" Margin="10"/>
-            <local:ChatbotWindow HorizontalAlignment="Right" Grid.Row="1" VerticalAlignment="Stretch" Margin="10"/>
+
+            <userControls:ChatbotIcon Grid.Column="1" Margin="1122,560,0,0"/>
+            <userControls:ChatbotWindow Grid.Column="1" Visibility="Collapsed" Margin="850,10,0,0" Background="GhostWhite" BorderBrush="#8a57ea" BorderThickness="3"/>
             <usercontrols:ImageMakerControl x:Name="xNoLoadedSolutionImg" Grid.Row="1" ImageType="GingerLogoGray" Width="250" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
             <Grid x:Name="xSplashGrid" Width="640" Height="419" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">

@@ -610,6 +610,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-regular-amdocs-gradient.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-regular-light-grey.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\send.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\VRTLogo.png" />
   </ItemGroup>
 
@@ -2448,6 +2449,9 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\save-regular-amdocs-gradient.svg" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\save-regular-light-grey.svg" />
     <Resource Include="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\send.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\VRTLogo.png">

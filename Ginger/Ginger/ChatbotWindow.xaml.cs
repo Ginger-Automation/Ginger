@@ -1,7 +1,9 @@
-﻿using System.Windows;
+﻿using ICSharpCode.AvalonEdit.Rendering;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
-namespace Ginger
+namespace Amdocs.Ginger.UserControls
 {
     public partial class ChatbotWindow : UserControl
     {
@@ -19,7 +21,7 @@ namespace Ginger
             txtInput.Text = "";
             string botResponse = GenerateDummyResponse(userInput);
 
-            AddMessage("Bot", botResponse);
+            AddMessage("Lisa", botResponse);
         }
         private void AddMessage(string sender, string message)
         {
@@ -32,7 +34,10 @@ namespace Ginger
 
         private string GenerateDummyResponse(string userMessage)
         {
-            return "Welcome to Ginger bot!";
+            return "Welcome to Ginger, I'm Lisa";
         }
+
+        
+
     }
 }
