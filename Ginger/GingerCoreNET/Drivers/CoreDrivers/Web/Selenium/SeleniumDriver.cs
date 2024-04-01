@@ -90,7 +90,7 @@ namespace GingerCore.Drivers
         private const string EDGE_DRIVER_NAME = "msedgedriver";
         private const string FIREFOX_DRIVER_NAME = "geckodriver";
 
-        private readonly List<string> HighlightStyleList = ["arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'" ];
+        private readonly List<string> HighlightStyleList = ["arguments[0].style.outline='3px dashed rgb(239, 183, 247)'", "arguments[0].style.backgroundColor='rgb(239, 183, 247)'", "arguments[0].style.border='3px dashed rgb(239, 183, 247)'"];
 
         public enum eBrowserType
         {
@@ -386,7 +386,7 @@ namespace GingerCore.Drivers
         {
             get
             {
-               return  _searchContext ?? Driver;
+                return _searchContext ?? Driver;
             }
             set
             {
@@ -911,7 +911,7 @@ namespace GingerCore.Drivers
                 else
                 {
                     throw new FileNotFoundException($"Invalid path provided in Custom Driver File in {nameof(DriverFilePath)} in Agent Configuration. Please provide valid path or consider removing it if not needed.");
-                } 
+                }
             }
         }
 
@@ -1530,7 +1530,7 @@ namespace GingerCore.Drivers
                 }
 
                 return;
-        }
+            }
 
 
             if (ActType == typeof(ActHello))
@@ -1540,7 +1540,7 @@ namespace GingerCore.Drivers
             }
 
             if (ActType == typeof(ActScreenShot))
-        {
+            {
                 ScreenshotHandler((ActScreenShot)act);
                 return;
             }
@@ -1614,7 +1614,7 @@ namespace GingerCore.Drivers
         {
             try
             {
-                if (act.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow )
+                if (act.WindowsToCapture == Act.eWindowsToCapture.OnlyActiveWindow)
                 {
                     AddCurrentScreenShot(act);
                 }
@@ -3815,7 +3815,7 @@ namespace GingerCore.Drivers
                 ElementLocator locator = new ElementLocator();
                 locator.LocateBy = locateBy;
                 locator.LocateValue = locateValue;
-                elem = LocateElementByLocator(locator, CurrentContext, null , AlwaysReturn);
+                elem = LocateElementByLocator(locator, CurrentContext, null, AlwaysReturn);
                 if (elem == null)
                 {
                     act.ExInfo += string.Format("Failed to locate the element with LocateBy='{0}' and LocateValue='{1}', Error Details:'{2}'", locator.LocateBy, locator.LocateValue, locator.LocateStatus);
@@ -3852,7 +3852,7 @@ namespace GingerCore.Drivers
                 }
             }
         }
-        
+
         // TODO: convert recursion to iteration    
         public IWebElement LocateElementByLocators(ElementInfo currentPOMElementInfo, IList<ElementInfo> MappedUIElements, bool iscallfromFriendlyLocator = false, POMExecutionUtils POMExecutionUtils = null)
         {
@@ -3867,7 +3867,7 @@ namespace GingerCore.Drivers
             ISearchContext ParentContext = Driver;
 
 
-            if(currentPOMElementInfo is HTMLElementInfo htmlCurrentElementInfo)
+            if (currentPOMElementInfo is HTMLElementInfo htmlCurrentElementInfo)
             {
                 var ParentPOMGuid = htmlCurrentElementInfo.FindParentPOMGuid();
 
@@ -3900,11 +3900,11 @@ namespace GingerCore.Drivers
                             ValueExpression VE = new ValueExpression(this.Environment, this.BusinessFlow);
                             FLocator.LocateValue = VE.Calculate(evaluatedLocator.LocateValue);
                         }
-            
+
                         if (FLocator.LocateBy == eLocateBy.POMElement && POMExecutionUtils != null)
                         {
                             ElementInfo ReferancePOMElementInfo = POMExecutionUtils.GetFriendlyElementInfo(new Guid(FLocator.LocateValue));
-                            
+
                             targetElement = LocateElementByLocators(ReferancePOMElementInfo, MappedUIElements, true, POMExecutionUtils);
                         }
                         else
@@ -3923,7 +3923,7 @@ namespace GingerCore.Drivers
                                     targetElement = LocateElementByLocator(locator, ParentContext);
                                 }
                             }
-             
+
                         }
                         if (targetElement != null)
                         {
@@ -3937,7 +3937,7 @@ namespace GingerCore.Drivers
                 }
 
 
-                   
+
                 if (!locator.IsAutoLearned)
                 {
                     if (shadowRoot != null)
@@ -3961,7 +3961,7 @@ namespace GingerCore.Drivers
                     {
 
                         elem = LocateElementByLocator(locator, shadowRoot, friendlyLocatorElementlist, true);
-                    
+
                     }
 
                     else
@@ -3972,7 +3972,7 @@ namespace GingerCore.Drivers
                         }
                     }
                 }
-            
+
                 if (elem != null)
                 {
                     locator.StatusError = string.Empty;
@@ -4771,6 +4771,12 @@ namespace GingerCore.Drivers
             });
         }
 
+        // Define a collection of excluded element names
+        internal static HashSet<string> excludedElementNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "noscript", "script", "style", "meta", "head", "link"
+        };
+
         private ObservableList<ElementInfo> FindAllElementsFromPOM(string path, PomSetting pomSetting, ISearchContext parentContext, Guid ParentGUID, ObservableList<ElementInfo> foundElementsList = null, ObservableList<POMPageMetaData> PomMetaData = null, bool isShadowRootDetected = false, string pageSource = null)
         {
             // Initialize lists if null
@@ -4781,7 +4787,12 @@ namespace GingerCore.Drivers
             string documentContents = pageSource ?? Driver.PageSource;
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(documentContents);
-            IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode.Descendants().Where(x => !x.Name.StartsWith('#'));
+
+            IEnumerable<HtmlNode> htmlElements = htmlDoc.DocumentNode
+                    .Descendants()
+                    .Where(x => !x.Name.StartsWith('#') && !excludedElementNames.Contains(x.Name)
+                                && !x.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase));
+
             List<HtmlNode> formElementsList = [];
             // Process HTML elements
             foreach (HtmlNode htmlElemNode in htmlElements)
@@ -4794,10 +4805,10 @@ namespace GingerCore.Drivers
                     }
 
                     // Skip elements inside <noscript> tags
-                    if (htmlElemNode.Name.Equals("noscript", StringComparison.OrdinalIgnoreCase) || htmlElemNode.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
+                    //if (htmlElemNode.Name.Equals("noscript", StringComparison.OrdinalIgnoreCase) || htmlElemNode.XPath.Contains("/noscript", StringComparison.OrdinalIgnoreCase))
+                    //{
+                    //    continue;
+                    //}
 
                     // Determine element type
                     Tuple<string, eElementType> elementTypeEnum = GetElementTypeEnum(htmlNode: htmlElemNode);
@@ -4900,7 +4911,7 @@ namespace GingerCore.Drivers
         }
 
         // Method to create HTMLElementInfo object
-        private HTMLElementInfo CreateHTMLElementInfo(IWebElement webElement, string path, HtmlNode htmlElemNode, string elementType, eElementType elementTypeEnum, Guid parentGUID, PomSetting pomSetting, string Sequence ="")
+        private HTMLElementInfo CreateHTMLElementInfo(IWebElement webElement, string path, HtmlNode htmlElemNode, string elementType, eElementType elementTypeEnum, Guid parentGUID, PomSetting pomSetting, string Sequence = "")
         {
             string xpath = htmlElemNode.XPath;
             var parentPOMGuid = parentGUID.Equals(Guid.Empty) ? Guid.Empty.ToString() : parentGUID.ToString();
@@ -4958,7 +4969,7 @@ namespace GingerCore.Drivers
         }
 
         // Method to process iframe elements
-        private void ProcessIframeElement(ISearchContext parentContext, HtmlNode htmlElemNode, string path, PomSetting pomSetting, Guid parentGUID, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData,bool isShadowRootDetected = false, string pageSource = null)
+        private void ProcessIframeElement(ISearchContext parentContext, HtmlNode htmlElemNode, string path, PomSetting pomSetting, Guid parentGUID, ObservableList<ElementInfo> foundElementsList, ObservableList<POMPageMetaData> PomMetaData, bool isShadowRootDetected = false, string pageSource = null)
         {
             string xpath = htmlElemNode.XPath;
             IWebElement webElement = parentContext is ShadowRoot shadowRoot ? shadowRoot.FindElement(By.CssSelector(shadowDOM.ConvertXPathToCssSelector(xpath))) :
@@ -5119,20 +5130,22 @@ namespace GingerCore.Drivers
                 foundElemntInfo.Locators.Add(elementLocator);
             }
 
-
             var innerText = foundElemntInfo.HTMLElementObject.InnerText;
             if (!string.IsNullOrEmpty(innerText))
             {
                 //relative xpath with Innertext Exact Match
-                var relXpathwithExactTextMatch = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, true);
-                if (!string.IsNullOrEmpty(relXpathwithExactTextMatch) && CheckElementLocateStatus(relXpathwithExactTextMatch))
+                if (innerText.Length < 20)
                 {
-                    var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithExactTextMatch, IsAutoLearned = true };
-                    foundElemntInfo.Locators.Add(elementLocator);
+                    var relXpathwithExactTextMatch = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, isExactMatch: true);
+                    if (!string.IsNullOrEmpty(relXpathwithExactTextMatch) && CheckElementLocateStatus(relXpathwithExactTextMatch))
+                    {
+                        var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithExactTextMatch, IsAutoLearned = true };
+                        foundElemntInfo.Locators.Add(elementLocator);
+                    }
                 }
 
                 //relative xpath with Contains Innertext
-                var relXpathwithContainsText = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, false);
+                var relXpathwithContainsText = mXPathHelper.CreateRelativeXpathWithTextMatch(foundElemntInfo, isExactMatch: false);
                 if (!string.IsNullOrEmpty(relXpathwithContainsText) && CheckElementLocateStatus(relXpathwithContainsText))
                 {
                     var elementLocator = new ElementLocator() { LocateBy = eLocateBy.ByRelXPath, LocateValue = relXpathwithContainsText, IsAutoLearned = true };
@@ -5234,7 +5247,7 @@ namespace GingerCore.Drivers
                 "TEXTAREA" or "TEXT" => eElementType.TextBox,
                 "RESET" or "SUBMIT" or "BUTTON" => eElementType.Button,
                 "TD" or "TH" or "TR" => eElementType.TableItem,
-                "LINK" or "A" => eElementType.HyperLink,//case "LI":
+                "LINK" or "A" or "LI" => eElementType.HyperLink,
                 "LABEL" or "TITLE" => eElementType.Label,
                 "SELECT" or "SELECT-ONE" => eElementType.ComboBox,
                 "TABLE" or "CAPTION" => eElementType.Table,
@@ -5268,7 +5281,7 @@ namespace GingerCore.Drivers
             }
 
 
-            if(pomSetting == null)
+            if (pomSetting == null)
             {
                 IList<string> XPaths = new List<string>();
 
@@ -5868,7 +5881,7 @@ namespace GingerCore.Drivers
             HighlightElement(ElementInfo, locateElementByItLocators, MappedUIElements);
         }
 
-        private void HighlightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> AllPomElementInfo=null)
+        private void HighlightElement(ElementInfo ElementInfo, bool locateElementByItLocators = false, IList<ElementInfo> AllPomElementInfo = null)
         {
             try
             {
@@ -5904,7 +5917,7 @@ namespace GingerCore.Drivers
                     if (!string.IsNullOrEmpty(ElementInfo.XPath))
                     {
 
-                        if(((HTMLElementInfo)ElementInfo).XPathList != null)
+                        if (((HTMLElementInfo)ElementInfo).XPathList != null)
                         {
                             IList<string> XPaths = ((HTMLElementInfo)ElementInfo).XPathList;
                             ISearchContext tempContext = Driver;
@@ -5993,55 +6006,60 @@ namespace GingerCore.Drivers
 
             try
             {
-                Driver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 0);
+                Driver.Manage().Timeouts().ImplicitWait = TimeSpan.Zero;
 
                 ObservableList<ControlProperty> list = new ObservableList<ControlProperty>();
 
-                IWebElement el = null;
-                if (ElementInfo.ElementObject != null)
-                {
-                    el = (IWebElement)ElementInfo.ElementObject;
-                }
-                else
+                IWebElement el = ElementInfo.ElementObject as IWebElement;
+
+                if (el == null)
                 {
                     if (string.IsNullOrEmpty(ElementInfo.XPath))
                     {
-                        ElementInfo.XPath = GenerateXpathForIWebElement((IWebElement)ElementInfo.ElementObject, "");
+                        ElementInfo.XPath = GenerateXpathForIWebElement(el, "");
                     }
 
                     el = Driver.FindElement(By.XPath(ElementInfo.XPath));
                     ElementInfo.ElementObject = el;
                 }
-                //Base properties 
 
+                // Base properties 
                 if (!string.IsNullOrWhiteSpace(ElementInfo.ElementType))
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.PlatformElementType, Value = ElementInfo.ElementType });
                 }
+
                 list.Add(new ControlProperty() { Name = ElementProperty.ElementType, Value = ElementInfo.ElementTypeEnum.ToString() });
+
                 if (!string.IsNullOrWhiteSpace(ElementInfo.Path))
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.ParentIFrame, Value = ElementInfo.Path });
                 }
+
                 if (!string.IsNullOrWhiteSpace(ElementInfo.XPath))
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.XPath, Value = ElementInfo.XPath });
                 }
+
                 if (!string.IsNullOrWhiteSpace(((HTMLElementInfo)ElementInfo).RelXpath))
                 {
                     list.Add(new ControlProperty() { Name = ElementProperty.RelativeXPath, Value = ((HTMLElementInfo)ElementInfo).RelXpath });
                 }
 
-                ElementInfo.Height = ((IWebElement)ElementInfo.ElementObject).Size.Height;
+                // Extract size and position properties
+                var size = el.Size;
+                var location = el.Location;
+
+                ElementInfo.Height = size.Height;
                 list.Add(new ControlProperty() { Name = ElementProperty.Height, Value = ElementInfo.Height.ToString() });
 
-                ElementInfo.Width = ((IWebElement)ElementInfo.ElementObject).Size.Width;
+                ElementInfo.Width = size.Width;
                 list.Add(new ControlProperty() { Name = ElementProperty.Width, Value = ElementInfo.Width.ToString() });
 
-                ElementInfo.X = ((IWebElement)ElementInfo.ElementObject).Location.X;
+                ElementInfo.X = location.X;
                 list.Add(new ControlProperty() { Name = ElementProperty.X, Value = ElementInfo.X.ToString() });
 
-                ElementInfo.Y = ((IWebElement)ElementInfo.ElementObject).Location.Y;
+                ElementInfo.Y = location.Y;
                 list.Add(new ControlProperty() { Name = ElementProperty.Y, Value = ElementInfo.Y.ToString() });
 
                 if (!string.IsNullOrWhiteSpace(ElementInfo.Value))
@@ -6049,53 +6067,56 @@ namespace GingerCore.Drivers
                     list.Add(new ControlProperty() { Name = ElementProperty.Value, Value = ElementInfo.Value });
                 }
 
-                if (((HTMLElementInfo)ElementInfo).HTMLElementObject != null)
+                if (ElementInfo is HTMLElementInfo htmlElementInfo)
                 {
-                    LearnPropertiesFromHtmlElementObject(ElementInfo, list);
-                }
-                else if (el != null)
-                {
-                    if (ElementInfo.IsElementTypeSupportingOptionalValues(ElementInfo.ElementTypeEnum))
+                    if (htmlElementInfo.HTMLElementObject != null)
                     {
-                        ReadOnlyCollection<IWebElement> elementsList = el.FindElements(By.XPath("*"));
-                        foreach (IWebElement val in elementsList)
+                        LearnPropertiesFromHtmlElementObject(ElementInfo, list);
+                    }
+                    else
+                    {
+                        if (ElementInfo.IsElementTypeSupportingOptionalValues(ElementInfo.ElementTypeEnum))
                         {
-                            if (!string.IsNullOrEmpty(val.Text))
+                            var elementsList = el.FindElements(By.XPath("*"));
+
+                            foreach (var val in elementsList)
                             {
-                                string[] tempOpVals = val.Text.Split('\n');
-                                if (tempOpVals != null && tempOpVals.Length > 1)
+                                if (!string.IsNullOrEmpty(val.Text))
                                 {
-                                    foreach (string cuVal in tempOpVals)
+                                    var tempOpVals = val.Text.Split('\n');
+
+                                    if (tempOpVals.Length > 1)
                                     {
-                                        ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
+                                        foreach (var cuVal in tempOpVals)
+                                        {
+                                            ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = cuVal, IsDefault = false });
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = val.Text, IsDefault = false });
                                     }
                                 }
-                                else
-                                {
-                                    ElementInfo.OptionalValuesObjectsList.Add(new OptionalValue() { Value = val.Text, IsDefault = false });
-                                }
+                            }
+
+                            if (ElementInfo.OptionalValuesObjectsList.Count > 0)
+                            {
+                                ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
+                                list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
                             }
                         }
 
-                        if (ElementInfo.OptionalValuesObjectsList.Count > 0)
-                        {
-                            ElementInfo.OptionalValuesObjectsList[0].IsDefault = true;
-                            list.Add(new ControlProperty() { Name = "Optional Values", Value = ElementInfo.OptionalValuesObjectsListAsString.Replace("*", "") });
-                        }
+                        var javascriptDriver = (IJavaScriptExecutor)Driver;
+                        var attributes = javascriptDriver.ExecuteScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", el) as Dictionary<string, object>;
 
-                    }
-
-                    IJavaScriptExecutor javascriptDriver = (IJavaScriptExecutor)Driver;
-                    Dictionary<string, object> attributes = javascriptDriver.ExecuteScript("var items = {}; for (index = 0; index < arguments[0].attributes.length; ++index) { items[arguments[0].attributes[index].name] = arguments[0].attributes[index].value }; return items;", el) as Dictionary<string, object>;
-                    if (attributes != null)
-                    {
-                        foreach (KeyValuePair<string, object> kvp in attributes)
+                        if (attributes != null)
                         {
-                            if (kvp.Key != "style" && (kvp.Value.ToString() != "border: 3px dashed red;" || kvp.Value.ToString() != "outline: 3px dashed red;"))
+                            foreach (var kvp in attributes)
                             {
-                                string PName = kvp.Key;
-                                string PValue = kvp.Value.ToString();
-                                list.Add(new ControlProperty() { Name = PName, Value = PValue });
+                                if (kvp.Key != "style" && kvp.Value.ToString() != "border: 3px dashed red;" && kvp.Value.ToString() != "outline: 3px dashed red;")
+                                {
+                                    list.Add(new ControlProperty() { Name = kvp.Key, Value = kvp.Value.ToString() });
+                                }
                             }
                         }
                     }
@@ -6105,7 +6126,7 @@ namespace GingerCore.Drivers
             }
             finally
             {
-                Driver.Manage().Timeouts().ImplicitWait = (TimeSpan.FromSeconds((int)ImplicitWait));
+                Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds((int)ImplicitWait);
             }
 
         }
@@ -7834,13 +7855,13 @@ namespace GingerCore.Drivers
         private void HandleSwitchToShadowDOM(Act act)
         {
             IWebElement shadowDOMHost = LocateElement(act);
-            if(shadowDOMHost != null)
+            if (shadowDOMHost != null)
             {
                 CurrentContext = shadowDOM.GetShadowRootIfExists(shadowDOMHost);
             }
 
             if (shadowDOMHost == null || CurrentContext == null)
-            { 
+            {
                 throw new NoSuchElementException("Shadow Root Host cannot be located. Please try to find the appropriate Locator of the Element just above the shadow root (Shadow Root Host)");
             }
 
@@ -9907,14 +9928,14 @@ namespace GingerCore.Drivers
                     }
                     if (!el.IsAutoLearned)
                     {
-                            webElement = LocateElementIfNotAutoLeared(el, Driver, friendlyLocatorElementlist);
+                        webElement = LocateElementIfNotAutoLeared(el, Driver, friendlyLocatorElementlist);
                     }
                     else
                     {
                         // for POM element
-                        if (mPOM!=null)
+                        if (mPOM != null)
                         {
-                            webElement = LocateElementByLocators(EI , mPOM.MappedUIElements);
+                            webElement = LocateElementByLocators(EI, mPOM.MappedUIElements);
                         }
                         // For Live spy
                         else
