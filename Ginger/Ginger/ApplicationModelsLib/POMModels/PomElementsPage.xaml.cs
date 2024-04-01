@@ -428,7 +428,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
                     if (ElementInfo.IsElementTypeSupportingOptionalValues(prms.ElementTypeEnum))
                     {
                         string parName = prms.ItemName.Replace("\r", "").Split('\n')[0];
-                        int count = lstParName.Where(p => p == parName).Count();
+                        int count = lstParName.Count(p => p == parName);
                         lstParName.Add(parName);
                         if (count > 0)
                         {
@@ -495,7 +495,7 @@ namespace Ginger.ApplicationModelsLib.POMModels
         private void DeleteUnMappedElementRow(object sender, RoutedEventArgs e)
         {
             bool msgShowen = false;
-            List<ElementInfo> elementsToDelete = xMainElementsGrid.Grid.SelectedItems.Cast<ElementInfo>().ToList();
+            var elementsToDelete = xMainElementsGrid.Grid.SelectedItems.Cast<ElementInfo>();
             foreach (ElementInfo element in elementsToDelete)
             {
                 if (element.IsAutoLearned)
