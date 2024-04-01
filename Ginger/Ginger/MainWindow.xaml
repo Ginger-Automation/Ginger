@@ -4,7 +4,6 @@
         xmlns:h="clr-namespace:Ginger.Help"
         xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
         xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
-        xmlns:local ="clr-namespace:Ginger"
         Title="Ginger by amdocs"        
         Icon="GingerIconNew.ico"
         Height="600" Width="1100" WindowState="Maximized"   SizeChanged="xMainWindow_SizeChanged"      
@@ -301,14 +300,30 @@
 
             <Frame x:Name="xMainWindowFrame" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" NavigationUIVisibility="Hidden" Background="Transparent" />
 
-            <userControls:ChatbotIcon Grid.Column="1" Margin="1122,560,0,0"/>
-            <userControls:ChatbotWindow Grid.Column="1" Visibility="Collapsed" Margin="850,10,0,0" Background="GhostWhite" BorderBrush="#8a57ea" BorderThickness="3"/>
+
             <usercontrols:ImageMakerControl x:Name="xNoLoadedSolutionImg" Grid.Row="1" ImageType="GingerLogoGray" Width="250" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
             <Grid x:Name="xSplashGrid" Width="640" Height="419" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1">
                 <usercontrols:ImageMakerControl ImageType="GingerSplash"/>
                 <Label x:Name="lblAppVersion" Content="Version 2023.4-Alpha 0.1" Style="{StaticResource $LabelStyle}" Foreground="WhiteSmoke"  FontWeight="Bold"  HorizontalAlignment="Left" Margin="476,374,0,0" Width="164" Height="47" VerticalAlignment="Top"/>
             </Grid>
+            <DockPanel Grid.Row="1" Grid.Column="1">
+                <usercontrols:ChatbotIcon DockPanel.Dock="Bottom" Visibility="Visible"/>
+                <usercontrols:ChatbotWindow Grid.Column="1" Visibility="Collapsed" Margin="850,10,0,0" Background="GhostWhite" BorderBrush="#8a57ea" BorderThickness="3"/>
+            </DockPanel>
+
+            <DockPanel LastChildFill="False" Grid.Row="1">
+                <usercontrols:ChatbotIcon DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="10,10,50,10"/>
+               
+            </DockPanel>
+
+            <!--<DockPanel LastChildFill="True"  Grid.Row="1">
+                <Button Content="Dock=Top" DockPanel.Dock="Top"/>
+                <Button Content="Dock=Bottom" DockPanel.Dock="Bottom"/>
+                <Button Content="Dock=Left"/>
+                <Button Content="Dock=Right" DockPanel.Dock="Right"/>
+                <Button Content="LastChildFill=True"/>
+            </DockPanel>-->
 
             <Border Grid.Row="2" BorderThickness="0,0,0,0" Margin="0,0,0,0" Background="{StaticResource $BackgroundColor_Black}" >
                 <DockPanel VerticalAlignment="Center">

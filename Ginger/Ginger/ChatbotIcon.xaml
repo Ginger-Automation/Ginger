@@ -11,7 +11,7 @@
             <ControlTemplate TargetType="Button">
                 <Grid>
                     <Ellipse Fill="MediumPurple" />
-                    <usercontrols:ImageMakerControl x:Name="xChatbot" Grid.Row="1" ImageType="Chatbot" Width="50" Foreground="LightGray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <usercontrols:ImageMakerControl x:Name="xChatbot" Grid.Row="1" ImageType="Chatbot" Width="50" Foreground="LightGray" />
                 </Grid>
             </ControlTemplate>
         </Button.Template>

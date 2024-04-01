@@ -14,12 +14,12 @@ namespace Amdocs.Ginger.UserControls
 
         private void SendMessage(object sender, RoutedEventArgs e)
         {
-            string userInput = txtInput.Text.Trim();
+            string userInput = "Hello";// txtInput.Text.Trim();
 
             AddMessage("You", userInput);
 
-            txtInput.Text = "";
-            string botResponse = GenerateDummyResponse(userInput);
+            //txtInput.Text = "";
+            string botResponse = "test";// GenerateDummyResponse(userInput);
 
             AddMessage("Lisa", botResponse);
         }
