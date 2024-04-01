@@ -113,8 +113,24 @@ namespace Ginger.Agents
 
                     switch (((AgentOperations)agent.AgentOperations).Status)
                     {
+                        case Agent.eStatus.Completed:
+                        case Agent.eStatus.Ready:
+                        case Agent.eStatus.Running:                       
+                            //Close Agent
+                            Reporter.ToStatus(eStatusMsgKey.StopAgent, null, AG.AgentName, AG.AppName);
+                            await System.Threading.Tasks.Task.Run(() =>
+                            {
+                                agent.AgentOperations.Close();
+                            });
+                            break;
+
+                        case Agent.eStatus.Starting:
+                            //Do nothing till Agent finish to start
+                            break;
+
                         case Agent.eStatus.FailedToStart:
                         case Agent.eStatus.NotStarted:
+                        default:
                             //Start Agent
                             Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
                             ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
@@ -124,21 +140,6 @@ namespace Ginger.Agents
                             await System.Threading.Tasks.Task.Run(() =>
                             {
                                 ((Agent)AG.Agent).AgentOperations.StartDriver();
-                            });
-                            break;
-
-                        case Agent.eStatus.Starting:
-                            //Do nothing till Agent finish to start
-                            break;
-
-                        case Agent.eStatus.Completed:
-                        case Agent.eStatus.Ready:
-                        case Agent.eStatus.Running:
-                            //Close Agent
-                            Reporter.ToStatus(eStatusMsgKey.StopAgent, null, AG.AgentName, AG.AppName);
-                            await System.Threading.Tasks.Task.Run(() =>
-                            {
-                                agent.AgentOperations.Close();
                             });
                             break;
                     }
