@@ -103,13 +103,25 @@ namespace GingerCore.Environments
         {
             get
             {
-                return mItemImageType;
+                return Platform switch
+                {
+                    ePlatformType.NA => eImageType.Empty,
+                    ePlatformType.Web => eImageType.Globe,
+                    ePlatformType.WebServices => eImageType.Exchange,
+                    ePlatformType.Java => eImageType.Java,
+                    ePlatformType.Mobile => eImageType.Mobile,
+                    ePlatformType.Windows => eImageType.WindowsIcon,
+                    ePlatformType.PowerBuilder => eImageType.Runing,
+                    ePlatformType.DOS => eImageType.Dos,
+                    ePlatformType.VBScript => eImageType.CodeFile,
+                    ePlatformType.Unix => eImageType.Linux,
+                    ePlatformType.MainFrame => eImageType.Server,
+                    ePlatformType.ASCF => eImageType.Screen,
+                    ePlatformType.Service => eImageType.Retweet,
+                    _ => eImageType.Empty,
+                };
             }
 
-            set
-            {
-                mItemImageType = value;
-            }
         }
 
         public override string ItemNameField
@@ -131,14 +143,10 @@ namespace GingerCore.Environments
            
             if(applicationPlatform != null)
             {
-                this.ItemImageType = applicationPlatform.PlatformImage;
                 this.Name = applicationPlatform.AppName;
                 this.Platform = applicationPlatform.Platform;
             }
-            else
-            {
-                this.ItemImageType = eImageType.Application;
-            }
+
         }
     }
 }
