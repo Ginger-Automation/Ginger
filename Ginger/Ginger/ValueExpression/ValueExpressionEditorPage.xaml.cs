@@ -652,6 +652,7 @@ namespace Ginger
                     tviEnvAppGlobalParam.MouseDoubleClick += tvi_MouseDoubleClick;
 
                     // Add all App General Params
+                    a.ConvertGeneralParamsToVariable();
                     foreach (VariableBase vb in a.Variables)
                     {
 
