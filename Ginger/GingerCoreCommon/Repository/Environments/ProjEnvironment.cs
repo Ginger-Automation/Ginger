@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -23,7 +23,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
-
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 namespace GingerCore.Environments
 {
     public class ProjEnvironment : RepositoryItemBase
@@ -137,5 +137,27 @@ namespace GingerCore.Environments
             return "Environment";
         }
         // object ProjEnvironment.Guid => throw new NotImplementedException();
+
+        // Checks the relation between Environment Application and Application Platform in "Target Application".
+
+        public bool CheckIfApplicationPlatformExists(Guid ParentGuid, string AppName)
+        {
+            return this.Applications.Any((app) => app.ParentGuid.Equals(ParentGuid) || app.Name.Equals(AppName));
+        }
+
+        public void AddApplications(IEnumerable<ApplicationPlatform> SelectedApplications)
+        {
+
+            foreach(ApplicationPlatform SelectedApplication in SelectedApplications)
+            {
+                EnvApplication envApplication = new ();
+                envApplication.Name = SelectedApplication.AppName;
+                envApplication.ParentGuid = SelectedApplication.Guid;
+                envApplication.Description = SelectedApplication.Description;
+                envApplication.ItemImageType = SelectedApplication.PlatformImage;
+                this.Applications.Add(envApplication);
+            }
+        }
+
     }
 }

@@ -24,6 +24,7 @@ using Ginger.UserControls;
 using Ginger.UserControlsLib;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
+using Microsoft.VisualStudio.Services.Common;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -90,6 +91,7 @@ namespace Ginger.Environments
             view.GridColsView = new ObservableList<GridColView>();
 
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Active), WidthWeight = 100, StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Name), WidthWeight = 100 });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Description), WidthWeight = 200 });
             view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Vendor), WidthWeight = 50 });
@@ -104,6 +106,7 @@ namespace Ginger.Environments
 
         private void SetGridData()
         {
+            AppEnvironmnet.Applications.ForEach((app) => app.SetPlatFormImage(WorkSpace.Instance.Solution.ApplicationPlatforms));
             grdApps.DataSourceList = AppEnvironmnet.Applications;
         }
 

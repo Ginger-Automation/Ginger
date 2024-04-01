@@ -23,6 +23,7 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
 using GingerCore.Variables;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 
 namespace GingerCore.Environments
 {
@@ -158,11 +159,17 @@ namespace GingerCore.Environments
             GeneralParams.Clear();
         }
 
+        private eImageType mItemImageType;
         public override eImageType ItemImageType
         {
             get
             {
-                return eImageType.Application;
+                return mItemImageType;
+            }
+
+            set
+            {
+                mItemImageType = value;
             }
         }
 
@@ -171,6 +178,24 @@ namespace GingerCore.Environments
             get
             {
                 return nameof(this.Name);
+            }
+        }
+        public ePlatformType Platform
+        {
+            get;
+            set;
+        }
+        public void SetPlatFormImage(ObservableList<ApplicationPlatform> ApplicationPlatforms)
+        {
+            ApplicationPlatform applicationPlatform =  ApplicationPlatforms.FirstOrDefault((app)=>app.Guid.Equals(this.ParentGuid));
+            if(applicationPlatform != null)
+            {
+                this.ItemImageType = applicationPlatform.PlatformImage;
+                this.Name = applicationPlatform.AppName;
+            }
+            else
+            {
+                this.ItemImageType = eImageType.Application;
             }
         }
         [IsSerializedForLocalRepository]

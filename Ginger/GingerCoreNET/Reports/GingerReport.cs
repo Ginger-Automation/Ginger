@@ -179,15 +179,15 @@ namespace Ginger.Reports
                     {
                         return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                     }
-                    else if ((from x in BusinessFlowReports where x.IsBlocked == true select x).Any())
+                    else if (BusinessFlowReports.Any(x=> x.IsBlocked))
                     {
                         return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
                     }
-                    else if ((from x in BusinessFlowReports where x.IsStopped == true select x).Any())
+                    else if (BusinessFlowReports.Any(x => x.IsStopped))
                     {
                         return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                     }
-                    else if ((from x in BusinessFlowReports where (x.IsPassed == true || x.IsSkipped == true) select x).Count() == TotalBusinessFlows)
+                    else if (BusinessFlowReports.Count(x=>x.IsPassed || x.IsSkipped) == TotalBusinessFlows)
                     {
                         return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                     }
@@ -229,7 +229,7 @@ namespace Ginger.Reports
                 }
                 else if (GingerRunner != null)
                 {
-                    return GingerRunner.Executor.BusinessFlows.Where(x => x.Active == true).ToList().Count();
+                    return GingerRunner.Executor.BusinessFlows.Count(x => x.Active);
                 }
                 else
                 {
@@ -327,17 +327,16 @@ namespace Ginger.Reports
         public int TotalBusinessFlowsPassed
         {
             get
-            {
-                int count = 0;
+            {               
                 if (BusinessFlowReports != null && BusinessFlowReports.Count > 0)
                 {
-                    count = (from x in BusinessFlowReports where x.IsPassed == true select x).Count();
+                    return BusinessFlowReports.Count(x=> x.IsPassed);
                 }
                 else if (GingerRunner != null)
                 {
-                    count = (from x in GingerRunner.Executor.BusinessFlows where x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed select x).Count();
+                   return GingerRunner.Executor.BusinessFlows.Count(x=> x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
                 }
-                return count;
+                return 0;
             }
         }
 
@@ -345,8 +344,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = (from x in BusinessFlowReports where x.IsFailed == true select x).Count();
-                return count;
+                return BusinessFlowReports.Count(x => x.IsFailed);
             }
         }
 
@@ -354,8 +352,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = (from x in BusinessFlowReports where x.IsStopped select x).Count();
-                return count;
+                return BusinessFlowReports.Count(x=>x.IsStopped);                
             }
         }
 
@@ -363,8 +360,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = TotalBusinessFlows - TotalBusinessFlowsFailed - TotalBusinessFlowsPassed - TotalBusinessFlowsStopped;
-                return count;
+                return TotalBusinessFlows - TotalBusinessFlowsFailed - TotalBusinessFlowsPassed - TotalBusinessFlowsStopped;                
             }
         }
 
