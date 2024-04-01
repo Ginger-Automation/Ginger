@@ -66,7 +66,7 @@ namespace Ginger.Actions.VisualTesting
 
             xBaselineImageRadioButton.Init(typeof(VRTAnalyzer.eBaselineImageBy), xBaselineImageRadioButtonPnl, mAct.GetOrCreateInputParam(VRTAnalyzer.BaselineImage, VRTAnalyzer.eBaselineImageBy.ActiveWindow.ToString()), BaselineImageButton_Clicked);
 
-            VRTCurrentBaselineImagePathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTSavedBaseImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "*", BaseLineFileSelected_Click);
+            VRTCurrentBaselineImagePathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTSavedBaseImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "*.png; *..jpg;", BaseLineFileSelected_Click);
             WeakEventManager<TextBoxBase, TextChangedEventArgs>.AddHandler(source: VRTCurrentBaselineImagePathTxtBox.ValueTextBox, eventName: nameof(TextBoxBase.TextChanged), handler: ValueTextBox_TextChanged);
             UpdateBaseLineImage();
 
