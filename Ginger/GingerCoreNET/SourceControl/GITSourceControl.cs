@@ -42,6 +42,8 @@ namespace GingerCore.SourceControl
         private const string IgnoreFileExtension = ".ignore";
         private const string ConflictBackupFileExtension = ".conflictBackup";
 
+        private DateTime _lastGitIgnoreCheckTimeUtc;
+
         public override string Name { get { return "GIT"; } }
 
         public override bool IsSupportingLocks { get { return false; } }
@@ -360,7 +362,11 @@ namespace GingerCore.SourceControl
                     relativePath = relativePath.Substring(1);
                 }
 
-                if (!File.Exists(GitIgnoreFilePath))
+                if (File.Exists(GitIgnoreFilePath))
+                {
+                    UpdateGitIgnoreFile();
+                }
+                else
                 {
                     CreateGitIgnoreFile();
                 }
@@ -517,6 +523,60 @@ namespace GingerCore.SourceControl
             catch(Exception ex)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error occurred while creating .gitignore file.", ex);
+            }
+        }
+
+        public void UpdateGitIgnoreFile()
+        {
+            if (!File.Exists(GitIgnoreFilePath))
+            {
+                throw new InvalidOperationException($"No git ignore file found at path '{GitIgnoreFilePath}'.");
+            }
+
+            DateTime lastWriteTime = File.GetLastWriteTimeUtc(GitIgnoreFilePath);
+            if (lastWriteTime <= _lastGitIgnoreCheckTimeUtc)
+            {
+                //gitignore file wasn't modified until last checked
+                return;
+            }
+
+            string[] gitIgnorePaths = File.ReadAllText(GitIgnoreFilePath)
+                .Split('\n')
+                .ToArray();
+
+            string[] solutionIgnoredPaths = WorkSpace.Instance.SolutionRepository
+                    .GetRelativePathsToAvoidFromSourceControl()
+                    .Select(path => path.Replace(oldValue: @"\", newValue: @"/"))
+                    .ToArray();
+
+            List<string> missingPaths = [];
+            foreach (string solutionIgnoredPath in solutionIgnoredPaths)
+            {
+                if (!gitIgnorePaths.Contains(solutionIgnoredPath))
+                {
+                    missingPaths.Add(solutionIgnoredPath);
+                }
+            }
+
+            if (missingPaths.Count == 0)
+            {
+                _lastGitIgnoreCheckTimeUtc = DateTime.UtcNow;
+                return;
+            }
+
+            string gitIgnoreFileContent = gitIgnorePaths
+                    .Concat(missingPaths)
+                    .Select(path => path.Replace(oldValue: @"\", newValue: @"/"))
+                    .Aggregate((aggContent, path) => $"{aggContent}\n{path}");
+
+            try
+            {
+                File.WriteAllText(GitIgnoreFilePath, gitIgnoreFileContent); 
+                _lastGitIgnoreCheckTimeUtc = File.GetLastWriteTimeUtc(GitIgnoreFilePath);
+            }
+            catch(Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while updating git ignore file at path '{GitIgnoreFilePath}'.", ex);
             }
         }
 

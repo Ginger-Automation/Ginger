@@ -461,7 +461,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             {
                 return 3;
             }
-            else if (testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Passed || x.IdentifiedActivity.Status == eRunStatus.Skipped).Count() == testToExport.ActivitiesIdentifiers.Count())
+            else if (testToExport.ActivitiesIdentifiers.Count(x => x.IdentifiedActivity.Status == eRunStatus.Passed || x.IdentifiedActivity.Status == eRunStatus.Skipped) == testToExport.ActivitiesIdentifiers.Count())
             {
                 return 1;
             }

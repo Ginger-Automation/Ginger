@@ -31,6 +31,7 @@ using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
+using Ginger.SolutionGeneral;
 
 namespace Ginger.Run
 {
@@ -216,22 +217,19 @@ namespace Ginger.Run
             get
             {
 
-                if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed select x).Any())
+                if (GingerRunners.Any(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed))
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 }
-                else if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked select x).Any())
+                else if (GingerRunners.Any(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked))
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
                 }
-                else if ((from x in GingerRunners.ToList() where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped select x).Any())
+                else if (GingerRunners.Any(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped))
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                 }
-                else if ((from x in GingerRunners.ToList()
-                          where (x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed ||
-x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
-                          select x).Count() == GingerRunners.Count)
+                else if (GingerRunners.Count(x => x.Status is Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed or Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped) == GingerRunners.Count)
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                 }
@@ -399,6 +397,20 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
             }
         }
 
+        private bool _isVirtual;
+        public bool IsVirtual 
+        { 
+            get => _isVirtual;
+            set
+            {
+                if (_isVirtual != value)
+                {
+                    _isVirtual = value;
+                    OnPropertyChanged(nameof(IsVirtual));
+                }
+            } 
+        }
+
         public void UpdateRunnersBusinessFlowRunsList()
         {
             foreach (GingerRunner GR in GingerRunners)
@@ -414,6 +426,14 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
         {
             UpdateRunnersBusinessFlowRunsList();
             base.UpdateBeforeSave();
+        }
+
+        public Action DynamicPostSaveHandler;
+
+        public override void PostSaveHandler()
+        {
+            base.PostSaveHandler();
+            DynamicPostSaveHandler?.Invoke();
         }
 
         [IsSerializedForLocalRepository]
@@ -490,7 +510,6 @@ x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
             }
             return false;
         }
-
 
         public ReRunConfig ReRunConfigurations = new ReRunConfig();
 
