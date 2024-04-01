@@ -101,6 +101,8 @@
     <None Remove="Images\%40Automate_16x16.png" />
     <None Remove="Images\%40A_16x16.png" />
     <None Remove="Images\%40BeatLogo.jpg" />
+    <None Remove="Images\%40BPMN_16x16.png" />
+    <None Remove="Images\%40BPMN_32x32.png" />
     <None Remove="Images\%40BrokenFile_32x32.png" />
     <None Remove="Images\%40BrokenFile_Orange_24x24.png" />
     <None Remove="Images\%40BrokenFile_Orange_32x32.png" />
@@ -242,6 +244,8 @@
     <None Remove="Images\%40LightRun_16x16.png" />
     <None Remove="Images\%40Link_16x16.png" />
     <None Remove="Images\%40List_16x16.png" />
+    <None Remove="Images\%40Load_Arrow_16x16.png" />
+    <None Remove="Images\%40Load_Arrow_32x32.png" />
     <None Remove="Images\%40Lock_16x16.png" />
     <None Remove="Images\%40Lock_Red_10x10.png" />
     <None Remove="Images\%40Lock_Red_16x16.png" />
@@ -654,6 +658,18 @@
     <Resource Include="Images\$Expand-Window.png" />
     <Resource Include="Images\$Minimize-Window.png" />
     <Resource Include="Images\$Pin-Window.png" />
+    <Resource Include="Images\@BPMN_16x16.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\@BPMN_32x32.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\@Load_Arrow_16x16.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\@Load_Arrow_32x32.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="PluginsLib\AddPluginWizardLib\AddPluginIntro.md" />
     <Resource Include="Resources\GingerDataSource.mdb">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

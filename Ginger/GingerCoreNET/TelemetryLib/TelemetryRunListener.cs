@@ -74,8 +74,8 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                     Elapsed = activity.Elapsed,
                     Platform = getAgentPlatform(activity),
                     ActionCount = activity.Acts.Count,
-                    ActionsPass = (from x in activity.Acts where x.Status == Execution.eRunStatus.Passed select x).Count(),
-                    ActionsFail = (from x in activity.Acts where x.Status == Execution.eRunStatus.Failed select x).Count(),
+                    ActionsPass = activity.Acts.Count(x=> x.Status == Execution.eRunStatus.Passed),
+                    ActionsFail = activity.Acts.Count(x=> x.Status == Execution.eRunStatus.Failed),
                     Status = activity.Status.ToString()
                 });
         }
