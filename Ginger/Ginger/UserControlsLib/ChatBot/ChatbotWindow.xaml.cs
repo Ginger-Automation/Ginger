@@ -6,6 +6,7 @@ using ICSharpCode.AvalonEdit.Rendering;
 using System;
 using System.Collections.ObjectModel;
 using System.ServiceModel.Syndication;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -45,9 +46,14 @@ namespace Amdocs.Ginger.UserControls
 
         private async void SendMessage(object sender, RoutedEventArgs e)
         {
+            await SendMessageToAPI();
+        }
+
+        private async Task SendMessageToAPI()
+        {
             //LisaIntro.Visibility = Visibility.Collapsed;
             string answer;
-            string userInput = "hello";
+            string userInput = xUserInputTextBox.Text;
             if (userInput.IsNullOrEmpty())
             {
                 // need to change to the specific message
@@ -55,6 +61,8 @@ namespace Amdocs.Ginger.UserControls
                 return;
             }
 
+            AddMessage(GetUserName(), userInput);
+            ShowLoader();
             try
             {
                 if (chatPanel.Children.Count == 1)
@@ -73,25 +81,29 @@ namespace Amdocs.Ginger.UserControls
                 Reporter.ToLog(eLogLevel.ERROR, "Unable to connect to the host", ex);
                 answer = "Sorry, I am unable to answer right now";
             }
-            
-
-            AddMessage(GetUserName(), userInput);
-
-            xUserInputTextBox.Clear();
-
+            finally
+            {
+                HideLoader();
+            }
             AddMessage("Lisa", answer);
         }
+
         private void AddMessage(string sender, string message)
         {
             TextBlock newTextBlock = new TextBlock();
             newTextBlock.Text = $"{sender}: {message}";
             newTextBlock.Margin = new Thickness(5);
+            newTextBlock.TextWrapping = TextWrapping.Wrap;
+            newTextBlock.Width = 300;
             chatPanel.Children.Add(newTextBlock);
+            
 
         }
 
-        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        private async void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
+            
+            
             if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.Enter)
             {
                 xUserInputTextBox.AppendText(Environment.NewLine);
@@ -99,8 +111,7 @@ namespace Amdocs.Ginger.UserControls
             }
             else if (e.Key == Key.Enter)
             {
-                MessageBox.Show(xUserInputTextBox.Text);
-                xUserInputTextBox.Clear();
+                await SendMessageToAPI();
                 e.Handled = true;
             }
         }
@@ -114,6 +125,24 @@ namespace Amdocs.Ginger.UserControls
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.Visibility = Visibility.Collapsed;
+            chatPanel.Children.Clear();
+        }
+
+        private void ShowLoader()
+        {
+            xLoader.Visibility = Visibility.Visible;
+            xUserInputTextBox.Clear();
+            xUserInputTextBox.IsEnabled = false;
+           // xSend.IsEnabled = false;
+           
+
+        }
+
+        private void HideLoader()
+        {
+            xLoader.Visibility = Visibility.Collapsed;
+            xUserInputTextBox.IsEnabled = true;
+            //xSend.IsEnabled = true;
         }
     }
 }
