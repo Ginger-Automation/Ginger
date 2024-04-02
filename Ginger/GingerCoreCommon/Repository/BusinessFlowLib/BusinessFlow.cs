@@ -1140,7 +1140,9 @@ namespace GingerCore
                 foreach (Act act in a.Acts)
                 {
                     if (act.ReturnValues != null)
-                        i += act.ReturnValues.Select(k => (!string.IsNullOrEmpty(k.Expected))).Count();
+                    {
+                        i += act.ReturnValues.Count(k => !string.IsNullOrEmpty(k.Expected));
+                    }
                 }
             }
 
@@ -1874,6 +1876,14 @@ namespace GingerCore
             }
         }
 
+        public Action DynamicPostSaveHandler;
+
+        public override void PostSaveHandler()
+        {
+            base.PostSaveHandler();
+            DynamicPostSaveHandler?.Invoke();
+        }
+
         public bool MarkActivityAsLink(Guid activityGuid, Guid parentGuid)
         {
             if (Activities.Any(act => act.Guid == activityGuid))
@@ -1922,5 +1932,8 @@ namespace GingerCore
                 ExternalIdCalCulated = ve.ValueCalculated;
             }
         }
+        public string ALMTestSetLevel { get; set; }
+
+        public bool IsEntitySearchByName { get; set; }
     }
 }

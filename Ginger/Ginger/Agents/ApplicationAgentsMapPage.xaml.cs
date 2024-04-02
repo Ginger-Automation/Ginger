@@ -125,28 +125,38 @@ namespace Ginger.Agents
                 {
                     ApplicationAgent AG = (ApplicationAgent)((ucButton)sender).DataContext;
                     Agent agent = ((Agent)AG.Agent);
-                    if (((AgentOperations)agent.AgentOperations).Status != Agent.eStatus.Running)
-                    {
-                        //start Agent
-                        Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
 
-                        ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
-                        ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
-                        ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
-                        ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-                        await System.Threading.Tasks.Task.Run(() =>
-                        {
-                            ((Agent)AG.Agent).AgentOperations.StartDriver();
-                        });
-                    }
-                    else
+                    switch (((AgentOperations)agent.AgentOperations).Status)
                     {
-                        //close Agent
-                        Reporter.ToStatus(eStatusMsgKey.StopAgent, null, AG.AgentName, AG.AppName);
-                        await System.Threading.Tasks.Task.Run(() =>
-                        {
-                            agent.AgentOperations.Close();
-                        });
+                        case Agent.eStatus.Completed:
+                        case Agent.eStatus.Ready:
+                        case Agent.eStatus.Running:                       
+                            //Close Agent
+                            Reporter.ToStatus(eStatusMsgKey.StopAgent, null, AG.AgentName, AG.AppName);
+                            await System.Threading.Tasks.Task.Run(() =>
+                            {
+                                agent.AgentOperations.Close();
+                            });
+                            break;
+
+                        case Agent.eStatus.Starting:
+                            //Do nothing till Agent finish to start
+                            break;
+
+                        case Agent.eStatus.FailedToStart:
+                        case Agent.eStatus.NotStarted:
+                        default:
+                            //Start Agent
+                            Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
+                            ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
+                            ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
+                            ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
+                            ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+                            await System.Threading.Tasks.Task.Run(() =>
+                            {
+                                ((Agent)AG.Agent).AgentOperations.StartDriver();
+                            });
+                            break;
                     }
                 }
                 finally

@@ -18,7 +18,9 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.Run.RemoteExecution;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
+using Ginger.ExecuterService.Contracts.V1.ExecuterHandler.Requests;
 using Ginger.Run;
 using Ginger.WizardLib;
 using GingerCore;
@@ -27,6 +29,8 @@ using IWshRuntimeLibrary;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Ginger.RunSetLib.CreateCLIWizardLib
@@ -52,7 +56,17 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             RunsetConfig = runSetConfig;
             mContext = context;
             CliHelper = new CLIHelper();
-            AutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, CliHelper);
+
+            string executionServiceURLFromRunset = RunsetConfig.GetExecutionServiceURLUsed();
+            if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL) && !string.IsNullOrEmpty(executionServiceURLFromRunset))
+            {
+                WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL = executionServiceURLFromRunset;
+            }
+
+            AutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, CliHelper)
+            {
+                ExecutionServiceUrl = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL
+            };
             AutoRunShortcut = new RunSetAutoRunShortcut(AutoRunConfiguration);
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Auto Run Configuration Introduction", Page: new WizardIntroPage("/RunSetLib/CreateAutoRunWizardLib/AutoRunIntroduction.md"));
@@ -119,16 +133,25 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
                     {
                         if (AutoRunConfiguration.AutoRunEexecutorType == eAutoRunEexecutorType.Remote)
                         {
-                            var responseString = new RemoteExecutionRequestConfig().ExecuteFromRunsetShortCutWizard(AutoRunConfiguration.ExecutionServiceUrl, AutoRunConfiguration.CLIContent);
+                            using ExecutionHandlerAPIClient executionHandlerAPIClient = new(AutoRunConfiguration.ExecutionServiceUrl);
+                            AddExecutionRequest executionRequest = JsonSerializer.Deserialize<AddExecutionRequest>(
+                                AutoRunConfiguration.CLIContent, 
+                                new JsonSerializerOptions()
+                                {
+                                    Converters = { new JsonStringEnumConverter() }
+                                })!;
+                            Task<bool> executionTask = executionHandlerAPIClient.StartExectuionAsync(executionRequest);
+                            executionTask.Wait(TimeSpan.FromSeconds(20));
+                            bool executionStartedSuccessfully = executionTask.Result;
 
-                            if (responseString == "Created")
+                            if (executionStartedSuccessfully)
                             {
                                 successCount++;
                             }
                             else
                             {
                                 failCount++;
-                                userMsg += "Failed to start remote execution, error: " + responseString + Environment.NewLine;
+                                userMsg += "Failed to start remote execution.";
                             }
                         }
                         else
