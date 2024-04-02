@@ -548,42 +548,68 @@ namespace Amdocs.Ginger.CoreNET
                 {
                     case ActUIElement.eElementAction.JavaScriptClick:
                     case ActUIElement.eElementAction.Submit:
-                        e = LocateElement(act);
-                        e.Click();
+                        e = LocateElement(act);                       
+                        if (e != null)
+                        {
+                            e.Click();
+                        }
+                        else
+                        {
+                            act.Error = "Element not found.";
+                        }
                         break;
 
                     case ActUIElement.eElementAction.SetValue:
                     case ActUIElement.eElementAction.SetText:
-                        e = LocateElement(act);
-                        e.SendKeys(act.GetInputParamCalculatedValue("Value"));
+                        e = LocateElement(act);                       
+                        if (e != null)
+                        {
+                            e.SendKeys(act.GetInputParamCalculatedValue("Value"));
+                        }
+                        else
+                        {
+                            act.Error = "Element not found.";
+                        }
                         break;
 
                     case ActUIElement.eElementAction.GetText:
                     case ActUIElement.eElementAction.GetFont:
-                        e = LocateElement(act);
-
-                        /// As text attribute does not exist on iOS devices
-                        if (DevicePlatformType == eDevicePlatformType.iOS)
+                        e = LocateElement(act);                        
+                        if (e != null)
                         {
-                            act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("value"));
+                            /// As text attribute does not exist on iOS devices
+                            if (DevicePlatformType == eDevicePlatformType.iOS)
+                            {
+                                act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("value"));
+                            }
+                            else
+                            {
+                                act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("text"));
+                            }
                         }
                         else
                         {
-                            act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("text"));
+                            act.Error = "Element not found.";
                         }
                         break;
 
                     case ActUIElement.eElementAction.GetTextLength:
-                        e = LocateElement(act);
-
-                        /// As text attribute does not exist on iOS devices
-                        if (DevicePlatformType == eDevicePlatformType.iOS)
+                        e = LocateElement(act);                        
+                        if (e != null)
                         {
-                            act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("value").Length).ToString());
+                            /// As text attribute does not exist on iOS devices
+                            if (DevicePlatformType == eDevicePlatformType.iOS)
+                            {
+                                act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("value").Length).ToString());
+                            }
+                            else
+                            {
+                                act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("text").Length).ToString());
+                            }
                         }
                         else
                         {
-                            act.AddOrUpdateReturnParamActual("Actual", (e.GetAttribute("text").Length).ToString());
+                            act.Error = "Element not found.";
                         }
                         break;
 
@@ -594,29 +620,78 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActUIElement.eElementAction.IsValuePopulated:
-                        e = LocateElement(act);
-                        switch (act.ElementType)
+                        e = LocateElement(act);                        
+                        if (e != null)
                         {
-                            case eElementType.ComboBox:
-                                OpenQA.Selenium.Support.UI.SelectElement seIsPrepopulated = new OpenQA.Selenium.Support.UI.SelectElement(e);
-                                act.AddOrUpdateReturnParamActual("Actual", (seIsPrepopulated.SelectedOption.ToString().Trim() != "").ToString());
-                                break;
-                            case eElementType.TextBox:
-                                act.AddOrUpdateReturnParamActual("Actual", (!string.IsNullOrEmpty(e.Text)).ToString());
-                                break;
+                            switch (act.ElementType)
+                            {
+                                case eElementType.ComboBox:
+                                    OpenQA.Selenium.Support.UI.SelectElement seIsPrepopulated = new OpenQA.Selenium.Support.UI.SelectElement(e);
+                                    act.AddOrUpdateReturnParamActual("Actual", (seIsPrepopulated.SelectedOption.ToString().Trim() != "").ToString());
+                                    break;
+                                case eElementType.TextBox:
+                                    act.AddOrUpdateReturnParamActual("Actual", (!string.IsNullOrEmpty(e.Text)).ToString());
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            act.Error = "Element not found.";
                         }
                         break;
 
                     case ActUIElement.eElementAction.GetSize:
-                        e = LocateElement(act);
-                        act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("contentSize").ToString());
+                        e = LocateElement(act);                        
+                        if (e != null)
+                        {
+                            act.AddOrUpdateReturnParamActual("Actual", e.GetAttribute("contentSize").ToString());
+                        }
+                        else
+                        {
+                            act.Error = "Element not found.";
+                        }
                         break;
 
                     case ActUIElement.eElementAction.ScrollToElement:
                         e = LocateElement(act);
-                        int x = e.Location.X;
-                        int y = e.Location.Y;
-                        (BuildTouchAction(Driver, x, y, x + 1000, y, 200)).Perform();
+                        if (e != null)
+                        {
+                            int element_X = e.Location.X;
+                            int element_Y = e.Location.Y;
+                            int numberOfMaxLoops = (element_Y - 500) / 200;
+                            while (!e.Displayed && numberOfMaxLoops > 0)
+                            {
+                                (BuildTouchAction(Driver, element_X, 500, element_X, 300, 200)).Perform();
+                                numberOfMaxLoops--;
+                            }
+                        }
+                        else
+                        {
+                            int numberOfMaxLoops = 12;
+                            while (numberOfMaxLoops > 0)
+                            {
+                                (BuildTouchAction(Driver, 500, 500, 500, 300, 200)).Perform();
+                                e = LocateElement(act);
+                                if (e != null && e.Displayed)
+                                {
+                                    break;
+                                }
+                                numberOfMaxLoops--;
+                            }
+                        }
+                        break;
+
+                    case ActUIElement.eElementAction.GetXY:
+                        e = LocateElement(act);
+                        if (e != null)
+                        {
+                            act.AddOrUpdateReturnParamActual("X", e.Location.X.ToString());
+                            act.AddOrUpdateReturnParamActual("Y", e.Location.Y.ToString());
+                        }
+                        else
+                        {
+                            act.Error = "Element not found.";
+                        }
                         break;
 
                     default:
