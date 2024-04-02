@@ -50,7 +50,27 @@ namespace Ginger.SolutionWindows
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
             UCEncryptionKey.mSolution = mSolution;
             UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
-            GingerCore.General.FillComboFromEnumObj(MainPlatformComboBox, s.MainPlatform);
+            MainPlatformTextBlock.Text = ConvertPlatformTypeToString(s.MainPlatform);
+        }
+
+        private string ConvertPlatformTypeToString(ePlatformType mainPlatform)
+        {
+            switch (mainPlatform)
+            {
+                case ePlatformType.Windows: return "Windows";
+                case ePlatformType.Unix: return "Unix";
+                case ePlatformType.Mobile: return "Mobile";
+                case ePlatformType.Web: return "Web";
+                case ePlatformType.DOS: return "DOS";
+                case ePlatformType.Java: return "Java";
+                case ePlatformType.WebServices: return "WebServices";
+                case ePlatformType.ASCF: return "ASCF";
+                case ePlatformType.MainFrame: return "MainFrame";
+                case ePlatformType.PowerBuilder: return "PowerBuilder";
+                case ePlatformType.Service: return "Service";
+                default: return "NA";
+            }
+
         }
 
         public bool IsUploadSolutionToSourceControl { get; set; }
@@ -69,7 +89,6 @@ namespace Ginger.SolutionWindows
                 //check name and folder inputs exists
                 if (SolutionNameTextBox.Text.Trim() == string.Empty || SolutionFolderTextBox.Text.Trim() == string.Empty
                         || ApplicationTextBox.Text.Trim() == string.Empty
-                            || MainPlatformComboBox.SelectedItem == null || MainPlatformComboBox.SelectedItem.ToString() == "Null"
                             || UCEncryptionKey.EncryptionKeyPasswordBox.Password.Trim() == string.Empty)
                 {
                     Mouse.OverrideCursor = null;
@@ -88,7 +107,7 @@ namespace Ginger.SolutionWindows
                 mSolution.ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
                 ApplicationPlatform MainApplicationPlatform = new ApplicationPlatform();
                 MainApplicationPlatform.AppName = ApplicationTextBox.Text;
-                MainApplicationPlatform.Platform = (ePlatformType)MainPlatformComboBox.SelectedValue;
+                MainApplicationPlatform.Platform =ConvertStringToPlatformType(MainPlatformTextBlock.Text);
                 mSolution.ApplicationPlatforms.Add(MainApplicationPlatform);
                 mSolution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
                 //TODO: check AppName and platform validity - not empty + app exist in list of apps
@@ -148,6 +167,26 @@ namespace Ginger.SolutionWindows
                 Mouse.OverrideCursor = null;
                 Reporter.ToUser(eUserMsgKey.AddSolutionFailed, ex.Message);
             }
+        }
+
+        private ePlatformType ConvertStringToPlatformType(string text)
+        {
+            switch (text)
+            {
+                case "Windows": return ePlatformType.Windows;
+                case "Unix": return ePlatformType.Unix;
+                case "Mobile": return ePlatformType.Mobile;
+                case "Web": return ePlatformType.Web;
+                case "DOS": return ePlatformType.DOS;
+                case "Java": return ePlatformType.Java;
+                case "WebServices": return ePlatformType.WebServices;
+                case "ASCF": return ePlatformType.ASCF;
+                case "MainFrame": return ePlatformType.MainFrame;
+                case "PowerBuilder": return ePlatformType.PowerBuilder;
+                case "Service": return ePlatformType.Service;
+                default: return ePlatformType.NA;
+            }
+
         }
 
         private void AddDeafultReportTemplate()
@@ -291,7 +330,7 @@ namespace Ginger.SolutionWindows
             if (mSolution.ApplicationPlatforms.Any())
             {
                 ApplicationTextBox.Text = mSolution.ApplicationPlatforms[0].AppName;
-                MainPlatformComboBox.SelectedValue = mSolution.ApplicationPlatforms[0].Platform;
+                MainPlatformTextBlock.Text = ConvertPlatformTypeToString(mSolution.ApplicationPlatforms[0].Platform);
             }
         }
     }
