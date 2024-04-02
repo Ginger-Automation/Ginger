@@ -19,6 +19,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
+using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
@@ -56,7 +57,9 @@ using GingerCoreNET;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
 using LiteDB;
+using Microsoft.VisualStudio.Services.Common;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
@@ -89,7 +92,7 @@ namespace GingerWPF.BusinessFlowsLib
         BusinessFlowConfigurationsPage mConfigurationsPage;
         ActivityPage mActivityPage;
         MainAddActionsNavigationPage mAddActionMainPage;
-
+        ActivityDetailsPage mActivityDetailsPage;
         bool mExecutionIsInProgress = false;
         bool mSyncSelectedItemWithExecution = true;
 
@@ -113,7 +116,6 @@ namespace GingerWPF.BusinessFlowsLib
         public NewAutomatePage(BusinessFlow businessFlow)
         {
             InitializeComponent();
-
             App.AutomateBusinessFlowEvent -= App_AutomateBusinessFlowEventAsync;
             App.AutomateBusinessFlowEvent += App_AutomateBusinessFlowEventAsync;
             WorkSpace.Instance.PropertyChanged -= WorkSpacePropertyChanged;
@@ -443,6 +445,9 @@ namespace GingerWPF.BusinessFlowsLib
 
 
                         PropertyChangedEventManager.AddHandler(source: mBusinessFlow, handler: mBusinessFlow_PropertyChanged, propertyName: allProperties);
+                        CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.Activities, handler: OnActivitiesListChanged);
+                        CollectionChangedEventManager.AddHandler(source: mBusinessFlow.Activities, handler: OnActivitiesListChanged);
+
 
                         //--BF sections updates
                         //Environments
@@ -517,6 +522,11 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                 }
             }
+        }
+
+        private void OnActivitiesListChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            OnTargetApplicationChanged(sender , null);
         }
 
         private void ResetPageUI()
@@ -596,6 +606,11 @@ namespace GingerWPF.BusinessFlowsLib
                         mActivityPage.UpdateActivity(mContext.Activity);
                         ToggleActivityPageUIButtons(!mExecutionIsInProgress);
                     }
+                    mActivityDetailsPage = new ActivityDetailsPage(mContext.Activity, mContext, mContext.Activity.Type == Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation : Ginger.General.eRIPageViewMode.ViewAndExecute);
+
+                    mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged -= OnTargetApplicationChanged;
+                    mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged += OnTargetApplicationChanged;
+
                 }
                 else
                 {
@@ -609,6 +624,23 @@ namespace GingerWPF.BusinessFlowsLib
                 xCurrentActivityFrame.SetContent(mActivityPage);
             }
         }
+
+        private void OnTargetApplicationChanged(object arg1, SelectionChangedEventArgs args)
+        {
+            var selectedTargetApplication = (TargetApplication)mActivityDetailsPage.xTargetApplicationComboBox.SelectedItem;
+
+            bool doesApplicationAgentAlreadyExist =  mExecutionEngine.GingerRunner.ApplicationAgents.Any((aa) => aa.AppName.Equals(selectedTargetApplication.AppName));
+
+            if (!doesApplicationAgentAlreadyExist)
+            {
+                ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = selectedTargetApplication.AppName };
+
+                mExecutionEngine.GingerRunner.ApplicationAgents.Add(applicationAgent);
+            }
+
+            mApplicationAgentsMapPage.RefreshApplicationAgentsList();
+        }
+
 
         private void mBusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -1681,7 +1713,7 @@ namespace GingerWPF.BusinessFlowsLib
                     ScenariosGenerator SG = new ScenariosGenerator();
                     SG.CreateScenarios(mBusinessFlow);
                     int cnt = mBusinessFlow.ActivitiesGroups.Count;
-                    int optCount = mBusinessFlow.ActivitiesGroups.Where(z => z.Name.StartsWith("Optimized Activities")).Count();
+                    int optCount = mBusinessFlow.ActivitiesGroups.Count(z => z.Name.StartsWith("Optimized Activities"));
                     if (optCount > 0)
                     {
                         cnt = cnt - optCount;

@@ -147,14 +147,14 @@ namespace GingerCore.Environments
 
         public void AddApplications(IEnumerable<ApplicationPlatform> SelectedApplications)
         {
-
+            
             foreach(ApplicationPlatform SelectedApplication in SelectedApplications)
             {
                 EnvApplication envApplication = new ();
                 envApplication.Name = SelectedApplication.AppName;
                 envApplication.ParentGuid = SelectedApplication.Guid;
                 envApplication.Description = SelectedApplication.Description;
-                envApplication.ItemImageType = SelectedApplication.PlatformImage;
+                envApplication.Platform = SelectedApplication.Platform;
                 this.Applications.Add(envApplication);
             }
         }

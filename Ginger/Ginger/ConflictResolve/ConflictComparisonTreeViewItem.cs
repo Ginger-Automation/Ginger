@@ -166,12 +166,12 @@ namespace Ginger.ConflictResolve
             CheckBox itemSelectCheckbox = new();
             itemSelectCheckbox.VerticalAlignment = System.Windows.VerticalAlignment.Center;
             BindingHandler.ObjFieldBinding(
-                control: itemSelectCheckbox, 
+                frameworkElement: itemSelectCheckbox, 
                 dependencyProperty: CheckBox.IsCheckedProperty, 
                 obj: _comparison, 
                 property: nameof(Comparison.Selected));
             BindingHandler.ObjFieldBinding(
-                control: itemSelectCheckbox,
+                frameworkElement: itemSelectCheckbox,
                 dependencyProperty: CheckBox.IsEnabledProperty,
                 obj: _comparison,
                 property: nameof(Comparison.IsSelectionEnabled));
