@@ -181,7 +181,7 @@ namespace Ginger
                     xAdminModeIcon.Foreground = (SolidColorBrush)FindResource("$HighlightColor_Yellow"); 
                 }
                 Reporter.ReporterData.PropertyChanged += ReporterDataChanged;
-
+                xChatbotWindow.IsVisibleChanged += XChatbotWindow_IsVisibleChanged;
             }
             catch (Exception ex)
             {
@@ -195,6 +195,15 @@ namespace Ginger
                 {
                     AddHelpLayoutToShow("MainWindow_AddSolutionHelp", xSolutionSelectionMainMenuItem, "Click here to create new Solution or to open / download an existing one");
                 }
+            }
+
+        }
+
+        private void XChatbotWindow_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if(xChatbotWindow.Visibility == Visibility.Collapsed && xChatbotIcon.Visibility == Visibility.Collapsed)
+            {
+                xChatbotIcon.Visibility = Visibility.Visible;
             }
         }
 

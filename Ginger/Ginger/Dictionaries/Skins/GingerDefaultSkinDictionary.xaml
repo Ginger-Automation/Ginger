@@ -664,6 +664,38 @@
         </Setter>
     </Style>
 
+    <Style TargetType="Button" x:Key="$RoundTextButtonStyle_ChatbotIcon">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_Black}" />
+        <Setter Property="FontFamily" Value="Open Sans" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="Padding" Value="20,3,20,3"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border Background="{TemplateBinding Background}" 
+                             BorderBrush="{DynamicResource $BackgroundColor_Black}" BorderThickness="1" CornerRadius="7,7,0,0">
+                        <ContentPresenter 
+                             TextElement.Foreground="{TemplateBinding Foreground}" 
+                             Margin="{TemplateBinding Padding}"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center"
+                             RecognizesAccessKey="True"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" Value="{DynamicResource $BackgroundColor_Black}" />
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="Cursor" Value="Hand"></Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
     <Style TargetType="Button" x:Key="$RoundTextButtonStyle_Generic_Highlight">
         <Setter Property="Background" Value="{StaticResource $BackgroundColor_Black}" />
         <Setter Property="Foreground" Value="{StaticResource $BackgroundColor_White}" />

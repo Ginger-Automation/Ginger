@@ -1,7 +1,10 @@
 ﻿using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.GenAIServices;
+using Ginger.Extensions;
 using ICSharpCode.AvalonEdit.Rendering;
 using System;
+using System.Collections.ObjectModel;
 using System.ServiceModel.Syndication;
 using System.Windows;
 using System.Windows.Controls;
@@ -42,22 +45,39 @@ namespace Amdocs.Ginger.UserControls
 
         private async void SendMessage(object sender, RoutedEventArgs e)
         {
-            LisaIntro.Visibility = Visibility.Collapsed;
+            //LisaIntro.Visibility = Visibility.Collapsed;
             string answer;
-            string userInput = "Hello";
-            if (chatPanel.Children.Count == 0)
+            string userInput = "hello";
+            if (userInput.IsNullOrEmpty())
             {
-               answer =await brainAIServices.StartNewChat(userInput);
+                // need to change to the specific message
+                Reporter.ToUser(eUserMsgKey.EnvParamNameEmpty);
+                return;
+            }
 
-            }
-            else
+            try
             {
-                answer = await brainAIServices.ContinueChat(userInput);
+                if (chatPanel.Children.Count == 1)
+                {
+
+                    answer = await brainAIServices.StartNewChat(userInput);
+                    chatPanel.Children.Clear();
+                }
+                else
+                {
+                    answer = await brainAIServices.ContinueChat(userInput);
+                }
             }
+            catch (Exception ex)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "Unable to connect to the host", ex);
+                answer = "Sorry, I am unable to answer right now";
+            }
+            
 
             AddMessage(GetUserName(), userInput);
-            //txtInput.Text = "";
-            //string botResponse = "test";// GenerateDummyResponse(userInput);
+
+            xUserInputTextBox.Clear();
 
             AddMessage("Lisa", answer);
         }
@@ -70,9 +90,30 @@ namespace Amdocs.Ginger.UserControls
 
         }
 
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.Enter)
+            {
+                xUserInputTextBox.AppendText(Environment.NewLine);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.Enter)
+            {
+                MessageBox.Show(xUserInputTextBox.Text);
+                xUserInputTextBox.Clear();
+                e.Handled = true;
+            }
+        }
+
+
+        private void Button_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.Visibility = Visibility.Collapsed;
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-           
+            this.Visibility = Visibility.Collapsed;
         }
     }
 }

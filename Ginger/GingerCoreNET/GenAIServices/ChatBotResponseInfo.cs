@@ -9,6 +9,6 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
     public class ChatBotResponseInfo
     {
      public string IsError { get; set; }   
-     public string Message { get; set; }
+     public string message { get; set; }
     }
 }

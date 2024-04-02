@@ -43,7 +43,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         public async Task<string> ContinueChat(string chatBotRequest)
         {
             MultipartFormDataContent content = PrepareRequestDetailsForChat(chatBotRequest);
-            var response = await _httpClient.PostAsync(START_NEW_CHAT, content);
+            var response = await _httpClient.PostAsync(CONTINUE_CHAT, content);
             return await ParseResponse(response);
         }
 
@@ -61,7 +61,7 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
 
             if (responseInfo != null)
             {
-                return responseInfo.Message;
+                return responseInfo.message;
             }
             else
             {

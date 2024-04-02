@@ -7,6 +7,6 @@
              mc:Ignorable="d" 
              Height="30" Width="98">
     <Grid>
-        <Button Click="Lisa_Click" Style="{StaticResource $RoundTextButtonStyle_Generic}" Content="Ask Lisa" Foreground="White" Background="#f05c62" />
+        <Button Click="Lisa_Click" Style="{StaticResource $RoundTextButtonStyle_ChatbotIcon}" Content="Ask Lisa" Foreground="White" Background="#f05c62" />
     </Grid>
 </UserControl>
