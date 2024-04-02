@@ -118,6 +118,7 @@ namespace Amdocs.Ginger.Common.Enums
         Stop,
         Close,
         Close2,
+        CloseWhite,
         Run,
         RunSingle,
         Continue,

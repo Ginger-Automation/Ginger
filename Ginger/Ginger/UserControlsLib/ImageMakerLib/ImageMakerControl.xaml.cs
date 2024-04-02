@@ -392,6 +392,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Close2:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Times);
                     break;
+                case eImageType.CloseWhite:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Times, Brushes.White);
+                    break;
                 case eImageType.Continue:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_FastForward);
                     break;

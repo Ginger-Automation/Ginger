@@ -1666,5 +1666,23 @@ namespace Ginger
             }
             
         }
+
+        private void xChatbotIcon_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (xChatbotWindow.Visibility == Visibility.Collapsed)
+            {
+                xChatbotWindow.Visibility = Visibility.Visible;
+                xChatbotIcon.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void xChatbotIcon_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (xChatbotWindow.Visibility == Visibility.Collapsed)
+            {
+                xChatbotWindow.Visibility = Visibility.Visible;
+                xChatbotIcon.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

@@ -9,8 +9,8 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Label Background="MediumPurple" FontWeight="Bold" HorizontalContentAlignment="Center" Foreground="White" Content="Ask Lisa"/>
-            <Button HorizontalAlignment="Right" MouseLeftButtonDown="Button_MouseLeftButtonDown" Click="Button_Click" BorderThickness="0" Background="Transparent" Foreground="White">
-                <Image  Source="{DynamicResource $Close-Window.png}" />
+            <Button HorizontalAlignment="Right" MouseLeftButtonDown="Button_MouseLeftButtonDown" Click="Button_Click" Width="30" BorderThickness="0" Background="MediumPurple">
+                <usercontrols:ImageMakerControl ImageType="CloseWhite" Width="15"></usercontrols:ImageMakerControl>
             </Button>
 
         </Grid>
