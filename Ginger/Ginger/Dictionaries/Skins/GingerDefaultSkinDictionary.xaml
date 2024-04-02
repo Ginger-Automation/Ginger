@@ -38,6 +38,10 @@
     <SolidColorBrush x:Key="$IgnoredStatusColor" Color="#737373"/>
     <SolidColorBrush x:Key="$BlockedStatusColor" Color="DarkRed"/>
 
+    <!--Chat Bot Colors-->
+    <SolidColorBrush x:Key="$LisaUserIconColor" Color="MediumPurple"/>
+    <SolidColorBrush x:Key="$YouUserIconColor" Color="#F05C62"/>
+    
     <LinearGradientBrush x:Key="$amdocsLogoLinarGradientBrush"
 		StartPoint="0,0" EndPoint="0.99,1" 
 		SpreadMethod="Pad" ColorInterpolationMode="SRgbLinearInterpolation" >

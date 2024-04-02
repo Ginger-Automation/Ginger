@@ -5,11 +5,13 @@ using Ginger.Extensions;
 using ICSharpCode.AvalonEdit.Rendering;
 using System;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace Amdocs.Ginger.UserControls
 {
@@ -21,7 +23,8 @@ namespace Amdocs.Ginger.UserControls
         {
             InitializeComponent();
             brainAIServices = new BrainAIServices();
-
+            string introMessage = "Hello I'm Lisa, the Ginger AI Assistent. How can i help you today?";
+            AddMessage("Lisa", introMessage, false);
         }
 
 
@@ -40,7 +43,7 @@ namespace Amdocs.Ginger.UserControls
             {
                 userName = userName.Substring(0, 7) + "...";
             }
-            
+
             return userName;
         }
 
@@ -51,7 +54,6 @@ namespace Amdocs.Ginger.UserControls
 
         private async Task SendMessageToAPI()
         {
-            //LisaIntro.Visibility = Visibility.Collapsed;
             string answer;
             string userInput = xUserInputTextBox.Text;
             if (userInput.IsNullOrEmpty())
@@ -61,13 +63,12 @@ namespace Amdocs.Ginger.UserControls
                 return;
             }
 
-            AddMessage(GetUserName(), userInput);
+            AddMessage(GetUserName(), userInput, true);
             ShowLoader();
             try
             {
                 if (chatPanel.Children.Count == 1)
                 {
-
                     answer = await brainAIServices.StartNewChat(userInput);
                     chatPanel.Children.Clear();
                 }
@@ -85,25 +86,107 @@ namespace Amdocs.Ginger.UserControls
             {
                 HideLoader();
             }
-            AddMessage("Lisa", answer);
+            AddMessage("Lisa", answer, false);
         }
 
-        private void AddMessage(string sender, string message)
+
+        private void AddMessage(string sender, string message, bool isUserMessage)
         {
-            TextBlock newTextBlock = new TextBlock();
-            newTextBlock.Text = $"{sender}: {message}";
-            newTextBlock.Margin = new Thickness(5);
-            newTextBlock.TextWrapping = TextWrapping.Wrap;
-            newTextBlock.Width = 300;
-            chatPanel.Children.Add(newTextBlock);
-            
+            StackPanel messageContainer = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(10),
+                MaxWidth = 400
+            };
 
+            TextBlock messageText = new TextBlock
+            {
+                Text = message,
+                //Background = isUserMessage ? System.Windows.Media.Brushes.LightBlue : System.Windows.Media.Brushes.LightGray,
+                Padding = new Thickness(10),
+                MaxWidth = 300,
+                TextWrapping = TextWrapping.Wrap
+            };
+            // Create a border with curved corners
+            Border messageBorder = new Border
+            {
+                CornerRadius = new CornerRadius(10), // Adjust corner radius as needed
+                Background = isUserMessage ? System.Windows.Media.Brushes.LightBlue : System.Windows.Media.Brushes.LightGray,
+                Child = messageText, // Set the TextBlock as the child of the border
+                Margin = new Thickness(0, 0, 0, 5) // Add margin at the bottom for spacing
+            };
+
+            messageContainer.Children.Add(messageBorder);
+
+            // Add user icon based on the message sender
+            if (isUserMessage)
+            {
+                // Add user icon (right side)
+                messageContainer.HorizontalAlignment = HorizontalAlignment.Right;
+
+                messageContainer.Children.Add(new System.Windows.Controls.Image
+                {
+                    Source = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User,
+                    foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_DarkGray")),
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Width = 30,
+                    Height = 30,
+                    Margin = new Thickness(5),
+                    ToolTip = sender
+                });
+            }
+            else
+            {
+                // Add user icon (left side)
+                messageContainer.HorizontalAlignment = HorizontalAlignment.Left;
+
+                messageContainer.Children.Insert(0, new System.Windows.Controls.Image
+                {
+                    Source = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User,
+                    foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_DarkGray")),
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Width = 30,
+                    Height = 30,
+                    Margin = new Thickness(5),
+                    ToolTip = sender
+                });
+            }
+
+            // Add time below the message
+            //TextBlock timeText = new TextBlock
+            //{
+            //    Text = DateTime.Now.ToString("HH:mm"), // Display current time in HH:mm format
+            //    FontSize = 10,
+            //    FontStyle = FontStyles.Italic,
+            //    HorizontalAlignment = HorizontalAlignment.Right,
+            //    Margin = new Thickness(5, 0, 5, 0) // Adjust margin for spacing
+            //};
+            //messageContainer.Children.Add(timeText);
+
+
+            chatPanel.Children.Add(messageContainer);
         }
+        //private void AddMessage(string sender, string message)
+        //{
+        //    TextBlock newTextBlock = new TextBlock();
+
+        //    newTextBlock.Inlines.Add(new Run("Bold text") { FontWeight = FontWeights.Bold });
+        //    newTextBlock.Inlines.Add(new Bold(new Run("TextBlock")));
+        //    boldRun.FontWeight = FontWeights.Bold;
+
+        //    newTextBlock.Text = $"{sender}: {message}";
+        //    newTextBlock.Margin = new Thickness(5);
+        //    newTextBlock.TextWrapping = TextWrapping.Wrap;
+        //    newTextBlock.Width = 300;
+        //    chatPanel.Children.Add(newTextBlock);
+
+
+        //}
 
         private async void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            
-            
+
+
             if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.Enter)
             {
                 xUserInputTextBox.AppendText(Environment.NewLine);
@@ -125,7 +208,7 @@ namespace Amdocs.Ginger.UserControls
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.Visibility = Visibility.Collapsed;
-            chatPanel.Children.Clear();
+            //chatPanel.Children.Clear();
         }
 
         private void ShowLoader()
@@ -133,8 +216,8 @@ namespace Amdocs.Ginger.UserControls
             xLoader.Visibility = Visibility.Visible;
             xUserInputTextBox.Clear();
             xUserInputTextBox.IsEnabled = false;
-           // xSend.IsEnabled = false;
-           
+            // xSend.IsEnabled = false;
+
 
         }
 

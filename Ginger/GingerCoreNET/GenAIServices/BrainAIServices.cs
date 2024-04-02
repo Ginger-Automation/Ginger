@@ -73,11 +73,11 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         {
             var content = new MultipartFormDataContent();
             content.Add(new StringContent(Question), "question");
-            content.Add(new StringContent("3uk"), "account");
+            content.Add(new StringContent("Ginger"), "account");
             content.Add(new StringContent("Knowledge Management"), "domainType");
             content.Add(new StringContent("0.1"), "temperatureVal");
             content.Add(new StringContent("2000"), "maxTokensVal");
-            content.Add(new StringContent("./Data/3UK"), "dataPath");
+            content.Add(new StringContent("./Data/Ginger"), "dataPath");
             return content;
         }
     }
