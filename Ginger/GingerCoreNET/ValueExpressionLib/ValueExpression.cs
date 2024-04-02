@@ -1420,7 +1420,7 @@ namespace GingerCore
                         ParamValue = VB.Value + "";  // Autohandle in case param is null convert to empty string
                     }
 
-                    if (DecryptFlag == true && VB is VariablePasswordString)
+                    if (DecryptFlag && VB is VariablePasswordString)
                     {
                         string strValuetoPass = EncryptionHandler.DecryptwithKey(VB.Value);
                         if (!string.IsNullOrEmpty(strValuetoPass))

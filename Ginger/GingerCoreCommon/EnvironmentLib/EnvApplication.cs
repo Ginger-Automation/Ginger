@@ -113,23 +113,35 @@ namespace GingerCore.Environments
         }
         public void SetUniqueVariableName(VariableBase var)
         {
-            if (string.IsNullOrEmpty(var.Name)) var.Name = "Variable";
-            if (Variables.FirstOrDefault(x => x.Name == var.Name) == null) return; //no name like it
+            if (string.IsNullOrEmpty(var.Name))
+            {
+                var.Name = "Variable";
+            }
+            if (Variables.FirstOrDefault(x => x.Name == var.Name) == null)
+            {
+                return; //no name like it
+            }
+            List<VariableBase> sameNameObjList = this.Variables.Where(x => x.Name == var.Name).ToList<VariableBase>();
 
-            List<VariableBase> sameNameObjList =
-                this.Variables.Where(x => x.Name == var.Name).ToList<VariableBase>();
-            if (sameNameObjList.Count == 1 && sameNameObjList[0] == var) return; //Same internal object
-
+            if (sameNameObjList.Count == 1 && sameNameObjList[0] == var)
+            {
+                return; //Same internal object
+            }
             //Set unique name
             int counter = 2;
             while ((Variables.FirstOrDefault(x => x.Name == var.Name + "_" + counter.ToString())) != null)
+            {
                 counter++;
+            }
             var.Name = var.Name + "_" + counter.ToString();
         }
 
         public void ConvertGeneralParamsToVariable()
         {
-            if (GeneralParams == null || GeneralParams.Count == 0) return;
+            if (GeneralParams == null || GeneralParams.Count == 0)
+            {
+                return;
+            }
 
             foreach (var generalParam in GeneralParams)
             {

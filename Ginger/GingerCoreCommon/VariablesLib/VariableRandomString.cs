@@ -223,9 +223,7 @@ namespace GingerCore.Variables
 
         public override void SetInitialValue(string InitialValue)
         {
-
-
-
+            Value = InitialValue;
         }
 
         public override bool SupportResetValue { get { return false; } }
