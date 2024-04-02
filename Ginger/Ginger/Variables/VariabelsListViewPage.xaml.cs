@@ -234,7 +234,7 @@ namespace Ginger.BusinessFlowPages
                 if(mVariabelsParent is EnvApplication)
                 {
                     mVariabelsListView.ListTitleVisibility = Visibility.Collapsed;
-                    mVariabelsListView.SetListImageVisibility = Visibility.Collapsed;
+                    mVariabelsListView.ListImageVisibility = Visibility.Collapsed;
                 }
                 else
                 {

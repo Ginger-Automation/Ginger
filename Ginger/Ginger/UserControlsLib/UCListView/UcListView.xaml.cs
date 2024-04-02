@@ -430,8 +430,12 @@ namespace Ginger.UserControlsLib.UCListView
         }
 
 
-        public Visibility SetListImageVisibility
+        public Visibility ListImageVisibility
         {
+            get
+            {
+                return xListTitleImage.Visibility;
+            }
             set
             {
                 xListTitleImage.Visibility = value;
@@ -478,15 +482,23 @@ namespace Ginger.UserControlsLib.UCListView
                 xListTitleImage.ImageType = value;
             }
         }
-        public Visibility SetSelectTitleVisibility
+        public Visibility SelectTitleVisibility
         {
+            get
+            {
+                return SelectionTitle.Visibility;
+            }
             set
             {
                 SelectionTitle.Visibility = value;  
             }
         }
-        public string SetSelectTitleContent
+        public string SelectTitleContent
         {
+            get
+            {
+                return SelectionTitle.Content.ToString() ?? string.Empty;
+            }
             set
             {
                 SelectionTitle.Content = value;
