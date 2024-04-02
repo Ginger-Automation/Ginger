@@ -20,6 +20,7 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
+using Amdocs.Ginger.UserControls;
 using Ginger.ALM;
 using Ginger.Run.RunSetActions;
 using GingerCore;
@@ -47,6 +48,7 @@ namespace Ginger.Run
         ObservableList<BusinessFlow> mBfs = new ObservableList<BusinessFlow>();
         PublishToALMConfig mPublishToALMConfig = new PublishToALMConfig();
         public bool IsProcessing = false;
+        ImageMakerControl loaderElement;
         ValueExpression mVE = null;
         Context mContext = null;
         public ExportResultsToALMConfigPage(RunSetActionPublishToQC runSetActionPublishToQC)
@@ -62,6 +64,7 @@ namespace Ginger.Run
             BindingHandler.ObjFieldBinding(VariableForTCRunName, TextBox.TextProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.VariableForTCRunName));
             BindingHandler.ObjFieldBinding(UseVariableInTCRunNameCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.isVariableInTCRunUsed));
             BindingHandler.ObjFieldBinding(AttachActivitiesGroupReportCbx, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.toAttachActivitiesGroupReport));
+            BindingHandler.ObjFieldBinding(SearchALMEntityByName, CheckBox.IsCheckedProperty, runSetActionPublishToQC, nameof(RunSetActionPublishToQC.SearchALMEntityByName));
             xFilterByStatusDroplist.BindControl(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.FilterStatus));
             xALMTypeCbx.Init(runSetActionPublishToQC, nameof(RunSetActionPublishToQC.PublishALMType),
                 GingerCore.General.GetEnumValuesForComboAndAddExtraValues(typeof(eALMType), new List<ComboEnumItem>() { new ComboEnumItem() { text = RunSetActionPublishToQC.AlmTypeDefault, Value = RunSetActionPublishToQC.AlmTypeDefault } }), ComboBox.TextProperty);
@@ -138,13 +141,19 @@ namespace Ginger.Run
             winButtons.Add(SaveAllButton);
             this.Width = 500;
             this.Height = 180;
-            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, winButtons, true);
+            loaderElement = new ImageMakerControl();
+            loaderElement.Name = "xProcessingImage";
+            loaderElement.Height = 30;
+            loaderElement.Width = 30;
+            loaderElement.ImageType = Amdocs.Ginger.Common.Enums.eImageType.Processing;
+            loaderElement.Visibility = Visibility.Collapsed;
+            GingerCore.General.LoadGenericWindow(ref genWin, App.MainWindow, eWindowShowStyle.Dialog, this.Title, this, winButtons, true,null,null,false, loaderElement);
         }
 
         private async void xExportToALMBtn_Click(object sender, RoutedEventArgs e)
         {
             string result = string.Empty;
-            xExportToALMLoadingIcon.Visibility = Visibility.Visible;
+            loaderElement.Visibility = Visibility.Visible;
             IsProcessing = true;
             mPublishToALMConfig.CalculateTCRunName(mVE);
             await Task.Run(() =>
@@ -159,7 +168,7 @@ namespace Ginger.Run
                 }
             });
             IsProcessing = false;
-            xExportToALMLoadingIcon.Visibility = Visibility.Collapsed;
+            loaderElement.Visibility = Visibility.Collapsed;
             Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALM, result);
         }
 
@@ -256,6 +265,7 @@ namespace Ginger.Run
             {
                 xExportTypePanel.Visibility = Visibility.Collapsed;
                 xExportDestinationFolder.Visibility = Visibility.Collapsed;
+                SearchALMEntityByName.Visibility = Visibility.Collapsed;
                 return;
             }
             xExportTypePanel.Visibility = Visibility.Visible;
@@ -266,10 +276,12 @@ namespace Ginger.Run
             if (xExportTypeCbx.ComboBoxSelectedValue is null) //&& xExportTypeCbx.ComboBoxSelectedValue.ToString().Equals(eExportType.ResultsOnly.ToString()))
             {
                 xExportDestinationFolder.Visibility = Visibility.Collapsed;
+                SearchALMEntityByName.Visibility = Visibility.Collapsed;
                 return;
             }
             xExportDestinationFolder.Visibility = Visibility.Visible;
             xExportTypeCbx.ComboBox.SelectedValue = eExportType.EntitiesAndResults;
+            SearchALMEntityByName.Visibility = Visibility.Visible;
             xExportTypeCbx.IsEnabled = false;
         }
         private void xALMTypeCbx_SelectionChanged(object sender, SelectionChangedEventArgs e)

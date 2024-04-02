@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -16,10 +16,13 @@ limitations under the License.
 */
 #endregion
 
+using System;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
+using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GingerCore.Environments
 {
@@ -95,11 +98,17 @@ namespace GingerCore.Environments
             return nameof(EnvApplication);
         }
 
+        private eImageType mItemImageType;
         public override eImageType ItemImageType
         {
             get
             {
-                return eImageType.Application;
+                return mItemImageType;
+            }
+
+            set
+            {
+                mItemImageType = value;
             }
         }
 
@@ -108,6 +117,24 @@ namespace GingerCore.Environments
             get
             {
                 return nameof(this.Name);
+            }
+        }
+        public ePlatformType Platform
+        {
+            get;
+            set;
+        }
+        public void SetPlatFormImage(ObservableList<ApplicationPlatform> ApplicationPlatforms)
+        {
+            ApplicationPlatform applicationPlatform =  ApplicationPlatforms.FirstOrDefault((app)=>app.Guid.Equals(this.ParentGuid));
+            if(applicationPlatform != null)
+            {
+                this.ItemImageType = applicationPlatform.PlatformImage;
+                this.Name = applicationPlatform.AppName;
+            }
+            else
+            {
+                this.ItemImageType = eImageType.Application;
             }
         }
     }

@@ -205,11 +205,11 @@ namespace GingerCore.ALM.QC
                                     {
                                         run.Status = "Failed";
                                     }
-                                    else if (stepsStatuses.Where(x => x == "No Run").Count() == stepsList.Count || stepsStatuses.Where(x => x == "N/A").Count() == stepsList.Count)
+                                    else if (stepsStatuses.Count(x => x == "No Run") == stepsList.Count || stepsStatuses.Count(x => x == "N/A") == stepsList.Count)
                                     {
                                         run.Status = "No Run";
                                     }
-                                    else if (stepsStatuses.Where(x => x == "Passed").Count() == stepsList.Count || (stepsStatuses.Where(x => x == "Passed").Count() + stepsStatuses.Where(x => x == "N/A").Count()) == stepsList.Count)
+                                    else if (stepsStatuses.Count(x => x == "Passed") == stepsList.Count || (stepsStatuses.Count(x => x == "Passed") + stepsStatuses.Count(x => x == "N/A")) == stepsList.Count)
                                     {
                                         run.Status = "Passed";
                                     }

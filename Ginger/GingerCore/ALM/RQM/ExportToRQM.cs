@@ -746,6 +746,10 @@ namespace GingerCore.ALM.RQM
                     else
                     {
                         businessFlow.ExternalIdCalCulated = $"RQMID={plan.ExportedID.ToString()}";
+                        if(plan.ALMTestSetLevel == "RunSet")
+                        {
+                            businessFlow.ExternalID = $"RQMID={plan.ExportedID.ToString()}";
+                        }
                     }
 
                     int ActivityGroupCounter = 0;
@@ -783,6 +787,10 @@ namespace GingerCore.ALM.RQM
                             else
                             {
                                 businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalIdCalculated = ActivityGroupID;
+                                if (plan.ALMTestSetLevel == "RunSet")
+                                {
+                                    businessFlow.ActivitiesGroups[ActivityGroupCounter].ExternalID = ActivityGroupID;
+                                }
                             }
                             foreach (ACL_Data_Contract.ActivityStep activityStep in act.ActivityData.ActivityStepsColl)
                             {
@@ -832,7 +840,8 @@ namespace GingerCore.ALM.RQM
 
             testPlan.EntityName = businessFlow.Name;
             testPlan.EntityDesc = businessFlow.Description == null ? "" : businessFlow.Description;
-
+            testPlan.IsEntitySearchByName = businessFlow.IsEntitySearchByName;
+            testPlan.ALMTestSetLevel = businessFlow.ALMTestSetLevel;
             List<TestSuite> testSuites = new List<TestSuite>();
             if (ALMCore.DefaultAlmConfig.IsTestSuite == "True")
             {

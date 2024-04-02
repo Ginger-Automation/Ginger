@@ -597,8 +597,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
             {
                 foreach (Activity activity in bf.Activities.Where(x => x.Active))
                 {
-                    count = count + activity.Acts.Where(act => (act.Active &&
-                                                               (act.GetType() == typeof(ActWebAPIRest) || act.GetType() == typeof(ActWebAPISoap)))).Count();
+                    count = count + activity.Acts.Count(act => act.Active &&
+                                                               (act.GetType() == typeof(ActWebAPIRest) || act.GetType() == typeof(ActWebAPISoap)));
                 }
             }
             catch (Exception ex)
