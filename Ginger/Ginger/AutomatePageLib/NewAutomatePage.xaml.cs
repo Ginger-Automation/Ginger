@@ -445,6 +445,9 @@ namespace GingerWPF.BusinessFlowsLib
 
 
                         PropertyChangedEventManager.AddHandler(source: mBusinessFlow, handler: mBusinessFlow_PropertyChanged, propertyName: allProperties);
+                        CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.Activities, handler: OnActivitiesListChanged);
+                        CollectionChangedEventManager.AddHandler(source: mBusinessFlow.Activities, handler: OnActivitiesListChanged);
+
 
                         //--BF sections updates
                         //Environments
@@ -519,6 +522,11 @@ namespace GingerWPF.BusinessFlowsLib
                     }
                 }
             }
+        }
+
+        private void OnActivitiesListChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            OnTargetApplicationChanged(sender , null);
         }
 
         private void ResetPageUI()
@@ -628,25 +636,11 @@ namespace GingerWPF.BusinessFlowsLib
                 ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = selectedTargetApplication.AppName };
 
                 mExecutionEngine.GingerRunner.ApplicationAgents.Add(applicationAgent);
-
-                #region Remove All Application Agent that do not exist in all the activities of the current business flow. 
-
-                IEnumerable<string> AllTargetApplicationsInActivities =  mBusinessFlow.Activities.Select((activity)=>activity.TargetApplication);
-
-                ObservableList<IApplicationAgent> filteredApplicationAgents = new ();
-
-                mExecutionEngine.GingerRunner.ApplicationAgents.Where((applicationAgent) =>
-                {
-                    return AllTargetApplicationsInActivities.Contains(applicationAgent.AppName);
-                }).ForEach(filteredApplicationAgents.Add);
-
-                mExecutionEngine.GingerRunner.ApplicationAgents = filteredApplicationAgents;
-
-                #endregion
-
-                mApplicationAgentsMapPage.RefreshApplicationAgentsList();
             }
+
+            mApplicationAgentsMapPage.RefreshApplicationAgentsList();
         }
+
 
         private void mBusinessFlow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {

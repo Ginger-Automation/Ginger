@@ -26,6 +26,7 @@ using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -86,19 +87,33 @@ namespace Ginger.Agents
             {
                 ApplicationAgents = new ObservableList<ApplicationAgent>();
 
-                foreach (ApplicationAgent Apag in mRunner.GingerRunner.ApplicationAgents)
+                if (mContext?.BusinessFlow != null)
                 {
-                    if (Apag.ApplicationAgentOperations == null)
-                    {
-                        Apag.ApplicationAgentOperations = new ApplicationAgentOperations(Apag);
-                    }
-                    if (mRunner.SolutionApplications.FirstOrDefault(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA) == null)
-                    {
-                        ApplicationAgents.Add(Apag);
-                    }
-                }
+                    var AllTargetApplicationNames = mContext.BusinessFlow.Activities.Select((activity) => activity.TargetApplication);
 
-                xAppAgentsListBox.ItemsSource = ApplicationAgents;
+
+                    var allTargetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+
+                    allTargetApplications.Where((App) =>
+                    {
+                        return AllTargetApplicationNames.Contains(App.Name);
+                    }).ForEach((FilteredTargetApp) =>
+                    {
+                        ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)FilteredTargetApp).AppName };
+                        applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+                        applicationAgent.Agent = applicationAgent.PossibleAgents?.FirstOrDefault((agent) => agent.Name.Equals(FilteredTargetApp.LastExecutingAgentName)) as Agent;
+
+
+                        if(applicationAgent.Agent == null && applicationAgent.PossibleAgents?.Count >= 1)
+                        {
+                            applicationAgent.Agent = applicationAgent.PossibleAgents[0] as Agent;
+                        }
+
+                        ApplicationAgents.Add(applicationAgent);
+                    });
+
+                    xAppAgentsListBox.ItemsSource = ApplicationAgents;
+                }
             });
         }
 
