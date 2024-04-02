@@ -193,6 +193,12 @@ namespace Ginger.UserControlsLib.UCListView
 
                     xListView.ItemsSource = mObjList;
 
+                    if(value is ObservableList<VariableBase>)
+                    {
+                        xListView.SelectedIndex = -1;
+                        xListView.SelectedItem = null;
+                    }
+
                     this.Dispatcher.BeginInvoke((Action)(() =>
                     {
                         xSearchTextBox.Text = "";
@@ -208,11 +214,7 @@ namespace Ginger.UserControlsLib.UCListView
                                 mObjList.CurrentItem = value[0];
                             }
                         }
-                        else
-                        {
-                            xListView.SelectedIndex = -1;
-                            xListView.SelectedItem = null;
-                        }
+
                         //show items as collapsed
                         mListViewHelper.ExpandItemOnLoad = false;
                         xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
