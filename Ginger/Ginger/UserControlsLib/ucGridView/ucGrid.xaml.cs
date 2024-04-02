@@ -190,6 +190,11 @@ namespace Ginger
         }
         public Visibility SearchVisibility
         {
+
+            get
+            {
+                return ToolsTray.Visibility;
+            }
             set
             {
                 ToolsTray.Visibility = value;

@@ -151,7 +151,6 @@ namespace Ginger.SolutionWindows
                 if (!DoesPlatformExist && !this.isSolutionNew)
                 {
                     SetAgent(selectedApp);
-                    //WorkSpace.Instance.SolutionRepository?.AddRepositoryItem(new Agent() { Platform = selectedApp.Platform, Name = selectedApp.AppName});
                 }
             }
 
