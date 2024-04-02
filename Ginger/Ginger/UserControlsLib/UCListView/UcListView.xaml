@@ -51,7 +51,7 @@
         </Border>
 
         <Ginger:ucTagsViewer x:Name="xTagsFilter" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" AddTags="False"/>
-        <Label Margin="5,0,0,0" x:Name="SelectionTitle" Height="40" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="DemiBold" Style="{StaticResource $SubHeaderLabelStyle}" FontSize="20" Visibility="Hidden"/>
+        <Label Margin="5,0,0,0" x:Name="SelectionTitle" Height="40" Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Center" Style="{StaticResource $SubHeaderLabelStyle}" FontSize="18" Visibility="Hidden"/>
         <GridSplitter Height="1" ResizeDirection="Rows" Grid.Row="2" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Margin="0,0,0,0" IsEnabled="False" Background="LightGray" />
 
         <Border Grid.Row="3" Background="{StaticResource $BackgroundColor_VeryLightGray}" BorderThickness="10" CornerRadius="20" >

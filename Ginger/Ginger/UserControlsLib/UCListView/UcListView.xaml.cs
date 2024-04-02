@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using GingerCore.GeneralLib;
+using GingerCore.Variables;
 using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
@@ -197,7 +198,7 @@ namespace Ginger.UserControlsLib.UCListView
                         xSearchTextBox.Text = "";
 
                         // Make the first row selected
-                        if (value != null && value.Count > 0)
+                        if (value != null && value.Count > 0 && value is not ObservableList<VariableBase>)
                         {
                             xListView.SelectedIndex = 0;
                             xListView.SelectedItem = value[0];
@@ -207,7 +208,11 @@ namespace Ginger.UserControlsLib.UCListView
                                 mObjList.CurrentItem = value[0];
                             }
                         }
-
+                        else
+                        {
+                            xListView.SelectedIndex = -1;
+                            xListView.SelectedItem = null;
+                        }
                         //show items as collapsed
                         mListViewHelper.ExpandItemOnLoad = false;
                         xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;

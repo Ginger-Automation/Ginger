@@ -28,32 +28,32 @@
                 <StackPanel Orientation="Vertical">
                     <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" Name="xVariableDetailsDockPanel"  Margin="10,25,0,10">
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                            <Label Style="{StaticResource $LabelStyle}" MinWidth="115" Content="Name:"/>
+                            <Label Style="{StaticResource $LabelStyle}" MinWidth="70" Content="Name:"/>
                             <StackPanel Orientation="Vertical">
                                 <TextBox Width="250" Height="25" Style="{StaticResource $TextBoxStyle}" Name="variableName" />
                                 <TextBlock Text="Name is mandatory" Name="NameError" DockPanel.Dock="Bottom" Foreground="Red" Visibility="Hidden"/>
                             </StackPanel>
                         </StackPanel>
 
-                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Name="ValueStackPanel" Visibility="Collapsed" >
-                            <Label Style="{StaticResource $LabelStyle}" MinWidth="115" Content="Initial Value:"/>
-                            <StackPanel Orientation="Vertical">
-                                <TextBox  Height="25" Width="250" Style="{StaticResource $TextBoxStyle}"  Name="variableValue"/>
-                                <TextBlock Text="Value is mandatory" Name="ValueError" DockPanel.Dock="Bottom" Foreground="Red" Visibility="Hidden"/>
-                            </StackPanel>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Visibility="Collapsed" Name="DateTimePanel">
-                            <TextBlock>Initial Date Time:</TextBlock>
-                            <window:WindowsFormsHost Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Width="30" Height="30">
-                                <wf:DateTimePicker    x:Name="dtpInitialDate" Format="Custom" ></wf:DateTimePicker>
-                            </window:WindowsFormsHost>
-                        </StackPanel>
-
-
 
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                            <Label Style="{StaticResource $LabelStyle}" MinWidth="115" Content="Description:"/>
-                            <TextBox Height="25" Width="250"  Style="{StaticResource $TextBoxStyle}"  Name="variableDescription"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Style="{StaticResource $LabelStyle}" MinWidth="50" Content="Description:"/>
+                                <TextBox Height="25" Width="250"  Style="{StaticResource $TextBoxStyle}"  Name="variableDescription"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Name="ValueStackPanel" Visibility="Collapsed" Margin="5, 0, 0, 0">
+                                <Label Style="{StaticResource $LabelStyle}" MinWidth="50" Content="Initial Value:"/>
+                                 <TextBox  Height="25" Width="250" Style="{StaticResource $TextBoxStyle}"  Name="variableValue"/>
+                                 <TextBlock Text="Value is mandatory" Name="ValueError" DockPanel.Dock="Bottom" Foreground="Red" Visibility="Hidden" Margin="5, 0, 0 , 0"/>
+                            </StackPanel>
+                            
+                            <StackPanel Orientation="Horizontal" Visibility="Collapsed" Name="DateTimePanel" Margin="5, 0, 0, 0">
+                                <TextBlock>Initial Date Time:</TextBlock>
+                                <window:WindowsFormsHost Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Width="30" Height="30">
+                                    <wf:DateTimePicker    x:Name="dtpInitialDate" Format="Custom" ></wf:DateTimePicker>
+                                </window:WindowsFormsHost>
+                            </StackPanel>
                         </StackPanel>
                     </DockPanel>
 

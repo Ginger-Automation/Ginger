@@ -26,6 +26,7 @@ using GingerCore.Environments;
 using GingerCore.Variables;
 using Microsoft.VisualStudio.Services.Common;
 using Newtonsoft.Json.Linq;
+using OctaneRepositoryStd.BLL;
 using System;
 using System.Collections;
 using System.Linq;
@@ -96,6 +97,13 @@ namespace Ginger.Variables
         {
             var SelectedListView = xLibraryTabListView.xListView.SelectedItem;
 
+            if(SelectedListView == null)
+            {
+                ValueStackPanel.Visibility = Visibility.Collapsed;
+                DateTimePanel.Visibility = Visibility.Collapsed;
+                return;
+            }
+
             if (SelectedListView is VariableRandomNumber || SelectedListView is VariableRandomString)
             {
                 ValueStackPanel.Visibility = Visibility.Collapsed;
@@ -162,13 +170,13 @@ namespace Ginger.Variables
                     variableString = vs;
                     varStrIndex = pointer;
                 }
-                v.Name = v.VariableUIType;
+                v.Name = (mVariablesLevel.Equals(eVariablesLevel.EnvApplication)) ? v.VariableUIType.Replace("Variable" , "Parameter") : v.VariableUIType;
                 if (!v.IsObsolete)
                 {
                     list.Add(v);
                     pointer++;
                 }
-
+            
             }
 
             if (varStrIndex != -1 && variableString!=null)
