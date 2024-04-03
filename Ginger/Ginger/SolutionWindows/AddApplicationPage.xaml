@@ -16,15 +16,15 @@
         <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" Name="xVariableDetailsDockPanel" Margin="10">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                 <Label Style="{StaticResource $LabelStyle}" MinWidth="115" Content="Name:"/>
-                <StackPanel Orientation="Vertical">
-                    <TextBox Width="200" Height="25" Style="{StaticResource $TextBoxStyle}" Name="variableName" />
-                    <TextBlock Text="Name is mandatory" Name="NameError" DockPanel.Dock="Bottom" Foreground="Red" Visibility="Hidden"/>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                    <TextBox Width="200" Height="25" Style="{StaticResource $TextBoxStyle}" Name="applicationName" />
+                    <TextBlock Name="NameError" DockPanel.Dock="Bottom" Foreground="Red" Visibility="Hidden"/>
                 </StackPanel>
             </StackPanel>
 
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                 <Label Style="{StaticResource $LabelStyle}" MinWidth="115" Content="Description:"/>
-                <TextBox Height="25" Width="200"  Style="{StaticResource $TextBoxStyle}"  Name="variableDescription"/>
+                <TextBox Height="25" Width="200"  Style="{StaticResource $TextBoxStyle}"  Name="applicationDescription"/>
             </StackPanel>
         </DockPanel>
 

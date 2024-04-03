@@ -41,7 +41,7 @@ namespace Ginger.SolutionWindows
     {
         Solution mSolution;
         GenericWindow _pageGenericWin = null;
-
+        private ePlatformType SelectedPlatform = ePlatformType.NA;
         public AddSolutionPage(Solution s)
         {
             InitializeComponent();
@@ -50,28 +50,8 @@ namespace Ginger.SolutionWindows
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(SolutionFolderTextBox, TextBox.TextProperty, s, nameof(Solution.Folder));
             UCEncryptionKey.mSolution = mSolution;
             UCEncryptionKey.EncryptionKeyPasswordBox.PasswordChanged += EncryptionKeyBox_Changed;
-            MainPlatformTextBlock.Text = ConvertPlatformTypeToString(s.MainPlatform);
         }
 
-        private string ConvertPlatformTypeToString(ePlatformType mainPlatform)
-        {
-            switch (mainPlatform)
-            {
-                case ePlatformType.Windows: return "Windows";
-                case ePlatformType.Unix: return "Unix";
-                case ePlatformType.Mobile: return "Mobile";
-                case ePlatformType.Web: return "Web";
-                case ePlatformType.DOS: return "DOS";
-                case ePlatformType.Java: return "Java";
-                case ePlatformType.WebServices: return "WebServices";
-                case ePlatformType.ASCF: return "ASCF";
-                case ePlatformType.MainFrame: return "MainFrame";
-                case ePlatformType.PowerBuilder: return "PowerBuilder";
-                case ePlatformType.Service: return "Service";
-                default: return "NA";
-            }
-
-        }
 
         public bool IsUploadSolutionToSourceControl { get; set; }
 
@@ -88,7 +68,6 @@ namespace Ginger.SolutionWindows
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 //check name and folder inputs exists
                 if (SolutionNameTextBox.Text.Trim() == string.Empty || SolutionFolderTextBox.Text.Trim() == string.Empty
-                        || ApplicationTextBox.Text.Trim() == string.Empty
                             || UCEncryptionKey.EncryptionKeyPasswordBox.Password.Trim() == string.Empty)
                 {
                     Mouse.OverrideCursor = null;
@@ -106,8 +85,9 @@ namespace Ginger.SolutionWindows
 
                 mSolution.ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
                 ApplicationPlatform MainApplicationPlatform = new ApplicationPlatform();
-                MainApplicationPlatform.AppName = ApplicationTextBox.Text;
-                MainApplicationPlatform.Platform =ConvertStringToPlatformType(MainPlatformTextBlock.Text);
+                MainApplicationPlatform.AppName = ApplicationLabel.Content.ToString();
+                MainApplicationPlatform.Platform = SelectedPlatform;
+
                 mSolution.ApplicationPlatforms.Add(MainApplicationPlatform);
                 mSolution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
                 //TODO: check AppName and platform validity - not empty + app exist in list of apps
@@ -329,8 +309,10 @@ namespace Ginger.SolutionWindows
 
             if (mSolution.ApplicationPlatforms.Any())
             {
-                ApplicationTextBox.Text = mSolution.ApplicationPlatforms[0].AppName;
-                MainPlatformTextBlock.Text = ConvertPlatformTypeToString(mSolution.ApplicationPlatforms[0].Platform);
+                ApplicationLabel.Content = mSolution.ApplicationPlatforms[0].AppName;
+                xApplicationImage.ImageType = ApplicationPlatform.GetPlatformImage(mSolution.ApplicationPlatforms[0].Platform);
+                xApplicationImage.Visibility = Visibility.Visible;
+                SelectedPlatform = mSolution.ApplicationPlatforms[0].Platform;
             }
         }
     }

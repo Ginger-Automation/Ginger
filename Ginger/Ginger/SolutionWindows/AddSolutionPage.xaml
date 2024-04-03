@@ -20,20 +20,17 @@
                 <TextBox x:Name="SolutionFolderTextBox" AutomationProperties.AutomationId="QA-SolutionFolderTextBox" Style="{StaticResource @TextBoxStyle}" Height="25" VerticalAlignment="Top"/>
                 <Button x:Name="BrowseButton" Click="BrowseButton_Click" Content="Browse" Style="{StaticResource @InputButtonStyle}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
             </Grid>
-            <Label Style="{StaticResource @InputFieldLabelStyle}">Main Application Name:</Label>
+            <Label Style="{StaticResource @InputFieldLabelStyle}" >Main Application Name:</Label>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100*"/>
+                    <ColumnDefinition Width="auto" MaxWidth="400"/>
+                    <ColumnDefinition Width="auto" MaxWidth="35"/>
                     <ColumnDefinition Width="55"/>
                 </Grid.ColumnDefinitions>
-                <TextBox x:Name="ApplicationTextBox" AutomationProperties.AutomationId="QA-ApplicationTextBox" Style="{StaticResource @TextBoxStyle}" Height="25" VerticalAlignment="Top"/>
-                <Button x:Name="SelectButton" Click="SelectButton_Click" Content="Select" ToolTip="Select From List of Known Applications" Style="{StaticResource @InputButtonStyle}" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
-
+                <Label x:Name="ApplicationLabel"  Style="{StaticResource @InputFieldLabelStyle}" Content="Select Application" FontSize ="12"  Height="30"  Grid.Column="0" VerticalContentAlignment="Center" />
+                <usercontrols:ImageMakerControl x:Name="xApplicationImage"  ImageType="Empty" Height="14" Visibility="Collapsed" Margin="5,0,5,0" Grid.Column="1"/>
+                <Button x:Name="SelectButton" Click="SelectButton_Click" Content="Select" ToolTip="Select From List of Known Applications" Style="{StaticResource @InputButtonStyle}" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
             </Grid>
-            <StackPanel>
-                <Label Style="{StaticResource @InputFieldLabelStyle}" Content="Main Application Platform:" />
-                <TextBox x:Name="MainPlatformTextBlock" Height="25"  Style="{StaticResource $TextBoxStyle}" Text="Hello World" IsReadOnly="True" Width="200" HorizontalAlignment="Left" />
-            </StackPanel>
             <usercontrols1:UCEncryptionKey x:Name="UCEncryptionKey" Height="52"></usercontrols1:UCEncryptionKey>
         </StackPanel>
 

@@ -23,7 +23,6 @@ using Ginger.UserControls;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using Microsoft.Graph;
 using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Linq;
@@ -39,8 +38,8 @@ namespace Ginger.SolutionWindows
     {
         GenericWindow _pageGenericWin = null;
         Solution mSolution;
-        bool isSolutionNew = false;
-        public AddApplicationPage(Solution Solution , bool isSolutionNew)
+        bool isApplicationLoadedFromNewSolution = false;
+        public AddApplicationPage(Solution Solution , bool isApplicationLoadedFromNewSolution)
         {
             InitializeComponent();
             SelectApplicationGrid.SelectionMode = DataGridSelectionMode.Single;
@@ -48,7 +47,7 @@ namespace Ginger.SolutionWindows
             SetAppsGridView();
             InitGridData();
             mSolution = Solution;
-            this.isSolutionNew = isSolutionNew;
+            this.isApplicationLoadedFromNewSolution = isApplicationLoadedFromNewSolution;
         }
 
         private void InitGridData()
@@ -111,47 +110,57 @@ namespace Ginger.SolutionWindows
             {
                 mSolution.ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
             }
-            var name = variableName.Text.Trim();
-            var description = variableDescription.Text.Trim();
+            var name = applicationName.Text.Trim();
+            var description = applicationDescription.Text.Trim();
             if (string.IsNullOrEmpty(name))
             {
+                NameError.Text = "Name is mandatory";
                 NameError.Visibility = Visibility.Visible;
                 return;
             }
 
-            eUserMsgSelection msgSelection = eUserMsgSelection.None;
+            ApplicationPlatform selectedApp = (ApplicationPlatform)SelectApplicationGrid.Grid.SelectedItem;
 
-            if (!this.isSolutionNew)
+
+
+            if (!this.isApplicationLoadedFromNewSolution)
             {
-                msgSelection = Reporter.ToUser(eUserMsgKey.ShareApplicationToEnvironment);
+                bool doesNameExist = WorkSpace.Instance.Solution.ApplicationPlatforms.Any((app) => app.AppName.Equals(name));
+
+                if (doesNameExist)
+                {
+
+                    NameError.Text = "This Name already exists";
+                    NameError.Visibility = Visibility.Visible;
+                    return;
+                }
+
             }
 
 
+            eUserMsgSelection msgSelection = eUserMsgSelection.None;
 
-            foreach (ApplicationPlatform selectedApp in SelectApplicationGrid.Grid.SelectedItems)
+            if (!this.isApplicationLoadedFromNewSolution)
             {
-                mSolution.SetUniqueApplicationName(selectedApp);
+                msgSelection = Reporter.ToUser(eUserMsgKey.ShareApplicationToEnvironment);
+            }
+            selectedApp.AppName = name;
+            selectedApp.Description = description;
 
-                selectedApp.AppName = name;
-                selectedApp.Description = description;
+            if (!this.isApplicationLoadedFromNewSolution && msgSelection.Equals(eUserMsgSelection.Yes))
+            {
+                var ProjEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
 
+                ProjEnvironments.ForEach((projEnv) => { projEnv.StartDirtyTracking(); projEnv.Applications.Add(new EnvApplication() { Name = selectedApp.AppName, ParentGuid = selectedApp.Guid, Platform = selectedApp.Platform }); });
+            }
 
-                if (!this.isSolutionNew && msgSelection.Equals(eUserMsgSelection.Yes))
-                {
-                    var ProjEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+            mSolution.ApplicationPlatforms.Add(selectedApp);
 
-                    ProjEnvironments.ForEach((projEnv) => { projEnv.StartDirtyTracking(); projEnv.Applications.Add(new EnvApplication() { Name = selectedApp.AppName, ParentGuid = selectedApp.Guid , Platform = selectedApp.Platform}); });
+            var DoesMatchingPlatformAgentExist = WorkSpace.Instance.SolutionRepository?.GetAllRepositoryItems<Agent>().Any((agent) => agent.Platform.Equals(selectedApp.Platform)) ?? true;
 
-                }
-
-                mSolution.ApplicationPlatforms.Add(selectedApp);
-
-                var DoesPlatformExist = WorkSpace.Instance.SolutionRepository?.GetAllRepositoryItems<Agent>().Any((agent)=>agent.Platform.Equals(selectedApp.Platform)) ?? true;
-
-                if (!DoesPlatformExist && !this.isSolutionNew)
-                {
-                    SetAgent(selectedApp);
-                }
+            if (!DoesMatchingPlatformAgentExist && !this.isApplicationLoadedFromNewSolution)
+            {
+                SetAgent(selectedApp);
             }
 
             _pageGenericWin.Close();
