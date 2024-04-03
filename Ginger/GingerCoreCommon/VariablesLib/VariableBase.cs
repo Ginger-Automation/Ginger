@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -77,7 +77,8 @@ namespace GingerCore.Variables
             GlobalVariable,
             OutputVariable,
             ApplicationModelParameter,
-            DataSource
+            DataSource,
+            ActivityOutputVariable
         }
 
         private bool mSetAsInputValue = true;
@@ -623,6 +624,9 @@ namespace GingerCore.Variables
                     DiffrentFromOrigin = false;
             }
         }
+
+        public Guid VariableReferenceEntity { get; set; }
+
         public abstract bool SupportSetValue { get; }
 
         public virtual bool SetValue(string value)
