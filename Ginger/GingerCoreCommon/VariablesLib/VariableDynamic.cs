@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -35,7 +35,7 @@ namespace GingerCore.Variables
         [IsSerializedForLocalRepository]
         public string ValueExpression
         {
-            set { mValueExpression = value; OnPropertyChanged("Formula"); }
+            set { mValueExpression = value; OnPropertyChanged(nameof(ValueExpression)); }
             get { return mValueExpression; }
         }
 
@@ -129,6 +129,11 @@ namespace GingerCore.Variables
         {
             ValueExpression = value;
             return true;
+        }
+
+        public override void SetInitialValue(string InitialValue)
+        {
+            this.ValueExpression = InitialValue;
         }
     }
 }

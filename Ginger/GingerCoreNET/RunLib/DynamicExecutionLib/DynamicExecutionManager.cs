@@ -1177,6 +1177,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                          new Tuple<string, Guid?>(nameof(Activity.Guid), sharedActivity.SharedActivityID),
                                          new Tuple<string, string>(nameof(Activity.ActivityName), sharedActivity.SharedActivityName),
                                          WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>());
+                                        if (sharedActivity.InstanceID != null)
+                                        {
+                                            shActivity.Guid = (Guid)sharedActivity.InstanceID;
+                                        }
                                         bf.AddActivity(shActivity, actGrp);
                                     }
                                 }
@@ -1279,6 +1283,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                                 break;
                                             case InputValue.eVariableCustomizationType.DataSource:
                                                 customizedInputVar.MappedOutputType = VariableBase.eOutputType.DataSource;
+                                                customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
+                                                break;
+                                            case InputValue.eVariableCustomizationType.ActivityOutputVariable:
+                                                customizedInputVar.MappedOutputType = VariableBase.eOutputType.ActivityOutputVariable;
+                                                customizedInputVar.VariableReferenceEntity = (Guid)inputValueConfig.VariableReferenceEntity;
                                                 customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
                                                 break;
                                             default:

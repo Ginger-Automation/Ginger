@@ -48,7 +48,7 @@
                                 <CheckBox x:Name="xSetAsOutputValueCheckBox" Style="{StaticResource $CeckBoxStyle}"  VerticalAlignment="Center" Content="Set as Output" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="5,5,0,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked"/>
                                 <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" VerticalAlignment="Center" HorizontalAlignment="Left"  DockPanel.Dock="Left" Margin="5,5,0,0" Style="{StaticResource $CeckBoxStyle}" Visibility="Collapsed"/>
                                 <StackPanel Orientation="Horizontal" Margin="5,10,0,0" VerticalAlignment="Center">
-                                    <Label Style="{StaticResource $LabelStyle}" VerticalAlignment="Center">
+                                    <Label Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Name="LinkedVariableStackPanel">
                                         <Label.Content>
                                             <GingerCore:ucTextDicResource Text="Linked [Variable]:"/>
                                         </Label.Content>

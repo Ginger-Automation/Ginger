@@ -17,12 +17,13 @@ limitations under the License.
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Repository;
+using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GingerCore.Environments
 {
@@ -81,6 +82,12 @@ namespace GingerCore.Environments
             GeneralParam GP = (from p in GeneralParams where p.Name == ParamName select p).FirstOrDefault();
             return GP;
         }
+        public VariableBase GetVariable(string ParamName)
+        {
+            ConvertGeneralParamsToVariable();
+            return Variables.FirstOrDefault((variable)=>variable.Name.Equals(ParamName));
+
+        }
 
         public override string ItemName
         {
@@ -96,6 +103,72 @@ namespace GingerCore.Environments
         public override string GetItemType()
         {
             return nameof(EnvApplication);
+        }
+
+        public void AddVariable(VariableBase newVar)
+        {
+
+            SetUniqueVariableName(newVar);
+            Variables.Add(newVar);
+        }
+        public void SetUniqueVariableName(VariableBase var)
+        {
+            if (string.IsNullOrEmpty(var.Name))
+            {
+                var.Name = "Variable";
+            }
+            if (Variables.FirstOrDefault(x => x.Name == var.Name) == null)
+            {
+                return; //no name like it
+            }
+            List<VariableBase> sameNameObjList = this.Variables.Where(x => x.Name == var.Name).ToList<VariableBase>();
+
+            if (sameNameObjList.Count == 1 && sameNameObjList[0] == var)
+            {
+                return; //Same internal object
+            }
+            //Set unique name
+            int counter = 2;
+            while ((Variables.FirstOrDefault(x => x.Name == var.Name + "_" + counter.ToString())) != null)
+            {
+                counter++;
+            }
+            var.Name = var.Name + "_" + counter.ToString();
+        }
+
+        public void ConvertGeneralParamsToVariable()
+        {
+            if (GeneralParams == null || GeneralParams.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var generalParam in GeneralParams)
+            {
+                if (generalParam.Encrypt)
+                {
+                    var variablePassword = new VariablePasswordString()
+                    {
+                        Description = generalParam.Description,
+                        Name = generalParam.Name
+                    };
+
+                    variablePassword.SetInitialValue(generalParam.Value);
+                    Variables.Add(variablePassword);
+                }
+                else
+                {
+                    Variables.Add(
+                         new VariableDynamic()
+                         {
+                             Name = generalParam.Name,
+                             Description = generalParam.Description,
+                             ValueExpression = generalParam.Value
+                         }
+                        );
+                }
+            }
+            GeneralParams.Clear();
         }
 
         private eImageType mItemImageType;
@@ -148,5 +221,7 @@ namespace GingerCore.Environments
             }
 
         }
+        [IsSerializedForLocalRepository]
+        public readonly ObservableList<VariableBase> Variables = new();
     }
 }
