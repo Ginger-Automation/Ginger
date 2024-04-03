@@ -896,6 +896,12 @@ namespace Ginger.Run
             List<VariableBase> variables = null;
             List<VariableBase> outputVariables = null;
             //do actual value update
+
+            if (inputVars.Count > 0)
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"Mapping {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} {GingerDicser.GetTermResValue(eTermResKey.Variable)} with customized values.");
+            }
+
             foreach (VariableBase inputVar in inputVars)
             {
                 try
@@ -3611,6 +3617,68 @@ namespace Ginger.Run
             return result;
         }
 
+        private void SetMappedValuesToActivityVariables(Activity activity, Activity[] prevActivities)
+        {
+            if (prevActivities.Length == 0)
+            {
+                return;
+            }
+
+            IEnumerable<VariableBase> activityVariables = activity.GetVariables();
+            if (!activityVariables.Any())
+            {
+                return;
+            }
+
+            VariableBase[] mappedTargetVars = activityVariables
+                .Where(var => var.MappedOutputType == VariableBase.eOutputType.ActivityOutputVariable)
+                .ToArray();
+
+            if (mappedTargetVars.Length == 0)
+            {
+                return;
+            }
+
+            Reporter.ToLog(eLogLevel.INFO, $"Mapping {GingerDicser.GetTermResValue(eTermResKey.Activity)} {GingerDicser.GetTermResValue(eTermResKey.Variables)} with customized values.");
+
+            foreach(VariableBase mappedTargetVar in mappedTargetVars)
+            {
+                if (!Guid.TryParse(mappedTargetVar.MappedOutputValue, out Guid mappedSourceVarGuid))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Value '{mappedTargetVar.MappedOutputValue}' is not a valid GUID for mapping input {GingerDicser.GetTermResValue(eTermResKey.Variable)}.");
+                    continue;
+                }
+
+                Activity mappedSourceActivity = prevActivities
+                    .FirstOrDefault(prevActivity => prevActivity.Guid == mappedTargetVar.VariableReferenceEntity);
+                
+                if (mappedSourceActivity == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"No Activity('{mappedTargetVar.VariableReferenceEntity}') found by id in {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} before current {GingerDicser.GetTermResValue(eTermResKey.Activity)}({activity.Guid}-{activity.ActivityName}).");
+                    continue;
+                }
+
+                VariableBase mappedSourceVar = mappedSourceActivity
+                    .GetVariables()
+                    .Where(var => var.SetAsOutputValue)
+                    .FirstOrDefault(var => var.Guid == mappedSourceVarGuid);
+
+                if (mappedSourceVar == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"No {GingerDicser.GetTermResValue(eTermResKey.Variable)}('{mappedSourceVarGuid}') found by id in {GingerDicser.GetTermResValue(eTermResKey.Activity)}('{mappedSourceActivity.Guid}-{mappedSourceActivity.ActivityName}') for mapping it's output value.");
+                    continue;
+                }
+
+                Reporter.ToLog(eLogLevel.INFO, $"Setting value '{mappedSourceVar.Value}' from {GingerDicser.GetTermResValue(eTermResKey.Variable)}({mappedSourceVar.Guid}-{mappedSourceVar.Name}) to {GingerDicser.GetTermResValue(eTermResKey.Variable)}({mappedTargetVar.Guid}-{mappedTargetVar.Name}).");
+                
+                bool wasValueSet = mappedTargetVar.SetValue(mappedSourceVar.Value);
+                if (!wasValueSet)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to set value '{mappedSourceVar.Value}' to {GingerDicser.GetTermResValue(eTermResKey.Variable)}({mappedTargetVar.Guid}-{mappedTargetVar.Name})");
+                }
+            }
+        }
+
 
         public void RunActivity(Activity activity, bool doContinueRun = false, bool standaloneExecution = false, bool resetErrorHandlerExecutedFlag = false)
         {
@@ -4289,6 +4357,8 @@ namespace Ginger.Run
                     mRunSource = eRunSource.BusinessFlow;
                 }
 
+                List<Activity> previouslyExecutedActivities = [];
+
                 while (ExecutingActivity != null)
                 {
                     if (ExecutingActivity.GetType() == typeof(ErrorHandler) || ExecutingActivity.GetType() == typeof(CleanUpActivity))
@@ -4308,6 +4378,7 @@ namespace Ginger.Run
                     {
                         ExecutingActivity.Status = eRunStatus.Running;
                         GiveUserFeedback();
+                        SetMappedValuesToActivityVariables(ExecutingActivity, previouslyExecutedActivities.ToArray());
                         if (doContinueRun && FirstExecutedActivity.Equals(ExecutingActivity))
                         {
                             // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
@@ -4317,6 +4388,7 @@ namespace Ginger.Run
                         {
                             RunActivity(ExecutingActivity, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
                         }
+                        previouslyExecutedActivities.Add(ExecutingActivity);
                         //TODO: Why this is here? do we need to rehook
                         CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
                         if (ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)
