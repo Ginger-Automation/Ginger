@@ -61,7 +61,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
 
                     foreach (ApplicationPlatform appPlat in WorkSpace.Instance.Solution.ApplicationPlatforms)
                     {
-                        EnvApplication envApp = new EnvApplication() { Name = appPlat.AppName, Platform = appPlat.Platform, ParentGuid = appPlat.Guid, ItemImageType = appPlat.PlatformImage };
+                        EnvApplication envApp = new EnvApplication() { Name = appPlat.AppName, Platform  = appPlat.Platform, ParentGuid = appPlat.Guid};
                         envApp.Active = true;
                         mWizard.apps.Add(envApp);
                     }
