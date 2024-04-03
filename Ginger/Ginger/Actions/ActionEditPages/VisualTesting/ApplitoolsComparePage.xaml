@@ -23,21 +23,22 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,10,0,0">
-            <Label MinWidth="150px" Style="{StaticResource $LabelStyle}" Grid.Column="0" VerticalAlignment="Center" FontWeight="SemiBold" Content="Applitools Action:"/>
+            <Label MinWidth="150px" Style="{StaticResource $LabelStyle}" Grid.Column="0" VerticalAlignment="Center" Content="Applitools Action:"/>
             <UserControlsLib:UCComboBox x:Name="xApplitoolsActionComboBox" Grid.Column="1" HorizontalAlignment="Left" Width="600" Margin="40,0,0,0"/>
         </StackPanel>
 
         <StackPanel Grid.Row="1" x:Name="xActionByPanel" Orientation="Horizontal" Margin="0,10,0,0">
-            <Label MinWidth="150px" Style="{StaticResource $LabelStyle}" Grid.Column="0" VerticalAlignment="Center" FontWeight="SemiBold" Content="Action By:"/>
+            <Label MinWidth="150px" Style="{StaticResource $LabelStyle}" Grid.Column="0" VerticalAlignment="Center" Content="Action By:"/>
             <UserControlsLib:UCComboBox x:Name="xActionByComboBox" Grid.Column="1" HorizontalAlignment="Left" Width="600" Margin="40,0,0,0"/>
         </StackPanel>
         <DockPanel x:Name="xLocateByAndValuePanel" Grid.Row="2" DockPanel.Dock="Top" Margin="0,10,0,0">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                <Label x:Name="xLocateBy" MinWidth="150px" Content="Locate By:" FontWeight="SemiBold" Style="{StaticResource $LabelStyle}"/>
+                <Label x:Name="xLocateBy" MinWidth="150px" Content="Locate By:"  Style="{StaticResource $LabelStyle}"/>
                 <ComboBox  x:Name="xElementLocateByComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" SelectionChanged="ElementLocateByComboBox_SelectionChanged" ToolTip="How to Locate the Element on the screen" Width="600" Margin="40,0,0,0"/>
             </StackPanel>
             <Grid DockPanel.Dock="Top" Margin="0,10,10,0">
@@ -45,25 +46,25 @@
                     <ColumnDefinition Width="10*"/>
                     <ColumnDefinition Width="100*" />
                 </Grid.ColumnDefinitions>
-                <Label MinWidth="150px" x:Name="xLocateValue" Content="Locate Value:" FontWeight="SemiBold" Grid.Column="0" Style="{StaticResource $LabelStyle}"/>
+                <Label MinWidth="150px" x:Name="xLocateValue" Content="Locate Value:"  Grid.Column="0" Style="{StaticResource $LabelStyle}"/>
                 <Actions:UCValueExpression x:Name="xLocateValueVE" Margin="90,0,0,0" Grid.Column="1" HorizontalAlignment="Left" Width="600" ToolTip="How to Locate the Element on the screen" />
                 <Frame x:Name="xLocateValueEditFrame" Grid.Column="1" Margin="90,0,0,0" NavigationUIVisibility="Hidden"/>
             </Grid>
         </DockPanel>
         
         <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,10,0,0" x:Name="xApplitoolsApplicationName">
-            <Label  MinWidth="150px" Style="{StaticResource $LabelStyle}" Grid.Column="0" VerticalAlignment="Center" FontWeight="SemiBold" Content="Application Name:"/>
+            <Label  MinWidth="150px" Style="{StaticResource $LabelStyle}" Grid.Column="0" VerticalAlignment="Center"  Content="Application Name:"/>
             <Actions:UCValueExpression x:Name="ApplicationNameUCVE" Grid.Column="1" HorizontalAlignment="Left" Width="600" Margin="40,0,0,0"/>
         </StackPanel>
 
         <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="0,10,0,0" x:Name="xApplitoolsTestName">
-            <Label MinWidth="150px" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" FontWeight="SemiBold" Content="Test Name:"/>
+            <Label MinWidth="150px" Style="{StaticResource $LabelStyle}" VerticalAlignment="Center" Content="Test Name:"/>
             <Actions:UCValueExpression x:Name="TestNameUCVE" HorizontalAlignment="Left" Width="600" Margin="40,0,0,0"/>
         </StackPanel>
 
         <StackPanel Grid.Row="5" HorizontalAlignment="Left" x:Name="xApplitoolsMatchLevel" Margin="0,10,0,0">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                <Label MinWidth="150px" Style="{StaticResource $LabelStyle}" FontWeight="SemiBold" Content="Match Level:"/>
+                <Label MinWidth="150px" Style="{StaticResource $LabelStyle}" Content="Match Level:"/>
                 <UserControlsLib:UCComboBox HorizontalAlignment="Left" x:Name="SetMatchLevelComboBox" Width="600" Margin="40,0,0,0"/>
             </StackPanel>
         </StackPanel>
@@ -75,6 +76,8 @@
         <StackPanel Grid.Row="7" x:Name="xApplitoolsResultsButton" HorizontalAlignment="Left" Margin="0,10,0,0">
             <Button x:Name="OpenResultsURL" Click="OpenResultsURL_Click" Style="{StaticResource @InputButtonStyle}" Width="250">Open Results URL</Button>
         </StackPanel>
-          
+        <StackPanel Grid.Row="8" x:Name="xApplitoolNotePnl" Orientation="Vertical" HorizontalAlignment="Left">
+            <Label x:Name="ApplitoolNote" Content="Note - Ensure that Applitools details are entered in Configurations -> External Integrations -> Applitools configurations."></Label>
+        </StackPanel>
     </Grid>
 </Page>
