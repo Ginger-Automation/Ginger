@@ -57,16 +57,20 @@ namespace Ginger.RunSetLib.CreateCLIWizardLib
             mContext = context;
             CliHelper = new CLIHelper();
 
-            string executionServiceURLFromRunset = RunsetConfig.GetExecutionServiceURLUsed();
-            if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL) && !string.IsNullOrEmpty(executionServiceURLFromRunset))
+            string handlerURLFromRunset = RunsetConfig.GetExecutionServiceURLUsed();
+
+            bool handlerURLConfiguredInLoggerConfig = !string.IsNullOrEmpty(WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL);
+            bool handlerURLConfiguredInRunset = !string.IsNullOrEmpty(handlerURLFromRunset);
+            if (!handlerURLConfiguredInLoggerConfig && handlerURLConfiguredInRunset)
             {
-                WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL = executionServiceURLFromRunset;
+                WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL = handlerURLFromRunset;
             }
 
-            AutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, CliHelper)
+            AutoRunConfiguration = new RunSetAutoRunConfiguration(WorkSpace.Instance.Solution, WorkSpace.Instance.RunsetExecutor, CliHelper);
+            if (WorkSpace.Instance.UserProfile.ShowEnterpriseFeatures)
             {
-                ExecutionServiceUrl = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL
-            };
+                AutoRunConfiguration.ExecutionServiceUrl = WorkSpace.Instance.Solution.LoggerConfigurations.ExecutionHandlerURL;
+            }
             AutoRunShortcut = new RunSetAutoRunShortcut(AutoRunConfiguration);
 
             AddPage(Name: "Introduction", Title: "Introduction", SubTitle: "Auto Run Configuration Introduction", Page: new WizardIntroPage("/RunSetLib/CreateAutoRunWizardLib/AutoRunIntroduction.md"));

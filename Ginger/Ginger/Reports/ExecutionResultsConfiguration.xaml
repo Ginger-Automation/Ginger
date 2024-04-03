@@ -242,6 +242,7 @@
                 </Expander.Content>
             </Expander>
             <Expander
+                x:Name="ExecutionHandlerSettingsExpander"
                 Style="{StaticResource $ExpanderStyle}"
                 IsExpanded="True"
                 Margin="0,20,0,0">

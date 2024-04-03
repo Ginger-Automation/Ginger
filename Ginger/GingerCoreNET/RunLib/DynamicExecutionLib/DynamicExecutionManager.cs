@@ -959,6 +959,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 //## Creating new Runset
                 runSetConfig = new RunSetConfig();
+                if (gingerExecConfig.ExecutionID != null)
+                {
+                    runSetConfig.Guid = (Guid)gingerExecConfig.ExecutionID;
+                }
                 runSetConfig.Name = dynamicRunsetConfigs.Name;
                 runSetConfig.AddCategories();
             }
