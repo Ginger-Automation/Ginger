@@ -79,7 +79,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
 
         private void AddApplicationToSolution(object sender, RoutedEventArgs e)
         {
-            AddApplicationPage applicationPage = new(WorkSpace.Instance.Solution);
+            AddApplicationPage applicationPage = new(WorkSpace.Instance.Solution, false);
 
             applicationPage.ShowAsWindow();
 
