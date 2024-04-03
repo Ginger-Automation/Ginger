@@ -24,6 +24,7 @@ using Ginger.SolutionGeneral;
 using GingerCore;
 using GingerCore.Environments;
 using GingerCore.Variables;
+using Microsoft.Azure.Pipelines.WebApi;
 using Microsoft.VisualStudio.Services.Common;
 using Newtonsoft.Json.Linq;
 using OctaneRepositoryStd.BLL;
@@ -56,6 +57,17 @@ namespace Ginger.Variables
             mVariablesLevel = variablesLevel;
             mContext = context;
             mVariablesParentObj = variablesParentObj;
+
+
+            if(variablesLevel.Equals(eVariablesLevel.Activity) || variablesLevel.Equals(eVariablesLevel.BusinessFlow))
+            {
+                ControlsPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ControlsPanel.Visibility = Visibility.Collapsed;
+
+            }
 
             SetUIControlsContent();
         }
@@ -303,6 +315,14 @@ namespace Ginger.Variables
                 addedVar.Name = Name;
                 addedVar.Description = Description;
                 addedVar.SetInitialValue(Value);
+
+                if(mVariablesLevel.Equals(eVariablesLevel.Activity) || mVariablesLevel.Equals(eVariablesLevel.BusinessFlow))
+                {
+                    addedVar.SetAsInputValue = xSetAsInputValueCheckBox.IsChecked ?? false;
+                    addedVar.SetAsOutputValue = xSetAsOutputValueCheckBox.IsChecked ?? false;
+                    addedVar.MandatoryInput = xMandatoryInputCheckBox.IsChecked ?? false;
+                    addedVar.Publish = xPublishcheckbox.IsChecked ?? false;
+                }
                 AddVarToParent(addedVar);
             }
 
@@ -362,5 +382,31 @@ namespace Ginger.Variables
                     break;
             }
         }
+
+        private void InputOutputChecked(object sender, RoutedEventArgs e)
+        {
+            xPublishcheckbox.Visibility = Visibility.Visible;
+
+            if (xSetAsInputValueCheckBox.IsChecked == true)
+            {
+                xMandatoryInputCheckBox.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void InputOutputUnChecked(object sender, RoutedEventArgs e)
+        {
+            if (xSetAsInputValueCheckBox.IsChecked == false && xSetAsOutputValueCheckBox.IsChecked == false)
+            {
+                xPublishcheckbox.IsChecked = false;
+                xPublishcheckbox.Visibility = Visibility.Collapsed;
+            }
+
+            if (xSetAsInputValueCheckBox.IsChecked == false)
+            {
+                xMandatoryInputCheckBox.IsChecked = false;
+                xMandatoryInputCheckBox.Visibility = Visibility.Collapsed;
+            }
+        }
+
     }
 }

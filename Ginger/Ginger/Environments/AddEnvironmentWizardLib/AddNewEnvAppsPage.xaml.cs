@@ -100,7 +100,7 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
 
             foreach (ApplicationPlatform selectedApp in applicationPage.SelectApplicationGrid.Grid.SelectedItems)
             {
-                EnvApplication envApp = new EnvApplication() { Name = selectedApp.AppName, Platform = selectedApp.Platform, ParentGuid = selectedApp.Guid, ItemImageType = selectedApp.PlatformImage };
+                EnvApplication envApp = new EnvApplication() { Name = selectedApp.AppName, Platform = selectedApp.Platform, ParentGuid = selectedApp.Guid};
                 envApp.Active = true;
                 mWizard.apps.Add(envApp);
             }

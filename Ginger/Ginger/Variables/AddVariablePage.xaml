@@ -56,6 +56,13 @@
                             </StackPanel>
                         </StackPanel>
                     </DockPanel>
+                    <StackPanel  Orientation="Horizontal" Name="ControlsPanel" Margin="10,5,0,0" Visibility="Collapsed">
+                        <CheckBox x:Name="xSetAsInputValueCheckBox" Style="{StaticResource $CeckBoxStyle}"  Content="Set as Input"  Margin="0,0,5,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked" />
+                        <CheckBox x:Name="xMandatoryInputCheckBox" Style="{StaticResource $CeckBoxStyle}"  Content="Mandatory Input"  Margin="0,0,5,0" Visibility="Collapsed" ToolTip="Value must be provided before execution starts"/>
+                        <CheckBox x:Name="xSetAsOutputValueCheckBox" Style="{StaticResource $CeckBoxStyle}"   Content="Set as Output"  Margin="0,0,5,0" Checked="InputOutputChecked" Unchecked="InputOutputUnChecked"/>
+                        <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications"  Style="{StaticResource $CeckBoxStyle}" Margin="0,0,5,0" Visibility="Collapsed"/>
+                    </StackPanel>
+
 
                     <uclistview:UcListView x:Name="xLibraryTabListView" ListTitleVisibility="Collapsed" ListSelectionMode="Extended" Height ="auto"  MaxHeight="400"/>
                 </StackPanel>
