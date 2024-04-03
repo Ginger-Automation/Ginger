@@ -95,7 +95,8 @@ namespace Amdocs.Ginger.UserControls
             StackPanel messageContainer = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
-                Margin = new Thickness(10),
+                VerticalAlignment = VerticalAlignment.Bottom,
+                Margin = new Thickness(5),
                 MaxWidth = 400
             };
 
@@ -122,9 +123,20 @@ namespace Amdocs.Ginger.UserControls
             if (isUserMessage)
             {
                 // Add user icon (right side)
-                messageContainer.HorizontalAlignment = HorizontalAlignment.Right;
+                messageContainer.HorizontalAlignment = HorizontalAlignment.Left;
 
-                messageContainer.Children.Add(new System.Windows.Controls.Image
+                //messageContainer.Children.Add(new System.Windows.Controls.Image
+                //{
+                //    Source = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User,
+                //    foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_DarkGray")),
+                //    VerticalAlignment = VerticalAlignment.Top,
+                //    Width = 30,
+                //    Height = 30,
+                //    Margin = new Thickness(5),
+                //    ToolTip = sender
+                //});
+
+                messageContainer.Children.Insert(0, new System.Windows.Controls.Image
                 {
                     Source = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User,
                     foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_DarkGray")),

@@ -5,7 +5,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition/>
+            <RowDefinition Height="550*"/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Label Background="MediumPurple" FontWeight="Bold" HorizontalContentAlignment="Center" Foreground="White" Content="Ask Lisa"/>
@@ -15,47 +15,30 @@
 
         </Grid>
         <Grid Grid.Row="1">
-            <ScrollViewer>
-                <StackPanel  x:Name="chatPanel">
-                    <!-- Lisa Intro messages -->
-
-                    <!--<TextBlock Text="Hello! I'm Lisa" HorizontalAlignment="Center" Margin="5"/>
-                    <TextBlock Text="Ask Me Anything about Ginger" HorizontalAlignment="Center" Margin="5"/>-->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="500*"/>
+                <RowDefinition Height="100"/>
+            </Grid.RowDefinitions>
+            <ScrollViewer Grid.Row="0">
+                <StackPanel x:Name="chatPanel" VerticalAlignment="Bottom">
                 </StackPanel>
             </ScrollViewer>
-            <usercontrols:ImageMakerControl Visibility="Collapsed" x:Name="xLoader" ImageType="Processing" Width="20"/>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Margin="5">
+           
+            <usercontrols:ImageMakerControl Grid.Row="0" Visibility="Collapsed" x:Name="xLoader" ImageType="Processing" Width="20" VerticalAlignment="Center"/>
+            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="15,5,10,5">
                 <!-- User input -->
-                
-                <TextBox Name="xUserInputTextBox" Width="365">
-
+                <TextBox Name="xUserInputTextBox" Width="350" Height="90">
                     <TextBox.Template>
-
                         <ControlTemplate>
-
                             <Grid>
-
-                                <TextBox Text="{Binding ElementName=xUserInputTextBox, Path=Text}"  VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Height="100"  Grid.Column="0"/>
-
+                                <TextBox Text="{Binding ElementName=xUserInputTextBox, Path=Text}"  VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Grid.Column="0"/>
                                 <Button Click="SendMessage" VerticalContentAlignment="Bottom" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="50" Grid.Column="1" Background="Transparent" BorderThickness="0">
-
                                     <usercontrols:ImageMakerControl x:Name="xSend" Grid.Row="1" ImageType="SendIcon" Width="30" Foreground="MediumPurple" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
                                 </Button>
-
                             </Grid>
-
                         </ControlTemplate>
-
                     </TextBox.Template>
-
                 </TextBox>
-
-               <!-- <TextBox x:Name="xUserInputTextBox" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" Width="240" Height="100" Margin="5"/>
-                <Button x:Name="xSend" Click="SendMessage" VerticalContentAlignment="Bottom" HorizontalAlignment="Center" VerticalAlignment="Center" Width="30" Background="Transparent" BorderThickness="0">
-    <usercontrols:ImageMakerControl  ImageType="SendIcon" Width="30" Foreground="MediumPurple" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-</Button> -->
-                
             </StackPanel>
         </Grid>
     </Grid>
