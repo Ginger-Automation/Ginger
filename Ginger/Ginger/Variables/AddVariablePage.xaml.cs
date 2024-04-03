@@ -277,16 +277,19 @@ namespace Ginger.Variables
             {
                 projEnv.StartDirtyTracking();
 
-                projEnv.Applications.ForEach((envApp) =>
+                projEnv.Applications.Where((envApp) =>
                 {
-                    envApp.StartDirtyTracking();
-                    if (envApp.Name.Equals(((EnvApplication)mVariablesParentObj).Name) && !envApp.Variables.Any((var) => var.Name.Equals(varToAdd.Name)))
-                    {
-                        envApp.Variables.Add(varToAdd);
-                    }
+                    return envApp.Name.Equals(((EnvApplication)mVariablesParentObj).Name) && !envApp.Variables.Any((var) => var.Name.Equals(varToAdd.Name));
+                })
+                .ForEach((filteredApp) =>
+                {
+                    filteredApp.StartDirtyTracking();
+
+                    filteredApp.Variables.Add(varToAdd);
                 });
-            }
-            );
+            });
+
+
             _pageGenericWin.Close();
         }
 
