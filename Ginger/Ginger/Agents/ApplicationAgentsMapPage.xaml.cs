@@ -26,6 +26,7 @@ using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Platforms;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -80,25 +81,39 @@ namespace Ginger.Agents
             }
         }
 
-        private void RefreshApplicationAgentsList()
+        public void RefreshApplicationAgentsList()
         {
             this.Dispatcher.Invoke(() =>
             {
                 ApplicationAgents = new ObservableList<ApplicationAgent>();
 
-                foreach (ApplicationAgent Apag in mRunner.GingerRunner.ApplicationAgents)
+                if (mContext?.BusinessFlow != null)
                 {
-                    if (Apag.ApplicationAgentOperations == null)
-                    {
-                        Apag.ApplicationAgentOperations = new ApplicationAgentOperations(Apag);
-                    }
-                    if (mRunner.SolutionApplications.FirstOrDefault(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA) == null)
-                    {
-                        ApplicationAgents.Add(Apag);
-                    }
-                }
+                    var AllTargetApplicationNames = mContext.BusinessFlow.Activities.Select((activity) => activity.TargetApplication);
 
-                xAppAgentsListBox.ItemsSource = ApplicationAgents;
+
+                    var allTargetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+
+                    allTargetApplications.Where((App) =>
+                    {
+                        return AllTargetApplicationNames.Contains(App.Name);
+                    }).ForEach((FilteredTargetApp) =>
+                    {
+                        ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)FilteredTargetApp).AppName };
+                        applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+                        applicationAgent.Agent = applicationAgent.PossibleAgents?.FirstOrDefault((agent) => agent.Name.Equals(FilteredTargetApp.LastExecutingAgentName)) as Agent;
+
+
+                        if(applicationAgent.Agent == null && applicationAgent.PossibleAgents?.Count >= 1)
+                        {
+                            applicationAgent.Agent = applicationAgent.PossibleAgents[0] as Agent;
+                        }
+
+                        ApplicationAgents.Add(applicationAgent);
+                    });
+
+                    xAppAgentsListBox.ItemsSource = ApplicationAgents;
+                }
             });
         }
 
@@ -110,28 +125,38 @@ namespace Ginger.Agents
                 {
                     ApplicationAgent AG = (ApplicationAgent)((ucButton)sender).DataContext;
                     Agent agent = ((Agent)AG.Agent);
-                    if (((AgentOperations)agent.AgentOperations).Status != Agent.eStatus.Running)
-                    {
-                        //start Agent
-                        Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
 
-                        ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
-                        ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
-                        ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
-                        ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
-                        await System.Threading.Tasks.Task.Run(() =>
-                        {
-                            ((Agent)AG.Agent).AgentOperations.StartDriver();
-                        });
-                    }
-                    else
+                    switch (((AgentOperations)agent.AgentOperations).Status)
                     {
-                        //close Agent
-                        Reporter.ToStatus(eStatusMsgKey.StopAgent, null, AG.AgentName, AG.AppName);
-                        await System.Threading.Tasks.Task.Run(() =>
-                        {
-                            agent.AgentOperations.Close();
-                        });
+                        case Agent.eStatus.Completed:
+                        case Agent.eStatus.Ready:
+                        case Agent.eStatus.Running:                       
+                            //Close Agent
+                            Reporter.ToStatus(eStatusMsgKey.StopAgent, null, AG.AgentName, AG.AppName);
+                            await System.Threading.Tasks.Task.Run(() =>
+                            {
+                                agent.AgentOperations.Close();
+                            });
+                            break;
+
+                        case Agent.eStatus.Starting:
+                            //Do nothing till Agent finish to start
+                            break;
+
+                        case Agent.eStatus.FailedToStart:
+                        case Agent.eStatus.NotStarted:
+                        default:
+                            //Start Agent
+                            Reporter.ToStatus(eStatusMsgKey.StartAgent, null, AG.AgentName, AG.AppName);
+                            ((Agent)AG.Agent).ProjEnvironment = mContext.Environment;
+                            ((Agent)AG.Agent).BusinessFlow = mContext.BusinessFlow;
+                            ((Agent)AG.Agent).SolutionFolder = WorkSpace.Instance.Solution.Folder;
+                            ((Agent)AG.Agent).DSList = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>();
+                            await System.Threading.Tasks.Task.Run(() =>
+                            {
+                                ((Agent)AG.Agent).AgentOperations.StartDriver();
+                            });
+                            break;
                     }
                 }
                 finally
@@ -149,7 +174,7 @@ namespace Ginger.Agents
             ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
             applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
 
-            List<IAgent> filteredOptionalAgents = applicationAgent.PossibleAgents;
+             List<IAgent> filteredOptionalAgents = applicationAgent.PossibleAgents;
 
             ((ComboBox)sender).ItemsSource = filteredOptionalAgents;
         }
