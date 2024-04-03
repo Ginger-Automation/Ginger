@@ -255,6 +255,7 @@ namespace Ginger.Run
                             RunSetReport runSetReport = (RunSetReport)JsonLib.LoadObjFromJSonFile(runSetFile, typeof(RunSetReport));
                             runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
                             runSetReport.LogFolder = System.IO.Path.GetDirectoryName(runSetFile);
+                            runSetReport.RunSetGuid = Guid.Parse(runSetReport.GUID);
                             if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
                             {
                                 //filer the run sets by GUID
