@@ -87,6 +87,8 @@ namespace Ginger.Reports
         [JsonProperty]
         public string GUID { get; set; }
 
+        public Guid RunSetGuid { get; set; }
+
         public float? ElapsedSecs { get; set; }
 
 
@@ -261,6 +263,7 @@ namespace Ginger.Reports
         public void SetLiteDBData(LiteDbRunSet runSet)
         {
             GUID = runSet._id.ToString();
+            RunSetGuid = runSet.GUID;
             Name = runSet.Name;
             Description = runSet.Description;
             StartTimeStamp = runSet.StartTimeStamp;

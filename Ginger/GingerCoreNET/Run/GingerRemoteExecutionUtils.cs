@@ -114,6 +114,7 @@ namespace Amdocs.Ginger.CoreNET
                 runSetReports.Add(new RunSetReport()
                 {
                     GUID = runsetHLInfo.ExecutionID.ToString(),
+                    RunSetGuid = runsetHLInfo.EntityId,
                     Name = runsetHLInfo.RunsetName,
                     Description = "",
                     StartTimeStamp = DateTime.Parse(runsetHLInfo.StartTime , CultureInfo.InvariantCulture).ToUniversalTime(),

@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
 using Amdocs.Ginger.CoreNET.Reports;
@@ -116,7 +117,7 @@ namespace Ginger.Run
         {
             if (mExecutionHistoryLevel == eExecutionHistoryLevel.Solution)
             {
-                grdExecutionsHistory.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.History, GingerDicser.GetTermResValue(eTermResKey.RunSets, "All ", " Executions History"), saveAllHandler: null, addHandler: null);
+                grdExecutionsHistory.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.History, GingerDicser.GetTermResValue(eTermResKey.RunSets, "All", "Executions History"), saveAllHandler: null, addHandler: null);
             }
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
@@ -254,6 +255,7 @@ namespace Ginger.Run
                             RunSetReport runSetReport = (RunSetReport)JsonLib.LoadObjFromJSonFile(runSetFile, typeof(RunSetReport));
                             runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
                             runSetReport.LogFolder = System.IO.Path.GetDirectoryName(runSetFile);
+                            runSetReport.RunSetGuid = Guid.Parse(runSetReport.GUID);
                             if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
                             {
                                 //filer the run sets by GUID
@@ -304,7 +306,11 @@ namespace Ginger.Run
             ObservableList<RunSetReport> executionsHistoryListSortedByDate = new ObservableList<RunSetReport>();
             if (mExecutionsHistoryList != null && mExecutionsHistoryList.Count > 0)
             {
-                foreach (RunSetReport runSetReport in mExecutionsHistoryList.OrderByDescending(item => item.StartTimeStamp))
+                IEnumerable<RunSetReport> sortedAndFilteredExecutionHistoryList = mExecutionsHistoryList
+                    .Where(report => report.RunSetExecutionStatus != eRunStatus.Automated)
+                    .OrderByDescending(item => item.StartTimeStamp);
+
+                foreach (RunSetReport runSetReport in sortedAndFilteredExecutionHistoryList)
                 {
                     runSetReport.StartTimeStamp = runSetReport.StartTimeStamp.ToLocalTime();
                     runSetReport.EndTimeStamp = runSetReport.EndTimeStamp.ToLocalTime();
