@@ -390,7 +390,7 @@ namespace Ginger.Variables
         {
             xPublishcheckbox.Visibility = Visibility.Visible;
 
-            if (xSetAsInputValueCheckBox.IsChecked == true)
+            if ((bool)xSetAsInputValueCheckBox.IsChecked)
             {
                 xMandatoryInputCheckBox.Visibility = Visibility.Visible;
             }
