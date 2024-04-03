@@ -398,13 +398,13 @@ namespace Ginger.Variables
 
         private void InputOutputUnChecked(object sender, RoutedEventArgs e)
         {
-            if (xSetAsInputValueCheckBox.IsChecked == false && xSetAsOutputValueCheckBox.IsChecked == false)
+            if (!(bool)xSetAsInputValueCheckBox.IsChecked && !(bool)xSetAsOutputValueCheckBox.IsChecked)
             {
                 xPublishcheckbox.IsChecked = false;
                 xPublishcheckbox.Visibility = Visibility.Collapsed;
             }
 
-            if (xSetAsInputValueCheckBox.IsChecked == false)
+            if (!(bool)xSetAsInputValueCheckBox.IsChecked)
             {
                 xMandatoryInputCheckBox.IsChecked = false;
                 xMandatoryInputCheckBox.Visibility = Visibility.Collapsed;
