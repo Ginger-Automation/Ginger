@@ -1140,7 +1140,9 @@ namespace GingerCore
                 foreach (Act act in a.Acts)
                 {
                     if (act.ReturnValues != null)
-                        i += act.ReturnValues.Select(k => (!string.IsNullOrEmpty(k.Expected))).Count();
+                    {
+                        i += act.ReturnValues.Count(k => !string.IsNullOrEmpty(k.Expected));
+                    }
                 }
             }
 

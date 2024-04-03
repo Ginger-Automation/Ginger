@@ -980,16 +980,12 @@ namespace Amdocs.Ginger.Repository
             }
             set { if (mFilePath != value) { mFilePath = value; OnPropertyChanged(nameof(FilePath)); } }
         }
-        private eImageType mItemImageType = eImageType.Null;
+
         public virtual eImageType ItemImageType
         {
             get
             {
-                return mItemImageType;
-            }
-            set
-            {
-                mItemImageType = value;
+                return eImageType.Null;
             }
         }
 

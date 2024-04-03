@@ -861,7 +861,8 @@ namespace Ginger.Drivers.DriversWindows
             }
             catch (Exception ex)
             {
-                Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Operation failed, Error: " + ex.Message);
+                Reporter.ToLog(eLogLevel.WARN, "Change device orientation failed, Error: " + ex.Message);
+                Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "Seems like changing orientation is not possible in current device state, make sure the loaded application supports it.");
             }
         }
 
