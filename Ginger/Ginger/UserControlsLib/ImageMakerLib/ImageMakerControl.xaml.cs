@@ -204,6 +204,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.SendIcon:
                     SetAsStaticImage("send.png");
                     break;
+                case eImageType.Comment:
+                    SetAsStaticImage("comments.png");
+                    break;
                 #endregion
 
 

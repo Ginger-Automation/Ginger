@@ -255,7 +255,6 @@ namespace Amdocs.Ginger.UserControls
 
         private void xUserInputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-
             ControlTemplate template = xUserInputTextBox.Template;
             TextBlock xy = (TextBlock)template.FindName("xPlaceholder", xUserInputTextBox);
             xy.Visibility = string.IsNullOrEmpty(xUserInputTextBox.Text) ? Visibility.Visible : Visibility.Hidden;

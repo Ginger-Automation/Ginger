@@ -10,7 +10,7 @@
     <Grid>
         <Button Click="Lisa_Click" Style="{StaticResource $RoundTextButtonStyle_ChatbotIcon}" Foreground="White" Background="#f05c62">
             <StackPanel Orientation="Horizontal">
-                <usercontrols:ImageMakerControl ImageType="Robot" Foreground="White" Margin="0,0,5,0"></usercontrols:ImageMakerControl>
+                <usercontrols:ImageMakerControl ImageType="Comment" Foreground="White" Margin="0,0,5,0"></usercontrols:ImageMakerControl>
                 <TextBlock x:Name="xButtonText" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Ask Lisa" />
             </StackPanel>
         </Button>
