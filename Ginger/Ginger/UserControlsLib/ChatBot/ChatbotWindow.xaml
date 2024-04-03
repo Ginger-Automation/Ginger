@@ -5,9 +5,10 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="550*"/>
+            <RowDefinition Height="10*"/>
+            <RowDefinition Height="110"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
+        <Grid>
             <Label Background="MediumPurple" FontWeight="Bold" HorizontalContentAlignment="Center" Foreground="White" Content="Ask Lisa"/>
             <Button HorizontalAlignment="Right" MouseLeftButtonDown="Button_MouseLeftButtonDown" Click="Button_Click" Width="30" BorderThickness="0" Background="MediumPurple">
                 <usercontrols:ImageMakerControl ImageType="CloseWhite" Width="15"></usercontrols:ImageMakerControl>
@@ -15,23 +16,22 @@
 
         </Grid>
         <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="500*"/>
-                <RowDefinition Height="100"/>
-            </Grid.RowDefinitions>
-            <ScrollViewer Grid.Row="0">
+            <ScrollViewer  Name="scrollViewer" VerticalScrollBarVisibility="Auto" ScrollChanged="ScrollViewer_ScrollChanged">
                 <StackPanel x:Name="chatPanel" VerticalAlignment="Bottom">
                 </StackPanel>
             </ScrollViewer>
-           
-            <usercontrols:ImageMakerControl Grid.Row="0" Visibility="Collapsed" x:Name="xLoader" ImageType="Processing" Width="20" VerticalAlignment="Center"/>
-            <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="15,5,10,5">
+
+            <usercontrols:ImageMakerControl  Visibility="Collapsed" x:Name="xLoader" ImageType="Processing" Width="20" VerticalAlignment="Center"/>
+        </Grid>
+        <Grid Grid.Row="2" Background="White">
+            <StackPanel  Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,0,0">
                 <!-- User input -->
-                <TextBox Name="xUserInputTextBox" Width="350" Height="90">
+                <TextBox Name="xUserInputTextBox" Width="395" TextChanged="xUserInputTextBox_TextChanged">
                     <TextBox.Template>
                         <ControlTemplate>
                             <Grid>
-                                <TextBox Text="{Binding ElementName=xUserInputTextBox, Path=Text}"  VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Grid.Column="0"/>
+                                <TextBox Text="{Binding ElementName=xUserInputTextBox, Path=Text}"  VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Background="Transparent"  Height="100" Grid.Column="0"/>
+                                <TextBlock Text="Enter Your query" Name="xPlaceholder"  FontWeight="Light" Panel.ZIndex="-1" VerticalAlignment="Top" Foreground="DarkGray" Margin="5,0,0,0" />
                                 <Button Click="SendMessage" VerticalContentAlignment="Bottom" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="50" Grid.Column="1" Background="Transparent" BorderThickness="0">
                                     <usercontrols:ImageMakerControl x:Name="xSend" Grid.Row="1" ImageType="SendIcon" Width="30" Foreground="MediumPurple" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Button>

@@ -1,0 +1,11 @@
+{
+	"BrainHost":"https://ilrnaaqua03:8082/",
+    "START_NEW_CHAT": "AQEQABot/Lisa/StartNewChat",
+    "CONTINUE_CHAT":"AQEQABot/Lisa/ContinueChat",
+	"account": "Ginger",
+	"domainType": "Knowledge Management",
+	"temperatureVal": "0.1",
+	"maxTokensVal": "2000",
+	"dataPath": "./Data/Ginger"
+}
+	

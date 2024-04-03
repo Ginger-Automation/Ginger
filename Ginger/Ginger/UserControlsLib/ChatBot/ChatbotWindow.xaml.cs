@@ -220,7 +220,7 @@ namespace Amdocs.Ginger.UserControls
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.Visibility = Visibility.Collapsed;
-            //chatPanel.Children.Clear();
+            chatPanel.Children.Clear();
         }
 
         private void ShowLoader()
@@ -239,5 +239,28 @@ namespace Amdocs.Ginger.UserControls
             xUserInputTextBox.IsEnabled = true;
             //xSend.IsEnabled = true;
         }
+
+        private void ScrollToBottom()
+        {
+            if (scrollViewer != null && scrollViewer.ScrollableHeight > 0)
+            {
+                scrollViewer.ScrollToVerticalOffset(scrollViewer.ScrollableHeight);
+            }
+        }
+        private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            // Auto-scroll to the bottom when a new message is added
+            scrollViewer.ScrollToBottom();
+        }
+
+        private void xUserInputTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+            ControlTemplate template = xUserInputTextBox.Template;
+            TextBlock xy = (TextBlock)template.FindName("xPlaceholder", xUserInputTextBox);
+            xy.Visibility = string.IsNullOrEmpty(xUserInputTextBox.Text) ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        
     }
 }

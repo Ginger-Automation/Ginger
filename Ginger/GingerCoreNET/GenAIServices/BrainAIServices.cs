@@ -1,5 +1,6 @@
 ﻿using Amdocs.Ginger.Common;
 using DocumentFormat.OpenXml.Office2013.Excel;
+using Pb;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,22 +13,19 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
 {
     public class BrainAIServices
     {
-        const string START_NEW_CHAT = "AQEQABot/Lisa/StartNewChat";
-        const string CONTINUE_CHAT = "AQEQABot/Lisa/ContinueChat";
-        const string BRAIN_API_HOST = "https://ilrnaaqua03:8082/";
 
         HttpClient _httpClient;
-
-        
+        readonly BrainServiceSettings _settings;
         public BrainAIServices()
         {
+            _settings = new BrainServiceSettings();
             InitClient();
         }
 
         private void InitClient()
         {
             _httpClient = new HttpClient();
-            var host = BRAIN_API_HOST;
+            var host = _settings.BrainSettingsObj.BrainHost;
             if (!string.IsNullOrEmpty(host))
             {
                 host = !host.EndsWith("/") ? $"{host}/" : host;
@@ -43,14 +41,14 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
         public async Task<string> ContinueChat(string chatBotRequest)
         {
             MultipartFormDataContent content = PrepareRequestDetailsForChat(chatBotRequest);
-            var response = await _httpClient.PostAsync(CONTINUE_CHAT, content);
+            var response = await _httpClient.PostAsync(_settings.BrainSettingsObj.CONTINUE_CHAT, content);
             return await ParseResponse(response);
         }
 
         public async Task<string> StartNewChat(string chatBotRequest)
         {
             MultipartFormDataContent content = PrepareRequestDetailsForChat(chatBotRequest);
-            var response = await _httpClient.PostAsync(START_NEW_CHAT, content);
+            var response = await _httpClient.PostAsync(_settings.BrainSettingsObj.START_NEW_CHAT, content);
             return await ParseResponse(response);
         }
 
@@ -68,16 +66,15 @@ namespace Amdocs.Ginger.CoreNET.GenAIServices
                 return null;
             }
         }
-
         private MultipartFormDataContent PrepareRequestDetailsForChat(string Question)
         {
             var content = new MultipartFormDataContent();
             content.Add(new StringContent(Question), "question");
-            content.Add(new StringContent("Ginger"), "account");
-            content.Add(new StringContent("Knowledge Management"), "domainType");
-            content.Add(new StringContent("0.1"), "temperatureVal");
-            content.Add(new StringContent("2000"), "maxTokensVal");
-            content.Add(new StringContent("./Data/Ginger"), "dataPath");
+            content.Add(new StringContent(_settings.BrainSettingsObj.account), "account");
+            content.Add(new StringContent(_settings.BrainSettingsObj.domainType), "domainType");
+            content.Add(new StringContent(_settings.BrainSettingsObj.temperatureVal), "temperatureVal");
+            content.Add(new StringContent(_settings.BrainSettingsObj.maxTokensVal), "maxTokensVal");
+            content.Add(new StringContent(_settings.BrainSettingsObj.dataPath), "dataPath");
             return content;
         }
     }

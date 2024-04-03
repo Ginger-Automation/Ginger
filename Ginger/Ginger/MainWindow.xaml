@@ -309,7 +309,7 @@
             </Grid>
 
             <DockPanel LastChildFill="False" Grid.Row="1">
-                <usercontrols:ChatbotIcon x:Name="xChatbotIcon" MouseDown="ChatbotIcon_MouseDown" Visibility="Visible" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="10,10,50,0" Width="130"/>
+                <usercontrols:ChatbotIcon x:Name="xChatbotIcon" MouseDown="ChatbotIcon_MouseDown" Visibility="Visible" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="10,10,50,0" Width="154"/>
                 <usercontrols:ChatbotWindow x:Name="xChatbotWindow" Grid.Column="1" Visibility="Collapsed" DockPanel.Dock="Right" VerticalAlignment="Bottom" Background="GhostWhite" BorderBrush="#8a57ea" BorderThickness="3" Margin="10,10,50,0"/>
 
             </DockPanel>
