@@ -24,6 +24,7 @@ using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.Repository;
 using Amdocs.Ginger.UserControls;
 using GingerCore.GeneralLib;
+using GingerCore.Variables;
 using GingerWPF.DragDropLib;
 using System;
 using System.Collections.Generic;
@@ -192,12 +193,18 @@ namespace Ginger.UserControlsLib.UCListView
 
                     xListView.ItemsSource = mObjList;
 
+                    if(value is ObservableList<VariableBase>)
+                    {
+                        xListView.SelectedIndex = -1;
+                        xListView.SelectedItem = null;
+                    }
+
                     this.Dispatcher.BeginInvoke((Action)(() =>
                     {
                         xSearchTextBox.Text = "";
 
                         // Make the first row selected
-                        if (value != null && value.Count > 0)
+                        if (value != null && value.Count > 0 && value is not ObservableList<VariableBase>)
                         {
                             xListView.SelectedIndex = 0;
                             xListView.SelectedItem = value[0];
@@ -382,6 +389,33 @@ namespace Ginger.UserControlsLib.UCListView
         {
             xExpandCollapseBtn.ButtonImageType = eImageType.ExpandAll;
         }
+        public Visibility SearchGridVisibility
+        {
+            get
+            {
+                return xSearchGrid.Visibility;
+            }
+            set
+            {
+                xSearchGrid.Visibility = value;
+            }
+        }
+
+
+        public Visibility TagsVisibility
+        {
+            get
+            {
+                return xTagsFilter.Visibility;
+            }
+
+
+            set
+            {
+                xTagsFilter.Visibility = value;
+            }
+        }
+
 
         public Visibility ListOperationsBarPnlVisiblity
         {
@@ -396,6 +430,17 @@ namespace Ginger.UserControlsLib.UCListView
         }
 
 
+        public Visibility ListImageVisibility
+        {
+            get
+            {
+                return xListTitleImage.Visibility;
+            }
+            set
+            {
+                xListTitleImage.Visibility = value;
+            }
+        }
         public Visibility ListTitleVisibility
         {
             get
@@ -437,7 +482,28 @@ namespace Ginger.UserControlsLib.UCListView
                 xListTitleImage.ImageType = value;
             }
         }
-
+        public Visibility SelectTitleVisibility
+        {
+            get
+            {
+                return SelectionTitle.Visibility;
+            }
+            set
+            {
+                SelectionTitle.Visibility = value;  
+            }
+        }
+        public string SelectTitleContent
+        {
+            get
+            {
+                return SelectionTitle.Content.ToString() ?? string.Empty;
+            }
+            set
+            {
+                SelectionTitle.Content = value;
+            }
+        }
         public void ScrollToViewCurrentItem()
         {
             if (mObjList != null && mObjList.CurrentItem != null)
@@ -462,11 +528,12 @@ namespace Ginger.UserControlsLib.UCListView
 
         private void SetSourceCurrentItemAsListSelectedItem()
         {
+
             if (mObjList == null)
             {
                 return;
             }
-
+            
             
             if (mObjList.CurrentItem == xListView.SelectedItem)
             {

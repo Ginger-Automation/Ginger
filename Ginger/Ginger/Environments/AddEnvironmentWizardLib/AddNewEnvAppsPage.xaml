@@ -3,22 +3,33 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:Ginger="clr-namespace:Ginger" 
+      xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore" xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AddNewEnvAppsPage">
 
     <Grid Background="{StaticResource $BackgroundColor_White}">
-        
+
+
         <Ginger:ucGrid x:Name="SelectApplicationGrid" IsReadOnly="true" 
                       ShowTitle="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed"/>
 
+        <UserControls:ucButton x:Name="xAddApplicationToSolution" 
+                               ButtonType="RoundTextAndImageButton" 
+                               VerticalAlignment="Top" 
+                               Margin="0,5,10,0"
+                               HorizontalContentAlignment="Right"
+                               ButtonText="Add Application" 
+                               ButtonImageType="Add" 
+                               ButtonFontImageSize="15" 
+                               ButtonImageWidth="15" 
+                               ButtonImageHeight="15" 
+                               ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" 
+                               IsEnabled="True"
+                               Click="AddApplicationToSolution"
+                               />
 
-        <Label Margin="0,0,0,0" VerticalAlignment="Bottom">
-            <Label.Content>
-                <GingerCore:ucTextDicResource Text="Note: If the application you want is not there in this list then go to Configurations -> Target Applications page to add the new Application" FontSize="13" FontWeight="Bold"/>
-            </Label.Content>
-        </Label>
 
     </Grid>
 </Page>

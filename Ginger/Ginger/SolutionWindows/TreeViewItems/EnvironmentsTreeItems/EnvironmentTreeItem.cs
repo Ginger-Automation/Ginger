@@ -121,15 +121,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
 
 
 
-            if( ApplicationPlatforms == null || ApplicationPlatforms?.Count == 0)
-            {
-
-                Reporter.ToUser(eUserMsgKey.NoApplicationPlatformLeft, ProjEnvironment.Name);
-
-                return;
-            }
-
-
+            string appName = string.Empty;
             ObservableList<ApplicationPlatform> DisplayedApplicationPlatforms = GingerCore.General.ConvertListToObservableList(ApplicationPlatforms);
 
             EnvironmentApplicationList applicationList = new(DisplayedApplicationPlatforms);

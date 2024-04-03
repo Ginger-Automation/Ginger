@@ -3,22 +3,35 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems" xmlns:Ginger="clr-namespace:Ginger" xmlns:GingerCore="clr-namespace:GingerCore;assembly=GingerCore"
+      xmlns:Ginger="clr-namespace:Ginger"
+       xmlns:UserControls="clr-namespace:Amdocs.Ginger.UserControls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Add Application">
 
     <Grid Background="{StaticResource $BackgroundColor_White}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="350*"/>
-            <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
+        
+        <UserControls:ucButton 
+                                Grid.Row="0"
+                                x:Name="xAddApplicationToSolution" 
+                               ButtonType="RoundTextAndImageButton" 
+                               VerticalAlignment="Top" 
+                               HorizontalContentAlignment="Right"
+                               ButtonText="Add Application" 
+                               ButtonImageType="Add" 
+                               ButtonFontImageSize="15" 
+                               ButtonImageWidth="15" 
+                               ButtonImageHeight="15" 
+                               ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" 
+                               IsEnabled="True"
+                                Click="AddApplicationToSolution"
+                               />
 
-        <Ginger:ucGrid x:Name="AppsGrid" Grid.Row="0" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowRefresh="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed"/>
-        <Label Grid.Row="1"  Margin="0,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <Label.Content>
-                <GingerCore:ucTextDicResource Text="Note: If the application you want is not there in this list then go to Configurations -> Target Applications page to add the new Application" FontSize="13" FontWeight="Bold"/>
-            </Label.Content>
-        </Label>
+        <Ginger:ucGrid x:Name="AppsGrid" Grid.Row="1"  ShowSearch="Hidden" ShowTitle="Collapsed" ShowAdd="Collapsed" ShowRefresh="Collapsed" ShowDelete="Collapsed" ShowClearAll="Collapsed" ShowEdit="Collapsed" ShowUpDown="Collapsed"/>
+       
     </Grid>
 </Page>
