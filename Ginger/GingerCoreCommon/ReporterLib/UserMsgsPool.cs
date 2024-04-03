@@ -189,7 +189,8 @@ namespace Amdocs.Ginger.Common
         RunSetLoadFromReportError,
         NoActionAvailable,
         PublishApplicationToOtherEnv,
-        NoApplicationPlatformLeft
+        NoApplicationPlatformLeft,
+        ShareApplicationToEnvironment
     }
 
     public static class UserMsgsPool
@@ -821,6 +822,7 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.UpdateExistingPOMElement, new UserMsg(eUserMsgType.QUESTION, "Updated Element Found", "An updated version of Page Object Model Element '{0}' Found." + Environment.NewLine + "Do you want to update existing POM ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SavePOMChanges, new UserMsg(eUserMsgType.QUESTION, "Save POM Changes", "Selected POM '{0}' was updated." + Environment.NewLine + "Do you want to save changes ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ShareApplicationToEnvironment, new UserMsg(eUserMsgType.QUESTION, "Add Application To All Environments", "Do you want to publish this application to all the existing environments" , eUserMsgOption.YesNo, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.POMMoveElementFromUnmappedToMapped, new UserMsg(eUserMsgType.QUESTION, "POM Element Found in Unmapped Elements", "Selected Element '{0}' Found in Unmapped Elements list of Page Object Model '{1}'." + Environment.NewLine + "Do you want to update POM & move element into Mapped Elements list ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
 
