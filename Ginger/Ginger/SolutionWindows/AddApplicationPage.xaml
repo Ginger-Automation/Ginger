@@ -10,8 +10,24 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="309*"/>            
+            <RowDefinition Height="auto" MaxHeight="150"/>
+            <RowDefinition Height="250*" />            
         </Grid.RowDefinitions>
-        <Ginger:ucGrid x:Name="SelectApplicationGrid" IsReadOnly="true" Title="Select Target Application(s) and Platforms" ShowTitle="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed"/>
+        <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" Name="xVariableDetailsDockPanel" Margin="10">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <Label Style="{StaticResource $LabelStyle}" MinWidth="115" Content="Name:"/>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Top">
+                    <TextBox Width="200" Height="25" Style="{StaticResource $TextBoxStyle}" Name="applicationName" />
+                    <TextBlock Name="NameError" DockPanel.Dock="Bottom" Foreground="Red" Visibility="Hidden"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                <Label Style="{StaticResource $LabelStyle}" MinWidth="115" Content="Description:"/>
+                <TextBox Height="25" Width="200"  Style="{StaticResource $TextBoxStyle}"  Name="applicationDescription"/>
+            </StackPanel>
+        </DockPanel>
+
+        <Ginger:ucGrid Grid.Row="1" Width="auto" HorizontalAlignment="Left" x:Name="SelectApplicationGrid" IsReadOnly="true" Title="Select Target Application(s) and Platforms" ShowTitle="Collapsed" ShowRefresh="Collapsed" ShowEdit="Collapsed" ShowAdd="Collapsed" ShowClearAll="Collapsed" ShowDelete="Collapsed" ShowUpDown="Collapsed"/>
     </Grid>
 </Page>
