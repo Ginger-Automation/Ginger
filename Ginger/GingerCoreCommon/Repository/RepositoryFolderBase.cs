@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -174,6 +174,7 @@ namespace Amdocs.Ginger.Repository
         public abstract ObservableList<RepositoryFolderBase> GetSubFoldersAsFolderBase();
 
         public abstract RepositoryFolderBase GetSubFolderByName(string name, bool recursive = false);
+        public abstract RepositoryFolderBase GetSubFolderByRelativePath(string relativePath, bool recursive = false);
 
         /// <summary>
         /// Move Repository item from current folder to another folder

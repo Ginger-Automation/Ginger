@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ limitations under the License.
 */
 #endregion
 
-using Amazon.Util;
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
@@ -96,6 +95,10 @@ namespace Ginger.ALM
                 case eALMType.ZephyrEnterprise:
                     AlmCore = new ZephyrEntCore();
                     AlmRepo = new ZephyrEnt_Repository(AlmCore);
+                    break;
+                case eALMType.Azure:
+                    AlmCore = new AzureDevOpsCore();
+                    AlmRepo = new AzureDevOpsRepository(AlmCore);
                     break;
             }
             AlmCore.GetCurrentAlmConfig(isOperationAlmType);
@@ -737,6 +740,7 @@ namespace Ginger.ALM
             try
             {
                 solutionAlmFields = SetALMTypeAndFieldsFromSolutionToOperation(publishToALMConfig);
+                businessFlow.IsEntitySearchByName = publishToALMConfig.IsEntitySearchByName;
                 Reporter.ToLog(eLogLevel.INFO, ("Exporting virtual " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + ": " + businessFlow.Name + " to ALM"));
                 if (AutoALMProjectConnect(eALMConnectType.Silence, false))
                 {

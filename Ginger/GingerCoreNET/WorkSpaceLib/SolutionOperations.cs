@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.OS;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Reports;
+using Ginger.Run;
 using GingerCore;
 using GingerCore.Variables;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
@@ -364,6 +365,27 @@ namespace Ginger.SolutionGeneral
                 return new ObservableList<SolutionCategoryValue>();
             }
 
+        }
+
+        public void CleanUpCacheDirectory()
+        {
+            Type[] repositoryItemTypes = [typeof(RunSetConfig), typeof(BusinessFlow)];
+            foreach (Type repositoryItemType in repositoryItemTypes)
+            {
+                string rootFolderPath = WorkSpace.Instance.SolutionRepository.GetSolutionRepositoryItemInfo(repositoryItemType).ItemRootRepositoryFolder.FolderFullPath;
+                string cacheFolderPath = Path.Combine(rootFolderPath, ISolution.CacheDirectoryName);
+                if (Directory.Exists(cacheFolderPath))
+                {
+                    try
+                    {
+                        Directory.Delete(cacheFolderPath, recursive: true);
+                    }
+                    catch(Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while trying to delete directory '{cacheFolderPath}'.", ex);
+                    }
+                }
+            }
         }
 
     }

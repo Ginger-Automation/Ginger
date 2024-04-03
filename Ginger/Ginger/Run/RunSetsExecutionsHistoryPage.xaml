@@ -11,10 +11,81 @@
 
     <Grid Name="pageGrid">
         <Grid.Resources>
-            <DataTemplate x:Key="ReportButton">
-                <Button x:Name="ReportBtn" Click="ReportBtnClicked" ToolTip="Generate Report" Style="{StaticResource @InputImageGridCellButtonStyle}">
-                    <Image Source="{StaticResource @Report2_16x16}" Height="16" Width="16"/>
-                </Button>
+            <Thickness
+                x:Key="@ActionButtonPadding"
+                Left="4"
+                Top="2"
+                Right="4"
+                Bottom="2" />
+            <DataTemplate
+                x:Key="ActionsDataTemplate">
+                <StackPanel
+                    Orientation="Horizontal">
+                    <Button
+                        x:Name="ReportBtn"
+                        Click="ReportBtnClicked"
+                        ToolTip="Generate Report"
+                        Style="{StaticResource @InputImageGridCellButtonStyle}"
+                        Padding="{StaticResource @ActionButtonPadding}">
+                        <Image
+                            Source="{StaticResource @Report2_16x16}"
+                            Height="16"
+                            Width="16" />
+                    </Button>
+                    <Button
+                        x:Name="BPMNButton"
+                        Click="BPMNButton_Click"
+                        ToolTip="Generate BPMN"
+                        Style="{StaticResource @InputImageGridCellButtonStyle}"
+                        Padding="{StaticResource @ActionButtonPadding}"
+                        Tag="{Binding .}">
+                        <Image
+                            Source="{StaticResource @BPMN_32x32.png}"
+                            Height="16"
+                            Width="16" />
+                    </Button>
+                    <Button
+                        x:Name="LoadRunsetButton"
+                        Click="LoadRunsetButton_Click"
+                        ToolTip="Load Runset"
+                        Style="{StaticResource @InputImageGridCellButtonStyle}"
+                        Padding="{StaticResource @ActionButtonPadding}"
+                        Tag="{Binding .}">
+                        <Image
+                            Source="{StaticResource @Load_Arrow_32x32.png}"
+                            Height="16"
+                            Width="16" />
+                    </Button>
+                </StackPanel>
+            </DataTemplate>
+            <DataTemplate
+                x:Key="ActionsDataTemplateWithoutLoadRunset">
+                <StackPanel
+                    Orientation="Horizontal">
+                    <Button
+                        x:Name="ReportBtn"
+                        Click="ReportBtnClicked"
+                        ToolTip="Generate Report"
+                        Style="{StaticResource @InputImageGridCellButtonStyle}"
+                        Padding="{StaticResource @ActionButtonPadding}">
+                        <Image
+                            Source="{StaticResource @Report2_16x16}"
+                            Height="16"
+                            Width="16" />
+                    </Button>
+                    <Button
+                        x:Name="BPMNButton"
+                        Click="BPMNButton_Click"
+                        ToolTip="Generate BPMN"
+                        Style="{StaticResource @InputImageGridCellButtonStyle}"
+                        Padding="{StaticResource @ActionButtonPadding}"
+                        Tag="{Binding .}">
+                        <Image
+                            Source="{StaticResource @BPMN_32x32.png}"
+                            Height="16"
+                            Width="16" />
+                    </Button>
+                </StackPanel>
             </DataTemplate>
         </Grid.Resources>
         <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto"  >

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -401,22 +401,20 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
             if (gingerRunner.BusinessFlows != null && gingerRunner.BusinessFlows.Count > 0)
             {
-                if ((from x in gingerRunner.BusinessFlows.ToList() where x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed select x).Any())
+                if (gingerRunner.BusinessFlows.Any(x=> x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed))
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed;
                 }
-                else if ((from x in gingerRunner.BusinessFlows.ToList() where x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked select x).Any())
+                else if (gingerRunner.BusinessFlows.Any(x => x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked))
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked;
                 }
-                else if ((from x in gingerRunner.BusinessFlows.ToList() where x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped select x).Any())
+                else if (gingerRunner.BusinessFlows.Any(x => x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped))
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped;
                 }
-                else if ((from x in gingerRunner.BusinessFlows.ToList()
-                          where (x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed ||
-                            x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)
-                          select x).Count() == gingerRunner.BusinessFlows.Count)
+                else if (gingerRunner.BusinessFlows.Count(x=> x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed ||
+                            x.RunStatus == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped)== gingerRunner.BusinessFlows.Count)
                 {
                     return Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed;
                 }
@@ -587,8 +585,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
 
         public static List<string> GetInputValues(Act mAction)
         {
-            List<string> inputValues = new List<string>();
-            inputValues = mAction.InputValues.Select(a => OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + a.ValueForDriver)).ToList();
+            List<string> inputValues = mAction.InputValues.Select(a => OverrideHTMLRelatedCharacters(a.Param + "_:_" + a.Value + "_:_" + a.ValueForDriver)).ToList();
 
             if ((mAction.GetInputValueListForVEProcessing() != null) && (mAction.GetInputValueListForVEProcessing().Count > 0))
             {

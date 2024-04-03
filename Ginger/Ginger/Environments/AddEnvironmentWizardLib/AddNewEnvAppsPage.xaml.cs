@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,10 @@ limitations under the License.
 #endregion
 
 using amdocs.ginger.GingerCoreNET;
+using Amdocs.Ginger.Common;
+using Ginger.SolutionWindows;
+using Ginger.UserControls;
+using GingerCore;
 using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.WizardLib;
@@ -36,6 +40,16 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
         public AddNewEnvAppsPage()
         {
             InitializeComponent();
+            xAddApplicationToSolution.ButtonTextSize = 12;
+            GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
+            view.GridColsView = new ObservableList<GridColView>();
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Active), Header = " ", StyleType = GridColView.eGridColStyleType.CheckBox });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Name), Header = GingerDicser.GetTermResValue(eTermResKey.TargetApplication), WidthWeight = 60 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.ItemImageType), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
+            view.GridColsView.Add(new GridColView() { Field = nameof(EnvApplication.Platform), Header = "Platform Type", WidthWeight = 40 });
+
+            SelectApplicationGrid.SetAllColumnsDefaultView(view);
+            SelectApplicationGrid.InitViewItems();
         }
 
         public void WizardEvent(WizardEventArgs WizardEventArgs)
@@ -47,19 +61,18 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
 
                     foreach (ApplicationPlatform appPlat in WorkSpace.Instance.Solution.ApplicationPlatforms)
                     {
-                        EnvApplication envApp = new EnvApplication() { Name = appPlat.AppName };
+                        EnvApplication envApp = new EnvApplication() { Name = appPlat.AppName, Platform  = appPlat.Platform, ParentGuid = appPlat.Guid};
                         envApp.Active = true;
                         mWizard.apps.Add(envApp);
                     }
 
                     if (mWizard.apps.Count == 0)
                     {
-                        mWizard.apps.Add(new EnvApplication() { Name = "MyApplication" });
+                        mWizard.apps.Add(new EnvApplication() { Name = "MyApplication", Platform = ePlatformType.NA });
                     }
 
-                    xAppsListBox.ItemsSource = mWizard.apps;
+                    SelectApplicationGrid.DataSourceList = mWizard.apps;
                     break;
-
             }
 
         }
@@ -76,6 +89,20 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
                     envApp.Active = true;
                     mWizard.apps.Add(envApp);
                 }
+            }
+        }
+
+        private void AddApplicationToSolution(object sender, RoutedEventArgs e)
+        {
+            AddApplicationPage applicationPage = new(WorkSpace.Instance.Solution, false);
+
+            applicationPage.ShowAsWindow();
+
+            foreach (ApplicationPlatform selectedApp in applicationPage.SelectApplicationGrid.Grid.SelectedItems)
+            {
+                EnvApplication envApp = new EnvApplication() { Name = selectedApp.AppName, Platform = selectedApp.Platform, ParentGuid = selectedApp.Guid};
+                envApp.Active = true;
+                mWizard.apps.Add(envApp);
             }
         }
     }

@@ -1,4 +1,22 @@
-﻿using Amdocs.Ginger.Common;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.CoreNET.BPMN.Conversion;
@@ -43,7 +61,7 @@ namespace GingerCoreNETUnitTest.BPMN
             ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
             CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
-            Assert.ThrowsException<BPMNConversionException>(() => converter.Create());
+            Assert.ThrowsException<NoValidActivityFoundInGroupException>(() => converter.Create());
         }
 
         [TestMethod]
@@ -64,7 +82,7 @@ namespace GingerCoreNETUnitTest.BPMN
             ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
             CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
-            Assert.ThrowsException<BPMNConversionException>(() => converter.Create());
+            Assert.ThrowsException<NoValidActivityFoundInGroupException>(() => converter.Create());
         }
 
         [TestMethod]
@@ -80,7 +98,7 @@ namespace GingerCoreNETUnitTest.BPMN
             ISolutionFacadeForBPMN solutionFacade = solutionFacadeMock.Object;
             CollaborationFromActivityGroupCreator converter = new(activityGroup, solutionFacade);
 
-            Assert.ThrowsException<BPMNConversionException>(() => converter.Create());
+            Assert.ThrowsException<NoValidActivityFoundInGroupException>(() => converter.Create());
         }
 
         [TestMethod]
@@ -674,7 +692,7 @@ namespace GingerCoreNETUnitTest.BPMN
             CreateActivityGroupWithGoToActivityByNameFlowControlWithInvalidTargetName(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
 
-            Assert.ThrowsException<BPMNConversionException>(() => creator.Create(), $"Expected to throw {nameof(BPMNConversionException)} because no {nameof(Activity)} was found by name in shared repository.");
+            Assert.ThrowsException<FlowControlTargetActivityNotFoundException>(() => creator.Create(), $"Expected to throw {nameof(BPMNConversionException)} because no {nameof(Activity)} was found by name in shared repository.");
         }
 
         [TestMethod]
@@ -1199,7 +1217,7 @@ namespace GingerCoreNETUnitTest.BPMN
             CreateActivityGroupWithRunSharedRepositoryActivityFlowFlowControlWithInvalidTargetName(out ActivitiesGroup activityGroup, out ISolutionFacadeForBPMN solutionFacade);
             CollaborationFromActivityGroupCreator creator = new(activityGroup, solutionFacade);
 
-            Assert.ThrowsException<BPMNConversionException>(() => creator.Create(), $"Expected to throw {nameof(BPMNConversionException)} because no {nameof(Activity)} was found by name in shared repository.");
+            Assert.ThrowsException<FlowControlTargetActivityNotFoundException>(() => creator.Create(), $"Expected to throw {nameof(BPMNConversionException)} because no {nameof(Activity)} was found by name in shared repository.");
         }
 
         private bool IsConditionalTask(Task task)

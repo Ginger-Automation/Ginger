@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ limitations under the License.
 
 using System;
 using System.Collections.Generic;
+using Amdocs.Ginger.Repository;
 using GingerCore;
 
 namespace Amdocs.Ginger.Common
@@ -174,12 +175,22 @@ namespace Amdocs.Ginger.Common
         HasUnhandledConflicts, 
         HasUnhandledMandatoryIssues,
         UncommitedChangesPreventCheckout,
-        ExportToBPMNSuccessful,
+        ExportToBPMNSuccessful, 
+        MultipleExportToBPMNSuccessful,
         GingerEntityToBPMNConversionError,
         IssueWhileAnalyzingConflict,
         ConflictsResolvedCount,
-        AddActivityGroupsToSharedRepositoryForBPMNConversion,
-        FailedToDownloadDriver
+        AddActivityGroupsToSharedRepositoryForBPMNConversion, 
+        AddActivitiesToSharedRepositoryForBPMNConversion,
+        AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport,
+        FailedToDownloadDriver,
+        ShadowRootExists,
+        RunsetNotFoundForLoading,
+        RunSetLoadFromReportError,
+        NoActionAvailable,
+        PublishApplicationToOtherEnv,
+        NoApplicationPlatformLeft,
+        ShareApplicationToEnvironment
     }
 
     public static class UserMsgsPool
@@ -223,7 +234,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticWarnMessage, new UserMsg(eUserMsgType.WARN, "Warning", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticInfoMessage, new UserMsg(eUserMsgType.INFO, "Info", "{0}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.StaticQuestionsMessage, new UserMsg(eUserMsgType.QUESTION, "Question", "{0}", eUserMsgOption.YesNo, eUserMsgSelection.No));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToClose, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Unsaved changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToClose, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?" + Environment.NewLine + Environment.NewLine + $"Note: Unsaved and {ISolution.CacheDirectoryName} folder file changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToCloseWithoutNote, new UserMsg(eUserMsgType.QUESTION, "Close Ginger", "Are you sure you want to close Ginger?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToRestart, new UserMsg(eUserMsgType.QUESTION, "Restart Ginger", "Are you sure you want to Restart Ginger?" + Environment.NewLine + Environment.NewLine + "Notice: Unsaved changes won't be saved.", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToRestartWithoutNote, new UserMsg(eUserMsgType.QUESTION, "Restart Ginger", "Are you sure you want to Restart Ginger?", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -233,6 +244,13 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowNeedTargetApplication, new UserMsg(eUserMsgType.WARN, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} Not Selected", "{0} Not Selected! Please Select at least one {0}", eUserMsgOption.OK, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfSureWantToUndoChange, new UserMsg(eUserMsgType.WARN, "Undo Changes", "Are you sure you want to undo all changes?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ShadowRootExists, new UserMsg(eUserMsgType.INFO, "Shadow DOM Element Detected", "This element exists under a shadow root, you will have to manually add the action(s) to locate this element's parent. Please look into 'Switch To Shadow DOM' operation in Browser Action", eUserMsgOption.OK , eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RunsetNotFoundForLoading, new UserMsg(eUserMsgType.ERROR, "RunSet Not Found", "No runset details were found.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.RunSetLoadFromReportError, new UserMsg(eUserMsgType.ERROR, "Unable To Load RunSet", "{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.PublishApplicationToOtherEnv, new UserMsg(eUserMsgType.QUESTION, "Publish Application to other Environment", "Do you want to publish this application to all the other existing environments?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+
+            Reporter.UserMsgsPool.Add(eUserMsgKey.NoApplicationPlatformLeft, new UserMsg(eUserMsgType.INFO, "No Application is available to add", $"All the applications are already available in {0} Environment. \nPlease add new application in the Configurations-> {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} page to add application here", eUserMsgOption.OK, eUserMsgSelection.None));
+
 
             #endregion General Application Messages
 
@@ -324,6 +342,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.UncommitedChangesPreventCheckout, new UserMsg(eUserMsgType.ERROR, "Uncommited Changes", "Local branch has uncommited changes, check-in them before getting latest.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.IssueWhileAnalyzingConflict, new UserMsg(eUserMsgType.INFO, "Issues with Analyzer", "{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ConflictsResolvedCount, new UserMsg(eUserMsgType.INFO, "Conflicts Resolved", "{0} conflicted file(s) was resolved.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.NoActionAvailable, new UserMsg(eUserMsgType.INFO, "No Action Found", "Please Add Action to run", eUserMsgOption.OK, eUserMsgSelection.OK));
             #endregion SourceControl Messages
 
             #region Validation Messages
@@ -398,7 +417,7 @@ namespace Amdocs.Ginger.Common
             
             Reporter.UserMsgsPool.Add(eUserMsgKey.FailedToDownloadDriver, new UserMsg(eUserMsgType.ERROR, "Failed to Download the Driver",
                 "Oh no! The {0} Driver couldn't be downloaded because we're currently offline.Check your internet connection or update the proxy settings in the Agent config for automatic downloads." + Environment.NewLine +
-                $"If that feels like a puzzle, you can manually grab the driver and drop it into the Ginger installation directory({ AppContext.BaseDirectory})." + Environment.NewLine +"Cheers to problem-solving."
+                $"If that feels like a puzzle, You can also grab the driver yourself and set its location in the DriverFilePath in the Agent Configuration." + Environment.NewLine +"Cheers to problem-solving."
                 , eUserMsgOption.OK, eUserMsgSelection.None));
 
             #endregion Agents/Drivers Messages
@@ -462,7 +481,7 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.FolderExistsWithName, new UserMsg(eUserMsgType.WARN, "Folder Creation Failed", "Folder with same name already exists. Please choose a different name for the folder.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.UpdateApplicationNameChangeInSolution, new UserMsg(eUserMsgType.WARN, $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} Name Change", $"Do you want to automatically update the {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} name in all Solution items?" + Environment.NewLine + Environment.NewLine + "Note: If you choose 'Yes', changes won't be saved, for saving them please click 'SaveAll'", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveRunsetChanges, new UserMsg(eUserMsgType.QUESTION, "Save Changes", "There are unsaved changes in runset, Do you want to save it?", eUserMsgOption.YesNo, eUserMsgSelection.No));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.SaveRunsetChanges, new UserMsg(eUserMsgType.QUESTION, "Save Changes", $"There are unsaved changes in runset, Do you want to save it?{Environment.NewLine}{Environment.NewLine}Note: {ISolution.CacheDirectoryName} folder files will be lost after solution reload.", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SolutionEncryptionKeyUpgrade, new UserMsg(eUserMsgType.INFO, "Solution Passwords encryption key updated", "'{0}'", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ForgotKeySaveChanges, new UserMsg(eUserMsgType.QUESTION, "Confirm to set new key", "All password values in the solution will be cleared and need to be entered again. Are you Sure you want to set a new key ?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SaveRunsetChangesWarn, new UserMsg(eUserMsgType.WARN, "Save Changes", "Runset execution will be reset on clicking on Yes.", eUserMsgOption.YesNo, eUserMsgSelection.No));
@@ -595,8 +614,11 @@ namespace Amdocs.Ginger.Common
 
             #region Otoma
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExportToBPMNSuccessful, new UserMsg(eUserMsgType.INFO, "BPMN Export Successful", "Exported to BPMN file {0} successfully.", eUserMsgOption.OK, eUserMsgSelection.OK));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.MultipleExportToBPMNSuccessful, new UserMsg(eUserMsgType.INFO, "BPMN Export Successful", "{0} BPMN file(s) exported successfully.", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.GingerEntityToBPMNConversionError, new UserMsg(eUserMsgType.ERROR, "BPMN Export Failed", "Error occurred while exporting BPMN.\n{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AddActivityGroupsToSharedRepositoryForBPMNConversion, new UserMsg(eUserMsgType.QUESTION, Caption: "Add Missing Activity Groups to Shared Repository", Message: "All the activity groups must be added to shared repository before generating BPMN.\nWould you like to add now?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AddActivitiesToSharedRepositoryForBPMNConversion, new UserMsg(eUserMsgType.QUESTION, Caption: "Add Missing Activities to Shared Repository", Message: "All the activities must be added to shared repository before generating BPMN.\nWould you like to add now?", eUserMsgOption.YesNoCancel, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport, new UserMsg(eUserMsgType.INFO, Caption: "Activities missing from Shared Repository", Message: "All activities must be added to shared repository for generating BPMN.", eUserMsgOption.OK, eUserMsgSelection.OK));
             #endregion
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.RemoteExecutionResultsCannotBeAccessed, new UserMsg(eUserMsgType.INFO, "Remote Data deletion", "Remote Execution Results will not be deleted.", eUserMsgOption.OK, eUserMsgSelection.OK));
@@ -800,6 +822,7 @@ namespace Amdocs.Ginger.Common
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.UpdateExistingPOMElement, new UserMsg(eUserMsgType.QUESTION, "Updated Element Found", "An updated version of Page Object Model Element '{0}' Found." + Environment.NewLine + "Do you want to update existing POM ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
             Reporter.UserMsgsPool.Add(eUserMsgKey.SavePOMChanges, new UserMsg(eUserMsgType.QUESTION, "Save POM Changes", "Selected POM '{0}' was updated." + Environment.NewLine + "Do you want to save changes ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ShareApplicationToEnvironment, new UserMsg(eUserMsgType.QUESTION, "Add Application To All Environments", "Do you want to publish this application to all the existing environments" , eUserMsgOption.YesNo, eUserMsgSelection.None));
 
             Reporter.UserMsgsPool.Add(eUserMsgKey.POMMoveElementFromUnmappedToMapped, new UserMsg(eUserMsgType.QUESTION, "POM Element Found in Unmapped Elements", "Selected Element '{0}' Found in Unmapped Elements list of Page Object Model '{1}'." + Environment.NewLine + "Do you want to update POM & move element into Mapped Elements list ?", eUserMsgOption.YesNo, eUserMsgSelection.Yes));
 

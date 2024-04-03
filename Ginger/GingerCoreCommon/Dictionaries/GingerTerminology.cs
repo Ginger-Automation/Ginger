@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ namespace GingerCore
             new KeyValuePair<string, string>("Activity", "Activity"),
             new KeyValuePair<string, string>("Activities", "Activities"),
             new KeyValuePair<string, string>("Variable", "Variable"),
+            new KeyValuePair<string, string>("Parameter", "Parameter"),
             new KeyValuePair<string, string>("Variables", "Variables"),
             new KeyValuePair<string, string>("RunSet", "Run Set"),
             new KeyValuePair<string, string>("RunSets", "Run Sets"),

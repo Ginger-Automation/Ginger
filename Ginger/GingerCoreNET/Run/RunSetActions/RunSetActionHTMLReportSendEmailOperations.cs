@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
@@ -145,8 +145,8 @@ namespace Ginger.Run.RunSetActions
                             if (RunSetActionHTMLReportSendEmail.selectedHTMLReportTemplateID > -1)
                             {
                                 int totalRunners = WorkSpace.Instance.RunsetExecutor.Runners.Count;
-                                int totalPassed = WorkSpace.Instance.RunsetExecutor.Runners.Where(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed).Count();
-                                int totalExecuted = totalRunners - WorkSpace.Instance.RunsetExecutor.Runners.Where(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked).Count();
+                                int totalPassed = WorkSpace.Instance.RunsetExecutor.Runners.Count(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed);
+                                int totalExecuted = totalRunners - WorkSpace.Instance.RunsetExecutor.Runners.Count(runner => runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Pending || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped || runner.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked);
                                 ReportInfo offlineReportInfo = new ReportInfo(runSetFolder);
                                 ((RunSetReport)offlineReportInfo.ReportInfoRootObject).RunSetExecutionRate = (totalExecuted * 100 / totalRunners).ToString();
                                 ((RunSetReport)offlineReportInfo.ReportInfoRootObject).GingerRunnersPassRate = (totalPassed * 100 / totalRunners).ToString();
@@ -974,9 +974,9 @@ namespace Ginger.Run.RunSetActions
             List<KeyValuePair<int, int>> chartData;
             IsExecutionStatistic = true;
             int totalRunners = liteDbRunSet.RunnersColl.Count;
-            int totalPassedRunners = liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Passed.ToString()).Count();
-            int totalFailedRunners = liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Failed.ToString()).Count();
-            int totalStoppedRunners = liteDbRunSet.RunnersColl.Where(runner => runner.RunStatus == eRunStatus.Stopped.ToString()).Count();
+            int totalPassedRunners = liteDbRunSet.RunnersColl.Count(runner => runner.RunStatus == eRunStatus.Passed.ToString());
+            int totalFailedRunners = liteDbRunSet.RunnersColl.Count(runner => runner.RunStatus == eRunStatus.Failed.ToString());
+            int totalStoppedRunners = liteDbRunSet.RunnersColl.Count(runner => runner.RunStatus == eRunStatus.Stopped.ToString());
             int totalOtherRunners = totalRunners - (totalPassedRunners + totalFailedRunners + totalStoppedRunners);
             //Ginger Runners Place Holders
             chartData = new List<KeyValuePair<int, int>>();
@@ -992,21 +992,21 @@ namespace Ginger.Run.RunSetActions
             foreach (LiteDbRunner liteDbRunner in liteDbRunSet.RunnersColl)
             {
                 totalBFs += liteDbRunner.BusinessFlowsColl.Count;
-                totalPassedBFs += liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Passed.ToString()).Count();
-                totalFailedBFs += liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Failed.ToString()).Count();
-                totalStoppedBFs += liteDbRunner.BusinessFlowsColl.Where(bf => bf.RunStatus == eRunStatus.Stopped.ToString()).Count();
+                totalPassedBFs += liteDbRunner.BusinessFlowsColl.Count(bf => bf.RunStatus == eRunStatus.Passed.ToString());
+                totalFailedBFs += liteDbRunner.BusinessFlowsColl.Count(bf => bf.RunStatus == eRunStatus.Failed.ToString());
+                totalStoppedBFs += liteDbRunner.BusinessFlowsColl.Count(bf => bf.RunStatus == eRunStatus.Stopped.ToString());
                 foreach (LiteDbBusinessFlow liteDbBusinessFlow in liteDbRunner.BusinessFlowsColl)
                 {
                     totalActivities += liteDbBusinessFlow.ActivitiesColl.Count;
-                    totalPassedActivities += liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
-                    totalFailedActivities += liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Failed.ToString()).Count();
-                    totalStoppedActivities += liteDbBusinessFlow.ActivitiesColl.Where(ac => ac.RunStatus == eRunStatus.Stopped.ToString()).Count();
+                    totalPassedActivities += liteDbBusinessFlow.ActivitiesColl.Count(ac => ac.RunStatus == eRunStatus.Passed.ToString());
+                    totalFailedActivities += liteDbBusinessFlow.ActivitiesColl.Count(ac => ac.RunStatus == eRunStatus.Failed.ToString());
+                    totalStoppedActivities += liteDbBusinessFlow.ActivitiesColl.Count(ac => ac.RunStatus == eRunStatus.Stopped.ToString());
                     foreach (LiteDbActivity liteDbActivity in liteDbBusinessFlow.ActivitiesColl)
                     {
                         totalActions += liteDbActivity.ActionsColl.Count;
-                        totalPassedActions += liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Passed.ToString()).Count();
-                        totalFailedActions += liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Failed.ToString()).Count();
-                        totalStoppedActions += liteDbActivity.ActionsColl.Where(ac => ac.RunStatus == eRunStatus.Stopped.ToString()).Count();
+                        totalPassedActions += liteDbActivity.ActionsColl.Count(ac => ac.RunStatus == eRunStatus.Passed.ToString());
+                        totalFailedActions += liteDbActivity.ActionsColl.Count(ac => ac.RunStatus == eRunStatus.Failed.ToString());
+                        totalStoppedActions += liteDbActivity.ActionsColl.Count(ac => ac.RunStatus == eRunStatus.Stopped.ToString());
                     }
                 }
             }
@@ -1045,7 +1045,7 @@ namespace Ginger.Run.RunSetActions
             string tableColor = "<td bgcolor='#7f7989' style='color:#fff;padding:10px;border-right:1px solid #fff'>";
             string tableStyle = @"<td style='padding: 10px; border: 1px solid #dddddd'>";
 
-            var totalColumnCount = currentTemplate.EmailSummaryViewFieldsToSelect.Where(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString())).Count(); ;
+            var totalColumnCount = currentTemplate.EmailSummaryViewFieldsToSelect.Count(x => (x.IsSelected == true && x.FieldType == Ginger.Reports.FieldsType.Field.ToString()));
             var columnHeaderName = fieldsNamesHTMLTableCellsRowOne;
             var columnValue = fieldsValuesHTMLTableCellsRowOne;
             var columnCount = 0;

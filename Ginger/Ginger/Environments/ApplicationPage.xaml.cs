@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Ginger.BusinessFlowPages;
 using Ginger.UserControlsLib;
 using GingerCore.Environments;
 using GingerCore.GeneralLib;
@@ -47,22 +48,10 @@ namespace Ginger.Environments
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(DescriptionTextBox, TextBox.TextProperty, app, nameof(EnvApplication.Description));
 
             UpdateParametersTabHeader();
-            CollectionChangedEventManager.AddHandler(source: app.GeneralParams, handler: GeneralParams_CollectionChanged);
+            CollectionChangedEventManager.AddHandler(source: app.Variables, handler: GeneralParams_CollectionChanged);
             UpdateDBsTabHeader();
             CollectionChangedEventManager.AddHandler(source: app.Dbs, handler: Dbs_CollectionChanged);
-            UpdateLoginuserTabHeader();
-            CollectionChangedEventManager.AddHandler(source: app.LoginUsers, handler: LoginUsers_CollectionChanged);
             ColorSelectedTab();
-        }
-
-        private void LoginUsers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            UpdateLoginuserTabHeader();
-        }
-
-        private void UpdateLoginuserTabHeader()
-        {
-            xUserTabHeaderText.Text = string.Format("Login Users ({0})", mEnvApplication.LoginUsers.Count);
         }
 
         private void GeneralParams_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -72,7 +61,7 @@ namespace Ginger.Environments
 
         private void UpdateParametersTabHeader()
         {
-            xParamsTabHeaderText.Text = string.Format("Parameters ({0})", mEnvApplication.GeneralParams.Count);
+            xParamsTabHeaderText.Text = string.Format("Parameters ({0})", mEnvApplication.Variables.Count);
         }
 
         private void Dbs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -82,7 +71,7 @@ namespace Ginger.Environments
 
         private void UpdateDBsTabHeader()
         {
-            xDBsTabHeaderText.Text = string.Format("DataBases ({0})", mEnvApplication.Dbs.Count);
+            xDBsTabHeaderText.Text = string.Format("Databases ({0})", mEnvApplication.Dbs.Count);
         }
 
         private void AppTab_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -93,7 +82,7 @@ namespace Ginger.Environments
             {
                 if (ParamsFrame.Content == null)
                 {
-                    ParamsFrame.ClearAndSetContent(new AppGeneralParamsPage(mEnvApplication));
+                    ParamsFrame.ClearAndSetContent(new VariabelsListViewPage(mEnvApplication, null, General.eRIPageViewMode.Standalone));
                 }
                 return;
             }
@@ -107,14 +96,6 @@ namespace Ginger.Environments
                 }
             }
 
-            if (((TabItem)AppTab.SelectedItem).Name == xUsersTab.Name)
-            {
-                if (UsersFrame.Content == null)
-                {
-                    UsersFrame.ClearAndSetContent(new AppLoginUsersPage(mEnvApplication));
-                    return;
-                }
-            }
         }
 
         private void ColorSelectedTab()

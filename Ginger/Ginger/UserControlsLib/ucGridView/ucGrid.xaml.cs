@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -188,7 +188,18 @@ namespace Ginger
                 mFilterSelectedTags = TagsViewer.GetSelectedTagsList();
             });
         }
+        public Visibility SearchVisibility
+        {
 
+            get
+            {
+                return ToolsTray.Visibility;
+            }
+            set
+            {
+                ToolsTray.Visibility = value;
+            }
+        }
         private bool FilterGridRows(object obj)
         {
             if (string.IsNullOrEmpty(mFilterSearchText) && (mFilterSelectedTags == null || mFilterSelectedTags.Count == 0))
@@ -2539,6 +2550,12 @@ namespace Ginger
             }
             return selectedItemsList;
         }
+
+        public RepositoryItemBase GetSelectedItem()
+        {
+            return (RepositoryItemBase)grdMain.SelectedItem;
+        }
+
 
         public IObservableList GetSourceItemsAsIList()
         {

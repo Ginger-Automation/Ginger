@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -597,8 +597,8 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.ActionsConversion
             {
                 foreach (Activity activity in bf.Activities.Where(x => x.Active))
                 {
-                    count = count + activity.Acts.Where(act => (act.Active &&
-                                                               (act.GetType() == typeof(ActWebAPIRest) || act.GetType() == typeof(ActWebAPISoap)))).Count();
+                    count = count + activity.Acts.Count(act => act.Active &&
+                                                               (act.GetType() == typeof(ActWebAPIRest) || act.GetType() == typeof(ActWebAPISoap)));
                 }
             }
             catch (Exception ex)

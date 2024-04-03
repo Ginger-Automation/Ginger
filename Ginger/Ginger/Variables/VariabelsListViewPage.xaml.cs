@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -27,9 +27,11 @@ using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using Ginger.Variables;
 using GingerCore;
+using GingerCore.Environments;
 using GingerCore.GeneralLib;
 using GingerCore.Variables;
 using GingerWPF.DragDropLib;
+using OctaneRepositoryStd.BLL;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -96,6 +98,11 @@ namespace Ginger.BusinessFlowPages
             {
                 return ((Activity)mVariabelsParent).Variables;
             }
+            else if (mVariabelsParent is EnvApplication envApplication)
+            {
+                envApplication.ConvertGeneralParamsToVariable();
+                return envApplication.Variables;
+            }
             else
             {
                 return null;
@@ -115,6 +122,10 @@ namespace Ginger.BusinessFlowPages
             else if (mVariabelsParent is Activity)
             {
                 return eVariablesLevel.Activity;
+            }
+            else if (mVariabelsParent is EnvApplication envApplication)
+            {
+                return eVariablesLevel.EnvApplication;
             }
             else
             {
@@ -168,6 +179,11 @@ namespace Ginger.BusinessFlowPages
                         mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Default, parent: mVariabelsParent);
                     }
                 }
+                else if (mVariabelsParent is EnvApplication)
+                {
+                    mVariabelEditPage = new VariableEditPage(mVarBeenEdit, mContext, showAsReadOnly, VariableEditPage.eEditMode.Global, parent: mVariabelsParent);
+
+                }
                 xMainFrame.SetContent(mVariabelEditPage);
             }
             else
@@ -215,9 +231,16 @@ namespace Ginger.BusinessFlowPages
             if (mVariabelsListView == null)
             {
                 mVariabelsListView = new UcListView();
-                mVariabelsListView.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
-                mVariabelsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Variable;
-
+                if(mVariabelsParent is EnvApplication)
+                {
+                    mVariabelsListView.ListTitleVisibility = Visibility.Collapsed;
+                    mVariabelsListView.ListImageVisibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    mVariabelsListView.Title = GingerDicser.GetTermResValue(eTermResKey.Variables);
+                    mVariabelsListView.ListImageType = Amdocs.Ginger.Common.Enums.eImageType.Variable;
+                }
                 mVariabelListHelper = new VariablesListViewHelper(GetVariablesList(), mVariabelsParent, mVariablesLevel, mContext, mPageViewMode);
                 mVariabelListHelper.VariabelListItemEvent += MVariabelListItemInfo_VariabelListItemEvent;
                 mVariabelsListView.SetDefaultListDataTemplate(mVariabelListHelper);

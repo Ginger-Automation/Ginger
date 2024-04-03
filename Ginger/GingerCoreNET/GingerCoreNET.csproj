@@ -55,6 +55,8 @@
     <None Remove="DLLS\SikuliStandardNet.dll" />
     <None Remove="DLLS\ZephyrEntStdSDK.dll" />
     <None Remove="DLLS\Zepyhr_Ent_Repository_Std.dll" />
+    <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporter.css" />
+    <None Remove="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporterElements.js" />
     <None Remove="Drivers\WebServicesDriver\WebServicesDriverWindow.xaml" />
     <None Remove="log4netLib\log4net.config" />
     <None Remove="Reports\Ginger-Web-Client\main.83a800d55fc7d8ada5fd.js" />
@@ -199,6 +201,9 @@
     <EmbeddedResource Include="DLLS\GingerHbaseFilter.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporterElements.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="log4netLib\log4net.config">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -248,9 +253,9 @@
   
     <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
-    <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.2" />
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.3" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="23.5.1" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.2" />
     
     <PackageReference Include="HBaseNet" Version="0.1.0" />
     
@@ -285,6 +290,8 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Graph" Version="4.51.0" />
     <PackageReference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling.ServiceBus" Version="6.0.1304" />
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.205.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.Client" Version="16.205.1" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
     <PackageReference Include="MySql.Data" Version="8.0.16" />
@@ -296,6 +303,7 @@
     <PackageReference Include="protobuf-net.Core" Version="3.2.26" />
     <PackageReference Include="Protractor" Version="1.0.0" />
     <PackageReference Include="RestSharp" Version="108.0.3" />
+    <PackageReference Include="Selenium.Axe" Version="4.0.16" />
     <PackageReference Include="Selenium.Support" Version="4.17.0" />
     <PackageReference Include="Selenium.WebDriver" Version="4.17.0" />
     <PackageReference Include="Selenium.WebDriver.Extensions" Version="4.1.0" />
@@ -323,6 +331,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="ACL_Data_Contract">
+      <HintPath>DLLS\ACL_Data_Contract.dll</HintPath>
+    </Reference>
     <Reference Include="AlmDataContractsStd">
       <HintPath>DLLS\AlmDataContractsStd.dll</HintPath>
     </Reference>
@@ -331,6 +342,9 @@
     </Reference>
     <Reference Include="ALM_CommonStd">
       <HintPath>DLLS\ALM_CommonStd.dll</HintPath>
+    </Reference>
+    <Reference Include="AzureDevOpsRepo">
+      <HintPath>..\..\..\..\ALMInteraction\AzureRepositoryStd\bin\Debug\net8.0\AzureDevOpsRepo.dll</HintPath>
     </Reference>
     <Reference Include="GingerExternal">
       <HintPath>DLLS\GingerExternal.dll</HintPath>
@@ -1201,6 +1215,12 @@
 
   <ItemGroup>
     <Folder Include="SolutionRepositoryLib\RepositoryObjectsLib\PlatformsLib\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Drivers\CoreDrivers\Web\Selenium\AccessibilityTestResources\htmlReporter.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

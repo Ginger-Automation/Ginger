@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -199,8 +199,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = (from x in ActionReports where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed.ToString() select x).Count();
-                return count;
+                return ActionReports.Count(x=> x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed.ToString());                
             }
         }
 
@@ -208,8 +207,8 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = (from x in ActionReports where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped.ToString() select x).Count();
-                return count;
+                return ActionReports.Count(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped.ToString());
+                
             }
         }
 
@@ -217,8 +216,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = (from x in ActionReports where x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed.ToString() select x).Count();
-                return count;
+                return ActionReports.Count(x => x.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed.ToString());
             }
         }
 
@@ -226,8 +224,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = TotalActions - TotalActionsFailed - TotalActionsPassed - TotalActionsStopped;
-                return count;
+                return TotalActions - TotalActionsFailed - TotalActionsPassed - TotalActionsStopped;
             }
         }
 

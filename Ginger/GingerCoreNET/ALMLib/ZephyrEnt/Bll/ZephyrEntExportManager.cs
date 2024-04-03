@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -461,7 +461,7 @@ namespace GingerCore.ALM.ZephyrEnt.Bll
             {
                 return 3;
             }
-            else if (testToExport.ActivitiesIdentifiers.Where(x => x.IdentifiedActivity.Status == eRunStatus.Passed || x.IdentifiedActivity.Status == eRunStatus.Skipped).Count() == testToExport.ActivitiesIdentifiers.Count())
+            else if (testToExport.ActivitiesIdentifiers.Count(x => x.IdentifiedActivity.Status == eRunStatus.Passed || x.IdentifiedActivity.Status == eRunStatus.Skipped) == testToExport.ActivitiesIdentifiers.Count())
             {
                 return 1;
             }

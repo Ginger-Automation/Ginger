@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -58,17 +58,8 @@ namespace GingerWPF.BusinessFlowsLib
             _ignoreValidationRules = ignoreValidationRules;
 
             CollectionChangedEventManager.AddHandler(source: mBusinessFlow.Activities, handler: mBusinessFlowActivities_CollectionChanged);
-            CollectionChangedEventManager.AddHandler(source: mBusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
             TrackBusinessFlowAutomationPrecentage();
             BindControls();
-        }
-
-        private void TargetApplications_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            this.Dispatcher.Invoke(() =>
-            {
-                xAppsGrid.DataSourceList = mBusinessFlow.TargetApplicationPlatforms;
-            });
         }
 
         private void SetGridView()
@@ -80,10 +71,6 @@ namespace GingerWPF.BusinessFlowsLib
             view.GridColsView.Add(new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay });
 
-            xAppsGrid.SetAllColumnsDefaultView(view);
-            xAppsGrid.InitViewItems();
-
-            xAppsGrid.DataSourceList = mBusinessFlow.TargetApplicationPlatforms;
         }
 
         string allProperties = string.Empty;
@@ -148,8 +135,6 @@ namespace GingerWPF.BusinessFlowsLib
                 xStatusComboBox.IsEnabled = false;
                 xCreatedByTextBox.IsEnabled = false;
                 xAutoPrecentageTextBox.IsEnabled = false;
-                xAppsGrid.IsEnabled = false;
-                xAddTargetBtn.IsEnabled = false;
                 xPublishcheckbox.IsEnabled = false;
                 xExternalId.IsEnabled = false;
             }
@@ -162,12 +147,9 @@ namespace GingerWPF.BusinessFlowsLib
                 xStatusComboBox.IsEnabled = true;
                 xCreatedByTextBox.IsEnabled = true;
                 xAutoPrecentageTextBox.IsEnabled = true;
-                xAppsGrid.IsEnabled = true;
-                xAddTargetBtn.IsEnabled = true;
                 xPublishcheckbox.IsEnabled = true;
                 xExternalId.IsEnabled = true;
             }
-            xAddTargetApplication.Content= $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}s:";
             BindingHandler.ObjFieldBinding(xNameTxtBox, TextBox.TextProperty, mBusinessFlow, nameof(BusinessFlow.Name));
             if(!_ignoreValidationRules) 
             { 
@@ -209,7 +191,6 @@ namespace GingerWPF.BusinessFlowsLib
             BindingOperations.ClearAllBindings(xStatusComboBox);
             BindingOperations.ClearAllBindings(xCreatedByTextBox);
             BindingOperations.ClearAllBindings(xAutoPrecentageTextBox);
-            BindingOperations.ClearAllBindings(xAppsGrid);
             BindingOperations.ClearAllBindings(xPublishcheckbox);
         }
 
@@ -220,14 +201,11 @@ namespace GingerWPF.BusinessFlowsLib
                 ClearBindings();
 
                 CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.Activities, handler: mBusinessFlowActivities_CollectionChanged);
-                CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
 
                 mBusinessFlow = updateBusinessFlow;
                 mContext.BusinessFlow = mBusinessFlow;
 
                 CollectionChangedEventManager.AddHandler(source: mBusinessFlow.Activities, handler: mBusinessFlowActivities_CollectionChanged);
-                CollectionChangedEventManager.AddHandler(source: mBusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
-
                 BindControls();
             }
         }

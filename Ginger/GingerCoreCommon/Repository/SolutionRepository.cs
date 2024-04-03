@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -52,6 +52,9 @@ namespace Amdocs.Ginger.Repository
              @"Backups\",
              @"ExecutionResults\",
              @"HTMLReports\",
+
+             $@"BusinessFlows\{ISolution.CacheDirectoryName}\",
+             $@"RunSetConfigs\{ISolution.CacheDirectoryName}\",
 
              @"SharedRepository\Activities\PrevVersions\",
              @"SharedRepository\Actions\PrevVersions\",
@@ -257,7 +260,7 @@ namespace Amdocs.Ginger.Repository
                     else if (new Uri(folder.FolderFullPath + "\\").IsBaseOf(inputURI))
                     {
                         string relPath = "~" + folderPath.Replace(SolutionFolder, "");
-                        repoFolder = folder.GetSubFolderByName(relPath, true);
+                        repoFolder = folder.GetSubFolderByRelativePath(relPath, true);
                     }
                 }
             });

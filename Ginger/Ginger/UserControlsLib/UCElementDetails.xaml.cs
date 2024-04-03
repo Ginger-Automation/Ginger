@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -32,11 +32,13 @@ using Ginger.WindowExplorer;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
+using GingerCore.Drivers.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.Application_Models;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using GingerWPF.UserControlsLib.UCTreeView;
+using OpenQA.Selenium.Appium;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -338,7 +340,7 @@ namespace Ginger
 
             if (SelectedElement != null)
             {
-                WindowExplorerDriver.TestElementLocators(SelectedElement);
+                WindowExplorerDriver.TestElementLocators(SelectedElement, mPOM: SelectedPOM);
             }
         }
 
@@ -439,7 +441,7 @@ namespace Ginger
 
             if (SelectedElement != null)
             {
-                WindowExplorerDriver.TestElementLocators(SelectedElement);
+                WindowExplorerDriver.TestElementLocators(SelectedElement, mPOM: SelectedPOM);
             }
         }
 
@@ -1051,9 +1053,20 @@ namespace Ginger
                         testElement = htmlElementInfo;
                         testElement.Properties = SelectedElement.Properties;
                     }
+                    WindowExplorerDriver.TestElementLocators(testElement);
+
+                }
+                else if (Platform.PlatformType().Equals(ePlatformType.Web) && SelectedElement is HTMLElementInfo)
+                {
+                    var htmlElementInfo = new HTMLElementInfo() { Path = testElement.Path, Locators = testElement.Locators, Properties = SelectedElement.Properties};
+                    WindowExplorerDriver.TestElementLocators(htmlElementInfo, mPOM: SelectedPOM);
                 }
 
-                WindowExplorerDriver.TestElementLocators(testElement);
+                else
+                {
+                    WindowExplorerDriver.TestElementLocators(testElement);
+
+                }
             }
         }
 
@@ -1069,6 +1082,15 @@ namespace Ginger
         {
             if (xActUIPageFrame.Content != null && xActUIPageFrame.Content is ControlActionsPage_New)
             {
+
+                if(SelectedElement!= null && SelectedElement is HTMLElementInfo htmlSelectedElementInfo)
+                {
+                    if(htmlSelectedElementInfo.XPathList?.Count > 0)
+                    {
+                        Reporter.ToUser(eUserMsgKey.ShadowRootExists);
+                    }
+                }
+
                 (xActUIPageFrame.Content as ControlActionsPage_New).AddActionClicked(sender, e);
 
                 if (POMElementsUpdated && (xAutoSavePOMChkBox.IsChecked == true

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -301,10 +301,6 @@ namespace Ginger.Actions.VisualTesting
                     EngineConfigFrame.ClearAndSetContent(mVRtComparisonPage);
                     xFullPageScreenshotCheckbox.Visibility = Visibility.Collapsed;
 
-                    if (string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl) || string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.ApiKey) || string.IsNullOrEmpty(WorkSpace.Instance.Solution.VRTConfiguration.Project))
-                    {
-                        Reporter.ToUser(eUserMsgKey.StaticErrorMessage, "Please check VRT configuration. From Configurations -> External Integrations -> VRT configurations");
-                    }
                     break;
                 default:
                     EngineConfigFrame.ClearAndSetContent(null);

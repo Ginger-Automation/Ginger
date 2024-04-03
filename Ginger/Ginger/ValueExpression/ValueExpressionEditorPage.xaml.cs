@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -652,12 +652,13 @@ namespace Ginger
                     tviEnvAppGlobalParam.MouseDoubleClick += tvi_MouseDoubleClick;
 
                     // Add all App General Params
-                    foreach (GeneralParam gp in a.GeneralParams)
+                    a.ConvertGeneralParamsToVariable();
+                    foreach (VariableBase vb in a.Variables)
                     {
 
                         TreeViewItem tviEnvAppParam = new TreeViewItem();
-                        string Paramval = "{EnvParam App=" + a.Name + " Param=" + gp.Name + "}";
-                        SetItemView(tviEnvAppParam, gp.Name + " =" + gp.Value, Paramval, eImageType.Parameter);
+                        string Paramval = "{EnvParam App=" + a.Name + " Param=" + vb.Name + "}";
+                        SetItemView(tviEnvAppParam, vb.Name + " =" + vb.Value, Paramval, eImageType.Parameter);
                         tviEnvAppGlobalParam.Items.Add(tviEnvAppParam);
                         tviEnvAppParam.MouseDoubleClick += tvi_MouseDoubleClick;
                         tviEnvAppParam.Selected += CleanHelpText;

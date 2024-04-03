@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ namespace Ginger.BusinessFlowWindows
         {
 
             InitializeComponent();
+            AppsGrid.SelectionMode = DataGridSelectionMode.Single;
 
             this.Title = $"Edit {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} { GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}";
 
@@ -58,7 +59,6 @@ namespace Ginger.BusinessFlowWindows
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView = new ObservableList<GridColView>();
 
-            view.GridColsView.Add(new GridColView() { Field = "Selected", WidthWeight = 20, StyleType = GridColView.eGridColStyleType.CheckBox });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.PlatformImage), Header = " ", StyleType = GridColView.eGridColStyleType.ImageMaker, WidthWeight = 5, MaxWidth = 16 });
             view.GridColsView.Add(new GridColView() { Field = "AppName", Header = "Application Name", WidthWeight = 50, ReadOnly = true, BindingMode = BindingMode.OneWay });
             view.GridColsView.Add(new GridColView() { Field = "Platform", Header = "Platform", WidthWeight = 30, ReadOnly = true, BindingMode = BindingMode.OneWay });
@@ -156,16 +156,16 @@ namespace Ginger.BusinessFlowWindows
             }
 
             //add new
-            foreach (ApplicationPlatform TA in mApplicationsPlatforms.Where(x => x.Selected))
+
+            ApplicationPlatform TA = (ApplicationPlatform)AppsGrid.GetSelectedItem();
+
+            if (mBusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == TA.AppName) == null)
             {
-                if (mBusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == TA.AppName) == null)
-                {
-                    TargetApplication tt = new TargetApplication();
-                    tt.AppName = TA.AppName;
-                    tt.TargetGuid = TA.Guid;
-                    tt.Selected = true;
-                    mBusinessFlow.TargetApplications.Add(tt);
-                }
+                TargetApplication tt = new TargetApplication();
+                tt.AppName = TA.AppName;
+                tt.TargetGuid = TA.Guid;
+                tt.Selected = true;
+                mBusinessFlow.TargetApplications.Add(tt);
             }
         }
     }

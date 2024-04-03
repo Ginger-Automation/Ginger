@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -993,7 +993,7 @@ namespace Amdocs.Ginger.Repository
 
             foreach (RepositoryFolder<T> RF in GetSubFolders())
             {
-                if (RF.FolderRelativePath == name)
+                if (string.Equals(RF.DisplayName, name))
                 {
                     return RF;
                 }
@@ -1001,6 +1001,28 @@ namespace Amdocs.Ginger.Repository
                 if (recursive)
                 {
                     RepositoryFolderBase subRF = RF.GetSubFolderByName(name, true);
+                    if (subRF != null)
+                    {
+                        return subRF;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public override RepositoryFolderBase GetSubFolderByRelativePath(string relativePath, bool recursive = false)
+        {
+
+            foreach (RepositoryFolder<T> RF in GetSubFolders())
+            {
+                if (RF.FolderRelativePath == relativePath)
+                {
+                    return RF;
+                }
+                // Recursive scan down the tree
+                if (recursive)
+                {
+                    RepositoryFolderBase subRF = RF.GetSubFolderByRelativePath(relativePath, true);
                     if (subRF != null)
                     {
                         return subRF;

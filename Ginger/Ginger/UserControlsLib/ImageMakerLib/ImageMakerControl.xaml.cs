@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -198,6 +198,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.SaveGradient:
                     SetAsStaticImage("save-regular-amdocs-gradient.svg");
                     break;
+                case eImageType.Environment:
+                    SetAsStaticImage("Environment.ico");
+                    break;
                 #endregion
 
 
@@ -237,7 +240,6 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Settings:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Cogs);//Gears
                     break;
-                case eImageType.Environment:
                 case eImageType.Globe:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Globe);
                     break;

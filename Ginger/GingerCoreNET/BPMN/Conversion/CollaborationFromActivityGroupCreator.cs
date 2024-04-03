@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -39,24 +39,35 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
     /// </summary>
     public sealed class CollaborationFromActivityGroupCreator
     {
+        public sealed class Options
+        {
+            public bool IgnoreInterActivityFlowControls { get; set; } = false;
+        }
+
         private readonly ActivitiesGroup _activityGroup;
+        private readonly Options _options;
         private readonly ISolutionFacadeForBPMN _solutionFacade;
 
         /// <summary>
         /// Create a new <see cref="CollaborationFromActivityGroupCreator"/>.
         /// </summary>
         /// <param name="activityGroup"><see cref="ActivitiesGroup"/> which will be used to create.</param>
-        public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup) : this(activityGroup, new WorkSpaceToSolutionFacadeAdapter(WorkSpace.Instance)) { }
+        public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup) : this(activityGroup, new Options()) { }
+
+        public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup, Options options) : this(activityGroup, options, new WorkSpaceToSolutionFacadeAdapter(WorkSpace.Instance)) { }
+        
+        public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade) : this(activityGroup, new Options(), solutionFacade) { }
 
         /// <summary>
         /// Create a new <see cref="CollaborationFromActivityGroupCreator"/>.
         /// </summary>
         /// <param name="activityGroup"><see cref="ActivitiesGroup"/> which will be used to create.</param>
         /// <param name="solutionFacade">A facade to expose solution data.</param>
-        public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup, ISolutionFacadeForBPMN solutionFacade)
+        public CollaborationFromActivityGroupCreator(ActivitiesGroup activityGroup, Options options, ISolutionFacadeForBPMN solutionFacade)
         {
             ValidateConstructorArgs(activityGroup, solutionFacade);
             _activityGroup = activityGroup;
+            _options = options;
             _solutionFacade = solutionFacade;
         }
 
@@ -88,12 +99,12 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             Collaboration collaboration = CreateCollaboration(activities);
 
-            CreateProcessEntitiesForActivity(activities, collaboration);
+            CreateProcessEntitiesForActivities(activities, collaboration);
 
             return collaboration;
         }
 
-        private void CreateProcessEntitiesForActivity(IEnumerable<Activity> activities, Collaboration collaboration)
+        private void CreateProcessEntitiesForActivities(IEnumerable<Activity> activities, Collaboration collaboration)
         {
             if (!activities.Any())
             {
@@ -102,18 +113,22 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             HistoricalEnumerator<Activity> activitiesEnumerator = new(activities.GetEnumerator());
             Dictionary<Activity, IEnumerable<Task>> activityTasksMap = new();
-            CreateProcessEntitiesForActivity(activitiesEnumerator, collaboration, activityTasksMap);
+            CreateProcessEntitiesForActivities(activitiesEnumerator, collaboration, activityTasksMap);
         }
 
-        private IFlowTarget CreateProcessEntitiesForActivity(HistoricalEnumerator<Activity> activitiesEnumerator, Collaboration collaboration, IDictionary<Activity, IEnumerable<Task>> activityTaskMap)
+        private IFlowTarget CreateProcessEntitiesForActivities(HistoricalEnumerator<Activity> activitiesEnumerator, Collaboration collaboration, IDictionary<Activity, IEnumerable<Task>> activityTaskMap)
         {
             bool isFirstActivity = activitiesEnumerator.Current == null;
 
             bool noMoreActivitiesLeft = !activitiesEnumerator.MoveNext();
             if (noMoreActivitiesLeft)
             {
-                Activity lastActivity = activitiesEnumerator.Previous;
-                EndEvent endEvent = CreateEndEventInParticipantOfActivity(lastActivity, collaboration);
+                Participant participantWithStartEvent = collaboration
+                    .Participants
+                    .First(p => p.Process.StartEvent != null);
+                EndEvent endEvent = participantWithStartEvent
+                    .Process
+                    .AddEndEvent(string.Empty);
                 return endEvent;
             }
 
@@ -131,7 +146,7 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             Task firstTaskForCurrentActivity = tasksForCurrentActivity.First();
             Task lastTaskForCurrentActivity = tasksForCurrentActivity.Last();
 
-            IFlowTarget firstEntityForNextActivity = CreateProcessEntitiesForActivity(activitiesEnumerator, collaboration, activityTaskMap);
+            IFlowTarget firstEntityForNextActivity = CreateProcessEntitiesForActivities(activitiesEnumerator, collaboration, activityTaskMap);
 
             IEnumerable<IProcessEntity> processEntitiesForFlowControls = CreateProcessEntitiesForActivityFlowControls(currentActivity, collaboration, activityTaskMap);
 
@@ -194,28 +209,18 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
             return startEvent;
         }
 
-        private EndEvent CreateEndEventInParticipantOfActivity(Activity activity, Collaboration collaboration)
-        {
-            Participant participant;
-            if (ActivityBPMNUtil.IsWebServicesActivity(activity, _solutionFacade))
-            {
-                Consumer consumer = ActivityBPMNUtil.GetActivityFirstConsumer(activity);
-                participant = GetParticipantByGuid(consumer.ConsumerGuid, collaboration);
-            }
-            else
-            {
-                TargetBase targetApp = SolutionBPMNUtil.GetTargetApplicationByName(activity.TargetApplication, _solutionFacade);
-                participant = GetParticipantByGuid(targetApp.Guid, collaboration);
-            }
-
-            EndEvent endEvent = participant.Process.AddEndEvent(name: string.Empty);
-
-            return endEvent;
-        }
-
         private IEnumerable<IProcessEntity> CreateProcessEntitiesForActivityFlowControls(Activity activity, Collaboration collaboration, IDictionary<Activity, IEnumerable<Task>> activityTasksMap)
         {
-            ProcessEntitiesFromActivityFlowControlCreator processEntitiesFromActivityFlowControlCreator = new(activity, collaboration, _solutionFacade, activityTasksMap);
+            if (_options.IgnoreInterActivityFlowControls)
+            {
+                return Array.Empty<IProcessEntity>();
+            }
+
+            ProcessEntitiesFromActivityFlowControlCreator processEntitiesFromActivityFlowControlCreator = new(
+                activity, 
+                collaboration, 
+                _solutionFacade, 
+                activityTasksMap);
             return processEntitiesFromActivityFlowControlCreator.Create();
         }
 
@@ -247,12 +252,11 @@ namespace Amdocs.Ginger.CoreNET.BPMN.Conversion
 
             Participant firstParticipant = participants.First();
 
-            Collaboration collaboration = new(_activityGroup.Guid, CollaborationType.SubProcess)
-            {
-                Name = _activityGroup.Name,
-                SystemRef = firstParticipant.Guid.ToString(),
-                Description = _activityGroup.Description
-            };
+            Collaboration collaboration = Collaboration.CreateForSubProcess(
+                guid: _activityGroup.Guid,
+                systemRef: firstParticipant.Guid.ToString());
+            collaboration.Name = _activityGroup.Name;
+            collaboration.Description = _activityGroup.Description;
 
             foreach (Participant participant in participants)
             {

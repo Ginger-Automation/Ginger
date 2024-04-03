@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -114,6 +114,7 @@ namespace GingerCore.Platforms.PlatformsInfo
                 //Changes from Web
                 foreach (ElementTypeData etd in mPlatformElementTypeOperations)
                 {
+                    etd.ElementOperationsList.Add(ActUIElement.eElementAction.GetXY);
                     etd.ElementOperationsList.Remove(ActUIElement.eElementAction.MouseClick);
                     etd.ElementOperationsList.Remove(ActUIElement.eElementAction.MousePressRelease);
                     etd.ElementOperationsList.Remove(ActUIElement.eElementAction.MouseRightClick);

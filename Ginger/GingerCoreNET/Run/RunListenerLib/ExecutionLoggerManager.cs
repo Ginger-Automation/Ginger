@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -154,6 +154,20 @@ namespace Ginger.Run
             mJsonSerializer = new Newtonsoft.Json.JsonSerializer();
             mJsonSerializer.NullValueHandling = NullValueHandling.Ignore;
             ExecutedFrom = executedFrom;
+
+            if (WorkSpace.Instance!=null && WorkSpace.Instance.Solution != null)
+            {
+                WorkSpace.Instance.Solution.LoggerConfigurations.DataRepositoryChanged -= InitializeExecutionLogger;
+                WorkSpace.Instance.Solution.LoggerConfigurations.DataRepositoryChanged += InitializeExecutionLogger;
+            }
+
+            InitializeExecutionLogger();
+            executionLoggerHelper = new ExecutionLoggerHelper();
+        }
+
+        private void InitializeExecutionLogger()
+        {
+
             if (WorkSpace.Instance != null && WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations.SelectedDataRepositoryMethod == ExecutionLoggerConfiguration.DataRepositoryMethod.LiteDB)
             {
                 mExecutionLogger = new LiteDBRepository();
@@ -162,9 +176,7 @@ namespace Ginger.Run
             {
                 mExecutionLogger = new TextFileRepository();
             }
-            executionLoggerHelper = new ExecutionLoggerHelper();
         }
-
         public override void ActivityGroupStart(uint eventTime, ActivitiesGroup activityGroup)
         {
             activityGroup.StartTimeStamp = DateTime.UtcNow; // DateTime.Now.ToUniversalTime();

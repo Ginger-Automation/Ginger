@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -331,12 +331,12 @@ namespace GingerCore.ALM.QCRestAPI
                                         currentRun.Status = "Failed";
                                         currentRun.ElementsField["status"] = "Failed";
                                     }
-                                    else if (stepsStatuses.Where(x => x == "No Run").Count() == runSteps.Count || stepsStatuses.Where(x => x == "N/A").Count() == runSteps.Count)
+                                    else if (stepsStatuses.Count(x => x == "No Run") == runSteps.Count || stepsStatuses.Count(x => x == "N/A") == runSteps.Count)
                                     {
                                         currentRun.Status = "No Run";
                                         currentRun.ElementsField["status"] = "No Run";
                                     }
-                                    else if (stepsStatuses.Where(x => x == "Passed").Count() == runSteps.Count || (stepsStatuses.Where(x => x == "Passed").Count() + stepsStatuses.Where(x => x == "N/A").Count()) == runSteps.Count)
+                                    else if (stepsStatuses.Count(x => x == "Passed") == runSteps.Count || (stepsStatuses.Count(x => x == "Passed") + stepsStatuses.Count(x => x == "N/A")) == runSteps.Count)
                                     {
                                         currentRun.Status = "Passed";
                                         currentRun.ElementsField["status"] = "Passed";

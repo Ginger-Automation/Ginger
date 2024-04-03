@@ -15,7 +15,6 @@
       d:DesignHeight="1000" d:DesignWidth="2000"
       Title="Runset"  Loaded="Page_loaded">
 
-
     <Grid Background="Transparent" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
         <StackPanel x:Name="xRunSetLoadingPnl" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed" >
             <usercontrols:ImageMakerControl x:Name="xProcessingIcon" ImageType="Processing"  HorizontalAlignment="Center" Width="80" Height="80" />
@@ -38,7 +37,7 @@
                     <StackPanel>
                         <DockPanel>
                             <usercontrols:ImageMakerControl x:Name="xIconImage"  ImageType="RunSet" Margin="3,0,5,2" SetAsFontImageWithSize="20" Width="20" Height="20" FontWeight="Bold" Foreground="{StaticResource $BackgroundColor_DarkGray}" VerticalAlignment="Center"/>
-                            <usercontrols1:UcLabel x:Name="xRunSetUcLabel" DockPanel.Dock="Left" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" MaxWidth="500" MaxHeight="50"/>
+                            <usercontrols1:UcLabel x:Name="xRunSetUcLabel" DockPanel.Dock="Left" Margin="0,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontSize="18" FontWeight="Bold" MaxWidth="500" MaxHeight="50"/>
                             <!--<TextBlock x:Name="xNameTextBlock" DockPanel.Dock="Left" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Margin="0,0,0,0" Text="Runset Name" VerticalAlignment="Center" HorizontalAlignment="Stretch" Style="{StaticResource $TextBlockStyle}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource $SelectionColor_Pink}" MaxHeight="50" MaxWidth="500" />-->
                             <DockPanel x:Name="xOperationsPnl" DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Right" >
                                 <StackPanel x:Name="xGeneralOperationsPnl" Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0">
@@ -400,6 +399,9 @@
 
                             <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}" Margin="-5,0,0,0">Run Description:</Label>
                             <Activities:UCValueExpression x:Name="xRunDescritpion" DockPanel.Dock="Top" HorizontalAlignment="Stretch" />
+
+                            <Label DockPanel.Dock="Top" Style="{StaticResource $LabelStyle}" Margin="-5,0,0,0">ALM ID (ExternalId):</Label>
+                            <Activities:UCValueExpression x:Name="xExternalId" DockPanel.Dock="Top" HorizontalAlignment="Stretch" />
 
                             <CheckBox x:Name="xPublishcheckbox" Content="Publish" ToolTip="Publish to third party applications" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,10,0,0" Style="{StaticResource $CeckBoxStyle}"/>
 

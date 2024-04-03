@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,6 +35,8 @@ namespace GingerCore.Actions.VisualTesting
         public static string VRTParamDiffTollerancePercent = "VRTParamDiffTollerancePercent";
         public static string VRTParamBuildName = "VRTParamBuildName";
         public static string ImageName = "ImageName";
+        public static string BaselineImage = "BaselineImage";
+        public static string VRTSavedBaseImageFilenameString = "VRTSavedBaseImageFilenameString";
 
 
         ActVisualTesting mAct;
@@ -87,6 +89,14 @@ namespace GingerCore.Actions.VisualTesting
             ActionNameGUID,
             [EnumValueDescription("Custom Name")]
             Custom
+        }
+
+        public enum eBaselineImageBy
+        {
+            [EnumValueDescription("Create baseline from active window")]
+            ActiveWindow,
+            [EnumValueDescription("Image File")]
+            ImageFile,
         }
         bool IVisualAnalyzer.SupportUniqueExecution()
         {
@@ -190,7 +200,23 @@ namespace GingerCore.Actions.VisualTesting
                 Image image;
                 if (mAct.GetOrCreateInputParam(ActVisualTesting.Fields.ActionBy).Value == eActionBy.Window.ToString())
                 {
-                    image = mDriver.GetScreenShot(null, mAct.IsFullPageScreenshot);
+                    if(mAct.CreateBaselineImage)
+                    {
+                        if(mAct.GetInputParamValue(VRTAnalyzer.BaselineImage) == eBaselineImageBy.ActiveWindow.ToString())
+                        {
+                            image = mDriver.GetScreenShot(null, mAct.IsFullPageScreenshot);
+                        }
+                        else
+                        {
+                            string baselinefilename = mAct.GetInputParamCalculatedValue(VRTSavedBaseImageFilenameString);
+                            image = GetBaseLineImage(baselinefilename);
+                        }
+                        mAct.CreateBaselineImage = false;//unchecked create Base line image after creation
+                    }
+                    else
+                    {
+                        image = mDriver.GetScreenShot(null, mAct.IsFullPageScreenshot);
+                    }
                 }
                 else
                 {
@@ -393,6 +419,12 @@ namespace GingerCore.Actions.VisualTesting
             eVRTAction vrtAction = eVRTAction.Track;
             Enum.TryParse<eVRTAction>(mAct.GetInputParamValue(VRTAnalyzer.VRTAction), out vrtAction);
             return vrtAction;
+        }
+
+        private Bitmap GetBaseLineImage(string filepath)
+        {
+            Bitmap bmp = new Bitmap(filepath);
+            return bmp;
         }
 
     }

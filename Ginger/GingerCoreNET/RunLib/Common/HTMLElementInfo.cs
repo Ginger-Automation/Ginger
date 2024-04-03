@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,6 +19,10 @@ limitations under the License.
 using Amdocs.Ginger.Common.UIElement;
 using Amdocs.Ginger.Repository;
 using HtmlAgilityPack;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GingerCore.Drivers.Common
 {
@@ -26,10 +30,8 @@ namespace GingerCore.Drivers.Common
     {
 
 
-
         [IsSerializedForLocalRepository]
         public string TagName { get; set; }
-
 
         private string mID = null;
 
@@ -98,7 +100,8 @@ namespace GingerCore.Drivers.Common
         {
             return mName;
         }
-
+        // Temporary list for XPaths to locate shadow dom Element
+        public IList<string> XPathList { get; set; }
         public HtmlNode HTMLElementObject { get; set; }
 
         public override string GetAbsoluteXpath()
@@ -119,5 +122,27 @@ namespace GingerCore.Drivers.Common
 
         public HtmlNode NearHTMLElementObject { get; set; }
 
+
+        public HTMLElementInfo FindParentElementUsingGuid(IList<ElementInfo> AllElements)
+        {
+            if (AllElements == null)
+            {
+                return null;
+            }
+            var ParentPOMGuid = FindParentPOMGuid();
+
+            if (ParentGuid.Equals(Guid.Empty.ToString()))
+            {
+                return null;
+            }
+
+            return (HTMLElementInfo)AllElements.FirstOrDefault((element) => element.Guid.Equals(new Guid(ParentPOMGuid)));
+        }
+
+
+        public string FindParentPOMGuid()
+        {
+            return  this.Properties.FirstOrDefault((prop) => prop.Name.Equals(ElementProperty.ParentPOMGUID))?.Value ?? Guid.Empty.ToString();
+        }
     }
 }

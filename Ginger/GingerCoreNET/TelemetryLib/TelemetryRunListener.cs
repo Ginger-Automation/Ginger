@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -74,8 +74,8 @@ namespace Amdocs.Ginger.CoreNET.TelemetryLib
                     Elapsed = activity.Elapsed,
                     Platform = getAgentPlatform(activity),
                     ActionCount = activity.Acts.Count,
-                    ActionsPass = (from x in activity.Acts where x.Status == Execution.eRunStatus.Passed select x).Count(),
-                    ActionsFail = (from x in activity.Acts where x.Status == Execution.eRunStatus.Failed select x).Count(),
+                    ActionsPass = activity.Acts.Count(x=> x.Status == Execution.eRunStatus.Passed),
+                    ActionsFail = activity.Acts.Count(x=> x.Status == Execution.eRunStatus.Failed),
                     Status = activity.Status.ToString()
                 });
         }

@@ -1,20 +1,45 @@
-﻿using amdocs.ginger.GingerCoreNET;
+#region License
+/*
+Copyright © 2014-2024 European Support Limited
+
+Licensed under the Apache License, Version 2.0 (the "License")
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at 
+
+http://www.apache.org/licenses/LICENSE-2.0 
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, 
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+See the License for the specific language governing permissions and 
+limitations under the License. 
+*/
+#endregion
+
+using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.UIElement;
+using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.Repository;
 using Deque.AxeCore.Commons;
 using Deque.AxeCore.Selenium;
 using Ginger.Actions._Common.ActUIElementLib;
 using Ginger.ALM.Repository;
+using Ginger.Configurations;
+using Ginger.UserControls;
 using GingerCore.Actions;
 using GingerCore.Actions.Common;
 using GingerCore.GeneralLib;
 using GingerCore.Platforms.PlatformsInfo;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using GingerTest.WizardLib;
+using Microsoft.Office.Interop.Outlook;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +52,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Windows.Foundation.Collections;
 
 namespace Ginger.Actions
 {
@@ -38,6 +64,7 @@ namespace Ginger.Actions
         private ActAccessibilityTesting mAct;
         PlatformInfoBase mPlatform;
         string mExistingPOMAndElementGuidString = null;
+        private AccessibilityConfiguration AccessibilityConfiguration = new AccessibilityConfiguration();
         public ActAccessibilityTestingEditPage(ActAccessibilityTesting act)
         {
             InitializeComponent();
@@ -51,29 +78,66 @@ namespace Ginger.Actions
             xElementLocateByComboBox.BindControl(mAct, Act.Fields.LocateBy, LocateByList);
             xLocateValueVE.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(Act.Fields.LocateValue));
 
-            List<ActAccessibilityTesting.eTags> supportedControlActions = GetStandardTags();
-            //bind controls
-            GingerCore.General.FillComboFromEnumObj(xStandardComboBox, mAct.Standard, supportedControlActions.Cast<object>().ToList());
-            GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xStandardComboBox, ComboBox.SelectedValueProperty, mAct, ActAccessibilityTesting.Fields.Standard);
+            ObservableList<OperationValues> StandardTaglist = GetStandardTagslist();
+            ObservableList<OperationValues> SeverityList = GetSeverityList();
+            mAct.Items = new Dictionary<string, object>();
+            xStdStack.Visibility = Visibility.Visible;
+            foreach (OperationValues StandardTag in StandardTaglist)
+            {
+                if (!string.IsNullOrEmpty(StandardTag.Value.ToString()))
+                {
+                    mAct.Items.Add(StandardTag.Value.ToString(), StandardTag);
+                }
+            }
+            xStdCB.ItemsSource = mAct.Items;
+            //Boolean value is to show description of enum value  
+            xStdCB.Init(mAct, nameof(mAct.StandardList),ShowEnumDesc: true);
 
-            ValueUC.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam("Value"));
+            xSeverityStack.Visibility = Visibility.Visible;
+            mAct.SeverityItems = new Dictionary<string, object>();
+            foreach (OperationValues severity in SeverityList)
+            {
+                if (!string.IsNullOrEmpty(severity.Value.ToString()))
+                {
+                    mAct.SeverityItems.Add(severity.Value.ToString(), severity);
+                }
+            }
+            xSeverityCB.ItemsSource = mAct.SeverityItems;
+            xSeverityCB.Init(mAct, nameof(mAct.SeverityList));
+
             xLocateValueVE.BindControl(Context.GetAsContext(mAct.Context), mAct, Act.Fields.LocateValue);
             xTargetRadioButton.Init(typeof(ActAccessibilityTesting.eTarget), xTargetRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Target, ActAccessibilityTesting.eTarget.Page.ToString()), TargetRadioButton_Clicked);
-            if ((act.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
+            xAnalyzerRadioButton.Init(typeof(ActAccessibilityTesting.eAnalyzer), xAnalyzerRadioButtonPnl, mAct.GetOrCreateInputParam(ActAccessibilityTesting.Fields.Analyzer, ActAccessibilityTesting.eAnalyzer.ByStandard.ToString()), AnalyzerRadioButton_Clicked);
+            BindControlForTarget();
+            BindControlForAnalyzer();
+            SetLocateValueFrame();
+        }
+
+        private void BindControlForTarget()
+        {
+            if ((mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Target) == ActAccessibilityTesting.eTarget.Element.ToString()))
             {
-                xValueLabel.Visibility = System.Windows.Visibility.Collapsed;
-                ValueUC.Visibility = System.Windows.Visibility.Collapsed;
                 xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
             }
             else
             {
-                xValueLabel.Visibility = System.Windows.Visibility.Visible;
-                ValueUC.Visibility = System.Windows.Visibility.Visible;
                 xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Collapsed;
-                xValueLabel.Content = "URL:";
             }
-            SetLocateValueFrame();
         }
+        private void BindControlForAnalyzer()
+        {
+            if ((mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString()))
+            {
+                xStdStack.Visibility = System.Windows.Visibility.Visible;
+                xSeveritylbl.Content = "Acceptable Severities :";
+            }
+            else if ((mAct.GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString()))
+            {
+                xStdStack.Visibility = System.Windows.Visibility.Collapsed;
+                xSeveritylbl.Content = "Severities :";
+            }
+        }
+
 
         private ePlatformType GetActionPlatform()
         {
@@ -92,21 +156,12 @@ namespace Ginger.Actions
 
         private void TargetRadioButton_Clicked(object sender, System.Windows.RoutedEventArgs e)
         {
-            RadioButton rbSender = sender as RadioButton;
+            BindControlForTarget();
+        }
 
-            if (rbSender.Content.ToString() == ActAccessibilityTesting.eTarget.Page.ToString())
-            {
-                xValueLabel.Visibility = System.Windows.Visibility.Visible;
-                ValueUC.Visibility = System.Windows.Visibility.Visible;
-                xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Collapsed;
-                xValueLabel.Content = "URL:";
-            }
-            else
-            {
-                xValueLabel.Visibility = System.Windows.Visibility.Collapsed;
-                ValueUC.Visibility = System.Windows.Visibility.Collapsed;
-                xLocateByAndValuePanel.Visibility = System.Windows.Visibility.Visible;
-            }
+        private void AnalyzerRadioButton_Clicked(object sender, System.Windows.RoutedEventArgs e)
+        {
+            BindControlForAnalyzer();
         }
 
         private void SetLocateValueFrame()
@@ -175,16 +230,28 @@ namespace Ginger.Actions
             }
         }
 
-
-        public List<ActAccessibilityTesting.eTags> GetStandardTags()
+        public ObservableList<OperationValues> GetStandardTagslist()
         {
-            List<ActAccessibilityTesting.eTags> StandardTagList = new List<ActAccessibilityTesting.eTags>();
-
-            StandardTagList.Add(ActAccessibilityTesting.eTags.wcag2a);
-            StandardTagList.Add(ActAccessibilityTesting.eTags.wcag2aa);
-            StandardTagList.Add(ActAccessibilityTesting.eTags.wcag21a);
-            StandardTagList.Add(ActAccessibilityTesting.eTags.wcag21aa);
+            ObservableList<OperationValues> StandardTagList = new ObservableList<OperationValues>();
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag2a.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag2a.ToString()) });
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag2aa.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag2aa.ToString()) });
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag21a.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag21a.ToString()) });
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag21aa.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag21aa.ToString()) });
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag22a.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag22a.ToString()) });
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.wcag22aa.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.wcag22aa.ToString()) });
+            StandardTagList.Add(new OperationValues() { Value = ActAccessibilityTesting.eTags.bestpractice.ToString(), DisplayName = GingerCore.General.GetEnumValueDescription(typeof(ActAccessibilityTesting.eTags), ActAccessibilityTesting.eTags.bestpractice.ToString()) });
             return StandardTagList;
+        }
+
+        public ObservableList<OperationValues> GetSeverityList()
+        {
+            ObservableList<OperationValues> SeverityList = new ObservableList<OperationValues>();
+
+            SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Critical.ToString() });
+            SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Serious.ToString() });
+            SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Moderate.ToString() });
+            SeverityList.Add(new OperationValues() { Value = ActAccessibilityTesting.eSeverity.Minor.ToString() });
+            return SeverityList;
         }
 
     }

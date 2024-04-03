@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@ namespace Amdocs.Ginger.CoreNET.Run
             {
                 gingerNodeInfo = GetGingerNode(serviceID);
 
-                if (gingerNodeInfo == null || WorkSpace.Instance.PlugInsManager.PluginProcesses.Where(x => x.ServiceId == serviceID).Count() == WorkSpace.Instance.PlugInsManager.PluginProcesses.Where(x => x.ServiceId == serviceID && x.IsProcessExited == true).Count())
+                if (gingerNodeInfo == null || WorkSpace.Instance.PlugInsManager.PluginProcesses.Count(x => x.ServiceId == serviceID) == WorkSpace.Instance.PlugInsManager.PluginProcesses.Count(x => x.ServiceId == serviceID && x.IsProcessExited))
                 {
                     // call plugin to start service and wait for ready
                     WorkSpace.Instance.PlugInsManager.StartService(pluginId, serviceID);

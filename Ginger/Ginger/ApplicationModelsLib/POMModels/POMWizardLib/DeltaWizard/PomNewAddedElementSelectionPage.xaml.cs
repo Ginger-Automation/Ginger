@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ namespace Ginger.ApplicationModelsLib.POMModels.POMWizardLib
 
             mAgent = mPomDeltaUtils.Agent;
 
-            mPomDeltaViewPage = new PomDeltaViewPage(mDeltaElements, gridColView, mAgent);
+            mPomDeltaViewPage = new PomDeltaViewPage(mPomDeltaUtils, gridColView, mAgent);
             mPomDeltaViewPage.SetAgent(mAgent);
             mPomDeltaViewPage.xMainElementsGrid.Grid.Columns[1].Visibility = Visibility.Collapsed;
             mPomDeltaViewPage.xMainElementsGrid.btnMarkAll.Visibility = Visibility.Collapsed;

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1407,18 +1407,26 @@ namespace GingerCore
             }
             if (app != null)
             {
-                GeneralParam GP = app.GetParam(GlobalParamName);
-                if (GP != null)
+                VariableBase VB = app.GetVariable(GlobalParamName);
+                if (VB != null)
                 {
-                    ParamValue = GP.Value + "";  // Autohandle in case param is null convert to empty string
-
-                    if (DecryptFlag == true && GP.Encrypt == true)
+                    if (VB is VariableDynamic variableDynamic) 
                     {
-                        string strValuetoPass = EncryptionHandler.DecryptwithKey(GP.Value);
+                        ParamValue = variableDynamic.ValueExpression + "";
+                        
+                    }
+                    else
+                    {
+                        ParamValue = VB.Value + "";  // Autohandle in case param is null convert to empty string
+                    }
+
+                    if (DecryptFlag && VB is VariablePasswordString)
+                    {
+                        string strValuetoPass = EncryptionHandler.DecryptwithKey(VB.Value);
                         if (!string.IsNullOrEmpty(strValuetoPass))
                         { 
                             mValueCalculated = mValueCalculated.Replace(p, strValuetoPass);
-                            mEncryptedValue = GP.Value;
+                            mEncryptedValue = VB.Value;
                         }
                         else
                         {
@@ -1638,6 +1646,11 @@ namespace GingerCore
                         {
                             VarValue = vb.Value;
                         }
+                    }
+                    else if (vb is VariableDynamic variableDynamic)
+                    {
+                        variableDynamic.Init(Env , BF);
+                        VarValue = variableDynamic.Value;
                     }
                     else
                     {

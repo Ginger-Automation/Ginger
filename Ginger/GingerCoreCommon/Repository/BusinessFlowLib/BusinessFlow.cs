@@ -1,6 +1,6 @@
 ﻿#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -1140,7 +1140,9 @@ namespace GingerCore
                 foreach (Act act in a.Acts)
                 {
                     if (act.ReturnValues != null)
-                        i += act.ReturnValues.Select(k => (!string.IsNullOrEmpty(k.Expected))).Count();
+                    {
+                        i += act.ReturnValues.Count(k => !string.IsNullOrEmpty(k.Expected));
+                    }
                 }
             }
 
@@ -1338,7 +1340,7 @@ namespace GingerCore
         /// <param name="userSelection">userselection to check if user need to be prompted or not</param>
         /// <param name="activityIns">Activity from which TA to check</param>
         /// <returns></returns>
-        public eUserMsgSelection MapTAToBF(eUserMsgSelection userSelection, Activity activityIns, ObservableList<ApplicationPlatform> ApplicationPlatforms)
+        public eUserMsgSelection MapTAToBF(eUserMsgSelection userSelection, Activity activityIns, ObservableList<ApplicationPlatform> ApplicationPlatforms, bool silently = false)
         {
             var consumerApplicationsGUIDs = activityIns.ConsumerApplications.Select(g => g.ConsumerGuid).ToList();
             if (!TargetApplications.Any(x => x.Name == activityIns.TargetApplication) ||
@@ -1359,7 +1361,14 @@ namespace GingerCore
                         messageToUser += $"Selected Consumers in activity is not present in the {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)}, Ginger will add. ";
 
                     }
-                    userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, messageToUser);
+                    if (silently)
+                    {
+                        userSelection = eUserMsgSelection.OK;
+                    }
+                    else
+                    {
+                        userSelection = Reporter.ToUser(eUserMsgKey.StaticInfoMessage, messageToUser);
+                    }
                 }
 
                 if (userSelection == eUserMsgSelection.OK)
@@ -1806,7 +1815,7 @@ namespace GingerCore
                     int idntIndex = group.Item1.ActivitiesIdentifiers.IndexOf(group.Item2);
                     if (idntIndex >= 0)
                     {
-                        group.Item1.ActivitiesIdentifiers.Move(idntIndex, idntIndex + (newIndx - currentIndx));
+                        ((IObservableList)group.Item1.ActivitiesIdentifiers).Move(idntIndex, idntIndex + (newIndx - currentIndx));
                     }
                 }
             }
@@ -1867,6 +1876,14 @@ namespace GingerCore
             }
         }
 
+        public Action DynamicPostSaveHandler;
+
+        public override void PostSaveHandler()
+        {
+            base.PostSaveHandler();
+            DynamicPostSaveHandler?.Invoke();
+        }
+
         public bool MarkActivityAsLink(Guid activityGuid, Guid parentGuid)
         {
             if (Activities.Any(act => act.Guid == activityGuid))
@@ -1915,5 +1932,8 @@ namespace GingerCore
                 ExternalIdCalCulated = ve.ValueCalculated;
             }
         }
+        public string ALMTestSetLevel { get; set; }
+
+        public bool IsEntitySearchByName { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -30,7 +30,8 @@ namespace GingerCoreNET.ALMLib
             Jira = 4,
             Qtest = 5,
             Octane = 6,
-            ZephyrEnterprise = 7
+            ZephyrEnterprise = 7,
+            Azure = 8
         }
 
         public enum eALMConnectType

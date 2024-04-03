@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -166,12 +166,12 @@ namespace Ginger.ConflictResolve
             CheckBox itemSelectCheckbox = new();
             itemSelectCheckbox.VerticalAlignment = System.Windows.VerticalAlignment.Center;
             BindingHandler.ObjFieldBinding(
-                control: itemSelectCheckbox, 
+                frameworkElement: itemSelectCheckbox, 
                 dependencyProperty: CheckBox.IsCheckedProperty, 
                 obj: _comparison, 
                 property: nameof(Comparison.Selected));
             BindingHandler.ObjFieldBinding(
-                control: itemSelectCheckbox,
+                frameworkElement: itemSelectCheckbox,
                 dependencyProperty: CheckBox.IsEnabledProperty,
                 obj: _comparison,
                 property: nameof(Comparison.IsSelectionEnabled));

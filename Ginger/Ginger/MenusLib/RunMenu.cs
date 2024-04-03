@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ namespace Ginger.MenusLib
             runSetMenu.Add(eImageType.RunSet, "", GetRunSetPage, ConsoleKey.R, "", "AID");
             twoLevelMenuGet.Add(runSetMenu);
 
-            TopMenuItem executionsHistoryMenu = new TopMenuItem(eImageType.History, "Executions History", ConsoleKey.E, "Executions History AID", "View executions history of all Run Sets");
+            TopMenuItem executionsHistoryMenu = new TopMenuItem(eImageType.History, "All Executions History", ConsoleKey.E, "Executions History AID", "View executions history of all Run Sets");
             executionsHistoryMenu.Add(eImageType.History, "", GetExecutionsHistoryPage, ConsoleKey.E, "", "AID");
             twoLevelMenuGet.Add(executionsHistoryMenu);
 
@@ -84,7 +84,15 @@ namespace Ginger.MenusLib
 
         private static Page GetExecutionsHistoryPage()
         {
-            return new RunSetsExecutionsHistoryPage(RunSetsExecutionsHistoryPage.eExecutionHistoryLevel.Solution);
+            RunSetsExecutionsHistoryPage executionsHistoryPage = new(RunSetsExecutionsHistoryPage.eExecutionHistoryLevel.Solution);
+            executionsHistoryPage.LoadRunset += ExecutionsHistoryPage_LoadRunset;
+            return executionsHistoryPage;
+        }
+
+        private static void ExecutionsHistoryPage_LoadRunset(RunSetConfig runset)
+        {
+            runSetPage.RunSetExecutionHistoryPage_LoadRunset(runset);
+            mMenusPage.SelectTopMenu(0);
         }
 
         private static Page GetGingerGridPage()

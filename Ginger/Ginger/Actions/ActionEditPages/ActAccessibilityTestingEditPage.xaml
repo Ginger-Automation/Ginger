@@ -11,8 +11,8 @@
     <Grid Background="{StaticResource $BackgroundColor_White}" Margin="0,-7,0,7">
         <DockPanel Margin="10,0,0,0">
             <StackPanel x:Name="xTargetPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
-                <Label x:Name="xTargetLbl" Style="{StaticResource $LabelStyle}">Target:</Label>
-                <StackPanel x:Name="xTargetRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="55,0,0,0">
+                <Label x:Name="xTargetLbl" Style="{StaticResource $LabelStyle}" Margin="0,10,0,0" Content="Target :"></Label>
+                <StackPanel x:Name="xTargetRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="65,0,0,0">
                     <UserControlsLib:UCRadioButtons x:Name="xTargetRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                 </StackPanel>
             </StackPanel>
@@ -22,8 +22,6 @@
                     <ColumnDefinition Width="115"/>
                     <ColumnDefinition Width="47*" />
                 </Grid.ColumnDefinitions>
-                <Label x:Name="xValueLabel" Content="Value:"  Grid.Column="0" Style="{StaticResource $LabelStyle}" Margin="-5,0,0,0"/>
-                <Actions:UCValueExpression x:Name="ValueUC" Grid.Column="1" Margin="6,0,0,0" Grid.ColumnSpan="1"/>
             </Grid>
 
             <StackPanel x:Name="xLocateByAndValuePanel" DockPanel.Dock="Top">
@@ -33,8 +31,8 @@
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <Label x:Name="xLocateBy" Grid.Column="0" Content="Locate By:" Margin="0,10,0,0" Style="{StaticResource $LabelStyle}"/>
-                    <ComboBox x:Name="xElementLocateByComboBox" Grid.Column="1" Margin="5,10,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Stretch" SelectionChanged="ElementLocateByComboBox_SelectionChanged" ToolTip="How to Locate the Element on the screen" Width="auto"/>
+                    <Label x:Name="xLocateBy" Grid.Column="0" Content="Locate By :" Margin="0,10,0,0" Style="{StaticResource $LabelStyle}"/>
+                    <ComboBox x:Name="xElementLocateByComboBox" Grid.Column="1" Margin="20,10,0,0" Style="{StaticResource $FlatInputComboBoxStyle}" HorizontalAlignment="Stretch" SelectionChanged="ElementLocateByComboBox_SelectionChanged" ToolTip="How to Locate the Element on the screen" Width="auto"/>
                 </Grid>
                 <Grid Margin="0,0,0,0">
                     <Grid.ColumnDefinitions>
@@ -42,15 +40,28 @@
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <Label x:Name="xLocateValue" Content="Locate Value:" Margin="0,10,0,0" Grid.Column="0" Style="{StaticResource $LabelStyle}"/>
-                    <Actions:UCValueExpression x:Name="xLocateValueVE" Grid.Column="1" Margin="5,10,0,0" HorizontalAlignment="Stretch" Width="auto" ToolTip="How to Locate the Element on the screen" />
-                    <Frame x:Name="xLocateValueEditFrame" Grid.Column="1" Grid.ColumnSpan="2" Margin="5,10,0,0" NavigationUIVisibility="Hidden"/>
+                    <Label x:Name="xLocateValue" Content="Locate Value :" Margin="0,10,0,0" Grid.Column="0" Style="{StaticResource $LabelStyle}"/>
+                    <Actions:UCValueExpression x:Name="xLocateValueVE" Grid.Column="1" Margin="20,10,0,0" HorizontalAlignment="Stretch" Width="auto" ToolTip="How to Locate the Element on the screen" />
+                    <Frame x:Name="xLocateValueEditFrame" Grid.Column="1" Grid.ColumnSpan="2" Margin="20,10,0,0" NavigationUIVisibility="Hidden"/>
                 </Grid>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0" DockPanel.Dock="Top">
-                <Label Grid.Column="0" Style="{StaticResource $LabelStyle}">Standard:</Label>
-                <ComboBox Grid.Column="1" x:Name="xStandardComboBox" Style="{StaticResource $FlatInputComboBoxStyle}" Width="300" Margin="60,0,0,0"></ComboBox>
+
+            <StackPanel x:Name="xAnalyzerPnl" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                <Label x:Name="xAnalyzerLbl" Grid.Column="0" Style="{StaticResource $LabelStyle}" Margin="0,10,0,0" Content="Analyze Option :"></Label>
+                <StackPanel x:Name="xAnalyzerRadioButtonPnl" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="300" Margin="18,0,0,0">
+                    <UserControlsLib:UCRadioButtons x:Name="xAnalyzerRadioButton" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel x:Name="xStdStack" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                <Label x:Name="xStdlbl" Grid.Column="0" Style="{StaticResource $LabelStyle}" Margin="0,10,0,0" Content="Standards :"/>
+                <UserControlsLib:MultiSelectComboBox Grid.Column="1" x:Name="xStdCB" Margin="75,0,0,0" HorizontalContentAlignment="Left" Width="auto"/>
+            </StackPanel>
+
+            <StackPanel x:Name="xSeverityStack" Orientation="Horizontal" DockPanel.Dock="Top" Margin="0,10,0,0">
+                <Label x:Name="xSeveritylbl" Grid.Column="0" Width="140" Style="{StaticResource $LabelStyle}" Margin="0,10,0,0" Content="Acceptable Severities :"/>
+                <UserControlsLib:MultiSelectComboBox Grid.Column="1" x:Name="xSeverityCB" Margin="8,0,0,0" HorizontalAlignment="Left" Width="auto" />
             </StackPanel>
 
         </DockPanel>

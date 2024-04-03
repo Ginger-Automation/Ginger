@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -234,8 +234,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = (from x in BusinessFlows where x.IsPassed == true select x).Count();
-                return count;
+                return BusinessFlows.Count(x=> x.IsPassed);
             }
         }
 
@@ -243,8 +242,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = (from x in BusinessFlows where x.IsFailed == true select x).Count();
-                return count;
+                return BusinessFlows.Count(x => x.IsFailed);
             }
         }
 
@@ -259,9 +257,7 @@ namespace Ginger.Reports
         {
             get
             {
-                string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed.ToString();
-                int count = AllActivitiesForReport.Count(activity => activity.Status == sStatus);
-                return count;
+                return AllActivitiesForReport.Count(activity => activity.Status.Equals(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed.ToString()));               
 
             }
         }
@@ -269,9 +265,7 @@ namespace Ginger.Reports
         {
             get
             {
-                string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed.ToString();
-                int count = AllActivitiesForReport.Count(activity => activity.Status == sStatus);
-                return count;
+                return AllActivitiesForReport.Count(activity => activity.Status.Equals(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed.ToString()));
 
             }
         }
@@ -279,20 +273,14 @@ namespace Ginger.Reports
         {
             get
             {
-                string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked.ToString();
-                int count = AllActivitiesForReport.Count(activity => activity.Status == sStatus);
-                return count;
-
+                return AllActivitiesForReport.Count(activity => activity.Status.Equals(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked.ToString()));
             }
         }
         public int TotalActivitesSkippedFromAllFlows
         {
             get
             {
-                string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped.ToString();
-                int count = AllActivitiesForReport.Count(activity => activity.Status == sStatus);
-                return count;
-
+                return AllActivitiesForReport.Count(activity => activity.Status.Equals(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped.ToString()));
             }
         }
 
@@ -301,40 +289,28 @@ namespace Ginger.Reports
         {
             get
             {
-                string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed.ToString();
-                int count = AllActionsForReport.Count(act => act.Status == sStatus);
-                return count;
-
+                return AllActionsForReport.Count(act => act.Status.Equals(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Passed.ToString()));
             }
         }
         public int TotalActionsFailedFromAllFlows
         {
             get
             {
-                string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed.ToString();
-                int count = AllActionsForReport.Count(act => act.Status == sStatus);
-                return count;
-
+                return AllActionsForReport.Count(act => act.Status.Equals(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed.ToString()));
             }
         }
         public int TotalActionsBlockedFromAllFlows
         {
             get
             {
-                string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked.ToString();
-                int count = AllActionsForReport.Count(act => act.Status == sStatus);
-                return count;
-
+                return AllActionsForReport.Count(act => act.Status.Equals(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Blocked.ToString()));
             }
         }
         public int TotalActionsSkippedFromAllFlows
         {
             get
             {
-                string sStatus = Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped.ToString();
-                int count = AllActionsForReport.Count(act => act.Status == sStatus);
-                return count;
-
+                return AllActionsForReport.Count(act => act.Status.Equals(Amdocs.Ginger.CoreNET.Execution.eRunStatus.Skipped.ToString()));
             }
         }
 
@@ -343,8 +319,7 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = (from f1 in BusinessFlows where f1.IsStopped == true select f1).Count();
-                return count;
+                return BusinessFlows.Count(f1=> f1.IsStopped);                
             }
         }
 
@@ -402,31 +377,25 @@ namespace Ginger.Reports
         {
             get
             {
-                int count = AllActivitiesForReport.Count();
-                return count;
+                return AllActivitiesForReport.Count();                
             }
         }
 
         public int TotalActivitiesByRunStatus(Amdocs.Ginger.CoreNET.Execution.eRunStatus RunStatus)
         {
             //TODO: fix me to use the same enum on activity add GetActivity on ActivityReport
-            string sStatus = RunStatus.ToString();
-            int count = AllActivitiesForReport.Count(activity => activity.Status == sStatus);
-            return count;
+            return AllActivitiesForReport.Count(activity => activity.Status.Equals(RunStatus.ToString()));
         }
 
         public int TotalActionsCount()
         {
-            int count = AllActionsForReport.Count();
-            return count;
+            return AllActionsForReport.Count();
         }
 
         public int TotalActionsCountByStatus(Amdocs.Ginger.CoreNET.Execution.eRunStatus Status)
         {
             //TODO: fix me to use the same enum on Act add GetAct on ActivityReport
-            string sStatus = Status.ToString();
-            int count = AllActionsForReport.Count(act => act.Status == sStatus);
-            return count;
+            return AllActionsForReport.Count(act => act.Status.Equals(Status.ToString()));
         }
 
         public int TotalValidationsCount()
@@ -437,21 +406,21 @@ namespace Ginger.Reports
 
         public int TotalValidationsCountByStatus(ActReturnValue.eStatus Status)
         {
-            //TODO: fix me to use the same enum on Act add GetAct on ActivityReport
-            string sStatus = Status.ToString();
-            int count = AllValidationsForReport.Count(arv => arv.Status == sStatus);
-            return count;
+            //TODO: fix me to use the same enum on Act add GetAct on ActivityReport            
+            return AllValidationsForReport.Count(arv => arv.Status.Equals(Status.ToString()));
         }
 
         private List<BusinessFlowReport> GetBziFlowsReport()
         {
-            List<BusinessFlowReport> list = new List<BusinessFlowReport>();
+            List<BusinessFlowReport> list = [];
             int BizFlowNumber = 0;
             foreach (BusinessFlowExecutionSummary BFES in mBFESs)
             {
                 BizFlowNumber++;
-                BusinessFlowReport BFR = new BusinessFlowReport(BFES);
-                BFR.Seq = BizFlowNumber;
+                BusinessFlowReport BFR = new(BFES)
+                {
+                    Seq = BizFlowNumber
+                };
                 list.Add(BFR);
             }
             return list;

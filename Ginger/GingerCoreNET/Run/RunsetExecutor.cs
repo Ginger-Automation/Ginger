@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -176,26 +176,26 @@ namespace Ginger.Run
             ConfigureRunnerForExecution((GingerExecutionEngine)runner.Executor);
 
             //Set the Apps agents
-            foreach (ApplicationAgent appagent in runner.ApplicationAgents.ToList())
+            foreach (ApplicationAgent appagent in runner.ApplicationAgents)
             {
                 if (appagent.AgentName != null)
                 {
                     ObservableList<Agent> agents = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Agent>();
-                    appagent.Agent = (from a in agents where a.Name == appagent.AgentName select a).FirstOrDefault();
+                    appagent.Agent = agents.FirstOrDefault(a=> a.Name == appagent.AgentName);
                 }
             }
 
             //Load the biz flows     
             ObservableList<BusinessFlow> runnerFlows = new ObservableList<BusinessFlow>();
-            foreach (BusinessFlowRun businessFlowRun in runner.BusinessFlowsRunList.ToList())
+            foreach (BusinessFlowRun businessFlowRun in runner.BusinessFlowsRunList)
             {
                 ObservableList<BusinessFlow> businessFlows = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
-                BusinessFlow businessFlow = (from x in businessFlows where x.Guid == businessFlowRun.BusinessFlowGuid select x).FirstOrDefault();
+                BusinessFlow businessFlow = businessFlows.FirstOrDefault(x=> x.Guid == businessFlowRun.BusinessFlowGuid);
                 //Fail over to try and find by name
                 if (businessFlow == null)
                 {
-                    businessFlow = (from x in businessFlows where x.Name == businessFlowRun.BusinessFlowName select x).FirstOrDefault();
+                    businessFlow = businessFlows.FirstOrDefault(x => x.Name == businessFlowRun.BusinessFlowName);
                 }
                 if (businessFlow == null)
                 {
@@ -263,14 +263,14 @@ namespace Ginger.Run
 
             try
             {
-                if (var.MappedOutputType == VariableBase.eOutputType.OutputVariable && !var.MappedOutputValue.Contains("_"))
+                if (var.MappedOutputType == VariableBase.eOutputType.OutputVariable && !var.MappedOutputValue.Contains('_'))
                 {
                     for (int i = AllPreviousBusinessFlowRuns.Count - 1; i >= 0; i--)//doing in reverse for sorting by latest value in case having the same var more than once
                     {
                         Guid guid = AllPreviousBusinessFlowRuns[i].BusinessFlowGuid;
                         BusinessFlow bf = WorkSpace.Instance.SolutionRepository.GetRepositoryItemByGuid<BusinessFlow>(guid);
 
-                        if (bf.GetBFandActivitiesVariabeles(false, false, true).FirstOrDefault(x => x.Guid.ToString() == var.MappedOutputValue) != null)
+                        if (bf.GetBFandActivitiesVariabeles(false, false, true).Any(x => x.Guid.ToString().Equals(var.MappedOutputValue)))
                         {
                             var.MappedOutputValue = AllPreviousBusinessFlowRuns[i].BusinessFlowInstanceGuid + "_" + var.MappedOutputValue;
                             break;
@@ -537,8 +537,7 @@ namespace Ginger.Run
                         {
                             GR.Executor.RunRunner();
                         }
-                        else
-                            if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
+                        else if (GR.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Stopped)//we continue only Stopped Runners
                         {
                             GR.Executor.ResetRunnerExecutionDetails(doNotResetBusFlows: true);//reset stopped runners only and not their BF's
                             GR.Executor.ContinueRun(eContinueLevel.Runner, eContinueFrom.LastStoppedAction);

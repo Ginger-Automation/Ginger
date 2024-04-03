@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -98,10 +98,13 @@ namespace Amdocs.Ginger.Repository
             AddPluginPackage(folder);
             return folder;
         }
-
-        public void UninstallPluginPackage(OnlinePluginPackage pluginPackageInfo)
+        public PluginPackage GetPluginPackageById(String id)
         {
-            PluginPackage pluginPackage = (from x in mPluginPackages where x.PluginId == pluginPackageInfo.Id select x).FirstOrDefault();
+            return mPluginPackages.FirstOrDefault(x => string.Equals(x.PluginId, id));
+        }
+
+        public void UninstallPluginPackage(PluginPackage pluginPackage)
+        {
             WorkSpace.Instance.SolutionRepository.DeleteRepositoryItem(pluginPackage);
         }
 

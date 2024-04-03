@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -72,7 +72,6 @@ namespace Ginger.SolutionWindows
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.AppName), Header = "Name", WidthWeight = 30 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Description), Header = "Description", WidthWeight = 40 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Platform), WidthWeight = 15, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.CoreVersion), Header = "Version", WidthWeight = 15 });
             view.GridColsView.Add(new GridColView() { Field = nameof(ApplicationPlatform.Guid), Header = "ID", WidthWeight = 15, ReadOnly = true });
 
             xTargetApplicationsGrid.SetAllColumnsDefaultView(view);
@@ -135,7 +134,7 @@ namespace Ginger.SolutionWindows
 
         private void AddApplication(object sender, RoutedEventArgs e)
         {
-            AddApplicationPage AAP = new AddApplicationPage(WorkSpace.Instance.Solution);
+            AddApplicationPage AAP = new AddApplicationPage(WorkSpace.Instance.Solution, false);
             AAP.ShowAsWindow();
         }
 

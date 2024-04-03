@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -210,7 +210,15 @@ namespace Ginger.PlugInsWindows
         private void UninstallPlugin()
         {
             OnlinePluginPackage pluginPackageInfo = (OnlinePluginPackage)xPluginsGrid.CurrentItem;
-            WorkSpace.Instance.PlugInsManager.UninstallPluginPackage(pluginPackageInfo);
+            PluginPackage pluginPackage = WorkSpace.Instance.PlugInsManager.GetPluginPackageById(pluginPackageInfo.Id);
+            if (pluginPackage != null)
+            {
+                WorkSpace.Instance.PlugInsManager.UninstallPluginPackage(pluginPackage);
+            }
+            else
+            {
+                GetPluginsList();
+            }
             pluginPackageInfo.Status = string.Empty;
             pluginPackageInfo.CurrentPackage = string.Empty;
         }

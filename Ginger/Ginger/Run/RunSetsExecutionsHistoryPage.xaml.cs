@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -19,22 +19,33 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
+using Amdocs.Ginger.CoreNET.BPMN.Exportation;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.Reports;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Utility;
 using Ginger.Reports;
+using Ginger.Repository.AddItemToRepositoryWizard;
+using Ginger.Repository.ItemToRepositoryWizard;
 using Ginger.UserControls;
 using GingerCore;
+using GingerWPF.WizardLib;
+using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Markup;
+using static Amdocs.Ginger.CoreNET.BPMN.Exportation.RunSetExecutionHistoryToBPMNExporter;
 
 namespace Ginger.Run
 {
@@ -43,8 +54,15 @@ namespace Ginger.Run
     /// </summary>
     public partial class RunSetsExecutionsHistoryPage : Page
     {
+        private const string BPMNExportPath = @"~\\Documents\BPMN";
+
+        private readonly RunsetFromReportLoader _runsetFromReportLoader;
+
         ObservableList<RunSetReport> mExecutionsHistoryList = new ObservableList<RunSetReport>();
         ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
+
+        private HttpClient? _httpClient;
+
         public bool AutoLoadExecutionData = false;
         public ObservableList<RunSetReport> ExecutionsHistoryList
         {
@@ -61,15 +79,33 @@ namespace Ginger.Run
         }
 
         private eExecutionHistoryLevel mExecutionHistoryLevel;
+
+        public delegate void LoadRunsetEventHandler(RunSetConfig runset);
+
+        public event LoadRunsetEventHandler? LoadRunset;
+
         public RunSetsExecutionsHistoryPage(eExecutionHistoryLevel executionHistoryLevel, RunSetConfig runsetConfig = null)
         {
             InitializeComponent();
 
             mExecutionHistoryLevel = executionHistoryLevel;
             RunsetConfig = runsetConfig;
+            _runsetFromReportLoader = new();
+
+            this.Unloaded += OnUnloaded;
 
             SetGridView();
             LoadExecutionsHistoryData();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (_httpClient != null)
+            {
+                _httpClient.Dispose();
+                _httpClient = null;
+                _runsetFromReportLoader.Dispose();
+            }
         }
 
         public void ReloadData()
@@ -81,21 +117,72 @@ namespace Ginger.Run
         {
             if (mExecutionHistoryLevel == eExecutionHistoryLevel.Solution)
             {
-                grdExecutionsHistory.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.History, GingerDicser.GetTermResValue(eTermResKey.RunSets, "All ", " Executions History"), saveAllHandler: null, addHandler: null);
+                grdExecutionsHistory.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.History, GingerDicser.GetTermResValue(eTermResKey.RunSets, "All", "Executions History"), saveAllHandler: null, addHandler: null);
             }
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
-            view.GridColsView = new ObservableList<GridColView>();
-
-            view.GridColsView.Add(new GridColView() { Field = nameof(RunSetReport.GUID), Header = "Execution ID", WidthWeight = 15 });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.Name, WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.Description, WidthWeight = 20, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.StartTimeStamp, Header = "Execution Start Time", WidthWeight = 10, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.EndTimeStamp, Header = "Execution End Time", WidthWeight = 10, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.ExecutionDurationHHMMSS, Header = "Execution Duration", WidthWeight = 10, ReadOnly = true });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.RunSetExecutionStatus, Header = "Execution Status", WidthWeight = 10, ReadOnly = true, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = RunSetReport.Fields.DataRepMethod, Header = "Type", Visible = true, ReadOnly = true, WidthWeight = 5, BindingMode = BindingMode.OneWay });
-            view.GridColsView.Add(new GridColView() { Field = "Generate Report", WidthWeight = 8, StyleType = GridColView.eGridColStyleType.Template, CellTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"] });
+            view.GridColsView =
+            [
+                new() {
+                    Field = nameof(RunSetReport.GUID),
+                    Header = "Execution ID",
+                    WidthWeight = 15
+                },
+                new() {
+                    Field = RunSetReport.Fields.Name,
+                    WidthWeight = 20,
+                    ReadOnly = true },
+                new()
+                {
+                    Field = RunSetReport.Fields.Description,
+                    WidthWeight = 20,
+                    ReadOnly = true },
+                new()
+                {
+                    Field = RunSetReport.Fields.StartTimeStamp,
+                    Header = "Execution Start Time",
+                    WidthWeight = 10,
+                    ReadOnly = true
+                },
+                new()
+                {
+                    Field = RunSetReport.Fields.EndTimeStamp,
+                    Header = "Execution End Time",
+                    WidthWeight = 10,
+                    ReadOnly = true
+                },
+                new()
+                {
+                    Field = RunSetReport.Fields.ExecutionDurationHHMMSS,
+                    Header = "Execution Duration",
+                    WidthWeight = 10,
+                    ReadOnly = true
+                },
+                new()
+                {
+                    Field = RunSetReport.Fields.RunSetExecutionStatus,
+                    Header = "Execution Status",
+                    WidthWeight = 10,
+                    ReadOnly = true,
+                    BindingMode = BindingMode.OneWay
+                },
+                new()
+                {
+                    Field = RunSetReport.Fields.DataRepMethod,
+                    Header = "Type",
+                    Visible = true,
+                    ReadOnly = true,
+                    WidthWeight = 5,
+                    BindingMode = BindingMode.OneWay
+                },
+                new()
+                {
+                    Field = "Actions",
+                    WidthWeight = 24,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = GetActionsDataTemplate()
+                }
+            ];
 
             grdExecutionsHistory.SetAllColumnsDefaultView(view);
             grdExecutionsHistory.InitViewItems();
@@ -110,6 +197,25 @@ namespace Ginger.Run
             {
                 grdExecutionsHistory.AddCheckBox("Auto Load Execution History", new RoutedEventHandler(AutoLoadExecutionHistory));
             }
+        }
+
+        private DataTemplate GetActionsDataTemplate()
+        {
+            if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
+            {
+                return (DataTemplate)pageGrid.Resources["ActionsDataTemplateWithoutLoadRunset"];
+            }
+            else
+            {
+                return (DataTemplate)pageGrid.Resources["ActionsDataTemplate"];
+            }
+        }
+
+        private string GetContentXAMLFromDataTemplate(DataTemplate dataTemplate)
+        {
+            using StringWriter stringWriter = new();
+            XamlWriter.Save(dataTemplate.LoadContent(), stringWriter);
+            return stringWriter.ToString();
         }
 
         private void AutoLoadExecutionHistory(object sender, RoutedEventArgs e)
@@ -134,7 +240,7 @@ namespace Ginger.Run
             grdExecutionsHistory.Visibility = Visibility.Collapsed;
             Loading.Visibility = Visibility.Visible;
             mExecutionsHistoryList.Clear();
-            await Task.Run(() =>
+            await System.Threading.Tasks.Task.Run(() =>
             {
                 try
                 {
@@ -149,6 +255,7 @@ namespace Ginger.Run
                             RunSetReport runSetReport = (RunSetReport)JsonLib.LoadObjFromJSonFile(runSetFile, typeof(RunSetReport));
                             runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
                             runSetReport.LogFolder = System.IO.Path.GetDirectoryName(runSetFile);
+                            runSetReport.RunSetGuid = Guid.Parse(runSetReport.GUID);
                             if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
                             {
                                 //filer the run sets by GUID
@@ -199,7 +306,11 @@ namespace Ginger.Run
             ObservableList<RunSetReport> executionsHistoryListSortedByDate = new ObservableList<RunSetReport>();
             if (mExecutionsHistoryList != null && mExecutionsHistoryList.Count > 0)
             {
-                foreach (RunSetReport runSetReport in mExecutionsHistoryList.OrderByDescending(item => item.StartTimeStamp))
+                IEnumerable<RunSetReport> sortedAndFilteredExecutionHistoryList = mExecutionsHistoryList
+                    .Where(report => report.RunSetExecutionStatus != eRunStatus.Automated)
+                    .OrderByDescending(item => item.StartTimeStamp);
+
+                foreach (RunSetReport runSetReport in sortedAndFilteredExecutionHistoryList)
                 {
                     runSetReport.StartTimeStamp = runSetReport.StartTimeStamp.ToLocalTime();
                     runSetReport.EndTimeStamp = runSetReport.EndTimeStamp.ToLocalTime();
@@ -285,7 +396,7 @@ namespace Ginger.Run
         {
             if (WorkSpace.Instance.Solution != null && WorkSpace.Instance.Solution.LoggerConfigurations != null)
             {
-                Process.Start(new ProcessStartInfo() { FileName = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder), UseShellExecute = true });
+                System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = executionLoggerHelper.GetLoggerDirectory(WorkSpace.Instance.Solution.LoggerConfigurations.CalculatedLoggerFolder), UseShellExecute = true });
             }
             else
             {
@@ -360,10 +471,199 @@ namespace Ginger.Run
                 }
                 else
                 {
-                    Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder, UseShellExecute = true });
-                    Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder + "\\" + "GingerExecutionReport.html", UseShellExecute = true });
+                    System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder, UseShellExecute = true });
+                    System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder + "\\" + "GingerExecutionReport.html", UseShellExecute = true });
                 }
             }
+        }
+
+        private void LoadRunsetButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button LoadRunsetButton = (Button)sender;
+            RunSetReport runsetReport = (RunSetReport)LoadRunsetButton.Tag;
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    Reporter.ToStatus(eStatusMsgKey.LoadingRunSet, messageArgs: runsetReport.Name);
+                    RunSetConfig? runset = await _runsetFromReportLoader.LoadAsync(runsetReport);
+
+                    if (runset == null)
+                    {
+                        Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.RunsetNotFoundForLoading));
+                        return;
+                    }
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        LoadRunsetEventHandler? handler = LoadRunset;
+                        handler?.Invoke(runset);
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.RunSetLoadFromReportError, ex.Message);
+                }
+                finally
+                {
+                    Reporter.HideStatusMessage();
+                }
+            });
+        }
+
+        private void BPMNButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button BPMNButton = (Button)sender;
+            RunSetReport runSetReport = (RunSetReport)BPMNButton.Tag;
+            _ = ExportBPMNFromRunSetReportAsync(runSetReport);
+        }
+
+        private async Task ExportBPMNFromRunSetReportAsync(RunSetReport runSetReport)
+        {
+            try
+            {
+                Dispatcher.Invoke(() => Reporter.ToStatus(eStatusMsgKey.ExportingToBPMNZIP));
+
+                RunSetExecutionHistoryToBPMNExporter exporter = new();
+
+                IEnumerable<ExecutedBusinessFlow> executedBusinessFlows;
+                executedBusinessFlows = await exporter.GetExecutedBusinessFlowsAsync(runSetReport.GUID, runSetReport.DataRepMethod);
+
+                executedBusinessFlows = RemoveNonSharedRepositoryActivitiesFromExecutionData(executedBusinessFlows);
+                if (!executedBusinessFlows.Any())
+                {
+                    return;
+                }
+
+                int exportedSuccessfullyCount = 0;
+                foreach (ExecutedBusinessFlow executedBusinessFlow in executedBusinessFlows)
+                {
+                    try
+                    {
+                        exporter.Export(executedBusinessFlow, BPMNExportPath);
+                        exportedSuccessfullyCount++;
+                    }
+                    catch (Exception ex)
+                    {
+                        Reporter.ToLog(eLogLevel.ERROR, $"Error occurred while exporting BPMN for business flow {executedBusinessFlow.Name}.", ex);
+                    }
+                }
+                if (exportedSuccessfullyCount > 0)
+                {
+                    Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.MultipleExportToBPMNSuccessful, exportedSuccessfullyCount));
+                }
+                else
+                {
+                    Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, "Unexpected Error, check logs for more details."));
+                }
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.GingerEntityToBPMNConversionError, "Unexpected Error, check logs for more details."));
+                Reporter.ToLog(eLogLevel.ERROR, "Exception occurred while exporting BPMN from execution history.", ex);
+            }
+            finally
+            {
+                Dispatcher.Invoke(() => Reporter.HideStatusMessage());
+            }
+        }
+
+        private IEnumerable<ExecutedBusinessFlow> RemoveNonSharedRepositoryActivitiesFromExecutionData(IEnumerable<ExecutedBusinessFlow> executedBusinessFlows)
+        {
+            List<(BusinessFlow, IEnumerable<GingerCore.Activity>)> activitiesMissingFromSR = [];
+            foreach (ExecutedBusinessFlow executedBusinessFlow in executedBusinessFlows)
+            {
+                activitiesMissingFromSR.Add((
+                    executedBusinessFlow.BusinessFlow,
+                    executedBusinessFlow
+                        .ExecutedActivities
+                        .Where(executedActivity => !executedActivity.ExistInSharedRepository)
+                        .Select(executedActivity => executedActivity.Activity)
+                        .ToArray()));
+            }
+
+            bool allItemsExistInSR = !activitiesMissingFromSR
+                .SelectMany(pair => pair.Item2)
+                .Any();
+
+            if (allItemsExistInSR)
+            {
+                return executedBusinessFlows;
+            }
+
+            //ask user if they want to add missing activities to Shared Repository
+            eUserMsgSelection userResponse = eUserMsgSelection.Cancel;
+            Dispatcher.Invoke(() => userResponse = Reporter.ToUser(eUserMsgKey.AddActivitiesToSharedRepositoryForBPMNConversion));
+            if (userResponse == eUserMsgSelection.Yes)
+            {
+                bool wasAllAdded = TryAddActivitiesToSharedRepository(activitiesMissingFromSR);
+                if (!wasAllAdded)
+                {
+                    Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.AllActivitiesMustBeAddedToSharedRepositoryForBPMNExport));
+                    return Array.Empty<ExecutedBusinessFlow>();
+                }
+
+                return executedBusinessFlows;
+            }
+            else if (userResponse == eUserMsgSelection.No)
+            {
+                List<ExecutedBusinessFlow> filteredExecutedBusinessFlows = [];
+                foreach (ExecutedBusinessFlow executedBusinessFlow in executedBusinessFlows)
+                {
+                    IEnumerable<ExecutedActivity> activitiesExistingInSR = executedBusinessFlow
+                                .ExecutedActivities
+                                .Where(execitedActivity => execitedActivity.ExistInSharedRepository)
+                                .ToList();
+
+                    filteredExecutedBusinessFlows.Add(new ExecutedBusinessFlow(
+                        executedBusinessFlow.BusinessFlow,
+                        activitiesExistingInSR));
+                }
+                return filteredExecutedBusinessFlows;
+            }
+            else
+            {
+                return Array.Empty<ExecutedBusinessFlow>();
+
+            }
+        }
+
+        private bool ActivityExistInSharedRepository(string name)
+        {
+            return WorkSpace
+                .Instance
+                .SolutionRepository
+                .GetAllRepositoryItems<GingerCore.Activity>()
+                .Any(activity => string.Equals(activity.ActivityName, name));
+        }
+
+        private bool TryAddActivitiesToSharedRepository(IEnumerable<(BusinessFlow, IEnumerable<GingerCore.Activity>)> bfActivities)
+        {
+            bool wasAllAdded = false;
+            Dispatcher.Invoke(() =>
+            {
+                List<UploadItemSelection> uploadItems = new();
+                foreach (var bfActivitiesPair in bfActivities)
+                {
+                    BusinessFlow bf = bfActivitiesPair.Item1;
+                    foreach (GingerCore.Activity activity in bfActivitiesPair.Item2)
+                    {
+                        uploadItems.Add(UploadItemToRepositoryWizard.CreateUploadItem(
+                            activity,
+                            new Context()
+                            {
+                                BusinessFlow = bf
+                            }));
+                    }
+                }
+                UploadItemToRepositoryWizard uploadItemToRepositoryWizard = new(uploadItems);
+                WizardWindow.ShowWizard(uploadItemToRepositoryWizard);
+
+                wasAllAdded = bfActivities
+                    .SelectMany(pair => pair.Item2)
+                    .All(activity => ActivityExistInSharedRepository(activity.ActivityName));
+            });
+            return wasAllAdded;
         }
     }
 }

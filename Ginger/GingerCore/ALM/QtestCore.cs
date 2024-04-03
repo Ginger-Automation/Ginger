@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -375,11 +375,11 @@ namespace GingerCore.ALM
                                         {
                                             testCaseStatus = statuses.FirstOrDefault(z => z.Name == "Failed");
                                         }
-                                        else if (stepsStatuses.Where(x => x.Name == "No Run").Count() == testStepsCount || (stepsStatuses.Where(x => x.Name == "Not Applicable").Count() + stepsStatuses.Where(x => x.Name == "Unexecuted").Count()) == testStepsCount)
+                                        else if (stepsStatuses.Count(x => x.Name == "No Run") == testStepsCount || (stepsStatuses.Count(x => x.Name == "Not Applicable") + stepsStatuses.Count(x => x.Name == "Unexecuted")) == testStepsCount)
                                         {
                                             testCaseStatus = statuses.FirstOrDefault(z => z.Name == "Unexecuted");
                                         }
-                                        else if (stepsStatuses.Where(x => x.Name == "Passed").Count() == testStepsCount || (stepsStatuses.Where(x => x.Name == "Passed").Count()) == testStepsCount)
+                                        else if (stepsStatuses.Count(x => x.Name == "Passed") == testStepsCount || (stepsStatuses.Count(x => x.Name == "Passed")) == testStepsCount)
                                         {
                                             testCaseStatus = statuses.FirstOrDefault(z => z.Name == "Passed");
                                         }

@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ namespace GingerCore.Variables
         [IsSerializedForLocalRepository]
         public string ValueExpression
         {
-            set { mValueExpression = value; OnPropertyChanged("Formula"); }
+            set { mValueExpression = value; OnPropertyChanged(nameof(ValueExpression)); }
             get { return mValueExpression; }
         }
 
@@ -129,6 +129,11 @@ namespace GingerCore.Variables
         {
             ValueExpression = value;
             return true;
+        }
+
+        public override void SetInitialValue(string InitialValue)
+        {
+            this.ValueExpression = InitialValue;
         }
     }
 }

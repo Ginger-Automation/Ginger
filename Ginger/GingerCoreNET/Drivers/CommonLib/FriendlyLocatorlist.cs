@@ -1,6 +1,6 @@
 #region License
 /*
-Copyright © 2014-2023 European Support Limited
+Copyright © 2014-2024 European Support Limited
 
 Licensed under the Apache License, Version 2.0 (the "License")
 you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ limitations under the License.
 
 using Amdocs.Ginger.Common.UIElement;
 using OpenQA.Selenium;
+using System.Collections.Generic;
 
 namespace GingerCoreNET.Drivers.CommonLib
 {
@@ -26,5 +27,7 @@ namespace GingerCoreNET.Drivers.CommonLib
         public ePosition position { get; set; }
 
         public IWebElement FriendlyElement { get; set; }
+
+
     }
 }
