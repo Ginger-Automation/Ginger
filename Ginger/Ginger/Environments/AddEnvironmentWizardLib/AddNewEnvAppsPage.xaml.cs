@@ -95,11 +95,11 @@ namespace Ginger.Environments.AddEnvironmentWizardLib
         private void AddApplicationToSolution(object sender, RoutedEventArgs e)
         {
             AddApplicationPage applicationPage = new(WorkSpace.Instance.Solution, false);
+            ApplicationPlatform? selectedApp = null;
+            applicationPage.ShowAsWindow(ref selectedApp);
 
-            applicationPage.ShowAsWindow();
-
-            foreach (ApplicationPlatform selectedApp in applicationPage.SelectApplicationGrid.Grid.SelectedItems)
-            {
+            if (selectedApp!=null) 
+            { 
                 EnvApplication envApp = new EnvApplication() { Name = selectedApp.AppName, Platform = selectedApp.Platform, ParentGuid = selectedApp.Guid};
                 envApp.Active = true;
                 mWizard.apps.Add(envApp);
