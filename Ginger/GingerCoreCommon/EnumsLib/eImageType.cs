@@ -46,8 +46,9 @@ namespace Amdocs.Ginger.Common.Enums
         NormalUser,
         AdminUser,
         Chatbot,
-        SendIcon,
-        Comment,
+        SendArrow,
+        Medical,
+        Chat,
         #endregion
 
 

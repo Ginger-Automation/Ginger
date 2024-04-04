@@ -201,11 +201,14 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Chatbot:
                     SetAsStaticImage("bot.png");
                     break;
-                case eImageType.SendIcon:
-                    SetAsStaticImage("send.png");
+                case eImageType.SendArrow:
+                    SetAsStaticImage("sendArrow.png");
                     break;
-                case eImageType.Comment:
-                    SetAsStaticImage("comments.png");
+                case eImageType.Medical:
+                    SetAsStaticImage("medical.png");
+                    break;
+                case eImageType.Chat:
+                    SetAsStaticImage("chat.png");
                     break;
                 #endregion
 
