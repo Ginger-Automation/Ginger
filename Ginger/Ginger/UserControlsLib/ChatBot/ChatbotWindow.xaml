@@ -3,11 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
              Height="700" Width="400" Background="White" BorderBrush="Black">
     <Border CornerRadius="7" BorderBrush="#8a57ea" BorderThickness="2" >
-        <Grid>
+        <Grid Background="White">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="10*"/>
-                <RowDefinition Height="110"/>
+                <RowDefinition Height="120"/>
             </Grid.RowDefinitions>
             <Grid Background="#7036dc">
                 <usercontrols:ImageMakerControl Width="24" Margin="12,0,0,0" ImageType="Chat" HorizontalAlignment="Left" />
@@ -23,13 +23,20 @@
                     <StackPanel x:Name="chatPanel" VerticalAlignment="Bottom">
                     </StackPanel>
                 </ScrollViewer>
-                
+                <StackPanel x:Name="xLisaIntroPanel" Visibility="Visible" VerticalAlignment="Center" Margin="23,0,10,250">
+                    <TextBlock FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Text="Hi, I'm Lisa"/>
+                    <TextBlock HorizontalAlignment="Center" FontSize="15" FontWeight="SemiBold" Text="What do you want to know about Ginger ?"/>
+                </StackPanel>
                 <usercontrols:ImageMakerControl  Visibility="Collapsed" x:Name="xLoader" ImageType="Processing" Width="20" VerticalAlignment="Center"/>
             </Grid>
 
             <Grid Grid.Row="2" Background="White">
-                <usercontrols:ImageMakerControl Grid.Row="0" Height="13" ImageType="Copy" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="11,10,35,2" />
-                <usercontrols:ImageMakerControl Grid.Row="0" Height="15" ImageType="Medical" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="0,0,10,12"/>
+                <Button BorderThickness="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,10,90" Background="Transparent">
+                    <usercontrols:ImageMakerControl Grid.Row="0" Height="13" ImageType="Copy" />
+                </Button>
+                <Button BorderThickness="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,-20,10" Background="Transparent">
+                    <usercontrols:ImageMakerControl Grid.Row="0" Height="15" ImageType="Medical" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="0,0,10,12"/>
+                </Button>
                 <StackPanel  Orientation="Horizontal" VerticalAlignment="Bottom" Grid.Row="1" Margin="5,0,0,0">
                     <!-- User input -->
                     <TextBox x:Name="xUserInputTextBox" TextChanged="xUserInputTextBox_TextChanged" PreviewKeyDown="TextBox_KeyDown" Width="385" Height="100" Padding="5">

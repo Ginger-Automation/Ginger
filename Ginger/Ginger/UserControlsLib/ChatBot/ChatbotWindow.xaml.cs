@@ -22,8 +22,8 @@ namespace Amdocs.Ginger.UserControls
         {
             InitializeComponent();
             brainAIServices = new BrainAIServices();
-            string introMessage = "Hello I'm Lisa, the Ginger AI Assistent. How can i help you today?";
-            AddMessage("Lisa", introMessage, false);
+            //string introMessage = "Hello I'm Lisa, the Ginger AI Assistent. How can i help you today?";
+           // AddMessage("Lisa", introMessage, false);
         }
 
 
@@ -61,12 +61,12 @@ namespace Amdocs.Ginger.UserControls
                 Reporter.ToUser(eUserMsgKey.EnvParamNameEmpty);
                 return;
             }
-
+            xLisaIntroPanel.Visibility = Visibility.Collapsed;
             AddMessage(GetUserName(), userInput, true);
             ShowLoader();
             try
             {
-                if (chatPanel.Children.Count == 1)
+                if (chatPanel.Children.Count == 0 )
                 {
                     answer = await brainAIServices.StartNewChat(userInput);
                     chatPanel.Children.Clear();
