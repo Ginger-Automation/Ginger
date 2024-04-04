@@ -27,7 +27,7 @@
             <Grid Grid.Row="2" Background="White" HorizontalAlignment="Stretch" Margin="5">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" >
                     <!-- User input -->
-                    <TextBox x:Name="xUserInputTextBox" TextChanged="xUserInputTextBox_TextChanged" KeyDown="TextBox_KeyDown" Width="385" Height="100" Padding="5">
+                    <TextBox x:Name="xUserInputTextBox" TextChanged="xUserInputTextBox_TextChanged" PreviewKeyDown="TextBox_KeyDown" Width="385" Height="100" Padding="5">
                         <TextBox.Template>
                             <ControlTemplate TargetType="{x:Type TextBox}">
                                 <Grid>
@@ -44,16 +44,15 @@
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsKeyboardFocused" Value="True">
                                         <Setter TargetName="border" Property="BorderBrush" Value="MediumPurple" />
-                                        <!--<Setter TargetName="border" Property="BorderThickness" Value="1.5" />-->
                                     </Trigger>
                                     <Trigger Property="IsKeyboardFocused" Value="False">
                                         <Setter TargetName="border" Property="BorderBrush" Value="Gray" />
-                                        <!--<Setter TargetName="border" Property="BorderThickness" Value="1.5" />-->
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </TextBox.Template>
                     </TextBox>
+
                 </StackPanel>
             </Grid>
         </Grid>

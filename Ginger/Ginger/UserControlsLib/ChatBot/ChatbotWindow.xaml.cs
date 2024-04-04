@@ -199,9 +199,14 @@ namespace Amdocs.Ginger.UserControls
 
         private async void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.Enter)
+            if ((Keyboard.Modifiers  == ModifierKeys.Control ||
+                Keyboard.Modifiers  == ModifierKeys.Shift) &&
+                e.Key == Key.Enter)
             {
-                xUserInputTextBox.AppendText(Environment.NewLine);
+                TextBox textBox = sender as TextBox;
+                int caretIndex = textBox.CaretIndex;
+                textBox.Text = textBox.Text.Insert(caretIndex, Environment.NewLine);
+                textBox.CaretIndex = caretIndex + Environment.NewLine.Length;
                 e.Handled = true;
             }
             else if (e.Key == Key.Enter)
