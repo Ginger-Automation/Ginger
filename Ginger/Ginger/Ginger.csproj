@@ -594,6 +594,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\androidWhite.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\ApplitoolsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\bot.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\chat.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\comments.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\Ginger.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\GingerByAmdocsLogo.png" />
@@ -604,6 +605,7 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\ios.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosOutline.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\iosWhite.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\medical.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-n.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs-new.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs.png" />
@@ -614,11 +616,18 @@
     <None Remove="UserControlsLib\ImageMakerLib\Images\save-regular-light-grey.svg" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\SealightsLogo.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\send.png" />
+    <None Remove="UserControlsLib\ImageMakerLib\Images\sendArrow.png" />
     <None Remove="UserControlsLib\ImageMakerLib\Images\VRTLogo.png" />
   </ItemGroup>
 
   <ItemGroup>
     <Page Remove="Images\_Images.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\sendArrow.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -2421,6 +2430,9 @@
     <Resource Include="UserControlsLib\ImageMakerLib\Images\bot.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\chat.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\comments.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -2449,6 +2461,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\iosWhite.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="UserControlsLib\ImageMakerLib\Images\medical.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="UserControlsLib\ImageMakerLib\Images\save-all-regular-gradient-amdocs.png" />

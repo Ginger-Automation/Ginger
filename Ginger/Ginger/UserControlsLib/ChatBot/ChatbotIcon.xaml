@@ -6,12 +6,12 @@
              xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls"
               xmlns:fa="http://schemas.fontawesome.com/icons/"
              mc:Ignorable="d" 
-             Height="30" Width="98">
+             Height="30" Width="130">
     <Grid>
-        <Button Click="Lisa_Click" Style="{StaticResource $RoundTextButtonStyle_ChatbotIcon}" Foreground="White" Background="#f05c62">
+        <Button Click="Lisa_Click" Style="{StaticResource $RoundTextButtonStyle_ChatbotIcon}" Foreground="White" Background="#824de6">
             <StackPanel Orientation="Horizontal">
-                <usercontrols:ImageMakerControl ImageType="Comment" Foreground="White" Margin="0,0,5,0"></usercontrols:ImageMakerControl>
-                <TextBlock x:Name="xButtonText" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Ask Lisa" />
+                <usercontrols:ImageMakerControl ImageType="Chat" Width="16"  Foreground="White"></usercontrols:ImageMakerControl>
+                <TextBlock x:Name="xButtonText" HorizontalAlignment="Center" Margin="9,0,0,0"  FontWeight="Bold" FontSize="14" VerticalAlignment="Center" Text="Ask Lisa" />
             </StackPanel>
         </Button>
     </Grid>
