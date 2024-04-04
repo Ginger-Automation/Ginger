@@ -26,11 +26,11 @@
         <Grid Grid.Row="2" Background="White">
             <StackPanel  Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,0,0">
                 <!-- User input -->
-                <TextBox x:Name="xUserInputTextBox" TextChanged="xUserInputTextBox_TextChanged"  Width="395">
+                <TextBox x:Name="xUserInputTextBox" TextChanged="xUserInputTextBox_TextChanged" KeyDown="TextBox_KeyDown"  Width="395">
                     <TextBox.Template>
                         <ControlTemplate>
                             <Grid>
-                                <TextBox  Text="{Binding ElementName=xUserInputTextBox, Path=Text}"  VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Background="Transparent"  Height="100" Grid.Column="0"/>
+                                <TextBox KeyDown="TextBox_KeyDown" Text="{Binding ElementName=xUserInputTextBox, Path=Text}"  VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Background="Transparent"  Height="100" Grid.Column="0"/>
                                 <TextBlock Text="Message Lisa" Name="xPlaceholder"  FontWeight="Light" Panel.ZIndex="-1" VerticalAlignment="Top" Foreground="DarkGray" Margin="5,0,0,0" />
                                 <Button Click="SendMessage" VerticalContentAlignment="Bottom" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="30" Grid.Column="1" Background="Transparent" BorderThickness="0">
                                     <usercontrols:ImageMakerControl x:Name="xSend" Grid.Row="1" ImageType="SendIcon" Width="30" Foreground="MediumPurple" HorizontalAlignment="Center" VerticalAlignment="Center"/>
