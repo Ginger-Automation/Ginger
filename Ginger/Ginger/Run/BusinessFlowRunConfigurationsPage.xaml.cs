@@ -18,7 +18,6 @@ limitations under the License.
 
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
-using Amdocs.Ginger.Common.VariablesLib;
 using Amdocs.Ginger.Repository;
 using Ginger.UserControls;
 using Ginger.UserControlsLib;
@@ -34,7 +33,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using static Ginger.Variables.InputVariableRule;
 using Amdocs.Ginger.CoreNET;
 using GingerCore.GeneralLib;
 using System.Collections.Specialized;
@@ -84,7 +82,9 @@ namespace Ginger.Run
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(MandatoryBusinessFlowCB, CheckBox.IsCheckedProperty, businessFlow, nameof(BusinessFlow.Mandatory), BindingMode.TwoWay);
 
             RunDescritpion.Init(mContext, businessFlow, nameof(BusinessFlow.RunDescription));
+            MandatoryBusinessFlowCB.Click += MandatoryBusinessFlow_Clicked;
 
+            RunDescritpion.ValueTextBox.TextChanged += RunDescription_TextChanged;
             grdVariables.btnEdit.AddHandler(Button.ClickEvent, new RoutedEventHandler(EditVar));
             grdVariables.AddToolbarTool("@Undo_16x16.png", "Reset " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " to Original Configurations", new RoutedEventHandler(ResetBusFlowVariables));
             grdVariables.AddToolbarTool("@Share_16x16.png", "Share Selected " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " Value to all Similar " + GingerDicser.GetTermResValue(eTermResKey.Variables) + " in " + GingerDicser.GetTermResValue(eTermResKey.RunSet), new RoutedEventHandler(CopyBusFlowVariables));
@@ -101,6 +101,24 @@ namespace Ginger.Run
 
             bool editable = _viewMode != General.eRIPageViewMode.View && _viewMode != General.eRIPageViewMode.ViewAndExecute;
             SetViewMode(editable);
+        }
+
+        private void MandatoryBusinessFlow_Clicked(object sender, RoutedEventArgs e)
+        {
+            if (EventRaiseVariableEdit != null)
+            {
+                EventRaiseVariableEdit(null , null);
+            }
+    
+        }
+
+        private void RunDescription_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+            if (EventRaiseVariableEdit != null)
+            {
+                EventRaiseVariableEdit(null, null);
+            }
         }
 
         private void SetViewMode(bool editable)
@@ -168,14 +186,14 @@ namespace Ginger.Run
                                     reason: "Variables are deprected for Mapped Runtime Value.")
                             }
                         }),
-                    WidthWeight = 40
+                    WidthWeight = 40,
+                    
                 });
             }
             else if (mWindowMode == eWindowMode.SummaryView)
             {
                 view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.MappedOutputValue), Header = "Mapped Runtime Value", BindingMode = BindingMode.OneWay, ReadOnly = true, WidthWeight = 40 });
             }
-
             //view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentType), Header = "Level", WidthWeight = 10, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.ParentName), Header = "Path", WidthWeight = 20, ReadOnly = true });
             view.GridColsView.Add(new GridColView() { Field = nameof(VariableBase.DiffrentFromOrigin), Header = "Customized?", WidthWeight = 8, BindingMode = BindingMode.OneWay, ReadOnly = true });
@@ -626,6 +644,6 @@ namespace Ginger.Run
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Error in " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Configuration Page tabs style", ex);
             }
-        }
+        }     
     }
 }

@@ -96,8 +96,21 @@ namespace Ginger.UserControlsLib
 
         public string MappedValue
         {
-            get { return (string)GetValue(MappedValueProperty); }
-            set { SetValue(MappedValueProperty, value.ToString()); }
+            get 
+            { 
+                return (string)GetValue(MappedValueProperty); 
+            }
+            set 
+            { 
+                
+                SetValue(MappedValueProperty, value.ToString());
+                if(WorkSpace.Instance!=null 
+                    && WorkSpace.Instance.RunsetExecutor!=null 
+                    && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null)
+                {
+                    WorkSpace.Instance.RunsetExecutor.RunSetConfig.DirtyStatus = eDirtyStatus.Modified;
+                }
+            }
         }
 
         public Guid MappedValueGUID
