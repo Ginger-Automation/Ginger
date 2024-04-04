@@ -118,8 +118,7 @@ namespace Amdocs.Ginger.UserControls
 
             messageContainer.Children.Add(messageBorder);
 
-            EllipseGeometry ellipse = new EllipseGeometry(new System.Windows.Point(15, 15), 15, 15);
-            // Add user icon based on the message sender
+            EllipseGeometry ellipse = new EllipseGeometry(new System.Windows.Point(12.5, 15), 15, 15);            // Add user icon based on the message sender
             if (isUserMessage)
             {
                 // Add user icon (right side)

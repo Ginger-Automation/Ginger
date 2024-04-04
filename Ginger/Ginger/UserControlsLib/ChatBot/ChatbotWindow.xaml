@@ -5,34 +5,32 @@
     <Border CornerRadius="7" BorderBrush="#8a57ea" BorderThickness="2" >
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
+                <RowDefinition Height="50"/>
                 <RowDefinition Height="10*"/>
                 <RowDefinition Height="110"/>
             </Grid.RowDefinitions>
             <Grid Background="#7036dc">
-                <usercontrols:ImageMakerControl Width="20" Margin="10,0,0,0" ImageType="Chat" HorizontalAlignment="Left" />
-                <Label Content="Ask Lisa" HorizontalAlignment="Left" FontSize="18" FontWeight="Bold" Foreground="White" Margin="33,0,0,0" />
+                <usercontrols:ImageMakerControl Width="24" Margin="12,0,0,0" ImageType="Chat" HorizontalAlignment="Left" />
+                <Label Content="Ask Lisa" HorizontalAlignment="Left" FontSize="25" FontWeight="Bold" Foreground="White" Margin="40,0,0,8" />
                 <Button HorizontalAlignment="Right" MouseLeftButtonDown="Button_MouseLeftButtonDown" Click="Button_Click" Width="30" BorderThickness="0" Background="Transparent">
                     <usercontrols:ImageMakerControl ImageType="CloseWhite" Width="15"></usercontrols:ImageMakerControl>
                 </Button>
 
             </Grid>
             <Grid Grid.Row="1">
+                
                 <ScrollViewer  Name="scrollViewer" VerticalScrollBarVisibility="Auto" ScrollChanged="ScrollViewer_ScrollChanged" Width="auto">
                     <StackPanel x:Name="chatPanel" VerticalAlignment="Bottom">
                     </StackPanel>
                 </ScrollViewer>
-
+                
                 <usercontrols:ImageMakerControl  Visibility="Collapsed" x:Name="xLoader" ImageType="Processing" Width="20" VerticalAlignment="Center"/>
             </Grid>
-            <Grid Grid.Row="2" Background="White" HorizontalAlignment="Stretch" Margin="5">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="17"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <usercontrols:ImageMakerControl Grid.Row="0" Height="13" ImageType="Copy" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,35,2" />
-                <usercontrols:ImageMakerControl Grid.Row="0" Height="15" ImageType="Medical" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="0,0,10,2"/>
-                <StackPanel  Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Bottom" >
+
+            <Grid Grid.Row="2" Background="White">
+                <usercontrols:ImageMakerControl Grid.Row="0" Height="13" ImageType="Copy" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="11,10,35,2" />
+                <usercontrols:ImageMakerControl Grid.Row="0" Height="15" ImageType="Medical" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="0,0,10,12"/>
+                <StackPanel  Orientation="Horizontal" VerticalAlignment="Bottom" Grid.Row="1" Margin="5,0,0,0">
                     <!-- User input -->
                     <TextBox x:Name="xUserInputTextBox" TextChanged="xUserInputTextBox_TextChanged" PreviewKeyDown="TextBox_KeyDown" Width="385" Height="100" Padding="5">
                         <TextBox.Template>
