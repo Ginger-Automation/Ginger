@@ -22,6 +22,7 @@ using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.UserControls;
 using Ginger.Run;
+using Ginger.SolutionWindows;
 using GingerCore;
 using GingerCore.DataSource;
 using GingerCore.Platforms;
@@ -46,7 +47,6 @@ namespace Ginger.Agents
         public ObservableList<ApplicationAgent> ApplicationAgents;
         GingerExecutionEngine mRunner;
         Context mContext;
-
         bool AllowAgentsManipulation;
 
         public ListBox MappingList
@@ -62,7 +62,7 @@ namespace Ginger.Agents
             AllowAgentsManipulation = allowAgentsManipulation;
             xAppAgentsListBox.Tag = AllowAgentsManipulation;//Placed here for binding with list dataTemplate- need better place
             mRunner.GingerRunner.PropertyChanged += MGR_PropertyChanged;
-
+            TargetApplicationsPage.OnActivityUpdate += RefreshApplicationAgentsList;
             xKeepAgentsOn.Visibility = Visibility.Collapsed;
             if (!AllowAgentsManipulation && !WorkSpace.Instance.RunsetExecutor.RunSetConfig.RunModeParallel)
             {
