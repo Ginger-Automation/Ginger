@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Enums;
 using Amdocs.Ginger.Common.InterfacesLib;
+using Amdocs.Ginger.Common.Repository;
 using Amdocs.Ginger.UserControls;
 using Ginger.Run;
 using GingerCore;
@@ -91,13 +92,17 @@ namespace Ginger.Agents
                 {
                     var AllTargetApplicationNames = mContext.BusinessFlow.Activities.Select((activity) => activity.TargetApplication);
 
-
                     var allTargetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
 
-                    allTargetApplications.Where((App) =>
+                    var TargetApplicationsInBusinessFlow = allTargetApplications.Where((App) =>
                     {
                         return AllTargetApplicationNames.Contains(App.Name);
-                    }).ForEach((FilteredTargetApp) =>
+                    });
+
+
+                    mContext.BusinessFlow.TargetApplications = new ObservableList<TargetBase>(TargetApplicationsInBusinessFlow.ToList());
+                    
+                    TargetApplicationsInBusinessFlow.ForEach((FilteredTargetApp) =>
                     {
                         ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)FilteredTargetApp).AppName };
                         applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
