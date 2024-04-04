@@ -33,10 +33,16 @@
 
             <Grid Grid.Row="2" Background="White">
                 <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,2,5,0">
-                    <Button BorderThickness="0" Background="Transparent" Width="20">
+                    <Button x:Name="xCopyAll" BorderThickness="0" Background="Transparent" Width="20" Click="xCopyAll_Click">
+                        <Button.ToolTip>
+                            <ToolTip Content="Copy All Conversation"/>
+                        </Button.ToolTip>
                         <usercontrols:ImageMakerControl Grid.Row="0" Height="13" ImageType="Copy" />
                     </Button>
                     <Button x:Name="xNewChat" BorderThickness="0" Background="Transparent" Width="20" Click="xNewChat_Click">
+                        <Button.ToolTip>
+                            <ToolTip Content="Start New Conversation"/>
+                        </Button.ToolTip>
                         <usercontrols:ImageMakerControl Grid.Row="0" Height="15" ImageType="Medical" HorizontalAlignment="Right" VerticalAlignment="Top"/>
                     </Button>
                 </StackPanel>

@@ -4,6 +4,8 @@ using Amdocs.Ginger.CoreNET.GenAIServices;
 using Ginger;
 using Ginger.Extensions;
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -324,5 +326,16 @@ namespace Amdocs.Ginger.UserControls
             chatPanel.Children.Clear();
             xLisaIntroPanel.Visibility = Visibility.Visible;
         }
+
+    private void xCopyAll_Click(object sender, RoutedEventArgs e)
+    {
+            Dictionary<string, string> messageCopyAll = new Dictionary<string, string>();
+
+            foreach (var item in chatPanel.Children)
+            {
+               
+            }
+
     }
+}
 }
