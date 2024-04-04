@@ -87,34 +87,49 @@ namespace Ginger.Agents
             {
                 ApplicationAgents = new ObservableList<ApplicationAgent>();
 
-                if (mContext?.BusinessFlow != null)
+                var AllTargetApplicationNames = GetAllTargetApplicationNames();
+
+                if (AllTargetApplicationNames == null)
                 {
-                    var AllTargetApplicationNames = mContext.BusinessFlow.Activities.Select((activity) => activity.TargetApplication);
-
-
-                    var allTargetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-
-                    allTargetApplications.Where((App) =>
-                    {
-                        return AllTargetApplicationNames.Contains(App.Name);
-                    }).ForEach((FilteredTargetApp) =>
-                    {
-                        ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)FilteredTargetApp).AppName };
-                        applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
-                        applicationAgent.Agent = applicationAgent.PossibleAgents?.FirstOrDefault((agent) => agent.Name.Equals(FilteredTargetApp.LastExecutingAgentName)) as Agent;
-
-
-                        if(applicationAgent.Agent == null && applicationAgent.PossibleAgents?.Count >= 1)
-                        {
-                            applicationAgent.Agent = applicationAgent.PossibleAgents[0] as Agent;
-                        }
-
-                        ApplicationAgents.Add(applicationAgent);
-                    });
-
-                    xAppAgentsListBox.ItemsSource = ApplicationAgents;
+                    return;
                 }
+
+                var allTargetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+
+                allTargetApplications.Where((App) =>
+                {
+                    return AllTargetApplicationNames.Contains(App.Name);
+                }).ForEach((FilteredTargetApp) =>
+                {
+                    ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)FilteredTargetApp).AppName };
+                    applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+                    applicationAgent.Agent = applicationAgent.PossibleAgents?.FirstOrDefault((agent) => agent.Name.Equals(FilteredTargetApp.LastExecutingAgentName)) as Agent;
+
+
+                    if (applicationAgent.Agent == null && applicationAgent.PossibleAgents?.Count >= 1)
+                    {
+                        applicationAgent.Agent = applicationAgent.PossibleAgents[0] as Agent;
+                    }
+
+                    ApplicationAgents.Add(applicationAgent);
+                });
+
+                xAppAgentsListBox.ItemsSource = ApplicationAgents;
             });
+        }
+
+        public IEnumerable<string> GetAllTargetApplicationNames()
+        {
+            if (mContext.BusinessFlow != null)
+            {
+                return mContext.BusinessFlow.Activities.Select((activity) => activity.TargetApplication);
+            }
+
+            else if (mRunner != null && mRunner.BusinessFlows!=null)
+            {
+                return mRunner.BusinessFlows.SelectMany((businessFlow) => businessFlow.Activities).Select((activity) => activity.TargetApplication);
+            }
+            return null;
         }
 
         private async void xStartCloseAgentBtn_Click(object sender, RoutedEventArgs e)
@@ -130,7 +145,7 @@ namespace Ginger.Agents
                     {
                         case Agent.eStatus.Completed:
                         case Agent.eStatus.Ready:
-                        case Agent.eStatus.Running:                       
+                        case Agent.eStatus.Running:
                             //Close Agent
                             Reporter.ToStatus(eStatusMsgKey.StopAgent, null, AG.AgentName, AG.AppName);
                             await System.Threading.Tasks.Task.Run(() =>
@@ -174,7 +189,7 @@ namespace Ginger.Agents
             ApplicationAgentOperations applicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
             applicationAgent.ApplicationAgentOperations = applicationAgentOperations;
 
-             List<IAgent> filteredOptionalAgents = applicationAgent.PossibleAgents;
+            List<IAgent> filteredOptionalAgents = applicationAgent.PossibleAgents;
 
             ((ComboBox)sender).ItemsSource = filteredOptionalAgents;
         }
