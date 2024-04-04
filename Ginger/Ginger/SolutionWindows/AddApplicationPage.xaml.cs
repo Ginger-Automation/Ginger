@@ -161,12 +161,15 @@ namespace Ginger.SolutionWindows
             {
                 var ProjEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
 
-                ProjEnvironments.ForEach((projEnv) => { projEnv.StartDirtyTracking(); projEnv.Applications.Add(new EnvApplication() { Name = selectedApp.AppName, ParentGuid = selectedApp.Guid, Platform = selectedApp.Platform }); });
+                ProjEnvironments.ForEach((projEnv) => { projEnv.StartDirtyTracking(); projEnv.Applications.Add(new EnvApplication() { Name = selectedApp.AppName, ParentGuid = selectedApp.Guid, Platform = selectedApp.Platform, Active = true}); });
             }
 
             mSolution.ApplicationPlatforms.Add(selectedApp);
-            
-            this.NewlyAddedApplicationPlatform = selectedApp;
+
+            if (!msgSelection.Equals(eUserMsgSelection.Yes))
+            {
+                this.NewlyAddedApplicationPlatform = selectedApp;
+            }
 
             var DoesMatchingPlatformAgentExist = WorkSpace.Instance.SolutionRepository?.GetAllRepositoryItems<Agent>().Any((agent) => agent.Platform.Equals(selectedApp.Platform)) ?? true;
 
