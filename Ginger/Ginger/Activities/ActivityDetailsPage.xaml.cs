@@ -337,7 +337,7 @@ namespace Ginger.BusinessFlowPages
 
                 if (xTargetApplicationComboBox.SelectedItem != null)
                 {
-                    foreach (var targetApplication in targetApplications.Where(x => x is TargetApplication).Cast<TargetApplication>())
+                    foreach (var targetApplication in targetApplications.OfType<TargetApplication>())
                     {
                         if (!targetApplication.AppName.Equals(xTargetApplicationComboBox.SelectedItem.ToString()))
                         {
