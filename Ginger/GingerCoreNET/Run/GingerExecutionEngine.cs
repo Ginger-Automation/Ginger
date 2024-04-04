@@ -446,6 +446,7 @@ namespace Ginger.Run
                     BusinessFlowIsMandatory = bf.Mandatory,
                     BusinessFlowInstanceGuid = bf.InstanceGuid,
                     BusinessFlowRunDescription = bf.RunDescription,
+                    ExternalID = bf.ExternalID,
                     BFFlowControls = bf.BFFlowControls
                 };
 
