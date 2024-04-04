@@ -49,6 +49,8 @@ namespace Ginger.Agents
         Context mContext;
 
         bool AllowAgentsManipulation;
+        public delegate void OnBusinessFlowTargetApplicationChange();
+        public static event OnBusinessFlowTargetApplicationChange BusinessFlowTargetApplicationChanged;
 
         public ListBox MappingList
         {
@@ -101,7 +103,12 @@ namespace Ginger.Agents
 
 
                     mContext.BusinessFlow.TargetApplications = new ObservableList<TargetBase>(TargetApplicationsInBusinessFlow.ToList());
-                    
+
+                    if (BusinessFlowTargetApplicationChanged != null)
+                    {
+                        BusinessFlowTargetApplicationChanged();
+                    }
+
                     TargetApplicationsInBusinessFlow.ForEach((FilteredTargetApp) =>
                     {
                         ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)FilteredTargetApp).AppName };
