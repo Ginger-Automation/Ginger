@@ -3,7 +3,6 @@ using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.GenAIServices;
 using Ginger;
 using Ginger.Extensions;
-using SixLabors.ImageSharp;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -58,7 +57,7 @@ namespace Amdocs.Ginger.UserControls
             if (userInput.IsNullOrEmpty())
             {
                 // need to change to the specific message
-                Reporter.ToUser(eUserMsgKey.EnvParamNameEmpty);
+               // Reporter.ToUser(eUserMsgKey.EnvParamNameEmpty);
                 return;
             }
             xLisaIntroPanel.Visibility = Visibility.Collapsed;
@@ -68,8 +67,7 @@ namespace Amdocs.Ginger.UserControls
             {
                 if (chatPanel.Children.Count == 0 )
                 {
-                    answer = await brainAIServices.StartNewChat(userInput);
-                    chatPanel.Children.Clear();
+                    answer = await brainAIServices.StartNewChat(userInput);                 
                 }
                 else
                 {
@@ -104,7 +102,7 @@ namespace Amdocs.Ginger.UserControls
                 Text = message,
                 //Background = isUserMessage ? System.Windows.Media.Brushes.LightBlue : System.Windows.Media.Brushes.LightGray,
                 Padding = new Thickness(10),
-                MaxWidth = 330,
+                MaxWidth = 315,
                 TextWrapping = TextWrapping.Wrap
             };
             // Create a border with curved corners
@@ -116,8 +114,19 @@ namespace Amdocs.Ginger.UserControls
                 Margin = new Thickness(0, 0, 0, 5) // Add margin at the bottom for spacing
             };
 
-            messageContainer.Children.Add(messageBorder);
+            ImageMakerControl copyButton = new ImageMakerControl
+            {
+                ImageType =Common.Enums.eImageType.Copy,
+                Visibility = Visibility.Collapsed, // Initially hide the copy button
+                Width = 10                
+            };
 
+
+
+            // Add the copy button to the message container
+       
+            messageContainer.Children.Add(messageBorder);
+            messageContainer.Children.Add(copyButton);
             EllipseGeometry ellipse = new EllipseGeometry(new System.Windows.Point(12.5, 15), 15, 15);            // Add user icon based on the message sender
             if (isUserMessage)
             {
@@ -165,19 +174,40 @@ namespace Amdocs.Ginger.UserControls
                 });
             }
 
-        // Add time below the message  new BitmapImage(new Uri(@"/Images/" + ImageFile, UriKind.RelativeOrAbsolute))
-        //TextBlock timeText = new TextBlock
-        //{
-        //    Text = DateTime.Now.ToString("HH:mm"), // Display current time in HH:mm format
-        //    FontSize = 10,
-        //    FontStyle = FontStyles.Italic,
-        //    HorizontalAlignment = HorizontalAlignment.Right,
-        //    Margin = new Thickness(5, 0, 5, 0) // Adjust margin for spacing
-        //};
-        //messageContainer.Children.Add(timeText);
+            messageContainer.MouseEnter += (sender, e) =>
+            {
+                copyButton.Visibility = Visibility.Visible;
+            };
 
+            // Handle MouseLeave event to hide the copy button
+            messageContainer.MouseLeave += (sender, e) =>
+            {
+                copyButton.Visibility = Visibility.Collapsed;
+            };
 
-        chatPanel.Children.Add(messageContainer);
+            // Handle Click event of the copy button
+            copyButton.MouseDown += (sender, e) =>
+            {
+                // Get the message from the Tag property of the Grid
+                //string messageToCopy = ((StackPanel)sender).Tag.ToString();
+                string message = ((Border)((sender as FrameworkElement).Parent as StackPanel).Children[1]).Child.GetValue(TextBlock.TextProperty).ToString();
+                // Copy the message to the clipboard
+                Clipboard.SetText(message);
+            };
+
+            // Add time below the message  new BitmapImage(new Uri(@"/Images/" + ImageFile, UriKind.RelativeOrAbsolute))
+            //TextBlock timeText = new TextBlock
+            //{
+            //    Text = DateTime.Now.ToString("HH:mm"), // Display current time in HH:mm format
+            //    FontSize = 10,
+            //    FontStyle = FontStyles.Italic,
+            //    HorizontalAlignment = HorizontalAlignment.Right,
+            //    Margin = new Thickness(5, 0, 5, 0) // Adjust margin for spacing
+            //};
+            //messageContainer.Children.Add(timeText);
+
+            chatPanel.Children.Add(messageContainer);
+            xScrollViewer.ScrollToBottom();            
         }
         //private void AddMessage(string sender, string message)
         //{
@@ -198,8 +228,8 @@ namespace Amdocs.Ginger.UserControls
 
         private async void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if ((Keyboard.Modifiers  == ModifierKeys.Control ||
-                Keyboard.Modifiers  == ModifierKeys.Shift) &&
+            if ((Keyboard.Modifiers == ModifierKeys.Control ||
+                Keyboard.Modifiers == ModifierKeys.Shift) &&
                 e.Key == Key.Enter)
             {
                 TextBox textBox = sender as TextBox;
@@ -243,19 +273,14 @@ namespace Amdocs.Ginger.UserControls
             //xSend.IsEnabled = true;
         }
 
-        private void ScrollToBottom()
-        {
-            if (scrollViewer != null && scrollViewer.ScrollableHeight > 0)
-            {
-                scrollViewer.ScrollToVerticalOffset(scrollViewer.ScrollableHeight);
-            }
-        }
-        private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
-        {
-            // Auto-scroll to the bottom when a new message is added
-            scrollViewer.ScrollToBottom();
-        }
-
+        //private void ScrollToBottom()
+        //{
+        //    if (xScrollViewer != null && xScrollViewer.ScrollableHeight > 0)
+        //    {
+        //        xScrollViewer.ScrollToVerticalOffset(xScrollViewer.ScrollableHeight);
+        //    }
+        //}
+       
         private void xUserInputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             System.Windows.Controls.TextBox textBox = sender as System.Windows.Controls.TextBox;
@@ -294,5 +319,10 @@ namespace Amdocs.Ginger.UserControls
             return null;
         }
 
+        private void xNewChat_Click(object sender, RoutedEventArgs e)
+        {
+            chatPanel.Children.Clear();
+            xLisaIntroPanel.Visibility = Visibility.Visible;
+        }
     }
 }
