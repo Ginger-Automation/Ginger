@@ -298,6 +298,7 @@ namespace Ginger
                 if (WorkSpace.Instance.SolutionLoaded)
                 {
                     WorkSpace.Instance.SolutionRepository.ModifiedFiles.CollectionChanged += ModifiedFilesChanged;
+
                 }
             }
 
@@ -636,6 +637,16 @@ namespace Ginger
                     xSolutionSourceControlInitMenuItem.Visibility = Visibility.Visible;
                     xSolutionSourceControlSetMenuItem.Visibility = Visibility.Collapsed;
                 }
+
+                if (!WorkSpace.Instance.RunningInExecutionMode)
+                {
+                    xChatbotIcon.Visibility = Visibility.Visible;
+                }
+                else 
+                {
+                    xChatbotIcon.Visibility = Visibility.Collapsed;
+                }
+                xChatbotWindow.Visibility = Visibility.Collapsed;
             }
             else
             {

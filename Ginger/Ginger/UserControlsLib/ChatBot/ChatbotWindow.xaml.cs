@@ -1,16 +1,15 @@
 ﻿using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET.GenAIServices;
+using Ginger;
 using Ginger.Extensions;
-using ICSharpCode.AvalonEdit.Rendering;
+using SixLabors.ImageSharp;
 using System;
-using System.Collections.ObjectModel;
-using System.Drawing;
-using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Amdocs.Ginger.UserControls
@@ -105,20 +104,21 @@ namespace Amdocs.Ginger.UserControls
                 Text = message,
                 //Background = isUserMessage ? System.Windows.Media.Brushes.LightBlue : System.Windows.Media.Brushes.LightGray,
                 Padding = new Thickness(10),
-                MaxWidth = 300,
+                MaxWidth = 330,
                 TextWrapping = TextWrapping.Wrap
             };
             // Create a border with curved corners
             Border messageBorder = new Border
             {
                 CornerRadius = new CornerRadius(10), // Adjust corner radius as needed
-                Background = isUserMessage ? System.Windows.Media.Brushes.LightBlue : System.Windows.Media.Brushes.LightGray,
+                Background = isUserMessage ? System.Windows.Media.Brushes.AliceBlue : System.Windows.Media.Brushes.WhiteSmoke,
                 Child = messageText, // Set the TextBlock as the child of the border
                 Margin = new Thickness(0, 0, 0, 5) // Add margin at the bottom for spacing
             };
 
             messageContainer.Children.Add(messageBorder);
 
+            EllipseGeometry ellipse = new EllipseGeometry(new System.Windows.Point(15, 15), 15, 15);
             // Add user icon based on the message sender
             if (isUserMessage)
             {
@@ -138,13 +138,14 @@ namespace Amdocs.Ginger.UserControls
 
                 messageContainer.Children.Insert(0, new System.Windows.Controls.Image
                 {
-                    Source = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User,
-                    foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_DarkGray")),
+                    Source = string.IsNullOrEmpty(WorkSpace.Instance.UserProfile.ProfileImage) ? ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User,
+                    foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_DarkGray")) : General.GetImageStream(General.Base64StringToImage(WorkSpace.Instance.UserProfile.ProfileImage)),
                     VerticalAlignment = VerticalAlignment.Top,
                     Width = 30,
                     Height = 30,
                     Margin = new Thickness(5),
-                    ToolTip = sender
+                    ToolTip = sender,
+                    Clip = ellipse
                 });
             }
             else
@@ -154,29 +155,30 @@ namespace Amdocs.Ginger.UserControls
 
                 messageContainer.Children.Insert(0, new System.Windows.Controls.Image
                 {
-                    Source = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User,
-                    foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_DarkGray")),
+                    // Source = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User, foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_DarkGray")),
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/Lisa.jpg", UriKind.RelativeOrAbsolute)),
                     VerticalAlignment = VerticalAlignment.Top,
                     Width = 30,
                     Height = 30,
                     Margin = new Thickness(5),
-                    ToolTip = sender
+                    ToolTip = sender,
+                    Clip = ellipse
                 });
             }
 
-            // Add time below the message
-            //TextBlock timeText = new TextBlock
-            //{
-            //    Text = DateTime.Now.ToString("HH:mm"), // Display current time in HH:mm format
-            //    FontSize = 10,
-            //    FontStyle = FontStyles.Italic,
-            //    HorizontalAlignment = HorizontalAlignment.Right,
-            //    Margin = new Thickness(5, 0, 5, 0) // Adjust margin for spacing
-            //};
-            //messageContainer.Children.Add(timeText);
+        // Add time below the message  new BitmapImage(new Uri(@"/Images/" + ImageFile, UriKind.RelativeOrAbsolute))
+        //TextBlock timeText = new TextBlock
+        //{
+        //    Text = DateTime.Now.ToString("HH:mm"), // Display current time in HH:mm format
+        //    FontSize = 10,
+        //    FontStyle = FontStyles.Italic,
+        //    HorizontalAlignment = HorizontalAlignment.Right,
+        //    Margin = new Thickness(5, 0, 5, 0) // Adjust margin for spacing
+        //};
+        //messageContainer.Children.Add(timeText);
 
 
-            chatPanel.Children.Add(messageContainer);
+        chatPanel.Children.Add(messageContainer);
         }
         //private void AddMessage(string sender, string message)
         //{
@@ -197,8 +199,6 @@ namespace Amdocs.Ginger.UserControls
 
         private async void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
-
-
             if (Keyboard.Modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && e.Key == Key.Enter)
             {
                 xUserInputTextBox.AppendText(Environment.NewLine);
@@ -210,7 +210,6 @@ namespace Amdocs.Ginger.UserControls
                 e.Handled = true;
             }
         }
-
 
         private void Button_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -255,11 +254,41 @@ namespace Amdocs.Ginger.UserControls
 
         private void xUserInputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ControlTemplate template = xUserInputTextBox.Template;
-            TextBlock xy = (TextBlock)template.FindName("xPlaceholder", xUserInputTextBox);
-            xy.Visibility = string.IsNullOrEmpty(xUserInputTextBox.Text) ? Visibility.Visible : Visibility.Hidden;
+            System.Windows.Controls.TextBox textBox = sender as System.Windows.Controls.TextBox;
+            if (textBox != null)
+            {
+                TextBlock placeholder = FindPlaceholder(textBox);
+                if (placeholder != null)
+                {
+                    if (!string.IsNullOrWhiteSpace(textBox.Text))
+                    {
+                        placeholder.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        placeholder.Visibility = Visibility.Visible;
+                    }
+                }
+            }
+        }
+        private TextBlock FindPlaceholder(Visual parent)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                Visual child = (Visual)VisualTreeHelper.GetChild(parent, i);
+                if (child is TextBlock && ((TextBlock)child).Name == "xPlaceholder")
+                {
+                    return (TextBlock)child;
+                }
+                else
+                {
+                    TextBlock placeholder = FindPlaceholder(child);
+                    if (placeholder != null)
+                        return placeholder;
+                }
+            }
+            return null;
         }
 
-        
     }
 }
