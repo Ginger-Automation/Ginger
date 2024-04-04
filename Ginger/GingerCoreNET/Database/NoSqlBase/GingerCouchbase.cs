@@ -153,7 +153,7 @@ namespace GingerCore.NoSqlBase
         private string GetBucketName(string inputSQL)
         {
             string bucketName = string.Empty;
-            string[] bucketNameArray = [];
+            string[] bucketNameArray;
             if (Action == ActDBValidation.eDBValidationType.RecordCount)
             {
                 bucketName = inputSQL.Replace("`", "");
