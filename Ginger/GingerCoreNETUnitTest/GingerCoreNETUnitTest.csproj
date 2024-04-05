@@ -86,7 +86,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.2" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.3" />
     <PackageReference Include="GingerTestHelper" Version="2.0.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.7.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
