@@ -311,11 +311,10 @@ namespace Ginger.BusinessFlowPages
                 xConsumerStack.Visibility = Visibility.Visible;                
 
                 //logic for Consumer ComboBox for Otoma
-                ObservableList<TargetBase> targetApplications;
+                ObservableList<TargetBase> targetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
                 ObservableList<Consumer> consumerList = new();
                 if (mContext.BusinessFlow != null)
                 {
-                    targetApplications = mContext.BusinessFlow.TargetApplications;
                     // this logic is developed to support the backward compatibility where parent guids are empty
                     if (targetApplications.Any(f => f.ParentGuid.Equals(Guid.Empty)))
                     {
@@ -329,10 +328,6 @@ namespace Ginger.BusinessFlowPages
                             }
                         }
                     }
-                }
-                else
-                {
-                    targetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
                 }
 
                 if (xTargetApplicationComboBox.SelectedItem != null)
