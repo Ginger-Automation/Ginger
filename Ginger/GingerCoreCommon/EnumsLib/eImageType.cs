@@ -86,6 +86,8 @@ namespace Amdocs.Ginger.Common.Enums
         Timer,
         #endregion
 
+        LisaProcessing,
+
         #region Execution Status Images
         Unknown,
         //############################## Execution Status Images:

@@ -329,6 +329,9 @@ namespace Amdocs.Ginger.UserControls
                 case eImageType.Processing:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Spinner, (LinearGradientBrush)FindResource("$amdocsLogoLinarGradientBrush_NewAmdocsColors"), 2);
                     break;
+                case eImageType.LisaProcessing:
+                    SetAsFontAwesomeIcon(EFontAwesomeIcon.Solid_Spinner, Brushes.MediumPurple, 2);
+                    break;
                 case eImageType.Ready:
                     SetAsFontAwesomeIcon(EFontAwesomeIcon.Regular_ThumbsUp, (SolidColorBrush)FindResource("$PendingStatusColor"));
                     break;

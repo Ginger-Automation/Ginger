@@ -309,7 +309,13 @@
             </Grid>
 
             <DockPanel LastChildFill="False" Grid.Row="1">
-                <usercontrols:ChatbotIcon x:Name="xChatbotIcon" MouseDown="ChatbotIcon_MouseDown" Visibility="Collapsed" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="10,10,50,0" Width="154"/>
+                <Button x:Name="xChatbotIcon"  Style="{StaticResource $RoundTextButtonStyle_ChatbotIcon}" Click="xChatbotIcon_Click" Foreground="White" Background="#824de6" Visibility="Collapsed" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="0,0,50,0" Width="150" Height="35">
+                    <StackPanel Orientation="Horizontal">
+                        <usercontrols:ImageMakerControl ImageType="Chat" Width="16" Margin="0,2,8,0" Foreground="White"></usercontrols:ImageMakerControl>
+                        <TextBlock x:Name="xButtonText" HorizontalAlignment="Center"  FontWeight="Bold" FontSize="14" VerticalAlignment="Center" Text="Ask Lisa" />
+                    </StackPanel>
+                </Button>
+                <!--<usercontrols:ChatbotIcon  MouseDown="ChatbotIcon_MouseDown" Visibility="Collapsed" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="10,10,50,0" Width="154"/>-->
                 <usercontrols:ChatbotWindow x:Name="xChatbotWindow" Grid.Column="1" Visibility="Collapsed" DockPanel.Dock="Right" VerticalAlignment="Bottom" Background="GhostWhite" Margin="10,10,10,0"/>
 
             </DockPanel>

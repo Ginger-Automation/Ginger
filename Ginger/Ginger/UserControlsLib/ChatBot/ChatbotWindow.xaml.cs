@@ -5,6 +5,7 @@ using Ginger;
 using Ginger.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,13 +19,14 @@ namespace Amdocs.Ginger.UserControls
     public partial class ChatbotWindow : UserControl
     {
         BrainAIServices brainAIServices;
-
+        static List<(string, string)> messages = [];
         public ChatbotWindow()
         {
             InitializeComponent();
             brainAIServices = new BrainAIServices();
+            xProfileImageImgBrush.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Ginger;component/Images/Lisa.jpg", UriKind.RelativeOrAbsolute));
             //string introMessage = "Hello I'm Lisa, the Ginger AI Assistent. How can i help you today?";
-           // AddMessage("Lisa", introMessage, false);
+            // AddMessage("Lisa", introMessage, false);
         }
 
 
@@ -59,7 +61,7 @@ namespace Amdocs.Ginger.UserControls
             if (userInput.IsNullOrEmpty())
             {
                 // need to change to the specific message
-               // Reporter.ToUser(eUserMsgKey.EnvParamNameEmpty);
+                // Reporter.ToUser(eUserMsgKey.EnvParamNameEmpty);
                 return;
             }
             xLisaIntroPanel.Visibility = Visibility.Collapsed;
@@ -67,9 +69,9 @@ namespace Amdocs.Ginger.UserControls
             ShowLoader();
             try
             {
-                if (chatPanel.Children.Count == 0 )
+                if (chatPanel.Children.Count == 0)
                 {
-                    answer = await brainAIServices.StartNewChat(userInput);                 
+                    answer = await brainAIServices.StartNewChat(userInput);
                 }
                 else
                 {
@@ -89,8 +91,9 @@ namespace Amdocs.Ginger.UserControls
         }
 
 
-        private void AddMessage(string sender, string message, bool isUserMessage)
+        private async void AddMessage(string sender, string message, bool isUserMessage)
         {
+            messages.Add((sender, message));
             StackPanel messageContainer = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
@@ -101,7 +104,7 @@ namespace Amdocs.Ginger.UserControls
 
             TextBlock messageText = new TextBlock
             {
-                Text = message,
+                Text = isUserMessage ? message: "",
                 //Background = isUserMessage ? System.Windows.Media.Brushes.LightBlue : System.Windows.Media.Brushes.LightGray,
                 Padding = new Thickness(10),
                 MaxWidth = 315,
@@ -118,15 +121,15 @@ namespace Amdocs.Ginger.UserControls
 
             ImageMakerControl copyButton = new ImageMakerControl
             {
-                ImageType =Common.Enums.eImageType.Copy,
+                ImageType = Common.Enums.eImageType.Copy,
                 Visibility = Visibility.Collapsed, // Initially hide the copy button
-                Width = 10                
+                Width = 10
             };
 
 
 
             // Add the copy button to the message container
-       
+
             messageContainer.Children.Add(messageBorder);
             messageContainer.Children.Add(copyButton);
             EllipseGeometry ellipse = new EllipseGeometry(new System.Windows.Point(12.5, 15), 15, 15);            // Add user icon based on the message sender
@@ -134,17 +137,6 @@ namespace Amdocs.Ginger.UserControls
             {
                 // Add user icon (right side)
                 messageContainer.HorizontalAlignment = HorizontalAlignment.Left;
-
-                //messageContainer.Children.Add(new System.Windows.Controls.Image
-                //{
-                //    Source = ImageMakerControl.GetImageSource(Amdocs.Ginger.Common.Enums.eImageType.User,
-                //    foreground: (System.Windows.Media.SolidColorBrush)FindResource("$BackgroundColor_DarkGray")),
-                //    VerticalAlignment = VerticalAlignment.Top,
-                //    Width = 30,
-                //    Height = 30,
-                //    Margin = new Thickness(5),
-                //    ToolTip = sender
-                //});
 
                 messageContainer.Children.Insert(0, new System.Windows.Controls.Image
                 {
@@ -155,7 +147,7 @@ namespace Amdocs.Ginger.UserControls
                     Height = 30,
                     Margin = new Thickness(5),
                     ToolTip = sender,
-                    Clip = ellipse
+                    Clip = ellipse,
                 });
             }
             else
@@ -209,25 +201,16 @@ namespace Amdocs.Ginger.UserControls
             //messageContainer.Children.Add(timeText);
 
             chatPanel.Children.Add(messageContainer);
-            xScrollViewer.ScrollToBottom();            
+            xScrollViewer.ScrollToBottom();
+            if (!isUserMessage)
+            {
+                foreach (char c in message)
+                {
+                    messageText.Text += c;
+                    await Task.Delay(20); // Adjust typing speed here
+                }
+            }
         }
-        //private void AddMessage(string sender, string message)
-        //{
-        //    TextBlock newTextBlock = new TextBlock();
-
-        //    newTextBlock.Inlines.Add(new Run("Bold text") { FontWeight = FontWeights.Bold });
-        //    newTextBlock.Inlines.Add(new Bold(new Run("TextBlock")));
-        //    boldRun.FontWeight = FontWeights.Bold;
-
-        //    newTextBlock.Text = $"{sender}: {message}";
-        //    newTextBlock.Margin = new Thickness(5);
-        //    newTextBlock.TextWrapping = TextWrapping.Wrap;
-        //    newTextBlock.Width = 300;
-        //    chatPanel.Children.Add(newTextBlock);
-
-
-        //}
-
         private async void TextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if ((Keyboard.Modifiers == ModifierKeys.Control ||
@@ -255,7 +238,7 @@ namespace Amdocs.Ginger.UserControls
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.Visibility = Visibility.Collapsed;
-            chatPanel.Children.Clear();
+            //chatPanel.Children.Clear();
         }
 
         private void ShowLoader()
@@ -263,6 +246,7 @@ namespace Amdocs.Ginger.UserControls
             xLoader.Visibility = Visibility.Visible;
             xUserInputTextBox.Clear();
             xUserInputTextBox.IsEnabled = false;
+            xNewChat.IsEnabled = false;
             // xSend.IsEnabled = false;
 
 
@@ -272,6 +256,7 @@ namespace Amdocs.Ginger.UserControls
         {
             xLoader.Visibility = Visibility.Collapsed;
             xUserInputTextBox.IsEnabled = true;
+            xNewChat.IsEnabled = true;
             //xSend.IsEnabled = true;
         }
 
@@ -282,7 +267,7 @@ namespace Amdocs.Ginger.UserControls
         //        xScrollViewer.ScrollToVerticalOffset(xScrollViewer.ScrollableHeight);
         //    }
         //}
-       
+
         private void xUserInputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             System.Windows.Controls.TextBox textBox = sender as System.Windows.Controls.TextBox;
@@ -325,17 +310,22 @@ namespace Amdocs.Ginger.UserControls
         {
             chatPanel.Children.Clear();
             xLisaIntroPanel.Visibility = Visibility.Visible;
+            messages.Clear();
         }
 
-    private void xCopyAll_Click(object sender, RoutedEventArgs e)
-    {
-            Dictionary<string, string> messageCopyAll = new Dictionary<string, string>();
-
-            foreach (var item in chatPanel.Children)
+        private void xCopyAll_Click(object sender, RoutedEventArgs e)
+        {
+            if (messages.Count != 0)
             {
-               
-            }
+                StringBuilder sb = new StringBuilder();
 
+                foreach (var item in messages)
+                {
+                    sb.Append($"{item.Item1}: {item.Item2} {Environment.NewLine}");
+                }
+
+                Clipboard.SetText(sb.ToString());
+            }
+        }
     }
-}
 }

@@ -5,14 +5,14 @@
     <Border CornerRadius="7" BorderBrush="#8a57ea" BorderThickness="2" >
         <Grid Background="White" Margin="0,0,0,5">
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="45"/>
                 <RowDefinition Height="10*"/>
                 <RowDefinition Height="125"/>
             </Grid.RowDefinitions>
             <Grid Background="#7036dc">
                 <StackPanel Orientation="Horizontal" Margin="10,0,0,0">
                     <usercontrols:ImageMakerControl Width="22" ImageType="Chat" Margin="0,5,3,0"/>
-                    <Label Content="Ask Lisa" VerticalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="White"/>
+                    <Label Content="Ask Lisa" VerticalAlignment="Center" FontSize="18" FontWeight="Bold" Foreground="White"/>
                 </StackPanel>
                 <Button HorizontalAlignment="Right" MouseLeftButtonDown="Button_MouseLeftButtonDown" Click="Button_Click" Width="30" BorderThickness="0" Background="Transparent">
                     <usercontrols:ImageMakerControl ImageType="CloseWhite" Width="15"></usercontrols:ImageMakerControl>
@@ -24,14 +24,21 @@
                     <StackPanel x:Name="chatPanel" VerticalAlignment="Bottom">
                     </StackPanel>
                 </ScrollViewer>
-                <StackPanel x:Name="xLisaIntroPanel" Visibility="Visible" VerticalAlignment="Center" Margin="23,0,10,250">
-                    <TextBlock FontWeight="Bold" FontSize="20" HorizontalAlignment="Center" Text="Hi, I'm Lisa"/>
-                    <TextBlock HorizontalAlignment="Center" FontSize="15" FontWeight="SemiBold" Text="What do you want to know about Ginger ?"/>
+                <StackPanel x:Name="xLisaIntroPanel" Visibility="Visible" VerticalAlignment="Center" Margin="23,100,10,250">
+                    <Ellipse x:Name="xProfileImageEllipse" Grid.Column="0" Height="45" Width="45" Margin="0,0,0,5" HorizontalAlignment="Center" >
+                        <Ellipse.Fill>
+                            <ImageBrush x:Name="xProfileImageImgBrush" RenderOptions.BitmapScalingMode="HighQuality"  Stretch="Uniform"  />
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <TextBlock FontWeight="Bold" FontSize="18" HorizontalAlignment="Center" Text="Hi, I'm Lisa"/>
+                    <TextBlock HorizontalAlignment="Center" FontSize="13" FontWeight="SemiBold" Text="What do you want to know about Ginger?"/>
                 </StackPanel>
-                <usercontrols:ImageMakerControl  Visibility="Collapsed" x:Name="xLoader" ImageType="Processing" Width="20" VerticalAlignment="Center"/>
+                <!--<usercontrols:ImageMakerControl  Visibility="Collapsed" x:Name="xLoader" ImageType="Processing" Width="20" VerticalAlignment="Center"/>-->
             </Grid>
 
             <Grid Grid.Row="2" Background="White">
+
+                <usercontrols:ImageMakerControl Grid.Row="0"  Visibility="Collapsed" x:Name="xLoader" ImageType="LisaProcessing" Width="20" VerticalAlignment="Top"/>
                 <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,2,5,0">
                     <Button x:Name="xCopyAll" BorderThickness="0" Background="Transparent" Width="20" Click="xCopyAll_Click">
                         <Button.ToolTip>
@@ -56,7 +63,7 @@
                                         <Grid>
                                             <ScrollViewer x:Name="PART_ContentHost" Background="Transparent" />
                                             <TextBlock Text="Type Your Message..." Name="xPlaceholder" FontWeight="Light" Panel.ZIndex="-1" VerticalAlignment="Top" Foreground="DarkGray" Padding="5"/>
-                                            <Button Click="SendMessage" VerticalContentAlignment="Bottom" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="30" Grid.Column="1" Background="Transparent" BorderThickness="0">
+                                            <Button Click="SendMessage" ToolTip="Send Message to Lisa" VerticalContentAlignment="Bottom" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="30" Grid.Column="1" Background="Transparent" BorderThickness="0">
                                                 <usercontrols:ImageMakerControl x:Name="xSend" Grid.Row="1" ImageType="SendArrow" Width="30" Foreground="MediumPurple" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Button>
                                         </Grid>
@@ -65,9 +72,11 @@
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsKeyboardFocused" Value="True">
                                         <Setter TargetName="border" Property="BorderBrush" Value="MediumPurple" />
+                                        <Setter TargetName="border" Property="BorderThickness" Value="2" />
                                     </Trigger>
                                     <Trigger Property="IsKeyboardFocused" Value="False">
                                         <Setter TargetName="border" Property="BorderBrush" Value="Gray" />
+                                        <Setter TargetName="border" Property="BorderThickness" Value="1.5" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>

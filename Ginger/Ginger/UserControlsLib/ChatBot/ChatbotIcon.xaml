@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              Height="30" Width="130">
     <Grid>
-        <Button Click="Lisa_Click" Style="{StaticResource $RoundTextButtonStyle_ChatbotIcon}" Foreground="White" Background="#824de6">
+        <Button Style="{StaticResource $RoundTextButtonStyle_ChatbotIcon}" Foreground="White" Background="#824de6">
             <StackPanel Orientation="Horizontal">
                 <usercontrols:ImageMakerControl ImageType="Chat" Width="16"  Foreground="White"></usercontrols:ImageMakerControl>
                 <TextBlock x:Name="xButtonText" HorizontalAlignment="Center" Margin="9,0,0,0"  FontWeight="Bold" FontSize="14" VerticalAlignment="Center" Text="Ask Lisa" />
