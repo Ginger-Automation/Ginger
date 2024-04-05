@@ -265,6 +265,7 @@ namespace Ginger.Run
             {
                 xExportTypePanel.Visibility = Visibility.Collapsed;
                 xExportDestinationFolder.Visibility = Visibility.Collapsed;
+                SearchALMEntityByNamePnl.Visibility = Visibility.Collapsed;
                 SearchALMEntityByName.Visibility = Visibility.Collapsed;
                 return;
             }
@@ -276,11 +277,13 @@ namespace Ginger.Run
             if (xExportTypeCbx.ComboBoxSelectedValue is null) //&& xExportTypeCbx.ComboBoxSelectedValue.ToString().Equals(eExportType.ResultsOnly.ToString()))
             {
                 xExportDestinationFolder.Visibility = Visibility.Collapsed;
+                SearchALMEntityByNamePnl.Visibility = Visibility.Collapsed;
                 SearchALMEntityByName.Visibility = Visibility.Collapsed;
                 return;
             }
             xExportDestinationFolder.Visibility = Visibility.Visible;
             xExportTypeCbx.ComboBox.SelectedValue = eExportType.EntitiesAndResults;
+            SearchALMEntityByNamePnl.Visibility = Visibility.Visible;
             SearchALMEntityByName.Visibility = Visibility.Visible;
             xExportTypeCbx.IsEnabled = false;
         }
