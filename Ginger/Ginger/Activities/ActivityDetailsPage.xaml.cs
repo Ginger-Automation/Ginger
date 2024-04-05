@@ -223,7 +223,37 @@ namespace Ginger.BusinessFlowPages
                 TargetAppSelectedComboBox();
             }
         }
+        public void UpdateTargetApplication()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                int pointer = 0;
+                foreach(TargetApplication targetApplication in xTargetApplicationComboBox.Items)
+                {
+                    
+                   var ApplicationPlatform =   WorkSpace.Instance?.Solution?.ApplicationPlatforms?
+                    .FirstOrDefault((appPlat) =>
+                    {
+                        if(appPlat.NameBeforeEdit!=null && appPlat.NameBeforeEdit.Equals(targetApplication.AppName))
+                        {
+                            return true ;  
+                        }
+                        return false;
+                    });
+                    if(ApplicationPlatform != null)
+                    {
+                        targetApplication.AppName = ApplicationPlatform.AppName;
 
+                        if (targetApplication.AppName.Equals(mActivity.TargetApplication) && xTargetApplicationComboBox.SelectedIndex != pointer)
+                        {
+                            xTargetApplicationComboBox.SelectedIndex = pointer;
+                        }
+                    }
+                    pointer++;
+                }
+
+            });
+        }
         private void AutoUpdate_ConsumerList(object? sender, NotifyCollectionChangedEventArgs e)
         {
              TargetAppSelectedComboBox();

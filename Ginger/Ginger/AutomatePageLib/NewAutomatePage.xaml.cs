@@ -629,13 +629,16 @@ namespace GingerWPF.BusinessFlowsLib
         {
             var selectedTargetApplication = (TargetApplication)mActivityDetailsPage.xTargetApplicationComboBox.SelectedItem;
 
-            bool doesApplicationAgentAlreadyExist =  mExecutionEngine.GingerRunner.ApplicationAgents.Any((aa) => aa.AppName.Equals(selectedTargetApplication.AppName));
-
-            if (!doesApplicationAgentAlreadyExist)
+            if (selectedTargetApplication != null)
             {
-                ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = selectedTargetApplication.AppName };
+                bool doesApplicationAgentAlreadyExist = mExecutionEngine.GingerRunner.ApplicationAgents.Any((aa) => aa.AppName.Equals(selectedTargetApplication.AppName));
 
-                mExecutionEngine.GingerRunner.ApplicationAgents.Add(applicationAgent);
+                if (!doesApplicationAgentAlreadyExist)
+                {
+                    ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = selectedTargetApplication.AppName };
+
+                    mExecutionEngine.GingerRunner.ApplicationAgents.Add(applicationAgent);
+                }
             }
 
             mApplicationAgentsMapPage.RefreshApplicationAgentsList();

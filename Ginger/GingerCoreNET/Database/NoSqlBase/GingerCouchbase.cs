@@ -153,25 +153,35 @@ namespace GingerCore.NoSqlBase
         private string GetBucketName(string inputSQL)
         {
             string bucketName = string.Empty;
-            string inputSQLLower = inputSQL.ToLower();
-            int bucket1 = 0;
-            int bucket2 = 0;
+            string[] bucketNameArray;
             if (Action == ActDBValidation.eDBValidationType.RecordCount)
             {
                 bucketName = inputSQL.Replace("`", "");
-            }else
-            {
-                if (Action == ActDBValidation.eDBValidationType.UpdateDB){
-                    bucket1 = inputSQLLower.IndexOf("`");
-                }else{
-                    bucket1 = inputSQLLower.IndexOf(" from ") + 6;
-                }
-                bucket2 = inputSQLLower.IndexOf("`", bucket1 + 1);
-                bucketName = inputSQL.Substring(bucket1, bucket2 - bucket1);
-
+                bucketNameArray = bucketName.Split('.');
+                bucketName = bucketNameArray[0].Replace("'", "");
             }
-            bucketName = bucketName.Replace("`", "");
-            bucketName = bucketName.Replace("'", "");
+            else
+            {
+                if (Action == ActDBValidation.eDBValidationType.UpdateDB)
+                {
+                    bucketName = inputSQL.Substring(inputSQL.ToLower().IndexOf("Update ") + 7);
+                }
+                else
+                {
+                    bucketName = inputSQL.Substring(inputSQL.ToLower().IndexOf(" from ") + 6);
+                }
+                bucketNameArray = bucketName.Split('.');
+                bucketName = bucketNameArray[0].Trim();
+                int index = bucketName.IndexOf(" ");
+                if (index != -1)
+                {
+                    bucketName = bucketName.Substring(0, index).Replace("`", "");
+                }
+                else
+                {
+                    bucketName = bucketName.Substring(0, bucketName.Length - 1).Replace("`", "");
+                }
+            }
             return bucketName;
         }
 
@@ -204,9 +214,8 @@ namespace GingerCore.NoSqlBase
                             }
                             break;
                         case Actions.ActDBValidation.eDBValidationType.RecordCount:
-                            result = clusterCB.Query<dynamic>("Select Count(*) as RECORDCOUNT from `" + bucketName + "`");
-                            var count = result.Rows[0];
-                            Act.ParseJSONToOutputValues(count.ToString(), 1);
+                            result = clusterCB.Query<dynamic>("Select Count(*) as RECORDCOUNT from " + SQLCalculated + "");
+                            Act.ParseJSONToOutputValues(result.Rows[0].ToString(), 1);
                             break;
                         case Actions.ActDBValidation.eDBValidationType.UpdateDB:
                             result = clusterCB.Query<dynamic>(SQLCalculated);
