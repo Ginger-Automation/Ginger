@@ -42,6 +42,8 @@ namespace Ginger.SolutionWindows
         Solution mSolution;
         GenericWindow _pageGenericWin = null;
         private ePlatformType SelectedPlatform = ePlatformType.NA;
+        private bool isApplicationDetailsSet = false;
+        private string mainAppDescription = string.Empty;
         public AddSolutionPage(Solution s)
         {
             InitializeComponent();
@@ -68,7 +70,7 @@ namespace Ginger.SolutionWindows
                 Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 //check name and folder inputs exists
                 if (SolutionNameTextBox.Text.Trim() == string.Empty || SolutionFolderTextBox.Text.Trim() == string.Empty
-                            || UCEncryptionKey.EncryptionKeyPasswordBox.Password.Trim() == string.Empty)
+                            || UCEncryptionKey.EncryptionKeyPasswordBox.Password.Trim() == string.Empty || !isApplicationDetailsSet)
                 {
                     Mouse.OverrideCursor = null;
                     Reporter.ToUser(eUserMsgKey.MissingAddSolutionInputs);
@@ -87,6 +89,7 @@ namespace Ginger.SolutionWindows
                 ApplicationPlatform MainApplicationPlatform = new ApplicationPlatform();
                 MainApplicationPlatform.AppName = ApplicationLabel.Content.ToString();
                 MainApplicationPlatform.Platform = SelectedPlatform;
+                MainApplicationPlatform.Description = mainAppDescription;
 
                 mSolution.ApplicationPlatforms.Add(MainApplicationPlatform);
                 mSolution.EncryptionKey = UCEncryptionKey.EncryptionKeyPasswordBox.Password;
@@ -218,6 +221,9 @@ namespace Ginger.SolutionWindows
                 case ePlatformType.Java:
                     agent.DriverType = Agent.eDriverType.JavaDriver;
                     break;
+                case ePlatformType.MainFrame:
+                    agent.DriverType = Agent.eDriverType.MainFrame3270;
+                    break;
                 default:
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No default driver set for first agent");
                     break;
@@ -313,6 +319,8 @@ namespace Ginger.SolutionWindows
                 xApplicationImage.ImageType = ApplicationPlatform.GetPlatformImage(mSolution.ApplicationPlatforms[0].Platform);
                 xApplicationImage.Visibility = Visibility.Visible;
                 SelectedPlatform = mSolution.ApplicationPlatforms[0].Platform;
+                mainAppDescription = mSolution.ApplicationPlatforms[0].Description;
+                isApplicationDetailsSet = true;
             }
         }
     }
