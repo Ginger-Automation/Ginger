@@ -17,6 +17,7 @@ limitations under the License.
 #endregion
 
 using Amdocs.Ginger.Common;
+using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Cassandra;
 using GingerCore.Actions;
 using GingerCore.NoSqlBase.DataAccess;
@@ -24,6 +25,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Security.Authentication;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -44,25 +46,62 @@ namespace GingerCore.NoSqlBase
             try
             {
                 string queryTimeoutString = "querytimeout=";
+                string SLL = "SSL=";
+                string sslValue = null;
                 int queryTimeout = 20000;//default timeout (20 seconds).
-                if (Db.DatabaseOperations.TNSCalculated.ToLower().Contains(queryTimeoutString.ToLower()))
+                string[] queryArray = Db.DatabaseOperations.TNSCalculated.Split(';');
+                if (queryArray[1].ToLower().Contains(queryTimeoutString.ToLower()))
                 {
-                    string queryTimeoutValue = Db.DatabaseOperations.TNSCalculated.Substring(Db.DatabaseOperations.TNSCalculated.ToLower().IndexOf(queryTimeoutString.ToLower()) + queryTimeoutString.Length);
+                    string queryTimeoutValue = queryArray[1].Substring(queryArray[1].ToLower().IndexOf(queryTimeoutString.ToLower()) + queryTimeoutString.Length);
                     queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
                 }
 
-                string[] HostKeySpace = Db.DatabaseOperations.TNSCalculated.Split('/');
+                if (queryArray[2].ToLower().Contains(SLL.ToLower()))
+                {
+                    sslValue = queryArray[2].Substring(queryArray[2].ToLower().IndexOf(SLL.ToLower()) + SLL.Length);
+                }
+                string[] HostKeySpace = queryArray[0].Split('/');
                 string[] HostPort = HostKeySpace[0].Split(':');
-
+               
                 if (HostPort.Length == 2)
                 {
                     if (string.IsNullOrEmpty(Db.Pass) && string.IsNullOrEmpty(Db.User))
                     {
-                        cluster = Cluster.Builder().AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
+                        if (string.IsNullOrEmpty(sslValue))
+                        {
+                            cluster = Cluster.Builder().AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
+                        }
+                        else
+                        {
+                            var sslOptions = new SSLOptions(
+                                        Enum.Parse<SslProtocols>(sslValue), false,
+                                        (sender, certificate, chain, errors) => { return true; });
+                            cluster = Cluster.Builder()
+                                .AddContactPoint(HostPort[0])
+                                .WithPort(Int32.Parse(HostPort[1]))
+                                .WithSSL(sslOptions)
+                                .WithQueryTimeout(queryTimeout)
+                                .Build();
+                        }
                     }
                     else
                     {
-                        cluster = Cluster.Builder().WithCredentials(Db.User.ToString(), Db.Pass.ToString()).AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
+                        if (string.IsNullOrEmpty(sslValue)) {
+                            cluster = Cluster.Builder().WithCredentials(Db.User.ToString(), Db.Pass.ToString()).AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
+                        }
+                        else
+                        {
+                            var sslOptions = new SSLOptions(
+                                        Enum.Parse<SslProtocols>(sslValue), false,
+                                        (sender, certificate, chain, errors) => { return true; });
+                            cluster = Cluster.Builder()
+                                .AddContactPoint(HostPort[0])
+                                .WithPort(Int32.Parse(HostPort[1]))
+                                .WithAuthProvider(new PlainTextAuthProvider(Db.User, Db.Pass))
+                                .WithSSL(sslOptions)
+                                .WithQueryTimeout(queryTimeout)
+                                .Build();
+                        }
                     }
                 }
                 else
@@ -94,7 +133,7 @@ namespace GingerCore.NoSqlBase
         {
             try
             {
-                if (session != null)
+                if (session != null && !session.IsDisposed)
                 {
                     Metadata m = cluster.Metadata;
                     ICollection<string> Keyspaces = m.GetKeyspaces();
@@ -184,6 +223,7 @@ namespace GingerCore.NoSqlBase
         {
             session.Dispose();
             cluster.Dispose();
+            session = null;
         }
 
         public Type TypeConverter(RowSet RS, string Type1)
