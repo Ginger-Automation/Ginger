@@ -218,6 +218,9 @@ namespace Ginger.SolutionWindows
                 case ePlatformType.Java:
                     agent.DriverType = Agent.eDriverType.JavaDriver;
                     break;
+                case ePlatformType.MainFrame:
+                    agent.DriverType = Agent.eDriverType.MainFrame3270;
+                    break;
                 default:
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No default driver set for first agent");
                     break;
