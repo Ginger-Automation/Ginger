@@ -26,6 +26,7 @@ using Ginger.BusinessFlowPages;
 using Ginger.BusinessFlowWindows;
 using Ginger.Repository;
 using Ginger.Repository.AddItemToRepositoryWizard;
+using Ginger.SolutionWindows;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.UCListView;
 using GingerCore;
@@ -299,6 +300,7 @@ namespace GingerWPF.BusinessFlowsLib
                     {
                         mConfigurationsPage = new ActivityDetailsPage(mActivity, mContext, mPageViewMode);
                         xConfigurationsFrame.SetContent(mConfigurationsPage);
+                        TargetApplicationsPage.OnActivityUpdate += UpdateTargetApplication;
                     }
                     else
                     {
@@ -307,6 +309,15 @@ namespace GingerWPF.BusinessFlowsLib
                 }
 
                 mLastSelectedTab = (TabItem)xItemsTabs.SelectedItem;
+            }
+        }
+
+        private void UpdateTargetApplication()
+        {
+
+            if (mConfigurationsPage != null)
+            {
+                mConfigurationsPage.UpdateTargetApplication();
             }
         }
 
