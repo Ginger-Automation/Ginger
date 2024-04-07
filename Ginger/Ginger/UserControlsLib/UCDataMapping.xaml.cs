@@ -103,7 +103,7 @@ namespace Ginger.UserControlsLib
             set 
             { 
                 
-                SetValue(MappedValueProperty, value.ToString());
+                SetValue(MappedValueProperty, value);
                 if(WorkSpace.Instance!=null 
                     && WorkSpace.Instance.RunsetExecutor!=null 
                     && WorkSpace.Instance.RunsetExecutor.RunSetConfig != null)
