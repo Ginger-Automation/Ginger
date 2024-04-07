@@ -48,11 +48,9 @@
                                  <TextBlock Text="Value is mandatory" Name="ValueError" DockPanel.Dock="Bottom" Foreground="Red" Visibility="Hidden" Margin="5, 0, 0 , 0"/>
                             </StackPanel>
                             
-                            <StackPanel Orientation="Horizontal" Visibility="Collapsed" Name="DateTimePanel" Margin="5, 0, 0, 0">
+                            <StackPanel Orientation="Horizontal" Visibility="Visible" Name="DateTimePanel" Margin="5, 0, 0, 0">
                                 <TextBlock>Initial Date Time:</TextBlock>
-                                <window:WindowsFormsHost Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Width="30" Height="30">
-                                    <wf:DateTimePicker    x:Name="dtpInitialDate" Format="Custom" ></wf:DateTimePicker>
-                                </window:WindowsFormsHost>
+                                <DatePicker Margin="10,-5,0,0" Name="xDateTime" Width="150"/>
                             </StackPanel>
                         </StackPanel>
                     </DockPanel>
