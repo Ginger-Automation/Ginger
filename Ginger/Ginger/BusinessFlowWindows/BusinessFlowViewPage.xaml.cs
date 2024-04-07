@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.Repository;
 using Ginger;
+using Ginger.Agents;
 using Ginger.ALM;
 using Ginger.AnalyzerLib;
 using Ginger.BusinessFlowPages;
@@ -58,6 +59,8 @@ namespace GingerWPF.BusinessFlowsLib
         public BusinessFlowViewPage(BusinessFlow businessFlow, Context context, Ginger.General.eRIPageViewMode pageViewMode, bool ignoreValidationRules = false)
         {
             InitializeComponent();
+            ApplicationAgentsMapPage.BusinessFlowTargetApplicationChanged -= UpdateInfoSection;
+            ApplicationAgentsMapPage.BusinessFlowTargetApplicationChanged += UpdateInfoSection;
 
             mBusinessFlow = businessFlow;
             CurrentItemToSave = mBusinessFlow;
@@ -97,7 +100,6 @@ namespace GingerWPF.BusinessFlowsLib
             CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: mBusinessFlow.TargetApplications, handler: TargetApplications_CollectionChanged);
             UpdateInfoSection();
-
             //Activities Tab Bindings
             CollectionChangedEventManager.RemoveHandler(source: mBusinessFlow.Activities, handler: Activities_CollectionChanged);
             CollectionChangedEventManager.AddHandler(source: mBusinessFlow.Activities, handler: Activities_CollectionChanged);
