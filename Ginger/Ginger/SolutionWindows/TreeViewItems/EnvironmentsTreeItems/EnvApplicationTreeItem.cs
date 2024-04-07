@@ -127,6 +127,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             EnvApplication copy = (EnvApplication)EnvApplication.CreateCopy();
             copy.Name = copy.Name + "_copy";
+            copy.Platform = EnvApplication.Platform;
             ProjEnvironment.Applications.Add(copy);
             ProjEnvironment.SaveBackup();//to mark the env as changed
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
