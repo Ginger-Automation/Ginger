@@ -25,6 +25,8 @@ using GingerCore.Environments;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
 using Microsoft.VisualStudio.Services.Common;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -90,18 +92,26 @@ namespace Ginger.SolutionWindows
             SelectApplicationGrid.InitViewItems();
         }
 
+        ApplicationPlatform? NewlyAddedApplicationPlatform = null;
+
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
         {
             Button CloseButton = new Button();
             CloseButton.Content = "OK";
             CloseButton.Click += new RoutedEventHandler(OKButton_Click);
-
             ObservableList<Button> winButtons = new ObservableList<Button>();
             winButtons.Add(CloseButton);
 
             GingerCore.General.LoadGenericWindow(ref _pageGenericWin, null, windowStyle, "Add Application to solution", this, winButtons, true);
             _pageGenericWin.Width = 800;
             _pageGenericWin.Height = 300;
+
+        }
+        public void ShowAsWindow(ref ApplicationPlatform? NewlyAddedApplicationPlatform, eWindowShowStyle windowStyle = eWindowShowStyle.Dialog)
+        {
+
+            ShowAsWindow(windowStyle);
+            NewlyAddedApplicationPlatform = this.NewlyAddedApplicationPlatform;
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
@@ -154,12 +164,17 @@ namespace Ginger.SolutionWindows
                 ProjEnvironments.ForEach((projEnv) => { 
               
                     projEnv.StartDirtyTracking(); 
-                    projEnv.Applications.Add(new EnvApplication() { Name = selectedApp.AppName, ParentGuid = selectedApp.Guid, Platform = selectedApp.Platform }); 
+                    projEnv.Applications.Add(new EnvApplication() { Name = selectedApp.AppName, ParentGuid = selectedApp.Guid, Platform = selectedApp.Platform, Active=true }); 
                     projEnv.OnPropertyChanged(nameof(projEnv.Applications)); 
                 });
             }
 
             mSolution.ApplicationPlatforms.Add(selectedApp);
+
+            if (!msgSelection.Equals(eUserMsgSelection.Yes))
+            {
+                this.NewlyAddedApplicationPlatform = selectedApp;
+            }
 
             var DoesMatchingPlatformAgentExist = WorkSpace.Instance.SolutionRepository?.GetAllRepositoryItems<Agent>().Any((agent) => agent.Platform.Equals(selectedApp.Platform)) ?? true;
 
@@ -207,6 +222,9 @@ namespace Ginger.SolutionWindows
                     break;
                 case ePlatformType.Java:
                     agent.DriverType = Agent.eDriverType.JavaDriver;
+                    break;
+                case ePlatformType.MainFrame:
+                    agent.DriverType = Agent.eDriverType.MainFrame3270;
                     break;
                 default:
                     Reporter.ToUser(eUserMsgKey.StaticWarnMessage, "No default driver set for first agent");
