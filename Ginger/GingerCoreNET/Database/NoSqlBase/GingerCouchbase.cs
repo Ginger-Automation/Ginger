@@ -164,7 +164,7 @@ namespace GingerCore.NoSqlBase
             {
                 if (Action == ActDBValidation.eDBValidationType.UpdateDB)
                 {
-                    bucketName = inputSQL.Substring(inputSQL.ToLower().IndexOf("Update ") + 7);
+                    bucketName = inputSQL.Substring(inputSQL.ToLower().IndexOf("update ") + 7);
                 }
                 else
                 {

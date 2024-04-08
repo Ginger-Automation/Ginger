@@ -51,29 +51,21 @@ namespace GingerCore.NoSqlBase
                 if (queryArray[1].ToLower().Contains(queryTimeoutString))
                 {
                     string queryTimeoutValue = queryArray[1].Substring(queryArray[1].ToLower().IndexOf(queryTimeoutString) + queryTimeoutString.Length);
+                    if (!int.TryParse(queryTimeoutValue, out int timeout))
+                    {
+                        throw new ArgumentException("Query timeout value is not a valid integer.");
+                    }
                     queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
                 }
                 SSLOptions sslOptions=null;
-                try
+                if (queryArray[2].ToLower().Contains(sslString))
                 {
-                    if (queryArray[2].ToLower().Contains(sslString))
-                    {
-                        string sslValue = queryArray[2].Substring(queryArray[2].ToLower().IndexOf(sslString) + sslString.Length);
-                        sslOptions = new SSLOptions(
-                                    Enum.Parse<SslProtocols>(sslValue), false,
-                                    (_, certificate, chain, errors) => { return true; });
-
-                    }
-                    
-                }
-                catch (Exception e)
-                {
-                    Reporter.ToLog(eLogLevel.ERROR, "SSL Value Not Correct. Please Enter SSL value like Default, None, Ssl2, Ssl3, Tls, Tls11, Tls12, Tls13", e);
-                    throw (e);
+                    string sslValue = queryArray[2].Substring(queryArray[2].ToLower().IndexOf(sslString) + sslString.Length);
+                    SetupSslOptions(sslValue);
                 }
                 string[] HostKeySpace = queryArray[0].ToLower().Replace("http://", "").Replace("https://", "").Split('/');
                 string[] HostPort = HostKeySpace[0].Split(':');
-               
+
                 if (HostPort.Length == 2)
                 {
                     if (string.IsNullOrEmpty(Db.Pass) && string.IsNullOrEmpty(Db.User))
@@ -832,6 +824,20 @@ namespace GingerCore.NoSqlBase
                     }
                 }
                 i++;
+            }
+        }
+
+        private SSLOptions SetupSslOptions(string sslParamValue)
+        {
+            try
+            {
+                var sslProtocol = Enum.Parse<SslProtocols>(sslParamValue, ignoreCase: true);
+                return new SSLOptions(sslProtocol, false, (_, _, _, _) => true);
+            }
+            catch (ArgumentException e)
+            {
+                Reporter.ToLog(eLogLevel.ERROR, "SSL Value Not Correct. Please Enter SSL value like Default, None, Ssl2, Ssl3, Tls, Tls11, Tls12, Tls13", e);
+                throw;
             }
         }
     }
