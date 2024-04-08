@@ -39,7 +39,6 @@ namespace GingerCore.NoSqlBase
         ActDBValidation Act = null;
         dynamic myclass = null;
         string mUDTName = null;
-        private SSLOptions sslOptions;
 
         public override bool Connect()
         {
@@ -47,7 +46,6 @@ namespace GingerCore.NoSqlBase
             {
                 const string queryTimeoutString = "querytimeout=";
                 const string sslString = "ssl=";
-                string sslValue = null;
                 int queryTimeout = 20000;//default timeout (20 seconds).
                 string[] queryArray = Db.DatabaseOperations.TNSCalculated.Split(';');
                 if (queryArray[1].ToLower().Contains(queryTimeoutString))
@@ -55,16 +53,18 @@ namespace GingerCore.NoSqlBase
                     string queryTimeoutValue = queryArray[1].Substring(queryArray[1].ToLower().IndexOf(queryTimeoutString) + queryTimeoutString.Length);
                     queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
                 }
+                SSLOptions sslOptions=null;
                 try
                 {
                     if (queryArray[2].ToLower().Contains(sslString))
                     {
-                        sslValue = queryArray[2].Substring(queryArray[2].ToLower().IndexOf(sslString) + sslString.Length);
+                        string sslValue = queryArray[2].Substring(queryArray[2].ToLower().IndexOf(sslString) + sslString.Length);
+                        sslOptions = new SSLOptions(
+                                    Enum.Parse<SslProtocols>(sslValue), false,
+                                    (_, certificate, chain, errors) => { return true; });
 
                     }
-                    var sslOptions = new SSLOptions(
-                                    Enum.Parse<SslProtocols>(sslValue), false,
-                                    (sender, certificate, chain, errors) => { return true; });
+                    
                 }
                 catch (Exception e)
                 {
@@ -78,12 +78,12 @@ namespace GingerCore.NoSqlBase
                 {
                     if (string.IsNullOrEmpty(Db.Pass) && string.IsNullOrEmpty(Db.User))
                     {
-                        if (string.IsNullOrEmpty(sslValue))
+                        if (sslOptions ==null)
                         {
                             cluster = Cluster.Builder().AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
                         }
                         else
-                        {                             
+                        {
                             cluster = Cluster.Builder()
                                 .AddContactPoint(HostPort[0])
                                 .WithPort(Int32.Parse(HostPort[1]))
@@ -94,7 +94,7 @@ namespace GingerCore.NoSqlBase
                     }
                     else
                     {
-                        if (string.IsNullOrEmpty(sslValue)) {
+                        if (sslOptions == null) {
                             cluster = Cluster.Builder().WithCredentials(Db.User.ToString(), Db.Pass.ToString()).AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
                         }
                         else
