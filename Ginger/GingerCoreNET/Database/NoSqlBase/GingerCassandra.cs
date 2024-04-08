@@ -48,20 +48,39 @@ namespace GingerCore.NoSqlBase
                 const string sslString = "ssl=";
                 int queryTimeout = 20000;//default timeout (20 seconds).
                 string[] queryArray = Db.DatabaseOperations.TNSCalculated.Split(';');
-                if (queryArray[1].ToLower().Contains(queryTimeoutString))
+                SSLOptions sslOptions = null;
+                if (queryArray.Length > 1)
                 {
-                    string queryTimeoutValue = queryArray[1].Substring(queryArray[1].ToLower().IndexOf(queryTimeoutString) + queryTimeoutString.Length);
-                    if (!int.TryParse(queryTimeoutValue, out int timeout))
+                    if (queryArray[1].ToLower().Contains(queryTimeoutString))
                     {
-                        throw new ArgumentException("Query timeout value is not a valid integer.");
+                        string queryTimeoutValue = queryArray[1].Substring(queryArray[1].ToLower().IndexOf(queryTimeoutString) + queryTimeoutString.Length);
+                        if (!int.TryParse(queryTimeoutValue, out int timeout))
+                        {
+                            throw new ArgumentException("Query timeout value is not a valid integer.");
+                        }
+                        queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
+                    }else if(queryArray[1].ToLower().Contains(sslString))
+                    {
+                        string sslValue = queryArray[1].Substring(queryArray[1].ToLower().IndexOf(sslString) + sslString.Length);
+                        sslOptions = SetupSslOptions(sslValue);
                     }
-                    queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
                 }
-                SSLOptions sslOptions=null;
-                if (queryArray[2].ToLower().Contains(sslString))
+                if (queryArray.Length > 2)
                 {
-                    string sslValue = queryArray[2].Substring(queryArray[2].ToLower().IndexOf(sslString) + sslString.Length);
-                    SetupSslOptions(sslValue);
+                    if (queryArray[2].ToLower().Contains(queryTimeoutString))
+                    {
+                        string queryTimeoutValue = queryArray[2].Substring(queryArray[2].ToLower().IndexOf(queryTimeoutString) + queryTimeoutString.Length);
+                        if (!int.TryParse(queryTimeoutValue, out int timeout))
+                        {
+                            throw new ArgumentException("Query timeout value is not a valid integer.");
+                        }
+                        queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
+                    }
+                    else if (queryArray[2].ToLower().Contains(sslString))
+                    {
+                        string sslValue = queryArray[2].Substring(queryArray[2].ToLower().IndexOf(sslString) + sslString.Length);
+                        sslOptions = SetupSslOptions(sslValue);
+                    }
                 }
                 string[] HostKeySpace = queryArray[0].ToLower().Replace("http://", "").Replace("https://", "").Split('/');
                 string[] HostPort = HostKeySpace[0].Split(':');
@@ -121,8 +140,8 @@ namespace GingerCore.NoSqlBase
             }
             catch (Exception e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Cassandra DB", e);
-                throw (e);
+                Reporter.ToLog(eLogLevel.ERROR, "Failed to connect to Cassandra DB. Please check Connection String", e);
+                throw;
             }
         }
 
@@ -831,13 +850,14 @@ namespace GingerCore.NoSqlBase
         {
             try
             {
-                var sslProtocol = Enum.Parse<SslProtocols>(sslParamValue, ignoreCase: true);
+                var sslProtocol = Enum.Parse<SslProtocols>(sslParamValue);
                 return new SSLOptions(sslProtocol, false, (_, _, _, _) => true);
             }
             catch (ArgumentException e)
             {
-                Reporter.ToLog(eLogLevel.ERROR, "SSL Value Not Correct. Please Enter SSL value like Default, None, Ssl2, Ssl3, Tls, Tls11, Tls12, Tls13", e);
-                throw new ArgumentException("SSL Value Not Correct. Please Enter SSL value like Default, None, Ssl2, Ssl3, Tls, Tls11, Tls12, Tls13");
+                Reporter.ToLog(eLogLevel.ERROR, "SSL value not correct. Please enter SSL value like Default, None, Ssl2, Ssl3, Tls, Tls11, Tls12, Tls13", e);
+                Reporter.ToLog(eLogLevel.ERROR, "Note - Also try removing ssl= parameter from connection string", e);
+                throw new ArgumentException("SSL value not correct. Please enter SSL value like Default, None, Ssl2, Ssl3, Tls, Tls11, Tls12, Tls13.");
             }
         }
     }
