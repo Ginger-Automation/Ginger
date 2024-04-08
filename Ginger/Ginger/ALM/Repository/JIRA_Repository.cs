@@ -296,6 +296,10 @@ namespace Ginger.ALM.Repository
                                     SetImportedTS(jiraImportedTSData, importDestinationPath);
 
                                 }
+                                else
+                                {
+                                    Reporter.ToUser(eUserMsgKey.TestSetsNotExist);
+                                }
 
 
                                 Reporter.ToUser(eUserMsgKey.TestSetsImportedSuccessfully);
