@@ -161,7 +161,12 @@ namespace Ginger.SolutionWindows
             {
                 var ProjEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
 
-                ProjEnvironments.ForEach((projEnv) => { projEnv.StartDirtyTracking(); projEnv.Applications.Add(new EnvApplication() { Name = selectedApp.AppName, ParentGuid = selectedApp.Guid, Platform = selectedApp.Platform, Active = true}); });
+                ProjEnvironments.ForEach((projEnv) => { 
+              
+                    projEnv.StartDirtyTracking(); 
+                    projEnv.Applications.Add(new EnvApplication() { Name = selectedApp.AppName, ParentGuid = selectedApp.Guid, Platform = selectedApp.Platform, Active=true }); 
+                    projEnv.OnPropertyChanged(nameof(projEnv.Applications)); 
+                });
             }
 
             mSolution.ApplicationPlatforms.Add(selectedApp);
