@@ -51,17 +51,18 @@ namespace Ginger.Agents
         bool AllowAgentsManipulation;
         public delegate void OnBusinessFlowTargetApplicationChange();
         public static event OnBusinessFlowTargetApplicationChange BusinessFlowTargetApplicationChanged;
-
+        public bool isCalledFromAutomationPage = false;
         public ListBox MappingList
         {
             get { return xAppAgentsListBox; }
         }
 
-        public ApplicationAgentsMapPage(GingerExecutionEngine runner, Context context, bool allowAgentsManipulation = true)
+        public ApplicationAgentsMapPage(GingerExecutionEngine runner, Context context,bool allowAgentsManipulation = true, bool isCalledFromAutomationPage = false)
         {
             InitializeComponent();
             mRunner = runner;
             mContext = context;
+            this.isCalledFromAutomationPage = isCalledFromAutomationPage;
             AllowAgentsManipulation = allowAgentsManipulation;
             xAppAgentsListBox.Tag = AllowAgentsManipulation;//Placed here for binding with list dataTemplate- need better place
             mRunner.GingerRunner.PropertyChanged += MGR_PropertyChanged;
@@ -90,59 +91,20 @@ namespace Ginger.Agents
             {
                 ApplicationAgents = new ObservableList<ApplicationAgent>();
 
-                var AllTargetApplicationNames = GetAllTargetApplicationNames();
-
-                if (AllTargetApplicationNames == null)
+                foreach (ApplicationAgent Apag in mRunner.GingerRunner.ApplicationAgents)
                 {
-                    return;
+                    if (Apag.ApplicationAgentOperations == null)
+                    {
+                        Apag.ApplicationAgentOperations = new ApplicationAgentOperations(Apag);
+                    }
+                    if (mRunner.SolutionApplications.FirstOrDefault(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA) == null)
+                    {
+                        ApplicationAgents.Add(Apag);
+                    }
                 }
-
-                var allTargetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-
-                    var TargetApplicationsInBusinessFlow = allTargetApplications.Where((App) =>
-                    {
-                        return AllTargetApplicationNames.Contains(App.Name);
-                    });
-
-
-                    mContext.BusinessFlow.TargetApplications = new ObservableList<TargetBase>(TargetApplicationsInBusinessFlow.ToList());
-
-                    if (BusinessFlowTargetApplicationChanged != null)
-                    {
-                        BusinessFlowTargetApplicationChanged();
-                    }
-
-                    TargetApplicationsInBusinessFlow.ForEach((FilteredTargetApp) =>
-                    {
-                        ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)FilteredTargetApp).AppName };
-                        applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
-                        applicationAgent.Agent = applicationAgent.PossibleAgents?.FirstOrDefault((agent) => agent.Name.Equals(FilteredTargetApp.LastExecutingAgentName)) as Agent;
-
-
-                    if (applicationAgent.Agent == null && applicationAgent.PossibleAgents?.Count >= 1)
-                    {
-                        applicationAgent.Agent = applicationAgent.PossibleAgents[0] as Agent;
-                    }
-
-                    ApplicationAgents.Add(applicationAgent);
-                });
 
                 xAppAgentsListBox.ItemsSource = ApplicationAgents;
             });
-        }
-
-        public IEnumerable<string> GetAllTargetApplicationNames()
-        {
-            if (mContext.BusinessFlow != null)
-            {
-                return mContext.BusinessFlow.Activities.Select((activity) => activity.TargetApplication);
-            }
-
-            else if (mRunner != null && mRunner.BusinessFlows!=null)
-            {
-                return mRunner.BusinessFlows.SelectMany((businessFlow) => businessFlow.Activities).Select((activity) => activity.TargetApplication);
-            }
-            return null;
         }
 
         private async void xStartCloseAgentBtn_Click(object sender, RoutedEventArgs e)

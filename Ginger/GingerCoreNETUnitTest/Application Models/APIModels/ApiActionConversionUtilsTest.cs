@@ -76,7 +76,7 @@ namespace GingerCoreNETUnitTest
 
             mListBF = new ObservableList<BusinessFlow>();
             mBF = new BusinessFlow() { Name = "TestBFConversion", Active = true };
-            mBF.TargetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+            //mBF.TargetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
         }
 
         [TestCleanup]

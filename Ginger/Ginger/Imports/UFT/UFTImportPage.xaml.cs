@@ -100,7 +100,7 @@ namespace Ginger.Imports.UFT
             sTarget.AppName = WorkSpace.Instance.Solution.MainApplication.ToString();
             sTarget.Selected = true;
             TargetApplicationsList.Add(sTarget);
-            mBusinessFlow.TargetApplications = TargetApplicationsList;
+           // mBusinessFlow.TargetApplications = TargetApplicationsList;
         }
 
         public void InitCommonFunctionMappingUCGrid()

@@ -36,6 +36,7 @@ using GingerCore.Platforms;
 using GingerCore.Variables;
 using GingerCoreNET.GeneralLib;
 using GingerCoreNET.SolutionRepositoryLib.RepositoryObjectsLib.PlatformsLib;
+using Microsoft.CodeAnalysis;
 namespace GingerCore
 {
     public class BusinessFlow : RepositoryItemBase
@@ -51,7 +52,6 @@ namespace GingerCore
             Name = sName;
             Activities = new ObservableList<Activity>();
             Variables = new ObservableList<VariableBase>();
-            TargetApplications = new ObservableList<TargetBase>();
 
             Activity a = new Activity() { Active = true };
             a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
@@ -356,8 +356,23 @@ namespace GingerCore
         //TODO:  Delete not used anymore , but keep so old BF can load till conv part is done
         // public ObservableList<Platform> Platforms;
 
-        [IsSerializedForLocalRepository]
-        public ObservableList<TargetBase> TargetApplications = new ObservableList<TargetBase>();
+        public ObservableList<TargetBase> TargetApplications
+        {
+            get
+            {
+
+               var AllTargetApplicationsNames =  Activities.Select((activity) => activity.TargetApplication);
+
+               var AllTargetApplications = GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications();
+
+                if (AllTargetApplications == null ||  !AllTargetApplications.Any() ||  AllTargetApplicationsNames==null ||!AllTargetApplicationsNames.Any())
+                {
+                    return [];
+                }
+               return new ObservableList<TargetBase>(AllTargetApplications.Where((App) => AllTargetApplicationsNames.Contains(App.Name)));
+
+            }
+        }
 
         public ObservableList<ApplicationPlatform> TargetApplicationPlatforms
         {

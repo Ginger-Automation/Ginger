@@ -92,7 +92,7 @@ namespace Ginger.Imports.QTP
                 sTarget.AppName = WorkSpace.Instance.Solution.MainApplication.ToString();
                 sTarget.Selected = true;
                 TargetApplicationsList.Add(sTarget);
-                mBusinessFlow.TargetApplications = TargetApplicationsList;
+              //  mBusinessFlow.TargetApplications = TargetApplicationsList;
             }
         }
 
