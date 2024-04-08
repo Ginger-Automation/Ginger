@@ -267,7 +267,7 @@ namespace Ginger.Variables
             
             string Name = variableName.Text;
             string Description = variableDescription.Text;
-            string? Value = varToAdd is VariableDateTime ? xDateTime.SelectedDate.ToString() : variableValue.Text;
+            string? Value = varToAdd is VariableDateTime ? dtpInitialDate.Value.ToString() : variableValue.Text;
 
             if (Name.Trim().Length == 0)
             {
@@ -316,7 +316,7 @@ namespace Ginger.Variables
             VariableBase varToAdd = (VariableBase)xLibraryTabListView.xListView.SelectedItem;
             string Name = variableName.Text;
             string Description = variableDescription.Text;
-            string? Value = xLibraryTabListView.xListView.SelectedItem is VariableDateTime ? xDateTime.SelectedDate.ToString() : variableValue.Text;
+            string? Value = xLibraryTabListView.xListView.SelectedItem is VariableDateTime ? dtpInitialDate.Value.ToString() : variableValue.Text;
 
             if(Name.Trim().Length == 0)
             {
