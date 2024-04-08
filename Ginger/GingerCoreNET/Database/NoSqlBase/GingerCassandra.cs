@@ -68,6 +68,8 @@ namespace GingerCore.NoSqlBase
                             string sslValue = str.Substring(str.IndexOf(sslString) + sslString.Length);
                             sslOptions = SetupSslOptions(sslValue);
                             break;
+                        default:
+                            throw new ArgumentException("Please check connection string.");
                     }
                 }
                 string[] HostKeySpace = queryArray[0].ToLower().Replace("http://", "").Replace("https://", "").Split('/');
@@ -225,9 +227,15 @@ namespace GingerCore.NoSqlBase
 
         private void Disconnect()
         {
-            session.Dispose();
-            cluster.Dispose();
-            session = null;
+            try
+            {
+                session.Dispose();
+                cluster.Dispose();
+            }
+            finally
+            {
+                session = null;
+            }
         }
 
         public Type TypeConverter(RowSet RS, string Type1)
@@ -838,7 +846,7 @@ namespace GingerCore.NoSqlBase
         {
             try
             {
-                var sslProtocol = Enum.Parse<SslProtocols>(sslParamValue);
+                var sslProtocol = Enum.Parse<SslProtocols>(sslParamValue, ignoreCase: true);
                 return new SSLOptions(sslProtocol, false, (_, _, _, _) => true);
             }
             catch (ArgumentException e)
