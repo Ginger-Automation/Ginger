@@ -47,7 +47,7 @@
                                  <TextBox  Height="25" Width="250" Style="{StaticResource $TextBoxStyle}"  Name="variableValue"/>
                                  <TextBlock Text="Value is mandatory" Name="ValueError" DockPanel.Dock="Bottom" Foreground="Red" Visibility="Hidden" Margin="5, 0, 0 , 0"/>
                             </StackPanel>
-                            
+
                             <StackPanel Orientation="Horizontal" Visibility="Collapsed" Name="DateTimePanel" Margin="5, 0, 0, 0">
                                 <TextBlock>Initial Date Time:</TextBlock>
                                 <window:WindowsFormsHost Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}" Width="30" Height="30">
