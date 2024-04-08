@@ -96,7 +96,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
         private void DeleteEnvTreeItems()
         {
             mTreeView.Tree.DeleteItemAndSelectParent(this);
-            ProjEnvironment.Applications.Remove(EnvApplication);
+            ProjEnvironment.StartDirtyTracking();
+            ProjEnvironment.Applications = new(ProjEnvironment.Applications.Where((app) => !app.Equals(EnvApplication)));
+            ProjEnvironment.OnPropertyChanged(nameof(ProjEnvironment.Applications));
             ProjEnvironment.SaveBackup();//to mark the env as changed
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
 
@@ -130,6 +132,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             copy.Platform = EnvApplication.Platform;
             ProjEnvironment.Applications.Add(copy);
             ProjEnvironment.SaveBackup();//to mark the env as changed
+            ProjEnvironment.OnPropertyChanged(nameof(ProjEnvironment.Applications));
             mTreeView.Tree.RefreshSelectedTreeNodeParent();
         }
 
@@ -147,6 +150,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
                         env.Applications.Add(app);
                         env.SaveBackup();//to mark the env as changed
                         appsWereAdded = true;
+                        env.OnPropertyChanged(nameof(env.Applications));
                     }
                 }
             }
@@ -155,6 +159,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             {
                 Reporter.ToUser(eUserMsgKey.ShareEnvAppWithAllEnvs);
             }
+            mTreeView.Tree.RefreshSelectedTreeNodeParent();
         }
 
         private void Save(object sender, System.Windows.RoutedEventArgs e)
