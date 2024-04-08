@@ -378,7 +378,7 @@ namespace GingerCore.ALM.JIRA.Bll
             }
             else
             {
-                result = "Error Has been Happened while export to ALM";
+                Reporter.ToUser(eUserMsgKey.ExportedExecDetailsToALM);
             }
 
             return resultFlag;
