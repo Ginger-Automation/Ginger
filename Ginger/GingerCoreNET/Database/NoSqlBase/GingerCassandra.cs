@@ -21,6 +21,7 @@ using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Cassandra;
 using GingerCore.Actions;
 using GingerCore.NoSqlBase.DataAccess;
+using HBaseNet.Const;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,29 +39,39 @@ namespace GingerCore.NoSqlBase
         ActDBValidation Act = null;
         dynamic myclass = null;
         string mUDTName = null;
-
-
+        private SSLOptions sslOptions;
 
         public override bool Connect()
         {
             try
             {
-                string queryTimeoutString = "querytimeout=";
-                string SLL = "SSL=";
+                const string queryTimeoutString = "querytimeout=";
+                const string sslString = "ssl=";
                 string sslValue = null;
                 int queryTimeout = 20000;//default timeout (20 seconds).
                 string[] queryArray = Db.DatabaseOperations.TNSCalculated.Split(';');
-                if (queryArray[1].ToLower().Contains(queryTimeoutString.ToLower()))
+                if (queryArray[1].ToLower().Contains(queryTimeoutString))
                 {
-                    string queryTimeoutValue = queryArray[1].Substring(queryArray[1].ToLower().IndexOf(queryTimeoutString.ToLower()) + queryTimeoutString.Length);
+                    string queryTimeoutValue = queryArray[1].Substring(queryArray[1].ToLower().IndexOf(queryTimeoutString) + queryTimeoutString.Length);
                     queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
                 }
-
-                if (queryArray[2].ToLower().Contains(SLL.ToLower()))
+                try
                 {
-                    sslValue = queryArray[2].Substring(queryArray[2].ToLower().IndexOf(SLL.ToLower()) + SLL.Length);
+                    if (queryArray[2].ToLower().Contains(sslString))
+                    {
+                        sslValue = queryArray[2].Substring(queryArray[2].ToLower().IndexOf(sslString) + sslString.Length);
+
+                    }
+                    var sslOptions = new SSLOptions(
+                                    Enum.Parse<SslProtocols>(sslValue), false,
+                                    (sender, certificate, chain, errors) => { return true; });
                 }
-                string[] HostKeySpace = queryArray[0].Split('/');
+                catch (Exception e)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, "SSL Value Not Correct. Please Enter SSL value like Default, None, Ssl2, Ssl3, Tls, Tls11, Tls12, Tls13", e);
+                    throw (e);
+                }
+                string[] HostKeySpace = queryArray[0].ToLower().Replace("http://", "").Replace("https://", "").Split('/');
                 string[] HostPort = HostKeySpace[0].Split(':');
                
                 if (HostPort.Length == 2)
@@ -72,10 +83,7 @@ namespace GingerCore.NoSqlBase
                             cluster = Cluster.Builder().AddContactPoint(HostPort[0]).WithPort(Int32.Parse(HostPort[1])).WithQueryTimeout(queryTimeout).Build();
                         }
                         else
-                        {
-                            var sslOptions = new SSLOptions(
-                                        Enum.Parse<SslProtocols>(sslValue), false,
-                                        (sender, certificate, chain, errors) => { return true; });
+                        {                             
                             cluster = Cluster.Builder()
                                 .AddContactPoint(HostPort[0])
                                 .WithPort(Int32.Parse(HostPort[1]))
@@ -91,9 +99,6 @@ namespace GingerCore.NoSqlBase
                         }
                         else
                         {
-                            var sslOptions = new SSLOptions(
-                                        Enum.Parse<SslProtocols>(sslValue), false,
-                                        (sender, certificate, chain, errors) => { return true; });
                             cluster = Cluster.Builder()
                                 .AddContactPoint(HostPort[0])
                                 .WithPort(Int32.Parse(HostPort[1]))
