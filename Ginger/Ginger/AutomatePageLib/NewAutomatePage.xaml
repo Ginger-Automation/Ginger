@@ -58,7 +58,9 @@
                     <GridSplitter Width="0.5" HorizontalAlignment="Left" DockPanel.Dock="Left" Background="{StaticResource $BackgroundColor_Black}" Margin="5,10,5,10"/>
 
                     <StackPanel x:Name="xExecutionConfigsPnl" DockPanel.Dock="Left" Orientation="Horizontal" >
-                        <Frame x:Name="xAppsAgentsMappingFrame" NavigationUIVisibility="Hidden"/>
+                        <ScrollViewer  Height="60" >
+                            <Frame x:Name="xAppsAgentsMappingFrame" NavigationUIVisibility="Hidden"/>
+                        </ScrollViewer>
                         <StackPanel VerticalAlignment="Center" Margin="0,0,0,10" >
                             <Label Style="{StaticResource $LabelStyle}" HorizontalAlignment="Left" Margin="0,0,0,0">Environment:</Label>
                             <ComboBox x:Name="xEnvironmentComboBox" ContextMenu="{x:Null}" SelectionChanged="xEnvironmentComboBox_SelectionChanged" Width="150" Style="{DynamicResource $FlatInputComboBoxStyle}" Margin="2,0,0,0"></ComboBox>

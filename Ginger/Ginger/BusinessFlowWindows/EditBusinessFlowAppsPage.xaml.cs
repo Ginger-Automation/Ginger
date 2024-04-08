@@ -146,26 +146,30 @@ namespace Ginger.BusinessFlowWindows
         {
             //mBusinessFlow.TargetApplications.Clear();
             //remove deleted
-            for (int indx = 0; indx < mBusinessFlow.TargetApplications.Count; indx++)
-            {
-                if (mApplicationsPlatforms.FirstOrDefault(x => x.Selected && x.AppName == mBusinessFlow.TargetApplications[indx].Name) == null)
-                {
-                    mBusinessFlow.TargetApplications.RemoveAt(indx);
-                    indx--;
-                }
-            }
+            //for (int indx = 0; indx < mBusinessFlow.TargetApplications.Count; indx++)
+            //{
+            //    if (mApplicationsPlatforms.FirstOrDefault(x => x.Selected && x.AppName == mBusinessFlow.TargetApplications[indx].Name) == null)
+            //    {
+            //        mBusinessFlow.TargetApplications.RemoveAt(indx);
+            //        indx--;
+            //    }
+            //}
 
-            //add new
+            ////add new
 
             ApplicationPlatform TA = (ApplicationPlatform)AppsGrid.GetSelectedItem();
 
-            if (mBusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == TA.AppName) == null)
+            //if (mBusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == TA.AppName) == null)
+            //{
+            //    TargetApplication tt = new TargetApplication();
+            //    tt.AppName = TA.AppName;
+            //    tt.TargetGuid = TA.Guid;
+            //    tt.Selected = true;
+            //    mBusinessFlow.TargetApplications.Add(tt);
+            //}
+            if (TA != null && mBusinessFlow.Activities.Any())
             {
-                TargetApplication tt = new TargetApplication();
-                tt.AppName = TA.AppName;
-                tt.TargetGuid = TA.Guid;
-                tt.Selected = true;
-                mBusinessFlow.TargetApplications.Add(tt);
+                mBusinessFlow.Activities.FirstOrDefault().TargetApplication = TA.AppName;
             }
         }
     }

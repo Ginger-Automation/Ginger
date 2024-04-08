@@ -51,18 +51,16 @@ namespace Ginger.Agents
         bool AllowAgentsManipulation;
         public delegate void OnBusinessFlowTargetApplicationChange();
         public static event OnBusinessFlowTargetApplicationChange BusinessFlowTargetApplicationChanged;
-        public bool isCalledFromAutomationPage = false;
         public ListBox MappingList
         {
             get { return xAppAgentsListBox; }
         }
 
-        public ApplicationAgentsMapPage(GingerExecutionEngine runner, Context context,bool allowAgentsManipulation = true, bool isCalledFromAutomationPage = false)
+        public ApplicationAgentsMapPage(GingerExecutionEngine runner, Context context,bool allowAgentsManipulation = true)
         {
             InitializeComponent();
             mRunner = runner;
             mContext = context;
-            this.isCalledFromAutomationPage = isCalledFromAutomationPage;
             AllowAgentsManipulation = allowAgentsManipulation;
             xAppAgentsListBox.Tag = AllowAgentsManipulation;//Placed here for binding with list dataTemplate- need better place
             mRunner.GingerRunner.PropertyChanged += MGR_PropertyChanged;

@@ -361,16 +361,20 @@ namespace GingerCore
             get
             {
 
-               var AllTargetApplicationsNames =  Activities.Select((activity) => activity.TargetApplication);
+                var AllTargetApplicationsNames = Activities.Select((activity) => activity.TargetApplication);
 
-               var AllTargetApplications = GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications();
+                var AllTargetApplications = GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications();
 
-                if (AllTargetApplications == null ||  !AllTargetApplications.Any() ||  AllTargetApplicationsNames==null ||!AllTargetApplicationsNames.Any())
+                if (AllTargetApplications == null || AllTargetApplications.Count == 0 || AllTargetApplicationsNames == null || !AllTargetApplicationsNames.Any())
                 {
                     return [];
                 }
-               return new ObservableList<TargetBase>(AllTargetApplications.Where((App) => AllTargetApplicationsNames.Contains(App.Name)));
+                return new ObservableList<TargetBase>(AllTargetApplications.Where((App) => AllTargetApplicationsNames.Contains(App.Name)));
 
+            }
+            set
+            {
+                return;
             }
         }
 

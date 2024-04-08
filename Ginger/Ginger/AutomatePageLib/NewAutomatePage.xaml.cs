@@ -44,7 +44,6 @@ using Ginger.Run;
 using Ginger.TimeLineLib;
 using Ginger.UserControlsLib;
 using Ginger.UserControlsLib.TextEditor;
-using Ginger.UserControlsLib.UCListView;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
@@ -203,7 +202,9 @@ namespace GingerWPF.BusinessFlowsLib
 
             BindingHandler.ObjFieldBinding(xAutoAnalyzeConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoRunAutomatePageAnalyzer), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
             BindingHandler.ObjFieldBinding(xAutoReportConfigMenuItemIcon, ImageMakerControl.ImageTypeProperty, WorkSpace.Instance.UserProfile, nameof(UserProfile.AutoGenerateAutomatePageReport), bindingConvertor: new ActiveImageTypeConverter(), BindingMode.OneWay);
-            mApplicationAgentsMapPage.MappingList.Height = 60;
+
+            mApplicationAgentsMapPage = new ApplicationAgentsMapPage(mExecutionEngine, mContext);
+            //mApplicationAgentsMapPage.MappingList.Height = 60;
             xAppsAgentsMappingFrame.SetContent(mApplicationAgentsMapPage);
             SetEnvsCombo();
         }
@@ -626,19 +627,41 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void OnTargetApplicationChanged(object arg1, SelectionChangedEventArgs args)
         {
-            var selectedTargetApplication = (TargetApplication)mActivityDetailsPage.xTargetApplicationComboBox.SelectedItem;
-
-            if (selectedTargetApplication != null)
+            mBusinessFlow.TargetApplications.ForEach((actTargetApp) =>
             {
-                bool doesApplicationAgentAlreadyExist = mExecutionEngine.GingerRunner.ApplicationAgents.Any((aa) => aa.AppName.Equals(selectedTargetApplication.AppName));
-
-                if (!doesApplicationAgentAlreadyExist)
+                if (!mExecutionEngine.GingerRunner.ApplicationAgents.Any(d => d.AppName.Equals(actTargetApp.Name)))
                 {
-                    ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = selectedTargetApplication.AppName };
-
+                    ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)actTargetApp).AppName };
+                    applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+                    applicationAgent.Agent = applicationAgent.PossibleAgents?.FirstOrDefault((agent) => agent.Name.Equals(actTargetApp.LastExecutingAgentName)) as Agent;
+                    if (applicationAgent.Agent == null && applicationAgent.PossibleAgents?.Count >= 1)
+                    {
+                        applicationAgent.Agent = applicationAgent.PossibleAgents[0] as Agent;
+                    }
                     mExecutionEngine.GingerRunner.ApplicationAgents.Add(applicationAgent);
                 }
+            });
+
+            // Create a list to store the items to be removed
+            List<IApplicationAgent> agentsToRemove = [];
+
+            // Iterate through the ApplicationAgents
+            foreach (var existingAgent in mExecutionEngine.GingerRunner.ApplicationAgents)
+            {
+                // Check if the existing agent is not present in mBusinessFlow.TargetApplications
+                if (!mBusinessFlow.TargetApplications.Any(actTargetApp => (actTargetApp as TargetApplication)?.AppName == existingAgent.AppName))
+                {
+                    // If not present, add to the removal list
+                    agentsToRemove.Add(existingAgent);
+                }
             }
+
+            // Remove the agents from mExecutionEngine.GingerRunner.ApplicationAgents
+            foreach (var agentToRemove in agentsToRemove)
+            {
+                mExecutionEngine.GingerRunner.ApplicationAgents.Remove(agentToRemove);
+            }
+     
 
             mApplicationAgentsMapPage.RefreshApplicationAgentsList();
         }

@@ -893,14 +893,14 @@ namespace amdocs.ginger.GingerCoreNET
 
             if (setTargetApp == true && WorkSpace.Instance.Solution.ApplicationPlatforms.Count > 0)
             {
-                string mainAppName = WorkSpace.Instance.Solution.MainApplication;
-                ApplicationPlatform mainApp = WorkSpace.Instance.Solution.ApplicationPlatforms.First(ap => string.Equals(ap.AppName, mainAppName));
-                newBF.TargetApplications.Add(new TargetApplication() 
-                { 
-                    AppName = mainAppName, 
-                    ParentGuid =  mainApp.Guid
-                });
-                newBF.CurrentActivity.TargetApplication = newBF.TargetApplications[0].Name;
+                //string mainAppName = WorkSpace.Instance.Solution.MainApplication;
+               // ApplicationPlatform mainApp = WorkSpace.Instance.Solution.ApplicationPlatforms.First(ap => string.Equals(ap.AppName, mainAppName));
+                //newBF.TargetApplications.Add(new TargetApplication() 
+                //{ 
+                //    AppName = mainAppName, 
+                //    ParentGuid =  mainApp.Guid
+                //});
+                newBF.CurrentActivity.TargetApplication = WorkSpace.Instance.Solution.MainApplication;
             }
 
             return newBF;
