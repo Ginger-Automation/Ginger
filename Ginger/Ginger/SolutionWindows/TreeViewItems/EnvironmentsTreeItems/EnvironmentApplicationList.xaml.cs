@@ -81,10 +81,11 @@ namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
         {
             AddApplicationPage applicationPage = new(WorkSpace.Instance.Solution, false);
 
-            applicationPage.ShowAsWindow();
+            ApplicationPlatform? selectedApp = null;
+            applicationPage.ShowAsWindow(ref selectedApp);
 
-            foreach (ApplicationPlatform selectedApp in applicationPage.SelectApplicationGrid.Grid.SelectedItems)
-            {
+            if(selectedApp!=null)
+            { 
                 AppsGrid.DataSourceList.Add(selectedApp);
             }
 

@@ -155,6 +155,7 @@ namespace GingerCore.Environments
                 envApplication.ParentGuid = SelectedApplication.Guid;
                 envApplication.Description = SelectedApplication.Description;
                 envApplication.Platform = SelectedApplication.Platform;
+                envApplication.Active = true;
                 this.Applications.Add(envApplication);
             }
         }

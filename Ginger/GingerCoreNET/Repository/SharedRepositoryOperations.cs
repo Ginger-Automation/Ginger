@@ -65,6 +65,10 @@ namespace Ginger.Repository
                 {
                     isOverwrite = true;
                     itemCopy = GetItemToOverrite(itemToUpload);
+                    if (itemToUpload.UsageItem is Activity activityToUpload && itemCopy is Activity activityCopy)
+                    {
+                        CopyActivityVariableIds(source: activityCopy, target: activityToUpload);
+                    }
                 }
                 else
                 {
@@ -536,7 +540,9 @@ namespace Ginger.Repository
             {
                 var sharedActFullPath = sharedActivity.ContainingFolderFullPath;
                 WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(sharedActivity);
-                sharedActivity = (Activity)LinkedActivity.CreateInstance(true);
+                Activity newSharedActivity = (Activity)LinkedActivity.CreateInstance(true);
+                CopyActivityVariableIds(source: sharedActivity, target: newSharedActivity);
+                sharedActivity = newSharedActivity;
                 sharedActivity.Guid = LinkedActivity.ParentGuid;
                 sharedActivity.Type = eSharedItemType.Regular;
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(sharedActivity);
@@ -549,6 +555,21 @@ namespace Ginger.Repository
                 Reporter.ToLog(eLogLevel.ERROR, "Activity not found in shared repository.");
             }
         }
+
+        private static void CopyActivityVariableIds(Activity source, Activity target)
+        {
+            foreach(VariableBase sourceVar in source.Variables)
+            {
+                VariableBase targetVar = target
+                    .Variables
+                    .FirstOrDefault(v => string.Equals(v.Name, sourceVar.Name));
+                if (targetVar != null)
+                {
+                    targetVar.Guid = sourceVar.Guid;
+                }
+            }
+        }
+
         public async Task UpdateSharedRepositoryLinkedInstances(Activity activity)
         {
             await UpdateLinkedInstances(activity);

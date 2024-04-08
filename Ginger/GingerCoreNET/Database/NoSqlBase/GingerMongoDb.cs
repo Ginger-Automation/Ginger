@@ -332,7 +332,7 @@ namespace GingerCore.NoSqlBase
                         else
                         {
                             var result = collection.Find(GetQueryParamater(SQLCalculated, "find")).
-                            Project(GetQueryParamater(SQLCalculated, "project")).
+                            //Project(GetQueryParamater(SQLCalculated, "project")).  //Commented this to include _id colmun in output values
                             Sort(BsonDocument.Parse(GetQueryParamater(SQLCalculated, "sort"))).
                             Limit(Convert.ToInt32(GetQueryParamater(SQLCalculated, "limit"))).
                             ToList();
