@@ -154,6 +154,8 @@ namespace GingerCore.NoSqlBase
         {
             string bucketName = string.Empty;
             string[] bucketNameArray;
+            const string strUpdate = "update ";
+            const string strFrom = " from ";
             if (Action == ActDBValidation.eDBValidationType.RecordCount)
             {
                 bucketName = inputSQL.Replace("`", "");
@@ -164,11 +166,11 @@ namespace GingerCore.NoSqlBase
             {
                 if (Action == ActDBValidation.eDBValidationType.UpdateDB)
                 {
-                    bucketName = inputSQL.Substring(inputSQL.IndexOf("update ", StringComparison.OrdinalIgnoreCase) + 7);
+                    bucketName = inputSQL.Substring(inputSQL.IndexOf(strUpdate, StringComparison.OrdinalIgnoreCase) + 7);
                 }
                 else
                 {
-                    bucketName = inputSQL.Substring(inputSQL.IndexOf(" from ", StringComparison.OrdinalIgnoreCase) + 6);
+                    bucketName = inputSQL.Substring(inputSQL.IndexOf(strFrom, StringComparison.OrdinalIgnoreCase) + 6);
                 }
                 bucketNameArray = bucketName.Split('.');
                 bucketName = bucketNameArray[0].Trim();

@@ -837,7 +837,7 @@ namespace GingerCore.NoSqlBase
             catch (ArgumentException e)
             {
                 Reporter.ToLog(eLogLevel.ERROR, "SSL Value Not Correct. Please Enter SSL value like Default, None, Ssl2, Ssl3, Tls, Tls11, Tls12, Tls13", e);
-                throw;
+                throw new ArgumentException("SSL Value Not Correct. Please Enter SSL value like Default, None, Ssl2, Ssl3, Tls, Tls11, Tls12, Tls13");
             }
         }
     }
