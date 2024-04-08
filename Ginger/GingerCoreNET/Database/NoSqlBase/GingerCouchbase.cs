@@ -164,11 +164,11 @@ namespace GingerCore.NoSqlBase
             {
                 if (Action == ActDBValidation.eDBValidationType.UpdateDB)
                 {
-                    bucketName = inputSQL.Substring(inputSQL.ToLower().IndexOf("update ") + 7);
+                    bucketName = inputSQL.Substring(inputSQL.IndexOf("update ", StringComparison.OrdinalIgnoreCase) + 7);
                 }
                 else
                 {
-                    bucketName = inputSQL.Substring(inputSQL.ToLower().IndexOf(" from ") + 6);
+                    bucketName = inputSQL.Substring(inputSQL.IndexOf(" from ", StringComparison.OrdinalIgnoreCase) + 6);
                 }
                 bucketNameArray = bucketName.Split('.');
                 bucketName = bucketNameArray[0].Trim();
