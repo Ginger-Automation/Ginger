@@ -22,6 +22,8 @@ using Cassandra;
 using GingerCore.Actions;
 using GingerCore.NoSqlBase.DataAccess;
 using HBaseNet.Const;
+using Microsoft.Graph;
+using Microsoft.Graph.SecurityNamespace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,37 +51,23 @@ namespace GingerCore.NoSqlBase
                 int queryTimeout = 20000;//default timeout (20 seconds).
                 string[] queryArray = Db.DatabaseOperations.TNSCalculated.Split(';');
                 SSLOptions sslOptions = null;
-                if (queryArray.Length > 1)
+                for (int i = 1; i < Math.Min(queryArray.Length, 3); i++)
                 {
-                    if (queryArray[1].ToLower().Contains(queryTimeoutString))
+                    switch (queryArray[i])
                     {
-                        string queryTimeoutValue = queryArray[1].Substring(queryArray[1].ToLower().IndexOf(queryTimeoutString) + queryTimeoutString.Length);
-                        if (!int.TryParse(queryTimeoutValue, out int timeout))
-                        {
-                            throw new ArgumentException("Query timeout value is not a valid integer.");
-                        }
-                        queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
-                    }else if(queryArray[1].ToLower().Contains(sslString))
-                    {
-                        string sslValue = queryArray[1].Substring(queryArray[1].ToLower().IndexOf(sslString) + sslString.Length);
-                        sslOptions = SetupSslOptions(sslValue);
-                    }
-                }
-                if (queryArray.Length > 2)
-                {
-                    if (queryArray[2].ToLower().Contains(queryTimeoutString))
-                    {
-                        string queryTimeoutValue = queryArray[2].Substring(queryArray[2].ToLower().IndexOf(queryTimeoutString) + queryTimeoutString.Length);
-                        if (!int.TryParse(queryTimeoutValue, out int timeout))
-                        {
-                            throw new ArgumentException("Query timeout value is not a valid integer.");
-                        }
-                        queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
-                    }
-                    else if (queryArray[2].ToLower().Contains(sslString))
-                    {
-                        string sslValue = queryArray[2].Substring(queryArray[2].ToLower().IndexOf(sslString) + sslString.Length);
-                        sslOptions = SetupSslOptions(sslValue);
+                        case var str when str.Contains(queryTimeoutString):
+                            string queryTimeoutValue = str.Substring(str.IndexOf(queryTimeoutString) + queryTimeoutString.Length);
+                            if (!int.TryParse(queryTimeoutValue, out int timeout))
+                            {
+                                throw new ArgumentException("Query timeout value is not a valid integer.");
+                            }
+                            queryTimeout = Convert.ToInt32(queryTimeoutValue) * 1000;
+                            break;
+
+                        case var str when str.Contains(sslString):
+                            string sslValue = str.Substring(str.IndexOf(sslString) + sslString.Length);
+                            sslOptions = SetupSslOptions(sslValue);
+                            break;
                     }
                 }
                 string[] HostKeySpace = queryArray[0].ToLower().Replace("http://", "").Replace("https://", "").Split('/');
