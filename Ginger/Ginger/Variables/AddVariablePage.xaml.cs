@@ -31,6 +31,7 @@ using OctaneRepositoryStd.BLL;
 using System;
 using System.Collections;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -77,6 +78,9 @@ namespace Ginger.Variables
             mLibraryVarsList = LoadLibraryVarsList();
             mLibraryVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add);
             mLibraryVarsHelper.AllowExpandItems = false;
+            InitialDateTimeTextBlock.Text = dtpInitialDate.Value.ToString();
+            dtpInitialDate.ValueChanged -= DtpInitialDate_ValueChanged;
+            dtpInitialDate.ValueChanged += DtpInitialDate_ValueChanged;
 
             xLibraryTabListView.xListView.SelectionChanged += OnSelectionChanged;
             xLibraryTabListView.SetDefaultListDataTemplate(mLibraryVarsHelper);
@@ -103,6 +107,11 @@ namespace Ginger.Variables
                 xSharedRepoTabListView.DataSourceList = mSharedRepoVarsList;
                 xSharedRepoTabListView.MouseDoubleClick += XSharedRepoTabListView_MouseDoubleClick;
             }
+        }
+
+        private void DtpInitialDate_ValueChanged(object? sender, EventArgs e)
+        {
+            InitialDateTimeTextBlock.Text = dtpInitialDate.Value.ToString();
         }
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -411,5 +420,26 @@ namespace Ginger.Variables
             }
         }
 
+        private void InitialDateTimePickerButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenDateTimePicker();
+        }
+
+        [DllImport("user32.dll")]
+        private static extern bool PostMessage(IntPtr hWnd, Int32 msg, Int32 wParam, Int32 lParam );
+        
+        private const Int32 WM_SYSKEYDOWN = 0x104;
+
+
+        //method to call dropdown
+        private void OpenDateTimePicker()
+        {
+            Int32 x = dtpInitialDate.Width - 10;
+            Int32 y = dtpInitialDate.Height / 2;
+            Int32 lParam = x + y * 0x00010000;
+
+            PostMessage(dtpInitialDate.Handle, WM_SYSKEYDOWN, (int)System.Windows.Forms.Keys.Down, lParam);
+
+        }
     }
 }
