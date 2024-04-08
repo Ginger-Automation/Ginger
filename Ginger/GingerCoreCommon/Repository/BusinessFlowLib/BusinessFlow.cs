@@ -366,7 +366,7 @@ namespace GingerCore
             {                
                 var AllTargetApplicationsNames = Activities.Select((activity) => activity.TargetApplication);
 
-                var AllTargetApplications = GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications();
+                var AllTargetApplications = GingerCoreCommonWorkSpace.Instance?.Solution?.GetSolutionTargetApplications();
 
                 if (AllTargetApplications == null || AllTargetApplications.Count == 0 || AllTargetApplicationsNames == null || !AllTargetApplicationsNames.Any())
                 {

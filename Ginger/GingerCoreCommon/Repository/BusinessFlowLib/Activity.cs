@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -395,7 +395,7 @@ namespace GingerCore
         {
             get
             {
-                ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == TargetApplication);
+                ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution?.ApplicationPlatforms.FirstOrDefault(x => x.AppName == TargetApplication);
                 if (appPlat != null)
                 {
                     return appPlat.PlatformImage;
@@ -411,7 +411,7 @@ namespace GingerCore
         {
             get
             {
-                ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault(x => x.AppName == TargetApplication);
+                ApplicationPlatform appPlat = GingerCoreCommonWorkSpace.Instance.Solution?.ApplicationPlatforms.FirstOrDefault(x => x.AppName == TargetApplication);
                 if (appPlat != null)
                 {
                     return appPlat.Platform.ToString();

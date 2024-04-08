@@ -46,7 +46,8 @@ namespace Ginger.AnalyzerLib
 
             CheckIfHasAnyAction(activity, businessFlow, ref issues);
 
-            CheckIfTargetApplicationExistInBusinessFlow(activity, businessFlow, ref issues);
+            //Commented below code as Target apps are removed from Businessflow. Need to add check for Target app in solution 
+            //CheckIfTargetApplicationExistInBusinessFlow(activity, businessFlow, ref issues);
 
             CheckIfExistsInAnyActivityGroup(activity, businessFlow, ref issues);
 
