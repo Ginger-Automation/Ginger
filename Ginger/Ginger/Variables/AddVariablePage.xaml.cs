@@ -125,13 +125,13 @@ namespace Ginger.Variables
                 return;
             }
 
-            if (SelectedListView is VariableRandomNumber || SelectedListView is VariableRandomString)
+            if (SelectedListView is VariableRandomNumber || SelectedListView is VariableRandomString || SelectedListView is VariableTimer)
             {
                 ValueStackPanel.Visibility = Visibility.Collapsed;
                 DateTimePanel.Visibility = Visibility.Collapsed;
             }
 
-            else if (SelectedListView is VariableString || SelectedListView is VariableNumber || SelectedListView is VariableTimer || SelectedListView is VariablePasswordString || SelectedListView is VariableSequence || SelectedListView is VariableDynamic)
+            else if (SelectedListView is VariableString || SelectedListView is VariableNumber || SelectedListView is VariablePasswordString || SelectedListView is VariableSequence || SelectedListView is VariableDynamic)
             {
                 ValueStackPanel.Visibility = Visibility.Visible;
                 DateTimePanel.Visibility = Visibility.Collapsed;
@@ -272,13 +272,31 @@ namespace Ginger.Variables
         private void AddVariablesToAllTheEnvironmentsButton_Click(object sender, RoutedEventArgs e)
         {
             VariableBase varToAdd = (VariableBase)xLibraryTabListView.xListView.SelectedItem;
+            
+            
             string Name = variableName.Text;
             string Description = variableDescription.Text;
             string? Value = varToAdd is VariableDateTime ? dtpInitialDate.Value.ToString() : variableValue.Text;
 
+            if (Name.Trim().Length == 0)
+            {
+                NameError.Visibility = Visibility.Visible;
+                return;
+            }
+
+            NameError.Visibility = Visibility.Hidden;
+
+
+            if (varToAdd == null)
+            {
+                return;
+            }
+
+            varToAdd = (VariableBase)varToAdd.CreateCopy();
             varToAdd.Name = Name;
             varToAdd.Description = Description;
-            varToAdd.SetInitialValue(Value);
+            varToAdd.SetInitialSetup();
+            varToAdd.SetInitialValue(Value ?? string.Empty);
 
             ObservableList<ProjEnvironment> ProjEnvironments = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
 
@@ -304,6 +322,7 @@ namespace Ginger.Variables
 
         private bool AddLibraryVariables()
         {
+            VariableBase varToAdd = (VariableBase)xLibraryTabListView.xListView.SelectedItem;
             string Name = variableName.Text;
             string Description = variableDescription.Text;
             string? Value = xLibraryTabListView.xListView.SelectedItem is VariableDateTime ? dtpInitialDate.Value.ToString() : variableValue.Text;
@@ -314,30 +333,30 @@ namespace Ginger.Variables
                 return false;
             }
 
-            if(Value?.Trim().Length == 0)
+            NameError.Visibility = Visibility.Hidden;
+
+
+            if (varToAdd == null)
             {
-                ValueError.Visibility = Visibility.Visible;
                 return false;
             }
 
-            foreach (VariableBase varToAdd in xLibraryTabListView.List.SelectedItems)
-            {
-                VariableBase addedVar = (VariableBase)varToAdd.CreateCopy();
-                addedVar.SetInitialSetup();
-                addedVar.Name = Name;
-                addedVar.Description = Description;
-                addedVar.SetInitialValue(Value);
 
-                if(mVariablesLevel.Equals(eVariablesLevel.Activity) || mVariablesLevel.Equals(eVariablesLevel.BusinessFlow))
-                {
-                    addedVar.SetAsInputValue = xSetAsInputValueCheckBox.IsChecked ?? false;
-                    addedVar.SetAsOutputValue = xSetAsOutputValueCheckBox.IsChecked ?? false;
-                    addedVar.MandatoryInput = xMandatoryInputCheckBox.IsChecked ?? false;
-                    addedVar.Publish = xPublishcheckbox.IsChecked ?? false;
-                }
-                AddVarToParent(addedVar);
+            VariableBase addedVar = (VariableBase)varToAdd.CreateCopy();
+            addedVar.SetInitialSetup();
+            addedVar.Name = Name;
+            addedVar.Description = Description;
+            addedVar.SetInitialValue(Value ?? string.Empty);
+
+            if (mVariablesLevel.Equals(eVariablesLevel.Activity) || mVariablesLevel.Equals(eVariablesLevel.BusinessFlow))
+            {
+                addedVar.SetAsInputValue = xSetAsInputValueCheckBox.IsChecked ?? false;
+                addedVar.SetAsOutputValue = xSetAsOutputValueCheckBox.IsChecked ?? false;
+                addedVar.MandatoryInput = xMandatoryInputCheckBox.IsChecked ?? false;
+                addedVar.Publish = xPublishcheckbox.IsChecked ?? false;
             }
 
+            AddVarToParent(addedVar);
             return true;
         }
 
