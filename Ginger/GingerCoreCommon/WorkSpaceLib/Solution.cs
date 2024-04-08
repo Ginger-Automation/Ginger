@@ -126,7 +126,7 @@ namespace Ginger.SolutionGeneral
         } = new ObservableList<ALMConfig>();
 
         [IsSerializedForLocalRepository]
-        public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; }
+        public ObservableList<ApplicationPlatform> ApplicationPlatforms { get; set; } = [];
 
         public string MainApplication
         {
@@ -134,7 +134,9 @@ namespace Ginger.SolutionGeneral
             get
             {
                 if (ApplicationPlatforms == null)
-                    ApplicationPlatforms = new ObservableList<ApplicationPlatform>();
+                {
+                    ApplicationPlatforms = [];
+                }
 
                 if (ApplicationPlatforms.Count > 0)
                 {
