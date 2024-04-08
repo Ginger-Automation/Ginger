@@ -31,6 +31,7 @@ using Amdocs.Ginger.Common.SelfHealingLib;
 using Amdocs.Ginger.CoreNET.Run.SolutionCategory;
 using Amdocs.Ginger.Repository;
 using Ginger.Run.RunSetActions;
+using Ginger.SolutionGeneral;
 
 namespace Ginger.Run
 {
@@ -396,6 +397,20 @@ namespace Ginger.Run
             }
         }
 
+        private bool _isVirtual;
+        public bool IsVirtual 
+        { 
+            get => _isVirtual;
+            set
+            {
+                if (_isVirtual != value)
+                {
+                    _isVirtual = value;
+                    OnPropertyChanged(nameof(IsVirtual));
+                }
+            } 
+        }
+
         public void UpdateRunnersBusinessFlowRunsList()
         {
             foreach (GingerRunner GR in GingerRunners)
@@ -411,6 +426,14 @@ namespace Ginger.Run
         {
             UpdateRunnersBusinessFlowRunsList();
             base.UpdateBeforeSave();
+        }
+
+        public Action DynamicPostSaveHandler;
+
+        public override void PostSaveHandler()
+        {
+            base.PostSaveHandler();
+            DynamicPostSaveHandler?.Invoke();
         }
 
         [IsSerializedForLocalRepository]
@@ -487,7 +510,6 @@ namespace Ginger.Run
             }
             return false;
         }
-
 
         public ReRunConfig ReRunConfigurations = new ReRunConfig();
 

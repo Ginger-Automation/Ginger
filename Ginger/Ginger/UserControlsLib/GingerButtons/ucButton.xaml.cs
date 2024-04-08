@@ -115,7 +115,18 @@ namespace Amdocs.Ginger.UserControls
             set { xButtonImage.Width = value; }
         }
 
+        public double ButtonTextSize
+        {
+            get
+            {
+                return xButton.FontSize;
+            }
 
+            set
+            {
+                xButton.FontSize = value;
+            }
+        }
 
         private void SetButtonLook()
         {

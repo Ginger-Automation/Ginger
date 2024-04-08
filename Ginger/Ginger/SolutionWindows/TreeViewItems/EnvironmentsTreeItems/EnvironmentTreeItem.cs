@@ -65,7 +65,7 @@ namespace Ginger.SolutionWindows.TreeViewItems
             foreach (EnvApplication app in ProjEnvironment.Applications.OrderBy(nameof(EnvApplication.Name)))
             {
                 EnvApplicationTreeItem EATI = new EnvApplicationTreeItem();
-                app.SetPlatFormImage(WorkSpace.Instance.Solution.ApplicationPlatforms);
+                app.SetDataFromAppPlatform(WorkSpace.Instance.Solution.ApplicationPlatforms);
                 EATI.EnvApplication = app;
                 EATI.ProjEnvironment = ProjEnvironment;
                 Childrens.Add(EATI);
@@ -119,15 +119,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             var ApplicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms.Where((app) => !ProjEnvironment.CheckIfApplicationPlatformExists(app.Guid , app.AppName))?.ToList();
 
-
-
-            if( ApplicationPlatforms == null || ApplicationPlatforms?.Count == 0)
-            {
-
-                Reporter.ToUser(eUserMsgKey.NoApplicationPlatformLeft, ProjEnvironment.Name);
-
-                return;
-            }
 
 
             string appName = string.Empty;

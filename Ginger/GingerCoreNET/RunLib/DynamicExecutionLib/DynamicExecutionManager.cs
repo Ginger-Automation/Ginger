@@ -936,9 +936,13 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             return NewtonsoftJsonUtils.SerializeObject(gingerExecConfig);
         }
 
-
-        public static void CreateUpdateRunSetFromJSON(RunsetExecutor runsetExecutor, GingerExecConfig gingerExecConfig)
+        public static RunSetConfig LoadRunsetFromExecutionConfig(GingerExecConfig gingerExecConfig)
         {
+            if (gingerExecConfig == null)
+            {
+                throw new ArgumentNullException(nameof(gingerExecConfig));
+            }
+
             RunsetExecConfig dynamicRunsetConfigs = gingerExecConfig.Runset;
             RunSetConfig runSetConfig = null;
 
@@ -955,6 +959,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 //## Creating new Runset
                 runSetConfig = new RunSetConfig();
+                if (gingerExecConfig.ExecutionID != null)
+                {
+                    runSetConfig.Guid = (Guid)gingerExecConfig.ExecutionID;
+                }
                 runSetConfig.Name = dynamicRunsetConfigs.Name;
                 runSetConfig.AddCategories();
             }
@@ -1169,6 +1177,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                          new Tuple<string, Guid?>(nameof(Activity.Guid), sharedActivity.SharedActivityID),
                                          new Tuple<string, string>(nameof(Activity.ActivityName), sharedActivity.SharedActivityName),
                                          WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<Activity>());
+                                        if (sharedActivity.InstanceID != null)
+                                        {
+                                            shActivity.Guid = (Guid)sharedActivity.InstanceID;
+                                        }
                                         bf.AddActivity(shActivity, actGrp);
                                     }
                                 }
@@ -1271,6 +1283,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                                 break;
                                             case InputValue.eVariableCustomizationType.DataSource:
                                                 customizedInputVar.MappedOutputType = VariableBase.eOutputType.DataSource;
+                                                customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
+                                                break;
+                                            case InputValue.eVariableCustomizationType.ActivityOutputVariable:
+                                                customizedInputVar.MappedOutputType = VariableBase.eOutputType.ActivityOutputVariable;
+                                                customizedInputVar.VariableReferenceEntity = (Guid)inputValueConfig.VariableReferenceEntity;
                                                 customizedInputVar.MappedOutputValue = inputValueConfig.VariableCustomizedValue;
                                                 break;
                                             default:
@@ -1639,8 +1656,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runSetConfig.AllowInterActivityFlowControls = (bool)dynamicRunsetConfigs.AllowInterActivityFlowControls;
             }
 
-            // Set config
-            runsetExecutor.RunSetConfig = runSetConfig;
+            return runSetConfig;
         }
 
         public static T FindItemByIDAndName<T>(Tuple<string, Guid?> id, Tuple<string, string> name, ObservableList<T> repoLibrary)

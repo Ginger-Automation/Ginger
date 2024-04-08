@@ -253,9 +253,9 @@
   
     <PackageReference Include="Eyes.Selenium4" Version="2.59.0" />
   
-    <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.2" />
+    <PackageReference Include="Ginger.AccountReport.Contracts" Version="4.2.3" />
   
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.1" />
+    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.2" />
     
     <PackageReference Include="HBaseNet" Version="0.1.0" />
     

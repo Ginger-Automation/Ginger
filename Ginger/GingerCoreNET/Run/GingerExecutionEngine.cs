@@ -35,6 +35,7 @@ using Ginger.Run.RunSetActions;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Actions.PlugIns;
+using GingerCore.Actions.WebServices.WebAPI;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
@@ -895,6 +896,12 @@ namespace Ginger.Run
             List<VariableBase> variables = null;
             List<VariableBase> outputVariables = null;
             //do actual value update
+
+            if (inputVars.Count > 0)
+            {
+                Reporter.ToLog(eLogLevel.INFO, $"Mapping {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} {GingerDicser.GetTermResValue(eTermResKey.Variable)} with customized values.");
+            }
+
             foreach (VariableBase inputVar in inputVars)
             {
                 try
@@ -1902,33 +1909,87 @@ namespace Ginger.Run
             }
 
             //Handle actions which needs VE processing like Tuxedo, we need to calculate the UD file values before execute, which is in different list not in ACT.Input list
+
             List<ObservableList<ActInputValue>> list = act.GetInputValueListForVEProcessing();
             if (list != null) // Will happen only if derived action implemented this function, since it needs processing for VEs
             {
-                foreach (var subList in list)
+                if (act is ActWebAPIModel)
                 {
-                    foreach (var IV in subList)
+                    foreach (var subList in list)
                     {
-                        if (!string.IsNullOrEmpty(IV.Value))
+                        foreach (var IV in subList)
                         {
-                            try
+                            if (!string.IsNullOrEmpty(IV.Value))
                             {
-                                IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
-                                IV.DisplayValue = act.ValueExpression.EncryptedValue;
+                                try
+                                {
+                                    string valueToEvaluate = EvaluateWebApiModelParameterValue(IV.Value, subList);
+                                    if (valueToEvaluate!= null)
+                                    {
+                                        IV.ValueForDriver = act.ValueExpression.Calculate(valueToEvaluate);
+                                    }
+                                    else
+                                    {
+                                        IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                                    }
+                                    IV.DisplayValue = act.ValueExpression.EncryptedValue;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to calculate VE for the Action Input value '{0}'", IV.Value), ex);
+                                }
                             }
-                            catch (Exception ex)
+                            else
                             {
-                                Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to calculate VE for the Action Input value '{0}'", IV.Value), ex);
+                                IV.ValueForDriver = string.Empty;
                             }
                         }
-                        else
+                    }
+                }
+                else
+                {
+                    foreach (var subList in list)
+                    {
+                        foreach (var IV in subList)
                         {
-                            IV.ValueForDriver = string.Empty;
+                            if (!string.IsNullOrEmpty(IV.Value))
+                            {
+                                try
+                                {
+                                    IV.ValueForDriver = act.ValueExpression.Calculate(IV.Value);
+                                    IV.DisplayValue = act.ValueExpression.EncryptedValue;
+                                }
+                                catch (Exception ex)
+                                {
+                                    Reporter.ToLog(eLogLevel.ERROR, string.Format("Failed to calculate VE for the Action Input value '{0}'", IV.Value), ex);
+                                }
+                            }
+                            else
+                            {
+                                IV.ValueForDriver = string.Empty;
+                            }
                         }
                     }
                 }
             }
+
             act.ValueExpression.DecryptFlag = true;
+        }
+
+        private static string EvaluateWebApiModelParameterValue(string valueToEvaluate, ObservableList<ActInputValue> subList)
+        {
+            foreach (var item_toCompare in subList)
+            {
+                if (valueToEvaluate.Contains(item_toCompare.ItemName))
+                {
+                    if (item_toCompare.ValueForDriver != null)
+                    {
+                        return valueToEvaluate.Replace(item_toCompare.ItemName, item_toCompare.ValueForDriver);
+                    }                    
+                }
+            }
+
+            return string.Empty;
         }
 
         private void ProcessWait(Act act, Stopwatch st)
@@ -3556,6 +3617,68 @@ namespace Ginger.Run
             return result;
         }
 
+        private void SetMappedValuesToActivityVariables(Activity activity, Activity[] prevActivities)
+        {
+            if (prevActivities.Length == 0)
+            {
+                return;
+            }
+
+            IEnumerable<VariableBase> activityVariables = activity.GetVariables();
+            if (!activityVariables.Any())
+            {
+                return;
+            }
+
+            VariableBase[] mappedTargetVars = activityVariables
+                .Where(var => var.MappedOutputType == VariableBase.eOutputType.ActivityOutputVariable)
+                .ToArray();
+
+            if (mappedTargetVars.Length == 0)
+            {
+                return;
+            }
+
+            Reporter.ToLog(eLogLevel.INFO, $"Mapping {GingerDicser.GetTermResValue(eTermResKey.Activity)} {GingerDicser.GetTermResValue(eTermResKey.Variables)} with customized values.");
+
+            foreach(VariableBase mappedTargetVar in mappedTargetVars)
+            {
+                if (!Guid.TryParse(mappedTargetVar.MappedOutputValue, out Guid mappedSourceVarGuid))
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Value '{mappedTargetVar.MappedOutputValue}' is not a valid GUID for mapping input {GingerDicser.GetTermResValue(eTermResKey.Variable)}.");
+                    continue;
+                }
+
+                Activity mappedSourceActivity = prevActivities
+                    .FirstOrDefault(prevActivity => prevActivity.Guid == mappedTargetVar.VariableReferenceEntity);
+                
+                if (mappedSourceActivity == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"No Activity('{mappedTargetVar.VariableReferenceEntity}') found by id in {GingerDicser.GetTermResValue(eTermResKey.BusinessFlow)} before current {GingerDicser.GetTermResValue(eTermResKey.Activity)}({activity.Guid}-{activity.ActivityName}).");
+                    continue;
+                }
+
+                VariableBase mappedSourceVar = mappedSourceActivity
+                    .GetVariables()
+                    .Where(var => var.SetAsOutputValue)
+                    .FirstOrDefault(var => var.Guid == mappedSourceVarGuid);
+
+                if (mappedSourceVar == null)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"No {GingerDicser.GetTermResValue(eTermResKey.Variable)}('{mappedSourceVarGuid}') found by id in {GingerDicser.GetTermResValue(eTermResKey.Activity)}('{mappedSourceActivity.Guid}-{mappedSourceActivity.ActivityName}') for mapping it's output value.");
+                    continue;
+                }
+
+                Reporter.ToLog(eLogLevel.INFO, $"Setting value '{mappedSourceVar.Value}' from {GingerDicser.GetTermResValue(eTermResKey.Variable)}({mappedSourceVar.Guid}-{mappedSourceVar.Name}) to {GingerDicser.GetTermResValue(eTermResKey.Variable)}({mappedTargetVar.Guid}-{mappedTargetVar.Name}).");
+                
+                bool wasValueSet = mappedTargetVar.SetValue(mappedSourceVar.Value);
+                if (!wasValueSet)
+                {
+                    Reporter.ToLog(eLogLevel.ERROR, $"Failed to set value '{mappedSourceVar.Value}' to {GingerDicser.GetTermResValue(eTermResKey.Variable)}({mappedTargetVar.Guid}-{mappedTargetVar.Name})");
+                }
+            }
+        }
+
 
         public void RunActivity(Activity activity, bool doContinueRun = false, bool standaloneExecution = false, bool resetErrorHandlerExecutedFlag = false)
         {
@@ -4234,6 +4357,8 @@ namespace Ginger.Run
                     mRunSource = eRunSource.BusinessFlow;
                 }
 
+                List<Activity> previouslyExecutedActivities = [];
+
                 while (ExecutingActivity != null)
                 {
                     if (ExecutingActivity.GetType() == typeof(ErrorHandler) || ExecutingActivity.GetType() == typeof(CleanUpActivity))
@@ -4253,6 +4378,7 @@ namespace Ginger.Run
                     {
                         ExecutingActivity.Status = eRunStatus.Running;
                         GiveUserFeedback();
+                        SetMappedValuesToActivityVariables(ExecutingActivity, previouslyExecutedActivities.ToArray());
                         if (doContinueRun && FirstExecutedActivity.Equals(ExecutingActivity))
                         {
                             // We run the first Activity in Continue mode, if it came from RunFlow, then it is set to first action
@@ -4262,6 +4388,7 @@ namespace Ginger.Run
                         {
                             RunActivity(ExecutingActivity, resetErrorHandlerExecutedFlag: doResetErrorHandlerExecutedFlag);
                         }
+                        previouslyExecutedActivities.Add(ExecutingActivity);
                         //TODO: Why this is here? do we need to rehook
                         CurrentBusinessFlow.PropertyChanged -= CurrentBusinessFlow_PropertyChanged;
                         if (ExecutingActivity.Status == Amdocs.Ginger.CoreNET.Execution.eRunStatus.Failed)

@@ -531,6 +531,16 @@ namespace Ginger.BusinessFlowPages.ListHelpers
         private void AddNewHandler(object sender, RoutedEventArgs e)
         {
             AddVariablePage addVarPage = new AddVariablePage(VariablesLevel, VariablesParent, mContext);
+            addVarPage.xLibraryTabListView.ListSelectionMode = SelectionMode.Single;
+            addVarPage.xLibraryTabListView.SelectTitleVisibility = Visibility.Visible;
+            if (VariablesLevel.Equals(eVariablesLevel.EnvApplication))
+            {
+                addVarPage.xLibraryTabListView.SelectTitleContent = "Select Parameter Type";
+            }
+            else
+            {
+                addVarPage.xLibraryTabListView.SelectTitleContent = "Select Variable Type";
+            }
             addVarPage.ShowAsWindow();
         }
 

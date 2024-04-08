@@ -195,6 +195,7 @@ namespace amdocs.ginger.GingerCoreNET
                     CloseAllRunningAgents();
                     PlugInsManager.CloseAllRunningPluginProcesses();
                     SolutionRepository.StopAllRepositoryFolderWatchers();
+                    Solution.SolutionOperations.CleanUpCacheDirectory();
                 }
 
                 if (!RunningInExecutionMode)
@@ -505,6 +506,8 @@ namespace amdocs.ginger.GingerCoreNET
                 SolutionRepository = GingerSolutionRepository.CreateGingerSolutionRepository();
                 SolutionRepository.Open(solutionFolder);
 
+                solution.SolutionOperations.CleanUpCacheDirectory();
+
                 Reporter.ToLog(eLogLevel.INFO, "Loading Solution- Loading needed Plugins");
                 mPluginsManager = new PluginsManager();
                 mPluginsManager.SolutionChanged(SolutionRepository);
@@ -693,6 +696,7 @@ namespace amdocs.ginger.GingerCoreNET
                 {
                     AppSolutionAutoSave.SolutionAutoSaveEnd();
                 }
+                Solution.SolutionOperations.CleanUpCacheDirectory();
             }
 
             //Reset values

@@ -22,6 +22,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Controls.Primitives;
+using GingerCore.Environments;
+using GingerTest.WizardLib;
+using amdocs.ginger.GingerCoreNET;
 
 namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
 {
@@ -54,7 +57,7 @@ namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
             AppsGrid.SetAllColumnsDefaultView(view);
             AppsGrid.InitViewItems();
 
-
+            xAddApplicationToSolution.ButtonTextSize = 12;
             AppsGrid.DataSourceList = FilteredListToBeDisplayed;
         }
         public void ShowAsWindow(eWindowShowStyle windowStyle = eWindowShowStyle.Dialog, bool ShowCancelButton = true)
@@ -74,5 +77,17 @@ namespace Ginger.SolutionWindows.TreeViewItems.EnvironmentsTreeItems
             _pageGenericWin?.Close();
         }
 
+        private void AddApplicationToSolution(object sender, RoutedEventArgs e)
+        {
+            AddApplicationPage applicationPage = new(WorkSpace.Instance.Solution, false);
+
+            applicationPage.ShowAsWindow();
+
+            foreach (ApplicationPlatform selectedApp in applicationPage.SelectApplicationGrid.Grid.SelectedItems)
+            {
+                AppsGrid.DataSourceList.Add(selectedApp);
+            }
+
+        }
     }
 }

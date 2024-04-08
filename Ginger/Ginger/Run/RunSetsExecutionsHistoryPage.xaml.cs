@@ -20,8 +20,10 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.CoreNET;
 using Amdocs.Ginger.CoreNET.BPMN.Exportation;
+using Amdocs.Ginger.CoreNET.Execution;
 using Amdocs.Ginger.CoreNET.LiteDBFolder;
 using Amdocs.Ginger.CoreNET.Logger;
+using Amdocs.Ginger.CoreNET.Reports;
 using Amdocs.Ginger.CoreNET.Run.RunListenerLib;
 using Amdocs.Ginger.CoreNET.Utility;
 using Ginger.Reports;
@@ -37,10 +39,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Markup;
 using static Amdocs.Ginger.CoreNET.BPMN.Exportation.RunSetExecutionHistoryToBPMNExporter;
 
 namespace Ginger.Run
@@ -51,6 +55,8 @@ namespace Ginger.Run
     public partial class RunSetsExecutionsHistoryPage : Page
     {
         private const string BPMNExportPath = @"~\\Documents\BPMN";
+
+        private readonly RunsetFromReportLoader _runsetFromReportLoader;
 
         ObservableList<RunSetReport> mExecutionsHistoryList = new ObservableList<RunSetReport>();
         ExecutionLoggerHelper executionLoggerHelper = new ExecutionLoggerHelper();
@@ -73,12 +79,18 @@ namespace Ginger.Run
         }
 
         private eExecutionHistoryLevel mExecutionHistoryLevel;
+
+        public delegate void LoadRunsetEventHandler(RunSetConfig runset);
+
+        public event LoadRunsetEventHandler? LoadRunset;
+
         public RunSetsExecutionsHistoryPage(eExecutionHistoryLevel executionHistoryLevel, RunSetConfig runsetConfig = null)
         {
             InitializeComponent();
 
             mExecutionHistoryLevel = executionHistoryLevel;
             RunsetConfig = runsetConfig;
+            _runsetFromReportLoader = new();
 
             this.Unloaded += OnUnloaded;
 
@@ -92,6 +104,7 @@ namespace Ginger.Run
             {
                 _httpClient.Dispose();
                 _httpClient = null;
+                _runsetFromReportLoader.Dispose();
             }
         }
 
@@ -104,77 +117,71 @@ namespace Ginger.Run
         {
             if (mExecutionHistoryLevel == eExecutionHistoryLevel.Solution)
             {
-                grdExecutionsHistory.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.History, GingerDicser.GetTermResValue(eTermResKey.RunSets, "All ", " Executions History"), saveAllHandler: null, addHandler: null);
+                grdExecutionsHistory.SetGridEnhancedHeader(Amdocs.Ginger.Common.Enums.eImageType.History, GingerDicser.GetTermResValue(eTermResKey.RunSets, "All", "Executions History"), saveAllHandler: null, addHandler: null);
             }
 
             GridViewDef view = new GridViewDef(GridViewDef.DefaultViewName);
             view.GridColsView =
             [
-                new(){ 
-                    Field = nameof(RunSetReport.GUID), 
-                    Header = "Execution ID", 
-                    WidthWeight = 15 
+                new() {
+                    Field = nameof(RunSetReport.GUID),
+                    Header = "Execution ID",
+                    WidthWeight = 15
                 },
-                new(){ 
-                    Field = RunSetReport.Fields.Name, 
-                    WidthWeight = 20, 
+                new() {
+                    Field = RunSetReport.Fields.Name,
+                    WidthWeight = 20,
                     ReadOnly = true },
                 new()
-                { 
-                    Field = RunSetReport.Fields.Description, 
-                    WidthWeight = 20, 
+                {
+                    Field = RunSetReport.Fields.Description,
+                    WidthWeight = 20,
                     ReadOnly = true },
                 new()
-                { 
-                    Field = RunSetReport.Fields.StartTimeStamp, 
-                    Header = "Execution Start Time", 
-                    WidthWeight = 10, 
-                    ReadOnly = true 
-                },
-                new()
-                { 
-                    Field = RunSetReport.Fields.EndTimeStamp, 
-                    Header = "Execution End Time", 
-                    WidthWeight = 10, 
-                    ReadOnly = true 
-                },
-                new()
-                { 
-                    Field = RunSetReport.Fields.ExecutionDurationHHMMSS, 
-                    Header = "Execution Duration", 
-                    WidthWeight = 10, 
-                    ReadOnly = true 
-                },
-                new()
-                { 
-                    Field = RunSetReport.Fields.RunSetExecutionStatus, 
-                    Header = "Execution Status", 
-                    WidthWeight = 10, 
-                    ReadOnly = true, 
-                    BindingMode = BindingMode.OneWay 
-                },
-                new()
-                { 
-                    Field = RunSetReport.Fields.DataRepMethod, 
-                    Header = "Type", 
-                    Visible = true, 
-                    ReadOnly = true,
-                    WidthWeight = 5, 
-                    BindingMode = BindingMode.OneWay 
-                },
-                new(){ 
-                    Field = "Generate Report", 
-                    WidthWeight = 8, 
-                    StyleType = GridColView.eGridColStyleType.Template, 
-                    CellTemplate = (DataTemplate)this.pageGrid.Resources["ReportButton"] 
+                {
+                    Field = RunSetReport.Fields.StartTimeStamp,
+                    Header = "Execution Start Time",
+                    WidthWeight = 10,
+                    ReadOnly = true
                 },
                 new()
                 {
-                    Field = "Export BPMN",
-                    WidthWeight = 8,
-                    StyleType = GridColView.eGridColStyleType.Template,
-                    CellTemplate = (DataTemplate)this.pageGrid.Resources["BPMNButtonDataTemplate"]
+                    Field = RunSetReport.Fields.EndTimeStamp,
+                    Header = "Execution End Time",
+                    WidthWeight = 10,
+                    ReadOnly = true
                 },
+                new()
+                {
+                    Field = RunSetReport.Fields.ExecutionDurationHHMMSS,
+                    Header = "Execution Duration",
+                    WidthWeight = 10,
+                    ReadOnly = true
+                },
+                new()
+                {
+                    Field = RunSetReport.Fields.RunSetExecutionStatus,
+                    Header = "Execution Status",
+                    WidthWeight = 10,
+                    ReadOnly = true,
+                    BindingMode = BindingMode.OneWay
+                },
+                new()
+                {
+                    Field = RunSetReport.Fields.DataRepMethod,
+                    Header = "Type",
+                    Visible = true,
+                    ReadOnly = true,
+                    WidthWeight = 5,
+                    BindingMode = BindingMode.OneWay
+                },
+                new()
+                {
+                    Field = "Actions",
+                    WidthWeight = 24,
+                    StyleType = GridColView.eGridColStyleType.Template,
+                    CellTemplate = GetActionsDataTemplate()
+                }
             ];
 
             grdExecutionsHistory.SetAllColumnsDefaultView(view);
@@ -190,6 +197,25 @@ namespace Ginger.Run
             {
                 grdExecutionsHistory.AddCheckBox("Auto Load Execution History", new RoutedEventHandler(AutoLoadExecutionHistory));
             }
+        }
+
+        private DataTemplate GetActionsDataTemplate()
+        {
+            if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
+            {
+                return (DataTemplate)pageGrid.Resources["ActionsDataTemplateWithoutLoadRunset"];
+            }
+            else
+            {
+                return (DataTemplate)pageGrid.Resources["ActionsDataTemplate"];
+            }
+        }
+
+        private string GetContentXAMLFromDataTemplate(DataTemplate dataTemplate)
+        {
+            using StringWriter stringWriter = new();
+            XamlWriter.Save(dataTemplate.LoadContent(), stringWriter);
+            return stringWriter.ToString();
         }
 
         private void AutoLoadExecutionHistory(object sender, RoutedEventArgs e)
@@ -229,6 +255,7 @@ namespace Ginger.Run
                             RunSetReport runSetReport = (RunSetReport)JsonLib.LoadObjFromJSonFile(runSetFile, typeof(RunSetReport));
                             runSetReport.DataRepMethod = ExecutionLoggerConfiguration.DataRepositoryMethod.TextFile;
                             runSetReport.LogFolder = System.IO.Path.GetDirectoryName(runSetFile);
+                            runSetReport.RunSetGuid = Guid.Parse(runSetReport.GUID);
                             if (mExecutionHistoryLevel == eExecutionHistoryLevel.SpecificRunSet)
                             {
                                 //filer the run sets by GUID
@@ -279,7 +306,11 @@ namespace Ginger.Run
             ObservableList<RunSetReport> executionsHistoryListSortedByDate = new ObservableList<RunSetReport>();
             if (mExecutionsHistoryList != null && mExecutionsHistoryList.Count > 0)
             {
-                foreach (RunSetReport runSetReport in mExecutionsHistoryList.OrderByDescending(item => item.StartTimeStamp))
+                IEnumerable<RunSetReport> sortedAndFilteredExecutionHistoryList = mExecutionsHistoryList
+                    .Where(report => report.RunSetExecutionStatus != eRunStatus.Automated)
+                    .OrderByDescending(item => item.StartTimeStamp);
+
+                foreach (RunSetReport runSetReport in sortedAndFilteredExecutionHistoryList)
                 {
                     runSetReport.StartTimeStamp = runSetReport.StartTimeStamp.ToLocalTime();
                     runSetReport.EndTimeStamp = runSetReport.EndTimeStamp.ToLocalTime();
@@ -444,6 +475,40 @@ namespace Ginger.Run
                     System.Diagnostics.Process.Start(new ProcessStartInfo() { FileName = reportsResultFolder + "\\" + "GingerExecutionReport.html", UseShellExecute = true });
                 }
             }
+        }
+
+        private void LoadRunsetButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button LoadRunsetButton = (Button)sender;
+            RunSetReport runsetReport = (RunSetReport)LoadRunsetButton.Tag;
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    Reporter.ToStatus(eStatusMsgKey.LoadingRunSet, messageArgs: runsetReport.Name);
+                    RunSetConfig? runset = await _runsetFromReportLoader.LoadAsync(runsetReport);
+
+                    if (runset == null)
+                    {
+                        Dispatcher.Invoke(() => Reporter.ToUser(eUserMsgKey.RunsetNotFoundForLoading));
+                        return;
+                    }
+
+                    Dispatcher.Invoke(() =>
+                    {
+                        LoadRunsetEventHandler? handler = LoadRunset;
+                        handler?.Invoke(runset);
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Reporter.ToUser(eUserMsgKey.RunSetLoadFromReportError, ex.Message);
+                }
+                finally
+                {
+                    Reporter.HideStatusMessage();
+                }
+            });
         }
 
         private void BPMNButton_Click(object sender, RoutedEventArgs e)
