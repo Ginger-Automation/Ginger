@@ -98,7 +98,7 @@ namespace GingerPluginCoreTest.CommunicationProtocol
             mBF.Name = "BF Test Java Driver";
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
-            mBF.TargetApplications.Add(new TargetApplication() { AppName = "TestApp" });
+            //mBF.TargetApplications.Add(new TargetApplication() { AppName = "TestApp" });
             Activity activity = new Activity();
             activity.TargetApplication = "JavaTestApp";
             mBF.Activities.Add(activity);

@@ -73,7 +73,7 @@ namespace UnitTest
             mBF.Name = "BF Test PB Driver";
             Platform p = new Platform();
             p.PlatformType = ePlatformType.PowerBuilder;
-            mBF.TargetApplications.Add(new TargetApplication() { AppName = "PBTestAPP" });
+            //mBF.TargetApplications.Add(new TargetApplication() { AppName = "PBTestAPP" });
             Activity activity = new Activity();
             activity.TargetApplication = "PBTestApp";
             mBF.Activities.Add(activity);

@@ -44,7 +44,8 @@ namespace GingerCore
 
         public BusinessFlow()
         {
-
+            // Initialize the TargetApplications property with a default value
+            TargetApplications = new ObservableList<TargetBase>();
         }
 
         public BusinessFlow(string sName)
@@ -52,6 +53,8 @@ namespace GingerCore
             Name = sName;
             Activities = new ObservableList<Activity>();
             Variables = new ObservableList<VariableBase>();
+            // Initialize the TargetApplications property with a default value
+            TargetApplications = new ObservableList<TargetBase>();
 
             Activity a = new Activity() { Active = true };
             a.ActivityName = GingerDicser.GetTermResValue(eTermResKey.Activity) + " 1";
@@ -59,6 +62,7 @@ namespace GingerCore
             Activities.Add(a);
             Activities.CurrentItem = a;
             CurrentActivity = a;
+
         }
 
         public override string ToString()
@@ -359,8 +363,7 @@ namespace GingerCore
         public ObservableList<TargetBase> TargetApplications
         {
             get
-            {
-
+            {                
                 var AllTargetApplicationsNames = Activities.Select((activity) => activity.TargetApplication);
 
                 var AllTargetApplications = GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications();
@@ -376,7 +379,7 @@ namespace GingerCore
             {
                 return;
             }
-        }
+        } 
 
         public ObservableList<ApplicationPlatform> TargetApplicationPlatforms
         {

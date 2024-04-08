@@ -80,7 +80,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
 
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
-            mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
+            //mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };
             mBF.AddVariable(v1);

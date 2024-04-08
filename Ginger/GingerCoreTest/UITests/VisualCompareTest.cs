@@ -45,7 +45,7 @@ namespace UnitTests.NonUITests
             mBF.Active = true;
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
-            mBF.TargetApplications.Add(new TargetApplication() { AppName = "VM" });
+            //mBF.TargetApplications.Add(new TargetApplication() { AppName = "VM" });
 
             mGR = new GingerRunner();
             mGR.Executor.SolutionFolder = TestResources.GetTestTempFolder("");

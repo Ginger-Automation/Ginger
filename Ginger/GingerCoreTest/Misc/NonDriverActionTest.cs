@@ -96,7 +96,7 @@ namespace UnitTests.NonUITests
         {
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
-            mBF.TargetApplications.Add(new TargetApplication() { AppName = "Web" });
+            //mBF.TargetApplications.Add(new TargetApplication() { AppName = "Web" });
 
             Agent a = new Agent();
             AgentOperations agentOperations = new AgentOperations(a);

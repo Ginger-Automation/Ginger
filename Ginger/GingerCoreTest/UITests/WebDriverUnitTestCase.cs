@@ -67,7 +67,7 @@ namespace UnitTests.UITests
 
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
-            mBF.TargetApplications.Add(new TargetApplication() { AppName = "WebApp" });
+            //mBF.TargetApplications.Add(new TargetApplication() { AppName = "WebApp" });
             mBF.CurrentActivity.TargetApplication = "WebApp";
             mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
             mDriver.AutoDetect = true;
@@ -958,7 +958,7 @@ namespace UnitTests.UITests
 
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
-            mBF.TargetApplications.Add(new TargetApplication() { AppName = "DeviceEmulation" });
+           // mBF.TargetApplications.Add(new TargetApplication() { AppName = "DeviceEmulation" });
             mBF.CurrentActivity.TargetApplication = "DeviceEmulation";
 
             var mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);
@@ -1014,7 +1014,7 @@ namespace UnitTests.UITests
 
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
-            mBF.TargetApplications.Add(new TargetApplication() { AppName = "DeviceEmulationUserAgent" });
+            //mBF.TargetApplications.Add(new TargetApplication() { AppName = "DeviceEmulationUserAgent" });
             mBF.CurrentActivity.TargetApplication = "DeviceEmulationUserAgent";
 
             var mDriver = new SeleniumDriver(GingerCore.Drivers.SeleniumDriver.eBrowserType.Chrome);

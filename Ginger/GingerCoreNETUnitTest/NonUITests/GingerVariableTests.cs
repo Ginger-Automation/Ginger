@@ -57,7 +57,7 @@ namespace UnitTests.NonUITests.GingerRunnerTests
             mBF.Active = true;
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
-            mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
+            //mBF.TargetApplications.Add(new TargetApplication() { AppName = "SCM" });
 
             VariableString busFlowV1 = new VariableString() { Name = "BFV1", InitialStringValue = "1" };
             mBF.AddVariable(busFlowV1);

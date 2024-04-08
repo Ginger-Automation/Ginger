@@ -52,7 +52,7 @@ namespace UnitTests.UITests
             mBF.Active = true;
             Platform p = new Platform();
             p.PlatformType = ePlatformType.Web;
-            mBF.TargetApplications.Add(new TargetApplication() { AppName = "WebApp" });
+            //mBF.TargetApplications.Add(new TargetApplication() { AppName = "WebApp" });
 
             VariableString v1 = new VariableString() { Name = "v1", InitialStringValue = "1" };
             mBF.AddVariable(v1);
