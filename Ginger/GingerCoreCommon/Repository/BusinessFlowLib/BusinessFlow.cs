@@ -363,8 +363,12 @@ namespace GingerCore
         public ObservableList<TargetBase> TargetApplications
         {
             get
-            {                
-                var AllTargetApplicationsNames = Activities.Select((activity) => activity.TargetApplication);
+            {
+                if(!ActivitiesLazyLoad)
+                {
+                    return [];
+                }
+                var AllTargetApplicationsNames = mActivities.Select((activity) => activity.TargetApplication);
 
                 var AllTargetApplications = GingerCoreCommonWorkSpace.Instance?.Solution?.GetSolutionTargetApplications();
 
@@ -379,7 +383,7 @@ namespace GingerCore
             {
                 return;
             }
-        } 
+        }
 
         public ObservableList<ApplicationPlatform> TargetApplicationPlatforms
         {
