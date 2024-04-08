@@ -149,6 +149,7 @@ namespace Ginger.Variables
             if(parent is EnvApplication)
             {
                 LinkedVariableStackPanel.Visibility = Visibility.Collapsed;
+                xTagsViewer.Visibility = Visibility.Collapsed;
             }
             else
             {
