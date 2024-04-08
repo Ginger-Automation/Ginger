@@ -12,7 +12,7 @@
         <StackPanel Orientation="Vertical">
             <StackPanel Margin="0,5,0,0" Orientation="Horizontal">
                 <Label Margin="0,0,10,0" Style="{StaticResource @LabelStyle}" Content="Select Defect's Profile:"/>
-                <ComboBox x:Name="CurrentProfilePickerCbx"  ContextMenu="{x:Null}" Width="250" Style="{DynamicResource $FlatInputComboBoxStyle}" SelectionChanged="CurrentProfilePickerCbx_SelectionChanged" ></ComboBox>
+                <ComboBox x:Name="CurrentProfilePickerCbx" Margin="95,0,0,0"  ContextMenu="{x:Null}" Width="300" Style="{DynamicResource $FlatInputComboBoxStyle}" SelectionChanged="CurrentProfilePickerCbx_SelectionChanged" ></ComboBox>
             </StackPanel>
             <StackPanel Margin="0,0,0,15" Orientation="Vertical">
                 <StackPanel Orientation="Vertical">

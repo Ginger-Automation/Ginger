@@ -54,6 +54,7 @@ namespace Amdocs.Ginger.Common
         TestCasesUpdatedSuccessfully,
         TestCasesUploadedSuccessfully,
         ASCFNotConnected,
+        TestSetsNotExist,
         DeleteRepositoryItemAreYouSure,
         SolutionEncryptionKeyUpgrade,
         ForgotKeySaveChanges,
@@ -526,6 +527,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestCasesUpdatedSuccessfully, new UserMsg(eUserMsgType.INFO, "TestCase Update", "TestCases Updated Successfully.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestCasesUploadedSuccessfully, new UserMsg(eUserMsgType.INFO, "TestCases Uploaded", "TestCases Uploaded Successfully.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestSetsImportedSuccessfully, new UserMsg(eUserMsgType.INFO, "Import ALM Test Set", "ALM Test Set/s import process ended successfully.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.TestSetsNotExist, new UserMsg(eUserMsgType.INFO, "Business Flow Not Found to Delete", "ALM Test Set/s as Business Flow does not exist to Delete.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestSetExists, new UserMsg(eUserMsgType.WARN, "Import Exiting Test Set", "The Test Set '{0}' was imported before and already exists in current Solution." + System.Environment.NewLine + "Do you want to delete the existing mapped " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " and import the Test Set again?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ErrorInTestsetImport, new UserMsg(eUserMsgType.ERROR, "Import Test Set Error", "Error Occurred while exporting the Test Set '{0}'." + System.Environment.NewLine + "Error Details:{1}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ErrorWhileExportingExecDetails, new UserMsg(eUserMsgType.ERROR, "Export Execution Details Error", "Error occurred while exporting the execution details to QC/ALM." + System.Environment.NewLine + "Error Details:{0}", eUserMsgOption.OK, eUserMsgSelection.None));
