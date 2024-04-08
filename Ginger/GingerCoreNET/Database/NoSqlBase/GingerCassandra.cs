@@ -827,7 +827,7 @@ namespace GingerCore.NoSqlBase
             }
         }
 
-        private SSLOptions SetupSslOptions(string sslParamValue)
+        public static SSLOptions SetupSslOptions(string sslParamValue)
         {
             try
             {
