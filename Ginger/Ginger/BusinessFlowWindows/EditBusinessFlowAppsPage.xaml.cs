@@ -74,7 +74,7 @@ namespace Ginger.BusinessFlowWindows
                 AP1.Guid = AP.Guid;
 
                 // If this App was selected before then mark it 
-                TargetApplication APS = (TargetApplication)(from x in mBusinessFlow.TargetApplications where x.Name == AP.AppName select x).FirstOrDefault();
+                TargetApplication APS = (TargetApplication)(from x in mBusinessFlow.TargetApplications where x?.Name == AP.AppName select x).FirstOrDefault();
 
                 if (APS != null)
                 {

@@ -830,7 +830,7 @@ namespace GingerCore
                 CurrentActivity = activity;
             }
 
-            if (!TargetApplications.Any(bfTA => ((TargetApplication)bfTA).AppName.Equals(activity.TargetApplication)))
+            if (!string.IsNullOrEmpty(activity.TargetApplication) && !TargetApplications.Any(bfTA => ((TargetApplication)bfTA).AppName.Equals(activity.TargetApplication)))
             {                
                 TargetApplications.Add(GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications().FirstOrDefault(f=>f.Name.Equals(activity.TargetApplication)));
             }
