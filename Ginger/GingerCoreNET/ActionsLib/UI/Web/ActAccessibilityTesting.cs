@@ -826,16 +826,17 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
             bool hasAnyViolations = axeResult.Violations.Any();
             bool ActionResult = true;
             IEnumerable<string> AcceptableSeverity = Enumerable.Empty<string>().ToList();
+            IEnumerable<string> Violationseverity = Enumerable.Empty<string>().ToList();
             if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.ByStandard.ToString() && SeverityList != null && SeverityList.Any())
             {
                 AcceptableSeverity = SeverityList.Select(x => x.Value.ToLower()).ToList();
-                IEnumerable<string> Violationseverity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()) : Enumerable.Empty<string>().ToList();
+                Violationseverity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()) : Enumerable.Empty<string>().ToList();
                 ActionResult = Violationseverity.Intersect(AcceptableSeverity).Any();
             }
             else if (GetInputParamValue(ActAccessibilityTesting.Fields.Analyzer) == ActAccessibilityTesting.eAnalyzer.BySeverity.ToString() && SeverityList != null && SeverityList.Any())
             {
                 List<string> sevritylist = SeverityList.Select(x => x.Value.ToLower()).ToList();
-                IEnumerable<string> Violationseverity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()) : Enumerable.Empty<string>().ToList();
+                Violationseverity = axeResult.Violations.Any() ? axeResult.Violations.Select(x => x.Impact.ToLower()) : Enumerable.Empty<string>().ToList();
                 foreach (string severity in sevritylist)
                 {
                     ActionResult = Violationseverity.Any(y => y.Equals(severity));
@@ -857,7 +858,7 @@ namespace Amdocs.Ginger.CoreNET.ActionsLib.UI.Web
                 Error = $"Accessibility testing resulted in violations.";
                 AddOrUpdateReturnParamActual(ParamName: "ViolationCount", ActualValue: axeResult.Violations.Length.ToString());
                 AddOrUpdateReturnParamActual(ParamName: "ViolationList", ActualValue: String.Join(",", axeResult.Violations.Select(x => x.Id)));
-                AddOrUpdateReturnParamActual(ParamName: "AcceptableSeverity", ActualValue: string.Join(",", AcceptableSeverity));
+                AddOrUpdateReturnParamActual(ParamName: "ViolationSeverity", ActualValue: string.Join(",", Violationseverity.Distinct()));
                 int violatedNodeIndex = 0;
                 foreach (AxeResultItem violation in axeResult.Violations)
                 {
