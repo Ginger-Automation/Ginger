@@ -649,7 +649,7 @@ namespace GingerWPF.BusinessFlowsLib
             var userTA = mBusinessFlow.Activities.Select(f => f.TargetApplication);
 
             // Iterate through the ApplicationAgents
-            foreach (var existingTargetApp in mBusinessFlow.TargetApplications)
+            foreach (var existingTargetApp in mBusinessFlow.TargetApplications.OfType<TargetApplication>())
             {
                 // Check if the existing agent is not present in mBusinessFlow.TargetApplications
                 if (!userTA.Contains((existingTargetApp as TargetApplication).AppName))
