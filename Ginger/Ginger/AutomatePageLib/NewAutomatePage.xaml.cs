@@ -219,6 +219,7 @@ namespace GingerWPF.BusinessFlowsLib
         {
             if (e.PropertyName == nameof(Activity.TargetApplication))
             {
+                OnTargetApplicationChanged(sender , null);
                 UpdateContextWithActivityDependencies();
             }
         }
@@ -489,6 +490,8 @@ namespace GingerWPF.BusinessFlowsLib
                             mActivity = mBusinessFlow.Activities[0];
                             mBusinessFlow.CurrentActivity = mActivity;
                             mContext.Activity = mActivity;
+                            PropertyChangedEventManager.RemoveHandler(source: mActivity, handler: Activity_PropertyChanged, propertyName: allProperties);
+                            PropertyChangedEventManager.AddHandler(source: mActivity, handler: Activity_PropertyChanged, propertyName: allProperties);
 
                             if (mContext.Platform == ePlatformType.NA)
                             {
@@ -607,10 +610,9 @@ namespace GingerWPF.BusinessFlowsLib
                         ToggleActivityPageUIButtons(!mExecutionIsInProgress);
                     }
                     mActivityDetailsPage = new ActivityDetailsPage(mContext.Activity, mContext, mContext.Activity.Type == Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation : Ginger.General.eRIPageViewMode.ViewAndExecute);
-
-                    mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged -= OnTargetApplicationChanged;
+/*                    mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged -= OnTargetApplicationChanged;
                     mActivityDetailsPage.xTargetApplicationComboBox.SelectionChanged += OnTargetApplicationChanged;
-
+*/
                 }
                 else
                 {
@@ -624,12 +626,12 @@ namespace GingerWPF.BusinessFlowsLib
                 xCurrentActivityFrame.SetContent(mActivityPage);
             }
         }
-
+         
         private void OnTargetApplicationChanged(object arg1, SelectionChangedEventArgs args)
         {
-            var selectedTargetApplication = (TargetApplication)mActivityDetailsPage.xTargetApplicationComboBox.SelectedItem;
+            var selectedTargetApplication = (mActivity!=null) ? WorkSpace.Instance.Solution.GetSolutionTargetApplications().FirstOrDefault((targetApp)=>targetApp.Name.Equals(mActivity.TargetApplication)) as TargetApplication : null;
 
-            if (!mBusinessFlow.TargetApplications.Any(bfTA => ((TargetApplication)bfTA).AppName.Equals(selectedTargetApplication.AppName)))
+            if (selectedTargetApplication !=null && !mBusinessFlow.TargetApplications.Any(bfTA => ((TargetApplication)bfTA).AppName.Equals(selectedTargetApplication.AppName)))
             {
                 //    ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)actTargetApp).AppName };
                 //    applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
