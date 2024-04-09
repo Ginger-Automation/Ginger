@@ -526,7 +526,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void OnActivitiesListChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            OnTargetApplicationChanged(sender , null);
+            OnTargetApplicationChanged(sender, null);
         }
 
         private void ResetPageUI()
@@ -599,7 +599,7 @@ namespace GingerWPF.BusinessFlowsLib
                     if (mActivityPage == null)
                     {
                         var pageViewMode = mContext.Activity.Type == Amdocs.Ginger.Repository.eSharedItemType.Regular ? Ginger.General.eRIPageViewMode.Automation : Ginger.General.eRIPageViewMode.ViewAndExecute;
-                        mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode, highlightActivityName:true);
+                        mActivityPage = new ActivityPage(mContext.Activity, mContext, pageViewMode, highlightActivityName: true);
                     }
                     else
                     {
@@ -629,19 +629,40 @@ namespace GingerWPF.BusinessFlowsLib
         {
             var selectedTargetApplication = (TargetApplication)mActivityDetailsPage.xTargetApplicationComboBox.SelectedItem;
 
-            if (selectedTargetApplication != null)
+            if (!mBusinessFlow.TargetApplications.Any(bfTA => ((TargetApplication)bfTA).AppName.Equals(selectedTargetApplication.AppName)))
             {
-                bool doesApplicationAgentAlreadyExist = mExecutionEngine.GingerRunner.ApplicationAgents.Any((aa) => aa.AppName.Equals(selectedTargetApplication.AppName));
+                //    ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)actTargetApp).AppName };
+                //    applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+                //    applicationAgent.Agent = applicationAgent.PossibleAgents?.FirstOrDefault((agent) => agent.Name.Equals(actTargetApp.LastExecutingAgentName)) as Agent;
+                //    if (applicationAgent.Agent == null && applicationAgent.PossibleAgents?.Count >= 1)
+                //    {
+                //        applicationAgent.Agent = applicationAgent.PossibleAgents[0] as Agent;
+                //    }
+                mBusinessFlow.TargetApplications.Add(selectedTargetApplication);
+            }
 
-                if (!doesApplicationAgentAlreadyExist)
+
+            // Create a list to store the items to be removed
+            List<TargetBase> agentsToRemove = [];
+            var userTA = mBusinessFlow.Activities.Select(f => f.TargetApplication);
+
+            // Iterate through the ApplicationAgents
+            foreach (var existingTargetApp in mBusinessFlow.TargetApplications)
+            {
+                // Check if the existing agent is not present in mBusinessFlow.TargetApplications
+                if (!userTA.Contains((existingTargetApp as TargetApplication).AppName))
                 {
-                    ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = selectedTargetApplication.AppName };
-
-                    mExecutionEngine.GingerRunner.ApplicationAgents.Add(applicationAgent);
+                    // If not present, add to the removal list
+                    agentsToRemove.Add(existingTargetApp);
                 }
             }
 
-            mApplicationAgentsMapPage.RefreshApplicationAgentsList();
+            // Remove the agents from mExecutionEngine.GingerRunner.ApplicationAgents
+            foreach (var agentToRemove in agentsToRemove)
+            {
+                mBusinessFlow.TargetApplications.Remove(agentToRemove);
+            }
+
         }
 
 
@@ -1076,9 +1097,9 @@ namespace GingerWPF.BusinessFlowsLib
                 Reporter.ToUser(eUserMsgKey.NoActionAvailable);
                 return;
             }
-         
+
             // set errorhandler execution status
-                  actionToExecute.ErrorHandlerExecuted = false;
+            actionToExecute.ErrorHandlerExecuted = false;
 
             if (!parentActivity.Acts.Any() && !skipInternalValidations)
             {
@@ -1399,7 +1420,8 @@ namespace GingerWPF.BusinessFlowsLib
                         catch (Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, "Failed to Restore backup", ex);
-                        } });
+                        }
+                    });
 
                     mActivitiesPage.ListView.UpdateGrouping();
                     mBusinessFlow.SaveBackup();
@@ -1809,7 +1831,7 @@ namespace GingerWPF.BusinessFlowsLib
                 return;
             }
 
-            GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)mExecutionEngine.RunListeners.FirstOrDefault(x=>x.GetType() == typeof(GingerRunnerTimeLine));
+            GingerRunnerTimeLine gingerRunnerTimeLine = (GingerRunnerTimeLine)mExecutionEngine.RunListeners.FirstOrDefault(x => x.GetType() == typeof(GingerRunnerTimeLine));
             TimeLinePage timeLinePage = new TimeLinePage(gingerRunnerTimeLine.timeLineEvents);
             timeLinePage.ShowAsWindow();
         }
@@ -1846,7 +1868,7 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void RunBtn_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue"); 
+            ((ucButton)sender).ButtonImageForground = (SolidColorBrush)FindResource("$HighlightColor_LightBlue");
         }
 
         private void xExportToCSVMenuItem_Click(object sender, RoutedEventArgs e)
@@ -1895,7 +1917,7 @@ namespace GingerWPF.BusinessFlowsLib
                     Reporter.HideStatusMessage();
                 }
             }
-        }       
+        }
     }
 
     public class ActiveImageTypeConverter : IValueConverter
@@ -1915,6 +1937,6 @@ namespace GingerWPF.BusinessFlowsLib
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
-        }   
-    } 
+        }
+    }
 }
