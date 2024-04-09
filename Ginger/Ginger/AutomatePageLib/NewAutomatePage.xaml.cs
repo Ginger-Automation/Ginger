@@ -627,42 +627,45 @@ namespace GingerWPF.BusinessFlowsLib
 
         private void OnTargetApplicationChanged(object arg1, SelectionChangedEventArgs args)
         {
-            var selectedTargetApplication = (TargetApplication)mActivityDetailsPage.xTargetApplicationComboBox.SelectedItem;
-
-            if (!mBusinessFlow.TargetApplications.Any(bfTA => ((TargetApplication)bfTA).AppName.Equals(selectedTargetApplication.AppName)))
+            Dispatcher.Invoke(() =>
             {
-                //    ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)actTargetApp).AppName };
-                //    applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
-                //    applicationAgent.Agent = applicationAgent.PossibleAgents?.FirstOrDefault((agent) => agent.Name.Equals(actTargetApp.LastExecutingAgentName)) as Agent;
-                //    if (applicationAgent.Agent == null && applicationAgent.PossibleAgents?.Count >= 1)
-                //    {
-                //        applicationAgent.Agent = applicationAgent.PossibleAgents[0] as Agent;
-                //    }
-                mBusinessFlow.TargetApplications.Add(selectedTargetApplication);
-            }
+                var selectedTargetApplication = (TargetApplication)mActivityDetailsPage.xTargetApplicationComboBox.SelectedItem;
 
-
-            // Create a list to store the items to be removed
-            List<TargetBase> agentsToRemove = [];
-            var userTA = mBusinessFlow.Activities.Select(f => f.TargetApplication);
-
-            // Iterate through the ApplicationAgents
-            foreach (var existingTargetApp in mBusinessFlow.TargetApplications)
-            {
-                // Check if the existing agent is not present in mBusinessFlow.TargetApplications
-                if (!userTA.Contains((existingTargetApp as TargetApplication).AppName))
+                if (!mBusinessFlow.TargetApplications.Any(bfTA => ((TargetApplication)bfTA).AppName.Equals(selectedTargetApplication.AppName)))
                 {
-                    // If not present, add to the removal list
-                    agentsToRemove.Add(existingTargetApp);
+                    //    ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)actTargetApp).AppName };
+                    //    applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
+                    //    applicationAgent.Agent = applicationAgent.PossibleAgents?.FirstOrDefault((agent) => agent.Name.Equals(actTargetApp.LastExecutingAgentName)) as Agent;
+                    //    if (applicationAgent.Agent == null && applicationAgent.PossibleAgents?.Count >= 1)
+                    //    {
+                    //        applicationAgent.Agent = applicationAgent.PossibleAgents[0] as Agent;
+                    //    }
+                    mBusinessFlow.TargetApplications.Add(selectedTargetApplication);
                 }
-            }
 
-            // Remove the agents from mExecutionEngine.GingerRunner.ApplicationAgents
-            foreach (var agentToRemove in agentsToRemove)
-            {
-                mBusinessFlow.TargetApplications.Remove(agentToRemove);
-            }
 
+                // Create a list to store the items to be removed
+                List<TargetBase> agentsToRemove = [];
+                var userTA = mBusinessFlow.Activities.Select(f => f.TargetApplication);
+
+                // Iterate through the ApplicationAgents
+                foreach (var existingTargetApp in mBusinessFlow.TargetApplications)
+                {
+                    // Check if the existing agent is not present in mBusinessFlow.TargetApplications
+                    if (!userTA.Contains((existingTargetApp as TargetApplication).AppName))
+                    {
+                        // If not present, add to the removal list
+                        agentsToRemove.Add(existingTargetApp);
+                    }
+                }
+
+                // Remove the agents from mExecutionEngine.GingerRunner.ApplicationAgents
+                foreach (var agentToRemove in agentsToRemove)
+                {
+                    mBusinessFlow.TargetApplications.Remove(agentToRemove);
+                }
+
+            });
         }
 
 
