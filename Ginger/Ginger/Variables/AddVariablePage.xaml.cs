@@ -93,7 +93,7 @@ namespace Ginger.Variables
             if (mVariablesLevel.Equals(eVariablesLevel.EnvApplication))
             {
                 xLibraryTabHeaderText.Text = string.Format("{0} Library ({1})", "Parameter", mLibraryVarsList.Count);
-
+                xLibraryTab.Style = this.FindResource("$CoolMainTab") as Style;
                 xSharedRepoTabListView.Visibility = Visibility.Collapsed;
                 xSharedRepoTab.Visibility = Visibility.Collapsed;
             }
@@ -125,7 +125,7 @@ namespace Ginger.Variables
                 return;
             }
 
-            if (SelectedListView is VariableRandomNumber || SelectedListView is VariableRandomString || SelectedListView is VariableTimer)
+            if (SelectedListView is VariableRandomNumber || SelectedListView is VariableRandomString || SelectedListView is VariableTimer || SelectedListView is VariableSelectionList)
             {
                 ValueStackPanel.Visibility = Visibility.Collapsed;
                 DateTimePanel.Visibility = Visibility.Collapsed;
