@@ -36,6 +36,7 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Security;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace GingerCoreNET.GeneralLib
@@ -548,6 +549,20 @@ namespace GingerCoreNET.GeneralLib
                 arg = streamReader.ReadToEnd();
             }
             return arg;
+        }
+
+        public static bool isVariableUsed(string variablestring)
+        {
+            Regex rxvarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
+            MatchCollection matcheslist = rxvarPattern.Matches(variablestring);
+            if (matcheslist.Count > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
