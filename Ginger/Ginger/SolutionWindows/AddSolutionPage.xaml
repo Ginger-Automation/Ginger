@@ -4,7 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:usercontrols="clr-namespace:Amdocs.Ginger.UserControls" xmlns:usercontrols1="clr-namespace:Ginger.UserControlsLib"
       mc:Ignorable="d" 
-      Height="350" Width="520" MinHeight="270"
+      Height="230" Width="520" MinHeight="230"
 	Title="Add Solution">
 
     <Grid Background="{StaticResource $BackgroundColor_White}">
