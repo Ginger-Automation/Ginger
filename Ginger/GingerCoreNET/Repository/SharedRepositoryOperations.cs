@@ -122,9 +122,30 @@ namespace Ginger.Repository
                 {
                     itemToUpload.UsageItem.ParentGuid = Guid.Empty;
                 }
-                if (itemToUpload.ReplaceType == UploadItemSelection.eActivityInstanceType.LinkInstance && !itemToUpload.UsageItem.IsLinkedItem)
+                if (itemToUpload.ReplaceType == UploadItemSelection.eActivityInstanceType.LinkInstance && !itemToUpload.UsageItem.IsLinkedItem && itemCopy is Activity)
                 {
                     context.BusinessFlow.MarkActivityAsLink(itemToUpload.ItemGUID, itemCopy.Guid);
+                    Activity referenceActivity = (Activity)itemCopy;
+                    Activity activity = context.BusinessFlow.Activities.FirstOrDefault(a => a.Guid == itemToUpload.ItemGUID);
+                    if (activity != null)
+                    {
+                        foreach (Act activityAction in activity.Acts)
+                        {
+                            Act referenceActivityAction = (Act)referenceActivity.Acts.FirstOrDefault(a => string.Equals(a.Description, activityAction.Description));
+                            if (referenceActivityAction != null)
+                            {
+                                activityAction.ParentGuid = referenceActivityAction.Guid;
+                            }
+                        }
+                        foreach (VariableBase activityVariable in activity.Variables)
+                        {
+                            VariableBase referenceActivityVariable = referenceActivity.Variables.FirstOrDefault(v => string.Equals(v.Name, activityVariable.Name));
+                            if (referenceActivityVariable != null)
+                            {
+                                activityVariable.ParentGuid = referenceActivityVariable.Guid;
+                            }
+                        }
+                    }
                 }
                 else if (itemToUpload.ReplaceType == UploadItemSelection.eActivityInstanceType.RegularInstance && itemToUpload.UsageItem.IsLinkedItem)
                 {
@@ -540,15 +561,33 @@ namespace Ginger.Repository
             {
                 var sharedActFullPath = sharedActivity.ContainingFolderFullPath;
                 WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(sharedActivity);
-                Activity newSharedActivity = (Activity)LinkedActivity.CreateInstance(true);
-                CopyActivityVariableIds(source: sharedActivity, target: newSharedActivity);
-                sharedActivity = newSharedActivity;
-                sharedActivity.Guid = LinkedActivity.ParentGuid;
-                sharedActivity.Type = eSharedItemType.Regular;
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(sharedActivity);
-                WorkSpace.Instance.SolutionRepository.MoveItem(sharedActivity, sharedActFullPath);
+                Activity newSharedActivity = (Activity)LinkedActivity.CreateCopy(setNewGUID: false);
+
+                newSharedActivity.Guid = sharedActivity.Guid;
+                newSharedActivity.Type = eSharedItemType.Regular;
+                foreach (Act newActivityAct in newSharedActivity.Acts)
+                {
+                    Act oldActivityAct = (Act)sharedActivity.Acts.FirstOrDefault(a => a.Guid == newActivityAct.ParentGuid);
+                    if (oldActivityAct != null)
+                    {
+                        newActivityAct.Guid = oldActivityAct.Guid;
+                        newActivityAct.ParentGuid = oldActivityAct.ParentGuid;
+                    }
+                }
+                foreach (VariableBase newActivityVar in newSharedActivity.Variables)
+                {
+                    VariableBase oldActivityVar = sharedActivity.Variables.FirstOrDefault(a => a.Guid == newActivityVar.ParentGuid);
+                    if (oldActivityVar != null)
+                    {
+                        newActivityVar.Guid = oldActivityVar.Guid;
+                        newActivityVar.ParentGuid = oldActivityVar.ParentGuid;
+                    }
+                }
+
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newSharedActivity);
+                WorkSpace.Instance.SolutionRepository.MoveItem(newSharedActivity, sharedActFullPath);
                 LinkedActivity.EnableEdit = false;
-                await UpdateLinkedInstances(sharedActivity, ExcludeBusinessFlowGuid);
+                await UpdateLinkedInstances(newSharedActivity, ExcludeBusinessFlowGuid);
             }
             else
             {

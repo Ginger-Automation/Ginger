@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -1144,6 +1144,28 @@ namespace GingerCore
         {
             // saving from Shared repository tab
             GingerCoreCommonWorkSpace.Instance.SharedRepositoryOperations.UpdateSharedRepositoryLinkedInstances(this);
+        }
+
+        public override RepositoryItemBase CreateInstance(bool originFromSharedRepository = false, bool setNewGUID = true)
+        {
+            Activity copiedActivity = (Activity)base.CreateInstance(originFromSharedRepository, setNewGUID);
+            foreach (Act copiedActivityAction in copiedActivity.Acts)
+            {
+                Act thisActivityAction = (Act)Acts.FirstOrDefault(a => string.Equals(a.Description, copiedActivityAction.Description));
+                if (thisActivityAction != null)
+                {
+                    copiedActivityAction.ParentGuid = thisActivityAction.Guid;
+                }
+            }
+            foreach (VariableBase copiedActivityVariable in copiedActivity.Variables)
+            {
+                VariableBase thisActivityVariable = Variables.FirstOrDefault(v => string.Equals(v.Name, copiedActivityVariable.Name));
+                if (thisActivityVariable != null)
+                {
+                    copiedActivityVariable.ParentGuid = thisActivityVariable.Guid;
+                }
+            }
+            return copiedActivity;
         }
 
         public bool IsAutoLearned { get; set; }
