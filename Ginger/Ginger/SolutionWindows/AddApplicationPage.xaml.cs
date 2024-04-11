@@ -171,6 +171,7 @@ namespace Ginger.SolutionWindows
 
             mSolution.ApplicationPlatforms.Add(selectedApp);
 
+            
             if (!msgSelection.Equals(eUserMsgSelection.Yes))
             {
                 this.NewlyAddedApplicationPlatform = selectedApp;

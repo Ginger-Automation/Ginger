@@ -49,68 +49,12 @@
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Visibility="Collapsed" Name="DateTimePanel" Margin="5, 0, 0, 0">
                                 <TextBlock
-                                    VerticalAlignment="Center"
-                                    Text="Initial Date Time:" />
-                                <Grid
-                                    VerticalAlignment="Center"
-                                    Width="240"
-                                    Height="25">
-                                    <Border
-                                        Grid.Row="0"
-                                        BorderThickness="0.3"
-                                        CornerRadius="5"
-                                        BorderBrush="{StaticResource $BackgroundColor_Black}"
-                                        Margin="5 0 3 0">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition
-                                                    Height="24" />
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition
-                                                    Width="*" />
-                                                <ColumnDefinition
-                                                    Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock
-                                                x:Name="InitialDateTimeTextBlock"
-                                                Grid.Column="0"
-                                                Text="08/04/2024"
-                                                FontSize="12"
-                                                VerticalAlignment="Center"
-                                                Margin="2 0 0 0" />
-                                            <Button
-                                                x:Name="InitialDateTimePickerButton"
-                                                Grid.Column="1"
-                                                Width="16"
-                                                VerticalAlignment="Stretch"
-                                                Margin="0"
-                                                Click="InitialDateTimePickerButton_Click">
-                                                <Button.Resources>
-                                                    <Style
-                                                        TargetType="Border">
-                                                        <Setter
-                                                            Property="CornerRadius"
-                                                            Value="0 5 5 0" />
-                                                    </Style>
-                                                </Button.Resources>
-                                                <Button.Content>
-                                                    <Polygon
-                                                        Points="0,0 8,0 4,4"
-                                                        Fill="DarkSlateGray" />
-                                                </Button.Content>
-                                            </Button>
-                                        </Grid>
-                                    </Border>
-                                    <window:WindowsFormsHost
-                                        Grid.Row="0"
-                                        Height="0"
-                                        Style="{StaticResource @WindowsFormsHostDateTimePickerStyle}">
-                                        <wf:DateTimePicker
-                                            x:Name="dtpInitialDate"
-                                            Format="Custom" />
-                                    </window:WindowsFormsHost>
-                                </Grid>
+                                    Text="Value is mandatory"
+                                    Name="ValueError"
+                                    DockPanel.Dock="Bottom"
+                                    Foreground="Red"
+                                    Visibility="Hidden"
+                                    Margin="5, 0, 0 , 0" />
                             </StackPanel>
                         </StackPanel>
                     </DockPanel>

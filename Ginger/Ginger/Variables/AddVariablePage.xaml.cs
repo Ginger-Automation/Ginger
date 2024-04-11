@@ -78,9 +78,6 @@ namespace Ginger.Variables
             mLibraryVarsList = LoadLibraryVarsList();
             mLibraryVarsHelper = new VariablesListViewHelper(mLibraryVarsList, mVariablesParentObj, mVariablesLevel, mContext, General.eRIPageViewMode.Add);
             mLibraryVarsHelper.AllowExpandItems = false;
-            InitialDateTimeTextBlock.Text = dtpInitialDate.Value.ToString();
-            dtpInitialDate.ValueChanged -= DtpInitialDate_ValueChanged;
-            dtpInitialDate.ValueChanged += DtpInitialDate_ValueChanged;
 
             xLibraryTabListView.xListView.SelectionChanged += OnSelectionChanged;
             xLibraryTabListView.SetDefaultListDataTemplate(mLibraryVarsHelper);
@@ -109,11 +106,6 @@ namespace Ginger.Variables
             }
         }
 
-        private void DtpInitialDate_ValueChanged(object? sender, EventArgs e)
-        {
-            InitialDateTimeTextBlock.Text = dtpInitialDate.Value.ToString();
-        }
-
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var SelectedListView = xLibraryTabListView.xListView.SelectedItem;
@@ -121,27 +113,23 @@ namespace Ginger.Variables
             if(SelectedListView == null)
             {
                 ValueStackPanel.Visibility = Visibility.Collapsed;
-                DateTimePanel.Visibility = Visibility.Collapsed;
                 return;
             }
 
             if (SelectedListView is VariableRandomNumber || SelectedListView is VariableRandomString || SelectedListView is VariableTimer || SelectedListView is VariableSelectionList)
             {
                 ValueStackPanel.Visibility = Visibility.Collapsed;
-                DateTimePanel.Visibility = Visibility.Collapsed;
             }
 
             else if (SelectedListView is VariableString || SelectedListView is VariableNumber || SelectedListView is VariablePasswordString || SelectedListView is VariableSequence || SelectedListView is VariableDynamic)
             {
                 ValueStackPanel.Visibility = Visibility.Visible;
-                DateTimePanel.Visibility = Visibility.Collapsed;
 
             }
 
             else if (SelectedListView is VariableDateTime)
             {
                 ValueStackPanel.Visibility = Visibility.Collapsed;
-                DateTimePanel.Visibility = Visibility.Visible;
             }
         }
 
@@ -276,7 +264,7 @@ namespace Ginger.Variables
             
             string Name = variableName.Text;
             string Description = variableDescription.Text;
-            string? Value = varToAdd is VariableDateTime ? dtpInitialDate.Value.ToString() : variableValue.Text;
+            string? Value = varToAdd is VariableDateTime dateTimeVarToAdd ? dateTimeVarToAdd.MinDateTime.ToString() : variableValue.Text;
 
             if (Name.Trim().Length == 0)
             {
@@ -325,7 +313,7 @@ namespace Ginger.Variables
             VariableBase varToAdd = (VariableBase)xLibraryTabListView.xListView.SelectedItem;
             string Name = variableName.Text;
             string Description = variableDescription.Text;
-            string? Value = xLibraryTabListView.xListView.SelectedItem is VariableDateTime ? dtpInitialDate.Value.ToString() : variableValue.Text;
+            string? Value = xLibraryTabListView.xListView.SelectedItem is VariableDateTime selectedDateTimeVar ? selectedDateTimeVar.MinDateTime.ToString() : variableValue.Text;
 
             if(Name.Trim().Length == 0)
             {
@@ -437,28 +425,6 @@ namespace Ginger.Variables
                 xMandatoryInputCheckBox.IsChecked = false;
                 xMandatoryInputCheckBox.Visibility = Visibility.Collapsed;
             }
-        }
-
-        private void InitialDateTimePickerButton_Click(object sender, RoutedEventArgs e)
-        {
-            OpenDateTimePicker();
-        }
-
-        [DllImport("user32.dll")]
-        private static extern bool PostMessage(IntPtr hWnd, Int32 msg, Int32 wParam, Int32 lParam );
-        
-        private const Int32 WM_SYSKEYDOWN = 0x104;
-
-
-        //method to call dropdown
-        private void OpenDateTimePicker()
-        {
-            Int32 x = dtpInitialDate.Width - 10;
-            Int32 y = dtpInitialDate.Height / 2;
-            Int32 lParam = x + y * 0x00010000;
-
-            PostMessage(dtpInitialDate.Handle, WM_SYSKEYDOWN, (int)System.Windows.Forms.Keys.Down, lParam);
-
         }
     }
 }

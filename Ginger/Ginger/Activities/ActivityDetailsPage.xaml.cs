@@ -170,8 +170,13 @@ namespace Ginger.BusinessFlowPages
 
             
             xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-            
-            
+
+            if (WorkSpace.Instance!=null && WorkSpace.Instance.Solution!=null && WorkSpace.Instance.Solution.ApplicationPlatforms!=null)
+            {
+                WorkSpace.Instance.Solution.ApplicationPlatforms.CollectionChanged -= OnApplicationPlatformChanged;
+                WorkSpace.Instance.Solution.ApplicationPlatforms.CollectionChanged += OnApplicationPlatformChanged;
+            }
+
             xTargetApplicationlbl.Content = $"{GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}:";
             xTargetApplicationComboBox.SelectedValuePath = nameof(TargetApplication.AppName);
             xTargetApplicationComboBox.DisplayMemberPath = nameof(TargetApplication.AppName);
@@ -214,6 +219,31 @@ namespace Ginger.BusinessFlowPages
             mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Paused;
             TargetAppSelectedComboBox();
             mActivity.DirtyTracking = Amdocs.Ginger.Common.Enums.eDirtyTracking.Started;
+        }
+
+        private void OnApplicationPlatformChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            xTargetApplicationComboBox.ItemsSource = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
+
+            if(xTargetApplicationComboBox.Items == null || mActivity == null || mActivity.TargetApplication == null)
+            {
+                return;
+            }
+
+            int pointer = 0;
+
+            foreach(TargetApplication targetApplication in xTargetApplicationComboBox.Items)
+            {
+
+                if (targetApplication.AppName.Equals(mActivity.TargetApplication))
+                {
+                    xTargetApplicationComboBox.SelectedIndex = pointer;
+                }
+
+                pointer++;
+            }
+
+            TargetAppSelectedComboBox();
         }
 
         private void UserProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
