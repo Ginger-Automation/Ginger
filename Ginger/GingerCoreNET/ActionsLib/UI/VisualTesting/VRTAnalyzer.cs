@@ -188,7 +188,8 @@ namespace GingerCore.Actions.VisualTesting
         }
         private void TrackVRT()
         {
-            if (!vrt.IsStarted)
+
+            if (vrt == null || !vrt.IsStarted)
             {
                 mAct.Error = "VRT is not Started";
                 mAct.ExInfo = "You require to add VRT Start Action one step before.";
@@ -399,6 +400,12 @@ namespace GingerCore.Actions.VisualTesting
         {
             try
             {
+                if (vrt == null || !vrt.IsStarted)
+                {
+                    mAct.Error = "VRT is not Started";
+                    mAct.ExInfo = "You require to add VRT Start Action one step before.";
+                    return;
+                }
                 if (vrt.IsStarted)
                 {
                     vrt.Stop().GetAwaiter().GetResult();
