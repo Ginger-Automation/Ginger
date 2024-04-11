@@ -89,44 +89,17 @@ namespace Ginger.Agents
             this.Dispatcher.Invoke(() =>
             {
                 ApplicationAgents = new ObservableList<ApplicationAgent>();
-
-                var AllTargetApplicationNames = GetAllTargetApplicationNames();
-
-                if (AllTargetApplicationNames == null)
+                foreach (ApplicationAgent Apag in mRunner.GingerRunner.ApplicationAgents)
                 {
-                    return;
+                    if (Apag.ApplicationAgentOperations == null)
+                    {
+                        Apag.ApplicationAgentOperations = new ApplicationAgentOperations(Apag);
+                    }
+                    if (mRunner.SolutionApplications.FirstOrDefault(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA) == null)
+                    {
+                        ApplicationAgents.Add(Apag);
+                    }
                 }
-
-                var allTargetApplications = WorkSpace.Instance.Solution.GetSolutionTargetApplications();
-
-                    var TargetApplicationsInBusinessFlow = allTargetApplications.Where((App) =>
-                    {
-                        return AllTargetApplicationNames.Contains(App.Name);
-                    });
-
-
-                    mContext.BusinessFlow.TargetApplications = new ObservableList<TargetBase>(TargetApplicationsInBusinessFlow.ToList());
-
-                    if (BusinessFlowTargetApplicationChanged != null)
-                    {
-                        BusinessFlowTargetApplicationChanged();
-                    }
-
-                    TargetApplicationsInBusinessFlow.ForEach((FilteredTargetApp) =>
-                    {
-                        ApplicationAgent applicationAgent = new ApplicationAgent() { AppName = ((TargetApplication)FilteredTargetApp).AppName };
-                        applicationAgent.ApplicationAgentOperations = new ApplicationAgentOperations(applicationAgent);
-                        applicationAgent.Agent = applicationAgent.PossibleAgents?.FirstOrDefault((agent) => agent.Name.Equals(FilteredTargetApp.LastExecutingAgentName)) as Agent;
-
-
-                    if (applicationAgent.Agent == null && applicationAgent.PossibleAgents?.Count >= 1)
-                    {
-                        applicationAgent.Agent = applicationAgent.PossibleAgents[0] as Agent;
-                    }
-
-                    ApplicationAgents.Add(applicationAgent);
-                });
-
                 xAppAgentsListBox.ItemsSource = ApplicationAgents;
             });
         }
