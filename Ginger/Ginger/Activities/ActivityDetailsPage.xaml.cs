@@ -242,6 +242,8 @@ namespace Ginger.BusinessFlowPages
 
                 pointer++;
             }
+
+            TargetAppSelectedComboBox();
         }
 
         private void UserProfile_PropertyChanged(object? sender, PropertyChangedEventArgs e)
