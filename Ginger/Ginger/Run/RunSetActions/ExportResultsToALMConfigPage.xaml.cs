@@ -119,6 +119,7 @@ namespace Ginger.Run
                 xALMTestSetLevelCbx.Init(PublishToALMConfig.eALMTestSetLevel.BusinessFlow, nameof(RunSetActionPublishToQC.ALMTestSetLevel), Enum.GetValues(typeof(eALMTestSetLevel)).Cast<eALMTestSetLevel>().ToList(), ComboBox.SelectedValueProperty);
                 xALMTypeCbx.ComboBox.SelectedValue = AlmConfig.AlmType;
                 xALMTestSetLevelCbx.ComboBox.SelectedValue = PublishToALMConfig.eALMTestSetLevel.BusinessFlow;
+                SearchALMEntityByNamePnl.Visibility = Visibility.Collapsed;
                 xALMTestSetLevelCbx.IsEnabled = false;
                 xALMTypeCbx.IsEnabled = false;
                 mBfs = bfs;
