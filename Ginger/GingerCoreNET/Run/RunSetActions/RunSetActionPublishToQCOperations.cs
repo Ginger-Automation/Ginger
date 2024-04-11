@@ -188,7 +188,8 @@ namespace Ginger.Run.RunSetActions
                         }
                         virtualAG.ExternalID = !string.IsNullOrEmpty(runSetBF.ExternalIdCalCulated) ? runSetBF.ExternalIdCalCulated : string.Empty;
                         virtualAG.ParentGuid = runSetBF.Guid;//Business flow instance Guid passing in Parent Guid to Update External Id back
-                        virtualBF.Variables = runSetBF.Variables;
+                        virtualAG.StartTimeStamp = runSetBF.StartTimeStamp;
+                        virtualAG.EndTimeStamp = runSetBF.EndTimeStamp;
                         if (Enum.IsDefined(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString()))
                         {
                             virtualAG.RunStatus = (eActivitiesGroupRunStatus)Enum.Parse(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString());
@@ -200,7 +201,9 @@ namespace Ginger.Run.RunSetActions
                         virtualBF.AddActivitiesGroup(virtualAG);
                         foreach (Activity runSetAct in runSetBF.Activities)
                         {
-                            virtualBF.AddActivity((Activity)runSetAct.CreateCopy(false), virtualAG, -1, false);
+                            Activity activitycopy = (Activity)runSetAct.CreateCopy(false);
+                            activitycopy.Status = runSetAct.Status;
+                            virtualBF.AddActivity(activitycopy, virtualAG, -1, false);
                         }
                     }
                 }
