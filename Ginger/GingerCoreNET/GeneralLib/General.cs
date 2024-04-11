@@ -121,7 +121,7 @@ namespace GingerCoreNET.GeneralLib
 
         #endregion ENUM
 
-
+       static Regex rxvarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
         public static T ParseEnum<T>(string value)
         {
             return (T)Enum.Parse(typeof(T), value, true);
@@ -553,7 +553,6 @@ namespace GingerCoreNET.GeneralLib
 
         public static bool isVariableUsed(string variablestring)
         {
-            Regex rxvarPattern = new Regex(@"{(\bVar Name=)\w+\b[^{}]*}", RegexOptions.Compiled);
             MatchCollection matcheslist = rxvarPattern.Matches(variablestring);
             if (matcheslist.Count > 0)
             {

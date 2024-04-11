@@ -241,7 +241,7 @@ namespace Ginger.Run.RunSetActions
                         runSetrunner.Executor = new GingerExecutionEngine(runSetrunner);
                     }
 
-                    ObservableList<BusinessFlow> Bflist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
+                    ObservableList<BusinessFlow> Bflist = runSetrunner.Executor.BusinessFlows;
 
                     foreach (BusinessFlow bFlow in Bflist)
                     {
