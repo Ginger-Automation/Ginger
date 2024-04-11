@@ -155,7 +155,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
         private string GetUniqueRunsetName(string runsetName)
         {
-            bool SolutionRepositoryContainsRunsetWithName(string runsetName)
+            bool RunsetExist(string runsetName)
             {
                 return WorkSpace
                     .Instance
@@ -164,21 +164,21 @@ namespace Amdocs.Ginger.CoreNET.Reports
                     .Any(runset => string.Equals(runset.Name, runsetName));
             }
 
-            int copyCount = 1;
-            while (SolutionRepositoryContainsRunsetWithName(runsetName))
+            int copyCount = 0;
+            string copyIdentifier = string.Empty;
+            while (RunsetExist($"{runsetName}{copyIdentifier}"))
             {
-                string copyIdentifier;
+                copyCount++;
                 if (copyCount == 1)
                 {
-                    copyIdentifier = "Copy";
+                    copyIdentifier = "-Copy";
                 }
                 else
                 {
-                    copyIdentifier = $"Copy{copyCount}";
+                    copyIdentifier = $"-Copy{copyCount}";
                 }
-                runsetName = $"{runsetName}-{copyIdentifier}";
             }
-            return runsetName;
+            return $"{runsetName}{copyIdentifier}";
         }
 
         private RepositoryFolderBase GetRootRepositoryFolder<T>() where T : RepositoryItemBase
