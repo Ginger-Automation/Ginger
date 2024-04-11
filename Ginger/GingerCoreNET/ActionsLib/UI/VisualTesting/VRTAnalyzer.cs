@@ -192,7 +192,7 @@ namespace GingerCore.Actions.VisualTesting
             if (vrt == null || !vrt.IsStarted)
             {
                 mAct.Error = "VRT is not Started";
-                mAct.ExInfo = "You require to add VRT Start Action one step before.";
+                mAct.ExInfo = "Please include a VRT Start Action one step before the current one, if it has not been done already, and ensure that it runs before the current action.";
                 return;
             }
             try
@@ -403,7 +403,7 @@ namespace GingerCore.Actions.VisualTesting
                 if (vrt == null || !vrt.IsStarted)
                 {
                     mAct.Error = "VRT is not Started";
-                    mAct.ExInfo = "You require to add VRT Start Action one step before.";
+                    mAct.ExInfo = "Please include a VRT Start Action one step before the current one, if it has not been done already, and ensure that it runs before the current action..";
                     return;
                 }
                 if (vrt.IsStarted)
