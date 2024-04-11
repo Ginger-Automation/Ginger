@@ -95,7 +95,7 @@ namespace Ginger.Agents
                     {
                         Apag.ApplicationAgentOperations = new ApplicationAgentOperations(Apag);
                     }
-                    if (mRunner.SolutionApplications.FirstOrDefault(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA) == null)
+                    if (mRunner.SolutionApplications?.FirstOrDefault(x => x.AppName == Apag.AppName && x.Platform == ePlatformType.NA) == null)
                     {
                         ApplicationAgents.Add(Apag);
                     }
