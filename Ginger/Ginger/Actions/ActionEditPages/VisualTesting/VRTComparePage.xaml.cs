@@ -66,7 +66,7 @@ namespace Ginger.Actions.VisualTesting
 
             xBaselineImageRadioButton.Init(typeof(VRTAnalyzer.eBaselineImageBy), xBaselineImageRadioButtonPnl, mAct.GetOrCreateInputParam(VRTAnalyzer.BaselineImage, VRTAnalyzer.eBaselineImageBy.ActiveWindow.ToString()), BaselineImageButton_Clicked);
 
-            VRTCurrentBaselineImagePathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTSavedBaseImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "*.png;", BaseLineFileSelected_Click);
+            VRTCurrentBaselineImagePathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTSavedBaseImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "png", BaseLineFileSelected_Click);
             WeakEventManager<TextBoxBase, TextChangedEventArgs>.AddHandler(source: VRTCurrentBaselineImagePathTxtBox.ValueTextBox, eventName: nameof(TextBoxBase.TextChanged), handler: ValueTextBox_TextChanged);
             UpdateBaseLineImage();
 
@@ -109,6 +109,8 @@ namespace Ginger.Actions.VisualTesting
             visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetTargetSectionVisibility, eVisualTestingVisibility.Collapsed);
             visualCompareAnalyzerIntegration.OnVisualTestingEvent(VisualTestingEventArgs.eEventType.SetResultsSectionVisibility, eVisualTestingVisibility.Collapsed);
             xVRTNote.Visibility = Visibility.Visible;
+            xCreateBaseline.Visibility = Visibility.Visible;
+            xCreateBaselineCheckbox.Visibility = Visibility.Visible;
             switch (vrtAction)
             {
                 case VRTAnalyzer.eVRTAction.Start:
@@ -335,7 +337,7 @@ namespace Ginger.Actions.VisualTesting
                 b = GetFreeBitmapCopy(FileName);
             }
             // send with null bitmap will show image not found
-            ScreenShotViewPage p = new ScreenShotViewPage("Baseline Image", b);
+            ScreenShotViewPage p = new ScreenShotViewPage("Preview Image", b);
             VRTBaseImageFrame.ClearAndSetContent(p);
         }
 
