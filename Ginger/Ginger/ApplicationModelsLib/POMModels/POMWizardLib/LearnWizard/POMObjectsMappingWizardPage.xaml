@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
        
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <TextBlock x:Name="timerText" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
+            <TextBlock x:Name="timerText" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Text="Timer: 00:00"/>
             <UserControls:ucButton x:Name="xStopLoadButton" Grid.Row="0" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right" ButtonText="Stop" ButtonImageType="Stop" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="StopButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Visibility="Collapsed"/>
             <UserControls:ucButton x:Name="xReLearnButton" Grid.Row="0" ButtonType="RoundTextAndImageButton" HorizontalAlignment="Right" ButtonText="Re-Learn" ButtonImageType="Reply" ButtonFontImageSize="15" ButtonImageWidth="15" ButtonImageHeight="15"  Click="ReLearnButtonClicked" ButtonStyle="{StaticResource $RoundTextAndImageButtonStyle}" Visibility="Collapsed"/>
         </StackPanel>
