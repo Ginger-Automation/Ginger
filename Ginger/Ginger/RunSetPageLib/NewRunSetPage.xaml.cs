@@ -320,7 +320,7 @@ namespace Ginger.Run
             SetNonSpecificRunSetEventsTracking();
             SetBusinessFlowsChangesLisener();
         }
-        string allProperties = string.Empty;
+        private string allProperties = string.Empty;
         private void SetNonSpecificRunSetEventsTracking()
         {
             WorkSpace.Instance.PropertyChanged -= WorkSpacePropertyChanged;
@@ -888,7 +888,6 @@ namespace Ginger.Run
             BindingOperations.ClearBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.TextProperty);
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
             xRunSetUcLabel.xNameTextBlock.ToolTip = GetToolTipForRunSetLabel();
-            string allProperties = string.Empty;
             PropertyChangedEventManager.RemoveHandler(mRunSetConfig, mRunSetConfig_PropertyChanged, propertyName: allProperties);
             PropertyChangedEventManager.AddHandler(mRunSetConfig, mRunSetConfig_PropertyChanged, propertyName: allProperties);
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ForegroundProperty, mRunSetConfig, nameof(RunSetConfig.IsVirtual), new BoolToRunsetLabelColorValueConverter());
@@ -922,7 +921,6 @@ namespace Ginger.Run
         {
             if (sender != null && sender is RunSetConfig senderRunset && senderRunset != mRunSetConfig)
             {
-                string allProperties = string.Empty;
                 PropertyChangedEventManager.RemoveHandler(senderRunset, mRunSetConfig_PropertyChanged, propertyName: allProperties);
                 return;
             }
