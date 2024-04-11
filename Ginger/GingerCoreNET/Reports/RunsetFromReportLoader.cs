@@ -155,7 +155,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
         private string GetUniqueRunsetName(string runsetName)
         {
-            bool SolutionRepositoryContainsRunsetWithName(string runsetName)
+            bool RunsetExist(string runsetName)
             {
                 return WorkSpace
                     .Instance
@@ -164,21 +164,28 @@ namespace Amdocs.Ginger.CoreNET.Reports
                     .Any(runset => string.Equals(runset.Name, runsetName));
             }
 
-            int copyCount = 1;
-            while (SolutionRepositoryContainsRunsetWithName(runsetName))
+            int copyCount = 0;
+            string copyIdentifier = string.Empty;
+            const int MaxAttempts = 10_000;
+            while (RunsetExist($"{runsetName}{copyIdentifier}") && copyCount < MaxAttempts)
             {
-                string copyIdentifier;
+                copyCount++;
                 if (copyCount == 1)
                 {
-                    copyIdentifier = "Copy";
+                    copyIdentifier = "-Copy";
                 }
                 else
                 {
-                    copyIdentifier = $"Copy{copyCount}";
+                    copyIdentifier = $"-Copy{copyCount}";
                 }
-                runsetName = $"{runsetName}-{copyIdentifier}";
             }
-            return runsetName;
+
+            if (copyCount >= MaxAttempts)
+            {
+                throw new Exception($"Too many {GingerDicser.GetTermResValue(eTermResKey.RunSets)} with similar name, remove/delete them first.");
+            }
+
+            return $"{runsetName}{copyIdentifier}";
         }
 
         private RepositoryFolderBase GetRootRepositoryFolder<T>() where T : RepositoryItemBase
