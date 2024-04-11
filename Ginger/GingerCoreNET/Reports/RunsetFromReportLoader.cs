@@ -166,7 +166,8 @@ namespace Amdocs.Ginger.CoreNET.Reports
 
             int copyCount = 0;
             string copyIdentifier = string.Empty;
-            while (RunsetExist($"{runsetName}{copyIdentifier}"))
+            const int MaxAttempts = 10_000;
+            while (RunsetExist($"{runsetName}{copyIdentifier}") && copyCount < MaxAttempts)
             {
                 copyCount++;
                 if (copyCount == 1)
@@ -178,6 +179,12 @@ namespace Amdocs.Ginger.CoreNET.Reports
                     copyIdentifier = $"-Copy{copyCount}";
                 }
             }
+
+            if (copyCount >= MaxAttempts)
+            {
+                throw new Exception($"Too many {GingerDicser.GetTermResValue(eTermResKey.RunSets)} with similar name, remove/delete them first.");
+            }
+
             return $"{runsetName}{copyIdentifier}";
         }
 

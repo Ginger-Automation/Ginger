@@ -888,8 +888,9 @@ namespace Ginger.Run
             BindingOperations.ClearBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.TextProperty);
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.TextProperty, mRunSetConfig, nameof(RunSetConfig.Name));
             xRunSetUcLabel.xNameTextBlock.ToolTip = GetToolTipForRunSetLabel();
-            PropertyChangedEventManager.RemoveHandler(mRunSetConfig, mRunSetConfig_PropertyChanged, propertyName: string.Empty);
-            PropertyChangedEventManager.AddHandler(mRunSetConfig, mRunSetConfig_PropertyChanged, propertyName: string.Empty);
+            string allProperties = string.Empty;
+            PropertyChangedEventManager.RemoveHandler(mRunSetConfig, mRunSetConfig_PropertyChanged, propertyName: allProperties);
+            PropertyChangedEventManager.AddHandler(mRunSetConfig, mRunSetConfig_PropertyChanged, propertyName: allProperties);
             BindingHandler.ObjFieldBinding(xRunSetUcLabel.xNameTextBlock, TextBlock.ForegroundProperty, mRunSetConfig, nameof(RunSetConfig.IsVirtual), new BoolToRunsetLabelColorValueConverter());
             if (WorkSpace.Instance.SourceControl == null || !WorkSpace.Instance.UserProfile.ShowSourceControlStatusIcon)
             {
@@ -921,7 +922,8 @@ namespace Ginger.Run
         {
             if (sender != null && sender is RunSetConfig senderRunset && senderRunset != mRunSetConfig)
             {
-                PropertyChangedEventManager.RemoveHandler(senderRunset, mRunSetConfig_PropertyChanged, propertyName: string.Empty);
+                string allProperties = string.Empty;
+                PropertyChangedEventManager.RemoveHandler(senderRunset, mRunSetConfig_PropertyChanged, propertyName: allProperties);
                 return;
             }
             if (string.Equals(nameof(RunSetConfig.IsVirtual), e.PropertyName))
