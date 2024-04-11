@@ -85,6 +85,12 @@ namespace Ginger.Variables
             xVarNameTxtBox.GotFocus += XVarNameTxtBox_GotFocus;
             xVarNameTxtBox.LostFocus += XVarNameTxtBox_LostFocus;
 
+            if(parent is EnvApplication)
+            {
+
+                xTitleName.Text = $"{GingerDicser.GetTermResValue(eTermResKey.Parameter)} Type: ";
+                xNameConfig.Text = $"{GingerDicser.GetTermResValue(eTermResKey.Parameter)} Type Configurations:";
+            }
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xVarDescritpiontxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Description));
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xFormulaTxtBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Formula), BindingMode.OneWay);
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCurrentValueTextBox, TextBox.TextProperty, mVariable, nameof(VariableBase.Value), BindingMode.OneWay);

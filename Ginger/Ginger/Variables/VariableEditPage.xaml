@@ -27,7 +27,7 @@
                             <StackPanel Orientation="Horizontal"  Margin="0,0,0,5">
                                 <Label Style="{StaticResource $LabelStyle}">
                                     <Label.Content>
-                                        <GingerCore:ucTextDicResource Text="[Variable] Type:"/>
+                                        <GingerCore:ucTextDicResource Name="xTitleName" Text="[Variable] Type:"/>
                                     </Label.Content>
                                 </Label>
                                 <Label x:Name="xTypeLbl" Style="{StaticResource $LabelStyle}" Content="Variable Type" Margin="-5,0,0,0"/>
@@ -76,7 +76,7 @@
                 <DockPanel DockPanel.Dock="Top" Margin="5,5,5,5">
                     <Label HorizontalAlignment="Stretch" DockPanel.Dock="Top" Style="{StaticResource $HeaderStyle}">
                         <Label.Content>
-                            <GingerCore:ucTextDicResource Text="[Variable] Type Configurations:"/>
+                            <GingerCore:ucTextDicResource Name="xNameConfig" Text="[Variable] Type Configurations:"/>
                         </Label.Content>
                     </Label>
 
