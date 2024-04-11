@@ -49,9 +49,9 @@ namespace GingerCore.NoSqlBase
                 const string queryTimeoutString = "querytimeout=";
                 const string sslString = "ssl=";
                 int queryTimeout = 20000;//default timeout (20 seconds).
-                string[] queryArray = Db.DatabaseOperations.TNSCalculated.Split(';');
+                string[] queryArray = Db.DatabaseOperations.TNSCalculated.ToLower().Split(';');
                 SSLOptions sslOptions = null;
-                for (int i = 1; i < Math.Min(queryArray.Length, 3); i++)
+                for (int i = 1; i < queryArray.Length; i++)
                 {
                     switch (queryArray[i])
                     {
