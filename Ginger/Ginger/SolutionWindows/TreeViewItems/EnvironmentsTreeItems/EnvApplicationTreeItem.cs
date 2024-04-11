@@ -88,7 +88,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             mContextMenu = new ContextMenu();
 
             TreeViewUtils.AddMenuItem(mContextMenu, "Save Parent Environment", Save, this, eImageType.Save);
-            TreeViewUtils.AddMenuItem(mContextMenu, "Duplicate", Duplicate, null, eImageType.Duplicate);
             TreeViewUtils.AddMenuItem(mContextMenu, "Delete", Delete, null, eImageType.Delete);
             TreeViewUtils.AddMenuItem(mContextMenu, "Share With Other Environments", Share, this, eImageType.Share);
         }
@@ -125,16 +124,6 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return true;
         }
 
-        private void Duplicate(object sender, RoutedEventArgs e)
-        {
-            EnvApplication copy = (EnvApplication)EnvApplication.CreateCopy();
-            copy.Name = copy.Name + "_copy";
-            copy.Platform = EnvApplication.Platform;
-            ProjEnvironment.Applications.Add(copy);
-            ProjEnvironment.SaveBackup();//to mark the env as changed
-            ProjEnvironment.OnPropertyChanged(nameof(ProjEnvironment.Applications));
-            mTreeView.Tree.RefreshSelectedTreeNodeParent();
-        }
 
         private void Share(object sender, System.Windows.RoutedEventArgs e)
         {
