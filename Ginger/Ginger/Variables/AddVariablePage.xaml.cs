@@ -90,9 +90,13 @@ namespace Ginger.Variables
             if (mVariablesLevel.Equals(eVariablesLevel.EnvApplication))
             {
                 xLibraryTabHeaderText.Text = string.Format("{0} Library ({1})", "Parameter", mLibraryVarsList.Count);
-
+                xLibraryTab.Style = this.FindResource("$CoolMainTab") as Style;
                 xSharedRepoTabListView.Visibility = Visibility.Collapsed;
                 xSharedRepoTab.Visibility = Visibility.Collapsed;
+                VariablePage.MinHeight = 400;
+                VariablePage.MinWidth = 700;
+                xLibraryTabListView.MaxHeight = 400;
+
             }
             else
             {
@@ -103,6 +107,9 @@ namespace Ginger.Variables
                 xSharedRepoTabListView.SetDefaultListDataTemplate(mSharedRepoVarsHelper);
                 xSharedRepoTabListView.DataSourceList = mSharedRepoVarsList;
                 xSharedRepoTabListView.MouseDoubleClick += XSharedRepoTabListView_MouseDoubleClick;
+                VariablePage.MinHeight = 600;
+                VariablePage.MinWidth = 800;
+                xLibraryTabListView.MaxHeight = 600;
             }
         }
 
@@ -116,7 +123,7 @@ namespace Ginger.Variables
                 return;
             }
 
-            if (SelectedListView is VariableRandomNumber || SelectedListView is VariableRandomString || SelectedListView is VariableTimer)
+            if (SelectedListView is VariableRandomNumber || SelectedListView is VariableRandomString || SelectedListView is VariableTimer || SelectedListView is VariableSelectionList)
             {
                 ValueStackPanel.Visibility = Visibility.Collapsed;
             }

@@ -191,7 +191,7 @@ namespace Ginger.SolutionWindows
             AgentOperations agentOperations = new AgentOperations(agent);
             agent.AgentOperations = agentOperations;
 
-            agent.Name = MainApplicationPlatform.AppName + " - Agent 1";
+            agent.Name = MainApplicationPlatform.AppName;
             switch (MainApplicationPlatform.Platform)
             {
                 case ePlatformType.ASCF:
