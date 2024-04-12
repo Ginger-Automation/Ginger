@@ -551,6 +551,7 @@ namespace Ginger.BusinessFlowPages.ListHelpers
             AddVariablePage addVarPage = new AddVariablePage(VariablesLevel, VariablesParent, mContext);
             addVarPage.xLibraryTabListView.ListSelectionMode = SelectionMode.Single;
             addVarPage.xLibraryTabListView.SelectTitleVisibility = Visibility.Visible;
+            addVarPage.xLibraryTabListView.SelectTitleFontWeight = FontWeight.FromOpenTypeWeight(400);
             if (VariablesLevel.Equals(eVariablesLevel.EnvApplication))
             {
                 addVarPage.xLibraryTabListView.SelectTitleContent = "Select Parameter Type";
