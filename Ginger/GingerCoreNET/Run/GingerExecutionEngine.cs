@@ -1925,7 +1925,7 @@ namespace Ginger.Run
                                 try
                                 {
                                     string valueToEvaluate = EvaluateWebApiModelParameterValue(IV.Value, subList);
-                                    if (valueToEvaluate!= null)
+                                    if (!string.IsNullOrEmpty(valueToEvaluate))
                                     {
                                         IV.ValueForDriver = act.ValueExpression.Calculate(valueToEvaluate);
                                     }
