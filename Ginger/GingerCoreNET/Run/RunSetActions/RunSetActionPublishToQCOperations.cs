@@ -227,10 +227,17 @@ namespace Ginger.Run.RunSetActions
                 }
                 if (businessFlow != null && !string.IsNullOrEmpty(businessFlow.ExternalID))
                 {
-                    if(!General.isVariableUsed(runSetExec.RunSetConfig.ExternalID))
+                    if(!string.IsNullOrEmpty(runSetExec.RunSetConfig.ExternalID))
+                    {
+                        if (!General.isVariableUsed(runSetExec.RunSetConfig.ExternalID))
+                        {
+                            runSetExec.RunSetConfig.ExternalID = businessFlow.ExternalID;
+                        }
+                    }
+                    else
                     {
                         runSetExec.RunSetConfig.ExternalID = businessFlow.ExternalID;
-                    }                
+                    }
                 }
 
                 foreach (GingerRunner runSetrunner in runSetExec.Runners)
@@ -240,18 +247,26 @@ namespace Ginger.Run.RunSetActions
                     {
                         runSetrunner.Executor = new GingerExecutionEngine(runSetrunner);
                     }
+                    List<Guid> BFGuidlist = runSetrunner.Executor.BusinessFlows.Select(x => x.Guid).ToList();
+                    ObservableList<BusinessFlow> Bflist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
-                    ObservableList<BusinessFlow> Bflist = runSetrunner.Executor.BusinessFlows;
-
-                    foreach (BusinessFlow bFlow in Bflist)
+                    foreach (BusinessFlow bFlow in Bflist.Where(x => BFGuidlist.Contains(x.Guid)))
                     {
                         ActivitiesGroup activitiesGroup = businessFlow.ActivitiesGroups.FirstOrDefault(x => x.ParentGuid == bFlow.Guid);
                         if(activitiesGroup != null)
                         {
-                            if(!General.isVariableUsed(bFlow.ExternalID))
+                            if(!string.IsNullOrEmpty(bFlow.ExternalID))
+                            {
+                                if (!General.isVariableUsed(bFlow.ExternalID))
+                                {
+                                    bFlow.ExternalID = activitiesGroup.ExternalID;
+                                }
+                            }
+                            else
                             {
                                 bFlow.ExternalID = activitiesGroup.ExternalID;
                             }
+
                         }
                     }
                 }
