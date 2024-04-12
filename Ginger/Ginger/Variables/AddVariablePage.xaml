@@ -8,6 +8,7 @@
       xmlns:uclistview="clr-namespace:Ginger.UserControlsLib.UCListView"
       mc:Ignorable="d"
       h:GingerHelpProvider.HelpString="Variable"
+          Name="VariablePage"
                 xmlns:window="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
 
@@ -28,41 +29,23 @@
                 <StackPanel Orientation="Vertical">
                     <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" Name="xVariableDetailsDockPanel"  Margin="10,25,0,10">
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                            <Label Style="{StaticResource $LabelStyle}" MinWidth="70" Content="Name:"/>
+                            <Label Style="{StaticResource $LabelStyle}" Width="100" Content="Name:" FontWeight="Normal"/>
                             <StackPanel Orientation="Vertical">
-                                <TextBox Width="250" Height="25" Style="{StaticResource $TextBoxStyle}" Name="variableName" />
-                                <TextBlock Text="Name is mandatory" Name="NameError" DockPanel.Dock="Bottom" Foreground="Red" Visibility="Hidden"/>
+                                <TextBox Width="200" Height="25" Style="{StaticResource $TextBoxStyle}" Name="variableName"/>
+                                <TextBlock Text="Name is mandatory" Name="NameError"  FontWeight="Normal" DockPanel.Dock="Bottom" Foreground="Red" Visibility="Hidden"/>
                             </StackPanel>
                         </StackPanel>
 
 
                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                             <StackPanel Orientation="Horizontal">
-                                <Label Style="{StaticResource $LabelStyle}" MinWidth="50" Content="Description:"/>
-                                <TextBox Height="25" Width="250"  Style="{StaticResource $TextBoxStyle}"  Name="variableDescription"/>
+                                <Label Style="{StaticResource $LabelStyle}" Width="100" FontWeight="Normal" Content="Description:"/>
+                                <TextBox Height="25" Width="200"  Style="{StaticResource $TextBoxStyle}"  Name="variableDescription"/>
                             </StackPanel>
 
-                            <StackPanel
-                                Orientation="Horizontal"
-                                Name="ValueStackPanel"
-                                Visibility="Collapsed"
-                                Margin="5, 0, 0, 0">
-                                <Label
-                                    Style="{StaticResource $LabelStyle}"
-                                    MinWidth="50"
-                                    Content="Initial Value:" />
-                                <TextBox
-                                    Height="25"
-                                    Width="250"
-                                    Style="{StaticResource $TextBoxStyle}"
-                                    Name="variableValue" />
-                                <TextBlock
-                                    Text="Value is mandatory"
-                                    Name="ValueError"
-                                    DockPanel.Dock="Bottom"
-                                    Foreground="Red"
-                                    Visibility="Hidden"
-                                    Margin="5, 0, 0 , 0" />
+                            <StackPanel Orientation="Horizontal" Name="ValueStackPanel" Visibility="Collapsed" Margin="5, 0, 0, 0">
+                                <Label Style="{StaticResource $LabelStyle}" Width="100" FontWeight="Normal" Content="Initial Value:"/>
+                                 <TextBox  Height="25" Width="200" Style="{StaticResource $TextBoxStyle}"  Name="variableValue"/>
                             </StackPanel>
                         </StackPanel>
                     </DockPanel>
