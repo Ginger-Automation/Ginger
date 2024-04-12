@@ -24,6 +24,7 @@ using Ginger.Repository.ItemToRepositoryWizard;
 using GingerCore;
 using GingerCore.Actions;
 using GingerCore.Activities;
+using GingerCore.FlowControlLib;
 using GingerCore.Variables;
 using System;
 using System.Collections.Generic;
@@ -65,19 +66,56 @@ namespace Ginger.Repository
                 {
                     isOverwrite = true;
                     itemCopy = GetItemToOverrite(itemToUpload);
-                    if (itemToUpload.UsageItem is Activity activityToUpload && itemCopy is Activity activityCopy)
+                    if (itemCopy is Activity srActivity)
                     {
-                        CopyActivityVariableIds(source: activityCopy, target: activityToUpload);
+                        List<KeyValuePair<Guid, Guid>> oldNewActionGuidList = [];
+                        foreach (Act srAction in srActivity.Acts.Cast<Act>())
+                        {
+                            if (srAction.ParentGuid != Guid.Empty)
+                            {
+                                oldNewActionGuidList.Add(new(srAction.Guid, srAction.ParentGuid));
+                                srAction.Guid = srAction.ParentGuid;
+                            }
+                            srAction.ParentGuid = Guid.Empty;
+                        }
+                        foreach (VariableBase srVariable in srActivity.Variables)
+                        {
+                            if (srVariable.ParentGuid != Guid.Empty)
+                            {
+                                srVariable.Guid = srVariable.ParentGuid;
+                            }
+                            srVariable.ParentGuid = Guid.Empty;
+                        }
+                        foreach (Act action in srActivity.Acts.Cast<Act>())
+                        {
+                            foreach (FlowControl fc in action.FlowControls)
+                            {
+                                Guid targetGuid = fc.GetGuidFromValue();
+                                if (oldNewActionGuidList.Any(oldNew => oldNew.Key == targetGuid))
+                                {
+                                    fc.Value = fc.Value.Replace(targetGuid.ToString(), oldNewActionGuidList.First(oldNew => oldNew.Key == targetGuid).ToString());
+                                }
+                            }
+                        }
                     }
                 }
                 else
                 {
                     itemCopy = (RepositoryItemBase)item.CreateCopy(false);
+                    if (item is Activity bfActivity)
+                    {
+                        foreach (Act bfAction in bfActivity.Acts.Cast<Act>())
+                        {
+                            bfAction.ParentGuid = bfAction.Guid;
+                        }
+                        foreach (VariableBase bfVariable in bfActivity.Variables)
+                        {
+                            bfVariable.ParentGuid = bfVariable.Guid;
+                        }
+                    }
                 }
 
                 itemCopy.UpdateItemFieldForReposiotryUse();
-
-
 
                 bool blockingIssuesHandled = HandleItemValidationIssues(context, itemToUpload, itemCopy, ref isOverwrite);
 
@@ -561,51 +599,44 @@ namespace Ginger.Repository
             {
                 var sharedActFullPath = sharedActivity.ContainingFolderFullPath;
                 WorkSpace.Instance.SolutionRepository.MoveSharedRepositoryItemToPrevVersion(sharedActivity);
-                Activity newSharedActivity = (Activity)LinkedActivity.CreateCopy(setNewGUID: false);
-
-                newSharedActivity.Guid = sharedActivity.Guid;
-                newSharedActivity.Type = eSharedItemType.Regular;
-                foreach (Act newActivityAct in newSharedActivity.Acts)
+                sharedActivity = (Activity)LinkedActivity.CreateInstance(true, setNewGUID: false);
+                sharedActivity.Guid = LinkedActivity.ParentGuid;
+                sharedActivity.ParentGuid = Guid.Empty;
+                sharedActivity.Type = eSharedItemType.Regular;
+                List<KeyValuePair<Guid, Guid>> oldNewActionGuidList = [];
+                foreach(Act action in sharedActivity.Acts.Cast<Act>())
                 {
-                    Act oldActivityAct = (Act)sharedActivity.Acts.FirstOrDefault(a => a.Guid == newActivityAct.ParentGuid);
-                    if (oldActivityAct != null)
+                    if (action.ParentGuid != Guid.Empty)
                     {
-                        newActivityAct.Guid = oldActivityAct.Guid;
-                        newActivityAct.ParentGuid = oldActivityAct.ParentGuid;
+                        oldNewActionGuidList.Add(new(action.Guid, action.ParentGuid));
+                        action.Guid = action.ParentGuid;
+                    }
+                    action.ParentGuid = Guid.Empty;
+                }
+                foreach(VariableBase variable in sharedActivity.Variables)
+                {
+                    if (variable.ParentGuid != Guid.Empty)
+                    {
+                        variable.Guid = variable.ParentGuid;
+                    }
+                    variable.ParentGuid = Guid.Empty;
+                }
+                foreach(FlowControl fc in sharedActivity.Acts.SelectMany(a => a.FlowControls))
+                {
+                    Guid targetGuid = fc.GetGuidFromValue();
+                    if (oldNewActionGuidList.Any(oldNew => oldNew.Key == targetGuid))
+                    {
+                        fc.Value = fc.Value.Replace(targetGuid.ToString(), oldNewActionGuidList.First(oldNew => oldNew.Key == targetGuid).ToString());
                     }
                 }
-                foreach (VariableBase newActivityVar in newSharedActivity.Variables)
-                {
-                    VariableBase oldActivityVar = sharedActivity.Variables.FirstOrDefault(a => a.Guid == newActivityVar.ParentGuid);
-                    if (oldActivityVar != null)
-                    {
-                        newActivityVar.Guid = oldActivityVar.Guid;
-                        newActivityVar.ParentGuid = oldActivityVar.ParentGuid;
-                    }
-                }
-
-                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newSharedActivity);
-                WorkSpace.Instance.SolutionRepository.MoveItem(newSharedActivity, sharedActFullPath);
+                WorkSpace.Instance.SolutionRepository.AddRepositoryItem(sharedActivity);
+                WorkSpace.Instance.SolutionRepository.MoveItem(sharedActivity, sharedActFullPath);
                 LinkedActivity.EnableEdit = false;
-                await UpdateLinkedInstances(newSharedActivity, ExcludeBusinessFlowGuid);
+                await UpdateLinkedInstances(sharedActivity, ExcludeBusinessFlowGuid);
             }
             else
             {
                 Reporter.ToLog(eLogLevel.ERROR, "Activity not found in shared repository.");
-            }
-        }
-
-        private static void CopyActivityVariableIds(Activity source, Activity target)
-        {
-            foreach(VariableBase sourceVar in source.Variables)
-            {
-                VariableBase targetVar = target
-                    .Variables
-                    .FirstOrDefault(v => string.Equals(v.Name, sourceVar.Name));
-                if (targetVar != null)
-                {
-                    targetVar.Guid = sourceVar.Guid;
-                }
             }
         }
 

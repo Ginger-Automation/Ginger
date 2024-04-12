@@ -1379,7 +1379,7 @@ namespace Amdocs.Ginger.Repository
         #endregion Dirty
 
 
-        public virtual RepositoryItemBase CreateInstance(bool originFromSharedRepository = false, bool setNewGUID = true)
+        public RepositoryItemBase CreateInstance(bool originFromSharedRepository = false, bool setNewGUID = true)
         {
             RepositoryItemBase copiedItem = this.CreateCopy(setNewGUID);
             copiedItem.ParentGuid = this.Guid;

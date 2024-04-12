@@ -327,7 +327,7 @@ namespace Ginger.BusinessFlowPages
                     Activity activityIns = null;
                     if (!IsPomActivity)
                     {
-                        activityIns = (Activity)sharedActivity.CreateInstance(true);
+                        activityIns = Activity.CopySharedRepositoryActivity(sharedActivity, originFromSharedRepository: true);
                         if (copyAsLink)
                         {
                             activityIns.Type = eSharedItemType.Link;
@@ -335,7 +335,7 @@ namespace Ginger.BusinessFlowPages
                     }
                     else
                     {
-                        activityIns = (Activity)sharedActivity.CreateInstance(false);
+                        activityIns = Activity.CopySharedRepositoryActivity(sharedActivity, originFromSharedRepository: false);
                         activityIns.IsAutoLearned = true;
                     }
                     activityIns.Active = true;

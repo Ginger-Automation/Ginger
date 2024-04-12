@@ -1112,7 +1112,7 @@ namespace GingerCore
 
                     if (sharedActivity != null)
                     {
-                        Activity copyItem = (Activity)sharedActivity.CreateInstance(true);
+                        Activity copyItem = Activity.CopySharedRepositoryActivity(sharedActivity, originFromSharedRepository: true);
                         copyItem.Guid = this.Activities[i].Guid;
                         copyItem.ActivitiesGroupID = this.Activities[i].ActivitiesGroupID;
                         copyItem.Type = this.Activities[i].Type;
