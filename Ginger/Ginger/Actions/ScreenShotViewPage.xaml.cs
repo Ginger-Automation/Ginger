@@ -215,26 +215,47 @@ namespace Ginger.Actions.UserControls
         //TODO: move to general class
         BitmapImage BitmapToImageSource(System.Drawing.Bitmap bitmap)
         {
-            using (MemoryStream memory = new MemoryStream())
+            //using (MemoryStream memory = new MemoryStream())
+            //{
+
+            //    try
+            //    {
+            //        bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
+            //        memory.Position = 0;
+            //        BitmapImage bitmapimage = new BitmapImage();
+            //        bitmapimage.BeginInit();
+            //        bitmapimage.StreamSource = memory;
+            //        bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
+            //        bitmapimage.EndInit();
+
+            //        return bitmapimage;
+            //    }
+            //    catch
+            //    {
+            //        return null;
+            //    }
+
+            //}
+
+            try
             {
-
-                try
+                using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Bmp);
-                    memory.Position = 0;
-                    BitmapImage bitmapimage = new BitmapImage();
-                    bitmapimage.BeginInit();
-                    bitmapimage.StreamSource = memory;
-                    bitmapimage.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmapimage.EndInit();
+                    bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Bmp);
+                    memoryStream.Seek(0, SeekOrigin.Begin);
 
-                    return bitmapimage;
-                }
-                catch
-                {
-                    return null;
-                }
+                    BitmapImage bitmapImage = new BitmapImage();
+                    bitmapImage.BeginInit();
+                    bitmapImage.StreamSource = memoryStream;
+                    bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmapImage.EndInit();
 
+                    return bitmapImage;
+                }
+            }
+            catch
+            {
+                return null; 
             }
         }
 

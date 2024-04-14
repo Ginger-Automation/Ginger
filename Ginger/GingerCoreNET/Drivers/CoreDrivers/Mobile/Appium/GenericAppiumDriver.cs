@@ -58,6 +58,7 @@ using OpenQA.Selenium.Appium.MultiTouch;
 using OpenQA.Selenium.Remote;
 using RestSharp;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -210,7 +211,7 @@ namespace Amdocs.Ginger.CoreNET
 
         public override void StartDriver()
         {
-            mIsDeviceConnected = ConnectToAppium();            
+            mIsDeviceConnected = ConnectToAppium();
             OnDriverMessage(eDriverMessageType.DriverStatusChanged);
         }
 
@@ -260,7 +261,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
 
                 //If Driver.SessionId is null, it means that the Mobile Agent already in use.
-                
+
                 if (!(Driver.Capabilities.HasCapability("message") && Driver.Capabilities.GetCapability("message").ToString() == "Could not find available device"))
                 {
                     mSeleniumDriver = new SeleniumDriver(Driver); //used for running regular Selenium actions
@@ -1057,10 +1058,10 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     case ActMobileDevice.eMobileDeviceAction.LockDevice:
-                            PerformLockButtonPress(eLockOperation.Lock);
+                        PerformLockButtonPress(eLockOperation.Lock);
                         break;
                     case ActMobileDevice.eMobileDeviceAction.UnlockDevice:
-                            PerformLockButtonPress(eLockOperation.UnLock);
+                        PerformLockButtonPress(eLockOperation.UnLock);
                         break;
                     case ActMobileDevice.eMobileDeviceAction.GetDeviceBattery:
                         AddReturnParamFromDict(GetDeviceBatteryInfo(), act);
@@ -1200,7 +1201,7 @@ namespace Amdocs.Ginger.CoreNET
                     Array.Clear(bytes);
                 }
             }
-            
+
             Dictionary<string, string> sensorSimulationMap = new Dictionary<string, string>
             {
                 { "uploadMedia", encodeString },
@@ -1543,7 +1544,7 @@ namespace Amdocs.Ginger.CoreNET
                     throw new ArgumentException("swipeScreen(): dir: '" + side + "' NOT supported");
             }
 
-            (BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();            
+            (BuildTouchAction(Driver, startX, startY, endX, endY, 200)).Perform();
         }
 
         public ITouchAction BuildTouchAction(AppiumDriver driver, double startX, double startY, double endX, double endY, int waitDuration = 200)
@@ -1598,7 +1599,7 @@ namespace Amdocs.Ginger.CoreNET
                 }
                 else if (DevicePlatformType == eDevicePlatformType.iOS)
                 {
-                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier").ToString());
+                    return string.Format("{0}", ((IOSDriver)Driver).GetSessionDetail("CFBundleIdentifier")?.ToString());
                 }
                 else
                 {
@@ -2567,7 +2568,7 @@ namespace Amdocs.Ginger.CoreNET
                         break;
 
                     default:
-                        elem = mSeleniumDriver.LocateElementByLocator(EL, Driver); 
+                        elem = mSeleniumDriver.LocateElementByLocator(EL, Driver);
                         break;
                 }
             }
@@ -2771,10 +2772,23 @@ namespace Amdocs.Ginger.CoreNET
 
         public Bitmap GetScreenShot(Tuple<int, int> setScreenSize = null, bool IsFullPageScreenshot = false)
         {
-            Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
-            string filename = Path.GetTempFileName();
-            ss.SaveAsFile(filename);
-            return new System.Drawing.Bitmap(filename);
+            //Screenshot ss = ((ITakesScreenshot)Driver).GetScreenshot();
+            //string filename = Path.GetTempFileName();
+            //ss.SaveAsFile(filename);
+            //return new System.Drawing.Bitmap(filename);
+
+            //using (MemoryStream memoryStream = new MemoryStream(GetScreenshotImage()))
+            //{
+            //    Bitmap bitmap = new Bitmap(memoryStream);
+            //    return bitmap;
+            //}
+
+            ImageConverter imageConverter = new ImageConverter();
+            Image image = (Image)imageConverter.ConvertFrom(GetScreenshotImage());
+
+            Bitmap bitmap = new Bitmap(image);
+
+            return bitmap;
         }
 
         XmlDocument pageSourceXml = null;
@@ -3074,7 +3088,17 @@ namespace Amdocs.Ginger.CoreNET
 
         public override double ScreenShotInitialZoom()
         {
-            return 0.25;
+            switch (DevicePlatformType)
+            {
+                case eDevicePlatformType.Android:
+                    return 0.25;
+                    
+                case eDevicePlatformType.iOS:
+                    return 0.65;
+
+                default:
+                    return 0.25;
+            }
         }
 
         public bool IsRecordingSupported()
