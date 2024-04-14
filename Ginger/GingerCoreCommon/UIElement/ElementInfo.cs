@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 /*
 Copyright © 2014-2024 European Support Limited
 
@@ -495,6 +495,18 @@ namespace Amdocs.Ginger.Common.UIElement
                 mData = this.WindowExplorer.GetElementData(this, elementLocateBy, elementLocateValue);
             }
             return mData;
+        }
+
+        public void SetLocatorsAndPropertiesCategory(string category)
+        {
+            foreach(ElementLocator locator in Locators)
+            {
+                locator.Category = category;
+            }
+            foreach (ControlProperty property in Properties)
+            {
+                property.Category = category;
+            }
         }
 
         public static eImageType GetElementTypeImage(eElementType elementType = eElementType.Unknown)

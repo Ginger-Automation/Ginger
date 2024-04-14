@@ -1816,7 +1816,7 @@ namespace Amdocs.Ginger.CoreNET
                     }
 
                     ElementInfo EI = await GetElementInfoforXmlNode(nodes[i]);
-                    EI.IsAutoLearned = true;
+                    EI.IsAutoLearned = true;                    
 
                     if (pomSetting.relativeXpathTemplateList != null && pomSetting.relativeXpathTemplateList.Count > 0)
                     {
@@ -1844,6 +1844,13 @@ namespace Amdocs.Ginger.CoreNET
                     {
                         foundElementsList.Add(EI);
                     }
+                }
+
+
+                //Add Locators and Properties Category
+                foreach (ElementInfo element in foundElementsList)
+                {
+                    element.SetLocatorsAndPropertiesCategory(DevicePlatformType.ToString());
                 }
 
                 return foundElementsList.ToList();
