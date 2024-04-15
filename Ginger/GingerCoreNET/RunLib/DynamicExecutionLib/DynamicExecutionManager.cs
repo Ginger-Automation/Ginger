@@ -19,8 +19,6 @@ limitations under the License.
 using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
-using Amdocs.Ginger.CoreNET.Execution;
-using Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger;
 using Amdocs.Ginger.CoreNET.Run.RunSetActions;
 using Amdocs.Ginger.CoreNET.RunLib.CLILib;
 using Amdocs.Ginger.Repository;
@@ -46,9 +44,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using ZephyrEntStdSDK.Models;
 using static Ginger.Configurations.SealightsConfiguration;
-using static Ginger.Run.GingerRunner;
 using eReRunLevel = Ginger.ExecuterService.Contracts.eReRunLevel;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
@@ -555,7 +551,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             executionConfig.VerboseLevel = GingerExecConfig.eVerboseLevel.normal;
             executionConfig.EncryptionKey = solution.EncryptionKey;
 
-
+            if (cliHelper.SetEnvironmentDetails && runsetExecutor.RunSetConfig.GingerRunners.Count > 0)
+            {
+                executionConfig.Environments = EnvironmentConfigOperations.ConvertToEnvironmentRunsetConfig(runsetExecutor.RunsetExecutionEnvironment, runsetExecutor.RunSetConfig.GingerRunners);
+            }
 
             RunsetExecConfig runset = new RunsetExecConfig();
             runset.Exist = true;
@@ -1016,6 +1015,19 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             if (dynamicRunsetConfigs.StopRunnersOnFailure != null)
             {
                 runSetConfig.StopRunnersOnFailure = (bool)dynamicRunsetConfigs.StopRunnersOnFailure;
+            }
+
+            if (gingerExecConfig.Environments?.Count > 0)
+            {
+
+                var ExistingEnvironments = gingerExecConfig.Environments.Where((env) => env.Exist == null || env.Exist);
+                var NewlyAddedEnvironments = gingerExecConfig.Environments.Where((env) => env.Exist != null && !env.Exist);
+
+                var AllEnvironmentsInGinger = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
+
+                EnvironmentConfigOperations.UpdateExistingEnvironmentDetails(ExistingEnvironments, AllEnvironmentsInGinger);
+
+                EnvironmentConfigOperations.AddNewEnvironmentDetails(NewlyAddedEnvironments, AllEnvironmentsInGinger);
             }
 
             //Add or Update Runners

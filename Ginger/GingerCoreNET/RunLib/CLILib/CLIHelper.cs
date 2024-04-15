@@ -121,6 +121,21 @@ namespace Amdocs.Ginger.CoreNET.RunLib.CLILib
             }
         }
 
+
+        bool mSetEnvironmentDetails;
+        public bool SetEnvironmentDetails
+        {
+            get
+            {
+                return mSetEnvironmentDetails;
+            }
+            set
+            {
+                mSetEnvironmentDetails = value;
+                OnPropertyChanged(nameof(mSetEnvironmentDetails));
+            }
+        }
+
         bool mSetAlmConnectionDetails;
         public bool SetAlmConnectionDetails
         {
