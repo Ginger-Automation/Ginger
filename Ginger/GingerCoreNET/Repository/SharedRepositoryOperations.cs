@@ -164,27 +164,6 @@ namespace Ginger.Repository
                 if (itemToUpload.ReplaceType == UploadItemSelection.eActivityInstanceType.LinkInstance && !itemToUpload.UsageItem.IsLinkedItem && itemCopy is Activity)
                 {
                     context.BusinessFlow.MarkActivityAsLink(itemToUpload.ItemGUID, itemCopy.Guid);
-                    Activity referenceActivity = (Activity)itemCopy;
-                    Activity activity = context.BusinessFlow.Activities.FirstOrDefault(a => a.Guid == itemToUpload.ItemGUID);
-                    if (activity != null)
-                    {
-                        foreach (Act activityAction in activity.Acts)
-                        {
-                            Act referenceActivityAction = (Act)referenceActivity.Acts.FirstOrDefault(a => string.Equals(a.Description, activityAction.Description));
-                            if (referenceActivityAction != null)
-                            {
-                                activityAction.ParentGuid = referenceActivityAction.Guid;
-                            }
-                        }
-                        foreach (VariableBase activityVariable in activity.Variables)
-                        {
-                            VariableBase referenceActivityVariable = referenceActivity.Variables.FirstOrDefault(v => string.Equals(v.Name, activityVariable.Name));
-                            if (referenceActivityVariable != null)
-                            {
-                                activityVariable.ParentGuid = referenceActivityVariable.Guid;
-                            }
-                        }
-                    }
                 }
                 else if (itemToUpload.ReplaceType == UploadItemSelection.eActivityInstanceType.RegularInstance && itemToUpload.UsageItem.IsLinkedItem)
                 {
