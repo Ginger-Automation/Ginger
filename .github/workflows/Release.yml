@@ -54,7 +54,6 @@ jobs:
             - name: create 
               run : |
                   echo ${{ secrets.PEM }} >> pem.txt
-                  echo ${{ secrets.PEM_PASS }} >> pass.txt
 
             - name: 'Upload static site content'
               uses: actions/upload-artifact@v3
