@@ -106,6 +106,7 @@ jobs:
                   filepath: 'D:\a\Installers\Ginger.exe'   
                   certificate: ${{ secrets.PEM }}
                   cert-password: ${{ secrets.PEM_PASS }}
+                  timeStampUrl: 'https://timestamp.digicert.com/'
                     
             -   name: Upload Windows Installer
                 uses: actions/upload-artifact@v3
