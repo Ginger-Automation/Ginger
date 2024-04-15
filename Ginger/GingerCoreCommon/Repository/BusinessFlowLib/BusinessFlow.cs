@@ -44,7 +44,7 @@ namespace GingerCore
 
         public BusinessFlow()
         {
-
+            AllowAutoSave = true;
         }
 
         public BusinessFlow(string sName)
@@ -60,6 +60,7 @@ namespace GingerCore
             Activities.Add(a);
             Activities.CurrentItem = a;
             CurrentActivity = a;
+            AllowAutoSave = true;
         }
 
         public override string ToString()

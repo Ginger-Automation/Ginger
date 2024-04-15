@@ -1705,7 +1705,10 @@ namespace Ginger.Run
             {
                 this.Dispatcher.Invoke(() =>
                 {
-                    mRunSetConfig.AllowAutoSave = true;
+                    if (!mRunSetConfig.IsVirtual)
+                    {
+                        mRunSetConfig.AllowAutoSave = true;
+                    }
                     xRunSetLoadingPnl.Visibility = Visibility.Collapsed;
                     xRunsetPageGrid.Visibility = Visibility.Visible;
                     if (xAddBusinessflowBtn.IsLoaded && mRunSetConfig != null)
