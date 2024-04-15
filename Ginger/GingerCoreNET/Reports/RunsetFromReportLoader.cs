@@ -117,6 +117,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
         {
             RunSetConfig runset = DynamicExecutionManager.LoadRunsetFromExecutionConfig(executionConfig);
             runset.IsVirtual = true;
+            runset.AllowAutoSave = false;
 
             runset.Name = GetUniqueRunsetName(runset.Name);
 
@@ -131,10 +132,12 @@ namespace Amdocs.Ginger.CoreNET.Reports
             foreach (BusinessFlowRun bfRun in bfRuns)
             {
                 BusinessFlow bf = GetBusinessFlowById(bfRun.BusinessFlowGuid);
+                bf.AllowAutoSave = false;
                 MoveRepositoryItemToFolder(bf, bfCacheRunsetFolder.FolderFullPath);
                 bf.DynamicPostSaveHandler = () =>
                 {
                     RepositoryFolderBase bfRunsetFolder = GetOrCreateRepositoryFolder(runset.Name, bfFolder);
+                    bf.AllowAutoSave = true;
                     MoveRepositoryItemToFolder(bf, bfRunsetFolder.FolderFullPath);
                 };
                 bf.DirtyStatus = eDirtyStatus.Modified;
@@ -148,6 +151,7 @@ namespace Amdocs.Ginger.CoreNET.Reports
             {
                 MoveRepositoryItemToFolder(runset, runsetFolder.FolderFullPath);
                 runset.IsVirtual = false;
+                runset.AllowAutoSave = true;
             };
             runset.DirtyStatus = eDirtyStatus.Modified;
 
