@@ -93,7 +93,8 @@ namespace Ginger.Repository
                                 Guid targetGuid = fc.GetGuidFromValue();
                                 if (oldNewActionGuidList.Any(oldNew => oldNew.Key == targetGuid))
                                 {
-                                    fc.Value = fc.Value.Replace(targetGuid.ToString(), oldNewActionGuidList.First(oldNew => oldNew.Key == targetGuid).ToString());
+                                    Guid newTargetGuid = oldNewActionGuidList.First(oldNew => oldNew.Key == targetGuid).Value;
+                                    fc.Value = fc.Value.Replace(targetGuid.ToString(), newTargetGuid.ToString());
                                 }
                             }
                         }
@@ -626,7 +627,8 @@ namespace Ginger.Repository
                     Guid targetGuid = fc.GetGuidFromValue();
                     if (oldNewActionGuidList.Any(oldNew => oldNew.Key == targetGuid))
                     {
-                        fc.Value = fc.Value.Replace(targetGuid.ToString(), oldNewActionGuidList.First(oldNew => oldNew.Key == targetGuid).ToString());
+                        Guid newTargetGuid = oldNewActionGuidList.First(oldNew => oldNew.Key == targetGuid).Value;
+                        fc.Value = fc.Value.Replace(targetGuid.ToString(), newTargetGuid.ToString());
                     }
                 }
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(sharedActivity);
