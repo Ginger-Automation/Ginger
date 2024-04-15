@@ -101,12 +101,11 @@ jobs:
                 with: 
                     filepath: './Ginger/GingerInstallerScriptGithub.iss'
                     
-            -   uses: nadeemjazmawe/Sign-action-signtool.exe@v0.1
+            -   uses: nadeemjazmawe/Sign-action-signtool.exe@v1.0-Official
                 with: 
                   filepath: 'D:\a\Installers\Ginger.exe'   
                   certificate: ${{ secrets.PEM }}
                   cert-password: ${{ secrets.PEM_PASS }}
-                  timeStampUrl: 'https://timestamp.digicert.com/'
                     
             -   name: Upload Windows Installer
                 uses: actions/upload-artifact@v3
