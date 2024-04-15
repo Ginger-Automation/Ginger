@@ -16,7 +16,7 @@ jobs:
               uses: actions/cache@v3.2.6
               with:
                 path: ./**
-                key: cache-site-${{ github.run_number }}
+                key: cache-site-147
                 enableCrossOsArchive:
                     true
 
