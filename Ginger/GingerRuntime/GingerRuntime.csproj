@@ -40,7 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ginger.ExecuterService.Contracts" Version="24.2.2" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="3.21.100" />
     <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="5.8.64" />
     <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
@@ -49,5 +48,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GingerCoreNET\GingerCoreNET.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Ginger.ExecuterService.Contracts">
+      <HintPath>..\..\..\..\OneDrive - AMDOCS\Backup Folders\Documents\Ginger-Execution-Services\Ginger.ExecuterService.Contracts\bin\Debug\net8.0\Ginger.ExecuterService.Contracts.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
