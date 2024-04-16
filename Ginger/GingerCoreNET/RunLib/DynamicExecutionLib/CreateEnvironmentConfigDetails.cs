@@ -21,7 +21,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 },
                 "dynamic" => new VariableDynamic()
                 {
-                    Value = Parameter.Value,
+                    Formula = Parameter.Value,
                     Name = Parameter.Name
                 },
                 "number" => new VariableNumber()
