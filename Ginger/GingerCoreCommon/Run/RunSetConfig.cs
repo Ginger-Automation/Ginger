@@ -514,5 +514,9 @@ namespace Ginger.Run
         public ReRunConfig ReRunConfigurations = new ReRunConfig();
 
         public bool AllowInterActivityFlowControls { get; set; } = true;
+
+        //adding source app and user field for account level report 
+        public string SourceApplication { get; set; }
+        public string SourceApplicationUser { get; set; }
     }
 }
