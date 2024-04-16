@@ -358,6 +358,7 @@ namespace GingerCoreNET.GeneralLib
                     EA.CoreProductName = AP.Core;
                     EA.CoreVersion = AP.CoreVersion;
                     EA.Active = true;
+                    EA.ParentGuid = AP.Guid;
                     newEnv.Applications.Add(EA);
                 }
                 WorkSpace.Instance.SolutionRepository.AddRepositoryItem(newEnv);
