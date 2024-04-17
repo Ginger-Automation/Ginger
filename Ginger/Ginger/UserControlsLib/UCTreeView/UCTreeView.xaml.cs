@@ -19,6 +19,7 @@ limitations under the License.
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Repository;
 using Ginger.ConflictResolve;
+using Ginger.SolutionWindows.TreeViewItems;
 using GingerWPF.DragDropLib;
 using GingerWPF.TreeViewItemsLib;
 using System;
@@ -223,6 +224,21 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
         }
 
+        public bool DoesItemExistInTree(ItemCollection items, ITreeViewItem item)
+        {
+            bool doesTVIExist = false;
+
+            foreach (TreeViewItem treeItem in items)
+            {
+                if (treeItem.Tag is EnvApplicationTreeItem treeItemEATI && item is EnvApplicationTreeItem itemEATI && treeItemEATI.EnvApplication.Guid.Equals(itemEATI.EnvApplication.Guid))
+                {
+                    doesTVIExist = true;
+                    break;
+                }
+            }
+            
+            return doesTVIExist;
+        }
         // TODO: remove temp code after cleanup 
         public TreeViewItem AddItem(ITreeViewItem item, TreeViewItem Parent = null)
         {
@@ -237,11 +253,21 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
             if (Parent == null)
             {
-                Tree.Items.Add(TVI);
+                bool doesTVIExist = DoesItemExistInTree(Tree.Items, item);
+
+                if (!doesTVIExist)
+                {
+                    Tree.Items.Add(TVI);
+                }
             }
             else
             {
-                Parent.Items.Add(TVI);
+                bool doesTVIExist = DoesItemExistInTree(Parent.Items, item);
+
+                if (!doesTVIExist)
+                {
+                    Parent.Items.Add(TVI);
+                }
             }
 
             if (item.IsExpandable())
@@ -461,6 +487,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (TVI != null)
             {
                 TVI.Items.Clear();
+                SetTreeNodeItemChilds(TVI);
                 TVI.IsExpanded = true;
             }
         }
