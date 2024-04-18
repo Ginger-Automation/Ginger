@@ -81,13 +81,9 @@ namespace Ginger.SolutionWindows.TreeViewItems
             return NewTVItemFolderHeaderStyle(mBusFlowsFolder);
         }
 
-        private List<ITreeViewItem>? _children;
-
         List<ITreeViewItem> ITreeViewItem.Childrens()
         {
-            if (_children == null)
-                _children = GetChildrentGeneric<BusinessFlow>(mBusFlowsFolder);
-            return _children;
+            return GetChildrentGeneric<BusinessFlow>(mBusFlowsFolder);
         }
 
         public override ITreeViewItem GetTreeItem(object item)
