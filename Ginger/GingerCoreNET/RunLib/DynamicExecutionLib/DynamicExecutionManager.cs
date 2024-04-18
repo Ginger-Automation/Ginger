@@ -1019,9 +1019,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
             if (gingerExecConfig.Environments?.Count > 0)
             {
+                EnvironmentConfigOperations.CheckIfNameIsUnique<EnvironmentConfig>(gingerExecConfig.Environments);
 
-                var ExistingEnvironments = gingerExecConfig.Environments.Where((env) => env.Exist == null || env.Exist);
-                var NewlyAddedEnvironments = gingerExecConfig.Environments.Where((env) => env.Exist != null && !env.Exist);
+                var ExistingEnvironments = gingerExecConfig.Environments.Where((env) => !env.Exist.HasValue || env.Exist.Value);
+                var NewlyAddedEnvironments = gingerExecConfig.Environments.Where((env) => env.Exist.HasValue && !env.Exist.Value);
 
                 var AllEnvironmentsInGinger = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<ProjEnvironment>();
 
@@ -1671,7 +1672,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             return runSetConfig;
         }
 
-        public static T FindItemByIDAndName<T>(Tuple<string, Guid?> id, Tuple<string, string> name, ObservableList<T> repoLibrary)
+        public static T FindItemByIDAndName<T>(Tuple<string, Guid?> id, Tuple<string, string> name, ObservableList<T> repoLibrary, bool throwException = true)
         {
             T item = default(T);
 
@@ -1708,7 +1709,16 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 else
                 {
                     string error = string.Format("Failed to find {0} with the details '{1}/{2}'", typeof(T), name.Item2.ToLower(), id.Item2);
-                    throw new Exception(error);
+
+                    if (throwException)
+                    {
+                        throw new Exception(error);
+                    }
+
+                    else
+                    {
+                        return item;
+                    }
                 }
             }
             catch (Exception ex)

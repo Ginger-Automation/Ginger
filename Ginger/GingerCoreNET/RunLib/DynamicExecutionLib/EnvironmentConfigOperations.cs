@@ -53,7 +53,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                     Guid = ((Database)db).Guid,
                                     KeepConnectionOpen = ((Database)db).KeepConnectionOpen,
                                     Name = ((Database)db).Name,
-                                    DBType = ConvertDBTypeToDBConfig(((Database)db).DBType)
+                                    DBType = DatabaseConfigHelper.ConverDBTypeToDBConfigType(((Database)db).DBType)
                                 }
                                 ) ;
 
@@ -68,7 +68,6 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                                 {
                                     Guid = variable.Guid,
                                     Name = variable.Name,
-                                    ParameterType = variable.VariableUIType.Replace("Variable", "").Trim(),
                                     Value = variable.Value,
                                 }
                                 );
@@ -83,8 +82,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             Guid = application.Guid,
                             Parameters = parameters,
                             URL = application.Url,
-                            ApplicationPlatformGUID = application.ParentGuid,
-                            ApplicationPlatformName = WorkSpace.Instance.Solution.ApplicationPlatforms.FirstOrDefault((app)=>app.Guid.Equals(application.ParentGuid))?.AppName ?? string.Empty
+                            TargetApplcationGUID = application.ParentGuid,
                         });
 
                     }
@@ -92,30 +90,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 resultConfigEnvironments.Add(configEnv);
             }
             return resultConfigEnvironments;
-        }
-
-        private static eDBConfigType ConvertDBTypeToDBConfig(eDBTypes dBType)
-        {
-            
-            return dBType switch
-            {
-                eDBTypes.Oracle => eDBConfigType.Oracle,
-                eDBTypes.MSAccess => eDBConfigType.MSAccess,
-                eDBTypes.MSSQL => eDBConfigType.MSSQL,
-                eDBTypes.Cassandra => eDBConfigType.Cassandra,
-                eDBTypes.MongoDb => eDBConfigType.MongoDb,
-                eDBTypes.CosmosDb => eDBConfigType.CosmosDb,
-                eDBTypes.MySQL => eDBConfigType.MySQL,
-                eDBTypes.PostgreSQL => eDBConfigType.PostgreSQL,
-                eDBTypes.Couchbase => eDBConfigType.Couchbase,
-                eDBTypes.DB2 => eDBConfigType.DB2,
-                eDBTypes.Hbase => eDBConfigType.Hbase,
-                _ => throw new Exception($"Mentioned DB Type does not exist"),
-            };
-        }
-        
+        }        
         public static void UpdateExistingEnvironmentDetails(IEnumerable<EnvironmentConfig> ExistingEnvironments, ObservableList<ProjEnvironment> AllEnvironmentsInGinger)
         {
+
             ExistingEnvironments.ForEach((env) =>
             {
                 var envFromGinger = DynamicExecutionManager.FindItemByIDAndName(
@@ -124,30 +102,50 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         AllEnvironmentsInGinger
                     );
 
+                CheckIfNameIsUnique<ApplicationConfig>(env.Applications);
                 env.Applications.ForEach((app) =>
                 {
 
                     var appFromGinger = DynamicExecutionManager.FindItemByIDAndName(
                         new Tuple<string, Guid?>(nameof(EnvApplication.Guid), app.Guid),
                         new Tuple<string, string>(nameof(EnvApplication.Name), app.Name),
-                        envFromGinger.Applications
+                        envFromGinger.Applications,
+                        false
                     );
 
-                    appFromGinger.AppVersion = app.AppVersion;
-                    appFromGinger.Url = app.URL;
+                    if(appFromGinger == null)
+                    {
+                        appFromGinger = ApplicationConfigHelper.CreateEnvApplicationFromConfig(app);
+                        envFromGinger.Applications.Add(appFromGinger);
+                    }
+                    else
+                    {
+                        ApplicationConfigHelper.UpdateEnvApplicationFromConfig(ref appFromGinger , app);
+                    }
+
 
                     var dbsFromGinger = new ObservableList<Database>(appFromGinger.Dbs.Select((d) => (Database)d));
+                    CheckIfNameIsUnique<DatabaseConfig>(app.DBs);
+                    CheckIfNameIsUnique<ParameterConfig>(app.Parameters);
+
                     app.DBs.ForEach((db) =>
                     {
                         var dbFromGinger = DynamicExecutionManager.FindItemByIDAndName(
                          new Tuple<string, Guid?>(nameof(Database.Guid), db.Guid),
                          new Tuple<string, string>(nameof(Database.Name), db.Name),
-                          dbsFromGinger
+                          dbsFromGinger,
+                          false
                          );
 
-                        dbFromGinger.Name = db.Name;
-                        dbFromGinger.ConnectionString = db.ConnectionString;
-                        dbFromGinger.KeepConnectionOpen = db.KeepConnectionOpen;
+                        if(dbFromGinger == null)
+                        {
+                            dbFromGinger = DatabaseConfigHelper.CreateDatabaseFromConfig(db);
+                            appFromGinger.Dbs.Add(dbFromGinger);
+                        }
+                        else
+                        {
+                            DatabaseConfigHelper.UpdateDatabaseFromConfig(db, ref dbFromGinger);
+                        }
                     });
 
                     app.Parameters.ForEach((param) =>
@@ -155,11 +153,20 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                         var parameterFromGinger = DynamicExecutionManager.FindItemByIDAndName(
                                 new Tuple<string, Guid?>(nameof(VariableBase.Guid), param.Guid),
                                 new Tuple<string, string>(nameof(VariableBase.Name), param.Name),
-                                appFromGinger.Variables
+                                appFromGinger.Variables,
+                                false
                              );
 
-                        parameterFromGinger.Name = param.Name;
-                        parameterFromGinger.Value = param.Value;
+                        if(parameterFromGinger == null)
+                        {
+                            parameterFromGinger = ParameterConfigHelper.CreateParameterFromConfig(param);
+                            
+                            appFromGinger.Variables.Add(parameterFromGinger);
+                        }
+                        else
+                        {
+                            ParameterConfigHelper.UpdateParameterFromConfig(param , ref parameterFromGinger);
+                        }
                     });
 
                 });
@@ -170,9 +177,9 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
         public static void AddNewEnvironmentDetails(IEnumerable<EnvironmentConfig> NewEnvironmentsInConfig, ObservableList<ProjEnvironment> AllEnvironmentsInGinger)
         {
-            NewEnvironmentsInConfig?.ForEach((Environment) =>
+           NewEnvironmentsInConfig?.ForEach((Environment) =>
             {
-                ValidateEnvironmentConfigDetails.ValidateEnvironmentConfig(AllEnvironmentsInGinger, Environment);
+                ValidateEnvironmentConfig(AllEnvironmentsInGinger, Environment);
                 var NewEnvironment = new ProjEnvironment()
                 {
                     Name = Environment.Name,
@@ -181,29 +188,50 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 
                 Environment.Applications?.ForEach((Application) =>
                 {
-                    ValidateEnvironmentConfigDetails.ValidateApplicationConfig(Application);
-
-                    var EnvApplication = CreateEnvironmentConfigDetails.CreateApplicationConfig(Application);
+                    var EnvApplication = ApplicationConfigHelper.CreateEnvApplicationFromConfig(Application);
                 
                     NewEnvironment.Applications.Add(EnvApplication);
 
                     Application.Parameters?.ForEach((Parameter) =>
                     {
-                        var ParameterToBeAdded = CreateEnvironmentConfigDetails.CreateParameterConfig(Parameter);
+                        var ParameterToBeAdded = ParameterConfigHelper.CreateParameterFromConfig(Parameter);
                         EnvApplication.Variables.Add(ParameterToBeAdded);
                     });
 
                     Application.DBs?.ForEach((DatabaseConfig) =>
                     {
-                        ValidateEnvironmentConfigDetails.ValidateDatabaseConfig(DatabaseConfig);
-                        
-                        EnvApplication.Dbs.Add(CreateEnvironmentConfigDetails.CreateDatabaseConfig(DatabaseConfig));
+                        EnvApplication.Dbs.Add(DatabaseConfigHelper.CreateDatabaseFromConfig(DatabaseConfig));
                     });
                 });
 
                 AllEnvironmentsInGinger.Add(NewEnvironment);
             });
+        }
 
+
+        public static void ValidateEnvironmentConfig(ObservableList<ProjEnvironment> AllEnvironmentsInGinger, EnvironmentConfig EnvironmentConfig)
+        {
+            var doesEnvironmentExist = AllEnvironmentsInGinger.Any((existingEnvironmentInGinger) => existingEnvironmentInGinger.Guid.Equals(EnvironmentConfig.Guid));
+            if (!doesEnvironmentExist)
+            {
+                doesEnvironmentExist = AllEnvironmentsInGinger.Any((existingEnvironmentInGinger) => existingEnvironmentInGinger.Name.Equals(EnvironmentConfig.Name));
+            }
+
+            if (doesEnvironmentExist)
+            {
+                throw new Exception($"The Environment {EnvironmentConfig.Name} already exists in Ginger. Please make sure that the Name and GUID is unique");
+            }
+        }
+
+
+        public static void CheckIfNameIsUnique<T>(IEnumerable<T> List)
+        {
+            var distinctCount =   List.Select((env) => typeof(T).GetProperty("Name").GetValue(env)).Distinct().Count();
+            var actualCount = List.Count();
+            if (distinctCount != actualCount)
+            {
+                throw new Exception($"{typeof(T).Name.Replace("Config","")} Name should be distinct in the list");
+            }
         }
     }
 
