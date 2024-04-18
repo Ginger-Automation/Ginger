@@ -1,6 +1,4 @@
-﻿using amdocs.ginger.GingerCoreNET;
-using Amdocs.Ginger.Common;
-using Ginger.ExecuterService.Contracts;
+﻿using Amdocs.Ginger.Common;
 using Ginger.ExecuterService.Contracts.V1.ExecutionConfiguration;
 using Ginger.Run;
 using GingerCore.Environments;
@@ -9,7 +7,6 @@ using Microsoft.VisualStudio.Services.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static GingerCore.Environments.Database;
 
 namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
 {
@@ -82,7 +79,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             Guid = application.Guid,
                             Parameters = parameters,
                             URL = application.Url,
-                            TargetApplcationGUID = application.ParentGuid,
+                            TargetApplicationGUID = application.ParentGuid,
                         });
 
                     }
