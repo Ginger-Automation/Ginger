@@ -152,11 +152,16 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             if (state == UCTreeView.ChildrenLoadState.Started)
             {
-                Dispatcher.Invoke(() => xSearchTextBox.IsEnabled = false);
+                Dispatcher.Invoke(() =>
+                {
+                    xSearchTextBox.IsEnabled = false;
+                    Reporter.ToStatus(eStatusMsgKey.LoadingTreeViewChildren);
+                });
             }
             else
             {
                 Dispatcher.Invoke(() => xSearchTextBox.IsEnabled = true);
+                Reporter.HideStatusMessage();
             }
         }
 
