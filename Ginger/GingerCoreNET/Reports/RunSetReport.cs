@@ -33,6 +33,8 @@ namespace Ginger.Reports
         {
             public static string Name = "Name";
             public static string Description = "Description";
+            public static string SourceApplication = "SourceApplication";
+            public static string SourceApplicationUser = "SourceApplicationUser";
             public static string StartTimeStamp = "StartTimeStamp";
             public static string EndTimeStamp = "EndTimeStamp";
             public static string Elapsed = "Elapsed";
@@ -149,6 +151,22 @@ namespace Ginger.Reports
         [FieldParamsIsSelected(true)]
         public string ExecutedbyUser { get; set; }
 
+        [JsonProperty]
+        [FieldParams]
+        [FieldParamsNameCaption("Requested By Application")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string SourceApplication { get; set; }
+
+
+        [JsonProperty]
+        [FieldParams]
+        [FieldParamsNameCaption("Requested By Application User")]
+        [FieldParamsFieldType(FieldsType.Field)]
+        [FieldParamsIsNotMandatory(true)]
+        [FieldParamsIsSelected(true)]
+        public string SourceApplicationUser { get; set; }
 
         [FieldParams]
         [FieldParamsNameCaption("Execution Statistics Details")]

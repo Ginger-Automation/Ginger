@@ -136,7 +136,22 @@ namespace Ginger.Run
                 {
                     Field = RunSetReport.Fields.Description,
                     WidthWeight = 20,
-                    ReadOnly = true },
+                    ReadOnly = true 
+                },
+                new()
+                {
+                    Field = RunSetReport.Fields.SourceApplication,
+                    Header = "Source Application",
+                    WidthWeight = 10,
+                    ReadOnly = true,
+                },
+                new()
+                {
+                    Field = RunSetReport.Fields.SourceApplicationUser,
+                    Header = "Source Application User",
+                    WidthWeight = 12,
+                    ReadOnly = true,
+                },
                 new()
                 {
                     Field = RunSetReport.Fields.StartTimeStamp,
