@@ -204,6 +204,13 @@ namespace GingerCore.Actions
             }
         }
 
+        public string previewBaselineImageName
+        {
+            get
+            { return this.GetOrCreateInputParam(Fields.VRTBaselineImagename).Value; }
+            set { this.GetOrCreateInputParam(Fields.VRTBaselineImagename).Value = value; }
+        }
+
         public string BaseLineFileName
         {
             get
@@ -281,6 +288,8 @@ namespace GingerCore.Actions
             public static readonly string ActionBy = "ActionBy";
             public static readonly string LocateBy = "LocateBy";
             public static readonly string LocateValue = "LocateValue";
+            public static readonly string VRTBaselineImagepath = "VRTBaselineImagepath";
+            public static readonly string VRTBaselineImagename = "VRTBaselineImagename";
         }
 
         public override string ActionEditPage { get { return "VisualTesting.ActVisualTestingEditPage"; } }

@@ -69,7 +69,7 @@ namespace Ginger.Actions.VisualTesting
             VRTCurrentBaselineImagePathTxtBox.Init(Context.GetAsContext(mAct.Context), mAct.GetOrCreateInputParam(VRTAnalyzer.VRTSavedBaseImageFilenameString), true, true, UCValueExpression.eBrowserType.File, "*.png;", BaseLineFileSelected_Click);
             WeakEventManager<TextBoxBase, TextChangedEventArgs>.AddHandler(source: VRTCurrentBaselineImagePathTxtBox.ValueTextBox, eventName: nameof(TextBoxBase.TextChanged), handler: ValueTextBox_TextChanged);
             UpdateBaseLineImage();
-
+            GetBaseLineImage();
             GingerCore.GeneralLib.BindingHandler.ObjFieldBinding(xCreateBaselineCheckbox, CheckBox.IsCheckedProperty, mAct, nameof(mAct.CreateBaselineImage));
 
             InitLayout();
@@ -140,6 +140,8 @@ namespace Ginger.Actions.VisualTesting
                     xCreateBaselineCheckbox.Visibility = Visibility.Collapsed;
                     xPreviewImage.Visibility = Visibility.Collapsed;
                     xCreateBaselineNote.Visibility = Visibility.Collapsed;
+                    xPreviewBaselineImage.Visibility = Visibility.Collapsed;
+                    VRTPreviewBaselineImageFramePnl.Visibility = Visibility.Collapsed;
                     break;
                 case VRTAnalyzer.eVRTAction.Track:
                     xDiffTollerancePercentLabel.Visibility = Visibility.Visible;
@@ -148,6 +150,17 @@ namespace Ginger.Actions.VisualTesting
                     xTestNameUCVE.Visibility = Visibility.Collapsed;
                     xVRTActionByLabel.Visibility = Visibility.Visible;
                     xActionByComboBox.Visibility = Visibility.Visible;
+                    if(!string.IsNullOrEmpty(mAct.previewBaselineImageName))
+                    {
+                        xPreviewBaselineImage.Visibility = Visibility.Visible;
+                        VRTPreviewBaselineImageFramePnl.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        xPreviewBaselineImage.Visibility = Visibility.Collapsed;
+                        VRTPreviewBaselineImageFramePnl.Visibility = Visibility.Collapsed;
+                    }
+                    
                     if (actionBy == VRTAnalyzer.eActionBy.Region)
                     {
                         xLocateByAndValuePanel.Visibility = Visibility.Visible;
@@ -228,6 +241,8 @@ namespace Ginger.Actions.VisualTesting
                     xCreateBaselineCheckbox.Visibility = Visibility.Collapsed;
                     xPreviewImage.Visibility = Visibility.Collapsed;
                     xCreateBaselineNote.Visibility = Visibility.Collapsed;
+                    xPreviewBaselineImage.Visibility = Visibility.Collapsed;
+                    VRTPreviewBaselineImageFramePnl.Visibility = Visibility.Collapsed;
                     break;
             }
         }
@@ -337,6 +352,20 @@ namespace Ginger.Actions.VisualTesting
             // send with null bitmap will show image not found
             ScreenShotViewPage p = new ScreenShotViewPage("Baseline Image", b);
             VRTBaseImageFrame.ClearAndSetContent(p);
+        }
+
+        private void GetBaseLineImage()
+        {
+            string previewBaselineImage = GingerCoreNET.GeneralLib.General.DownloadBaselineImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + mAct.previewBaselineImageName, mAct);
+            string FileName = General.GetFullFilePath(previewBaselineImage);
+            BitmapImage b = null;
+            if (File.Exists(FileName))
+            {
+                b = GetFreeBitmapCopy(FileName);
+            }
+            // send with null bitmap will show image not found
+            ScreenShotViewPage p = new ScreenShotViewPage("preview Baseline Image", b);
+            VRTPreviewBaselineImageFrame.ClearAndSetContent(p);
         }
 
         private BitmapImage GetFreeBitmapCopy(String filePath)

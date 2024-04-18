@@ -37,7 +37,7 @@ namespace GingerCore.Actions.VisualTesting
         public static string ImageName = "ImageName";
         public static string BaselineImage = "BaselineImage";
         public static string VRTSavedBaseImageFilenameString = "VRTSavedBaseImageFilenameString";
-
+        
 
         ActVisualTesting mAct;
         IVisualTestingDriver mDriver;
@@ -124,7 +124,7 @@ namespace GingerCore.Actions.VisualTesting
         {
             throw new NotImplementedException();
         }
-
+     
         public void Execute()
         {
             switch (GetSelectedVRTActionEnum())
@@ -307,6 +307,13 @@ namespace GingerCore.Actions.VisualTesting
                     {
                         case TestRunStatus.New:
                             mAct.Error += $"No baseline found, Please approve it on dashboard to create baseline." + System.Environment.NewLine + result.Url;
+                            //Add baseline image to act screenshots
+                            if (result.ImageUrl != null)
+                            {
+                                int index = result.ImageUrl.LastIndexOf("/");
+                                string imageToDownload = result.ImageUrl.Substring(index + 1);
+                                mAct.previewBaselineImageName = imageToDownload;
+                            }
                             break;
                         case TestRunStatus.Unresolved:
                             mAct.Error += $"Differences from baseline was found." + System.Environment.NewLine + result.DiffUrl;
@@ -324,6 +331,7 @@ namespace GingerCore.Actions.VisualTesting
                             {
                                 int index = result.BaselineUrl.LastIndexOf("/");
                                 string imageToDownload = result.BaselineUrl.Substring(index + 1);
+                                mAct.previewBaselineImageName = imageToDownload;
                                 General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
                             }
                             
