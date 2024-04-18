@@ -30,6 +30,7 @@ using GingerWPF.UserControlsLib.UCTreeView;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -38,12 +39,29 @@ using System.Windows.Controls;
 
 namespace GingerWPF.TreeViewItemsLib
 {
-    public class NewTreeViewItemBase : TreeViewItemGenericBase
+    public class NewTreeViewItemBase : TreeViewItemGenericBase, INotifyPropertyChanged
     {
+        private Visibility _visibility;
+        public virtual Visibility Visibility 
+        {
+            get => _visibility; 
+            set
+            {
+                if (_visibility != value)
+                {
+                    _visibility = value;
+                    PropertyChanged?.Invoke(sender: this, new PropertyChangedEventArgs(nameof(Visibility)));
+                }
+            } 
+        }
+
         public virtual TreeViewItem? TreeViewItem { get; set; }
 
         public SourceControlFileInfo.eRepositoryItemStatus ItemSourceControlStatus;//TODO: combine it with GingerCore one      
         static bool mBulkOperationIsInProcess = false;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public override bool SaveTreeItem(object item, bool saveOnlyIfDirty = false)
         {
             if (item is RepositoryItemBase)

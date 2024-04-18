@@ -234,6 +234,14 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             if (item is NewTreeViewItemBase newTreeViewItem)
             {
                 newTreeViewItem.TreeViewItem = TVI;
+                Binding visibilityBinding = new()
+                {
+                    Mode = BindingMode.TwoWay,
+                    Source = item,
+                    Path = new PropertyPath(nameof(NewTreeViewItemBase.Visibility)),
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                };
+                TVI.SetBinding(TreeViewItem.VisibilityProperty, visibilityBinding);
             }
             if (Parent == null)
             {
@@ -648,6 +656,71 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             }
 
             return header;
+        }
+
+        public void FilterItemsByText2(string text)
+        {
+            long startTime = DateTime.UtcNow.Ticks;
+
+            List<ITreeViewItem> items = [];
+            foreach(TreeViewItem tvi in ((TreeViewItem)Tree.Items[0]).Items)
+            {
+                if (tvi.Tag is ITreeViewItem item)
+                    items.Add(item);
+            }
+
+            FilterItemsByText2(items, text);
+
+            Debug.WriteLine($"==================== FilterItemsByText2: {TimeSpan.FromTicks(DateTime.UtcNow.Ticks - startTime).TotalMilliseconds}ms ====================");
+        }
+
+        private bool FilterItemsByText2(IEnumerable<ITreeViewItem> items, string text)
+        {
+            if (items == null)
+                return false;
+
+            bool wasFound = false;
+            foreach (ITreeViewItem item in items)
+            {
+                NewTreeViewItemBase itemBase = (NewTreeViewItemBase)item;
+
+                itemBase.Visibility = Visibility.Collapsed;
+
+                string header = GetItemHeaderText(item);
+                if (!string.IsNullOrEmpty(header) && header.Contains(text, StringComparison.OrdinalIgnoreCase))
+                {
+                    itemBase.Visibility = Visibility.Visible;
+                    wasFound = true;
+                }
+
+                if (FilterItemsByText2(item.Childrens(), text))
+                {
+                    wasFound = true;
+                    itemBase.Visibility = Visibility.Visible;
+                }
+            }
+
+            return wasFound;
+        }
+
+        private string GetItemHeaderText(ITreeViewItem item)
+        {
+            StackPanel SP = (StackPanel)item.Header();
+
+            //Combine text of all label child's of the header Stack panel
+            string HeaderTXT = "";
+            foreach (var v in SP.Children)
+            {
+                if (v.GetType() == typeof(Label))
+                {
+                    Label l = (Label)v;
+                    if (l.Content != null)
+                    {
+                        HeaderTXT += l.Content.ToString();
+                    }
+                }
+            }
+            return HeaderTXT;
         }
 
         /// <summary>

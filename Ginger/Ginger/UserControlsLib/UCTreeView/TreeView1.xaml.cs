@@ -276,7 +276,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         {
             xSearchClearBtn.Visibility = Visibility.Collapsed;
             xSearchBtn.Visibility = Visibility.Visible;
-
+            xTreeViewTree.FilterItemsByText2(string.Empty);
 
             if (mSearchTask?.IsCompleted == false && mSearchTask?.IsCanceled == false)
             {
@@ -363,7 +363,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                             SearchStarted.Invoke(Tree, new EventArgs());
                         }
                         Mouse.OverrideCursor = Cursors.Wait;
-                        xTreeViewTree.FilterItemsByText(xTreeViewTree.TreeItemsCollection, mSearchString, mCancellationTokenSource.Token);
+                        xTreeViewTree.FilterItemsByText2(mSearchString);
                     }
                     catch (Exception ex)
                     {
