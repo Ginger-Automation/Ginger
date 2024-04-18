@@ -145,8 +145,20 @@ namespace GingerWPF.UserControlsLib.UCTreeView
 
             xTreeViewTree.ItemSelected += xTreeViewTree_ItemSelected;
             xTreeViewTree.ItemAdded += XTreeViewTree_ItemAdded;
+            xTreeViewTree.ChildrenLoadEvent += XTreeViewTree_ChildrenLoadEvent;
         }
 
+        private void XTreeViewTree_ChildrenLoadEvent(UCTreeView.ChildrenLoadState state)
+        {
+            if (state == UCTreeView.ChildrenLoadState.Started)
+            {
+                Dispatcher.Invoke(() => xSearchTextBox.IsEnabled = false);
+            }
+            else
+            {
+                Dispatcher.Invoke(() => xSearchTextBox.IsEnabled = true);
+            }
+        }
 
         public bool IsSearchRunning()
         {

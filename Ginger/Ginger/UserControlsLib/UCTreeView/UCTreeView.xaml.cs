@@ -307,6 +307,15 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         private AutoResetEvent? mSetTreeNodeItemChildsEvent = null;
 
         private readonly Dictionary<TreeViewItem, Task> tviChildNodesLoadTaskMap = new();
+        public enum ChildrenLoadState
+        {
+            Started,
+            Completed
+        }
+
+        public delegate void ChildrenLoadHandler(ChildrenLoadState state);
+        
+        public event ChildrenLoadHandler ChildrenLoadEvent;
 
         private Task SetTreeNodeItemChilds(TreeViewItem TVI)
         {
@@ -322,6 +331,7 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                 {
                     setChildItemsTask = Task.Run(() =>
                     {
+                        ChildrenLoadEvent?.Invoke(ChildrenLoadState.Started);
                         try
                         {
                             mSetTreeNodeItemChildsEvent = new AutoResetEvent(false);
@@ -358,6 +368,10 @@ namespace GingerWPF.UserControlsLib.UCTreeView
                         catch(Exception ex)
                         {
                             Reporter.ToLog(eLogLevel.ERROR, ex.Message, ex);
+                        }
+                        finally
+                        {
+                            ChildrenLoadEvent?.Invoke(ChildrenLoadState.Completed);
                         }
                     });
                 }
