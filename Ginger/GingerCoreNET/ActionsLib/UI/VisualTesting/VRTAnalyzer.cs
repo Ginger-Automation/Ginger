@@ -21,6 +21,7 @@ using Amdocs.Ginger.Common;
 using GingerCoreNET.GeneralLib;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using VisualRegressionTracker;
 
@@ -310,8 +311,7 @@ namespace GingerCore.Actions.VisualTesting
                             //Add baseline image to act screenshots
                             if (result.ImageUrl != null)
                             {
-                                int index = result.ImageUrl.LastIndexOf("/");
-                                string imageToDownload = result.ImageUrl.Substring(index + 1);
+                                string imageToDownload = Path.GetFileName(result.ImageUrl);
                                 mAct.previewBaselineImageName = imageToDownload;
                             }
                             break;
@@ -320,8 +320,7 @@ namespace GingerCore.Actions.VisualTesting
 
                             //Add difference image to act screenshots
                             if(result.DiffUrl != null){
-                                int index = result.DiffUrl.LastIndexOf("/");
-                                string imageToDownload = result.DiffUrl.Substring(index + 1);
+                                string imageToDownload = Path.GetFileName(result.DiffUrl);
                                 General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
                             }
                             
@@ -329,8 +328,7 @@ namespace GingerCore.Actions.VisualTesting
                             //Add baseline image to act screenshots
                             if(result.BaselineUrl != null)
                             {
-                                int index = result.BaselineUrl.LastIndexOf("/");
-                                string imageToDownload = result.BaselineUrl.Substring(index + 1);
+                                string imageToDownload = Path.GetFileName(result.BaselineUrl);
                                 mAct.previewBaselineImageName = imageToDownload;
                                 General.DownloadImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + imageToDownload, mAct);
                             }

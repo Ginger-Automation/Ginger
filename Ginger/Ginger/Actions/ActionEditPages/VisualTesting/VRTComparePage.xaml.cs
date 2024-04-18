@@ -345,7 +345,7 @@ namespace Ginger.Actions.VisualTesting
         {
             string FileName = General.GetFullFilePath(VRTCurrentBaselineImagePathTxtBox.ValueTextBox.Text);
             BitmapImage b = null;
-            if (File.Exists(FileName))
+            if (File.Exists(FileName) && new FileInfo(FileName).Length > 0)
             {
                 b = GetFreeBitmapCopy(FileName);
             }
@@ -356,16 +356,23 @@ namespace Ginger.Actions.VisualTesting
 
         private void GetBaseLineImage()
         {
-            string previewBaselineImage = GingerCoreNET.GeneralLib.General.DownloadBaselineImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + mAct.previewBaselineImageName, mAct);
-            string FileName = General.GetFullFilePath(previewBaselineImage);
-            BitmapImage b = null;
-            if (File.Exists(FileName))
+            try
             {
-                b = GetFreeBitmapCopy(FileName);
+                string previewBaselineImage = GingerCoreNET.GeneralLib.General.DownloadBaselineImage(WorkSpace.Instance.Solution.VRTConfiguration.ApiUrl + "/" + mAct.previewBaselineImageName, mAct);
+                string FileName = General.GetFullFilePath(previewBaselineImage);
+                BitmapImage b = null;
+                if (File.Exists(FileName) && new FileInfo(FileName).Length > 0)
+                {
+                    b = GetFreeBitmapCopy(FileName);
+                }
+                // send with null bitmap will show image not found
+                ScreenShotViewPage p = new ScreenShotViewPage("preview Baseline Image", b);
+                VRTPreviewBaselineImageFrame.ClearAndSetContent(p);
             }
-            // send with null bitmap will show image not found
-            ScreenShotViewPage p = new ScreenShotViewPage("preview Baseline Image", b);
-            VRTPreviewBaselineImageFrame.ClearAndSetContent(p);
+            catch(Exception ex) 
+            {
+                Reporter.ToLog(eLogLevel.INFO, "unable to fetch the baseline image",ex);
+            } 
         }
 
         private BitmapImage GetFreeBitmapCopy(String filePath)
