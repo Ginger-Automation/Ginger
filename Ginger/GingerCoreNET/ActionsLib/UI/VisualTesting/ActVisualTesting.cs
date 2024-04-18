@@ -288,7 +288,6 @@ namespace GingerCore.Actions
             public static readonly string ActionBy = "ActionBy";
             public static readonly string LocateBy = "LocateBy";
             public static readonly string LocateValue = "LocateValue";
-            public static readonly string VRTBaselineImagepath = "VRTBaselineImagepath";
             public static readonly string VRTBaselineImagename = "VRTBaselineImagename";
         }
 
