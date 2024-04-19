@@ -67,15 +67,6 @@ namespace Ginger.Environments
         {
             var ApplicationPlatforms = WorkSpace.Instance.Solution.ApplicationPlatforms.Where((app) => !AppEnvironment.CheckIfApplicationPlatformExists(app.Guid, app.AppName))?.ToList();
 
-
-
-            if (ApplicationPlatforms?.Count == 0)
-            {
-
-                Reporter.ToUser(eUserMsgKey.NoApplicationPlatformLeft, AppEnvironment.Name);
-                return;
-            }
-
             ObservableList<ApplicationPlatform> DisplayedApplicationPlatforms = GingerCore.General.ConvertListToObservableList(ApplicationPlatforms);
 
             EnvironmentApplicationList applicationList = new(DisplayedApplicationPlatforms);

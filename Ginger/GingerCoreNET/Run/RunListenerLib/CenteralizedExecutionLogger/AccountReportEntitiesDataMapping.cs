@@ -345,6 +345,11 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             GingerCore.ValueExpression valueExpression = new(context.Environment, context, WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<DataSourceBase>());
 
             AccountReportRunSet accountReportRunSet = new AccountReportRunSet();
+
+            //updating source application and user
+            accountReportRunSet.SourceApplication = runSetConfig.SourceApplication;
+            accountReportRunSet.SourceApplicationUser = runSetConfig.SourceApplicationUser;
+            
             accountReportRunSet.Id = (Guid)runSetConfig.ExecutionID;
             accountReportRunSet.ExecutionId = (Guid)runSetConfig.ExecutionID;
             accountReportRunSet.EntityId = runSetConfig.Guid;
@@ -370,6 +375,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             valueExpression.Value = runSetConfig.RunDescription;
             accountReportRunSet.RunDescription = valueExpression.ValueCalculated;
             accountReportRunSet.IsPublished = runSetConfig.Publish;
+            accountReportRunSet.ExternalID = runSetConfig.ExternalID;
             SetRunSetChildCounts(runSetConfig, accountReportRunSet, true);
             return accountReportRunSet;
         }

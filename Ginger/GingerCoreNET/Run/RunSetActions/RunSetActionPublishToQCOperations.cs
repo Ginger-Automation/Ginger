@@ -25,9 +25,12 @@ using GingerCore;
 using GingerCore.Activities;
 using GingerCore.ALM;
 using GingerCore.DataSource;
+using GingerCore.Environments;
+using GingerCoreNET.GeneralLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using static Ginger.Run.RunSetActions.RunSetActionBase;
 using static GingerCore.ALM.PublishToALMConfig;
 using static GingerCoreNET.ALMLib.ALMIntegrationEnums;
@@ -177,8 +180,16 @@ namespace Ginger.Run.RunSetActions
                         ActivitiesGroup virtualAG = new ActivitiesGroup();
                         virtualAG.Name = runSetBF.Name;
                         virtualAG.Description = runSetBF.Description;
-                        virtualAG.ExternalID = !string.IsNullOrEmpty(runSetBF.ExternalID) ? runSetBF.ExternalID : string.Empty;
+                        ProjEnvironment projEnvironment = runSetExec.RunsetExecutionEnvironment;
+                        if (projEnvironment != null)
+                        {
+                            IValueExpression magVE = new GingerCore.ValueExpression(projEnvironment, runSetBF, new ObservableList<GingerCore.DataSource.DataSourceBase>(), false, "", false);
+                            runSetBF.CalculateExternalId(magVE);
+                        }
+                        virtualAG.ExternalID = !string.IsNullOrEmpty(runSetBF.ExternalIdCalCulated) ? runSetBF.ExternalIdCalCulated : string.Empty;
                         virtualAG.ParentGuid = runSetBF.Guid;//Business flow instance Guid passing in Parent Guid to Update External Id back
+                        virtualAG.StartTimeStamp = runSetBF.StartTimeStamp;
+                        virtualAG.EndTimeStamp = runSetBF.EndTimeStamp;
                         if (Enum.IsDefined(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString()))
                         {
                             virtualAG.RunStatus = (eActivitiesGroupRunStatus)Enum.Parse(typeof(eActivitiesGroupRunStatus), runSetBF.RunStatus.ToString());
@@ -190,7 +201,9 @@ namespace Ginger.Run.RunSetActions
                         virtualBF.AddActivitiesGroup(virtualAG);
                         foreach (Activity runSetAct in runSetBF.Activities)
                         {
-                            virtualBF.AddActivity((Activity)runSetAct.CreateCopy(false), virtualAG, -1, false);
+                            Activity activitycopy = (Activity)runSetAct.CreateCopy(false);
+                            activitycopy.Status = runSetAct.Status;
+                            virtualBF.AddActivity(activitycopy, virtualAG, -1, false);
                         }
                     }
                 }
@@ -214,7 +227,17 @@ namespace Ginger.Run.RunSetActions
                 }
                 if (businessFlow != null && !string.IsNullOrEmpty(businessFlow.ExternalID))
                 {
-                    runSetExec.RunSetConfig.ExternalID = businessFlow.ExternalID;
+                    if(!string.IsNullOrEmpty(runSetExec.RunSetConfig.ExternalID))
+                    {
+                        if (!General.isVariableUsed(runSetExec.RunSetConfig.ExternalID))
+                        {
+                            runSetExec.RunSetConfig.ExternalID = businessFlow.ExternalID;
+                        }
+                    }
+                    else
+                    {
+                        runSetExec.RunSetConfig.ExternalID = businessFlow.ExternalID;
+                    }
                 }
 
                 foreach (GingerRunner runSetrunner in runSetExec.Runners)
@@ -224,15 +247,26 @@ namespace Ginger.Run.RunSetActions
                     {
                         runSetrunner.Executor = new GingerExecutionEngine(runSetrunner);
                     }
-
+                    List<Guid> BFGuidlist = runSetrunner.Executor.BusinessFlows.Select(x => x.Guid).ToList();
                     ObservableList<BusinessFlow> Bflist = WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>();
 
-                    foreach (BusinessFlow bFlow in Bflist)
+                    foreach (BusinessFlow bFlow in Bflist.Where(x => BFGuidlist.Contains(x.Guid)))
                     {
                         ActivitiesGroup activitiesGroup = businessFlow.ActivitiesGroups.FirstOrDefault(x => x.ParentGuid == bFlow.Guid);
                         if(activitiesGroup != null)
                         {
-                            bFlow.ExternalID = activitiesGroup.ExternalID;
+                            if(!string.IsNullOrEmpty(bFlow.ExternalID))
+                            {
+                                if (!General.isVariableUsed(bFlow.ExternalID))
+                                {
+                                    bFlow.ExternalID = activitiesGroup.ExternalID;
+                                }
+                            }
+                            else
+                            {
+                                bFlow.ExternalID = activitiesGroup.ExternalID;
+                            }
+
                         }
                     }
                 }
