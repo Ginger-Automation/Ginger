@@ -216,7 +216,7 @@ namespace GingerCore.ALM.RQM
                     {
                         XmlSerializer serializer = new XmlSerializer(typeof(RQMProjectListConfiguration));
 
-                        FileStream fs = new FileStream(importConfigTemplate, FileMode.Open);
+                        FileStream fs = new FileStream(importConfigTemplate, FileMode.Open,FileAccess.Read);
                         reader = XmlReader.Create(fs);
                         RQMProjectListConfig = (RQMProjectListConfiguration)serializer.Deserialize(reader);
                         fs.Close();

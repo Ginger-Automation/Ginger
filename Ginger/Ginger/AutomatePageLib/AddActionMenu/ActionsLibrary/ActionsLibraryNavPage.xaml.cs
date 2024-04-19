@@ -20,6 +20,7 @@ using amdocs.ginger.GingerCoreNET;
 using Amdocs.Ginger.Common;
 using Amdocs.Ginger.Common.InterfacesLib;
 using Amdocs.Ginger.Common.Repository.PlugInsLib;
+using Amdocs.Ginger.Common.WorkSpaceLib;
 using Amdocs.Ginger.CoreNET.ActionsLib.UI.Web;
 using Amdocs.Ginger.Repository;
 using Ginger.Actions;
@@ -183,7 +184,7 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                     }
                     else
                     {
-                       platformActions.Add(cA);
+                        platformActions.Add(cA);
                     }
                 }
             }
@@ -239,19 +240,11 @@ namespace Ginger.BusinessFlowsLibNew.AddActionMenu
                 {
                     return null;
                 }
-                TargetApplication TA = (TargetApplication)(from x in mContext.BusinessFlow.TargetApplications where x.Name == mContext.BusinessFlow.CurrentActivity.TargetApplication select x).FirstOrDefault();
+                TargetApplication TA = (TargetApplication)mContext.BusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == mContext.BusinessFlow.CurrentActivity.TargetApplication);
                 if (TA == null)
                 {
-                    if (mContext.BusinessFlow.TargetApplications.Count == 1)
-                    {
-                        TA = (TargetApplication)mContext.BusinessFlow.TargetApplications.FirstOrDefault();
-                        mContext.BusinessFlow.CurrentActivity.TargetApplication = TA.AppName;
-                    }
-                    else
-                    {
-                        Reporter.ToUser(eUserMsgKey.MissingActivityAppMapping, GingerDicser.GetTermResValue(eTermResKey.Activity),GingerDicser.GetTermResValue(eTermResKey.TargetApplication));
-                        return null;
-                    }
+                    mContext.BusinessFlow.TargetApplications.Add(GingerCoreCommonWorkSpace.Instance.Solution.GetSolutionTargetApplications().FirstOrDefault(f => f.Name.Equals(mContext.BusinessFlow.CurrentActivity.TargetApplication)));
+                    TA = (TargetApplication)mContext.BusinessFlow.TargetApplications.FirstOrDefault(x => x.Name == mContext.BusinessFlow.CurrentActivity.TargetApplication);
                 }
                 ApplicationPlatform AP = (from x in WorkSpace.Instance.Solution.ApplicationPlatforms where x.AppName == TA.AppName select x).FirstOrDefault();
                 if (AP != null)

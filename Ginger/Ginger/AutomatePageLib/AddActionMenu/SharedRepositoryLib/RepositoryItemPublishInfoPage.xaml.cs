@@ -178,7 +178,7 @@ namespace Ginger.Repository
                             {
                                 if (repositoryItem.Selected && repositoryItem.PublishStatus != RepositoryItemUsage.ePublishStatus.Published)
                                 {
-                                    Activity activityCopy = (Activity)mRepoItem.CreateInstance(true);
+                                    Activity activityCopy = Activity.CopySharedRepositoryActivity((Activity)mRepoItem, originFromSharedRepository: true);
                                     activityCopy.Active = true;
 
                                     if (repositoryItem.InsertRepositoryInsatncePosition == RepositoryItemUsage.eInsertRepositoryInsatncePosition.AtEnd)

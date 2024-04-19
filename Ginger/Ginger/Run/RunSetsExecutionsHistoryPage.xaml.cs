@@ -513,6 +513,10 @@ namespace Ginger.Run
                     {
                         LoadRunsetEventHandler? handler = LoadRunset;
                         handler?.Invoke(runset);
+                        if (runset.IsVirtual)
+                        {
+                            runset.DirtyStatus = Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified;
+                        }
                     });
                 }
                 catch(Exception ex)

@@ -375,6 +375,7 @@ namespace Amdocs.Ginger.CoreNET.Run.RunListenerLib.CenteralizedExecutionLogger
             valueExpression.Value = runSetConfig.RunDescription;
             accountReportRunSet.RunDescription = valueExpression.ValueCalculated;
             accountReportRunSet.IsPublished = runSetConfig.Publish;
+            accountReportRunSet.ExternalID = runSetConfig.ExternalID;
             SetRunSetChildCounts(runSetConfig, accountReportRunSet, true);
             return accountReportRunSet;
         }

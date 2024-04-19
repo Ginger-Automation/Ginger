@@ -54,6 +54,7 @@ namespace Amdocs.Ginger.Common
         TestCasesUpdatedSuccessfully,
         TestCasesUploadedSuccessfully,
         ASCFNotConnected,
+        TestSetsNotExist,
         DeleteRepositoryItemAreYouSure,
         SolutionEncryptionKeyUpgrade,
         ForgotKeySaveChanges,
@@ -249,7 +250,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.RunSetLoadFromReportError, new UserMsg(eUserMsgType.ERROR, "Unable To Load RunSet", "{0}", eUserMsgOption.OK, eUserMsgSelection.OK));
             Reporter.UserMsgsPool.Add(eUserMsgKey.PublishApplicationToOtherEnv, new UserMsg(eUserMsgType.QUESTION, "Publish Application to other Environment", "Do you want to publish this application to all the other existing environments?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
-            Reporter.UserMsgsPool.Add(eUserMsgKey.NoApplicationPlatformLeft, new UserMsg(eUserMsgType.INFO, "No Application is available to add", $"All the applications are already available in {0} Environment. \nPlease add new application in the Configurations-> {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} page to add application here", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.NoApplicationPlatformLeft, new UserMsg(eUserMsgType.INFO, "No Application is available to add", $"All the applications are already available in {{0}}. \nPlease add new application in the Configurations-> {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)} page to add application here", eUserMsgOption.OK, eUserMsgSelection.None));
 
 
             #endregion General Application Messages
@@ -526,6 +527,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestCasesUpdatedSuccessfully, new UserMsg(eUserMsgType.INFO, "TestCase Update", "TestCases Updated Successfully.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestCasesUploadedSuccessfully, new UserMsg(eUserMsgType.INFO, "TestCases Uploaded", "TestCases Uploaded Successfully.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestSetsImportedSuccessfully, new UserMsg(eUserMsgType.INFO, "Import ALM Test Set", "ALM Test Set/s import process ended successfully.", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.TestSetsNotExist, new UserMsg(eUserMsgType.INFO, "Business Flow Not Found to Delete", "ALM Test Set/s as Business Flow does not exist to Delete.", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.TestSetExists, new UserMsg(eUserMsgType.WARN, "Import Exiting Test Set", "The Test Set '{0}' was imported before and already exists in current Solution." + System.Environment.NewLine + "Do you want to delete the existing mapped " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " and import the Test Set again?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ErrorInTestsetImport, new UserMsg(eUserMsgType.ERROR, "Import Test Set Error", "Error Occurred while exporting the Test Set '{0}'." + System.Environment.NewLine + "Error Details:{1}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ErrorWhileExportingExecDetails, new UserMsg(eUserMsgType.ERROR, "Export Execution Details Error", "Error occurred while exporting the execution details to QC/ALM." + System.Environment.NewLine + "Error Details:{0}", eUserMsgOption.OK, eUserMsgSelection.None));
@@ -537,7 +539,7 @@ namespace Amdocs.Ginger.Common
             Reporter.UserMsgsPool.Add(eUserMsgKey.ActivitiesGroupAlreadyMappedToTC, new UserMsg(eUserMsgType.WARN, "Export " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " to QC/ALM", "The " + GingerDicser.GetTermResValue(eTermResKey.ActivitiesGroup) + " '{0}' is already mapped to the QC/ALM '{1}' Test Case, do you want to update it?" + Environment.NewLine + Environment.NewLine + "Select 'Yes' to update or 'No' to create new Test Case.", eUserMsgOption.YesNoCancel, eUserMsgSelection.Cancel));
             Reporter.UserMsgsPool.Add(eUserMsgKey.BusinessFlowAlreadyMappedToTC, new UserMsg(eUserMsgType.WARN, "Export " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " to QC/ALM", "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '{0}' is already mapped to the QC/ALM '{1}' Test Set, do you want to update it?" + Environment.NewLine + Environment.NewLine + "Select 'Yes' to update or 'No' to create new Test Set.", eUserMsgOption.YesNoCancel, eUserMsgSelection.Cancel));
             Reporter.UserMsgsPool.Add(eUserMsgKey.ExportQCNewTestSetSelectDiffFolder, new UserMsg(eUserMsgType.INFO, "Export QC Item - Creating new Test Set", "Please select QC folder to export to that the Test Set does not exist there.", eUserMsgOption.OK, eUserMsgSelection.None));
-            Reporter.UserMsgsPool.Add(eUserMsgKey.ExportItemToALMFailed, new UserMsg(eUserMsgType.ERROR, "Export to ALM Failed", "The {0} '{1}' failed to be exported to ALM." + Environment.NewLine + Environment.NewLine + "Error Details: {2}", eUserMsgOption.OK, eUserMsgSelection.None));
+            Reporter.UserMsgsPool.Add(eUserMsgKey.ExportItemToALMFailed, new UserMsg(eUserMsgType.ERROR, "Export to ALM Failed", "The {0} ' {1}' failed to be exported to ALM." + Environment.NewLine + Environment.NewLine + "Error Details: {2}", eUserMsgOption.OK, eUserMsgSelection.None));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToSaveBFAfterExport, new UserMsg(eUserMsgType.QUESTION, "Save Links to QC/ALM Items", "The " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " '{0}' must be saved for keeping the links to QC/ALM items." + Environment.NewLine + "To perform the save now?", eUserMsgOption.YesNo, eUserMsgSelection.No));
             Reporter.UserMsgsPool.Add(eUserMsgKey.AskIfToLoadExternalFields, new UserMsg(eUserMsgType.QUESTION, "Load/Refresh ALM External Fields", "The activity will run in the background for several hours." + Environment.NewLine + "Please do not close Ginger until operation is complete." + Environment.NewLine + "Would you like to continue?", eUserMsgOption.YesNo, eUserMsgSelection.No));
 
