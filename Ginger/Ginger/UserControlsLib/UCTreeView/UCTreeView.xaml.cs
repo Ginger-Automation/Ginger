@@ -663,10 +663,12 @@ namespace GingerWPF.UserControlsLib.UCTreeView
             long startTime = DateTime.UtcNow.Ticks;
 
             List<ITreeViewItem> items = [];
-            foreach(TreeViewItem tvi in ((TreeViewItem)Tree.Items[0]).Items)
+            foreach (TreeViewItem tvi in ((TreeViewItem)Tree.Items[0]).Items)
             {
                 if (tvi.Tag is ITreeViewItem item)
+                {
                     items.Add(item);
+                }
             }
 
             FilterItemsByText2(items, text);
@@ -677,7 +679,9 @@ namespace GingerWPF.UserControlsLib.UCTreeView
         private bool FilterItemsByText2(IEnumerable<ITreeViewItem> items, string text)
         {
             if (items == null)
+            {
                 return false;
+            }
 
             bool wasFound = false;
             foreach (ITreeViewItem item in items)

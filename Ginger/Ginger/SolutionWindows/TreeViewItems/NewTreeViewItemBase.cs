@@ -50,7 +50,11 @@ namespace GingerWPF.TreeViewItemsLib
                 if (_visibility != value)
                 {
                     _visibility = value;
-                    PropertyChanged?.Invoke(sender: this, new PropertyChangedEventArgs(nameof(Visibility)));
+                    PropertyChangedEventHandler? handler = PropertyChanged;
+                    if (handler != null)
+                    {
+                        handler.Invoke(sender: this, new PropertyChangedEventArgs(nameof(Visibility)));
+                    }
                 }
             } 
         }
