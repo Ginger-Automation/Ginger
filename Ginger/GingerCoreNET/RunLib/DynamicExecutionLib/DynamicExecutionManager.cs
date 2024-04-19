@@ -569,6 +569,10 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             runset.RunAnalyzer = cliHelper.RunAnalyzer;
             runset.RunInParallel = runsetExecutor.RunSetConfig.RunModeParallel;
             runset.StopRunnersOnFailure = runsetExecutor.RunSetConfig.StopRunnersOnFailure;
+            if (!string.IsNullOrEmpty(runsetExecutor.RunSetConfig.ExternalID))
+            {
+                runset.ExternalID = runsetExecutor.RunSetConfig.ExternalID;
+            }
             ///////////////
             ///
             RerunConfig rerunconfiguration = new RerunConfig()
@@ -659,6 +663,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                     businessFlow.Name = businessFlowRun.BusinessFlowName;
                     businessFlow.ID = businessFlowRun.BusinessFlowGuid;
                     businessFlow.InstanceID = businessFlowRun.BusinessFlowInstanceGuid;
+                    if (!string.IsNullOrEmpty(businessFlowRun.ExternalID))
+                    { 
+                        businessFlow.ExternalID = businessFlowRun.ExternalID; 
+                    }
+
                     businessFlow.Exist = true;
                     if (gingerRunner.BusinessFlowsRunList.Where(x => x.BusinessFlowGuid == businessFlowRun.BusinessFlowGuid).ToList().Count > 1)
                     {
@@ -1011,6 +1020,11 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                 runSetConfig.SourceApplicationUser = gingerExecConfig.SourceApplicationUser;
             }
 
+            if(!String.IsNullOrEmpty(gingerExecConfig.Runset.ExternalID))
+            {
+                runSetConfig.ExternalID = gingerExecConfig.Runset.ExternalID;
+            }
+
             if (dynamicRunsetConfigs.RunAnalyzer != null)
             {
                 runSetConfig.RunWithAnalyzer = (bool)dynamicRunsetConfigs.RunAnalyzer;
@@ -1168,7 +1182,7 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
                             else
                             {
                                 //using Virtual BF
-                                bf = new BusinessFlow() { Name = businessFlowConfig.Name };
+                                bf = new BusinessFlow() { Name = businessFlowConfig.Name,ExternalID = businessFlowConfig.ExternalID };
                                 ///Add Shared Activities 
                                 if (businessFlowConfig.SharedActivities != null && businessFlowConfig.SharedActivities.Count > 0)
                                 {
