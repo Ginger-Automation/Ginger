@@ -119,6 +119,7 @@ namespace Ginger.Run
                 xALMTestSetLevelCbx.Init(PublishToALMConfig.eALMTestSetLevel.BusinessFlow, nameof(RunSetActionPublishToQC.ALMTestSetLevel), Enum.GetValues(typeof(eALMTestSetLevel)).Cast<eALMTestSetLevel>().ToList(), ComboBox.SelectedValueProperty);
                 xALMTypeCbx.ComboBox.SelectedValue = AlmConfig.AlmType;
                 xALMTestSetLevelCbx.ComboBox.SelectedValue = PublishToALMConfig.eALMTestSetLevel.BusinessFlow;
+                SearchALMEntityByNamePnl.Visibility = Visibility.Collapsed;
                 xALMTestSetLevelCbx.IsEnabled = false;
                 xALMTypeCbx.IsEnabled = false;
                 mBfs = bfs;
@@ -265,6 +266,7 @@ namespace Ginger.Run
             {
                 xExportTypePanel.Visibility = Visibility.Collapsed;
                 xExportDestinationFolder.Visibility = Visibility.Collapsed;
+                SearchALMEntityByNamePnl.Visibility = Visibility.Collapsed;
                 SearchALMEntityByName.Visibility = Visibility.Collapsed;
                 return;
             }
@@ -276,11 +278,13 @@ namespace Ginger.Run
             if (xExportTypeCbx.ComboBoxSelectedValue is null) //&& xExportTypeCbx.ComboBoxSelectedValue.ToString().Equals(eExportType.ResultsOnly.ToString()))
             {
                 xExportDestinationFolder.Visibility = Visibility.Collapsed;
+                SearchALMEntityByNamePnl.Visibility = Visibility.Collapsed;
                 SearchALMEntityByName.Visibility = Visibility.Collapsed;
                 return;
             }
             xExportDestinationFolder.Visibility = Visibility.Visible;
             xExportTypeCbx.ComboBox.SelectedValue = eExportType.EntitiesAndResults;
+            SearchALMEntityByNamePnl.Visibility = Visibility.Visible;
             SearchALMEntityByName.Visibility = Visibility.Visible;
             xExportTypeCbx.IsEnabled = false;
         }

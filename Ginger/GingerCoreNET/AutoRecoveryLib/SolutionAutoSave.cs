@@ -121,7 +121,7 @@ namespace Ginger.Functionalties
                     //BusinesFlows           
                     foreach (BusinessFlow bf in WorkSpace.Instance.SolutionRepository.GetAllRepositoryItems<BusinessFlow>())
                     {
-                        if (bf.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
+                        if (bf.AllowAutoSave && bf.DirtyStatus == Amdocs.Ginger.Common.Enums.eDirtyStatus.Modified)
                         {
                             DirtyFileAutoSave(bf);
                         }

@@ -288,7 +288,14 @@ namespace Ginger.SolutionWindows.TreeViewItems
         {
             //TODO: change to wizard
             string BizFlowName = string.Empty;
+            if (WorkSpace.Instance.Solution.ApplicationPlatforms == null || WorkSpace.Instance.Solution.ApplicationPlatforms.Count == 0)
+            {
+                Reporter.ToUser(eUserMsgKey.MissingTargetApplication, $"The default Application Platform Info is missing, please go to Solution level to add at least one {GingerDicser.GetTermResValue(eTermResKey.TargetApplication)}");
+                return;
+            }
+
             BusinessFlow BizFlow = WorkSpace.Instance.GetNewBusinessFlow(BizFlowName);
+
             if (GingerCore.General.GetInputWithValidation("Add " + GingerDicser.GetTermResValue(eTermResKey.BusinessFlow), GingerDicser.GetTermResValue(eTermResKey.BusinessFlow) + " Name:", ref BizFlowName, null, false, BizFlow))
             {
                 BizFlow = WorkSpace.Instance.GetNewBusinessFlow(BizFlowName);
