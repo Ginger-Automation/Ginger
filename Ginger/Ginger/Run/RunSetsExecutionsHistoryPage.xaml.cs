@@ -141,15 +141,15 @@ namespace Ginger.Run
                 new()
                 {
                     Field = RunSetReport.Fields.SourceApplication,
-                    Header = "Source Application",
+                    Header = "Requested From",
                     WidthWeight = 10,
                     ReadOnly = true,
                 },
                 new()
                 {
                     Field = RunSetReport.Fields.SourceApplicationUser,
-                    Header = "Source Application User",
-                    WidthWeight = 12,
+                    Header = "Requested By",
+                    WidthWeight = 10,
                     ReadOnly = true,
                 },
                 new()

@@ -153,7 +153,7 @@ namespace Ginger.Reports
 
         [JsonProperty]
         [FieldParams]
-        [FieldParamsNameCaption("Requested By Application")]
+        [FieldParamsNameCaption("Requested From")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
@@ -162,7 +162,7 @@ namespace Ginger.Reports
 
         [JsonProperty]
         [FieldParams]
-        [FieldParamsNameCaption("Requested By Application User")]
+        [FieldParamsNameCaption("Requested By")]
         [FieldParamsFieldType(FieldsType.Field)]
         [FieldParamsIsNotMandatory(true)]
         [FieldParamsIsSelected(true)]
