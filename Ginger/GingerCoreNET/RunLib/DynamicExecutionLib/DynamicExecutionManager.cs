@@ -1002,6 +1002,14 @@ namespace Amdocs.Ginger.CoreNET.RunLib.DynamicExecutionLib
             {
                 runSetConfig.Description = gingerExecConfig.Runset.Description;
             }
+            if (!string.IsNullOrEmpty(gingerExecConfig.SourceApplication))
+            {
+                runSetConfig.SourceApplication = gingerExecConfig.SourceApplication;
+            }
+            if (!string.IsNullOrEmpty(gingerExecConfig.SourceApplicationUser))
+            {
+                runSetConfig.SourceApplicationUser = gingerExecConfig.SourceApplicationUser;
+            }
 
             if (dynamicRunsetConfigs.RunAnalyzer != null)
             {
